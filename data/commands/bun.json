@@ -1,0 +1,230 @@
+{
+  "name": "bun",
+  "description": "Bun — all-in-one JavaScript runtime, bundler, transpiler, and package manager",
+  "category": "javascript",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "run",
+      "description": "Execute a JavaScript/TypeScript file or package.json script",
+      "args": [{ "name": "<script>", "type": "string", "required": true, "description": "Script file or package.json script name" }],
+      "options": [
+        { "name": "--watch", "description": "Watch mode — restart on file changes" },
+        { "name": "--hot", "description": "Hot reload mode" },
+        { "name": "--smol", "description": "Use less memory at the cost of performance" },
+        { "name": "--bun", "description": "Force usage of Bun's runtime" },
+        { "name": "--env-file", "description": "Load environment variables from file", "type": "file" },
+        { "name": "--port", "description": "Set default port for Bun.serve()", "type": "number" },
+        { "name": "--inspect", "description": "Enable inspector on host:port", "type": "string" }
+      ],
+      "examples": ["bun run index.ts", "bun run dev", "bun run build", "bun run --watch server.ts", "bun run --hot src/index.ts"]
+    },
+    {
+      "name": "install",
+      "description": "Install dependencies from package.json",
+      "options": [
+        { "name": "--production", "description": "Skip devDependencies" },
+        { "name": "--frozen-lockfile", "description": "Error if lockfile is out of date" },
+        { "name": "--no-save", "description": "Don't update package.json" },
+        { "name": "--dry-run", "description": "Show what would be installed" },
+        { "name": "--force", "description": "Always request latest versions" },
+        { "name": "--global", "short": "-g", "description": "Install globally" },
+        { "name": "--backend", "description": "Package resolution backend", "type": "string" },
+        { "name": "--trust", "description": "Trust lifecycle scripts from specific packages" }
+      ],
+      "examples": ["bun install", "bun install --frozen-lockfile", "bun install --production"]
+    },
+    {
+      "name": "add",
+      "description": "Add a package to dependencies",
+      "args": [{ "name": "<package>", "type": "string", "required": true, "description": "Package name(s) to add" }],
+      "options": [
+        { "name": "--dev", "short": "-d", "description": "Add as devDependency" },
+        { "name": "--optional", "description": "Add as optionalDependency" },
+        { "name": "--exact", "short": "-E", "description": "Pin exact version" },
+        { "name": "--global", "short": "-g", "description": "Install globally" },
+        { "name": "--trust", "description": "Trust lifecycle scripts" }
+      ],
+      "examples": ["bun add express", "bun add -d typescript", "bun add react react-dom", "bun add -g serve"]
+    },
+    {
+      "name": "remove",
+      "description": "Remove a package from dependencies",
+      "args": [{ "name": "<package>", "type": "string", "required": true, "description": "Package name to remove" }],
+      "examples": ["bun remove express", "bun remove -g serve"]
+    },
+    {
+      "name": "update",
+      "description": "Update packages to latest versions",
+      "args": [{ "name": "<package>", "type": "string", "required": false, "description": "Specific package to update" }],
+      "options": [
+        { "name": "--latest", "description": "Update beyond semver range" }
+      ],
+      "examples": ["bun update", "bun update react", "bun update --latest"]
+    },
+    {
+      "name": "create",
+      "description": "Create a new project from a template",
+      "args": [{ "name": "<template>", "type": "string", "required": true, "description": "Template to use" }],
+      "examples": ["bun create react-app my-app", "bun create elysia my-api", "bun create hono my-api", "bun create vite my-app"]
+    },
+    {
+      "name": "init",
+      "description": "Initialize a new package.json",
+      "options": [
+        { "name": "--yes", "short": "-y", "description": "Accept all defaults" }
+      ],
+      "examples": ["bun init", "bun init -y"]
+    },
+    {
+      "name": "test",
+      "description": "Run tests using Bun's built-in test runner",
+      "args": [{ "name": "<pattern>", "type": "string", "required": false, "description": "Test file pattern" }],
+      "options": [
+        { "name": "--watch", "description": "Run in watch mode" },
+        { "name": "--bail", "description": "Stop after first failure", "type": "number" },
+        { "name": "--timeout", "description": "Test timeout (ms)", "type": "number" },
+        { "name": "--rerun-each", "description": "Run each test N times", "type": "number" },
+        { "name": "--coverage", "description": "Enable code coverage" },
+        { "name": "--preload", "description": "Preload modules before tests", "type": "string" }
+      ],
+      "examples": ["bun test", "bun test --watch", "bun test src/utils.test.ts", "bun test --coverage"]
+    },
+    {
+      "name": "build",
+      "description": "Bundle TypeScript/JavaScript using Bun's bundler",
+      "args": [{ "name": "<entrypoint>", "type": "file", "required": true, "description": "Entry point file(s)" }],
+      "options": [
+        { "name": "--outdir", "description": "Output directory", "type": "directory" },
+        { "name": "--outfile", "description": "Output file", "type": "file" },
+        { "name": "--target", "description": "Target environment (browser, bun, node)", "type": "string" },
+        { "name": "--minify", "description": "Minify output" },
+        { "name": "--sourcemap", "description": "Generate source maps (none, linked, inline, external)", "type": "string" },
+        { "name": "--splitting", "description": "Enable code splitting" },
+        { "name": "--format", "description": "Module format (esm, cjs, iife)", "type": "string" },
+        { "name": "--external", "description": "Mark packages as external", "type": "string" },
+        { "name": "--compile", "description": "Create a standalone executable" }
+      ],
+      "examples": ["bun build src/index.ts --outdir ./dist", "bun build src/index.ts --target bun --minify", "bun build src/index.ts --compile --outfile myapp"]
+    },
+    {
+      "name": "x",
+      "description": "Execute a package binary (like npx)",
+      "args": [{ "name": "<command>", "type": "string", "required": true, "description": "Package/command to run" }],
+      "examples": ["bunx tsc --init", "bunx create-react-app my-app", "bunx prisma migrate dev", "bunx eslint ."]
+    },
+    {
+      "name": "link",
+      "description": "Register or link a local package",
+      "examples": ["bun link", "bun link my-package"]
+    },
+    {
+      "name": "pm",
+      "description": "Package manager utilities",
+      "examples": ["bun pm ls", "bun pm cache", "bun pm cache rm", "bun pm hash", "bun pm hash-string", "bun pm bin", "bun pm bin -g"]
+    },
+    {
+      "name": "upgrade",
+      "description": "Upgrade Bun to the latest version",
+      "examples": ["bun upgrade", "bun upgrade --canary"]
+    },
+    {
+      "name": "repl",
+      "description": "Start the Bun REPL",
+      "examples": ["bun repl"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--version", "description": "Show Bun version" },
+    { "name": "--help", "short": "-h", "description": "Show help" },
+    { "name": "--cwd", "description": "Set working directory", "type": "directory" },
+    { "name": "--config", "short": "-c", "description": "Config file path", "type": "file" },
+    { "name": "--env-file", "description": "Environment file path", "type": "file" }
+  ],
+  "examples": [
+    "bun run dev",
+    "bun install",
+    "bun add express",
+    "bun test",
+    "bun build src/index.ts --outdir dist",
+    "bun --version"
+  ],
+  "relatedCommands": ["node", "npm", "yarn", "pnpm", "deno"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "bun_version",
+        "description": "Installed Bun version",
+        "command": "bun --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "package_json_scripts",
+        "description": "Scripts defined in package.json",
+        "command": "cat package.json 2>/dev/null | grep -A100 '\"scripts\"' | grep -B0 -E '\"[^\"]+\"\\s*:' | head -30",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "installed_deps",
+        "description": "Installed dependencies (from bun.lockb)",
+        "command": "bun pm ls 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "lockfile_exists",
+        "description": "Check for bun.lockb lockfile",
+        "command": "test -f bun.lockb && echo 'bun.lockb' || test -f bun.lock && echo 'bun.lock' || echo 'none'",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "package_name",
+        "description": "Package name from package.json",
+        "command": "cat package.json 2>/dev/null | grep '\"name\"' | head -1 | sed 's/.*\"name\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/'",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "workspaces",
+        "description": "Workspace definitions from package.json",
+        "command": "cat package.json 2>/dev/null | grep -A10 '\"workspaces\"' | head -12",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "bunfig_toml",
+        "description": "Check for bunfig.toml configuration",
+        "command": "test -f bunfig.toml && cat bunfig.toml 2>/dev/null | head -20 || echo 'none'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "global_packages",
+        "description": "Globally installed Bun packages",
+        "command": "bun pm bin -g 2>/dev/null && ls $(bun pm bin -g 2>/dev/null) 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "bun"
+      },
+      {
+        "name": "test_files",
+        "description": "Test files in the project",
+        "command": "find . -name '*.test.ts' -o -name '*.test.js' -o -name '*.spec.ts' -o -name '*.spec.js' 2>/dev/null | head -20 | grep -v node_modules",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "bun"
+      }
+    ]
+  }
+}

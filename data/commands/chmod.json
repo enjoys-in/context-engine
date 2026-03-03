@@ -1,0 +1,97 @@
+{
+  "name": "chmod",
+  "description": "Change file mode bits (permissions)",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-R", "description": "Change files and directories recursively" },
+    { "name": "-v", "description": "Verbose — output for each file processed" },
+    { "name": "-c", "description": "Verbose only when a change is made" },
+    { "name": "-f", "description": "Suppress most error messages" },
+    { "name": "--reference", "description": "Use another file's permissions as template", "type": "file" },
+    { "name": "--preserve-root", "description": "Fail to operate recursively on '/'" },
+    { "name": "--no-preserve-root", "description": "Do not treat '/' specially" }
+  ],
+  "examples": [
+    "chmod 755 script.sh",
+    "chmod 644 file.txt",
+    "chmod +x script.sh",
+    "chmod -x file.txt",
+    "chmod u+rwx,g+rx,o+rx file",
+    "chmod -R 755 directory/",
+    "chmod a+r file.txt",
+    "chmod u+s program",
+    "chmod g+s directory/",
+    "chmod o-rwx private.key",
+    "chmod 600 ~/.ssh/id_rsa",
+    "chmod 700 ~/.ssh",
+    "chmod --reference=ref.txt target.txt",
+    "chmod -R u+rw,g+r,o-rwx /var/www",
+    "chmod 400 secret.pem",
+    "find . -type f -exec chmod 644 {} +",
+    "find . -type d -exec chmod 755 {} +"
+  ],
+  "relatedCommands": ["chown", "chgrp", "ls", "stat", "umask", "getfacl", "setfacl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cwd_permissions",
+        "description": "File permissions in the current directory",
+        "command": "ls -la 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_path",
+        "description": "Current working directory path",
+        "command": "pwd",
+        "parser": "text",
+        "cacheFor": 3,
+        "requiresCmd": "chmod"
+      },
+      {
+        "name": "executable_files",
+        "description": "Executable files in current directory",
+        "command": "find . -maxdepth 1 -type f -executable 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "find"
+      },
+      {
+        "name": "current_umask",
+        "description": "Current file creation mask",
+        "command": "umask",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "chmod"
+      },
+      {
+        "name": "current_user",
+        "description": "Current user and groups",
+        "command": "id",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "chmod"
+      },
+      {
+        "name": "world_writable",
+        "description": "World-writable files (potential security risks)",
+        "command": "find . -maxdepth 2 -type f -perm -002 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "find"
+      },
+      {
+        "name": "ssh_key_permissions",
+        "description": "SSH key file permissions (should be 600)",
+        "command": "ls -la ~/.ssh/ 2>/dev/null | grep -E '(id_|authorized)' | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "ls"
+      }
+    ]
+  }
+}

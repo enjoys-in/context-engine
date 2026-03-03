@@ -1,0 +1,1265 @@
+{
+  "name": "npm",
+  "description": "Node.js package manager",
+  "category": "node-ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "init",
+      "description": "Create a new package.json file",
+      "options": [
+        { "name": "--yes", "short": "-y", "description": "Accept all defaults without prompting" },
+        { "name": "--scope", "description": "Create a scoped package", "type": "string" },
+        { "name": "--workspace", "short": "-w", "description": "Create in specified workspace", "type": "string" }
+      ],
+      "args": [
+        { "name": "<initializer>", "type": "string", "required": false, "description": "Package initializer (e.g. react-app, vite)" }
+      ],
+      "examples": [
+        "npm init",
+        "npm init -y",
+        "npm init @scope",
+        "npm init react-app my-app",
+        "npm init vite@latest my-project"
+      ]
+    },
+    {
+      "name": "install",
+      "description": "Install project dependencies or specific packages",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Package name or spec (name@version, name@tag, tarball, git url)" }
+      ],
+      "options": [
+        { "name": "--save-dev", "short": "-D", "description": "Save to devDependencies" },
+        { "name": "--save-exact", "short": "-E", "description": "Save exact version instead of range" },
+        { "name": "--save-optional", "short": "-O", "description": "Save to optionalDependencies" },
+        { "name": "--save-peer", "description": "Save to peerDependencies" },
+        { "name": "--global", "short": "-g", "description": "Install globally" },
+        { "name": "--no-save", "description": "Do not save to package.json" },
+        { "name": "--production", "description": "Do not install devDependencies" },
+        { "name": "--omit", "description": "Omit dependency type (dev, optional, peer)", "type": "string" },
+        { "name": "--legacy-peer-deps", "description": "Ignore peerDependency conflicts" },
+        { "name": "--force", "short": "-f", "description": "Force fetching even if local copy exists" },
+        { "name": "--dry-run", "description": "Report what would be installed without installing" },
+        { "name": "--ignore-scripts", "description": "Do not run pre/post/install scripts" },
+        { "name": "--no-optional", "description": "Do not install optional dependencies" },
+        { "name": "--prefer-offline", "description": "Use cached data when possible" },
+        { "name": "--package-lock-only", "description": "Only update package-lock.json" },
+        { "name": "--strict-peer-deps", "description": "Fail on peerDependency conflicts" },
+        { "name": "--workspace", "short": "-w", "description": "Install in specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Install across all workspaces" },
+        { "name": "--install-strategy", "description": "Install strategy: hoisted, nested, shallow, linked", "type": "string" },
+        { "name": "--fund", "description": "Show funding message", "type": "boolean" }
+      ],
+      "examples": [
+        "npm install",
+        "npm install express",
+        "npm install -D typescript @types/node",
+        "npm install -g nodemon",
+        "npm install react@18.2.0",
+        "npm install react@latest",
+        "npm install --save-exact lodash",
+        "npm install --legacy-peer-deps",
+        "npm install --omit=dev",
+        "npm install github:user/repo",
+        "npm install ./local-package.tgz",
+        "npm install -w packages/server express"
+      ]
+    },
+    {
+      "name": "uninstall",
+      "description": "Remove a package",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name to remove" }
+      ],
+      "options": [
+        { "name": "--save-dev", "short": "-D", "description": "Remove from devDependencies" },
+        { "name": "--global", "short": "-g", "description": "Remove global package" },
+        { "name": "--no-save", "description": "Do not remove from package.json" },
+        { "name": "--workspace", "short": "-w", "description": "Remove from specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm uninstall lodash",
+        "npm uninstall -D typescript",
+        "npm uninstall -g nodemon",
+        "npm uninstall -w packages/server express"
+      ]
+    },
+    {
+      "name": "update",
+      "description": "Update packages to latest version satisfying semver range",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Package name (omit to update all)" }
+      ],
+      "options": [
+        { "name": "--global", "short": "-g", "description": "Update global packages" },
+        { "name": "--save", "short": "-S", "description": "Save updated versions to package.json" },
+        { "name": "--dry-run", "description": "Show what would be updated" },
+        { "name": "--workspace", "short": "-w", "description": "Update in specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Update across all workspaces" }
+      ],
+      "examples": [
+        "npm update",
+        "npm update express",
+        "npm update -g",
+        "npm update --save"
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Run an arbitrary package script",
+      "args": [
+        { "name": "<script>", "type": "string", "required": true, "description": "Script name defined in package.json scripts" },
+        { "name": "-- <args>", "type": "string", "required": false, "description": "Arguments passed to the script" }
+      ],
+      "options": [
+        { "name": "--silent", "short": "-s", "description": "Suppress npm output, only show script output" },
+        { "name": "--if-present", "description": "Do not error if script is missing" },
+        { "name": "--ignore-scripts", "description": "Do not run pre/post scripts" },
+        { "name": "--workspace", "short": "-w", "description": "Run script in specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Run in all workspaces" },
+        { "name": "--include-workspace-root", "description": "Include root workspace when using --workspaces" }
+      ],
+      "examples": [
+        "npm run build",
+        "npm run dev",
+        "npm run test -- --watch",
+        "npm run lint -- --fix",
+        "npm run -s build",
+        "npm run build --if-present",
+        "npm run build -w packages/server",
+        "npm run build --workspaces"
+      ]
+    },
+    {
+      "name": "run-script",
+      "description": "Run an arbitrary package script (alias for run)",
+      "args": [
+        { "name": "<script>", "type": "string", "required": true, "description": "Script name from package.json" }
+      ],
+      "examples": [
+        "npm run-script build",
+        "npm run-script test"
+      ]
+    },
+    {
+      "name": "start",
+      "description": "Run the start script (defaults to node server.js)",
+      "options": [
+        { "name": "--ignore-scripts", "description": "Do not run pre/post scripts" }
+      ],
+      "examples": [
+        "npm start",
+        "npm start -- --port 3000"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Run the test script",
+      "options": [
+        { "name": "--ignore-scripts", "description": "Do not run pre/post scripts" }
+      ],
+      "examples": [
+        "npm test",
+        "npm test -- --coverage",
+        "npm test -- --watchAll",
+        "npm t"
+      ]
+    },
+    {
+      "name": "build",
+      "description": "Build the package (runs the build script)",
+      "examples": [
+        "npm run build"
+      ]
+    },
+    {
+      "name": "publish",
+      "description": "Publish a package to the registry",
+      "args": [
+        { "name": "<tarball|folder>", "type": "string", "required": false, "description": "Tarball or folder to publish" }
+      ],
+      "options": [
+        { "name": "--tag", "description": "Publish with given dist-tag", "type": "string" },
+        { "name": "--access", "description": "Set access level (public, restricted)", "type": "string" },
+        { "name": "--otp", "description": "One-time password for 2FA", "type": "string" },
+        { "name": "--dry-run", "description": "Report what would be published without publishing" },
+        { "name": "--registry", "description": "Publish to specified registry", "type": "string" },
+        { "name": "--workspace", "short": "-w", "description": "Publish specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Publish all workspaces" },
+        { "name": "--provenance", "description": "Generate provenance statement" }
+      ],
+      "examples": [
+        "npm publish",
+        "npm publish --access public",
+        "npm publish --tag beta",
+        "npm publish --dry-run",
+        "npm publish --otp 123456",
+        "npm publish --provenance"
+      ]
+    },
+    {
+      "name": "pack",
+      "description": "Create a tarball from a package",
+      "args": [
+        { "name": "<package-spec>", "type": "string", "required": false, "description": "Package spec to pack" }
+      ],
+      "options": [
+        { "name": "--dry-run", "description": "Report contents without creating tarball" },
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--pack-destination", "description": "Directory for the tarball", "type": "string" },
+        { "name": "--workspace", "short": "-w", "description": "Pack specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm pack",
+        "npm pack --dry-run",
+        "npm pack --json",
+        "npm pack ./packages/my-lib"
+      ]
+    },
+    {
+      "name": "link",
+      "description": "Symlink a package for local development",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Package name or folder to link" }
+      ],
+      "options": [
+        { "name": "--global", "short": "-g", "description": "Create global link" },
+        { "name": "--workspace", "short": "-w", "description": "Link in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm link",
+        "npm link my-package",
+        "npm link ../my-local-lib"
+      ]
+    },
+    {
+      "name": "unlink",
+      "description": "Remove a symlinked package",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Package to unlink" }
+      ],
+      "examples": [
+        "npm unlink",
+        "npm unlink my-package"
+      ]
+    },
+    {
+      "name": "ls",
+      "description": "List installed packages",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Filter by package name" }
+      ],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Show all packages, not just top-level" },
+        { "name": "--depth", "description": "Max display depth of dependency tree", "type": "number" },
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--long", "short": "-l", "description": "Show extended information" },
+        { "name": "--parseable", "short": "-p", "description": "Output parseable results" },
+        { "name": "--global", "short": "-g", "description": "List global packages" },
+        { "name": "--production", "description": "Only show production dependencies" },
+        { "name": "--omit", "description": "Omit dependency type", "type": "string" },
+        { "name": "--workspace", "short": "-w", "description": "List in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm ls",
+        "npm ls --depth=0",
+        "npm ls --json",
+        "npm ls -g --depth=0",
+        "npm ls react",
+        "npm ls --all",
+        "npm ls --parseable"
+      ]
+    },
+    {
+      "name": "outdated",
+      "description": "Check for outdated packages",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Check specific package" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--long", "short": "-l", "description": "Show extended information" },
+        { "name": "--parseable", "short": "-p", "description": "Output parseable results" },
+        { "name": "--global", "short": "-g", "description": "Check global packages" },
+        { "name": "--all", "short": "-a", "description": "Show all outdated packages" },
+        { "name": "--workspace", "short": "-w", "description": "Check in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm outdated",
+        "npm outdated --json",
+        "npm outdated --long",
+        "npm outdated -g"
+      ]
+    },
+    {
+      "name": "audit",
+      "description": "Run a security audit on installed packages",
+      "options": [
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--production", "description": "Only audit production dependencies" },
+        { "name": "--omit", "description": "Omit dependency type from audit", "type": "string" },
+        { "name": "--audit-level", "description": "Minimum vulnerability level to report (info, low, moderate, high, critical)", "type": "string" },
+        { "name": "--fix", "description": "Automatically install compatible updated versions for vulnerable deps" },
+        { "name": "--force", "description": "Install semver-major updates to vulnerable deps with --fix" },
+        { "name": "--dry-run", "description": "Report fixes without installing them" },
+        { "name": "--workspace", "short": "-w", "description": "Audit specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Audit all workspaces" }
+      ],
+      "subcommands": [
+        {
+          "name": "fix",
+          "description": "Automatically fix audit vulnerabilities",
+          "options": [
+            { "name": "--force", "description": "Install semver-major updates" },
+            { "name": "--dry-run", "description": "Report without installing" }
+          ],
+          "examples": [
+            "npm audit fix",
+            "npm audit fix --force",
+            "npm audit fix --dry-run"
+          ]
+        }
+      ],
+      "examples": [
+        "npm audit",
+        "npm audit --json",
+        "npm audit --audit-level=high",
+        "npm audit --production",
+        "npm audit fix",
+        "npm audit fix --force",
+        "npm audit fix --dry-run",
+        "npm audit --omit=dev"
+      ]
+    },
+    {
+      "name": "fund",
+      "description": "Display funding information for installed packages",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Show funding for specific package" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--which", "description": "Positional index of funding source to open", "type": "number" },
+        { "name": "--workspace", "short": "-w", "description": "Show funding in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm fund",
+        "npm fund express",
+        "npm fund --json"
+      ]
+    },
+    {
+      "name": "login",
+      "description": "Log in to the npm registry",
+      "options": [
+        { "name": "--registry", "description": "Registry URL to log in to", "type": "string" },
+        { "name": "--scope", "description": "Associate login with scope", "type": "string" },
+        { "name": "--auth-type", "description": "Authentication type (legacy, web)", "type": "string" }
+      ],
+      "examples": [
+        "npm login",
+        "npm login --registry=https://registry.company.com",
+        "npm login --scope=@myorg"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Log out of the npm registry",
+      "options": [
+        { "name": "--registry", "description": "Registry URL", "type": "string" },
+        { "name": "--scope", "description": "Scope to log out of", "type": "string" }
+      ],
+      "examples": [
+        "npm logout",
+        "npm logout --registry=https://registry.company.com"
+      ]
+    },
+    {
+      "name": "whoami",
+      "description": "Display the current logged-in npm username",
+      "options": [
+        { "name": "--registry", "description": "Check against specified registry", "type": "string" }
+      ],
+      "examples": [
+        "npm whoami"
+      ]
+    },
+    {
+      "name": "cache",
+      "description": "Manage the npm cache",
+      "subcommands": [
+        {
+          "name": "clean",
+          "description": "Remove all items from the cache",
+          "options": [
+            { "name": "--force", "description": "Force cache clean (required)" }
+          ],
+          "examples": [
+            "npm cache clean --force"
+          ]
+        },
+        {
+          "name": "ls",
+          "description": "List contents of the cache",
+          "examples": [
+            "npm cache ls"
+          ]
+        },
+        {
+          "name": "verify",
+          "description": "Verify cache integrity and remove corrupted content",
+          "examples": [
+            "npm cache verify"
+          ]
+        }
+      ],
+      "examples": [
+        "npm cache clean --force",
+        "npm cache verify",
+        "npm cache ls"
+      ]
+    },
+    {
+      "name": "config",
+      "description": "Manage npm configuration",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "Show all config settings",
+          "options": [
+            { "name": "--json", "description": "Output as JSON" },
+            { "name": "--long", "short": "-l", "description": "Show all defaults and descriptions" }
+          ],
+          "examples": [
+            "npm config list",
+            "npm config list --json",
+            "npm config list -l"
+          ]
+        },
+        {
+          "name": "set",
+          "description": "Set a config key-value pair",
+          "args": [
+            { "name": "<key>=<value>", "type": "string", "required": true, "description": "Config key and value" }
+          ],
+          "options": [
+            { "name": "--global", "short": "-g", "description": "Set in global config" },
+            { "name": "--location", "description": "Where to set: user, global, or project", "type": "string" }
+          ],
+          "examples": [
+            "npm config set registry https://registry.npmjs.org/",
+            "npm config set init-author-name \"Your Name\"",
+            "npm config set save-exact true",
+            "npm config set @myorg:registry https://npm.myorg.com",
+            "npm config set //registry.npmjs.org/:_authToken $TOKEN"
+          ]
+        },
+        {
+          "name": "get",
+          "description": "Get the value of a config key",
+          "args": [
+            { "name": "<key>", "type": "string", "required": true, "description": "Config key to retrieve" }
+          ],
+          "examples": [
+            "npm config get registry",
+            "npm config get prefix",
+            "npm config get cache"
+          ]
+        },
+        {
+          "name": "delete",
+          "description": "Delete a config key",
+          "args": [
+            { "name": "<key>", "type": "string", "required": true, "description": "Config key to delete" }
+          ],
+          "examples": [
+            "npm config delete registry",
+            "npm config delete proxy"
+          ]
+        },
+        {
+          "name": "edit",
+          "description": "Open the config file in an editor",
+          "options": [
+            { "name": "--global", "short": "-g", "description": "Edit global config" }
+          ],
+          "examples": [
+            "npm config edit",
+            "npm config edit --global"
+          ]
+        }
+      ],
+      "examples": [
+        "npm config list",
+        "npm config set registry https://registry.npmjs.org/",
+        "npm config get registry",
+        "npm config delete proxy",
+        "npm config edit"
+      ]
+    },
+    {
+      "name": "search",
+      "description": "Search the npm registry for packages",
+      "args": [
+        { "name": "<search-terms>", "type": "string", "required": true, "description": "Search terms" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--long", "short": "-l", "description": "Show detailed results" },
+        { "name": "--parseable", "short": "-p", "description": "Parseable output" },
+        { "name": "--searchlimit", "description": "Max number of results", "type": "number" },
+        { "name": "--registry", "description": "Search against specified registry", "type": "string" }
+      ],
+      "examples": [
+        "npm search express",
+        "npm search react --json",
+        "npm search webpack --long"
+      ]
+    },
+    {
+      "name": "view",
+      "description": "View registry info about a package",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name" },
+        { "name": "<field>", "type": "string", "required": false, "description": "Specific field to view" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--registry", "description": "Use specified registry", "type": "string" }
+      ],
+      "examples": [
+        "npm view express",
+        "npm view express version",
+        "npm view express versions --json",
+        "npm view express dependencies",
+        "npm view express dist-tags",
+        "npm view express repository.url"
+      ]
+    },
+    {
+      "name": "info",
+      "description": "View registry info about a package (alias for view)",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" }
+      ],
+      "examples": [
+        "npm info express",
+        "npm info react versions"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Bump the package version",
+      "args": [
+        { "name": "<newversion>", "type": "string", "required": false, "description": "Version or increment (major, minor, patch, premajor, preminor, prepatch, prerelease, from-git)" }
+      ],
+      "options": [
+        { "name": "--preid", "description": "Prerelease identifier (alpha, beta, rc)", "type": "string" },
+        { "name": "--no-git-tag-version", "description": "Do not create git tag" },
+        { "name": "--no-commit-hooks", "description": "Do not run git commit hooks" },
+        { "name": "--allow-same-version", "description": "Allow same version bump" },
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--workspace", "short": "-w", "description": "Bump in specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Bump in all workspaces" }
+      ],
+      "examples": [
+        "npm version patch",
+        "npm version minor",
+        "npm version major",
+        "npm version 1.2.3",
+        "npm version prerelease --preid=alpha",
+        "npm version premajor --preid=beta",
+        "npm version from-git",
+        "npm version --no-git-tag-version patch"
+      ]
+    },
+    {
+      "name": "prune",
+      "description": "Remove extraneous packages",
+      "options": [
+        { "name": "--production", "description": "Remove devDependencies" },
+        { "name": "--omit", "description": "Omit dependency type", "type": "string" },
+        { "name": "--dry-run", "description": "Report what would be removed" },
+        { "name": "--json", "description": "Output as JSON" }
+      ],
+      "examples": [
+        "npm prune",
+        "npm prune --production",
+        "npm prune --dry-run"
+      ]
+    },
+    {
+      "name": "dedupe",
+      "description": "Reduce duplication in the dependency tree",
+      "options": [
+        { "name": "--dry-run", "description": "Report what would change" },
+        { "name": "--json", "description": "Output as JSON" },
+        { "name": "--workspace", "short": "-w", "description": "Dedupe in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm dedupe",
+        "npm dedupe --dry-run"
+      ]
+    },
+    {
+      "name": "ci",
+      "description": "Clean install from package-lock.json (for CI/CD environments)",
+      "options": [
+        { "name": "--ignore-scripts", "description": "Do not run scripts" },
+        { "name": "--omit", "description": "Omit dependency type", "type": "string" },
+        { "name": "--prefer-offline", "description": "Use cached data when possible" },
+        { "name": "--workspace", "short": "-w", "description": "Install in specified workspace", "type": "string" },
+        { "name": "--workspaces", "short": "-ws", "description": "Install in all workspaces" }
+      ],
+      "examples": [
+        "npm ci",
+        "npm ci --omit=dev",
+        "npm ci --ignore-scripts"
+      ]
+    },
+    {
+      "name": "exec",
+      "description": "Run a command from a local or remote npm package",
+      "args": [
+        { "name": "<command>", "type": "string", "required": true, "description": "Command to execute" }
+      ],
+      "options": [
+        { "name": "--package", "short": "-p", "description": "Package to install for exec", "type": "string" },
+        { "name": "--call", "short": "-c", "description": "Define custom command from exec", "type": "string" },
+        { "name": "--yes", "description": "Automatically confirm prompts" },
+        { "name": "--no", "description": "Automatically deny prompts" },
+        { "name": "--workspace", "short": "-w", "description": "Exec in specified workspace", "type": "string" }
+      ],
+      "examples": [
+        "npm exec -- eslint .",
+        "npm exec --package=typescript -- tsc --version",
+        "npm exec -c 'eslint . && prettier --check .'",
+        "npm exec -y -- create-react-app my-app"
+      ]
+    },
+    {
+      "name": "explore",
+      "description": "Browse an installed package directory",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package to explore" },
+        { "name": "<command>", "type": "string", "required": false, "description": "Command to run inside the package dir" }
+      ],
+      "examples": [
+        "npm explore express",
+        "npm explore express -- ls"
+      ]
+    },
+    {
+      "name": "explain",
+      "description": "Explain why a package is installed",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package to explain" }
+      ],
+      "options": [
+        { "name": "--json", "description": "Output as JSON" }
+      ],
+      "examples": [
+        "npm explain chalk",
+        "npm explain lodash --json",
+        "npm why chalk"
+      ]
+    },
+    {
+      "name": "prefix",
+      "description": "Display the prefix (directory where packages are installed)",
+      "options": [
+        { "name": "--global", "short": "-g", "description": "Show global prefix" }
+      ],
+      "examples": [
+        "npm prefix",
+        "npm prefix -g"
+      ]
+    },
+    {
+      "name": "root",
+      "description": "Display the effective node_modules folder",
+      "options": [
+        { "name": "--global", "short": "-g", "description": "Show global root" }
+      ],
+      "examples": [
+        "npm root",
+        "npm root -g"
+      ]
+    },
+    {
+      "name": "bin",
+      "description": "Display the bin folder for executables",
+      "options": [
+        { "name": "--global", "short": "-g", "description": "Show global bin folder" }
+      ],
+      "examples": [
+        "npm bin",
+        "npm bin -g"
+      ]
+    },
+    {
+      "name": "rebuild",
+      "description": "Rebuild installed packages (useful for native modules)",
+      "args": [
+        { "name": "<package>", "type": "string", "required": false, "description": "Package to rebuild (omit for all)" }
+      ],
+      "examples": [
+        "npm rebuild",
+        "npm rebuild node-sass",
+        "npm rebuild bcrypt"
+      ]
+    },
+    {
+      "name": "doctor",
+      "description": "Run a set of checks to validate your npm environment",
+      "examples": [
+        "npm doctor"
+      ]
+    },
+    {
+      "name": "token",
+      "description": "Manage authentication tokens",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List all active authentication tokens",
+          "options": [
+            { "name": "--json", "description": "Output as JSON" },
+            { "name": "--parseable", "short": "-p", "description": "Parseable output" }
+          ],
+          "examples": [
+            "npm token list",
+            "npm token list --json"
+          ]
+        },
+        {
+          "name": "create",
+          "description": "Create a new authentication token",
+          "options": [
+            { "name": "--read-only", "description": "Create read-only token" },
+            { "name": "--cidr", "description": "Restrict token to CIDR ranges", "type": "string" }
+          ],
+          "examples": [
+            "npm token create",
+            "npm token create --read-only",
+            "npm token create --cidr=10.0.0.0/8"
+          ]
+        },
+        {
+          "name": "revoke",
+          "description": "Revoke an authentication token",
+          "args": [
+            { "name": "<id|token>", "type": "string", "required": true, "description": "Token ID or token value" }
+          ],
+          "examples": [
+            "npm token revoke abc123"
+          ]
+        }
+      ],
+      "examples": [
+        "npm token list",
+        "npm token create",
+        "npm token revoke abc123"
+      ]
+    },
+    {
+      "name": "owner",
+      "description": "Manage package owners (maintainers)",
+      "subcommands": [
+        {
+          "name": "add",
+          "description": "Add a new maintainer to a package",
+          "args": [
+            { "name": "<user>", "type": "string", "required": true, "description": "npm username" },
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm owner add newuser my-package"
+          ]
+        },
+        {
+          "name": "rm",
+          "description": "Remove a maintainer from a package",
+          "args": [
+            { "name": "<user>", "type": "string", "required": true, "description": "npm username" },
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm owner rm olduser my-package"
+          ]
+        },
+        {
+          "name": "ls",
+          "description": "List maintainers of a package",
+          "args": [
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm owner ls express"
+          ]
+        }
+      ],
+      "examples": [
+        "npm owner ls express",
+        "npm owner add username my-package",
+        "npm owner rm username my-package"
+      ]
+    },
+    {
+      "name": "deprecate",
+      "description": "Deprecate a version of a package",
+      "args": [
+        { "name": "<package>[@<version>]", "type": "string", "required": true, "description": "Package and optional version range" },
+        { "name": "<message>", "type": "string", "required": true, "description": "Deprecation message (empty to undeprecate)" }
+      ],
+      "options": [
+        { "name": "--otp", "description": "One-time password for 2FA", "type": "string" },
+        { "name": "--registry", "description": "Registry URL", "type": "string" }
+      ],
+      "examples": [
+        "npm deprecate my-package@1.0.0 \"Use v2 instead\"",
+        "npm deprecate my-package@\"< 2.0.0\" \"Upgrade to v2\"",
+        "npm deprecate my-package@1.0.0 \"\""
+      ]
+    },
+    {
+      "name": "dist-tag",
+      "description": "Manage package distribution tags",
+      "subcommands": [
+        {
+          "name": "add",
+          "description": "Add a dist-tag to a specific version",
+          "args": [
+            { "name": "<package>@<version>", "type": "string", "required": true, "description": "Package@version" },
+            { "name": "<tag>", "type": "string", "required": true, "description": "Tag name" }
+          ],
+          "examples": [
+            "npm dist-tag add my-package@1.0.0 latest",
+            "npm dist-tag add my-package@2.0.0-beta.1 beta"
+          ]
+        },
+        {
+          "name": "rm",
+          "description": "Remove a dist-tag",
+          "args": [
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" },
+            { "name": "<tag>", "type": "string", "required": true, "description": "Tag name" }
+          ],
+          "examples": [
+            "npm dist-tag rm my-package beta"
+          ]
+        },
+        {
+          "name": "ls",
+          "description": "List all dist-tags for a package",
+          "args": [
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm dist-tag ls express",
+            "npm dist-tag ls react"
+          ]
+        }
+      ],
+      "examples": [
+        "npm dist-tag ls express",
+        "npm dist-tag add my-package@1.0.0 latest",
+        "npm dist-tag rm my-package beta"
+      ]
+    },
+    {
+      "name": "access",
+      "description": "Manage access to scoped packages",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List access permissions for a package or org",
+          "subcommands": [
+            {
+              "name": "packages",
+              "description": "List packages with access for user/org/team",
+              "args": [
+                { "name": "<entity>", "type": "string", "required": true, "description": "User, org, or team" }
+              ],
+              "examples": [
+                "npm access list packages @myorg",
+                "npm access list packages @myorg:myteam"
+              ]
+            },
+            {
+              "name": "collaborators",
+              "description": "List collaborators for a package",
+              "args": [
+                { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+              ],
+              "examples": [
+                "npm access list collaborators @myorg/my-package"
+              ]
+            }
+          ],
+          "examples": [
+            "npm access list packages @myorg",
+            "npm access list collaborators @myorg/my-package"
+          ]
+        },
+        {
+          "name": "grant",
+          "description": "Grant access permissions",
+          "args": [
+            { "name": "<read-only|read-write>", "type": "string", "required": true, "description": "Permission level" },
+            { "name": "<scope:team>", "type": "string", "required": true, "description": "Team to grant" },
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm access grant read-write @myorg:myteam @myorg/my-package"
+          ]
+        },
+        {
+          "name": "revoke",
+          "description": "Revoke access permissions",
+          "args": [
+            { "name": "<scope:team>", "type": "string", "required": true, "description": "Team to revoke" },
+            { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+          ],
+          "examples": [
+            "npm access revoke @myorg:myteam @myorg/my-package"
+          ]
+        },
+        {
+          "name": "set",
+          "description": "Set access level for a package",
+          "subcommands": [
+            {
+              "name": "status=public",
+              "description": "Set package to public",
+              "examples": ["npm access set status=public @myorg/my-package"]
+            },
+            {
+              "name": "status=private",
+              "description": "Set package to private",
+              "examples": ["npm access set status=private @myorg/my-package"]
+            },
+            {
+              "name": "mfa",
+              "description": "Set 2FA requirement for publishing",
+              "examples": [
+                "npm access set mfa=publish @myorg/my-package",
+                "npm access set mfa=none @myorg/my-package"
+              ]
+            }
+          ],
+          "examples": [
+            "npm access set status=public @myorg/my-package",
+            "npm access set mfa=publish @myorg/my-package"
+          ]
+        }
+      ],
+      "examples": [
+        "npm access list packages @myorg",
+        "npm access list collaborators @myorg/my-package",
+        "npm access grant read-write @myorg:team @myorg/my-package",
+        "npm access revoke @myorg:team @myorg/my-package",
+        "npm access set status=public @myorg/my-package"
+      ]
+    },
+    {
+      "name": "ping",
+      "description": "Ping the configured npm registry",
+      "options": [
+        { "name": "--registry", "description": "Registry URL to ping", "type": "string" }
+      ],
+      "examples": [
+        "npm ping",
+        "npm ping --registry https://registry.npmjs.org"
+      ]
+    },
+    {
+      "name": "bugs",
+      "description": "Open the bug tracker for a package in a browser",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+      ],
+      "options": [
+        { "name": "--browser", "description": "Browser to use", "type": "string" },
+        { "name": "--registry", "description": "Registry URL", "type": "string" }
+      ],
+      "examples": [
+        "npm bugs express",
+        "npm bugs react"
+      ]
+    },
+    {
+      "name": "docs",
+      "description": "Open the documentation for a package in a browser",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+      ],
+      "options": [
+        { "name": "--browser", "description": "Browser to use", "type": "string" },
+        { "name": "--registry", "description": "Registry URL", "type": "string" }
+      ],
+      "examples": [
+        "npm docs express",
+        "npm docs react"
+      ]
+    },
+    {
+      "name": "repo",
+      "description": "Open the repository page for a package in a browser",
+      "args": [
+        { "name": "<package>", "type": "string", "required": true, "description": "Package name" }
+      ],
+      "options": [
+        { "name": "--browser", "description": "Browser to use", "type": "string" }
+      ],
+      "examples": [
+        "npm repo express",
+        "npm repo react"
+      ]
+    },
+    {
+      "name": "stars",
+      "description": "View packages starred by a user",
+      "args": [
+        { "name": "<user>", "type": "string", "required": false, "description": "npm username (defaults to logged-in user)" }
+      ],
+      "examples": [
+        "npm stars",
+        "npm stars username"
+      ]
+    },
+    {
+      "name": "profile",
+      "description": "View or modify your npm profile",
+      "subcommands": [
+        {
+          "name": "get",
+          "description": "Display profile fields",
+          "args": [
+            { "name": "<field>", "type": "string", "required": false, "description": "Specific field to view" }
+          ],
+          "examples": [
+            "npm profile get",
+            "npm profile get email",
+            "npm profile get name"
+          ]
+        },
+        {
+          "name": "set",
+          "description": "Update profile fields",
+          "args": [
+            { "name": "<field>", "type": "string", "required": true, "description": "Field to set" },
+            { "name": "<value>", "type": "string", "required": true, "description": "New value" }
+          ],
+          "examples": [
+            "npm profile set fullname \"John Doe\"",
+            "npm profile set homepage https://example.com",
+            "npm profile set password"
+          ]
+        },
+        {
+          "name": "enable-2fa",
+          "description": "Enable two-factor authentication",
+          "args": [
+            { "name": "<mode>", "type": "string", "required": false, "description": "2FA mode: auth-only or auth-and-writes" }
+          ],
+          "examples": [
+            "npm profile enable-2fa auth-and-writes",
+            "npm profile enable-2fa auth-only"
+          ]
+        },
+        {
+          "name": "disable-2fa",
+          "description": "Disable two-factor authentication",
+          "examples": [
+            "npm profile disable-2fa"
+          ]
+        }
+      ],
+      "examples": [
+        "npm profile get",
+        "npm profile set fullname \"Your Name\"",
+        "npm profile enable-2fa auth-and-writes",
+        "npm profile disable-2fa"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help for a command" },
+    { "name": "--version", "short": "-v", "description": "Show npm version" },
+    { "name": "--registry", "description": "Set the registry URL", "type": "string" },
+    { "name": "--loglevel", "description": "Set log level (silent, error, warn, notice, http, info, verbose, silly)", "type": "string" },
+    { "name": "--json", "description": "Output as JSON where supported" },
+    { "name": "--long", "short": "-l", "description": "Show extended information" },
+    { "name": "--parseable", "short": "-p", "description": "Output parseable results" },
+    { "name": "--global", "short": "-g", "description": "Operate in global mode" },
+    { "name": "--prefix", "description": "Override the prefix directory", "type": "string" },
+    { "name": "--userconfig", "description": "Path to user config file", "type": "string" },
+    { "name": "--globalconfig", "description": "Path to global config file", "type": "string" },
+    { "name": "--workspace", "short": "-w", "description": "Enable running in workspace context", "type": "string" },
+    { "name": "--workspaces", "short": "-ws", "description": "Enable running across all workspaces" },
+    { "name": "--include-workspace-root", "description": "Include workspace root when using --workspaces" },
+    { "name": "--omit", "description": "Omit dependency type (dev, optional, peer)", "type": "string" },
+    { "name": "--ignore-scripts", "description": "Do not run any lifecycle scripts" },
+    { "name": "--no-fund", "description": "Suppress fund message" },
+    { "name": "--no-audit", "description": "Suppress audit message" },
+    { "name": "--dry-run", "description": "Report intended changes without making them" },
+    { "name": "--force", "short": "-f", "description": "Remove various protections and force operations" },
+    { "name": "--save", "short": "-S", "description": "Save to dependencies (default)" },
+    { "name": "--save-dev", "short": "-D", "description": "Save to devDependencies" },
+    { "name": "--save-exact", "short": "-E", "description": "Save exact version" },
+    { "name": "--save-optional", "short": "-O", "description": "Save to optionalDependencies" },
+    { "name": "--legacy-peer-deps", "description": "Ignore peerDependency conflicts during install" },
+    { "name": "--strict-peer-deps", "description": "Fail on peerDependency conflicts" },
+    { "name": "--prefer-offline", "description": "Prefer cached data, avoiding registry fetch" },
+    { "name": "--prefer-online", "description": "Force staleness check for cached data" },
+    { "name": "--cache", "description": "Set the cache directory", "type": "string" },
+    { "name": "--timing", "description": "Show timing information" },
+    { "name": "--foreground-scripts", "description": "Run lifecycle scripts in foreground" },
+    { "name": "--script-shell", "description": "Shell to use for scripts", "type": "string" }
+  ],
+  "examples": [
+    "npm init -y",
+    "npm install",
+    "npm install express",
+    "npm install -D typescript",
+    "npm install -g nodemon",
+    "npm run build",
+    "npm test",
+    "npm start",
+    "npm publish --access public",
+    "npm version patch",
+    "npm audit fix",
+    "npm outdated",
+    "npm ci",
+    "npm cache clean --force",
+    "npm config list",
+    "npm view express versions",
+    "npm ls --depth=0",
+    "npm dedupe",
+    "npm doctor",
+    "npm exec -- create-react-app my-app"
+  ],
+  "relatedCommands": ["yarn", "pnpm", "bun", "npx", "node"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "package_scripts",
+        "description": "List all scripts defined in package.json",
+        "command": "node -e \"try{const p=require('./package.json');console.log(Object.keys(p.scripts||{}).join('\\n'))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "dependencies",
+        "description": "List all production dependencies from package.json",
+        "command": "node -e \"try{const p=require('./package.json');console.log(Object.keys(p.dependencies||{}).join('\\n'))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "dev_dependencies",
+        "description": "List all dev dependencies from package.json",
+        "command": "node -e \"try{const p=require('./package.json');console.log(Object.keys(p.devDependencies||{}).join('\\n'))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "node_version",
+        "description": "Detect the current Node.js version",
+        "command": "node --version",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "npm_version",
+        "description": "Detect the current npm version",
+        "command": "npm --version",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "global_packages",
+        "description": "List globally installed npm packages",
+        "command": "npm list -g --depth=0 --json",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "outdated",
+        "description": "List outdated packages in the current project",
+        "command": "npm outdated --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 30,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "npm_config",
+        "description": "Current npm configuration settings",
+        "command": "npm config list",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "workspaces",
+        "description": "List configured workspaces from package.json",
+        "command": "node -e \"try{const p=require('./package.json');console.log((p.workspaces||[]).join('\\n'))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "registry",
+        "description": "Current configured npm registry URL",
+        "command": "npm config get registry",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "logged_in_user",
+        "description": "Currently authenticated npm user",
+        "command": "npm whoami 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "installed_packages",
+        "description": "List locally installed packages at top level",
+        "command": "npm ls --depth=0 --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 15,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "audit_summary",
+        "description": "Summary of known vulnerabilities in dependencies",
+        "command": "npm audit --json 2>/dev/null | node -e \"const d=require('fs').readFileSync(0,'utf8');try{const j=JSON.parse(d);console.log(JSON.stringify(j.metadata?.vulnerabilities||{}))}catch{}\"",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "engines",
+        "description": "Engine constraints from package.json",
+        "command": "node -e \"try{const p=require('./package.json');console.log(JSON.stringify(p.engines||{}))}catch{}\"",
+        "parser": "json",
+        "cacheFor": 30,
+        "requiresCmd": "node"
+      }
+    ]
+  }
+}

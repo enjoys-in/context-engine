@@ -1,0 +1,86 @@
+{
+  "name": "make",
+  "description": "GNU Make — build automation tool that reads Makefiles to compile and link programs",
+  "category": "build-tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-f", "description": "Read FILE as the makefile", "type": "file" },
+    { "name": "-C", "description": "Change to directory before reading makefile", "type": "directory" },
+    { "name": "-j", "description": "Number of parallel jobs", "type": "number" },
+    { "name": "-k", "description": "Keep going after errors" },
+    { "name": "-n", "description": "Dry run — print commands without executing" },
+    { "name": "-B", "description": "Unconditionally make all targets" },
+    { "name": "-s", "description": "Silent mode — don't echo recipes" },
+    { "name": "-i", "description": "Ignore errors in recipes" },
+    { "name": "-d", "description": "Print lots of debugging info" },
+    { "name": "-p", "description": "Print internal database (rules and variables)" },
+    { "name": "-q", "description": "Question mode — exit with 0 if target is up to date" },
+    { "name": "-t", "description": "Touch targets instead of remaking them" },
+    { "name": "-W", "description": "Pretend FILE has been modified", "type": "file" },
+    { "name": "--jobs", "description": "Number of parallel jobs", "type": "number" },
+    { "name": "--always-make", "description": "Unconditionally make all targets" },
+    { "name": "--dry-run", "description": "Print commands without executing" },
+    { "name": "--keep-going", "description": "Keep going after errors" },
+    { "name": "--environment-overrides", "short": "-e", "description": "Environment variables override makefiles" }
+  ],
+  "examples": [
+    "make",
+    "make build",
+    "make -j$(nproc)",
+    "make clean",
+    "make install",
+    "make test",
+    "make -f Makefile.prod build",
+    "make -n deploy",
+    "make -C subdir all",
+    "make CFLAGS='-O2 -Wall' build",
+    "make -j4 -k all"
+  ],
+  "relatedCommands": ["cmake", "gradle", "mvn", "ninja", "just", "bazel"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "makefile_targets",
+        "description": "All targets defined in the Makefile",
+        "command": "make -pRrq 2>/dev/null | awk -F: '/^[a-zA-Z0-9][^$#\\/\\t=]*:([^=]|$)/ {split($1,a,/ /);for(i in a)print a[i]}' | sort -u | grep -v '^Makefile$'",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "make"
+      },
+      {
+        "name": "makefile_exists",
+        "description": "Whether a Makefile exists in the current directory",
+        "command": "test -f Makefile && echo 'Makefile' || test -f makefile && echo 'makefile' || test -f GNUmakefile && echo 'GNUmakefile' || echo 'none'",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "make"
+      },
+      {
+        "name": "makefile_variables",
+        "description": "Variables defined in the Makefile",
+        "command": "make -pRrq 2>/dev/null | grep '^[A-Z_]*[[:space:]]*=' | head -30",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "make"
+      },
+      {
+        "name": "makefile_includes",
+        "description": "Included makefiles",
+        "command": "grep -E '^(include|-include|sinclude)' Makefile 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "make"
+      },
+      {
+        "name": "phony_targets",
+        "description": "PHONY targets (non-file targets)",
+        "command": "grep -E '^\\.PHONY' Makefile 2>/dev/null | sed 's/.PHONY[[:space:]]*:[[:space:]]*//' | tr ' ' '\\n' | sort -u",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "make"
+      }
+    ]
+  }
+}

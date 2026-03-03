@@ -1,0 +1,115 @@
+{
+  "name": "ls",
+  "description": "List directory contents",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-l", "description": "Long listing format" },
+    { "name": "-a", "description": "Show all files (including hidden)" },
+    { "name": "-A", "description": "Show almost all (exclude . and ..)" },
+    { "name": "-h", "description": "Human-readable sizes (with -l)" },
+    { "name": "-R", "description": "List subdirectories recursively" },
+    { "name": "-r", "description": "Reverse order while sorting" },
+    { "name": "-t", "description": "Sort by modification time (newest first)" },
+    { "name": "-S", "description": "Sort by file size (largest first)" },
+    { "name": "-d", "description": "List directories themselves, not their contents" },
+    { "name": "-i", "description": "Show inode numbers" },
+    { "name": "-1", "description": "One file per line" },
+    { "name": "--color", "description": "Colorize output (auto, always, never)", "type": "string" },
+    { "name": "-F", "description": "Append indicator (*/=>@|) to entries" },
+    { "name": "-G", "description": "Don't print group names (with -l)" },
+    { "name": "-n", "description": "Numeric UID and GID" },
+    { "name": "--sort", "description": "Sort by (none, size, time, version, extension)", "type": "string" },
+    { "name": "--group-directories-first", "description": "List directories before files" },
+    { "name": "--block-size", "description": "Scale sizes to SIZE", "type": "string" },
+    { "name": "--hide", "description": "Hide entries matching pattern", "type": "string" },
+    { "name": "-X", "description": "Sort alphabetically by extension" }
+  ],
+  "examples": [
+    "ls",
+    "ls -la",
+    "ls -lah",
+    "ls -lt",
+    "ls -lS",
+    "ls -R",
+    "ls -la /etc/",
+    "ls -1",
+    "ls -d */",
+    "ls --color=auto -lah",
+    "ls --group-directories-first -la",
+    "ls -lahtr",
+    "ls -li",
+    "ls *.json"
+  ],
+  "relatedCommands": ["find", "tree", "du", "stat", "file", "chmod", "chown"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cwd_contents",
+        "description": "Files and directories in the current working directory",
+        "command": "ls -1A 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 3,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_path",
+        "description": "Current working directory path",
+        "command": "pwd",
+        "parser": "text",
+        "cacheFor": 3,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_size",
+        "description": "Total size of current directory",
+        "command": "du -sh . 2>/dev/null | awk '{print $1}'",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_file_count",
+        "description": "Number of files in current directory",
+        "command": "ls -1A 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "hidden_files",
+        "description": "Hidden files in the current directory",
+        "command": "ls -d .* 2>/dev/null | grep -v '^\\.\\.\\?$'",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "largest_files",
+        "description": "Largest files in the current directory",
+        "command": "ls -lhS 2>/dev/null | head -11 | tail -10",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "recent_files",
+        "description": "Most recently modified files",
+        "command": "ls -lht 2>/dev/null | head -11 | tail -10",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "disk_usage",
+        "description": "Disk usage of filesystem containing cwd",
+        "command": "df -h . 2>/dev/null | tail -1",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "ls"
+      }
+    ]
+  }
+}

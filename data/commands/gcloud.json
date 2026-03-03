@@ -1,0 +1,227 @@
+{
+  "name": "gcloud",
+  "description": "Google Cloud CLI — manage GCP resources from the command line",
+  "category": "cloud",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "init",
+      "description": "Initialize or reinitialize gcloud",
+      "examples": ["gcloud init", "gcloud init --console-only"]
+    },
+    {
+      "name": "auth",
+      "description": "Manage authentication",
+      "examples": ["gcloud auth login", "gcloud auth list", "gcloud auth application-default login", "gcloud auth revoke", "gcloud auth configure-docker", "gcloud auth print-access-token"]
+    },
+    {
+      "name": "config",
+      "description": "Manage gcloud configuration properties",
+      "examples": ["gcloud config list", "gcloud config set project my-project", "gcloud config set compute/zone us-central1-a", "gcloud config set compute/region us-central1", "gcloud config get project", "gcloud config configurations list", "gcloud config configurations create myconfig", "gcloud config configurations activate myconfig"]
+    },
+    {
+      "name": "projects",
+      "description": "Manage GCP projects",
+      "examples": ["gcloud projects list", "gcloud projects describe my-project", "gcloud projects create my-new-project"]
+    },
+    {
+      "name": "compute",
+      "description": "Manage Compute Engine resources",
+      "examples": ["gcloud compute instances list", "gcloud compute instances create myvm --machine-type=e2-medium --zone=us-central1-a", "gcloud compute instances stop myvm", "gcloud compute instances start myvm", "gcloud compute instances delete myvm", "gcloud compute ssh myvm", "gcloud compute disks list", "gcloud compute firewall-rules list", "gcloud compute networks list", "gcloud compute addresses list"]
+    },
+    {
+      "name": "container",
+      "description": "Manage GKE clusters and containers",
+      "examples": ["gcloud container clusters list", "gcloud container clusters create mycluster --num-nodes=3", "gcloud container clusters get-credentials mycluster", "gcloud container clusters delete mycluster", "gcloud container images list --repository=gcr.io/my-project"]
+    },
+    {
+      "name": "run",
+      "description": "Manage Cloud Run services",
+      "examples": ["gcloud run services list", "gcloud run deploy myservice --image=gcr.io/my-project/myimage --platform=managed --region=us-central1", "gcloud run services delete myservice", "gcloud run services describe myservice"]
+    },
+    {
+      "name": "functions",
+      "description": "Manage Cloud Functions",
+      "examples": ["gcloud functions list", "gcloud functions deploy myfunc --runtime python311 --trigger-http --entry-point hello", "gcloud functions delete myfunc", "gcloud functions logs read myfunc"]
+    },
+    {
+      "name": "sql",
+      "description": "Manage Cloud SQL instances",
+      "examples": ["gcloud sql instances list", "gcloud sql instances create mydb --database-version=POSTGRES_15 --tier=db-f1-micro --region=us-central1", "gcloud sql databases list --instance=mydb", "gcloud sql connect mydb --user=postgres"]
+    },
+    {
+      "name": "storage",
+      "description": "Manage Cloud Storage (GCS) buckets and objects",
+      "examples": ["gcloud storage ls", "gcloud storage cp file.txt gs://mybucket/", "gcloud storage buckets create gs://mybucket", "gcloud storage rm gs://mybucket/file.txt", "gcloud storage cat gs://mybucket/file.txt"]
+    },
+    {
+      "name": "app",
+      "description": "Manage App Engine applications",
+      "examples": ["gcloud app deploy", "gcloud app browse", "gcloud app logs tail", "gcloud app services list", "gcloud app versions list"]
+    },
+    {
+      "name": "iam",
+      "description": "Manage IAM policies and service accounts",
+      "examples": ["gcloud iam service-accounts list", "gcloud iam service-accounts create mysa", "gcloud iam roles list", "gcloud projects add-iam-policy-binding my-project --member='serviceAccount:mysa@my-project.iam.gserviceaccount.com' --role='roles/editor'"]
+    },
+    {
+      "name": "dns",
+      "description": "Manage Cloud DNS",
+      "examples": ["gcloud dns managed-zones list", "gcloud dns record-sets list --zone=myzone"]
+    },
+    {
+      "name": "logging",
+      "description": "Manage Cloud Logging",
+      "examples": ["gcloud logging read 'severity>=ERROR' --limit=20", "gcloud logging logs list"]
+    },
+    {
+      "name": "builds",
+      "description": "Manage Cloud Build",
+      "examples": ["gcloud builds submit --tag gcr.io/my-project/myimage", "gcloud builds list", "gcloud builds log BUILD_ID"]
+    },
+    {
+      "name": "secrets",
+      "description": "Manage Secret Manager secrets",
+      "examples": ["gcloud secrets list", "gcloud secrets create mysecret --data-file=secret.txt", "gcloud secrets versions access latest --secret=mysecret"]
+    },
+    {
+      "name": "artifacts",
+      "description": "Manage Artifact Registry",
+      "examples": ["gcloud artifacts repositories list", "gcloud artifacts docker images list"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--project", "description": "GCP project ID", "type": "string" },
+    { "name": "--account", "description": "Override the account", "type": "string" },
+    { "name": "--configuration", "description": "Named configuration", "type": "string" },
+    { "name": "--format", "description": "Output format (json, yaml, table, csv, value)", "type": "string" },
+    { "name": "--quiet", "short": "-q", "description": "Disable interactive prompts" },
+    { "name": "--verbosity", "description": "Logging verbosity level", "type": "string" },
+    { "name": "--impersonate-service-account", "description": "Service account to impersonate", "type": "string" }
+  ],
+  "examples": [
+    "gcloud init",
+    "gcloud auth login",
+    "gcloud config set project myproject",
+    "gcloud compute instances list",
+    "gcloud run deploy"
+  ],
+  "relatedCommands": ["aws", "az", "firebase", "kubectl", "terraform"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "active_account",
+        "description": "Currently authenticated GCP account",
+        "command": "gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "active_project",
+        "description": "Currently set GCP project",
+        "command": "gcloud config get project 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "projects",
+        "description": "Available GCP projects",
+        "command": "gcloud projects list --format='value(projectId)' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "active_region",
+        "description": "Currently set compute region",
+        "command": "gcloud config get compute/region 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "active_zone",
+        "description": "Currently set compute zone",
+        "command": "gcloud config get compute/zone 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "configurations",
+        "description": "Available gcloud configurations",
+        "command": "gcloud config configurations list --format='value(name,is_active)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "compute_instances",
+        "description": "Compute Engine VM instances",
+        "command": "gcloud compute instances list --format='value(name,zone,status)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "gke_clusters",
+        "description": "GKE clusters",
+        "command": "gcloud container clusters list --format='value(name,location,status)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "cloud_run_services",
+        "description": "Deployed Cloud Run services",
+        "command": "gcloud run services list --format='value(name,region,status)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "cloud_functions",
+        "description": "Deployed Cloud Functions",
+        "command": "gcloud functions list --format='value(name,status,runtime)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "sql_instances",
+        "description": "Cloud SQL instances",
+        "command": "gcloud sql instances list --format='value(name,databaseVersion,state)' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "storage_buckets",
+        "description": "GCS buckets in the project",
+        "command": "gcloud storage buckets list --format='value(name)' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "service_accounts",
+        "description": "IAM service accounts",
+        "command": "gcloud iam service-accounts list --format='value(email)' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "secrets",
+        "description": "Secret Manager secrets",
+        "command": "gcloud secrets list --format='value(name)' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "gcloud"
+      }
+    ]
+  }
+}

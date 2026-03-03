@@ -1,0 +1,147 @@
+{
+  "name": "sudo",
+  "description": "Execute a command as another user (typically root) with elevated privileges",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-u", "description": "Run command as specified user", "type": "string" },
+    { "name": "-g", "description": "Run command as specified group", "type": "string" },
+    { "name": "-i", "description": "Run the shell specified as login shell" },
+    { "name": "-s", "description": "Run the shell specified in SHELL env variable" },
+    { "name": "-l", "description": "List allowed (and forbidden) commands" },
+    { "name": "-k", "description": "Invalidate the user's cached credentials" },
+    { "name": "-K", "description": "Remove user's cached credentials entirely" },
+    { "name": "-v", "description": "Update the user's cached credentials (extend timeout)" },
+    { "name": "-n", "description": "Non-interactive mode (fail instead of prompting)" },
+    { "name": "-b", "description": "Run command in the background" },
+    { "name": "-E", "description": "Preserve user environment variables" },
+    { "name": "-H", "description": "Set HOME variable to target user's home" },
+    { "name": "-S", "description": "Read password from standard input" },
+    { "name": "-p", "description": "Custom password prompt", "type": "string" },
+    { "name": "--preserve-env", "description": "Preserve specified environment variables", "type": "string" },
+    { "name": "-e", "description": "Edit files (sudoedit)", "type": "file" }
+  ],
+  "examples": [
+    "sudo apt update",
+    "sudo apt install nginx",
+    "sudo systemctl restart nginx",
+    "sudo -i",
+    "sudo -s",
+    "sudo -u postgres psql",
+    "sudo -u www-data whoami",
+    "sudo -l",
+    "sudo -k",
+    "sudo visudo",
+    "sudo -E env",
+    "sudo bash -c 'echo hello > /etc/motd'",
+    "sudo tee /etc/myconfig.conf <<< 'setting=value'",
+    "sudo chown root:root /etc/config",
+    "sudo chmod 644 /etc/config",
+    "echo 'password' | sudo -S command",
+    "sudo !!",
+    "sudo -n /usr/bin/command"
+  ],
+  "relatedCommands": ["su", "doas", "visudo", "chown", "chmod", "systemctl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "current_user",
+        "description": "Current user information",
+        "command": "id",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "sudo_privileges",
+        "description": "Commands the current user can run via sudo",
+        "command": "sudo -l 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "os_info",
+        "description": "Operating system information",
+        "command": "cat /etc/os-release 2>/dev/null | grep -E '^(NAME|VERSION_ID|ID)=' | head -3",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "package_manager",
+        "description": "Detect installed package manager",
+        "command": "command -v apt >/dev/null && echo 'apt (Debian/Ubuntu)' || command -v dnf >/dev/null && echo 'dnf (Fedora/RHEL)' || command -v yum >/dev/null && echo 'yum (CentOS/RHEL)' || command -v pacman >/dev/null && echo 'pacman (Arch)' || command -v brew >/dev/null && echo 'brew (macOS)' || echo 'unknown'",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "running_services",
+        "description": "Active system services",
+        "command": "systemctl list-units --type=service --state=running --no-pager --no-legend 2>/dev/null | head -20 | awk '{print $1}'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "failed_services",
+        "description": "Failed system services",
+        "command": "systemctl list-units --type=service --state=failed --no-pager --no-legend 2>/dev/null | awk '{print $1}'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "system_users",
+        "description": "System users with login shell",
+        "command": "awk -F: '$7 !~ /(nologin|false)$/ {print $1}' /etc/passwd 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "network_interfaces",
+        "description": "Network interfaces and IP addresses",
+        "command": "ip -br addr 2>/dev/null || ifconfig 2>/dev/null | grep -E '(^[a-z]|inet )' | head -20",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "firewall_status",
+        "description": "Firewall status (ufw or firewalld)",
+        "command": "ufw status 2>/dev/null || firewall-cmd --state 2>/dev/null || iptables -L -n 2>/dev/null | head -5 || echo 'no firewall detected'",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "sudo"
+      },
+      {
+        "name": "disk_space",
+        "description": "Disk space usage overview",
+        "command": "df -h 2>/dev/null | grep -E '^(/dev|tmpfs)' | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "df"
+      },
+      {
+        "name": "memory_usage",
+        "description": "Memory usage overview",
+        "command": "free -h 2>/dev/null | head -3",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "free"
+      },
+      {
+        "name": "uptime",
+        "description": "System uptime and load average",
+        "command": "uptime",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "sudo"
+      }
+    ]
+  }
+}

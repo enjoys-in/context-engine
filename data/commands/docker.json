@@ -1,0 +1,1100 @@
+{
+  "name": "docker",
+  "description": "Container platform for building, shipping, and running distributed applications",
+  "category": "containers",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "build",
+      "description": "Build an image from a Dockerfile",
+      "args": [{ "name": "<path|url>", "type": "path", "required": true, "description": "Build context path or URL" }],
+      "options": [
+        { "name": "--tag", "short": "-t", "description": "Name and optionally tag (name:tag)", "type": "string" },
+        { "name": "--file", "short": "-f", "description": "Path to Dockerfile", "type": "path" },
+        { "name": "--build-arg", "description": "Set build-time variable (KEY=VALUE)", "type": "string" },
+        { "name": "--target", "description": "Set the target build stage", "type": "string" },
+        { "name": "--no-cache", "description": "Do not use cache when building the image" },
+        { "name": "--pull", "description": "Always attempt to pull a newer version of the base image" },
+        { "name": "--platform", "description": "Set target platform (e.g. linux/amd64)", "type": "string" },
+        { "name": "--progress", "description": "Set type of progress output (auto|plain|tty)", "type": "string" },
+        { "name": "--secret", "description": "Secret to expose to the build (id=mysecret,src=./secret)", "type": "string" },
+        { "name": "--ssh", "description": "SSH agent socket or keys to expose to the build", "type": "string" },
+        { "name": "--cache-from", "description": "Images to consider as cache sources", "type": "string" },
+        { "name": "--cache-to", "description": "Cache export destinations", "type": "string" },
+        { "name": "--label", "description": "Set metadata for an image (key=value)", "type": "string" },
+        { "name": "--network", "description": "Set the networking mode for RUN instructions", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output destination (e.g. type=local,dest=path)", "type": "string" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress build output and print image ID on success" },
+        { "name": "--rm", "description": "Remove intermediate containers after build (default true)" },
+        { "name": "--squash", "description": "Squash newly built layers into a single layer" },
+        { "name": "--compress", "description": "Compress the build context using gzip" },
+        { "name": "--memory", "short": "-m", "description": "Memory limit for the build", "type": "string" },
+        { "name": "--shm-size", "description": "Size of /dev/shm", "type": "string" },
+        { "name": "--ulimit", "description": "Ulimit options", "type": "string" },
+        { "name": "--add-host", "description": "Add a custom host-to-IP mapping (host:ip)", "type": "string" },
+        { "name": "--iidfile", "description": "Write the image ID to the file", "type": "path" }
+      ],
+      "examples": [
+        "docker build -t myapp .",
+        "docker build -t myapp:latest -f Dockerfile.prod .",
+        "docker build --build-arg NODE_ENV=production -t myapp .",
+        "docker build --no-cache -t myapp .",
+        "docker build --target builder -t myapp:builder .",
+        "docker build --platform linux/amd64,linux/arm64 -t myapp .",
+        "docker build --secret id=npmrc,src=.npmrc -t myapp ."
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Create and run a new container from an image",
+      "args": [
+        { "name": "<image>", "type": "string", "required": true, "description": "Image to run" },
+        { "name": "<command>", "type": "string", "required": false, "description": "Command to execute in container" }
+      ],
+      "options": [
+        { "name": "--name", "description": "Assign a name to the container", "type": "string" },
+        { "name": "--detach", "short": "-d", "description": "Run container in background" },
+        { "name": "--interactive", "short": "-i", "description": "Keep STDIN open even if not attached" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a pseudo-TTY" },
+        { "name": "--rm", "description": "Automatically remove the container when it exits" },
+        { "name": "--publish", "short": "-p", "description": "Publish port(s) (host:container)", "type": "string" },
+        { "name": "--publish-all", "short": "-P", "description": "Publish all exposed ports to random ports" },
+        { "name": "--volume", "short": "-v", "description": "Bind mount a volume (host:container[:opts])", "type": "string" },
+        { "name": "--mount", "description": "Attach a filesystem mount (type=bind,source=...,target=...)", "type": "string" },
+        { "name": "--env", "short": "-e", "description": "Set environment variable (KEY=VALUE)", "type": "string" },
+        { "name": "--env-file", "description": "Read in a file of environment variables", "type": "path" },
+        { "name": "--network", "description": "Connect to a network", "type": "string" },
+        { "name": "--network-alias", "description": "Add network-scoped alias for the container", "type": "string" },
+        { "name": "--hostname", "short": "-h", "description": "Container hostname", "type": "string" },
+        { "name": "--workdir", "short": "-w", "description": "Working directory inside the container", "type": "string" },
+        { "name": "--user", "short": "-u", "description": "Username or UID (format: <name|uid>[:<group|gid>])", "type": "string" },
+        { "name": "--entrypoint", "description": "Override the default entrypoint", "type": "string" },
+        { "name": "--restart", "description": "Restart policy (no|on-failure[:max]|always|unless-stopped)", "type": "string" },
+        { "name": "--platform", "description": "Set platform (e.g. linux/amd64)", "type": "string" },
+        { "name": "--cpus", "description": "Number of CPUs", "type": "string" },
+        { "name": "--memory", "short": "-m", "description": "Memory limit (e.g. 512m, 1g)", "type": "string" },
+        { "name": "--memory-swap", "description": "Swap limit equal to memory plus swap", "type": "string" },
+        { "name": "--gpus", "description": "GPU devices to add (all or device=ID)", "type": "string" },
+        { "name": "--shm-size", "description": "Size of /dev/shm (e.g. 2g)", "type": "string" },
+        { "name": "--cap-add", "description": "Add Linux capabilities", "type": "string" },
+        { "name": "--cap-drop", "description": "Drop Linux capabilities", "type": "string" },
+        { "name": "--privileged", "description": "Give extended privileges to the container" },
+        { "name": "--security-opt", "description": "Security options", "type": "string" },
+        { "name": "--read-only", "description": "Mount the container's root filesystem as read only" },
+        { "name": "--tmpfs", "description": "Mount a tmpfs directory", "type": "string" },
+        { "name": "--device", "description": "Add a host device to the container", "type": "string" },
+        { "name": "--dns", "description": "Set custom DNS servers", "type": "string" },
+        { "name": "--add-host", "description": "Add a custom host-to-IP mapping (host:ip)", "type": "string" },
+        { "name": "--label", "short": "-l", "description": "Set metadata on a container (key=value)", "type": "string" },
+        { "name": "--log-driver", "description": "Logging driver for the container", "type": "string" },
+        { "name": "--log-opt", "description": "Log driver options", "type": "string" },
+        { "name": "--pid", "description": "PID namespace to use", "type": "string" },
+        { "name": "--ipc", "description": "IPC namespace to use", "type": "string" },
+        { "name": "--init", "description": "Run an init process inside the container to forward signals" },
+        { "name": "--sig-proxy", "description": "Proxy received signals to the process (default true)" },
+        { "name": "--stop-signal", "description": "Signal to stop the container", "type": "string" },
+        { "name": "--stop-timeout", "description": "Timeout (seconds) to stop a container", "type": "number" },
+        { "name": "--health-cmd", "description": "Command to run to check health", "type": "string" },
+        { "name": "--health-interval", "description": "Time between running the check", "type": "string" },
+        { "name": "--health-retries", "description": "Consecutive failures needed to report unhealthy", "type": "number" },
+        { "name": "--health-timeout", "description": "Maximum time for one check to run", "type": "string" },
+        { "name": "--no-healthcheck", "description": "Disable any container-specified HEALTHCHECK" },
+        { "name": "--ulimit", "description": "Ulimit options", "type": "string" },
+        { "name": "--isolation", "description": "Container isolation technology", "type": "string" },
+        { "name": "--link", "description": "Add link to another container", "type": "string" }
+      ],
+      "examples": [
+        "docker run -d -p 8080:80 nginx",
+        "docker run -it --rm ubuntu bash",
+        "docker run -d --name myapp -p 3000:3000 -e NODE_ENV=production myapp:latest",
+        "docker run -v $(pwd):/app -w /app node:18 npm install",
+        "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock docker",
+        "docker run -d --restart unless-stopped --name redis -p 6379:6379 redis:alpine",
+        "docker run --gpus all -it tensorflow/tensorflow:latest-gpu bash",
+        "docker run -d --memory 512m --cpus 1.5 --name limited myapp",
+        "docker run -d --network my-net --network-alias db postgres:15",
+        "docker run --env-file .env -p 8080:8080 myapp"
+      ]
+    },
+    {
+      "name": "ps",
+      "description": "List containers",
+      "args": [],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Show all containers (default shows just running)" },
+        { "name": "--filter", "short": "-f", "description": "Filter output (e.g. status=running, name=foo)", "type": "string" },
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--last", "short": "-n", "description": "Show n last created containers", "type": "number" },
+        { "name": "--latest", "short": "-l", "description": "Show the latest created container" },
+        { "name": "--no-trunc", "description": "Don't truncate output" },
+        { "name": "--quiet", "short": "-q", "description": "Only display container IDs" },
+        { "name": "--size", "short": "-s", "description": "Display total file sizes" }
+      ],
+      "examples": [
+        "docker ps",
+        "docker ps -a",
+        "docker ps -q",
+        "docker ps --filter status=exited",
+        "docker ps --format '{{.Names}}\\t{{.Status}}'",
+        "docker ps -a --filter name=myapp",
+        "docker ps -s"
+      ]
+    },
+    {
+      "name": "images",
+      "description": "List images",
+      "args": [{ "name": "<repository>", "type": "string", "required": false, "description": "Repository name to filter" }],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Show all images (including intermediate)" },
+        { "name": "--filter", "short": "-f", "description": "Filter output (e.g. dangling=true)", "type": "string" },
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--no-trunc", "description": "Don't truncate output" },
+        { "name": "--quiet", "short": "-q", "description": "Only show image IDs" },
+        { "name": "--digests", "description": "Show digests" }
+      ],
+      "examples": [
+        "docker images",
+        "docker images -a",
+        "docker images -q",
+        "docker images --filter dangling=true",
+        "docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}'",
+        "docker images node"
+      ]
+    },
+    {
+      "name": "pull",
+      "description": "Download an image from a registry",
+      "args": [{ "name": "<image>", "type": "string", "required": true, "description": "Image name (name[:tag|@digest])" }],
+      "options": [
+        { "name": "--all-tags", "short": "-a", "description": "Download all tagged images in the repository" },
+        { "name": "--platform", "description": "Set platform (e.g. linux/amd64)", "type": "string" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress verbose output" },
+        { "name": "--disable-content-trust", "description": "Skip image verification" }
+      ],
+      "examples": [
+        "docker pull ubuntu",
+        "docker pull nginx:alpine",
+        "docker pull node:18-slim",
+        "docker pull --platform linux/arm64 ubuntu",
+        "docker pull ghcr.io/owner/image:tag",
+        "docker pull myregistry.io:5000/myimage:latest"
+      ]
+    },
+    {
+      "name": "push",
+      "description": "Upload an image to a registry",
+      "args": [{ "name": "<image>", "type": "string", "required": true, "description": "Image name (name[:tag])" }],
+      "options": [
+        { "name": "--all-tags", "short": "-a", "description": "Push all tags of an image" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress verbose output" },
+        { "name": "--disable-content-trust", "description": "Skip image signing" }
+      ],
+      "examples": [
+        "docker push myregistry.io/myapp:latest",
+        "docker push myregistry.io/myapp --all-tags",
+        "docker push ghcr.io/owner/image:v1.0.0"
+      ]
+    },
+    {
+      "name": "exec",
+      "description": "Execute a command in a running container",
+      "args": [
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" },
+        { "name": "<command>", "type": "string", "required": true, "description": "Command to execute" }
+      ],
+      "options": [
+        { "name": "--interactive", "short": "-i", "description": "Keep STDIN open" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a pseudo-TTY" },
+        { "name": "--detach", "short": "-d", "description": "Run command in the background" },
+        { "name": "--env", "short": "-e", "description": "Set environment variables", "type": "string" },
+        { "name": "--env-file", "description": "Read in a file of environment variables", "type": "path" },
+        { "name": "--user", "short": "-u", "description": "Username or UID", "type": "string" },
+        { "name": "--workdir", "short": "-w", "description": "Working directory inside the container", "type": "string" },
+        { "name": "--privileged", "description": "Give extended privileges to the command" }
+      ],
+      "examples": [
+        "docker exec -it mycontainer bash",
+        "docker exec -it mycontainer sh",
+        "docker exec mycontainer ls /app",
+        "docker exec -e MY_VAR=value mycontainer env",
+        "docker exec -u root mycontainer apt-get update",
+        "docker exec -w /app mycontainer cat config.json",
+        "docker exec -d mycontainer touch /tmp/flag"
+      ]
+    },
+    {
+      "name": "stop",
+      "description": "Stop one or more running containers",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name(s) or ID(s)" }],
+      "options": [
+        { "name": "--signal", "short": "-s", "description": "Signal to send to the container", "type": "string" },
+        { "name": "--time", "short": "-t", "description": "Seconds to wait before killing the container", "type": "number" }
+      ],
+      "examples": [
+        "docker stop mycontainer",
+        "docker stop -t 30 mycontainer",
+        "docker stop $(docker ps -q)",
+        "docker stop container1 container2"
+      ]
+    },
+    {
+      "name": "start",
+      "description": "Start one or more stopped containers",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name(s) or ID(s)" }],
+      "options": [
+        { "name": "--attach", "short": "-a", "description": "Attach STDOUT/STDERR and forward signals" },
+        { "name": "--interactive", "short": "-i", "description": "Attach container's STDIN" }
+      ],
+      "examples": [
+        "docker start mycontainer",
+        "docker start -a mycontainer",
+        "docker start container1 container2"
+      ]
+    },
+    {
+      "name": "restart",
+      "description": "Restart one or more containers",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name(s) or ID(s)" }],
+      "options": [
+        { "name": "--signal", "short": "-s", "description": "Signal to send to the container", "type": "string" },
+        { "name": "--time", "short": "-t", "description": "Seconds to wait before killing the container", "type": "number" }
+      ],
+      "examples": [
+        "docker restart mycontainer",
+        "docker restart -t 10 mycontainer",
+        "docker restart container1 container2"
+      ]
+    },
+    {
+      "name": "rm",
+      "description": "Remove one or more containers",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name(s) or ID(s)" }],
+      "options": [
+        { "name": "--force", "short": "-f", "description": "Force removal of a running container (uses SIGKILL)" },
+        { "name": "--volumes", "short": "-v", "description": "Remove anonymous volumes associated with the container" },
+        { "name": "--link", "short": "-l", "description": "Remove the specified link" }
+      ],
+      "examples": [
+        "docker rm mycontainer",
+        "docker rm -f mycontainer",
+        "docker rm -v mycontainer",
+        "docker rm $(docker ps -aq --filter status=exited)",
+        "docker rm container1 container2"
+      ]
+    },
+    {
+      "name": "rmi",
+      "description": "Remove one or more images",
+      "args": [{ "name": "<image>", "type": "string", "required": true, "description": "Image name(s) or ID(s)" }],
+      "options": [
+        { "name": "--force", "short": "-f", "description": "Force removal of the image" },
+        { "name": "--no-prune", "description": "Do not delete untagged parent images" }
+      ],
+      "examples": [
+        "docker rmi myimage",
+        "docker rmi myimage:v1.0",
+        "docker rmi -f myimage",
+        "docker rmi $(docker images -q --filter dangling=true)",
+        "docker rmi image1 image2 image3"
+      ]
+    },
+    {
+      "name": "logs",
+      "description": "Fetch the logs of a container",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" }],
+      "options": [
+        { "name": "--follow", "short": "-f", "description": "Follow log output (stream)" },
+        { "name": "--tail", "short": "-n", "description": "Number of lines to show from end of logs", "type": "string" },
+        { "name": "--since", "description": "Show logs since timestamp or relative (e.g. 10m, 2h)", "type": "string" },
+        { "name": "--until", "description": "Show logs before a timestamp or relative", "type": "string" },
+        { "name": "--timestamps", "short": "-t", "description": "Show timestamps" },
+        { "name": "--details", "description": "Show extra details provided to logs" }
+      ],
+      "examples": [
+        "docker logs mycontainer",
+        "docker logs -f mycontainer",
+        "docker logs --tail 100 mycontainer",
+        "docker logs --since 10m mycontainer",
+        "docker logs -f --tail 50 mycontainer",
+        "docker logs -t mycontainer",
+        "docker logs --since 2024-01-01T00:00:00 mycontainer"
+      ]
+    },
+    {
+      "name": "inspect",
+      "description": "Return low-level information on Docker objects",
+      "args": [{ "name": "<object>", "type": "string", "required": true, "description": "Container/image/network/volume name or ID" }],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "Format output using Go template", "type": "string" },
+        { "name": "--type", "description": "Return JSON for specified type (container|image|network|volume)", "type": "string" },
+        { "name": "--size", "short": "-s", "description": "Display total file sizes if the type is container" }
+      ],
+      "examples": [
+        "docker inspect mycontainer",
+        "docker inspect --format '{{.State.Status}}' mycontainer",
+        "docker inspect --format '{{.NetworkSettings.IPAddress}}' mycontainer",
+        "docker inspect --format '{{json .Config.Env}}' mycontainer",
+        "docker inspect --format '{{.Config.Image}}' mycontainer",
+        "docker inspect myimage:latest",
+        "docker inspect --type network bridge"
+      ]
+    },
+    {
+      "name": "network ls",
+      "description": "List networks",
+      "args": [],
+      "options": [
+        { "name": "--filter", "short": "-f", "description": "Filter output (e.g. driver=bridge)", "type": "string" },
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--no-trunc", "description": "Do not truncate output" },
+        { "name": "--quiet", "short": "-q", "description": "Only display network IDs" }
+      ],
+      "examples": [
+        "docker network ls",
+        "docker network ls --filter driver=bridge",
+        "docker network ls --format '{{.Name}}\\t{{.Driver}}'",
+        "docker network ls -q"
+      ]
+    },
+    {
+      "name": "network create",
+      "description": "Create a network",
+      "args": [{ "name": "<name>", "type": "string", "required": true, "description": "Network name" }],
+      "options": [
+        { "name": "--driver", "short": "-d", "description": "Driver to manage the network (bridge|overlay|macvlan|none)", "type": "string" },
+        { "name": "--subnet", "description": "Subnet in CIDR format", "type": "string" },
+        { "name": "--gateway", "description": "IPv4 or IPv6 gateway for the subnet", "type": "string" },
+        { "name": "--ip-range", "description": "Allocate container IP from a sub-range", "type": "string" },
+        { "name": "--ipv6", "description": "Enable IPv6 networking" },
+        { "name": "--internal", "description": "Restrict external access to the network" },
+        { "name": "--attachable", "description": "Enable manual container attachment" },
+        { "name": "--label", "description": "Set metadata on a network", "type": "string" },
+        { "name": "--opt", "short": "-o", "description": "Set driver-specific options", "type": "string" }
+      ],
+      "examples": [
+        "docker network create my-network",
+        "docker network create --driver bridge my-bridge",
+        "docker network create --subnet 172.20.0.0/16 --gateway 172.20.0.1 my-net",
+        "docker network create --internal secure-net"
+      ]
+    },
+    {
+      "name": "network rm",
+      "description": "Remove one or more networks",
+      "args": [{ "name": "<network>", "type": "string", "required": true, "description": "Network name(s) or ID(s)" }],
+      "options": [
+        { "name": "--force", "short": "-f", "description": "Do not error if the network does not exist" }
+      ],
+      "examples": [
+        "docker network rm my-network",
+        "docker network rm net1 net2"
+      ]
+    },
+    {
+      "name": "network connect",
+      "description": "Connect a container to a network",
+      "args": [
+        { "name": "<network>", "type": "string", "required": true, "description": "Network name or ID" },
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" }
+      ],
+      "options": [
+        { "name": "--alias", "description": "Add network-scoped alias for the container", "type": "string" },
+        { "name": "--ip", "description": "IPv4 address", "type": "string" },
+        { "name": "--ip6", "description": "IPv6 address", "type": "string" },
+        { "name": "--link", "description": "Add link to another container", "type": "string" }
+      ],
+      "examples": [
+        "docker network connect my-network mycontainer",
+        "docker network connect --alias db my-network postgres-container",
+        "docker network connect --ip 172.20.0.5 my-network mycontainer"
+      ]
+    },
+    {
+      "name": "network disconnect",
+      "description": "Disconnect a container from a network",
+      "args": [
+        { "name": "<network>", "type": "string", "required": true, "description": "Network name or ID" },
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" }
+      ],
+      "options": [
+        { "name": "--force", "short": "-f", "description": "Force the container to disconnect" }
+      ],
+      "examples": [
+        "docker network disconnect my-network mycontainer",
+        "docker network disconnect -f my-network mycontainer"
+      ]
+    },
+    {
+      "name": "volume ls",
+      "description": "List volumes",
+      "args": [],
+      "options": [
+        { "name": "--filter", "short": "-f", "description": "Filter output (e.g. dangling=true, driver=local)", "type": "string" },
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--quiet", "short": "-q", "description": "Only display volume names" }
+      ],
+      "examples": [
+        "docker volume ls",
+        "docker volume ls --filter dangling=true",
+        "docker volume ls --format '{{.Name}}\\t{{.Driver}}'",
+        "docker volume ls -q"
+      ]
+    },
+    {
+      "name": "volume create",
+      "description": "Create a volume",
+      "args": [{ "name": "<name>", "type": "string", "required": false, "description": "Volume name" }],
+      "options": [
+        { "name": "--driver", "short": "-d", "description": "Volume driver name", "type": "string" },
+        { "name": "--label", "description": "Set metadata for a volume", "type": "string" },
+        { "name": "--opt", "short": "-o", "description": "Set driver-specific options", "type": "string" }
+      ],
+      "examples": [
+        "docker volume create my-volume",
+        "docker volume create --driver local my-volume",
+        "docker volume create --label project=myapp data-vol"
+      ]
+    },
+    {
+      "name": "volume rm",
+      "description": "Remove one or more volumes",
+      "args": [{ "name": "<volume>", "type": "string", "required": true, "description": "Volume name(s)" }],
+      "options": [
+        { "name": "--force", "short": "-f", "description": "Force removal of volume (even if in use)" }
+      ],
+      "examples": [
+        "docker volume rm my-volume",
+        "docker volume rm -f my-volume",
+        "docker volume rm vol1 vol2"
+      ]
+    },
+    {
+      "name": "volume inspect",
+      "description": "Display detailed information on one or more volumes",
+      "args": [{ "name": "<volume>", "type": "string", "required": true, "description": "Volume name(s)" }],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "Format output using a Go template", "type": "string" }
+      ],
+      "examples": [
+        "docker volume inspect my-volume",
+        "docker volume inspect --format '{{.Mountpoint}}' my-volume"
+      ]
+    },
+    {
+      "name": "compose up",
+      "description": "Create and start containers defined in compose file",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s) to start" }],
+      "options": [
+        { "name": "--detach", "short": "-d", "description": "Run in background" },
+        { "name": "--build", "description": "Build images before starting containers" },
+        { "name": "--force-recreate", "description": "Recreate containers even if unchanged" },
+        { "name": "--no-recreate", "description": "Do not recreate existing containers" },
+        { "name": "--no-build", "description": "Don't build an image, even if it's missing" },
+        { "name": "--no-deps", "description": "Don't start linked services" },
+        { "name": "--remove-orphans", "description": "Remove containers for services not defined in compose file" },
+        { "name": "--scale", "description": "Scale SERVICE to NUM instances (service=num)", "type": "string" },
+        { "name": "--timeout", "short": "-t", "description": "Shutdown timeout in seconds", "type": "number" },
+        { "name": "--wait", "description": "Wait for services to be running/healthy" },
+        { "name": "--wait-timeout", "description": "Maximum duration to wait for project to be running/healthy", "type": "number" },
+        { "name": "--pull", "description": "Pull image before running (always|missing|never)", "type": "string" },
+        { "name": "--abort-on-container-exit", "description": "Stop all containers if any container stops" },
+        { "name": "--no-start", "description": "Don't start the services after creating them" },
+        { "name": "--quiet-pull", "description": "Pull without printing progress information" },
+        { "name": "-f", "description": "Specify compose file(s)", "type": "path" },
+        { "name": "--project-name", "short": "-p", "description": "Project name", "type": "string" },
+        { "name": "--env-file", "description": "Specify an alternate environment file", "type": "path" },
+        { "name": "--profile", "description": "Specify a profile to enable", "type": "string" }
+      ],
+      "examples": [
+        "docker compose up",
+        "docker compose up -d",
+        "docker compose up --build",
+        "docker compose up -d --force-recreate",
+        "docker compose up -d web api",
+        "docker compose up --scale worker=3",
+        "docker compose -f docker-compose.prod.yml up -d",
+        "docker compose up -d --wait",
+        "docker compose --profile debug up",
+        "docker compose up --remove-orphans"
+      ]
+    },
+    {
+      "name": "compose down",
+      "description": "Stop and remove containers, networks defined in compose file",
+      "args": [],
+      "options": [
+        { "name": "--volumes", "short": "-v", "description": "Remove named volumes declared in the volumes section and anonymous volumes" },
+        { "name": "--rmi", "description": "Remove images (all|local)", "type": "string" },
+        { "name": "--remove-orphans", "description": "Remove containers for services not defined in compose" },
+        { "name": "--timeout", "short": "-t", "description": "Shutdown timeout in seconds", "type": "number" },
+        { "name": "-f", "description": "Specify compose file(s)", "type": "path" },
+        { "name": "--project-name", "short": "-p", "description": "Project name", "type": "string" }
+      ],
+      "examples": [
+        "docker compose down",
+        "docker compose down -v",
+        "docker compose down --rmi all",
+        "docker compose down --rmi local -v",
+        "docker compose down --remove-orphans",
+        "docker compose -f docker-compose.prod.yml down"
+      ]
+    },
+    {
+      "name": "compose ps",
+      "description": "List containers for a compose project",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s)" }],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Show all stopped containers" },
+        { "name": "--format", "description": "Format output (table|json)", "type": "string" },
+        { "name": "--filter", "description": "Filter services by condition", "type": "string" },
+        { "name": "--quiet", "short": "-q", "description": "Only display IDs" },
+        { "name": "--status", "description": "Filter by status (paused|restarting|removing|running|dead|created|exited)", "type": "string" },
+        { "name": "--services", "description": "Display services" },
+        { "name": "-f", "description": "Specify compose file(s)", "type": "path" }
+      ],
+      "examples": [
+        "docker compose ps",
+        "docker compose ps -a",
+        "docker compose ps --format json",
+        "docker compose ps --status running",
+        "docker compose ps --services"
+      ]
+    },
+    {
+      "name": "compose logs",
+      "description": "View output from containers",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s)" }],
+      "options": [
+        { "name": "--follow", "short": "-f", "description": "Follow log output" },
+        { "name": "--tail", "short": "-n", "description": "Number of lines to show from end", "type": "string" },
+        { "name": "--since", "description": "Show logs since timestamp", "type": "string" },
+        { "name": "--until", "description": "Show logs before a timestamp", "type": "string" },
+        { "name": "--timestamps", "short": "-t", "description": "Show timestamps" },
+        { "name": "--no-color", "description": "Produce monochrome output" },
+        { "name": "--no-log-prefix", "description": "Don't print prefix in logs" }
+      ],
+      "examples": [
+        "docker compose logs",
+        "docker compose logs -f",
+        "docker compose logs --tail 100 web",
+        "docker compose logs --since 10m api worker",
+        "docker compose logs -f --no-log-prefix web"
+      ]
+    },
+    {
+      "name": "compose build",
+      "description": "Build or rebuild services",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s)" }],
+      "options": [
+        { "name": "--build-arg", "description": "Set build-time variables", "type": "string" },
+        { "name": "--no-cache", "description": "Do not use cache" },
+        { "name": "--pull", "description": "Always pull a newer version of the image" },
+        { "name": "--parallel", "description": "Build images in parallel" },
+        { "name": "--progress", "description": "Set type of progress output (auto|plain|tty)", "type": "string" },
+        { "name": "--push", "description": "Push service images" },
+        { "name": "--quiet", "short": "-q", "description": "Don't print anything to STDOUT" }
+      ],
+      "examples": [
+        "docker compose build",
+        "docker compose build --no-cache",
+        "docker compose build web",
+        "docker compose build --build-arg VERSION=1.0 web",
+        "docker compose build --parallel"
+      ]
+    },
+    {
+      "name": "compose exec",
+      "description": "Execute a command in a running service container",
+      "args": [
+        { "name": "<service>", "type": "string", "required": true, "description": "Service name" },
+        { "name": "<command>", "type": "string", "required": true, "description": "Command to execute" }
+      ],
+      "options": [
+        { "name": "--detach", "short": "-d", "description": "Run in background" },
+        { "name": "--env", "short": "-e", "description": "Set environment variables", "type": "string" },
+        { "name": "--index", "description": "Index of the container if scaled service", "type": "number" },
+        { "name": "--interactive", "short": "-i", "description": "Keep STDIN open (default true)" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a pseudo-TTY (default true)" },
+        { "name": "--user", "short": "-u", "description": "Run as this user", "type": "string" },
+        { "name": "--workdir", "short": "-w", "description": "Working directory", "type": "string" },
+        { "name": "--privileged", "description": "Give extended privileges" }
+      ],
+      "examples": [
+        "docker compose exec web bash",
+        "docker compose exec db psql -U postgres",
+        "docker compose exec -u root web sh",
+        "docker compose exec web rails console",
+        "docker compose exec -e DEBUG=1 web python manage.py shell"
+      ]
+    },
+    {
+      "name": "compose pull",
+      "description": "Pull service images",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s)" }],
+      "options": [
+        { "name": "--ignore-buildable", "description": "Ignore images that can be built" },
+        { "name": "--ignore-pull-failures", "description": "Pull what it can, ignore failures" },
+        { "name": "--include-deps", "description": "Also pull services declared as dependencies" },
+        { "name": "--quiet", "short": "-q", "description": "Pull without printing progress" },
+        { "name": "--policy", "description": "Apply pull policy (missing|always)", "type": "string" }
+      ],
+      "examples": [
+        "docker compose pull",
+        "docker compose pull web db",
+        "docker compose pull --ignore-pull-failures"
+      ]
+    },
+    {
+      "name": "compose restart",
+      "description": "Restart service containers",
+      "args": [{ "name": "<service>", "type": "string", "required": false, "description": "Service name(s)" }],
+      "options": [
+        { "name": "--timeout", "short": "-t", "description": "Shutdown timeout in seconds", "type": "number" },
+        { "name": "--no-deps", "description": "Don't restart dependent services" }
+      ],
+      "examples": [
+        "docker compose restart",
+        "docker compose restart web",
+        "docker compose restart -t 30 web api"
+      ]
+    },
+    {
+      "name": "system prune",
+      "description": "Remove unused data (containers, networks, images, optionally volumes)",
+      "args": [],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Remove all unused images, not just dangling" },
+        { "name": "--volumes", "description": "Prune volumes" },
+        { "name": "--force", "short": "-f", "description": "Do not prompt for confirmation" },
+        { "name": "--filter", "description": "Provide filter values (e.g. until=24h, label=foo)", "type": "string" }
+      ],
+      "examples": [
+        "docker system prune",
+        "docker system prune -f",
+        "docker system prune -a --volumes -f",
+        "docker system prune --filter until=24h"
+      ]
+    },
+    {
+      "name": "system df",
+      "description": "Show Docker disk usage",
+      "args": [],
+      "options": [
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Show detailed information on space usage" }
+      ],
+      "examples": [
+        "docker system df",
+        "docker system df -v",
+        "docker system df --format '{{.Type}}\\t{{.Size}}\\t{{.Reclaimable}}'"
+      ]
+    },
+    {
+      "name": "system info",
+      "description": "Display system-wide information",
+      "args": [],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "Format output using Go template", "type": "string" }
+      ],
+      "examples": [
+        "docker system info",
+        "docker info",
+        "docker info --format '{{.ServerVersion}}'",
+        "docker info --format '{{json .}}'"
+      ]
+    },
+    {
+      "name": "login",
+      "description": "Log in to a registry",
+      "args": [{ "name": "<server>", "type": "string", "required": false, "description": "Registry server URL (default: Docker Hub)" }],
+      "options": [
+        { "name": "--username", "short": "-u", "description": "Username", "type": "string" },
+        { "name": "--password", "short": "-p", "description": "Password", "type": "string" },
+        { "name": "--password-stdin", "description": "Take the password from stdin" }
+      ],
+      "examples": [
+        "docker login",
+        "docker login -u myuser",
+        "docker login ghcr.io",
+        "docker login myregistry.io:5000 -u myuser",
+        "echo $TOKEN | docker login ghcr.io -u USERNAME --password-stdin"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Log out from a registry",
+      "args": [{ "name": "<server>", "type": "string", "required": false, "description": "Registry server URL" }],
+      "options": [],
+      "examples": [
+        "docker logout",
+        "docker logout ghcr.io"
+      ]
+    },
+    {
+      "name": "tag",
+      "description": "Create a tag that refers to a source image",
+      "args": [
+        { "name": "<source>", "type": "string", "required": true, "description": "Source image (name[:tag])" },
+        { "name": "<target>", "type": "string", "required": true, "description": "Target image (name[:tag])" }
+      ],
+      "options": [],
+      "examples": [
+        "docker tag myapp myregistry.io/myapp:latest",
+        "docker tag myapp:latest myregistry.io/myapp:v1.0.0",
+        "docker tag abc123 myapp:stable",
+        "docker tag myapp ghcr.io/owner/myapp:sha-abc123"
+      ]
+    },
+    {
+      "name": "cp",
+      "description": "Copy files/folders between a container and the local filesystem",
+      "args": [
+        { "name": "<src>", "type": "string", "required": true, "description": "Source path (container:path or local path)" },
+        { "name": "<dest>", "type": "string", "required": true, "description": "Destination path (container:path or local path)" }
+      ],
+      "options": [
+        { "name": "--archive", "short": "-a", "description": "Archive mode (copy all uid/gid information)" },
+        { "name": "--follow-link", "short": "-L", "description": "Always follow symbol link in SRC_PATH" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress progress output" }
+      ],
+      "examples": [
+        "docker cp mycontainer:/app/logs ./logs",
+        "docker cp ./config.json mycontainer:/app/config.json",
+        "docker cp mycontainer:/var/log/app.log .",
+        "docker cp -a mycontainer:/data ./backup"
+      ]
+    },
+    {
+      "name": "stats",
+      "description": "Display a live stream of container resource usage statistics",
+      "args": [{ "name": "<container>", "type": "string", "required": false, "description": "Container name(s) or ID(s) (default: all running)" }],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Show all containers (default shows just running)" },
+        { "name": "--format", "description": "Format output using Go template", "type": "string" },
+        { "name": "--no-stream", "description": "Disable streaming stats and only pull the first result" },
+        { "name": "--no-trunc", "description": "Do not truncate output" }
+      ],
+      "examples": [
+        "docker stats",
+        "docker stats mycontainer",
+        "docker stats --no-stream",
+        "docker stats --format 'table {{.Name}}\\t{{.CPUPerc}}\\t{{.MemUsage}}'",
+        "docker stats --no-stream --format json"
+      ]
+    },
+    {
+      "name": "top",
+      "description": "Display the running processes of a container",
+      "args": [
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" },
+        { "name": "<ps_options>", "type": "string", "required": false, "description": "ps options (e.g. aux)" }
+      ],
+      "options": [],
+      "examples": [
+        "docker top mycontainer",
+        "docker top mycontainer aux"
+      ]
+    },
+    {
+      "name": "port",
+      "description": "List port mappings or a specific mapping for the container",
+      "args": [
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" },
+        { "name": "<private_port>", "type": "string", "required": false, "description": "Private port (e.g. 80/tcp)" }
+      ],
+      "options": [],
+      "examples": [
+        "docker port mycontainer",
+        "docker port mycontainer 80",
+        "docker port mycontainer 80/tcp"
+      ]
+    },
+    {
+      "name": "diff",
+      "description": "Inspect changes to files or directories on a container's filesystem",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" }],
+      "options": [],
+      "examples": [
+        "docker diff mycontainer"
+      ]
+    },
+    {
+      "name": "commit",
+      "description": "Create a new image from a container's changes",
+      "args": [
+        { "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" },
+        { "name": "<repository[:tag]>", "type": "string", "required": false, "description": "Repository and tag for new image" }
+      ],
+      "options": [
+        { "name": "--author", "short": "-a", "description": "Author (e.g. 'John <john@example.com>')", "type": "string" },
+        { "name": "--change", "short": "-c", "description": "Apply Dockerfile instruction to the created image", "type": "string" },
+        { "name": "--message", "short": "-m", "description": "Commit message", "type": "string" },
+        { "name": "--pause", "short": "-p", "description": "Pause container during commit (default true)" }
+      ],
+      "examples": [
+        "docker commit mycontainer myimage:v2",
+        "docker commit -m 'added config' mycontainer myimage:configured",
+        "docker commit -c 'CMD [\"nginx\"]' mycontainer mynginx:custom",
+        "docker commit -a 'Dev Team' mycontainer snapshot:latest"
+      ]
+    },
+    {
+      "name": "save",
+      "description": "Save one or more images to a tar archive",
+      "args": [{ "name": "<image>", "type": "string", "required": true, "description": "Image name(s)" }],
+      "options": [
+        { "name": "--output", "short": "-o", "description": "Write to a file instead of STDOUT", "type": "path" }
+      ],
+      "examples": [
+        "docker save -o myimage.tar myimage:latest",
+        "docker save myimage:latest | gzip > myimage.tar.gz",
+        "docker save image1 image2 -o images.tar"
+      ]
+    },
+    {
+      "name": "load",
+      "description": "Load an image from a tar archive or STDIN",
+      "args": [],
+      "options": [
+        { "name": "--input", "short": "-i", "description": "Read from tar archive file", "type": "path" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress the load output" }
+      ],
+      "examples": [
+        "docker load -i myimage.tar",
+        "docker load < myimage.tar",
+        "gunzip -c myimage.tar.gz | docker load"
+      ]
+    },
+    {
+      "name": "export",
+      "description": "Export a container's filesystem as a tar archive",
+      "args": [{ "name": "<container>", "type": "string", "required": true, "description": "Container name or ID" }],
+      "options": [
+        { "name": "--output", "short": "-o", "description": "Write to a file instead of STDOUT", "type": "path" }
+      ],
+      "examples": [
+        "docker export -o container-fs.tar mycontainer",
+        "docker export mycontainer | gzip > container.tar.gz"
+      ]
+    },
+    {
+      "name": "import",
+      "description": "Import the contents from a tarball to create a filesystem image",
+      "args": [
+        { "name": "<file|url>", "type": "string", "required": true, "description": "Tar file path, URL, or - for STDIN" },
+        { "name": "<repository[:tag]>", "type": "string", "required": false, "description": "Repository and tag" }
+      ],
+      "options": [
+        { "name": "--change", "short": "-c", "description": "Apply Dockerfile instruction to the created image", "type": "string" },
+        { "name": "--message", "short": "-m", "description": "Set commit message for imported image", "type": "string" },
+        { "name": "--platform", "description": "Set platform if server is multi-platform capable", "type": "string" }
+      ],
+      "examples": [
+        "docker import container-fs.tar myimage:imported",
+        "docker import https://example.com/image.tar myimage:remote",
+        "cat container.tar.gz | docker import - myimage:restored",
+        "docker import -c 'CMD [\"/bin/bash\"]' backup.tar myimage:custom"
+      ]
+    },
+    {
+      "name": "buildx build",
+      "description": "Build with BuildKit (extended build capabilities)",
+      "args": [{ "name": "<path|url>", "type": "path", "required": true, "description": "Build context" }],
+      "options": [
+        { "name": "--tag", "short": "-t", "description": "Name and optionally a tag (name:tag)", "type": "string" },
+        { "name": "--file", "short": "-f", "description": "Path to Dockerfile", "type": "path" },
+        { "name": "--platform", "description": "Set target platform(s) for build", "type": "string" },
+        { "name": "--push", "description": "Push image to registry after build" },
+        { "name": "--load", "description": "Load the single-platform build result to docker images" },
+        { "name": "--build-arg", "description": "Set build-time variables", "type": "string" },
+        { "name": "--target", "description": "Set the target build stage", "type": "string" },
+        { "name": "--no-cache", "description": "Do not use cache when building" },
+        { "name": "--pull", "description": "Always attempt to pull all referenced images" },
+        { "name": "--cache-from", "description": "External cache sources (e.g. type=registry,ref=...)", "type": "string" },
+        { "name": "--cache-to", "description": "Cache export destinations", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output destination (e.g. type=local,dest=path)", "type": "string" },
+        { "name": "--progress", "description": "Set type of progress output (auto|plain|tty)", "type": "string" },
+        { "name": "--secret", "description": "Secret to expose to the build", "type": "string" },
+        { "name": "--ssh", "description": "SSH agent socket or keys to expose", "type": "string" },
+        { "name": "--builder", "description": "Override the configured builder instance", "type": "string" },
+        { "name": "--label", "description": "Set metadata for an image", "type": "string" },
+        { "name": "--network", "description": "Set the networking mode for RUN instructions", "type": "string" },
+        { "name": "--sbom", "description": "Shorthand for --attest=type=sbom", "type": "string" },
+        { "name": "--provenance", "description": "Shorthand for --attest=type=provenance", "type": "string" },
+        { "name": "--attest", "description": "Attestation parameters (type=sbom|provenance)", "type": "string" },
+        { "name": "--shm-size", "description": "Size of /dev/shm", "type": "string" },
+        { "name": "--ulimit", "description": "Ulimit options", "type": "string" },
+        { "name": "--add-host", "description": "Add a custom host-to-IP mapping", "type": "string" },
+        { "name": "--allow", "description": "Allow extra privileged entitlement (network.host|security.insecure)", "type": "string" },
+        { "name": "--iidfile", "description": "Write the image ID to the file", "type": "path" },
+        { "name": "--metadata-file", "description": "Write build result metadata to the file", "type": "path" }
+      ],
+      "examples": [
+        "docker buildx build -t myapp .",
+        "docker buildx build --platform linux/amd64,linux/arm64 -t myapp --push .",
+        "docker buildx build --load -t myapp .",
+        "docker buildx build --cache-from type=registry,ref=myapp:cache --cache-to type=registry,ref=myapp:cache -t myapp .",
+        "docker buildx build --secret id=npmrc,src=.npmrc -t myapp .",
+        "docker buildx build --provenance=true --sbom=true -t myapp --push ."
+      ]
+    },
+    {
+      "name": "buildx create",
+      "description": "Create a new builder instance",
+      "args": [{ "name": "<context|endpoint>", "type": "string", "required": false, "description": "Builder context or endpoint" }],
+      "options": [
+        { "name": "--name", "description": "Builder instance name", "type": "string" },
+        { "name": "--driver", "description": "Builder driver (docker|docker-container|kubernetes|remote)", "type": "string" },
+        { "name": "--driver-opt", "description": "Driver-specific options", "type": "string" },
+        { "name": "--platform", "description": "Fixed platforms for current node", "type": "string" },
+        { "name": "--use", "description": "Set the current builder instance" },
+        { "name": "--bootstrap", "description": "Boot builder after creation" },
+        { "name": "--buildkitd-flags", "description": "Flags for buildkitd daemon", "type": "string" },
+        { "name": "--config", "description": "BuildKit config file", "type": "path" },
+        { "name": "--append", "description": "Append a node to builder instead of changing it" },
+        { "name": "--node", "description": "Create/modify node with given name", "type": "string" },
+        { "name": "--leave", "description": "Remove a node from builder instead of changing it" }
+      ],
+      "examples": [
+        "docker buildx create --name mybuilder --use",
+        "docker buildx create --name multiarch --driver docker-container --bootstrap",
+        "docker buildx create --name mybuilder --platform linux/amd64,linux/arm64 --use",
+        "docker buildx create --driver kubernetes --driver-opt namespace=buildkit"
+      ]
+    },
+    {
+      "name": "buildx use",
+      "description": "Set the current builder instance",
+      "args": [{ "name": "<name>", "type": "string", "required": true, "description": "Builder instance name" }],
+      "options": [
+        { "name": "--default", "description": "Set builder as default for current context" },
+        { "name": "--global", "description": "Builder persists context changes" }
+      ],
+      "examples": [
+        "docker buildx use mybuilder",
+        "docker buildx use default",
+        "docker buildx use --global mybuilder"
+      ]
+    },
+    {
+      "name": "buildx ls",
+      "description": "List builder instances",
+      "args": [],
+      "options": [
+        { "name": "--format", "description": "Format output", "type": "string" }
+      ],
+      "examples": [
+        "docker buildx ls"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--config", "description": "Location of client config files", "type": "path" },
+    { "name": "--context", "short": "-c", "description": "Name of the context to use for connecting to the daemon", "type": "string" },
+    { "name": "--debug", "short": "-D", "description": "Enable debug mode" },
+    { "name": "--host", "short": "-H", "description": "Daemon socket to connect to", "type": "string" },
+    { "name": "--log-level", "short": "-l", "description": "Set the logging level (debug|info|warn|error|fatal)", "type": "string" },
+    { "name": "--tls", "description": "Use TLS; implied by --tlsverify" },
+    { "name": "--tlscacert", "description": "Trust certs signed only by this CA", "type": "path" },
+    { "name": "--tlscert", "description": "Path to TLS certificate file", "type": "path" },
+    { "name": "--tlskey", "description": "Path to TLS key file", "type": "path" },
+    { "name": "--tlsverify", "description": "Use TLS and verify the remote" },
+    { "name": "--version", "short": "-v", "description": "Print version information and quit" }
+  ],
+  "examples": [
+    "docker run -d -p 80:80 nginx",
+    "docker build -t myapp .",
+    "docker compose up -d",
+    "docker ps -a",
+    "docker logs -f mycontainer",
+    "docker exec -it mycontainer bash",
+    "docker system prune -a --volumes -f",
+    "docker buildx build --platform linux/amd64,linux/arm64 -t myapp --push ."
+  ],
+  "relatedCommands": ["docker-compose", "podman", "kubectl", "nerdctl", "buildah", "skopeo", "crictl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "running_containers",
+        "description": "Currently running containers with name, image, status, and ports",
+        "command": "docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "all_containers",
+        "description": "All containers including stopped ones",
+        "command": "docker ps -a --format '{{.Names}}\t{{.Image}}\t{{.Status}}'",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "images",
+        "description": "Locally available Docker images with repository, tag, size, and ID",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "volumes",
+        "description": "Docker volumes and their drivers",
+        "command": "docker volume ls --format '{{.Name}}\t{{.Driver}}'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "networks",
+        "description": "Docker networks with name, driver, and scope",
+        "command": "docker network ls --format '{{.Name}}\t{{.Driver}}\t{{.Scope}}'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "compose_services",
+        "description": "Running Docker Compose services and their status",
+        "command": "docker compose ps --format '{{.Name}}\t{{.Service}}\t{{.Status}}'",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "docker_info",
+        "description": "Docker daemon server version, OS, CPU, and memory summary",
+        "command": "docker info --format '{{.ServerVersion}} {{.OperatingSystem}} {{.NCPU}}cores {{.MemTotal}}'",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "disk_usage",
+        "description": "Docker disk usage by resource type",
+        "command": "docker system df --format '{{.Type}}\t{{.TotalCount}}\t{{.Size}}\t{{.Reclaimable}}'",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "dangling_images",
+        "description": "IDs of dangling (untagged) images that can be pruned",
+        "command": "docker images -f dangling=true -q",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "buildx_builders",
+        "description": "Available BuildKit builder instances and their status",
+        "command": "docker buildx ls",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
+}

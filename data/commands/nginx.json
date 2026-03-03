@@ -1,0 +1,146 @@
+{
+  "name": "nginx",
+  "description": "Nginx — high-performance HTTP server, reverse proxy, and load balancer",
+  "category": "web-server",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-t", "description": "Test configuration and exit" },
+    { "name": "-T", "description": "Test configuration, dump it, and exit" },
+    { "name": "-s", "description": "Send signal to master process (stop, quit, reopen, reload)", "type": "string" },
+    { "name": "-c", "description": "Set configuration file path", "type": "file" },
+    { "name": "-g", "description": "Set global directives", "type": "string" },
+    { "name": "-p", "description": "Set prefix path", "type": "directory" },
+    { "name": "-v", "description": "Show version and exit" },
+    { "name": "-V", "description": "Show version and configure options and exit" },
+    { "name": "-q", "description": "Suppress non-error messages during config testing" }
+  ],
+  "examples": [
+    "nginx",
+    "nginx -t",
+    "nginx -T",
+    "nginx -s reload",
+    "nginx -s stop",
+    "nginx -s quit",
+    "nginx -s reopen",
+    "nginx -c /etc/nginx/nginx.conf",
+    "nginx -v",
+    "nginx -V",
+    "sudo nginx -t && sudo nginx -s reload",
+    "sudo systemctl start nginx",
+    "sudo systemctl stop nginx",
+    "sudo systemctl restart nginx",
+    "sudo systemctl status nginx",
+    "sudo systemctl enable nginx"
+  ],
+  "relatedCommands": ["caddy", "apache", "certbot", "openssl", "systemctl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "running_status",
+        "description": "Check if Nginx is currently running",
+        "command": "pgrep -x nginx >/dev/null 2>&1 && echo 'running' || echo 'stopped'",
+        "parser": "text",
+        "cacheFor": 5,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "nginx_version",
+        "description": "Installed Nginx version",
+        "command": "nginx -v 2>&1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "config_test",
+        "description": "Validate current Nginx configuration",
+        "command": "nginx -t 2>&1",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "enabled_sites",
+        "description": "Site configurations enabled (symlinked in sites-enabled)",
+        "command": "ls /etc/nginx/sites-enabled/ 2>/dev/null || ls /etc/nginx/conf.d/*.conf 2>/dev/null | xargs -I{} basename {}",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "available_sites",
+        "description": "Site configurations available",
+        "command": "ls /etc/nginx/sites-available/ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "server_names",
+        "description": "All configured server_name directives",
+        "command": "grep -rh 'server_name' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | sed 's/.*server_name//' | sed 's/;.*//' | tr ' ' '\\n' | sort -u | grep -v '^$'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "listen_ports",
+        "description": "All configured listen ports",
+        "command": "grep -rh 'listen' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | sed 's/.*listen//' | sed 's/;.*//' | awk '{print $1}' | sort -u",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "upstream_backends",
+        "description": "Configured upstream backends",
+        "command": "grep -rh 'upstream\\|proxy_pass' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | sed 's/^[[:space:]]*//'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "error_log_path",
+        "description": "Path to the error log",
+        "command": "grep -rh 'error_log' /etc/nginx/nginx.conf 2>/dev/null | head -1 | awk '{print $2}' | sed 's/;$//'",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "access_log_path",
+        "description": "Path to the access log",
+        "command": "grep -rh 'access_log' /etc/nginx/nginx.conf 2>/dev/null | head -1 | awk '{print $2}' | sed 's/;$//'",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "recent_errors",
+        "description": "Last 15 lines of Nginx error log",
+        "command": "tail -15 /var/log/nginx/error.log 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "ssl_certificates",
+        "description": "SSL certificates referenced in configs",
+        "command": "grep -rh 'ssl_certificate[^_]' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | sed 's/.*ssl_certificate//' | sed 's/;.*//' | sort -u",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "nginx"
+      },
+      {
+        "name": "worker_processes",
+        "description": "Worker process configuration",
+        "command": "grep 'worker_processes' /etc/nginx/nginx.conf 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nginx"
+      }
+    ]
+  }
+}

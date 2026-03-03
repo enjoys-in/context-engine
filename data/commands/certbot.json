@@ -1,0 +1,148 @@
+{
+  "name": "certbot",
+  "description": "Let's Encrypt client — obtain and manage TLS/SSL certificates automatically",
+  "category": "security",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    {
+      "name": "certonly",
+      "description": "Obtain a certificate without installing it",
+      "options": [
+        { "name": "--standalone", "description": "Use built-in web server for validation" },
+        { "name": "--webroot", "description": "Use webroot directory for validation" },
+        { "name": "--webroot-path", "short": "-w", "description": "Web root path for webroot plugin", "type": "directory" },
+        { "name": "--nginx", "description": "Use Nginx plugin for validation and installation" },
+        { "name": "--apache", "description": "Use Apache plugin for validation and installation" },
+        { "name": "--dns-cloudflare", "description": "Use Cloudflare DNS plugin for validation" },
+        { "name": "--dns-route53", "description": "Use AWS Route 53 DNS plugin for validation" },
+        { "name": "--manual", "description": "Manual mode for domain validation" },
+        { "name": "--preferred-challenges", "description": "Preferred challenge type (http-01, dns-01, tls-alpn-01)", "type": "string" }
+      ],
+      "examples": [
+        "certbot certonly --standalone -d example.com",
+        "certbot certonly --webroot -w /var/www/html -d example.com -d www.example.com",
+        "certbot certonly --nginx -d example.com",
+        "certbot certonly --dns-cloudflare -d '*.example.com' -d example.com"
+      ]
+    },
+    {
+      "name": "install",
+      "description": "Install a previously obtained certificate",
+      "options": [
+        { "name": "--nginx", "description": "Install in Nginx" },
+        { "name": "--apache", "description": "Install in Apache" },
+        { "name": "--cert-path", "description": "Path to certificate", "type": "file" },
+        { "name": "--key-path", "description": "Path to private key", "type": "file" }
+      ],
+      "examples": ["certbot install --nginx -d example.com"]
+    },
+    {
+      "name": "renew",
+      "description": "Renew all certificates that are near expiry",
+      "options": [
+        { "name": "--dry-run", "description": "Test renewal without making changes" },
+        { "name": "--force-renewal", "description": "Force renewal even if not yet due" },
+        { "name": "--deploy-hook", "description": "Command to run after successful renewal", "type": "string" },
+        { "name": "--pre-hook", "description": "Command to run before renewal", "type": "string" },
+        { "name": "--post-hook", "description": "Command to run after renewal (success or fail)", "type": "string" },
+        { "name": "--quiet", "description": "Suppress output except errors" }
+      ],
+      "examples": [
+        "certbot renew",
+        "certbot renew --dry-run",
+        "certbot renew --force-renewal",
+        "certbot renew --deploy-hook 'systemctl reload nginx'"
+      ]
+    },
+    {
+      "name": "certificates",
+      "description": "List all managed certificates",
+      "examples": ["certbot certificates"]
+    },
+    {
+      "name": "revoke",
+      "description": "Revoke a certificate",
+      "options": [
+        { "name": "--cert-path", "description": "Path to certificate to revoke", "type": "file" },
+        { "name": "--reason", "description": "Reason for revocation", "type": "string" },
+        { "name": "--delete-after-revoke", "description": "Delete cert files after revoking" }
+      ],
+      "examples": ["certbot revoke --cert-path /etc/letsencrypt/live/example.com/cert.pem"]
+    },
+    {
+      "name": "delete",
+      "description": "Delete a certificate",
+      "options": [
+        { "name": "--cert-name", "description": "Name of certificate to delete", "type": "string" }
+      ],
+      "examples": ["certbot delete --cert-name example.com"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--domain", "short": "-d", "description": "Domain name(s) for the certificate", "type": "string" },
+    { "name": "--email", "description": "Email for registration and recovery", "type": "string" },
+    { "name": "--agree-tos", "description": "Agree to the ACME terms of service" },
+    { "name": "--non-interactive", "short": "-n", "description": "Run non-interactively" },
+    { "name": "--dry-run", "description": "Test without making permanent changes" },
+    { "name": "--staging", "description": "Use Let's Encrypt staging server" },
+    { "name": "--cert-name", "description": "Certificate name", "type": "string" },
+    { "name": "--expand", "description": "Expand existing certificate with additional domains" },
+    { "name": "--rsa-key-size", "description": "RSA key size", "type": "number", "default": "2048" },
+    { "name": "--key-type", "description": "Key type (rsa or ecdsa)", "type": "string", "default": "ecdsa" },
+    { "name": "--config-dir", "description": "Configuration directory", "type": "directory" },
+    { "name": "--logs-dir", "description": "Logs directory", "type": "directory" }
+  ],
+  "examples": [
+    "certbot --nginx -d example.com",
+    "certbot certonly --standalone -d example.com",
+    "certbot renew --dry-run",
+    "certbot certificates",
+    "certbot delete --cert-name example.com"
+  ],
+  "relatedCommands": ["openssl", "nginx", "apache", "caddy"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "managed_certificates",
+        "description": "All Let's Encrypt certificates managed by certbot",
+        "command": "certbot certificates 2>/dev/null | grep -E '(Certificate Name|Domains|Expiry Date|Certificate Path|Private Key Path)' | sed 's/^[[:space:]]*//'",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "certbot"
+      },
+      {
+        "name": "certificate_names",
+        "description": "Names of managed certificates",
+        "command": "certbot certificates 2>/dev/null | grep 'Certificate Name:' | awk '{print $3}'",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "certbot"
+      },
+      {
+        "name": "expiring_soon",
+        "description": "Certificates expiring within 30 days",
+        "command": "certbot certificates 2>/dev/null | grep -A3 'Certificate Name' | grep -B1 'INVALID\\|days)' || echo 'none'",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "certbot"
+      },
+      {
+        "name": "renewal_configs",
+        "description": "Renewal configuration files",
+        "command": "ls /etc/letsencrypt/renewal/ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "certbot"
+      },
+      {
+        "name": "live_certs_dir",
+        "description": "Certificate directories in /etc/letsencrypt/live/",
+        "command": "ls /etc/letsencrypt/live/ 2>/dev/null | grep -v README",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "certbot"
+      }
+    ]
+  }
+}

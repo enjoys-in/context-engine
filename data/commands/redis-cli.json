@@ -1,0 +1,148 @@
+{
+  "name": "redis-cli",
+  "description": "Redis command-line interface — interact with a Redis server",
+  "category": "database",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-h", "description": "Server hostname", "type": "string", "default": "127.0.0.1" },
+    { "name": "-p", "description": "Server port", "type": "number", "default": "6379" },
+    { "name": "-a", "description": "Password for AUTH", "type": "string" },
+    { "name": "--user", "description": "ACL username", "type": "string" },
+    { "name": "-n", "description": "Database number (0-15)", "type": "number", "default": "0" },
+    { "name": "-u", "description": "Server URI (redis://user:pass@host:port/db)", "type": "string" },
+    { "name": "--tls", "description": "Enable TLS/SSL" },
+    { "name": "--cert", "description": "Client certificate file", "type": "file" },
+    { "name": "--key", "description": "Client private key file", "type": "file" },
+    { "name": "--cacert", "description": "CA certificate file", "type": "file" },
+    { "name": "-r", "description": "Repeat command N times", "type": "number" },
+    { "name": "-i", "description": "Interval between commands (seconds)", "type": "number" },
+    { "name": "--stat", "description": "Print rolling stats about server" },
+    { "name": "--latency", "description": "Continuously sample latency" },
+    { "name": "--bigkeys", "description": "Sample keys looking for big keys" },
+    { "name": "--memkeys", "description": "Sample keys and report memory usage" },
+    { "name": "--hotkeys", "description": "Sample keys looking for hot keys (requires maxmemory-policy=allkeys-lfu)" },
+    { "name": "--scan", "description": "List all keys using SCAN" },
+    { "name": "--pattern", "description": "Pattern for --scan", "type": "string" },
+    { "name": "--pipe", "description": "Transfer raw Redis protocol from stdin to server" },
+    { "name": "--rdb", "description": "Dump RDB file from server", "type": "file" },
+    { "name": "--cluster", "description": "Enable cluster mode" },
+    { "name": "--raw", "description": "Use raw formatting for replies" },
+    { "name": "--no-auth-warning", "description": "Suppress auth password warning" },
+    { "name": "--csv", "description": "Output in CSV format" },
+    { "name": "--json", "description": "Output in JSON format" }
+  ],
+  "examples": [
+    "redis-cli",
+    "redis-cli -h myhost -p 6379",
+    "redis-cli -a mypassword",
+    "redis-cli -n 1",
+    "redis-cli PING",
+    "redis-cli SET mykey 'hello'",
+    "redis-cli GET mykey",
+    "redis-cli DEL mykey",
+    "redis-cli KEYS '*'",
+    "redis-cli --scan --pattern 'user:*'",
+    "redis-cli INFO server",
+    "redis-cli DBSIZE",
+    "redis-cli MONITOR",
+    "redis-cli --stat",
+    "redis-cli --bigkeys",
+    "redis-cli --latency",
+    "redis-cli FLUSHDB",
+    "redis-cli CONFIG GET maxmemory",
+    "redis-cli HGETALL myhash",
+    "redis-cli LPUSH mylist 'item1'",
+    "redis-cli SUBSCRIBE mychannel",
+    "redis-cli PUBLISH mychannel 'hello'",
+    "redis-cli MULTI",
+    "redis-cli --cluster info 127.0.0.1:6379",
+    "redis-cli -u redis://user:pass@host:6379/0"
+  ],
+  "relatedCommands": ["psql", "mysql", "mongosh", "memcached"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "server_info",
+        "description": "Redis server info summary",
+        "command": "redis-cli INFO server 2>/dev/null | grep -E '^(redis_version|os|tcp_port|uptime_in_days|connected_clients):'",
+        "parser": "keyvalue",
+        "cacheFor": 60,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "databases",
+        "description": "Databases with key counts",
+        "command": "redis-cli INFO keyspace 2>/dev/null | grep '^db'",
+        "parser": "keyvalue",
+        "cacheFor": 15,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "db_size",
+        "description": "Total number of keys in current database",
+        "command": "redis-cli DBSIZE 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "memory_usage",
+        "description": "Memory usage information",
+        "command": "redis-cli INFO memory 2>/dev/null | grep -E '^(used_memory_human|maxmemory_human|mem_fragmentation_ratio):'",
+        "parser": "keyvalue",
+        "cacheFor": 30,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "connected_clients",
+        "description": "Number of connected clients",
+        "command": "redis-cli INFO clients 2>/dev/null | grep '^connected_clients:'",
+        "parser": "keyvalue",
+        "cacheFor": 15,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "key_sample",
+        "description": "Sample of keys in the database (first 50)",
+        "command": "redis-cli --scan --count 50 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "slowlog",
+        "description": "Recent slow queries",
+        "command": "redis-cli SLOWLOG GET 5 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "cluster_info",
+        "description": "Cluster status (if running in cluster mode)",
+        "command": "redis-cli CLUSTER INFO 2>/dev/null | grep -E '^cluster_(enabled|state|known_nodes|size):'",
+        "parser": "keyvalue",
+        "cacheFor": 60,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "persistence",
+        "description": "RDB/AOF persistence status",
+        "command": "redis-cli INFO persistence 2>/dev/null | grep -E '^(rdb_last_save_time|aof_enabled|rdb_changes_since_last_save):'",
+        "parser": "keyvalue",
+        "cacheFor": 60,
+        "requiresCmd": "redis-cli"
+      },
+      {
+        "name": "replication",
+        "description": "Replication status",
+        "command": "redis-cli INFO replication 2>/dev/null | grep -E '^(role|connected_slaves|master_host|master_link_status):'",
+        "parser": "keyvalue",
+        "cacheFor": 30,
+        "requiresCmd": "redis-cli"
+      }
+    ]
+  }
+}

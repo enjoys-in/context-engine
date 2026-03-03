@@ -1,0 +1,147 @@
+{
+  "name": "httpd",
+  "description": "Apache HTTP Server — the world's most used web server (also invoked as apache2 on Debian/Ubuntu)",
+  "category": "web-server",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-t", "description": "Test configuration syntax" },
+    { "name": "-S", "description": "Show parsed vhost settings" },
+    { "name": "-M", "description": "List loaded modules" },
+    { "name": "-l", "description": "List compiled-in modules" },
+    { "name": "-v", "description": "Show version" },
+    { "name": "-V", "description": "Show version and build parameters" },
+    { "name": "-f", "description": "Specify an alternate config file", "type": "file" },
+    { "name": "-c", "description": "Execute directive before reading config", "type": "string" },
+    { "name": "-D", "description": "Define a parameter for <IfDefine>", "type": "string" },
+    { "name": "-k", "description": "Send signal: start, restart, graceful, graceful-stop, stop", "type": "string" },
+    { "name": "-e", "description": "Set startup log level (debug, info, notice, warn, error, crit)", "type": "string" },
+    { "name": "-X", "description": "Debug mode (single worker, no detach)" }
+  ],
+  "examples": [
+    "httpd -t",
+    "httpd -S",
+    "httpd -M",
+    "httpd -v",
+    "httpd -V",
+    "httpd -k restart",
+    "httpd -k graceful",
+    "httpd -k stop",
+    "apachectl configtest",
+    "apachectl graceful",
+    "apachectl restart",
+    "apachectl stop",
+    "apachectl start",
+    "sudo systemctl start httpd",
+    "sudo systemctl start apache2",
+    "sudo systemctl reload apache2",
+    "sudo a2ensite mysite.conf",
+    "sudo a2dissite default",
+    "sudo a2enmod rewrite",
+    "sudo a2enmod ssl",
+    "sudo a2enmod proxy",
+    "sudo a2dismod status"
+  ],
+  "relatedCommands": ["nginx", "caddy", "certbot", "systemctl", "openssl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "running_status",
+        "description": "Check if Apache is currently running",
+        "command": "(pgrep -x httpd || pgrep -x apache2) >/dev/null 2>&1 && echo 'running' || echo 'stopped'",
+        "parser": "text",
+        "cacheFor": 5,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "apache_version",
+        "description": "Installed Apache version",
+        "command": "httpd -v 2>/dev/null || apache2 -v 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "loaded_modules",
+        "description": "Currently loaded Apache modules",
+        "command": "httpd -M 2>/dev/null || apache2ctl -M 2>/dev/null | grep -v 'Loaded Modules'",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "vhost_config",
+        "description": "Parsed virtual host settings",
+        "command": "httpd -S 2>/dev/null || apache2ctl -S 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "config_test",
+        "description": "Validate current Apache configuration",
+        "command": "httpd -t 2>&1 || apachectl configtest 2>&1",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "enabled_sites",
+        "description": "Enabled site configurations (Debian/Ubuntu)",
+        "command": "ls /etc/apache2/sites-enabled/ 2>/dev/null || ls /etc/httpd/conf.d/*.conf 2>/dev/null | xargs -I{} basename {}",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "available_sites",
+        "description": "Available site configurations (Debian/Ubuntu)",
+        "command": "ls /etc/apache2/sites-available/ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "enabled_modules",
+        "description": "Enabled Apache modules (Debian/Ubuntu)",
+        "command": "ls /etc/apache2/mods-enabled/*.load 2>/dev/null | xargs -I{} basename {} .load | sort",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "server_names",
+        "description": "Configured ServerName directives",
+        "command": "grep -rh 'ServerName\\|ServerAlias' /etc/apache2/sites-enabled/ /etc/httpd/conf.d/ 2>/dev/null | awk '{print $2}' | sort -u",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "listen_ports",
+        "description": "Configured Listen ports",
+        "command": "grep -rh '^Listen' /etc/apache2/ports.conf /etc/httpd/conf/httpd.conf 2>/dev/null | awk '{print $2}' | sort -u",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "recent_errors",
+        "description": "Last 15 lines of Apache error log",
+        "command": "tail -15 /var/log/apache2/error.log 2>/dev/null || tail -15 /var/log/httpd/error_log 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "httpd"
+      },
+      {
+        "name": "document_roots",
+        "description": "Configured DocumentRoot directories",
+        "command": "grep -rh 'DocumentRoot' /etc/apache2/sites-enabled/ /etc/httpd/conf.d/ /etc/httpd/conf/httpd.conf 2>/dev/null | awk '{print $2}' | tr -d '\"' | sort -u",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "httpd"
+      }
+    ]
+  }
+}

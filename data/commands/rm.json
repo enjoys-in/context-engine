@@ -1,0 +1,79 @@
+{
+  "name": "rm",
+  "description": "Remove files or directories",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-r", "description": "Remove directories and their contents recursively" },
+    { "name": "-R", "description": "Remove directories recursively (same as -r)" },
+    { "name": "-f", "description": "Force removal without confirmation" },
+    { "name": "-i", "description": "Prompt before every removal" },
+    { "name": "-I", "description": "Prompt once before removing more than 3 files or recursively" },
+    { "name": "-v", "description": "Verbose — explain what is being done" },
+    { "name": "-d", "description": "Remove empty directories" },
+    { "name": "--no-preserve-root", "description": "Do not treat '/' specially (DANGEROUS)" },
+    { "name": "--preserve-root", "description": "Do not remove '/' (default)" },
+    { "name": "--one-file-system", "description": "Skip directories on different filesystems when recursive" },
+    { "name": "--interactive", "description": "Prompt according to WHEN (never, once, always)", "type": "string" }
+  ],
+  "examples": [
+    "rm file.txt",
+    "rm -f file.txt",
+    "rm -rf directory/",
+    "rm -i file.txt",
+    "rm -v *.log",
+    "rm -rf node_modules/",
+    "rm -I *.tmp",
+    "rm -d empty-dir/",
+    "rm -rv build/ dist/",
+    "find . -name '*.pyc' -exec rm {} +",
+    "rm -rf /tmp/my-temp-*"
+  ],
+  "relatedCommands": ["rmdir", "find", "shred", "unlink", "trash", "mv", "ls"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cwd_contents",
+        "description": "Files and directories in the current working directory",
+        "command": "ls -1A 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 3,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_path",
+        "description": "Current working directory path",
+        "command": "pwd",
+        "parser": "text",
+        "cacheFor": 3,
+        "requiresCmd": "rm"
+      },
+      {
+        "name": "large_directories",
+        "description": "Largest directories (potential cleanup targets)",
+        "command": "du -sh */ 2>/dev/null | sort -rh | head -10",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "du"
+      },
+      {
+        "name": "temp_files",
+        "description": "Temporary and cache files that could be cleaned up",
+        "command": "find . -maxdepth 2 \\( -name '*.tmp' -o -name '*.log' -o -name '*.pyc' -o -name '.DS_Store' -o -name 'Thumbs.db' -o -name '__pycache__' -o -name 'node_modules' \\) 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "find"
+      },
+      {
+        "name": "disk_usage",
+        "description": "Available disk space",
+        "command": "df -h . 2>/dev/null | tail -1",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "rm"
+      }
+    ]
+  }
+}

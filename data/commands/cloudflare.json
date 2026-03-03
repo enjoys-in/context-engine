@@ -1,0 +1,226 @@
+{
+  "name": "cloudflare",
+  "description": "Cloudflare CLI (Wrangler + flarectl) — manage DNS, Workers, Pages, tunnels, and more",
+  "category": "cloud",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "wrangler dev",
+      "description": "Start a local development server for Workers",
+      "options": [
+        { "name": "--port", "description": "Local port", "type": "number" },
+        { "name": "--local", "description": "Run with local runtime" },
+        { "name": "--remote", "description": "Run against remote Cloudflare infrastructure" },
+        { "name": "--env", "description": "Environment to use", "type": "string" },
+        { "name": "--test-scheduled", "description": "Test scheduled events" }
+      ],
+      "examples": ["npx wrangler dev", "npx wrangler dev --port 8787", "npx wrangler dev --local"]
+    },
+    {
+      "name": "wrangler deploy",
+      "description": "Deploy a Worker to Cloudflare",
+      "options": [
+        { "name": "--env", "description": "Environment to deploy to", "type": "string" },
+        { "name": "--name", "description": "Worker name", "type": "string" },
+        { "name": "--dry-run", "description": "Preview deploy without publishing" },
+        { "name": "--outdir", "description": "Output directory for bundle", "type": "directory" }
+      ],
+      "examples": ["npx wrangler deploy", "npx wrangler deploy --env production", "npx wrangler deploy --dry-run"]
+    },
+    {
+      "name": "wrangler init",
+      "description": "Initialize a new Worker project",
+      "examples": ["npx wrangler init my-worker", "npx wrangler init"]
+    },
+    {
+      "name": "wrangler login",
+      "description": "Authenticate with Cloudflare",
+      "examples": ["npx wrangler login", "npx wrangler whoami"]
+    },
+    {
+      "name": "wrangler tail",
+      "description": "Tail logs from a deployed Worker",
+      "options": [
+        { "name": "--format", "description": "Output format (json, pretty)", "type": "string" },
+        { "name": "--status", "description": "Filter by status (ok, error, canceled)", "type": "string" }
+      ],
+      "examples": ["npx wrangler tail my-worker", "npx wrangler tail my-worker --format json"]
+    },
+    {
+      "name": "wrangler secret",
+      "description": "Manage Worker secrets",
+      "examples": ["npx wrangler secret put MY_SECRET", "npx wrangler secret list", "npx wrangler secret delete MY_SECRET"]
+    },
+    {
+      "name": "wrangler kv",
+      "description": "Manage Workers KV namespaces and key-value pairs",
+      "examples": [
+        "npx wrangler kv namespace list",
+        "npx wrangler kv namespace create MY_KV",
+        "npx wrangler kv key put --namespace-id=xxx mykey 'myvalue'",
+        "npx wrangler kv key get --namespace-id=xxx mykey",
+        "npx wrangler kv key list --namespace-id=xxx",
+        "npx wrangler kv key delete --namespace-id=xxx mykey",
+        "npx wrangler kv bulk put --namespace-id=xxx data.json"
+      ]
+    },
+    {
+      "name": "wrangler r2",
+      "description": "Manage R2 storage buckets and objects",
+      "examples": [
+        "npx wrangler r2 bucket list",
+        "npx wrangler r2 bucket create my-bucket",
+        "npx wrangler r2 object get my-bucket/file.txt",
+        "npx wrangler r2 object put my-bucket/file.txt --file=file.txt"
+      ]
+    },
+    {
+      "name": "wrangler d1",
+      "description": "Manage D1 databases",
+      "examples": [
+        "npx wrangler d1 list",
+        "npx wrangler d1 create my-db",
+        "npx wrangler d1 execute my-db --command='SELECT * FROM users'",
+        "npx wrangler d1 execute my-db --file=schema.sql",
+        "npx wrangler d1 migrations apply my-db"
+      ]
+    },
+    {
+      "name": "wrangler pages",
+      "description": "Manage Cloudflare Pages projects",
+      "examples": [
+        "npx wrangler pages project list",
+        "npx wrangler pages project create my-site",
+        "npx wrangler pages deploy ./dist",
+        "npx wrangler pages deployment list --project-name my-site"
+      ]
+    },
+    {
+      "name": "wrangler tunnel",
+      "description": "Manage Cloudflare Tunnels (formerly Argo Tunnels)",
+      "examples": [
+        "cloudflared tunnel list",
+        "cloudflared tunnel create my-tunnel",
+        "cloudflared tunnel route dns my-tunnel myapp.example.com",
+        "cloudflared tunnel run my-tunnel",
+        "cloudflared tunnel delete my-tunnel",
+        "cloudflared tunnel info my-tunnel"
+      ]
+    },
+    {
+      "name": "dns",
+      "description": "Manage DNS records via flarectl or API",
+      "examples": [
+        "flarectl dns list --zone example.com",
+        "flarectl dns create --zone example.com --type A --name app --content 192.168.1.1",
+        "flarectl dns update --zone example.com --id RECORD_ID --content 10.0.0.1",
+        "flarectl dns delete --zone example.com --id RECORD_ID",
+        "curl -X GET 'https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records' -H 'Authorization: Bearer TOKEN'"
+      ]
+    },
+    {
+      "name": "wrangler generate",
+      "description": "Generate a new Worker from a template",
+      "examples": ["npx wrangler generate my-worker https://github.com/cloudflare/worker-template"]
+    },
+    {
+      "name": "wrangler queues",
+      "description": "Manage Cloudflare Queues",
+      "examples": [
+        "npx wrangler queues list",
+        "npx wrangler queues create my-queue",
+        "npx wrangler queues delete my-queue"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--config", "short": "-c", "description": "Path to wrangler.toml config file", "type": "file" },
+    { "name": "--env", "short": "-e", "description": "Environment to use", "type": "string" }
+  ],
+  "examples": [
+    "npx wrangler dev",
+    "npx wrangler deploy",
+    "npx wrangler login",
+    "npx wrangler whoami",
+    "npx wrangler pages deploy ./dist",
+    "cloudflared tunnel run my-tunnel"
+  ],
+  "relatedCommands": ["vercel", "netlify", "aws", "nginx", "caddy"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "whoami",
+        "description": "Currently authenticated Cloudflare account",
+        "command": "npx wrangler whoami 2>/dev/null | grep -E '(account|email)' | head -5",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "workers",
+        "description": "Deployed Workers in the account",
+        "command": "npx wrangler deployments list 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "kv_namespaces",
+        "description": "KV namespaces in the account",
+        "command": "npx wrangler kv namespace list 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "r2_buckets",
+        "description": "R2 storage buckets",
+        "command": "npx wrangler r2 bucket list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "d1_databases",
+        "description": "D1 databases",
+        "command": "npx wrangler d1 list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "pages_projects",
+        "description": "Pages projects",
+        "command": "npx wrangler pages project list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "tunnels",
+        "description": "Active Cloudflare tunnels",
+        "command": "cloudflared tunnel list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "cloudflared"
+      },
+      {
+        "name": "wrangler_config",
+        "description": "Check for wrangler.toml in current project",
+        "command": "test -f wrangler.toml && echo 'found' || test -f wrangler.json && echo 'found' || echo 'none'",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "queues",
+        "description": "Cloudflare Queues",
+        "command": "npx wrangler queues list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      }
+    ]
+  }
+}

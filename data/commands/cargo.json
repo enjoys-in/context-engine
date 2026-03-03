@@ -1,0 +1,1048 @@
+{
+  "name": "cargo",
+  "description": "Rust package manager and build system",
+  "category": "rust-ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "new",
+      "description": "Create a new Cargo package",
+      "args": [{ "name": "<path>", "type": "string", "required": true, "description": "Directory path for the new package" }],
+      "options": [
+        { "name": "--bin", "description": "Create a binary (application) package (default)" },
+        { "name": "--lib", "description": "Create a library package" },
+        { "name": "--edition", "description": "Rust edition to use (2015, 2018, 2021, 2024)", "type": "string" },
+        { "name": "--name", "description": "Set the package name (defaults to directory name)", "type": "string" },
+        { "name": "--vcs", "description": "Version control system to initialize (git, hg, pijul, fossil, none)", "type": "string" },
+        { "name": "--registry", "description": "Registry to use", "type": "string" }
+      ],
+      "examples": [
+        "cargo new myproject",
+        "cargo new --lib mylib",
+        "cargo new --edition 2021 myapp",
+        "cargo new --name my-crate my_crate_dir",
+        "cargo new --vcs none myproject"
+      ]
+    },
+    {
+      "name": "init",
+      "description": "Create a new Cargo package in an existing directory",
+      "args": [{ "name": "<path>", "type": "string", "required": false, "description": "Directory path (defaults to current directory)" }],
+      "options": [
+        { "name": "--bin", "description": "Create a binary (application) package (default)" },
+        { "name": "--lib", "description": "Create a library package" },
+        { "name": "--edition", "description": "Rust edition to use", "type": "string" },
+        { "name": "--name", "description": "Set the package name", "type": "string" },
+        { "name": "--vcs", "description": "Version control system (git, hg, pijul, fossil, none)", "type": "string" }
+      ],
+      "examples": [
+        "cargo init",
+        "cargo init --lib",
+        "cargo init --edition 2021",
+        "cargo init ."
+      ]
+    },
+    {
+      "name": "build",
+      "description": "Compile the current package and all dependencies",
+      "args": [{ "name": "<spec>", "type": "string", "required": false, "description": "Package specification to build" }],
+      "options": [
+        { "name": "--release", "short": "-r", "description": "Build with optimizations (release profile)" },
+        { "name": "--profile", "description": "Build with the specified profile", "type": "string" },
+        { "name": "--target", "description": "Build for the target triple", "type": "string" },
+        { "name": "--target-dir", "description": "Directory for all generated artifacts", "type": "path" },
+        { "name": "--features", "short": "-F", "description": "Space or comma-separated list of features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--lib", "description": "Build only the library" },
+        { "name": "--bin", "description": "Build only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Build all binaries" },
+        { "name": "--example", "description": "Build only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Build all examples" },
+        { "name": "--test", "description": "Build only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Build all test targets" },
+        { "name": "--bench", "description": "Build only the specified benchmark", "type": "string" },
+        { "name": "--benches", "description": "Build all benchmarks" },
+        { "name": "--all-targets", "description": "Build all targets (lib, bins, tests, benches, examples)" },
+        { "name": "--workspace", "description": "Build all members of the workspace" },
+        { "name": "--package", "short": "-p", "description": "Build only the specified packages", "type": "string" },
+        { "name": "--exclude", "description": "Exclude packages from the build", "type": "string" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output (-vv for very verbose)" },
+        { "name": "--message-format", "description": "Error format (human, json, short)", "type": "string" },
+        { "name": "--timings", "description": "Output build timings information" },
+        { "name": "--future-incompat-report", "description": "Output a future incompatibility report" }
+      ],
+      "examples": [
+        "cargo build",
+        "cargo build --release",
+        "cargo build --target x86_64-unknown-linux-musl",
+        "cargo build --features \"serde,tokio\"",
+        "cargo build --all-features --all-targets",
+        "cargo build --no-default-features",
+        "cargo build --bin mybin",
+        "cargo build --example demo",
+        "cargo build -p my-crate --release",
+        "cargo build --workspace",
+        "cargo build --profile bench",
+        "cargo build -j 4",
+        "cargo build --timings"
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Build and execute the main binary of the local package",
+      "args": [{ "name": "<args>", "type": "string", "required": false, "description": "Arguments to pass to the binary (after --)" }],
+      "options": [
+        { "name": "--release", "short": "-r", "description": "Run in release mode with optimizations" },
+        { "name": "--profile", "description": "Run with the specified profile", "type": "string" },
+        { "name": "--bin", "description": "Run the specified binary", "type": "string" },
+        { "name": "--example", "description": "Run the specified example", "type": "string" },
+        { "name": "--package", "short": "-p", "description": "Run the specified package's binary", "type": "string" },
+        { "name": "--target", "description": "Run for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--message-format", "description": "Error format", "type": "string" }
+      ],
+      "examples": [
+        "cargo run",
+        "cargo run --release",
+        "cargo run -- arg1 arg2",
+        "cargo run --bin server",
+        "cargo run --example demo",
+        "cargo run -p my-crate",
+        "cargo run --features \"cli,logging\" -- --verbose"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Execute all unit tests, integration tests, and doc tests",
+      "args": [
+        { "name": "<testname>", "type": "string", "required": false, "description": "Filter tests by name pattern" },
+        { "name": "<args>", "type": "string", "required": false, "description": "Arguments to the test binary (after --)" }
+      ],
+      "options": [
+        { "name": "--release", "short": "-r", "description": "Test with release optimizations" },
+        { "name": "--profile", "description": "Test with the specified profile", "type": "string" },
+        { "name": "--lib", "description": "Test only the library unit tests" },
+        { "name": "--bin", "description": "Test only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Test all binaries" },
+        { "name": "--test", "description": "Test only the specified integration test", "type": "string" },
+        { "name": "--tests", "description": "Test all targets with test = true" },
+        { "name": "--example", "description": "Test only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Test all examples" },
+        { "name": "--doc", "description": "Only run doc tests" },
+        { "name": "--bench", "description": "Test only the specified benchmark", "type": "string" },
+        { "name": "--benches", "description": "Test all benchmarks" },
+        { "name": "--all-targets", "description": "Test all targets" },
+        { "name": "--no-run", "description": "Compile but do not run tests" },
+        { "name": "--no-fail-fast", "description": "Run all tests regardless of failure" },
+        { "name": "--workspace", "description": "Test all members of the workspace" },
+        { "name": "--package", "short": "-p", "description": "Test only the specified packages", "type": "string" },
+        { "name": "--exclude", "description": "Exclude packages from testing", "type": "string" },
+        { "name": "--target", "description": "Test for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--message-format", "description": "Error format", "type": "string" },
+        { "name": "--future-incompat-report", "description": "Output a future incompatibility report" }
+      ],
+      "examples": [
+        "cargo test",
+        "cargo test -- --nocapture",
+        "cargo test test_my_function",
+        "cargo test --lib",
+        "cargo test --doc",
+        "cargo test --test integration_tests",
+        "cargo test --release",
+        "cargo test --workspace",
+        "cargo test -p my-crate",
+        "cargo test -- --test-threads=1",
+        "cargo test -- --ignored",
+        "cargo test -- --show-output",
+        "cargo test --no-fail-fast",
+        "cargo test --features \"test-utils\" -- --exact my_test"
+      ]
+    },
+    {
+      "name": "bench",
+      "description": "Execute all benchmarks of a local package",
+      "args": [
+        { "name": "<benchname>", "type": "string", "required": false, "description": "Filter benchmarks by name" },
+        { "name": "<args>", "type": "string", "required": false, "description": "Arguments to the benchmark binary (after --)" }
+      ],
+      "options": [
+        { "name": "--bench", "description": "Only the specified benchmark target", "type": "string" },
+        { "name": "--benches", "description": "Benchmark all bench targets" },
+        { "name": "--lib", "description": "Benchmark only the library" },
+        { "name": "--bin", "description": "Benchmark only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Benchmark all binaries" },
+        { "name": "--test", "description": "Benchmark only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Benchmark all test targets" },
+        { "name": "--all-targets", "description": "Benchmark all targets" },
+        { "name": "--no-run", "description": "Compile but do not run benchmarks" },
+        { "name": "--workspace", "description": "Benchmark all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Benchmark only the specified packages", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--target", "description": "Benchmark for the target triple", "type": "string" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo bench",
+        "cargo bench my_benchmark",
+        "cargo bench --bench bench_main",
+        "cargo bench --workspace",
+        "cargo bench -p my-crate"
+      ]
+    },
+    {
+      "name": "check",
+      "description": "Analyze the current package and report errors without producing output binary",
+      "args": [{ "name": "<spec>", "type": "string", "required": false, "description": "Package specification" }],
+      "options": [
+        { "name": "--release", "short": "-r", "description": "Check in release mode" },
+        { "name": "--profile", "description": "Check with the specified profile", "type": "string" },
+        { "name": "--lib", "description": "Check only the library" },
+        { "name": "--bin", "description": "Check only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Check all binaries" },
+        { "name": "--test", "description": "Check only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Check all test targets" },
+        { "name": "--example", "description": "Check only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Check all examples" },
+        { "name": "--bench", "description": "Check only the specified benchmark", "type": "string" },
+        { "name": "--benches", "description": "Check all benchmarks" },
+        { "name": "--all-targets", "description": "Check all targets" },
+        { "name": "--workspace", "description": "Check all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Check only the specified packages", "type": "string" },
+        { "name": "--exclude", "description": "Exclude packages", "type": "string" },
+        { "name": "--target", "description": "Check for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--message-format", "description": "Error format", "type": "string" },
+        { "name": "--future-incompat-report", "description": "Output a future incompatibility report" }
+      ],
+      "examples": [
+        "cargo check",
+        "cargo check --all-targets",
+        "cargo check --workspace",
+        "cargo check -p my-crate",
+        "cargo check --message-format=json",
+        "cargo check --target wasm32-unknown-unknown"
+      ]
+    },
+    {
+      "name": "clean",
+      "description": "Remove artifacts that cargo has generated in the past",
+      "options": [
+        { "name": "--release", "description": "Remove only release artifacts" },
+        { "name": "--profile", "description": "Remove artifacts for the specified profile", "type": "string" },
+        { "name": "--target", "description": "Remove artifacts for the target triple", "type": "string" },
+        { "name": "--target-dir", "description": "Directory for generated artifacts", "type": "path" },
+        { "name": "--package", "short": "-p", "description": "Clean only the specified packages", "type": "string" },
+        { "name": "--doc", "description": "Remove only doc artifacts" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo clean",
+        "cargo clean --release",
+        "cargo clean -p my-crate",
+        "cargo clean --doc",
+        "cargo clean --target x86_64-unknown-linux-musl"
+      ]
+    },
+    {
+      "name": "doc",
+      "description": "Build this package's and its dependencies' documentation",
+      "options": [
+        { "name": "--open", "description": "Open the docs in a browser after building" },
+        { "name": "--no-deps", "description": "Do not build documentation for dependencies" },
+        { "name": "--document-private-items", "description": "Document private items" },
+        { "name": "--lib", "description": "Document only the library" },
+        { "name": "--bin", "description": "Document only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Document all binaries" },
+        { "name": "--workspace", "description": "Document all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Document only the specified packages", "type": "string" },
+        { "name": "--exclude", "description": "Exclude packages", "type": "string" },
+        { "name": "--release", "short": "-r", "description": "Document in release mode" },
+        { "name": "--target", "description": "Document for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo doc",
+        "cargo doc --open",
+        "cargo doc --no-deps",
+        "cargo doc --document-private-items",
+        "cargo doc --workspace --no-deps",
+        "cargo doc -p my-crate --open"
+      ]
+    },
+    {
+      "name": "publish",
+      "description": "Upload a package to the registry (crates.io by default)",
+      "options": [
+        { "name": "--dry-run", "description": "Perform all checks without uploading" },
+        { "name": "--token", "description": "API token to use for authentication", "type": "string" },
+        { "name": "--registry", "description": "Registry to publish to", "type": "string" },
+        { "name": "--allow-dirty", "description": "Allow publishing with uncommitted changes" },
+        { "name": "--no-verify", "description": "Do not verify the contents by building them" },
+        { "name": "--package", "short": "-p", "description": "Package to publish", "type": "string" },
+        { "name": "--target", "description": "Build for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo publish",
+        "cargo publish --dry-run",
+        "cargo publish --allow-dirty",
+        "cargo publish --token $CARGO_REGISTRY_TOKEN",
+        "cargo publish --registry my-registry",
+        "cargo publish -p my-crate"
+      ]
+    },
+    {
+      "name": "install",
+      "description": "Build and install a Rust binary crate",
+      "args": [{ "name": "<crate>", "type": "string", "required": false, "description": "Crate to install (omit for current directory)" }],
+      "options": [
+        { "name": "--version", "description": "Specify a version to install", "type": "string" },
+        { "name": "--git", "description": "Install from a git URL", "type": "string" },
+        { "name": "--branch", "description": "Branch to use when installing from git", "type": "string" },
+        { "name": "--tag", "description": "Tag to use when installing from git", "type": "string" },
+        { "name": "--rev", "description": "Specific commit to use when installing from git", "type": "string" },
+        { "name": "--path", "description": "Install from a local filesystem path", "type": "path" },
+        { "name": "--root", "description": "Installation directory", "type": "path" },
+        { "name": "--bin", "description": "Install only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Install all binaries" },
+        { "name": "--example", "description": "Install only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Install all examples" },
+        { "name": "--force", "short": "-f", "description": "Force overwriting existing crates or binaries" },
+        { "name": "--no-track", "description": "Do not save tracking information" },
+        { "name": "--locked", "description": "Require Cargo.lock is up to date" },
+        { "name": "--frozen", "description": "Require Cargo.lock and cache are up to date" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--target", "description": "Build for the target triple", "type": "string" },
+        { "name": "--profile", "description": "Build with the specified profile", "type": "string" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--list", "description": "List all installed packages and their versions" }
+      ],
+      "examples": [
+        "cargo install ripgrep",
+        "cargo install cargo-edit",
+        "cargo install cargo-watch",
+        "cargo install --version 0.9.0 tokio-console",
+        "cargo install --git https://github.com/user/repo",
+        "cargo install --path .",
+        "cargo install --force cargo-audit",
+        "cargo install --locked my-tool",
+        "cargo install --list"
+      ]
+    },
+    {
+      "name": "uninstall",
+      "description": "Remove a Rust binary installed with cargo install",
+      "args": [{ "name": "<spec>", "type": "string", "required": true, "description": "Package specification to uninstall" }],
+      "options": [
+        { "name": "--bin", "description": "Only uninstall the specified binary", "type": "string" },
+        { "name": "--root", "description": "Directory to uninstall from", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo uninstall ripgrep",
+        "cargo uninstall cargo-edit",
+        "cargo uninstall --bin mybin my-crate"
+      ]
+    },
+    {
+      "name": "search",
+      "description": "Search packages in crates.io",
+      "args": [{ "name": "<query>", "type": "string", "required": true, "description": "Search query string" }],
+      "options": [
+        { "name": "--limit", "description": "Maximum number of results to display", "type": "number" },
+        { "name": "--registry", "description": "Registry to search", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo search serde",
+        "cargo search async runtime",
+        "cargo search http client --limit 20",
+        "cargo search --registry my-registry my-crate"
+      ]
+    },
+    {
+      "name": "update",
+      "description": "Update dependencies as recorded in the local lock file",
+      "options": [
+        { "name": "--package", "short": "-p", "description": "Update only the specified packages", "type": "string" },
+        { "name": "--aggressive", "description": "Force updating all dependencies of the specified packages" },
+        { "name": "--precise", "description": "Update a single dependency to exactly the specified version", "type": "string" },
+        { "name": "--workspace", "description": "Only update workspace members" },
+        { "name": "--dry-run", "description": "Show what would be updated without actually updating" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo update",
+        "cargo update -p serde",
+        "cargo update -p serde --precise 1.0.150",
+        "cargo update --workspace",
+        "cargo update --dry-run",
+        "cargo update -p tokio --aggressive"
+      ]
+    },
+    {
+      "name": "add",
+      "description": "Add dependencies to a Cargo.toml manifest file",
+      "args": [{ "name": "<dep>", "type": "string", "required": true, "description": "Dependency specification (name, name@version, or URL)" }],
+      "options": [
+        { "name": "--dev", "short": "-D", "description": "Add as a development dependency" },
+        { "name": "--build", "short": "-B", "description": "Add as a build dependency" },
+        { "name": "--rename", "description": "Rename the dependency", "type": "string" },
+        { "name": "--optional", "description": "Mark the dependency as optional" },
+        { "name": "--no-optional", "description": "Mark the dependency as required" },
+        { "name": "--features", "short": "-F", "description": "Space or comma-separated features to activate", "type": "string" },
+        { "name": "--no-default-features", "description": "Disable the default features" },
+        { "name": "--default-features", "description": "Re-enable the default features" },
+        { "name": "--path", "description": "Filesystem path to local crate", "type": "path" },
+        { "name": "--git", "description": "Git URL of the crate", "type": "string" },
+        { "name": "--branch", "description": "Git branch", "type": "string" },
+        { "name": "--tag", "description": "Git tag", "type": "string" },
+        { "name": "--rev", "description": "Git commit hash", "type": "string" },
+        { "name": "--registry", "description": "Registry to use", "type": "string" },
+        { "name": "--package", "short": "-p", "description": "Package to modify", "type": "string" },
+        { "name": "--dry-run", "description": "Show what would be added without actually modifying Cargo.toml" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo add serde",
+        "cargo add serde@1.0",
+        "cargo add serde -F derive",
+        "cargo add tokio --features full",
+        "cargo add -D pretty_assertions",
+        "cargo add -B cc",
+        "cargo add --optional wasm-bindgen",
+        "cargo add --rename my_serde serde",
+        "cargo add --path ../my-local-crate",
+        "cargo add --git https://github.com/serde-rs/serde --branch master",
+        "cargo add serde serde_json tokio",
+        "cargo add --dry-run some-crate"
+      ]
+    },
+    {
+      "name": "remove",
+      "description": "Remove dependencies from a Cargo.toml manifest file",
+      "args": [{ "name": "<dep>", "type": "string", "required": true, "description": "Dependencies to remove" }],
+      "options": [
+        { "name": "--dev", "short": "-D", "description": "Remove from dev-dependencies" },
+        { "name": "--build", "short": "-B", "description": "Remove from build-dependencies" },
+        { "name": "--package", "short": "-p", "description": "Package to remove dependency from", "type": "string" },
+        { "name": "--dry-run", "description": "Show what would be removed without modifying Cargo.toml" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo remove serde",
+        "cargo remove -D pretty_assertions",
+        "cargo remove -B cc",
+        "cargo remove serde serde_json",
+        "cargo remove -p my-crate tokio"
+      ]
+    },
+    {
+      "name": "tree",
+      "description": "Display a tree visualization of the dependency graph",
+      "options": [
+        { "name": "--depth", "description": "Maximum depth of the dependency tree", "type": "number" },
+        { "name": "--invert", "short": "-i", "description": "Invert the tree direction (show what depends on a package)", "type": "string" },
+        { "name": "--no-dedupe", "description": "Do not de-duplicate repeated dependencies" },
+        { "name": "--duplicates", "short": "-d", "description": "Show packages with multiple versions only" },
+        { "name": "--edges", "short": "-e", "description": "Edge types to display (normal, dev, build, all, features, no-dev, no-build, no-normal)", "type": "string" },
+        { "name": "--target", "description": "Filter by target triple", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Format string for each package line", "type": "string" },
+        { "name": "--prefix", "description": "Tree prefix (indent, depth, none)", "type": "string" },
+        { "name": "--workspace", "description": "Display all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Display for the specified packages", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo tree",
+        "cargo tree --depth 1",
+        "cargo tree -i serde",
+        "cargo tree -d",
+        "cargo tree -e features",
+        "cargo tree -e no-dev",
+        "cargo tree --format \"{p} {f}\"",
+        "cargo tree -p my-crate"
+      ]
+    },
+    {
+      "name": "metadata",
+      "description": "Output resolved dependencies of a package in machine-readable JSON format",
+      "options": [
+        { "name": "--format-version", "description": "Format version (currently only 1)", "type": "number" },
+        { "name": "--no-deps", "description": "Output only workspace members without fetching dependencies" },
+        { "name": "--filter-platform", "description": "Only include dependencies for the given target", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo metadata",
+        "cargo metadata --format-version 1",
+        "cargo metadata --no-deps",
+        "cargo metadata --format-version 1 --no-deps",
+        "cargo metadata --filter-platform x86_64-unknown-linux-gnu"
+      ]
+    },
+    {
+      "name": "fix",
+      "description": "Automatically fix lint warnings reported by rustc and clippy",
+      "options": [
+        { "name": "--edition", "description": "Fix code to be compatible with the next edition" },
+        { "name": "--edition-idioms", "description": "Fix code to use the current edition idioms" },
+        { "name": "--broken-code", "description": "Fix code even if it will not compile after fixes" },
+        { "name": "--allow-dirty", "description": "Allow fixing with uncommitted changes" },
+        { "name": "--allow-staged", "description": "Allow fixing with staged changes" },
+        { "name": "--allow-no-vcs", "description": "Allow fixing without version control" },
+        { "name": "--lib", "description": "Fix only the library" },
+        { "name": "--bin", "description": "Fix only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Fix all binaries" },
+        { "name": "--test", "description": "Fix only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Fix all test targets" },
+        { "name": "--example", "description": "Fix only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Fix all examples" },
+        { "name": "--all-targets", "description": "Fix all targets" },
+        { "name": "--workspace", "description": "Fix all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Fix only the specified packages", "type": "string" },
+        { "name": "--target", "description": "Fix for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo fix",
+        "cargo fix --edition",
+        "cargo fix --edition-idioms",
+        "cargo fix --allow-dirty",
+        "cargo fix --allow-staged",
+        "cargo fix --broken-code --allow-dirty",
+        "cargo fix --workspace",
+        "cargo fix --all-targets"
+      ]
+    },
+    {
+      "name": "clippy",
+      "description": "Run Clippy lints on the current package",
+      "options": [
+        { "name": "--fix", "description": "Automatically apply Clippy suggestions" },
+        { "name": "--allow-dirty", "description": "Allow fixing with uncommitted changes (used with --fix)" },
+        { "name": "--allow-staged", "description": "Allow fixing with staged changes (used with --fix)" },
+        { "name": "--no-deps", "description": "Do not lint dependencies" },
+        { "name": "--lib", "description": "Lint only the library" },
+        { "name": "--bin", "description": "Lint only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Lint all binaries" },
+        { "name": "--test", "description": "Lint only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Lint all test targets" },
+        { "name": "--example", "description": "Lint only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Lint all examples" },
+        { "name": "--bench", "description": "Lint only the specified benchmark", "type": "string" },
+        { "name": "--benches", "description": "Lint all benchmarks" },
+        { "name": "--all-targets", "description": "Lint all targets" },
+        { "name": "--workspace", "description": "Lint all workspace members" },
+        { "name": "--package", "short": "-p", "description": "Lint only the specified packages", "type": "string" },
+        { "name": "--exclude", "description": "Exclude packages", "type": "string" },
+        { "name": "--release", "short": "-r", "description": "Lint in release mode" },
+        { "name": "--profile", "description": "Lint with the specified profile", "type": "string" },
+        { "name": "--target", "description": "Lint for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--message-format", "description": "Error format", "type": "string" }
+      ],
+      "examples": [
+        "cargo clippy",
+        "cargo clippy -- -D warnings",
+        "cargo clippy -- -W clippy::pedantic",
+        "cargo clippy -- -A clippy::needless_return",
+        "cargo clippy --fix",
+        "cargo clippy --fix --allow-dirty",
+        "cargo clippy --all-targets --all-features",
+        "cargo clippy --workspace",
+        "cargo clippy -p my-crate",
+        "cargo clippy --message-format=short"
+      ]
+    },
+    {
+      "name": "fmt",
+      "description": "Format all Rust files of the current crate using rustfmt",
+      "args": [{ "name": "<files>", "type": "file", "required": false, "description": "Specific files to format" }],
+      "options": [
+        { "name": "--check", "description": "Check formatting without modifying files (exit with error if unformatted)" },
+        { "name": "--all", "description": "Format all packages in the workspace" },
+        { "name": "--package", "short": "-p", "description": "Format only the specified packages", "type": "string" },
+        { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--message-format", "description": "Format message output (human, short)", "type": "string" }
+      ],
+      "examples": [
+        "cargo fmt",
+        "cargo fmt --check",
+        "cargo fmt --all",
+        "cargo fmt -p my-crate",
+        "cargo fmt -- --config max_width=120",
+        "cargo fmt -- --edition 2021"
+      ]
+    },
+    {
+      "name": "audit",
+      "description": "Audit Cargo.lock for crates with security vulnerabilities (requires cargo-audit)",
+      "options": [
+        { "name": "--db", "description": "Path to the advisory database", "type": "path" },
+        { "name": "--deny", "description": "Exit with an error if any vulnerabilities are found matching category", "type": "string" },
+        { "name": "--ignore", "description": "Advisory ID to ignore", "type": "string" },
+        { "name": "--json", "description": "Output results as JSON" },
+        { "name": "--stale", "description": "Allow stale advisory database" },
+        { "name": "--no-fetch", "description": "Do not fetch the advisory database" },
+        { "name": "--target-arch", "description": "Filter for target architecture", "type": "string" },
+        { "name": "--target-os", "description": "Filter for target operating system", "type": "string" },
+        { "name": "--file", "short": "-f", "description": "Path to Cargo.lock file", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo audit",
+        "cargo audit --json",
+        "cargo audit --ignore RUSTSEC-2020-0000",
+        "cargo audit --deny warnings",
+        "cargo audit --no-fetch",
+        "cargo audit -f /path/to/Cargo.lock"
+      ]
+    },
+    {
+      "name": "outdated",
+      "description": "Display when newer versions of dependencies are available (requires cargo-outdated)",
+      "options": [
+        { "name": "--root-deps-only", "short": "-R", "description": "Only check root dependencies" },
+        { "name": "--workspace", "short": "-w", "description": "Check all workspace members" },
+        { "name": "--depth", "short": "-d", "description": "How deep in the dependency chain to search", "type": "number" },
+        { "name": "--format", "description": "Output format (list, json)", "type": "string" },
+        { "name": "--exclude", "short": "-x", "description": "Exclude specific dependencies", "type": "string" },
+        { "name": "--ignore", "description": "Ignore a specific dependency", "type": "string" },
+        { "name": "--aggressive", "description": "Ignore the SemVer compatibility and check for the latest version" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo outdated",
+        "cargo outdated -R",
+        "cargo outdated --depth 1",
+        "cargo outdated --format json",
+        "cargo outdated --workspace",
+        "cargo outdated --exclude serde"
+      ]
+    },
+    {
+      "name": "vendor",
+      "description": "Vendor all dependencies locally into a directory",
+      "args": [{ "name": "<path>", "type": "path", "required": false, "description": "Destination directory (defaults to 'vendor')" }],
+      "options": [
+        { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+        { "name": "--no-delete", "description": "Do not delete older crates in the vendor directory" },
+        { "name": "--respect-source-config", "description": "Respect source replacement configuration" },
+        { "name": "--versioned-dirs", "description": "Use versioned subdirectories for crates" },
+        { "name": "--sync", "short": "-s", "description": "Additional Cargo.toml to sync", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo vendor",
+        "cargo vendor third-party",
+        "cargo vendor --versioned-dirs",
+        "cargo vendor -s ../other_project/Cargo.toml"
+      ]
+    },
+    {
+      "name": "generate-lockfile",
+      "description": "Generate the lockfile without building anything",
+      "options": [
+        { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo generate-lockfile"
+      ]
+    },
+    {
+      "name": "package",
+      "description": "Assemble the local package into a distributable tarball",
+      "options": [
+        { "name": "--list", "short": "-l", "description": "Print files included in the package" },
+        { "name": "--no-verify", "description": "Do not verify the contents by building them" },
+        { "name": "--no-metadata", "description": "Ignore warnings about missing metadata" },
+        { "name": "--allow-dirty", "description": "Allow packaging with uncommitted changes" },
+        { "name": "--target", "description": "Package for the target triple", "type": "string" },
+        { "name": "--target-dir", "description": "Directory for generated artifacts", "type": "path" },
+        { "name": "--package", "short": "-p", "description": "Package to assemble", "type": "string" },
+        { "name": "--workspace", "description": "Package all workspace members" },
+        { "name": "--exclude", "description": "Exclude packages", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo package",
+        "cargo package --list",
+        "cargo package --allow-dirty",
+        "cargo package --no-verify",
+        "cargo package -p my-crate"
+      ]
+    },
+    {
+      "name": "login",
+      "description": "Save an API token to the local credential store",
+      "args": [{ "name": "<token>", "type": "string", "required": false, "description": "API token (reads from stdin if not provided)" }],
+      "options": [
+        { "name": "--registry", "description": "Registry to authenticate with", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo login",
+        "cargo login mytoken123",
+        "cargo login --registry my-registry"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Remove an API token from the local credential store",
+      "options": [
+        { "name": "--registry", "description": "Registry to remove credentials for", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo logout",
+        "cargo logout --registry my-registry"
+      ]
+    },
+    {
+      "name": "owner",
+      "description": "Manage the owners of a crate on the registry",
+      "args": [{ "name": "<crate>", "type": "string", "required": false, "description": "Crate name" }],
+      "options": [
+        { "name": "--add", "short": "-a", "description": "Name of a user or team to invite as an owner", "type": "string" },
+        { "name": "--remove", "short": "-r", "description": "Name of a user or team to remove as an owner", "type": "string" },
+        { "name": "--list", "short": "-l", "description": "List owners of a crate" },
+        { "name": "--token", "description": "API token to use", "type": "string" },
+        { "name": "--registry", "description": "Registry to use", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo owner --list my-crate",
+        "cargo owner --add github:my-org:my-team my-crate",
+        "cargo owner --remove user123 my-crate"
+      ]
+    },
+    {
+      "name": "yank",
+      "description": "Remove a pushed crate from the index (does not delete the crate)",
+      "args": [{ "name": "<crate>", "type": "string", "required": false, "description": "Crate name" }],
+      "options": [
+        { "name": "--version", "description": "Version to yank", "type": "string" },
+        { "name": "--undo", "description": "Undo a yank, putting the version back into the index" },
+        { "name": "--token", "description": "API token to use", "type": "string" },
+        { "name": "--registry", "description": "Registry to use", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo yank --version 1.0.0 my-crate",
+        "cargo yank --version 1.0.0 --undo my-crate"
+      ]
+    },
+    {
+      "name": "fetch",
+      "description": "Fetch dependencies of a package from the network",
+      "options": [
+        { "name": "--target", "description": "Fetch dependencies for the target triple", "type": "string" },
+        { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo fetch",
+        "cargo fetch --target x86_64-unknown-linux-gnu"
+      ]
+    },
+    {
+      "name": "locate-project",
+      "description": "Print the path to the Cargo.toml manifest file",
+      "options": [
+        { "name": "--workspace", "description": "Locate the root workspace Cargo.toml" },
+        { "name": "--message-format", "description": "Output format (json, plain)", "type": "string" },
+        { "name": "--manifest-path", "description": "Path to a Cargo.toml", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo locate-project",
+        "cargo locate-project --workspace",
+        "cargo locate-project --message-format plain"
+      ]
+    },
+    {
+      "name": "verify-project",
+      "description": "Check the correctness of a Cargo.toml manifest",
+      "options": [
+        { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo verify-project"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show version information for cargo",
+      "options": [
+        { "name": "--verbose", "short": "-v", "description": "Show extra version information" }
+      ],
+      "examples": [
+        "cargo version",
+        "cargo version --verbose"
+      ]
+    },
+    {
+      "name": "rustc",
+      "description": "Compile the current package and pass extra flags to the compiler",
+      "args": [{ "name": "<args>", "type": "string", "required": false, "description": "Extra flags passed to rustc (after --)" }],
+      "options": [
+        { "name": "--release", "short": "-r", "description": "Build in release mode" },
+        { "name": "--profile", "description": "Build with the specified profile", "type": "string" },
+        { "name": "--lib", "description": "Build only the library" },
+        { "name": "--bin", "description": "Build only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Build all binaries" },
+        { "name": "--test", "description": "Build only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Build all test targets" },
+        { "name": "--example", "description": "Build only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Build all examples" },
+        { "name": "--bench", "description": "Build only the specified benchmark", "type": "string" },
+        { "name": "--benches", "description": "Build all benchmarks" },
+        { "name": "--all-targets", "description": "Build all targets" },
+        { "name": "--target", "description": "Build for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--package", "short": "-p", "description": "Package to build", "type": "string" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" },
+        { "name": "--print", "description": "Output compiler information without compiling", "type": "string" }
+      ],
+      "examples": [
+        "cargo rustc -- -D warnings",
+        "cargo rustc --lib -- --emit=llvm-ir",
+        "cargo rustc --release -- -C target-cpu=native",
+        "cargo rustc -- --print cfg",
+        "cargo rustc --print native-static-libs",
+        "cargo rustc -- -C link-arg=-s"
+      ]
+    },
+    {
+      "name": "rustdoc",
+      "description": "Build a package's documentation, passing extra flags to rustdoc",
+      "args": [{ "name": "<args>", "type": "string", "required": false, "description": "Extra flags passed to rustdoc (after --)" }],
+      "options": [
+        { "name": "--open", "description": "Open documentation in a browser" },
+        { "name": "--lib", "description": "Document only the library" },
+        { "name": "--bin", "description": "Document only the specified binary", "type": "string" },
+        { "name": "--bins", "description": "Document all binaries" },
+        { "name": "--test", "description": "Document only the specified test target", "type": "string" },
+        { "name": "--tests", "description": "Document all test targets" },
+        { "name": "--example", "description": "Document only the specified example", "type": "string" },
+        { "name": "--examples", "description": "Document all examples" },
+        { "name": "--release", "short": "-r", "description": "Document in release mode" },
+        { "name": "--target", "description": "Document for the target triple", "type": "string" },
+        { "name": "--features", "short": "-F", "description": "Features to activate", "type": "string" },
+        { "name": "--all-features", "description": "Activate all available features" },
+        { "name": "--no-default-features", "description": "Do not activate the default feature" },
+        { "name": "--package", "short": "-p", "description": "Package to document", "type": "string" },
+        { "name": "--jobs", "short": "-j", "description": "Number of parallel jobs", "type": "number" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo rustdoc -- --cfg docsrs",
+        "cargo rustdoc --open",
+        "cargo rustdoc -- --extend-css extra.css",
+        "cargo rustdoc --lib -- --document-private-items"
+      ]
+    },
+    {
+      "name": "report",
+      "description": "Generate and display various reports",
+      "args": [{ "name": "<type>", "type": "string", "required": true, "description": "Report type (future-incompatibilities)" }],
+      "options": [
+        { "name": "--id", "description": "Report ID to display", "type": "number" },
+        { "name": "--package", "short": "-p", "description": "Package to report on", "type": "string" },
+        { "name": "--verbose", "short": "-v", "description": "Use verbose output" }
+      ],
+      "examples": [
+        "cargo report future-incompatibilities",
+        "cargo report future-incompatibilities --id 1"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "short": "-V", "description": "Show version information" },
+    { "name": "--verbose", "short": "-v", "description": "Use verbose output (-vv for very verbose)" },
+    { "name": "--quiet", "short": "-q", "description": "Suppress cargo output" },
+    { "name": "--color", "description": "Coloring: auto, always, never", "type": "string" },
+    { "name": "--frozen", "description": "Require Cargo.lock and cache are up to date" },
+    { "name": "--locked", "description": "Require Cargo.lock is up to date" },
+    { "name": "--offline", "description": "Run without accessing the network" },
+    { "name": "--config", "description": "Override a Cargo configuration value", "type": "string" },
+    { "name": "-Z", "description": "Unstable (nightly-only) flags to Cargo", "type": "string" },
+    { "name": "--manifest-path", "description": "Path to Cargo.toml", "type": "path" },
+    { "name": "--explain", "description": "Run rustc --explain CODE to show detailed error explanation", "type": "string" }
+  ],
+  "examples": [
+    "cargo new myapp && cd myapp && cargo run",
+    "cargo build --release",
+    "cargo test && cargo clippy && cargo fmt --check",
+    "cargo add serde -F derive && cargo add serde_json",
+    "cargo build --target wasm32-unknown-unknown --release",
+    "cargo install cargo-watch && cargo watch -x run",
+    "cargo tree -d",
+    "cargo update && cargo audit",
+    "cargo doc --open --no-deps",
+    "cargo publish --dry-run"
+  ],
+  "relatedCommands": ["rustup", "rustc", "wasm-pack", "cargo-watch", "cross"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cargo_toml",
+        "description": "Read the Cargo.toml manifest for package metadata, dependencies, and features",
+        "command": "cat Cargo.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 10
+      },
+      {
+        "name": "workspace_members",
+        "description": "List all workspace member packages and their paths",
+        "command": "cargo metadata --format-version 1 --no-deps 2>/dev/null | node -e \"const d=require('fs').readFileSync(0,'utf8');try{const m=JSON.parse(d);m.workspace_members.forEach(w=>console.log(w))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "installed_binaries",
+        "description": "List all globally installed cargo binary crates",
+        "command": "cargo install --list 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "targets",
+        "description": "List all build targets (bins, libs, tests, examples, benches) in the current package",
+        "command": "cargo metadata --format-version 1 --no-deps 2>/dev/null | node -e \"const d=require('fs').readFileSync(0,'utf8');try{const m=JSON.parse(d);m.packages.forEach(p=>p.targets.forEach(t=>console.log(t.kind.join(',')+':'+t.name)))}catch{}\"",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "features",
+        "description": "Extract feature definitions from Cargo.toml",
+        "command": "grep -A 50 '\\[features\\]' Cargo.toml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 15
+      },
+      {
+        "name": "dependencies",
+        "description": "List direct dependencies and their versions using cargo tree",
+        "command": "cargo tree --depth 1 --no-dedupe 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "rust_version",
+        "description": "Detect the active Rust compiler version",
+        "command": "rustc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "rustc"
+      },
+      {
+        "name": "cargo_version",
+        "description": "Detect the cargo version",
+        "command": "cargo --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "toolchain",
+        "description": "Detect the active Rust toolchain (stable, nightly, etc.)",
+        "command": "rustup show active-toolchain 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "available_targets",
+        "description": "List installed compilation targets (e.g., wasm32, musl)",
+        "command": "rustup target list --installed 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "test_targets",
+        "description": "Discover compiled test executables for the current package",
+        "command": "cargo test --no-run --message-format=json 2>/dev/null | grep '\"executable\"'",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "clippy_warnings",
+        "description": "Get a summary of current Clippy lint warnings",
+        "command": "cargo clippy --message-format=short 2>&1 | head -20",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "cargo"
+      },
+      {
+        "name": "outdated_deps",
+        "description": "List dependencies with newer versions available (requires cargo-outdated)",
+        "command": "cargo outdated -R 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "cargo"
+      }
+    ]
+  }
+}

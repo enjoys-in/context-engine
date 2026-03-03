@@ -1,0 +1,1277 @@
+{
+  "name": "kubectl",
+  "description": "Kubernetes command-line tool for managing clusters",
+  "category": "container-orchestration",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "get",
+      "description": "Display one or many resources",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type (pods, services, deployments, nodes, etc.)" },
+        { "name": "<name>", "type": "string", "required": false, "description": "Name of specific resource" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "List resources across all namespaces" },
+        { "name": "--output", "short": "-o", "description": "Output format (json|yaml|wide|name|jsonpath=...|custom-columns=...)", "type": "string" },
+        { "name": "--selector", "short": "-l", "description": "Label selector (e.g. app=nginx)", "type": "string" },
+        { "name": "--field-selector", "description": "Field selector (e.g. status.phase=Running)", "type": "string" },
+        { "name": "--watch", "short": "-w", "description": "Watch for changes after listing" },
+        { "name": "--show-labels", "description": "Show all labels as the last column" },
+        { "name": "--sort-by", "description": "Sort list by JSONPath expression", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" },
+        { "name": "--chunk-size", "description": "Return large lists in chunks", "type": "number" },
+        { "name": "--ignore-not-found", "description": "Treat 'resource not found' as successful retrieval" },
+        { "name": "--raw", "description": "Raw URI to request from the server", "type": "string" }
+      ],
+      "examples": [
+        "kubectl get pods",
+        "kubectl get pods -n kube-system",
+        "kubectl get pods -A",
+        "kubectl get pods -o wide",
+        "kubectl get pods -o yaml",
+        "kubectl get pods -l app=nginx",
+        "kubectl get pods --field-selector status.phase=Running",
+        "kubectl get pods --sort-by=.metadata.creationTimestamp",
+        "kubectl get pods -o jsonpath='{.items[*].metadata.name}'",
+        "kubectl get svc,deployments -n my-namespace",
+        "kubectl get nodes -o custom-columns='NAME:.metadata.name,STATUS:.status.conditions[-1].type'",
+        "kubectl get pod my-pod -o json",
+        "kubectl get all -n default",
+        "kubectl get events --sort-by=.lastTimestamp",
+        "kubectl get pods -w"
+      ]
+    },
+    {
+      "name": "apply",
+      "description": "Apply a configuration to a resource by file or stdin",
+      "args": [],
+      "options": [
+        { "name": "--filename", "short": "-f", "description": "Filename, directory, or URL to apply", "type": "path" },
+        { "name": "--kustomize", "short": "-k", "description": "Process kustomization directory", "type": "path" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--recursive", "short": "-R", "description": "Process the directory recursively" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter on", "type": "string" },
+        { "name": "--prune", "description": "Automatically delete resources not in the applied set" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--force", "description": "Delete and re-create resource if needed" },
+        { "name": "--server-side", "description": "Use server-side apply" },
+        { "name": "--field-manager", "description": "Name of the manager for server-side apply", "type": "string" },
+        { "name": "--force-conflicts", "description": "Force apply even with field conflicts (server-side)" },
+        { "name": "--validate", "description": "Validation mode (strict|warn|ignore)", "type": "string" },
+        { "name": "--record", "description": "Record current kubectl command in resource annotation" },
+        { "name": "--overwrite", "description": "Overwrite existing annotations/labels" }
+      ],
+      "examples": [
+        "kubectl apply -f deployment.yaml",
+        "kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/deployment.yaml",
+        "kubectl apply -f ./manifests/",
+        "kubectl apply -f deployment.yaml -n staging",
+        "kubectl apply -k ./overlays/production",
+        "kubectl apply -f - <<EOF\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: my-config\ndata:\n  key: value\nEOF",
+        "kubectl apply -f deployment.yaml --dry-run=client",
+        "kubectl apply -f deployment.yaml --server-side",
+        "kubectl apply -f deployment.yaml --server-side --force-conflicts",
+        "kubectl apply -R -f ./manifests/"
+      ]
+    },
+    {
+      "name": "delete",
+      "description": "Delete resources by filenames, stdin, resources and names, or by resources and label selector",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": false, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": false, "description": "Resource name(s)" }
+      ],
+      "options": [
+        { "name": "--filename", "short": "-f", "description": "Filename, directory, or URL for resource manifests", "type": "path" },
+        { "name": "--kustomize", "short": "-k", "description": "Process kustomization directory", "type": "path" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all", "description": "Delete all resources of the specified type" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Delete resources in all namespaces" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter on", "type": "string" },
+        { "name": "--grace-period", "description": "Seconds to wait before force deletion (-1 for default)", "type": "number" },
+        { "name": "--force", "description": "Immediately remove resources from API and bypass graceful deletion" },
+        { "name": "--cascade", "description": "Cascade strategy (background|orphan|foreground)", "type": "string" },
+        { "name": "--now", "description": "Signal immediate shutdown (grace-period=1)" },
+        { "name": "--wait", "description": "Wait for resources to be fully deleted (default true)" },
+        { "name": "--ignore-not-found", "description": "Treat 'resource not found' errors as successful" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--timeout", "description": "Time to wait before giving up on deletion", "type": "string" }
+      ],
+      "examples": [
+        "kubectl delete pod my-pod",
+        "kubectl delete pod my-pod -n staging",
+        "kubectl delete -f deployment.yaml",
+        "kubectl delete pods -l app=nginx",
+        "kubectl delete pods --all -n test",
+        "kubectl delete pod my-pod --grace-period=0 --force",
+        "kubectl delete deployment,svc my-app",
+        "kubectl delete namespace my-namespace",
+        "kubectl delete -k ./overlays/staging",
+        "kubectl delete pod my-pod --dry-run=client"
+      ]
+    },
+    {
+      "name": "describe",
+      "description": "Show details of a specific resource or group of resources",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": false, "description": "Resource name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Describe in all namespaces" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--show-events", "description": "Show events associated with the resource (default true)" },
+        { "name": "--chunk-size", "description": "Return large lists in chunks", "type": "number" }
+      ],
+      "examples": [
+        "kubectl describe pod my-pod",
+        "kubectl describe pod my-pod -n production",
+        "kubectl describe node worker-1",
+        "kubectl describe svc my-service",
+        "kubectl describe deployment my-app",
+        "kubectl describe ingress my-ingress",
+        "kubectl describe pvc my-volume",
+        "kubectl describe pods -l app=nginx"
+      ]
+    },
+    {
+      "name": "logs",
+      "description": "Print the logs for a container in a pod",
+      "args": [
+        { "name": "<pod>", "type": "string", "required": true, "description": "Pod name or resource/name (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--container", "short": "-c", "description": "Container name (for multi-container pods)", "type": "string" },
+        { "name": "--follow", "short": "-f", "description": "Stream logs in real time" },
+        { "name": "--previous", "short": "-p", "description": "Print logs from the previous instance of the container" },
+        { "name": "--since", "description": "Show logs newer than a relative duration (e.g. 5m, 1h)", "type": "string" },
+        { "name": "--since-time", "description": "Show logs after a specific RFC3339 timestamp", "type": "string" },
+        { "name": "--timestamps", "description": "Include timestamps on each line" },
+        { "name": "--tail", "description": "Number of lines to show from the end", "type": "number" },
+        { "name": "--all-containers", "description": "Get logs from all containers in the pod" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter pods", "type": "string" },
+        { "name": "--max-log-requests", "description": "Max number of concurrent log requests (when using -l)", "type": "number" },
+        { "name": "--limit-bytes", "description": "Maximum bytes of logs to return", "type": "number" },
+        { "name": "--prefix", "description": "Prefix each line with pod name and container name" },
+        { "name": "--ignore-errors", "description": "If watching/following, allow errors to be ignored" }
+      ],
+      "examples": [
+        "kubectl logs my-pod",
+        "kubectl logs my-pod -n production",
+        "kubectl logs my-pod -c sidecar",
+        "kubectl logs my-pod -f",
+        "kubectl logs my-pod --previous",
+        "kubectl logs my-pod --since=1h",
+        "kubectl logs my-pod --tail=100",
+        "kubectl logs my-pod --timestamps",
+        "kubectl logs my-pod --all-containers",
+        "kubectl logs -l app=nginx --prefix",
+        "kubectl logs deployment/my-app",
+        "kubectl logs job/my-job",
+        "kubectl logs -l app=nginx --since=30m --tail=50"
+      ]
+    },
+    {
+      "name": "exec",
+      "description": "Execute a command in a container",
+      "args": [
+        { "name": "<pod>", "type": "string", "required": true, "description": "Pod name" },
+        { "name": "<command>", "type": "string", "required": true, "description": "Command to execute" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--container", "short": "-c", "description": "Container name", "type": "string" },
+        { "name": "--stdin", "short": "-i", "description": "Pass stdin to the container" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a TTY" },
+        { "name": "--quiet", "short": "-q", "description": "Only print output from the remote session" }
+      ],
+      "examples": [
+        "kubectl exec my-pod -- ls /app",
+        "kubectl exec -it my-pod -- /bin/bash",
+        "kubectl exec -it my-pod -- /bin/sh",
+        "kubectl exec my-pod -c sidecar -- cat /var/log/app.log",
+        "kubectl exec -it my-pod -n production -- /bin/bash",
+        "kubectl exec my-pod -- env",
+        "kubectl exec my-pod -- wget -qO- http://localhost:8080/health",
+        "kubectl exec my-pod -- printenv | grep DATABASE"
+      ]
+    },
+    {
+      "name": "port-forward",
+      "description": "Forward one or more local ports to a pod",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Pod or resource (pod/name, deployment/name, svc/name)" },
+        { "name": "<ports>", "type": "string", "required": true, "description": "Port pairs (local:remote)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--address", "description": "Addresses to listen on (comma separated)", "type": "string" },
+        { "name": "--pod-running-timeout", "description": "Timeout for waiting for at least one pod to be running", "type": "string" }
+      ],
+      "examples": [
+        "kubectl port-forward my-pod 8080:80",
+        "kubectl port-forward my-pod 8080:80 -n production",
+        "kubectl port-forward svc/my-service 8080:80",
+        "kubectl port-forward deployment/my-app 3000:3000",
+        "kubectl port-forward my-pod 8080:80 9090:9090",
+        "kubectl port-forward --address 0.0.0.0 my-pod 8080:80",
+        "kubectl port-forward pod/my-pod 5432:5432"
+      ]
+    },
+    {
+      "name": "create deployment",
+      "description": "Create a deployment with the specified name",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Deployment name" }
+      ],
+      "options": [
+        { "name": "--image", "description": "Container image to use", "type": "string" },
+        { "name": "--replicas", "short": "-r", "description": "Number of replicas", "type": "number" },
+        { "name": "--port", "description": "Container port to expose", "type": "number" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format (json|yaml|name)", "type": "string" },
+        { "name": "--save-config", "description": "Save the configuration of the resource in annotation" }
+      ],
+      "examples": [
+        "kubectl create deployment nginx --image=nginx",
+        "kubectl create deployment my-app --image=myapp:latest --replicas=3",
+        "kubectl create deployment my-app --image=myapp:v1 --port=8080",
+        "kubectl create deployment my-app --image=myapp --dry-run=client -o yaml",
+        "kubectl create deployment my-app --image=myapp -n staging"
+      ]
+    },
+    {
+      "name": "create service clusterip",
+      "description": "Create a ClusterIP service",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Service name" }
+      ],
+      "options": [
+        { "name": "--tcp", "description": "Port pairs (port:targetPort)", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--clusterip", "description": "Assign a static ClusterIP or set to 'None'", "type": "string" }
+      ],
+      "examples": [
+        "kubectl create service clusterip my-svc --tcp=80:8080",
+        "kubectl create service clusterip my-svc --tcp=80:8080 --dry-run=client -o yaml",
+        "kubectl create service clusterip my-svc --clusterip=None --tcp=80:8080"
+      ]
+    },
+    {
+      "name": "create service nodeport",
+      "description": "Create a NodePort service",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Service name" }
+      ],
+      "options": [
+        { "name": "--tcp", "description": "Port pairs (port:targetPort)", "type": "string" },
+        { "name": "--node-port", "description": "Port on each node (30000-32767)", "type": "number" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" }
+      ],
+      "examples": [
+        "kubectl create service nodeport my-svc --tcp=80:8080",
+        "kubectl create service nodeport my-svc --tcp=80:8080 --node-port=30080"
+      ]
+    },
+    {
+      "name": "create service loadbalancer",
+      "description": "Create a LoadBalancer service",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Service name" }
+      ],
+      "options": [
+        { "name": "--tcp", "description": "Port pairs (port:targetPort)", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" }
+      ],
+      "examples": [
+        "kubectl create service loadbalancer my-svc --tcp=80:8080",
+        "kubectl create service loadbalancer my-svc --tcp=443:8443 --dry-run=client -o yaml"
+      ]
+    },
+    {
+      "name": "create namespace",
+      "description": "Create a namespace with the specified name",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Namespace name" }
+      ],
+      "options": [
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--save-config", "description": "Save the configuration in annotation" }
+      ],
+      "examples": [
+        "kubectl create namespace staging",
+        "kubectl create namespace production",
+        "kubectl create ns my-namespace --dry-run=client -o yaml"
+      ]
+    },
+    {
+      "name": "create configmap",
+      "description": "Create a configmap from literal values, files, or directories",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "ConfigMap name" }
+      ],
+      "options": [
+        { "name": "--from-literal", "description": "Key-value pair (key=value)", "type": "string" },
+        { "name": "--from-file", "description": "File or directory to populate configmap from", "type": "path" },
+        { "name": "--from-env-file", "description": "Env file to populate configmap from", "type": "path" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--append-hash", "description": "Append a hash to the configmap name" }
+      ],
+      "examples": [
+        "kubectl create configmap my-config --from-literal=key1=value1 --from-literal=key2=value2",
+        "kubectl create configmap my-config --from-file=config.properties",
+        "kubectl create configmap my-config --from-file=./configs/",
+        "kubectl create configmap my-config --from-env-file=.env",
+        "kubectl create configmap my-config --from-literal=DB_HOST=db.example.com -n production",
+        "kubectl create configmap my-config --from-file=key=path/to/file --dry-run=client -o yaml"
+      ]
+    },
+    {
+      "name": "create secret generic",
+      "description": "Create a secret from literal values, files, or directories",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Secret name" }
+      ],
+      "options": [
+        { "name": "--from-literal", "description": "Key-value pair (key=value)", "type": "string" },
+        { "name": "--from-file", "description": "File to populate secret from", "type": "path" },
+        { "name": "--from-env-file", "description": "Env file to populate secret from", "type": "path" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--type", "description": "Secret type (Opaque|kubernetes.io/tls|etc.)", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--append-hash", "description": "Append a hash to the secret name" }
+      ],
+      "examples": [
+        "kubectl create secret generic my-secret --from-literal=username=admin --from-literal=password=secret123",
+        "kubectl create secret generic my-secret --from-file=ssh-privatekey=~/.ssh/id_rsa",
+        "kubectl create secret generic my-secret --from-env-file=.env",
+        "kubectl create secret generic my-secret --from-literal=password=s3cr3t -n production",
+        "kubectl create secret generic db-creds --from-literal=DB_PASSWORD=pass --dry-run=client -o yaml"
+      ]
+    },
+    {
+      "name": "create secret tls",
+      "description": "Create a TLS secret from a certificate and key pair",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Secret name" }
+      ],
+      "options": [
+        { "name": "--cert", "description": "Path to TLS certificate file", "type": "path" },
+        { "name": "--key", "description": "Path to TLS private key file", "type": "path" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" }
+      ],
+      "examples": [
+        "kubectl create secret tls my-tls --cert=tls.crt --key=tls.key",
+        "kubectl create secret tls my-tls --cert=cert.pem --key=key.pem -n production"
+      ]
+    },
+    {
+      "name": "edit",
+      "description": "Edit a resource on the server using the default editor",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": true, "description": "Resource name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format for the saved resource", "type": "string" },
+        { "name": "--save-config", "description": "Save the configuration in annotation" },
+        { "name": "--validate", "description": "Validation mode (strict|warn|ignore)", "type": "string" },
+        { "name": "--windows-line-endings", "description": "Use Windows line endings" },
+        { "name": "--field-manager", "description": "Name of the field manager used for server-side apply", "type": "string" },
+        { "name": "--subresource", "description": "Subresource to edit (e.g. status)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl edit deployment my-app",
+        "kubectl edit svc my-service -n production",
+        "kubectl edit configmap my-config",
+        "kubectl edit pod my-pod",
+        "KUBE_EDITOR=nano kubectl edit deployment my-app",
+        "kubectl edit deployment my-app -o json"
+      ]
+    },
+    {
+      "name": "scale",
+      "description": "Set a new size for a deployment, replica set, or stateful set",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource to scale (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--replicas", "description": "Target number of replicas", "type": "number" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--current-replicas", "description": "Precondition for expected current replica count", "type": "number" },
+        { "name": "--resource-version", "description": "Precondition for expected resource version", "type": "string" },
+        { "name": "--timeout", "description": "Timeout for waiting for the scaling to complete", "type": "string" },
+        { "name": "--all", "description": "Select all resources of the specified type" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl scale deployment my-app --replicas=5",
+        "kubectl scale deployment my-app --replicas=3 -n production",
+        "kubectl scale --replicas=0 deployment/my-app",
+        "kubectl scale deployment my-app --current-replicas=3 --replicas=5",
+        "kubectl scale statefulset my-db --replicas=3",
+        "kubectl scale --replicas=2 -f deployment.yaml",
+        "kubectl scale deployment -l app=web --replicas=2"
+      ]
+    },
+    {
+      "name": "rollout status",
+      "description": "Show the status of a rollout",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--watch", "short": "-w", "description": "Watch the rollout status until done (default true)" },
+        { "name": "--revision", "description": "Pin to a specific revision for showing status", "type": "number" },
+        { "name": "--timeout", "description": "Timeout for watch", "type": "string" }
+      ],
+      "examples": [
+        "kubectl rollout status deployment/my-app",
+        "kubectl rollout status deployment/my-app -n production",
+        "kubectl rollout status deployment/my-app --timeout=5m",
+        "kubectl rollout status daemonset/my-ds"
+      ]
+    },
+    {
+      "name": "rollout history",
+      "description": "View rollout history of a resource",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--revision", "description": "See details of a specific revision", "type": "number" }
+      ],
+      "examples": [
+        "kubectl rollout history deployment/my-app",
+        "kubectl rollout history deployment/my-app --revision=3",
+        "kubectl rollout history deployment/my-app -n production"
+      ]
+    },
+    {
+      "name": "rollout undo",
+      "description": "Undo a previous rollout",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--to-revision", "description": "Revision number to rollback to (0 = previous)", "type": "number" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl rollout undo deployment/my-app",
+        "kubectl rollout undo deployment/my-app --to-revision=2",
+        "kubectl rollout undo deployment/my-app -n production",
+        "kubectl rollout undo daemonset/my-ds"
+      ]
+    },
+    {
+      "name": "rollout restart",
+      "description": "Restart a resource (triggers a rolling restart)",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--field-manager", "description": "Name of the field manager", "type": "string" }
+      ],
+      "examples": [
+        "kubectl rollout restart deployment/my-app",
+        "kubectl rollout restart deployment/my-app -n production",
+        "kubectl rollout restart daemonset/my-ds",
+        "kubectl rollout restart deployment -l app=web"
+      ]
+    },
+    {
+      "name": "expose",
+      "description": "Expose a resource as a new Kubernetes service",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource to expose (e.g. deployment/my-app)" }
+      ],
+      "options": [
+        { "name": "--port", "description": "Port the service should listen on", "type": "number" },
+        { "name": "--target-port", "description": "Port on the container to route to", "type": "string" },
+        { "name": "--protocol", "description": "Protocol (TCP|UDP|SCTP)", "type": "string" },
+        { "name": "--type", "description": "Service type (ClusterIP|NodePort|LoadBalancer|ExternalName)", "type": "string" },
+        { "name": "--name", "description": "Name for the new service", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--selector", "description": "Label selector to identify pods", "type": "string" },
+        { "name": "--external-ip", "description": "External IP address to set for the service", "type": "string" },
+        { "name": "--cluster-ip", "description": "ClusterIP to assign ('' for auto, 'None' for headless)", "type": "string" },
+        { "name": "--session-affinity", "description": "Session affinity (None|ClientIP)", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" }
+      ],
+      "examples": [
+        "kubectl expose deployment my-app --port=80 --target-port=8080",
+        "kubectl expose deployment my-app --type=LoadBalancer --port=80",
+        "kubectl expose deployment my-app --type=NodePort --port=80 --target-port=8080",
+        "kubectl expose pod my-pod --port=80 --name=my-service",
+        "kubectl expose deployment my-app --port=80 --dry-run=client -o yaml"
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Create and run a particular image in a pod",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Name for the pod" }
+      ],
+      "options": [
+        { "name": "--image", "description": "Container image to run", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--port", "description": "Container port to expose", "type": "number" },
+        { "name": "--env", "description": "Environment variables (key=value)", "type": "string" },
+        { "name": "--labels", "short": "-l", "description": "Labels to apply (key=value pairs)", "type": "string" },
+        { "name": "--command", "description": "Use command mode (pass command and args after --)" },
+        { "name": "--stdin", "short": "-i", "description": "Keep stdin open" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a TTY" },
+        { "name": "--rm", "description": "Delete pod after it exits (with --attach or --stdin)" },
+        { "name": "--attach", "description": "Wait for the pod to start and attach to it" },
+        { "name": "--restart", "description": "Restart policy (Always|OnFailure|Never)", "type": "string" },
+        { "name": "--serviceaccount", "description": "Service account name", "type": "string" },
+        { "name": "--overrides", "description": "JSON override for the generated object", "type": "string" },
+        { "name": "--image-pull-policy", "description": "Image pull policy (Always|IfNotPresent|Never)", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--requests", "description": "Resource requests (cpu=100m,memory=256Mi)", "type": "string" },
+        { "name": "--limits", "description": "Resource limits (cpu=200m,memory=512Mi)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl run nginx --image=nginx",
+        "kubectl run my-shell --image=busybox -it --rm -- /bin/sh",
+        "kubectl run curl-test --image=curlimages/curl -it --rm -- curl http://my-service",
+        "kubectl run my-app --image=myapp:v1 --port=8080 --env=ENV=production",
+        "kubectl run debug --image=alpine -it --rm -- sh",
+        "kubectl run my-pod --image=nginx --dry-run=client -o yaml",
+        "kubectl run my-pod --image=nginx --restart=Never",
+        "kubectl run load-gen --image=busybox --restart=Never -- /bin/sh -c 'while true; do wget -qO- http://my-svc; done'"
+      ]
+    },
+    {
+      "name": "attach",
+      "description": "Attach to a process that is already running inside an existing container",
+      "args": [
+        { "name": "<pod>", "type": "string", "required": true, "description": "Pod name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--container", "short": "-c", "description": "Container name", "type": "string" },
+        { "name": "--stdin", "short": "-i", "description": "Pass stdin to the container" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a TTY" },
+        { "name": "--quiet", "short": "-q", "description": "Only print output from the remote session" }
+      ],
+      "examples": [
+        "kubectl attach my-pod -it",
+        "kubectl attach my-pod -c my-container -it",
+        "kubectl attach my-pod -n production"
+      ]
+    },
+    {
+      "name": "cp",
+      "description": "Copy files and directories to and from containers",
+      "args": [
+        { "name": "<src>", "type": "string", "required": true, "description": "Source (local path or pod:path)" },
+        { "name": "<dest>", "type": "string", "required": true, "description": "Destination (local path or pod:path)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--container", "short": "-c", "description": "Container name", "type": "string" },
+        { "name": "--no-preserve", "description": "Do not preserve ownership and permissions" },
+        { "name": "--retries", "description": "Number of retries on network errors", "type": "number" }
+      ],
+      "examples": [
+        "kubectl cp ./local-file.txt my-pod:/tmp/remote-file.txt",
+        "kubectl cp my-pod:/var/log/app.log ./app.log",
+        "kubectl cp my-pod:/data ./local-data/ -n production",
+        "kubectl cp ./config.yaml my-pod:/etc/app/config.yaml -c app-container",
+        "kubectl cp my-namespace/my-pod:/tmp/data ./data"
+      ]
+    },
+    {
+      "name": "top nodes",
+      "description": "Display resource (CPU/memory) usage of nodes",
+      "args": [
+        { "name": "<name>", "type": "string", "required": false, "description": "Node name" }
+      ],
+      "options": [
+        { "name": "--selector", "short": "-l", "description": "Label selector", "type": "string" },
+        { "name": "--sort-by", "description": "Sort by field (cpu|memory)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" },
+        { "name": "--show-capacity", "description": "Show node resource capacity in addition to usage" },
+        { "name": "--use-protocol-buffers", "description": "Use protocol buffers to access Metrics API" }
+      ],
+      "examples": [
+        "kubectl top nodes",
+        "kubectl top node worker-1",
+        "kubectl top nodes --sort-by=cpu",
+        "kubectl top nodes --sort-by=memory",
+        "kubectl top nodes -l role=worker"
+      ]
+    },
+    {
+      "name": "top pods",
+      "description": "Display resource (CPU/memory) usage of pods",
+      "args": [
+        { "name": "<name>", "type": "string", "required": false, "description": "Pod name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Show pods across all namespaces" },
+        { "name": "--containers", "description": "Show metrics per container" },
+        { "name": "--selector", "short": "-l", "description": "Label selector", "type": "string" },
+        { "name": "--sort-by", "description": "Sort by field (cpu|memory)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" },
+        { "name": "--sum", "description": "Print sum of resource usage" },
+        { "name": "--use-protocol-buffers", "description": "Use protocol buffers to access Metrics API" }
+      ],
+      "examples": [
+        "kubectl top pods",
+        "kubectl top pods -A",
+        "kubectl top pods -n kube-system",
+        "kubectl top pods --sort-by=cpu",
+        "kubectl top pods --sort-by=memory",
+        "kubectl top pods --containers",
+        "kubectl top pod my-pod -n production",
+        "kubectl top pods -l app=web --sum"
+      ]
+    },
+    {
+      "name": "config view",
+      "description": "Display merged kubeconfig settings or a specified kubeconfig file",
+      "args": [],
+      "options": [
+        { "name": "--minify", "description": "Remove info not used by current-context" },
+        { "name": "--raw", "description": "Display raw byte data and sensitive fields" },
+        { "name": "--flatten", "description": "Flatten the resulting kubeconfig file" },
+        { "name": "--output", "short": "-o", "description": "Output format (json|yaml)", "type": "string" },
+        { "name": "--merge", "description": "Merge the full kubeconfig hierarchy (default true)" }
+      ],
+      "examples": [
+        "kubectl config view",
+        "kubectl config view --minify",
+        "kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'",
+        "kubectl config view -o json",
+        "kubectl config view --raw",
+        "kubectl config view --flatten > merged-kubeconfig.yaml"
+      ]
+    },
+    {
+      "name": "config use-context",
+      "description": "Set the current context in kubeconfig",
+      "args": [
+        { "name": "<context>", "type": "string", "required": true, "description": "Context name" }
+      ],
+      "options": [],
+      "examples": [
+        "kubectl config use-context production",
+        "kubectl config use-context minikube",
+        "kubectl config use-context docker-desktop",
+        "kubectl config use-context arn:aws:eks:us-west-2:123456789:cluster/my-cluster"
+      ]
+    },
+    {
+      "name": "config get-contexts",
+      "description": "Display one or many contexts from the kubeconfig file",
+      "args": [
+        { "name": "<context>", "type": "string", "required": false, "description": "Context name" }
+      ],
+      "options": [
+        { "name": "--output", "short": "-o", "description": "Output format (name)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" }
+      ],
+      "examples": [
+        "kubectl config get-contexts",
+        "kubectl config get-contexts -o name",
+        "kubectl config get-contexts my-context"
+      ]
+    },
+    {
+      "name": "config set-context",
+      "description": "Set a context entry in kubeconfig",
+      "args": [
+        { "name": "<context>", "type": "string", "required": true, "description": "Context name" }
+      ],
+      "options": [
+        { "name": "--current", "description": "Modify the current context" },
+        { "name": "--cluster", "description": "Cluster for the context entry", "type": "string" },
+        { "name": "--user", "description": "User for the context entry", "type": "string" },
+        { "name": "--namespace", "description": "Default namespace for the context entry", "type": "string" }
+      ],
+      "examples": [
+        "kubectl config set-context --current --namespace=production",
+        "kubectl config set-context my-context --namespace=staging",
+        "kubectl config set-context my-context --cluster=my-cluster --user=admin --namespace=default"
+      ]
+    },
+    {
+      "name": "config current-context",
+      "description": "Display the current context from kubeconfig",
+      "args": [],
+      "options": [],
+      "examples": [
+        "kubectl config current-context"
+      ]
+    },
+    {
+      "name": "label",
+      "description": "Update the labels on a resource",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": true, "description": "Resource name" },
+        { "name": "<labels>", "type": "string", "required": true, "description": "Label key=value pairs (use key- to remove)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--overwrite", "description": "Overwrite existing label values" },
+        { "name": "--all", "description": "Select all resources of the specified type" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--resource-version", "description": "Precondition for resource version", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--list", "description": "List current labels for the resource" },
+        { "name": "--field-manager", "description": "Name of the field manager", "type": "string" }
+      ],
+      "examples": [
+        "kubectl label pod my-pod app=web",
+        "kubectl label pod my-pod env=production --overwrite",
+        "kubectl label pod my-pod app-",
+        "kubectl label nodes worker-1 disktype=ssd",
+        "kubectl label pods --all status=healthy -n staging",
+        "kubectl label pod my-pod tier=frontend env=prod"
+      ]
+    },
+    {
+      "name": "annotate",
+      "description": "Update the annotations on a resource",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": true, "description": "Resource name" },
+        { "name": "<annotations>", "type": "string", "required": true, "description": "Annotation key=value pairs (use key- to remove)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--overwrite", "description": "Overwrite existing annotation values" },
+        { "name": "--all", "description": "Select all resources of the specified type" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--resource-version", "description": "Precondition for resource version", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--list", "description": "List current annotations" },
+        { "name": "--field-manager", "description": "Name of the field manager", "type": "string" }
+      ],
+      "examples": [
+        "kubectl annotate pod my-pod description='My web server'",
+        "kubectl annotate pod my-pod description-",
+        "kubectl annotate deployment my-app kubernetes.io/change-cause='image update to v2'",
+        "kubectl annotate nodes worker-1 node-role=worker --overwrite",
+        "kubectl annotate --all pods owner=team-a -n staging"
+      ]
+    },
+    {
+      "name": "patch",
+      "description": "Update fields of a resource using strategic merge, JSON merge, or JSON patch",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" },
+        { "name": "<name>", "type": "string", "required": true, "description": "Resource name" }
+      ],
+      "options": [
+        { "name": "--patch", "short": "-p", "description": "The patch content (JSON or YAML)", "type": "string" },
+        { "name": "--patch-file", "description": "Path to a file containing the patch", "type": "path" },
+        { "name": "--type", "description": "Patch type (strategic|merge|json)", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" },
+        { "name": "--record", "description": "Record command in resource annotation" },
+        { "name": "--field-manager", "description": "Name of the field manager", "type": "string" },
+        { "name": "--subresource", "description": "Subresource to patch (e.g. status, scale)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl patch deployment my-app -p '{\"spec\":{\"replicas\":5}}'",
+        "kubectl patch svc my-service -p '{\"spec\":{\"type\":\"LoadBalancer\"}}'",
+        "kubectl patch node worker-1 -p '{\"spec\":{\"unschedulable\":true}}'",
+        "kubectl patch deployment my-app --type=json -p '[{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":3}]'",
+        "kubectl patch deployment my-app -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"app\",\"image\":\"myapp:v2\"}]}}}}'",
+        "kubectl patch deployment my-app --patch-file patch.yaml",
+        "kubectl patch deployment my-app --type=merge -p '{\"spec\":{\"replicas\":2}}' -n production"
+      ]
+    },
+    {
+      "name": "taint",
+      "description": "Update the taints on one or more nodes",
+      "args": [
+        { "name": "<node>", "type": "string", "required": true, "description": "Node name" },
+        { "name": "<taints>", "type": "string", "required": true, "description": "Taint key=value:effect (NoSchedule|PreferNoSchedule|NoExecute)" }
+      ],
+      "options": [
+        { "name": "--all", "description": "Taint all nodes" },
+        { "name": "--overwrite", "description": "Overwrite existing taints with matching key" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter nodes", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format", "type": "string" }
+      ],
+      "examples": [
+        "kubectl taint nodes worker-1 key=value:NoSchedule",
+        "kubectl taint nodes worker-1 dedicated=gpu:NoSchedule",
+        "kubectl taint nodes worker-1 key=value:NoSchedule-",
+        "kubectl taint nodes worker-1 key:NoSchedule-",
+        "kubectl taint nodes --all key=value:NoSchedule",
+        "kubectl taint nodes worker-1 special=true:NoExecute"
+      ]
+    },
+    {
+      "name": "cordon",
+      "description": "Mark a node as unschedulable",
+      "args": [
+        { "name": "<node>", "type": "string", "required": true, "description": "Node name" }
+      ],
+      "options": [
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter nodes", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl cordon worker-1",
+        "kubectl cordon worker-1 worker-2",
+        "kubectl cordon -l role=worker"
+      ]
+    },
+    {
+      "name": "uncordon",
+      "description": "Mark a node as schedulable",
+      "args": [
+        { "name": "<node>", "type": "string", "required": true, "description": "Node name" }
+      ],
+      "options": [
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter nodes", "type": "string" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl uncordon worker-1",
+        "kubectl uncordon worker-1 worker-2",
+        "kubectl uncordon -l role=worker"
+      ]
+    },
+    {
+      "name": "drain",
+      "description": "Drain a node in preparation for maintenance",
+      "args": [
+        { "name": "<node>", "type": "string", "required": true, "description": "Node name" }
+      ],
+      "options": [
+        { "name": "--force", "description": "Continue even if there are pods not managed by a controller" },
+        { "name": "--grace-period", "description": "Seconds to wait for pod termination", "type": "number" },
+        { "name": "--ignore-daemonsets", "description": "Ignore DaemonSet-managed pods" },
+        { "name": "--delete-emptydir-data", "description": "Continue even if there are pods using emptyDir" },
+        { "name": "--timeout", "description": "Time to wait before giving up", "type": "string" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter nodes", "type": "string" },
+        { "name": "--pod-selector", "description": "Label selector to filter pods on the node", "type": "string" },
+        { "name": "--disable-eviction", "description": "Force drain using delete even if eviction is supported" },
+        { "name": "--skip-wait-for-delete-timeout", "description": "Skip waiting for pods with DeletionTimestamp > N seconds", "type": "number" },
+        { "name": "--dry-run", "description": "Strategy for dry-run (none|server|client)", "type": "string" },
+        { "name": "--chunk-size", "description": "Number of pods processed at once during eviction", "type": "number" }
+      ],
+      "examples": [
+        "kubectl drain worker-1",
+        "kubectl drain worker-1 --ignore-daemonsets",
+        "kubectl drain worker-1 --ignore-daemonsets --delete-emptydir-data",
+        "kubectl drain worker-1 --force --grace-period=0",
+        "kubectl drain worker-1 --ignore-daemonsets --timeout=300s",
+        "kubectl drain worker-1 --ignore-daemonsets --dry-run=client"
+      ]
+    },
+    {
+      "name": "api-resources",
+      "description": "Print the supported API resources on the server",
+      "args": [],
+      "options": [
+        { "name": "--api-group", "description": "Limit to resources in the specified API group", "type": "string" },
+        { "name": "--namespaced", "description": "If false, non-namespaced resources are listed; if true, namespaced resources (default true)" },
+        { "name": "--verbs", "description": "Limit output to resources that support specified verbs", "type": "string" },
+        { "name": "--sort-by", "description": "Sort by field (name|kind)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format (wide|name)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" },
+        { "name": "--cached", "description": "Use the cached list of resources" }
+      ],
+      "examples": [
+        "kubectl api-resources",
+        "kubectl api-resources --namespaced=true",
+        "kubectl api-resources --namespaced=false",
+        "kubectl api-resources -o name",
+        "kubectl api-resources --verbs=list,get",
+        "kubectl api-resources --api-group=apps",
+        "kubectl api-resources -o wide"
+      ]
+    },
+    {
+      "name": "api-versions",
+      "description": "Print the supported API versions on the server",
+      "args": [],
+      "options": [],
+      "examples": [
+        "kubectl api-versions"
+      ]
+    },
+    {
+      "name": "explain",
+      "description": "Get documentation of a resource or field",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource or field path (e.g. pods.spec.containers)" }
+      ],
+      "options": [
+        { "name": "--recursive", "description": "Print fields of fields recursively" },
+        { "name": "--api-version", "description": "Specify API version to explain (e.g. apps/v1)", "type": "string" },
+        { "name": "--output", "description": "Output format (plaintext|plaintext-openapiv2)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl explain pods",
+        "kubectl explain pods.spec",
+        "kubectl explain pods.spec.containers",
+        "kubectl explain pods.spec.containers.resources",
+        "kubectl explain deployments.spec.strategy",
+        "kubectl explain services.spec.type",
+        "kubectl explain pods --recursive",
+        "kubectl explain pods --api-version=v1"
+      ]
+    },
+    {
+      "name": "auth can-i",
+      "description": "Check whether an action is allowed in the cluster",
+      "args": [
+        { "name": "<verb>", "type": "string", "required": true, "description": "API verb (get, list, create, delete, update, patch, watch, etc.)" },
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource type" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Check in all namespaces" },
+        { "name": "--as", "description": "Username to impersonate for the operation", "type": "string" },
+        { "name": "--as-group", "description": "Group to impersonate", "type": "string" },
+        { "name": "--as-uid", "description": "UID to impersonate", "type": "string" },
+        { "name": "--list", "description": "List all allowed actions" },
+        { "name": "--no-headers", "description": "Do not print column headers (with --list)" },
+        { "name": "--subresource", "description": "Subresource to check (e.g. log, status)", "type": "string" },
+        { "name": "--quiet", "short": "-q", "description": "Suppress output, only set exit code" }
+      ],
+      "examples": [
+        "kubectl auth can-i create pods",
+        "kubectl auth can-i create pods -n production",
+        "kubectl auth can-i delete deployments",
+        "kubectl auth can-i '*' '*'",
+        "kubectl auth can-i list pods --as=system:serviceaccount:default:my-sa",
+        "kubectl auth can-i --list",
+        "kubectl auth can-i --list --namespace=production",
+        "kubectl auth can-i get pods --as=jane",
+        "kubectl auth can-i create pods --as-group=system:masters"
+      ]
+    },
+    {
+      "name": "certificate approve",
+      "description": "Approve a certificate signing request",
+      "args": [
+        { "name": "<csr>", "type": "string", "required": true, "description": "CSR name" }
+      ],
+      "options": [
+        { "name": "--force", "description": "Update even if the CSR has been approved" },
+        { "name": "--allow-missing-template-keys", "description": "Allow missing template keys in Go templates" }
+      ],
+      "examples": [
+        "kubectl certificate approve my-csr",
+        "kubectl certificate approve csr-abc123"
+      ]
+    },
+    {
+      "name": "certificate deny",
+      "description": "Deny a certificate signing request",
+      "args": [
+        { "name": "<csr>", "type": "string", "required": true, "description": "CSR name" }
+      ],
+      "options": [
+        { "name": "--force", "description": "Update even if the CSR has been denied" }
+      ],
+      "examples": [
+        "kubectl certificate deny my-csr",
+        "kubectl certificate deny csr-abc123"
+      ]
+    },
+    {
+      "name": "debug",
+      "description": "Create a debugging session for troubleshooting workloads and nodes",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource to debug (pod/name, node/name)" }
+      ],
+      "options": [
+        { "name": "--image", "description": "Container image for the debug container", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--stdin", "short": "-i", "description": "Keep stdin open" },
+        { "name": "--tty", "short": "-t", "description": "Allocate a TTY" },
+        { "name": "--target", "description": "Target container to share process namespace with", "type": "string" },
+        { "name": "--container", "short": "-c", "description": "Name of the debug container", "type": "string" },
+        { "name": "--copy-to", "description": "Create a copy of the target pod with this name", "type": "string" },
+        { "name": "--set-image", "description": "Override container images in the copied pod (container=image)", "type": "string" },
+        { "name": "--share-processes", "description": "Use shared process namespace in the copy (default true)" },
+        { "name": "--same-node", "description": "Schedule the copy to the same node as the target" },
+        { "name": "--env", "description": "Environment variables for the debug container", "type": "string" },
+        { "name": "--attach", "description": "Automatically attach to the debug container" },
+        { "name": "--quiet", "short": "-q", "description": "Reduce output" },
+        { "name": "--profile", "description": "Debug profile (general|baseline|restricted|netadmin|sysadmin)", "type": "string" },
+        { "name": "--custom", "description": "Path to a partial container spec to customize debug containers", "type": "path" }
+      ],
+      "examples": [
+        "kubectl debug my-pod -it --image=busybox",
+        "kubectl debug my-pod -it --image=nicolaka/netshoot --target=app",
+        "kubectl debug my-pod --copy-to=debug-pod --image=ubuntu -it",
+        "kubectl debug node/worker-1 -it --image=ubuntu",
+        "kubectl debug my-pod -it --image=busybox --profile=netadmin",
+        "kubectl debug my-pod --copy-to=debug-pod --set-image=app=app:debug -it",
+        "kubectl debug my-pod -it --image=alpine -n production"
+      ]
+    },
+    {
+      "name": "wait",
+      "description": "Wait for a specific condition on one or many resources",
+      "args": [
+        { "name": "<resource>", "type": "string", "required": true, "description": "Resource to wait on (e.g. pod/my-pod)" }
+      ],
+      "options": [
+        { "name": "--for", "description": "Condition to wait for (condition=Ready, delete, jsonpath=...)", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Wait in all namespaces" },
+        { "name": "--timeout", "description": "Timeout duration (e.g. 60s, 5m)", "type": "string" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--all", "description": "Select all resources of the specified type" },
+        { "name": "--filename", "short": "-f", "description": "Filename to identify the resource", "type": "path" }
+      ],
+      "examples": [
+        "kubectl wait --for=condition=Ready pod/my-pod",
+        "kubectl wait --for=condition=Ready pod/my-pod --timeout=120s",
+        "kubectl wait --for=condition=Available deployment/my-app",
+        "kubectl wait --for=delete pod/my-pod --timeout=60s",
+        "kubectl wait --for=condition=Ready pods --all -n production",
+        "kubectl wait --for=condition=complete job/my-job",
+        "kubectl wait --for=jsonpath='{.status.phase}'=Running pod/my-pod",
+        "kubectl wait --for=condition=Ready pod -l app=web --timeout=300s"
+      ]
+    },
+    {
+      "name": "diff",
+      "description": "Diff a local file or stdin against the live cluster state",
+      "args": [],
+      "options": [
+        { "name": "--filename", "short": "-f", "description": "Filename, directory, or URL to diff", "type": "path" },
+        { "name": "--kustomize", "short": "-k", "description": "Process kustomization directory", "type": "path" },
+        { "name": "--recursive", "short": "-R", "description": "Process the directory recursively" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter", "type": "string" },
+        { "name": "--server-side", "description": "Run the diff using server-side apply" },
+        { "name": "--force-conflicts", "description": "Force conflict resolution with server-side" },
+        { "name": "--field-manager", "description": "Name of the field manager", "type": "string" },
+        { "name": "--prune-allowlist", "description": "Allowlist of resource types for pruning (when --prune is set)", "type": "string" }
+      ],
+      "examples": [
+        "kubectl diff -f deployment.yaml",
+        "kubectl diff -f ./manifests/",
+        "kubectl diff -k ./overlays/production",
+        "kubectl diff -R -f ./manifests/",
+        "kubectl diff -f deployment.yaml --server-side"
+      ]
+    },
+    {
+      "name": "kustomize",
+      "description": "Build a set of KRM resources using a kustomization.yaml file",
+      "args": [
+        { "name": "<directory>", "type": "path", "required": false, "description": "Path to kustomization directory or URL" }
+      ],
+      "options": [
+        { "name": "--enable-helm", "description": "Enable Helm chart inflation" },
+        { "name": "--helm-command", "description": "Path to Helm binary", "type": "path" },
+        { "name": "--load-restrictor", "description": "Restrict file loading (LoadRestrictionsRootOnly|LoadRestrictionsNone)", "type": "string" },
+        { "name": "--network", "description": "Enable network and remote resources" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "path" }
+      ],
+      "examples": [
+        "kubectl kustomize ./",
+        "kubectl kustomize ./overlays/production",
+        "kubectl kustomize ./overlays/production | kubectl apply -f -",
+        "kubectl kustomize https://github.com/kubernetes-sigs/kustomize/examples/helloWorld",
+        "kubectl kustomize --enable-helm ./"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--kubeconfig", "description": "Path to the kubeconfig file", "type": "path" },
+    { "name": "--context", "description": "Name of the kubeconfig context to use", "type": "string" },
+    { "name": "--cluster", "description": "Name of the kubeconfig cluster to use", "type": "string" },
+    { "name": "--user", "description": "Name of the kubeconfig user to use", "type": "string" },
+    { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace scope for the request", "type": "string" },
+    { "name": "--server", "short": "-s", "description": "Address and port of the Kubernetes API server", "type": "string" },
+    { "name": "--tls-server-name", "description": "Server name for TLS certificate validation", "type": "string" },
+    { "name": "--insecure-skip-tls-verify", "description": "Skip TLS certificate verification" },
+    { "name": "--certificate-authority", "description": "Path to CA certificate file", "type": "path" },
+    { "name": "--client-certificate", "description": "Path to client certificate file", "type": "path" },
+    { "name": "--client-key", "description": "Path to client key file", "type": "path" },
+    { "name": "--token", "description": "Bearer token for authenticating to the API server", "type": "string" },
+    { "name": "--as", "description": "Username to impersonate", "type": "string" },
+    { "name": "--as-group", "description": "Group to impersonate", "type": "string" },
+    { "name": "--as-uid", "description": "UID to impersonate", "type": "string" },
+    { "name": "--cache-dir", "description": "Default cache directory", "type": "path" },
+    { "name": "--request-timeout", "description": "Timeout for a single server request (e.g. 0, 5s, 2m)", "type": "string" },
+    { "name": "--output", "short": "-o", "description": "Output format (json|yaml|wide|name|jsonpath=...)", "type": "string" },
+    { "name": "--v", "description": "Verbosity level (0-9)", "type": "number" },
+    { "name": "--warnings-as-errors", "description": "Treat warnings from server as errors" }
+  ],
+  "examples": [
+    "kubectl get pods -A",
+    "kubectl apply -f deployment.yaml",
+    "kubectl logs -f my-pod",
+    "kubectl exec -it my-pod -- /bin/bash",
+    "kubectl port-forward svc/my-service 8080:80",
+    "kubectl scale deployment my-app --replicas=3",
+    "kubectl rollout restart deployment/my-app",
+    "kubectl config use-context production",
+    "kubectl top pods --sort-by=cpu",
+    "kubectl drain worker-1 --ignore-daemonsets --delete-emptydir-data"
+  ],
+  "relatedCommands": ["helm", "kustomize", "docker", "podman", "istioctl", "argocd", "k9s", "stern", "kubectx", "kubens", "minikube", "kind"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "current_context",
+        "description": "Currently active kubeconfig context",
+        "command": "kubectl config current-context",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "all_contexts",
+        "description": "All available kubeconfig contexts",
+        "command": "kubectl config get-contexts -o name",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "namespaces",
+        "description": "All namespaces in the cluster",
+        "command": "kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "current_namespace",
+        "description": "Default namespace for the current context",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}'",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "pods",
+        "description": "All pods across namespaces with namespace, name, and status",
+        "command": "kubectl get pods --all-namespaces --no-headers -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,STATUS:.status.phase'",
+        "parser": "table",
+        "cacheFor": 10,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "services",
+        "description": "All services across namespaces with type and ports",
+        "command": "kubectl get svc --all-namespaces --no-headers -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,TYPE:.spec.type,PORTS:.spec.ports[*].port'",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "deployments",
+        "description": "All deployments across namespaces with ready/desired replica counts",
+        "command": "kubectl get deployments --all-namespaces --no-headers -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,READY:.status.readyReplicas,DESIRED:.spec.replicas'",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "nodes",
+        "description": "Cluster nodes with status, roles, and kubelet version",
+        "command": "kubectl get nodes -o custom-columns='NAME:.metadata.name,STATUS:.status.conditions[-1].type,ROLES:.metadata.labels.node-role\\.kubernetes\\.io/*,VERSION:.status.nodeInfo.kubeletVersion' --no-headers",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "configmaps",
+        "description": "All configmaps across namespaces",
+        "command": "kubectl get configmaps --all-namespaces --no-headers -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name'",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "secrets",
+        "description": "All secrets across namespaces with their type",
+        "command": "kubectl get secrets --all-namespaces --no-headers -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,TYPE:.type'",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "ingresses",
+        "description": "All ingress resources across namespaces",
+        "command": "kubectl get ingress --all-namespaces --no-headers",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "cluster_info",
+        "description": "Kubernetes control plane and CoreDNS endpoint information",
+        "command": "kubectl cluster-info",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "api_resources",
+        "description": "All supported API resource names in the cluster",
+        "command": "kubectl api-resources --no-headers -o name",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "storage_classes",
+        "description": "Available storage classes and their provisioners",
+        "command": "kubectl get storageclass --no-headers -o custom-columns='NAME:.metadata.name,PROVISIONER:.provisioner'",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "persistent_volumes",
+        "description": "Cluster-wide persistent volumes",
+        "command": "kubectl get pv --no-headers",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      }
+    ]
+  }
+}

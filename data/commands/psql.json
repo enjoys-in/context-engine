@@ -1,0 +1,124 @@
+{
+  "name": "psql",
+  "description": "PostgreSQL interactive terminal — query and manage PostgreSQL databases",
+  "category": "database",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--host", "short": "-h", "description": "Database server host", "type": "string", "default": "localhost" },
+    { "name": "--port", "short": "-p", "description": "Database server port", "type": "number", "default": "5432" },
+    { "name": "--username", "short": "-U", "description": "Database user name", "type": "string" },
+    { "name": "--dbname", "short": "-d", "description": "Database name to connect to", "type": "string" },
+    { "name": "--password", "short": "-W", "description": "Force password prompt" },
+    { "name": "--no-password", "short": "-w", "description": "Never prompt for password" },
+    { "name": "--command", "short": "-c", "description": "Execute a single command and exit", "type": "string" },
+    { "name": "--file", "short": "-f", "description": "Execute commands from a file", "type": "file" },
+    { "name": "--list", "short": "-l", "description": "List available databases and exit" },
+    { "name": "--expanded", "short": "-x", "description": "Enable expanded table formatting" },
+    { "name": "--tuples-only", "short": "-t", "description": "Print rows only (no headers/footers)" },
+    { "name": "--html", "short": "-H", "description": "HTML table output mode" },
+    { "name": "--csv", "description": "CSV output mode" },
+    { "name": "--field-separator", "short": "-F", "description": "Field separator for unaligned output", "type": "string" },
+    { "name": "--variable", "short": "-v", "description": "Set psql variable", "type": "string" },
+    { "name": "--single-transaction", "short": "-1", "description": "Execute in a single transaction" },
+    { "name": "--echo-all", "short": "-a", "description": "Print all input lines as read" },
+    { "name": "--no-align", "short": "-A", "description": "Unaligned table output mode" }
+  ],
+  "examples": [
+    "psql -U postgres",
+    "psql -h localhost -U admin -d mydb",
+    "psql -c 'SELECT version();'",
+    "psql -l",
+    "psql -d mydb -f schema.sql",
+    "psql -U admin -d mydb -c '\\dt'",
+    "psql --csv -c 'SELECT * FROM users' -d mydb",
+    "psql -t -A -c 'SELECT datname FROM pg_database'",
+    "psql postgresql://user:pass@host:5432/dbname"
+  ],
+  "relatedCommands": ["pg_dump", "pg_restore", "createdb", "dropdb", "mysql", "sqlite3"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "databases",
+        "description": "List of all PostgreSQL databases",
+        "command": "psql -U postgres -t -A -c 'SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "current_database",
+        "description": "Currently connected database name",
+        "command": "psql -U postgres -t -A -c 'SELECT current_database();' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "schemas",
+        "description": "Schemas in the current database",
+        "command": "psql -U postgres -t -A -c \"SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog','information_schema','pg_toast') ORDER BY schema_name;\" 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "tables",
+        "description": "Tables in public schema",
+        "command": "psql -U postgres -t -A -c \"SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;\" 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "active_connections",
+        "description": "Active database connections",
+        "command": "psql -U postgres -t -A -c \"SELECT datname, usename, state, count(*) FROM pg_stat_activity GROUP BY datname, usename, state ORDER BY count(*) DESC;\" 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "db_sizes",
+        "description": "Size of each database",
+        "command": "psql -U postgres -t -A -c \"SELECT datname, pg_size_pretty(pg_database_size(datname)) FROM pg_database WHERE datistemplate = false ORDER BY pg_database_size(datname) DESC;\" 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "extensions",
+        "description": "Installed PostgreSQL extensions",
+        "command": "psql -U postgres -t -A -c 'SELECT extname, extversion FROM pg_extension ORDER BY extname;' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "roles",
+        "description": "Database roles/users",
+        "command": "psql -U postgres -t -A -c 'SELECT rolname FROM pg_roles WHERE rolcanlogin = true ORDER BY rolname;' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "pg_version",
+        "description": "PostgreSQL server version",
+        "command": "psql -U postgres -t -A -c 'SELECT version();' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "psql"
+      },
+      {
+        "name": "running_queries",
+        "description": "Currently running queries",
+        "command": "psql -U postgres -t -A -c \"SELECT pid, now() - pg_stat_activity.query_start AS duration, query FROM pg_stat_activity WHERE state = 'active' AND pid <> pg_backend_pid() ORDER BY duration DESC LIMIT 10;\" 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 5,
+        "requiresCmd": "psql"
+      }
+    ]
+  }
+}

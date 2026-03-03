@@ -1,0 +1,194 @@
+{
+  "name": "caddy",
+  "description": "Caddy — fast, multi-platform web server with automatic HTTPS",
+  "category": "web-server",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "run",
+      "description": "Start Caddy in the foreground",
+      "options": [
+        { "name": "--config", "description": "Configuration file path", "type": "file" },
+        { "name": "--adapter", "description": "Config adapter (caddyfile, json)", "type": "string" },
+        { "name": "--environ", "description": "Print environment and exit" },
+        { "name": "--resume", "description": "Use saved config, if any" },
+        { "name": "--watch", "description": "Watch config file for changes and auto-reload" }
+      ],
+      "examples": ["caddy run", "caddy run --config Caddyfile", "caddy run --config caddy.json", "caddy run --watch"]
+    },
+    {
+      "name": "start",
+      "description": "Start Caddy in the background",
+      "options": [
+        { "name": "--config", "description": "Configuration file path", "type": "file" },
+        { "name": "--adapter", "description": "Config adapter", "type": "string" }
+      ],
+      "examples": ["caddy start", "caddy start --config Caddyfile"]
+    },
+    {
+      "name": "stop",
+      "description": "Stop the running Caddy process",
+      "examples": ["caddy stop"]
+    },
+    {
+      "name": "reload",
+      "description": "Apply config changes without downtime",
+      "options": [
+        { "name": "--config", "description": "Configuration file path", "type": "file" },
+        { "name": "--adapter", "description": "Config adapter", "type": "string" },
+        { "name": "--force", "description": "Force reload even if config hasn't changed" }
+      ],
+      "examples": ["caddy reload", "caddy reload --config Caddyfile"]
+    },
+    {
+      "name": "adapt",
+      "description": "Adapt a configuration to native JSON format",
+      "options": [
+        { "name": "--config", "description": "Configuration file path", "type": "file" },
+        { "name": "--adapter", "description": "Config adapter", "type": "string" },
+        { "name": "--pretty", "description": "Pretty-print output" },
+        { "name": "--validate", "description": "Validate the final config" }
+      ],
+      "examples": ["caddy adapt --config Caddyfile --pretty", "caddy adapt --config Caddyfile --validate"]
+    },
+    {
+      "name": "validate",
+      "description": "Validate a configuration file",
+      "options": [
+        { "name": "--config", "description": "Configuration file path", "type": "file" },
+        { "name": "--adapter", "description": "Config adapter", "type": "string" }
+      ],
+      "examples": ["caddy validate --config Caddyfile"]
+    },
+    {
+      "name": "reverse-proxy",
+      "description": "Quick reverse proxy (no config file needed)",
+      "options": [
+        { "name": "--from", "description": "Address to listen on", "type": "string" },
+        { "name": "--to", "description": "Upstream address(es)", "type": "string" },
+        { "name": "--change-host-header", "description": "Set upstream Host header to address of upstream" },
+        { "name": "--internal-certs", "description": "Use internal CA for TLS" }
+      ],
+      "examples": ["caddy reverse-proxy --from :2080 --to localhost:8080", "caddy reverse-proxy --from example.com --to localhost:3000"]
+    },
+    {
+      "name": "file-server",
+      "description": "Quick static file server (no config file needed)",
+      "options": [
+        { "name": "--root", "description": "Root directory to serve", "type": "directory" },
+        { "name": "--listen", "description": "Address to listen on", "type": "string" },
+        { "name": "--domain", "description": "Domain name (enables HTTPS)", "type": "string" },
+        { "name": "--browse", "description": "Enable directory browsing" },
+        { "name": "--access-log", "description": "Enable access logging" }
+      ],
+      "examples": ["caddy file-server --root ./public --browse", "caddy file-server --domain example.com --root /srv/www"]
+    },
+    {
+      "name": "fmt",
+      "description": "Format a Caddyfile",
+      "options": [
+        { "name": "--overwrite", "description": "Overwrite the input file" }
+      ],
+      "examples": ["caddy fmt Caddyfile", "caddy fmt --overwrite Caddyfile"]
+    },
+    {
+      "name": "trust",
+      "description": "Install Caddy's root CA into local trust store",
+      "examples": ["caddy trust"]
+    },
+    {
+      "name": "untrust",
+      "description": "Untrust Caddy's root CA from local trust store",
+      "examples": ["caddy untrust"]
+    },
+    {
+      "name": "list-modules",
+      "description": "List installed Caddy modules",
+      "examples": ["caddy list-modules", "caddy list-modules --versions"]
+    },
+    {
+      "name": "environ",
+      "description": "Print the environment",
+      "examples": ["caddy environ"]
+    },
+    {
+      "name": "version",
+      "description": "Print Caddy version",
+      "examples": ["caddy version"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--config", "description": "Path to config file", "type": "file" },
+    { "name": "--adapter", "description": "Config adapter name", "type": "string" }
+  ],
+  "examples": [
+    "caddy run",
+    "caddy start --config Caddyfile",
+    "caddy reverse-proxy --from :2080 --to localhost:8080",
+    "caddy file-server --browse",
+    "caddy reload",
+    "caddy stop"
+  ],
+  "relatedCommands": ["nginx", "apache", "certbot", "openssl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "running_status",
+        "description": "Check if Caddy is currently running",
+        "command": "pgrep -x caddy >/dev/null 2>&1 && echo 'running' || echo 'stopped'",
+        "parser": "text",
+        "cacheFor": 5,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "caddy_version",
+        "description": "Installed Caddy version",
+        "command": "caddy version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "loaded_modules",
+        "description": "Installed Caddy modules",
+        "command": "caddy list-modules 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "caddyfile_exists",
+        "description": "Check for Caddyfile in common locations",
+        "command": "test -f ./Caddyfile && echo './Caddyfile' || test -f /etc/caddy/Caddyfile && echo '/etc/caddy/Caddyfile' || echo 'none'",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "caddyfile_sites",
+        "description": "Sites/domains configured in Caddyfile",
+        "command": "grep -E '^[a-zA-Z0-9.:*]+' /etc/caddy/Caddyfile 2>/dev/null || grep -E '^[a-zA-Z0-9.:*]+' ./Caddyfile 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "managed_certificates",
+        "description": "Caddy-managed TLS certificates",
+        "command": "ls ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/ 2>/dev/null || ls /var/lib/caddy/.local/share/caddy/certificates/ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "caddy"
+      },
+      {
+        "name": "current_config",
+        "description": "Current running Caddy config (from API)",
+        "command": "curl -s localhost:2019/config/ 2>/dev/null | head -c 2000",
+        "parser": "json",
+        "cacheFor": 15,
+        "requiresCmd": "caddy"
+      }
+    ]
+  }
+}

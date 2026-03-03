@@ -1,0 +1,112 @@
+{
+  "name": "ssh-keygen",
+  "description": "SSH key generation, management, and conversion utility",
+  "category": "security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-t", "description": "Key type (rsa, ed25519, ecdsa, dsa)", "type": "string" },
+    { "name": "-b", "description": "Number of bits in the key", "type": "number" },
+    { "name": "-C", "description": "Comment for the key", "type": "string" },
+    { "name": "-f", "description": "Key file path", "type": "file" },
+    { "name": "-N", "description": "New passphrase", "type": "string" },
+    { "name": "-P", "description": "Old passphrase", "type": "string" },
+    { "name": "-p", "description": "Change passphrase of existing key" },
+    { "name": "-l", "description": "Show fingerprint of key file" },
+    { "name": "-E", "description": "Hash algorithm for fingerprint (md5, sha256)", "type": "string" },
+    { "name": "-R", "description": "Remove host from known_hosts file", "type": "string" },
+    { "name": "-F", "description": "Search for hostname in known_hosts", "type": "string" },
+    { "name": "-H", "description": "Hash known_hosts file" },
+    { "name": "-y", "description": "Read private key and print public key" },
+    { "name": "-e", "description": "Export key to other formats" },
+    { "name": "-i", "description": "Import key from other formats" },
+    { "name": "-m", "description": "Key format (RFC4716, PKCS8, PEM)", "type": "string" },
+    { "name": "-A", "description": "Generate host keys for all default key types" },
+    { "name": "-q", "description": "Quiet mode" },
+    { "name": "-o", "description": "Use new OpenSSH format for private key" },
+    { "name": "-a", "description": "Number of KDF rounds for new format", "type": "number" },
+    { "name": "-s", "description": "Sign a key (for certificates)", "type": "file" },
+    { "name": "-I", "description": "Certificate identity string", "type": "string" },
+    { "name": "-n", "description": "Certificate principal(s)", "type": "string" },
+    { "name": "-V", "description": "Certificate validity interval", "type": "string" },
+    { "name": "-L", "description": "Print contents of a certificate" }
+  ],
+  "examples": [
+    "ssh-keygen -t ed25519 -C 'user@example.com'",
+    "ssh-keygen -t rsa -b 4096 -C 'user@example.com'",
+    "ssh-keygen -t ecdsa -b 521",
+    "ssh-keygen -t ed25519 -f ~/.ssh/github_key -N ''",
+    "ssh-keygen -l -f ~/.ssh/id_ed25519.pub",
+    "ssh-keygen -l -E md5 -f ~/.ssh/id_rsa.pub",
+    "ssh-keygen -y -f ~/.ssh/id_ed25519 > ~/.ssh/id_ed25519.pub",
+    "ssh-keygen -p -f ~/.ssh/id_rsa",
+    "ssh-keygen -R hostname",
+    "ssh-keygen -F hostname",
+    "ssh-keygen -H",
+    "ssh-keygen -t ed25519 -a 100",
+    "ssh-keygen -s ca_key -I user_key -n user1,user2 -V +52w user_key.pub",
+    "ssh-keygen -L -f certificate.pub"
+  ],
+  "relatedCommands": ["ssh", "ssh-agent", "ssh-copy-id", "ssh-add", "scp", "openssl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "ssh_keys",
+        "description": "SSH key files in ~/.ssh/",
+        "command": "ls -1 ~/.ssh/id_* 2>/dev/null | grep -v '\\.pub$'",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "ssh_public_keys",
+        "description": "Public key files in ~/.ssh/",
+        "command": "ls -1 ~/.ssh/*.pub 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "key_fingerprints",
+        "description": "Fingerprints of all SSH keys",
+        "command": "for f in ~/.ssh/id_*.pub; do ssh-keygen -l -f \"$f\" 2>/dev/null; done",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "ssh_config_hosts",
+        "description": "Hosts defined in SSH config",
+        "command": "grep -E '^Host[[:space:]]' ~/.ssh/config 2>/dev/null | awk '{for(i=2;i<=NF;i++) print $i}' | grep -v '[*?]'",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "known_hosts_count",
+        "description": "Number of entries in known_hosts",
+        "command": "wc -l < ~/.ssh/known_hosts 2>/dev/null || echo '0'",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "ssh_agent_keys",
+        "description": "Keys currently loaded in ssh-agent",
+        "command": "ssh-add -l 2>/dev/null || echo 'agent not running'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "ssh-keygen"
+      },
+      {
+        "name": "authorized_keys",
+        "description": "Number of authorized keys for incoming SSH",
+        "command": "wc -l < ~/.ssh/authorized_keys 2>/dev/null || echo '0'",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "ssh-keygen"
+      }
+    ]
+  }
+}

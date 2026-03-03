@@ -1,0 +1,86 @@
+{
+  "name": "cp",
+  "description": "Copy files and directories",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-r", "description": "Copy directories recursively" },
+    { "name": "-R", "description": "Copy directories recursively (same as -r)" },
+    { "name": "-a", "description": "Archive mode (preserve all attributes, -dR --preserve=all)" },
+    { "name": "-i", "description": "Prompt before overwrite" },
+    { "name": "-n", "description": "Do not overwrite existing files" },
+    { "name": "-f", "description": "Force overwrite (remove destination if needed)" },
+    { "name": "-u", "description": "Copy only when source is newer than destination" },
+    { "name": "-v", "description": "Verbose — explain what is being done" },
+    { "name": "-p", "description": "Preserve modification times, access times, mode" },
+    { "name": "--preserve", "description": "Preserve attributes (mode, ownership, timestamps, context, links, xattr, all)", "type": "string" },
+    { "name": "-l", "description": "Hard link files instead of copying" },
+    { "name": "-s", "description": "Create symlinks instead of copying" },
+    { "name": "--backup", "description": "Make a backup of each existing destination", "type": "string" },
+    { "name": "-b", "description": "Make backup (simple)" },
+    { "name": "--suffix", "short": "-S", "description": "Override backup suffix", "type": "string" },
+    { "name": "-t", "description": "Copy all source arguments into target directory", "type": "directory" },
+    { "name": "-T", "description": "Treat destination as a normal file" },
+    { "name": "--sparse", "description": "Control creation of sparse files (auto, always, never)", "type": "string" },
+    { "name": "--reflink", "description": "Control clone/CoW copies (auto, always, never)", "type": "string" }
+  ],
+  "examples": [
+    "cp file.txt backup.txt",
+    "cp -r src/ dest/",
+    "cp -a /home/user /backup/",
+    "cp -iv file.txt /dest/",
+    "cp -u *.txt /dest/",
+    "cp -rp project/ project-backup/",
+    "cp -l file.txt hardlink.txt",
+    "cp -s file.txt symlink.txt",
+    "cp --backup=numbered file.txt dest/",
+    "cp -t /dest/ file1.txt file2.txt file3.txt"
+  ],
+  "relatedCommands": ["mv", "rm", "rsync", "ln", "install", "ls"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cwd_contents",
+        "description": "Files and directories in the current working directory",
+        "command": "ls -1A 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 3,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_path",
+        "description": "Current working directory path",
+        "command": "pwd",
+        "parser": "text",
+        "cacheFor": 3,
+        "requiresCmd": "cp"
+      },
+      {
+        "name": "disk_usage",
+        "description": "Available disk space",
+        "command": "df -h . 2>/dev/null | tail -1",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "cp"
+      },
+      {
+        "name": "recent_files",
+        "description": "Recently modified files",
+        "command": "ls -1t 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "directories",
+        "description": "Subdirectories in current working directory",
+        "command": "ls -d */ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      }
+    ]
+  }
+}

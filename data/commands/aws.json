@@ -1,0 +1,229 @@
+{
+  "name": "aws",
+  "description": "Amazon Web Services CLI — manage AWS services from the command line",
+  "category": "cloud",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "s3",
+      "description": "Manage Amazon S3 buckets and objects",
+      "options": [],
+      "examples": ["aws s3 ls", "aws s3 cp file.txt s3://mybucket/", "aws s3 sync . s3://mybucket/", "aws s3 mb s3://newbucket", "aws s3 rb s3://oldbucket --force", "aws s3 rm s3://mybucket/file.txt", "aws s3 mv s3://mybucket/old.txt s3://mybucket/new.txt", "aws s3 presign s3://mybucket/file.txt --expires-in 3600"]
+    },
+    {
+      "name": "s3api",
+      "description": "Low-level S3 API commands",
+      "options": [
+        { "name": "--bucket", "description": "Bucket name", "type": "string" }
+      ],
+      "examples": ["aws s3api list-buckets", "aws s3api get-object --bucket mybucket --key file.txt output.txt", "aws s3api put-object --bucket mybucket --key file.txt --body file.txt"]
+    },
+    {
+      "name": "ec2",
+      "description": "Manage EC2 instances and resources",
+      "examples": ["aws ec2 describe-instances", "aws ec2 run-instances --image-id ami-xxx --instance-type t3.micro --key-name mykey", "aws ec2 stop-instances --instance-ids i-xxx", "aws ec2 start-instances --instance-ids i-xxx", "aws ec2 terminate-instances --instance-ids i-xxx", "aws ec2 describe-security-groups", "aws ec2 describe-vpcs", "aws ec2 describe-subnets", "aws ec2 create-key-pair --key-name mykey"]
+    },
+    {
+      "name": "ecs",
+      "description": "Manage Elastic Container Service",
+      "examples": ["aws ecs list-clusters", "aws ecs list-services --cluster mycluster", "aws ecs describe-services --cluster mycluster --services myservice", "aws ecs update-service --cluster mycluster --service myservice --desired-count 3", "aws ecs list-tasks --cluster mycluster", "aws ecs describe-tasks --cluster mycluster --tasks arn:xxx"]
+    },
+    {
+      "name": "eks",
+      "description": "Manage Elastic Kubernetes Service",
+      "examples": ["aws eks list-clusters", "aws eks describe-cluster --name mycluster", "aws eks update-kubeconfig --name mycluster", "aws eks list-nodegroups --cluster-name mycluster"]
+    },
+    {
+      "name": "lambda",
+      "description": "Manage Lambda functions",
+      "examples": ["aws lambda list-functions", "aws lambda invoke --function-name myfunc output.json", "aws lambda create-function --function-name myfunc --runtime nodejs20.x --handler index.handler --role arn:aws:iam::xxx:role/myrole --zip-file fileb://function.zip", "aws lambda update-function-code --function-name myfunc --zip-file fileb://function.zip", "aws lambda delete-function --function-name myfunc"]
+    },
+    {
+      "name": "iam",
+      "description": "Manage Identity and Access Management",
+      "examples": ["aws iam list-users", "aws iam list-roles", "aws iam create-user --user-name myuser", "aws iam attach-user-policy --user-name myuser --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess", "aws iam list-policies --scope Local", "aws iam get-role --role-name myrole", "aws iam create-role --role-name myrole --assume-role-policy-document file://trust.json"]
+    },
+    {
+      "name": "rds",
+      "description": "Manage Relational Database Service",
+      "examples": ["aws rds describe-db-instances", "aws rds create-db-instance --db-instance-identifier mydb --db-instance-class db.t3.micro --engine postgres --master-username admin --master-user-password secret", "aws rds delete-db-instance --db-instance-identifier mydb --skip-final-snapshot", "aws rds describe-db-clusters"]
+    },
+    {
+      "name": "cloudformation",
+      "description": "Manage CloudFormation stacks",
+      "examples": ["aws cloudformation list-stacks", "aws cloudformation create-stack --stack-name mystack --template-body file://template.yaml", "aws cloudformation update-stack --stack-name mystack --template-body file://template.yaml", "aws cloudformation delete-stack --stack-name mystack", "aws cloudformation describe-stack-events --stack-name mystack"]
+    },
+    {
+      "name": "ecr",
+      "description": "Manage Elastic Container Registry",
+      "examples": ["aws ecr get-login-password | docker login --username AWS --password-stdin <account>.dkr.ecr.<region>.amazonaws.com", "aws ecr describe-repositories", "aws ecr create-repository --repository-name myrepo", "aws ecr list-images --repository-name myrepo"]
+    },
+    {
+      "name": "sqs",
+      "description": "Manage Simple Queue Service",
+      "examples": ["aws sqs list-queues", "aws sqs create-queue --queue-name myqueue", "aws sqs send-message --queue-url <url> --message-body 'hello'", "aws sqs receive-message --queue-url <url>"]
+    },
+    {
+      "name": "sns",
+      "description": "Manage Simple Notification Service",
+      "examples": ["aws sns list-topics", "aws sns create-topic --name mytopic", "aws sns publish --topic-arn <arn> --message 'Hello!'", "aws sns subscribe --topic-arn <arn> --protocol email --notification-endpoint user@example.com"]
+    },
+    {
+      "name": "route53",
+      "description": "Manage Route 53 DNS",
+      "examples": ["aws route53 list-hosted-zones", "aws route53 list-resource-record-sets --hosted-zone-id Z1234", "aws route53 change-resource-record-sets --hosted-zone-id Z1234 --change-batch file://changes.json"]
+    },
+    {
+      "name": "dynamodb",
+      "description": "Manage DynamoDB tables",
+      "examples": ["aws dynamodb list-tables", "aws dynamodb describe-table --table-name mytable", "aws dynamodb scan --table-name mytable", "aws dynamodb put-item --table-name mytable --item file://item.json", "aws dynamodb query --table-name mytable --key-condition-expression 'pk = :pk' --expression-attribute-values '{\":pk\":{\"S\":\"abc\"}}'"]
+    },
+    {
+      "name": "ssm",
+      "description": "Systems Manager parameter store and sessions",
+      "examples": ["aws ssm get-parameter --name /my/param", "aws ssm put-parameter --name /my/param --value secret --type SecureString", "aws ssm get-parameters-by-path --path /my/ --recursive", "aws ssm start-session --target i-xxx"]
+    },
+    {
+      "name": "logs",
+      "description": "Manage CloudWatch Logs",
+      "examples": ["aws logs describe-log-groups", "aws logs tail /aws/lambda/myfunc --follow", "aws logs filter-log-events --log-group-name /aws/lambda/myfunc --filter-pattern ERROR"]
+    },
+    {
+      "name": "sts",
+      "description": "Security Token Service",
+      "examples": ["aws sts get-caller-identity", "aws sts assume-role --role-arn arn:aws:iam::xxx:role/myrole --role-session-name mysession"]
+    },
+    {
+      "name": "configure",
+      "description": "Configure AWS CLI credentials and settings",
+      "examples": ["aws configure", "aws configure list", "aws configure set region us-east-1", "aws configure get region", "aws configure list-profiles"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--region", "description": "AWS region", "type": "string" },
+    { "name": "--profile", "description": "Named profile from credentials", "type": "string" },
+    { "name": "--output", "description": "Output format (json, text, table, yaml)", "type": "string" },
+    { "name": "--no-cli-pager", "description": "Disable CLI pager" },
+    { "name": "--query", "description": "JMESPath query to filter output", "type": "string" },
+    { "name": "--dry-run", "description": "Check permissions without making the request" },
+    { "name": "--debug", "description": "Enable debug logging" },
+    { "name": "--endpoint-url", "description": "Override the default endpoint URL", "type": "string" }
+  ],
+  "examples": [
+    "aws s3 ls",
+    "aws ec2 describe-instances --region us-east-1",
+    "aws sts get-caller-identity",
+    "aws configure list-profiles",
+    "aws lambda list-functions --output table"
+  ],
+  "relatedCommands": ["gcloud", "az", "terraform", "sam", "cdk"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "caller_identity",
+        "description": "Current AWS account and IAM identity",
+        "command": "aws sts get-caller-identity --output json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "current_region",
+        "description": "Currently configured AWS region",
+        "command": "aws configure get region 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "profiles",
+        "description": "Available AWS CLI profiles",
+        "command": "aws configure list-profiles 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "s3_buckets",
+        "description": "S3 buckets in the account",
+        "command": "aws s3api list-buckets --query 'Buckets[].Name' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "ec2_instances",
+        "description": "Running EC2 instances",
+        "command": "aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],InstanceType,State.Name]' --output text 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "lambda_functions",
+        "description": "Lambda functions in current region",
+        "command": "aws lambda list-functions --query 'Functions[].FunctionName' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "ecs_clusters",
+        "description": "ECS clusters",
+        "command": "aws ecs list-clusters --query 'clusterArns[]' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "ecr_repositories",
+        "description": "ECR repositories",
+        "command": "aws ecr describe-repositories --query 'repositories[].repositoryName' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "rds_instances",
+        "description": "RDS database instances",
+        "command": "aws rds describe-db-instances --query 'DBInstances[].[DBInstanceIdentifier,Engine,DBInstanceStatus]' --output text 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "cloudformation_stacks",
+        "description": "CloudFormation stacks",
+        "command": "aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE --query 'StackSummaries[].StackName' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "eks_clusters",
+        "description": "EKS clusters",
+        "command": "aws eks list-clusters --query 'clusters[]' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "dynamodb_tables",
+        "description": "DynamoDB tables",
+        "command": "aws dynamodb list-tables --query 'TableNames[]' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      },
+      {
+        "name": "sqs_queues",
+        "description": "SQS queues",
+        "command": "aws sqs list-queues --query 'QueueUrls[]' --output text 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "aws"
+      }
+    ]
+  }
+}

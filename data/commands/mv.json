@@ -1,0 +1,68 @@
+{
+  "name": "mv",
+  "description": "Move or rename files and directories",
+  "category": "coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-i", "description": "Prompt before overwrite" },
+    { "name": "-n", "description": "Do not overwrite existing files" },
+    { "name": "-f", "description": "Force overwrite without prompting" },
+    { "name": "-u", "description": "Move only when source is newer than destination" },
+    { "name": "-v", "description": "Verbose — explain what is being done" },
+    { "name": "--backup", "description": "Make a backup of each existing destination file", "type": "string" },
+    { "name": "-b", "description": "Make backup (simple)" },
+    { "name": "--suffix", "short": "-S", "description": "Override backup suffix", "type": "string" },
+    { "name": "-t", "description": "Move all source arguments into target directory", "type": "directory" },
+    { "name": "-T", "description": "Treat destination as a normal file" }
+  ],
+  "examples": [
+    "mv oldname.txt newname.txt",
+    "mv file.txt /dest/",
+    "mv -i source.txt dest.txt",
+    "mv -v *.txt /dest/",
+    "mv -n file.txt /dest/",
+    "mv -u *.log /archive/",
+    "mv --backup=numbered file.txt /dest/",
+    "mv -t /dest/ file1.txt file2.txt file3.txt",
+    "mv olddir/ newdir/"
+  ],
+  "relatedCommands": ["cp", "rm", "rename", "ln", "ls"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "cwd_contents",
+        "description": "Files and directories in the current working directory",
+        "command": "ls -1A 2>/dev/null | head -50",
+        "parser": "lines",
+        "cacheFor": 3,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "cwd_path",
+        "description": "Current working directory path",
+        "command": "pwd",
+        "parser": "text",
+        "cacheFor": 3,
+        "requiresCmd": "mv"
+      },
+      {
+        "name": "directories",
+        "description": "Subdirectories in current working directory",
+        "command": "ls -d */ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      },
+      {
+        "name": "recent_files",
+        "description": "Recently modified files",
+        "command": "ls -1t 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 5,
+        "requiresCmd": "ls"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1104 @@
+{
+  "name": "helm",
+  "description": "Kubernetes package manager",
+  "category": "container-orchestration",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "install",
+      "description": "Install a chart archive into Kubernetes",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name for the installation" },
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference (repo/chart, path, or URL)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace for the release", "type": "string" },
+        { "name": "--create-namespace", "description": "Create the release namespace if not present" },
+        { "name": "--values", "short": "-f", "description": "Specify values file(s) in YAML format", "type": "path" },
+        { "name": "--set", "description": "Set individual values on the command line (key=value)", "type": "string" },
+        { "name": "--set-string", "description": "Set string values on the command line (key=value)", "type": "string" },
+        { "name": "--set-json", "description": "Set JSON values on the command line (key=jsonval)", "type": "string" },
+        { "name": "--set-file", "description": "Set values from files on the command line (key=filepath)", "type": "string" },
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions (alpha, beta, rc) too" },
+        { "name": "--dry-run", "description": "Simulate an install (none|client|server)", "type": "string" },
+        { "name": "--debug", "description": "Enable verbose output" },
+        { "name": "--wait", "description": "Wait until all resources are in a ready state before marking the release as successful" },
+        { "name": "--wait-for-jobs", "description": "Wait for all Jobs to complete before marking the release as successful" },
+        { "name": "--timeout", "description": "Time to wait for any individual Kubernetes operation (default 5m0s)", "type": "string" },
+        { "name": "--atomic", "description": "If set, installation rolls back changes on failure; implies --wait" },
+        { "name": "--generate-name", "short": "-g", "description": "Generate a release name (and omit the NAME parameter)" },
+        { "name": "--name-template", "description": "Specify template used to name the release", "type": "string" },
+        { "name": "--description", "description": "Add a custom description to the release", "type": "string" },
+        { "name": "--dependency-update", "description": "Update dependencies before installing the chart" },
+        { "name": "--disable-openapi-validation", "description": "Do not validate rendered templates against the Kubernetes OpenAPI schema" },
+        { "name": "--no-hooks", "description": "Prevent hooks from running during install" },
+        { "name": "--replace", "description": "Re-use the given release name even if it was previously deleted" },
+        { "name": "--render-subchart-notes", "description": "Render subchart notes along with the parent" },
+        { "name": "--skip-crds", "description": "Do not install CRDs in the chart" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--post-renderer", "description": "Path to an executable to use for post rendering", "type": "path" },
+        { "name": "--username", "description": "Chart repository username", "type": "string" },
+        { "name": "--password", "description": "Chart repository password", "type": "string" },
+        { "name": "--ca-file", "description": "Verify certificates against this CA bundle", "type": "path" },
+        { "name": "--cert-file", "description": "Identify HTTPS client using this SSL certificate file", "type": "path" },
+        { "name": "--key-file", "description": "Identify HTTPS client using this SSL key file", "type": "path" },
+        { "name": "--insecure-skip-tls-verify", "description": "Skip TLS certificate checks for the chart download" },
+        { "name": "--plain-http", "description": "Use insecure HTTP connections for the chart download" },
+        { "name": "--verify", "description": "Verify the package before using it" },
+        { "name": "--keyring", "description": "Location of public keys used for verification", "type": "path" }
+      ],
+      "examples": [
+        "helm install my-release bitnami/nginx",
+        "helm install my-release bitnami/nginx -n my-namespace --create-namespace",
+        "helm install my-release bitnami/nginx -f values.yaml",
+        "helm install my-release bitnami/nginx --set replicaCount=3",
+        "helm install my-release bitnami/nginx --set-json 'resources={\"limits\":{\"cpu\":\"200m\",\"memory\":\"256Mi\"}}'",
+        "helm install my-release ./my-chart --values values-prod.yaml --values values-secrets.yaml",
+        "helm install my-release bitnami/nginx --version 15.0.0",
+        "helm install my-release bitnami/nginx --dry-run=server --debug",
+        "helm install my-release bitnami/nginx --wait --timeout 10m",
+        "helm install my-release bitnami/nginx --atomic",
+        "helm install my-release oci://registry-1.docker.io/bitnamicharts/nginx",
+        "helm install my-release bitnami/nginx --generate-name",
+        "helm install my-release bitnami/nginx --dependency-update",
+        "helm install my-release bitnami/nginx --skip-crds --no-hooks"
+      ]
+    },
+    {
+      "name": "upgrade",
+      "description": "Upgrade a release to a new version of a chart",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name to upgrade" },
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference (repo/chart, path, or URL)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--install", "short": "-i", "description": "If a release by this name doesn't exist, install it" },
+        { "name": "--values", "short": "-f", "description": "Specify values file(s) in YAML format", "type": "path" },
+        { "name": "--set", "description": "Set individual values on the command line (key=value)", "type": "string" },
+        { "name": "--set-string", "description": "Set string values on the command line (key=value)", "type": "string" },
+        { "name": "--set-json", "description": "Set JSON values on the command line (key=jsonval)", "type": "string" },
+        { "name": "--set-file", "description": "Set values from files on the command line (key=filepath)", "type": "string" },
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions (alpha, beta, rc) too" },
+        { "name": "--dry-run", "description": "Simulate an upgrade (none|client|server)", "type": "string" },
+        { "name": "--debug", "description": "Enable verbose output" },
+        { "name": "--wait", "description": "Wait until all resources are in a ready state" },
+        { "name": "--wait-for-jobs", "description": "Wait for all Jobs to complete" },
+        { "name": "--timeout", "description": "Time to wait for any individual Kubernetes operation (default 5m0s)", "type": "string" },
+        { "name": "--atomic", "description": "If set, upgrade rolls back changes on failure; implies --wait" },
+        { "name": "--force", "description": "Force resource updates through a replacement strategy" },
+        { "name": "--reset-values", "description": "When upgrading, reset the values to the ones built into the chart" },
+        { "name": "--reuse-values", "description": "When upgrading, reuse the last release's values and merge in any overrides" },
+        { "name": "--reset-then-reuse-values", "description": "When upgrading, reset the values to the chart's defaults, then merge reused values" },
+        { "name": "--create-namespace", "description": "Create the release namespace if not present (--install only)" },
+        { "name": "--cleanup-on-fail", "description": "Delete newly created resources on a failed upgrade" },
+        { "name": "--history-max", "description": "Limit the maximum number of revisions saved per release (0 for no limit)", "type": "number" },
+        { "name": "--no-hooks", "description": "Prevent hooks from running during upgrade" },
+        { "name": "--render-subchart-notes", "description": "Render subchart notes along with the parent" },
+        { "name": "--skip-crds", "description": "Do not install CRDs if they are not already present" },
+        { "name": "--disable-openapi-validation", "description": "Do not validate rendered templates against the Kubernetes OpenAPI schema" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--post-renderer", "description": "Path to an executable to use for post rendering", "type": "path" }
+      ],
+      "examples": [
+        "helm upgrade my-release bitnami/nginx",
+        "helm upgrade my-release bitnami/nginx -f values.yaml",
+        "helm upgrade my-release bitnami/nginx --set replicaCount=5",
+        "helm upgrade --install my-release bitnami/nginx -n my-namespace --create-namespace",
+        "helm upgrade my-release bitnami/nginx --version 16.0.0",
+        "helm upgrade my-release bitnami/nginx --reuse-values --set image.tag=1.25",
+        "helm upgrade my-release bitnami/nginx --atomic --timeout 10m",
+        "helm upgrade my-release bitnami/nginx --dry-run=server --debug",
+        "helm upgrade my-release bitnami/nginx --force",
+        "helm upgrade my-release bitnami/nginx --cleanup-on-fail --wait",
+        "helm upgrade my-release bitnami/nginx --reset-values -f new-values.yaml",
+        "helm upgrade my-release bitnami/nginx --history-max 10"
+      ]
+    },
+    {
+      "name": "uninstall",
+      "description": "Uninstall a release from Kubernetes",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name(s) to uninstall" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--dry-run", "description": "Simulate an uninstall" },
+        { "name": "--keep-history", "description": "Remove all associated resources and mark the release as deleted, but retain release history" },
+        { "name": "--no-hooks", "description": "Prevent hooks from running during uninstallation" },
+        { "name": "--timeout", "description": "Time to wait for any individual Kubernetes operation (default 5m0s)", "type": "string" },
+        { "name": "--wait", "description": "Wait for deletion of all associated resources" },
+        { "name": "--cascade", "description": "Cascade strategy (background|orphan|foreground)", "type": "string" },
+        { "name": "--description", "description": "Add a custom description to the release", "type": "string" }
+      ],
+      "examples": [
+        "helm uninstall my-release",
+        "helm uninstall my-release -n my-namespace",
+        "helm uninstall my-release --keep-history",
+        "helm uninstall my-release --dry-run",
+        "helm uninstall my-release --no-hooks",
+        "helm uninstall my-release --wait --timeout 5m",
+        "helm uninstall my-release --cascade foreground"
+      ]
+    },
+    {
+      "name": "list",
+      "description": "List releases across namespaces",
+      "args": [],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace to list releases from", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "List releases across all namespaces" },
+        { "name": "--all", "short": "-a", "description": "Show all releases without any filter applied" },
+        { "name": "--deployed", "description": "Show deployed releases (default if none specified)" },
+        { "name": "--failed", "description": "Show failed releases" },
+        { "name": "--pending", "description": "Show pending releases" },
+        { "name": "--superseded", "description": "Show superseded releases" },
+        { "name": "--uninstalled", "description": "Show uninstalled releases (if --keep-history was used)" },
+        { "name": "--uninstalling", "description": "Show releases that are currently being uninstalled" },
+        { "name": "--date", "short": "-d", "description": "Sort by release date" },
+        { "name": "--reverse", "short": "-r", "description": "Reverse the sort order" },
+        { "name": "--max", "short": "-m", "description": "Maximum number of releases to fetch (default 256)", "type": "number" },
+        { "name": "--offset", "description": "Next release index in the list (used for pagination)", "type": "number" },
+        { "name": "--filter", "description": "A regular expression to filter release names", "type": "string" },
+        { "name": "--selector", "short": "-l", "description": "Label selector to filter on (CURRENTLY NOT IMPLEMENTED)", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers with default output format" },
+        { "name": "--time-format", "description": "Format time using golang time format", "type": "string" },
+        { "name": "--short", "description": "Print output in short (quiet) format" }
+      ],
+      "examples": [
+        "helm list",
+        "helm list -n my-namespace",
+        "helm list --all-namespaces",
+        "helm list -a",
+        "helm list --failed",
+        "helm list --pending",
+        "helm list -o json",
+        "helm list -o yaml",
+        "helm list --filter 'nginx.*'",
+        "helm list --date --reverse",
+        "helm list --max 10 --offset 0",
+        "helm list --no-headers",
+        "helm list -A --short"
+      ]
+    },
+    {
+      "name": "repo add",
+      "description": "Add a chart repository",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Repository name" },
+        { "name": "<url>", "type": "string", "required": true, "description": "Repository URL" }
+      ],
+      "options": [
+        { "name": "--force-update", "description": "Replace (overwrite) the repo even if it already exists" },
+        { "name": "--allow-deprecated-repos", "description": "Allow adding repositories previously marked as deprecated" },
+        { "name": "--username", "description": "Chart repository username", "type": "string" },
+        { "name": "--password", "description": "Chart repository password", "type": "string" },
+        { "name": "--pass-credentials", "description": "Pass credentials to all domains" },
+        { "name": "--no-update", "description": "Do not update if a repo with the same name already exists" },
+        { "name": "--ca-file", "description": "Verify certificates against this CA bundle", "type": "path" },
+        { "name": "--cert-file", "description": "Identify HTTPS client using this SSL certificate file", "type": "path" },
+        { "name": "--key-file", "description": "Identify HTTPS client using this SSL key file", "type": "path" },
+        { "name": "--insecure-skip-tls-verify", "description": "Skip TLS certificate verification" }
+      ],
+      "examples": [
+        "helm repo add bitnami https://charts.bitnami.com/bitnami",
+        "helm repo add stable https://charts.helm.sh/stable",
+        "helm repo add jetstack https://charts.jetstack.io",
+        "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx",
+        "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts",
+        "helm repo add grafana https://grafana.github.io/helm-charts",
+        "helm repo add bitnami https://charts.bitnami.com/bitnami --force-update",
+        "helm repo add myrepo https://charts.example.com --username admin --password secret",
+        "helm repo add myrepo https://charts.example.com --ca-file ca.pem"
+      ]
+    },
+    {
+      "name": "repo remove",
+      "description": "Remove one or more chart repositories",
+      "args": [
+        { "name": "<name>...", "type": "string", "required": true, "description": "Repository name(s) to remove" }
+      ],
+      "options": [],
+      "examples": [
+        "helm repo remove bitnami",
+        "helm repo remove stable bitnami"
+      ]
+    },
+    {
+      "name": "repo update",
+      "description": "Update information of available charts locally from chart repositories",
+      "args": [
+        { "name": "<name>...", "type": "string", "required": false, "description": "Specific repo name(s) to update (default: all)" }
+      ],
+      "options": [
+        { "name": "--fail-on-repo-update-fail", "description": "Return an error if any repo update fails" }
+      ],
+      "examples": [
+        "helm repo update",
+        "helm repo update bitnami",
+        "helm repo update bitnami jetstack"
+      ]
+    },
+    {
+      "name": "repo list",
+      "description": "List chart repositories",
+      "args": [],
+      "options": [
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--no-headers", "description": "Do not print column headers" }
+      ],
+      "examples": [
+        "helm repo list",
+        "helm repo list -o json",
+        "helm repo list -o yaml"
+      ]
+    },
+    {
+      "name": "repo index",
+      "description": "Generate an index file given a directory containing packaged charts",
+      "args": [
+        { "name": "<dir>", "type": "path", "required": true, "description": "Directory containing chart packages" }
+      ],
+      "options": [
+        { "name": "--url", "description": "URL of chart repository", "type": "string" },
+        { "name": "--merge", "description": "Merge the generated index into the given index", "type": "path" }
+      ],
+      "examples": [
+        "helm repo index ./charts",
+        "helm repo index ./charts --url https://charts.example.com",
+        "helm repo index ./charts --merge index.yaml"
+      ]
+    },
+    {
+      "name": "search hub",
+      "description": "Search Artifact Hub for charts",
+      "args": [
+        { "name": "<keyword>", "type": "string", "required": true, "description": "Search keyword" }
+      ],
+      "options": [
+        { "name": "--max-col-width", "description": "Maximum column width for output table", "type": "number" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--list-repo-url", "description": "Print charts repository URL" },
+        { "name": "--fail-on-no-result", "description": "Return an error if no results are found" }
+      ],
+      "examples": [
+        "helm search hub nginx",
+        "helm search hub wordpress -o json",
+        "helm search hub redis --list-repo-url",
+        "helm search hub prometheus --max-col-width 80"
+      ]
+    },
+    {
+      "name": "search repo",
+      "description": "Search repositories for a keyword in charts",
+      "args": [
+        { "name": "<keyword>", "type": "string", "required": false, "description": "Search keyword" }
+      ],
+      "options": [
+        { "name": "--devel", "description": "Use development versions (alpha, beta, rc) too" },
+        { "name": "--max-col-width", "description": "Maximum column width for output table", "type": "number" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--regexp", "description": "Use regular expressions for searching" },
+        { "name": "--version", "description": "Search for a specific chart version / version constraint", "type": "string" },
+        { "name": "--versions", "description": "Show all available versions, not just the latest" },
+        { "name": "--fail-on-no-result", "description": "Return an error if no results are found" }
+      ],
+      "examples": [
+        "helm search repo nginx",
+        "helm search repo bitnami/nginx",
+        "helm search repo nginx --versions",
+        "helm search repo nginx --version '^15'",
+        "helm search repo nginx --devel",
+        "helm search repo nginx -o json",
+        "helm search repo '' --regexp"
+      ]
+    },
+    {
+      "name": "show all",
+      "description": "Show all information of the chart (values, readme, chart, crds)",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference (repo/chart, path, or URL)" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions too" },
+        { "name": "--jsonpath", "description": "A JSONPath expression for filtering chart info", "type": "string" }
+      ],
+      "examples": [
+        "helm show all bitnami/nginx",
+        "helm show all bitnami/nginx --version 15.0.0",
+        "helm show all ./my-chart"
+      ]
+    },
+    {
+      "name": "show chart",
+      "description": "Show the chart's definition (Chart.yaml)",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions too" }
+      ],
+      "examples": [
+        "helm show chart bitnami/nginx",
+        "helm show chart bitnami/nginx --version 15.0.0"
+      ]
+    },
+    {
+      "name": "show readme",
+      "description": "Show the chart's README",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions too" }
+      ],
+      "examples": [
+        "helm show readme bitnami/nginx",
+        "helm show readme bitnami/nginx --version 15.0.0"
+      ]
+    },
+    {
+      "name": "show values",
+      "description": "Show the chart's default values",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions too" },
+        { "name": "--jsonpath", "description": "A JSONPath expression for filtering values", "type": "string" }
+      ],
+      "examples": [
+        "helm show values bitnami/nginx",
+        "helm show values bitnami/nginx --version 15.0.0",
+        "helm show values bitnami/nginx > values.yaml",
+        "helm show values ./my-chart"
+      ]
+    },
+    {
+      "name": "show crds",
+      "description": "Show the chart's CRDs",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--devel", "description": "Use development versions too" }
+      ],
+      "examples": [
+        "helm show crds bitnami/nginx",
+        "helm show crds jetstack/cert-manager --version 1.13.0"
+      ]
+    },
+    {
+      "name": "pull",
+      "description": "Download a chart from a repository and (optionally) unpack it locally",
+      "args": [
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference or URL" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--untar", "description": "Untar the chart after downloading it" },
+        { "name": "--untardir", "description": "Directory to untar into (default '.')", "type": "path" },
+        { "name": "--destination", "short": "-d", "description": "Location to write the chart (default '.')", "type": "path" },
+        { "name": "--devel", "description": "Use development versions too" },
+        { "name": "--repo", "description": "Chart repository URL", "type": "string" },
+        { "name": "--username", "description": "Chart repository username", "type": "string" },
+        { "name": "--password", "description": "Chart repository password", "type": "string" },
+        { "name": "--ca-file", "description": "Verify certificates against this CA bundle", "type": "path" },
+        { "name": "--cert-file", "description": "Identify HTTPS client using this SSL certificate file", "type": "path" },
+        { "name": "--key-file", "description": "Identify HTTPS client using this SSL key file", "type": "path" },
+        { "name": "--insecure-skip-tls-verify", "description": "Skip TLS certificate verification" },
+        { "name": "--plain-http", "description": "Use insecure HTTP connections" },
+        { "name": "--prov", "description": "Fetch the provenance file, but don't perform verification" },
+        { "name": "--verify", "description": "Verify the package before using it" },
+        { "name": "--keyring", "description": "Location of public keys used for verification", "type": "path" },
+        { "name": "--pass-credentials", "description": "Pass credentials to all domains" }
+      ],
+      "examples": [
+        "helm pull bitnami/nginx",
+        "helm pull bitnami/nginx --version 15.0.0",
+        "helm pull bitnami/nginx --untar",
+        "helm pull bitnami/nginx --untar --untardir ./charts",
+        "helm pull bitnami/nginx -d /tmp/charts",
+        "helm pull oci://registry-1.docker.io/bitnamicharts/nginx",
+        "helm pull bitnami/nginx --verify --keyring public.gpg"
+      ]
+    },
+    {
+      "name": "push",
+      "description": "Push a chart package to a remote registry",
+      "args": [
+        { "name": "<chart>", "type": "path", "required": true, "description": "Path to the chart package (.tgz)" },
+        { "name": "<remote>", "type": "string", "required": true, "description": "Remote registry URL (oci://...)" }
+      ],
+      "options": [
+        { "name": "--ca-file", "description": "Verify certificates against this CA bundle", "type": "path" },
+        { "name": "--cert-file", "description": "Identify HTTPS client using this SSL certificate file", "type": "path" },
+        { "name": "--key-file", "description": "Identify HTTPS client using this SSL key file", "type": "path" },
+        { "name": "--insecure-skip-tls-verify", "description": "Skip TLS certificate verification" },
+        { "name": "--plain-http", "description": "Use insecure HTTP connections" }
+      ],
+      "examples": [
+        "helm push mychart-0.1.0.tgz oci://registry.example.com/charts",
+        "helm push mychart-0.1.0.tgz oci://ghcr.io/myorg/charts",
+        "helm push mychart-0.1.0.tgz oci://registry.example.com/charts --plain-http"
+      ]
+    },
+    {
+      "name": "package",
+      "description": "Package a chart directory into a chart archive (.tgz)",
+      "args": [
+        { "name": "<chart-path>...", "type": "path", "required": true, "description": "Path(s) to the chart directory" }
+      ],
+      "options": [
+        { "name": "--destination", "short": "-d", "description": "Location to write the chart archive", "type": "path" },
+        { "name": "--version", "description": "Set the version on the chart to this semver", "type": "string" },
+        { "name": "--app-version", "description": "Set the appVersion on the chart to this version", "type": "string" },
+        { "name": "--dependency-update", "short": "-u", "description": "Update dependencies before packaging" },
+        { "name": "--sign", "description": "Use a PGP private key to sign this package" },
+        { "name": "--key", "description": "Name of the key to use when signing (--sign)", "type": "string" },
+        { "name": "--keyring", "description": "Location of public keys used for verification", "type": "path" },
+        { "name": "--passphrase-file", "description": "Location of a file that contains the passphrase for the signing key", "type": "path" }
+      ],
+      "examples": [
+        "helm package ./my-chart",
+        "helm package ./my-chart -d ./dist",
+        "helm package ./my-chart --version 1.2.3",
+        "helm package ./my-chart --app-version 2.0.0",
+        "helm package ./my-chart --dependency-update",
+        "helm package ./my-chart --sign --key 'John Smith' --keyring keyring.gpg"
+      ]
+    },
+    {
+      "name": "template",
+      "description": "Locally render templates without connecting to the server",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name (for template rendering)" },
+        { "name": "<chart>", "type": "string", "required": true, "description": "Chart reference" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Namespace for the release", "type": "string" },
+        { "name": "--values", "short": "-f", "description": "Specify values file(s) in YAML format", "type": "path" },
+        { "name": "--set", "description": "Set individual values on the command line (key=value)", "type": "string" },
+        { "name": "--set-string", "description": "Set string values on the command line (key=value)", "type": "string" },
+        { "name": "--set-json", "description": "Set JSON values on the command line (key=jsonval)", "type": "string" },
+        { "name": "--set-file", "description": "Set values from files on the command line (key=filepath)", "type": "string" },
+        { "name": "--version", "description": "Specify chart version constraint", "type": "string" },
+        { "name": "--show-only", "short": "-s", "description": "Only show manifests rendered from the given templates", "type": "string" },
+        { "name": "--output-dir", "description": "Write rendered manifests to this directory instead of stdout", "type": "path" },
+        { "name": "--release-name", "description": "Use release name in the output-dir path" },
+        { "name": "--validate", "description": "Validate rendered templates against the Kubernetes cluster" },
+        { "name": "--include-crds", "description": "Include CRDs in the templated output" },
+        { "name": "--skip-crds", "description": "Do not include CRDs in the templated output" },
+        { "name": "--no-hooks", "description": "Do not render hook templates" },
+        { "name": "--is-upgrade", "description": "Set .Release.IsUpgrade instead of .Release.IsInstall" },
+        { "name": "--dependency-update", "description": "Update dependencies before rendering" },
+        { "name": "--api-versions", "short": "-a", "description": "Kubernetes API versions used for Capabilities.APIVersions", "type": "string" },
+        { "name": "--kube-version", "description": "Kubernetes version used for Capabilities.KubeVersion", "type": "string" },
+        { "name": "--debug", "description": "Enable verbose output" },
+        { "name": "--disable-openapi-validation", "description": "Do not validate rendered templates against the Kubernetes OpenAPI schema" },
+        { "name": "--post-renderer", "description": "Path to an executable to use for post rendering", "type": "path" }
+      ],
+      "examples": [
+        "helm template my-release bitnami/nginx",
+        "helm template my-release ./my-chart -f values.yaml",
+        "helm template my-release bitnami/nginx --set replicaCount=3",
+        "helm template my-release bitnami/nginx -s templates/deployment.yaml",
+        "helm template my-release bitnami/nginx --output-dir ./rendered",
+        "helm template my-release bitnami/nginx --namespace production",
+        "helm template my-release bitnami/nginx --validate",
+        "helm template my-release bitnami/nginx --include-crds",
+        "helm template my-release bitnami/nginx --kube-version 1.28.0",
+        "helm template my-release bitnami/nginx --api-versions networking.k8s.io/v1",
+        "helm template my-release bitnami/nginx --debug"
+      ]
+    },
+    {
+      "name": "lint",
+      "description": "Examine a chart for possible issues",
+      "args": [
+        { "name": "<path>", "type": "path", "required": false, "description": "Path to the chart (default '.')" }
+      ],
+      "options": [
+        { "name": "--values", "short": "-f", "description": "Specify values file(s) in YAML format", "type": "path" },
+        { "name": "--set", "description": "Set individual values on the command line (key=value)", "type": "string" },
+        { "name": "--set-string", "description": "Set string values on the command line (key=value)", "type": "string" },
+        { "name": "--set-json", "description": "Set JSON values on the command line (key=jsonval)", "type": "string" },
+        { "name": "--set-file", "description": "Set values from files on the command line (key=filepath)", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Namespace for template rendering", "type": "string" },
+        { "name": "--strict", "description": "Fail on lint warnings" },
+        { "name": "--with-subcharts", "description": "Lint dependent charts" },
+        { "name": "--quiet", "description": "Print only warnings and errors" }
+      ],
+      "examples": [
+        "helm lint",
+        "helm lint ./my-chart",
+        "helm lint ./my-chart -f values-prod.yaml",
+        "helm lint ./my-chart --strict",
+        "helm lint ./my-chart --with-subcharts",
+        "helm lint ./my-chart --set replicaCount=3",
+        "helm lint ./my-chart --quiet"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Run tests for a release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name to test" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--filter", "description": "A label filter to limit the tests that are run (comma-separated list of key=value)", "type": "string" },
+        { "name": "--timeout", "description": "Time to wait for any individual Kubernetes operation (default 5m0s)", "type": "string" },
+        { "name": "--logs", "description": "Dump the logs from test pods" }
+      ],
+      "examples": [
+        "helm test my-release",
+        "helm test my-release -n my-namespace",
+        "helm test my-release --logs",
+        "helm test my-release --timeout 10m",
+        "helm test my-release --filter name=my-release-test-connection"
+      ]
+    },
+    {
+      "name": "rollback",
+      "description": "Roll back a release to a previous revision",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" },
+        { "name": "<revision>", "type": "number", "required": false, "description": "Revision number to roll back to (default: previous)" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--dry-run", "description": "Simulate a rollback" },
+        { "name": "--force", "description": "Force resource update through delete/recreate if needed" },
+        { "name": "--no-hooks", "description": "Prevent hooks from running during rollback" },
+        { "name": "--recreate-pods", "description": "Perform pods restart for the resource (DEPRECATED)" },
+        { "name": "--timeout", "description": "Time to wait for any individual Kubernetes operation (default 5m0s)", "type": "string" },
+        { "name": "--wait", "description": "Wait until all Pods, PVCs, Services, Deployments, StatefulSets, or ReplicaSets are in a ready state" },
+        { "name": "--wait-for-jobs", "description": "Wait for all Jobs to complete" },
+        { "name": "--cleanup-on-fail", "description": "Delete newly created resources on a failed rollback" },
+        { "name": "--history-max", "description": "Limit the maximum number of revisions saved per release", "type": "number" }
+      ],
+      "examples": [
+        "helm rollback my-release",
+        "helm rollback my-release 1",
+        "helm rollback my-release 3 -n my-namespace",
+        "helm rollback my-release 2 --dry-run",
+        "helm rollback my-release 1 --wait --timeout 5m",
+        "helm rollback my-release 2 --force",
+        "helm rollback my-release 1 --cleanup-on-fail"
+      ]
+    },
+    {
+      "name": "history",
+      "description": "Fetch release history",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--max", "description": "Maximum number of revisions to include in history", "type": "number" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" }
+      ],
+      "examples": [
+        "helm history my-release",
+        "helm history my-release -n my-namespace",
+        "helm history my-release --max 10",
+        "helm history my-release -o json",
+        "helm history my-release -o yaml"
+      ]
+    },
+    {
+      "name": "status",
+      "description": "Display the status of a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Display the status of a specific revision", "type": "number" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" },
+        { "name": "--show-desc", "description": "Display the description message of the named release" },
+        { "name": "--show-resources", "description": "Display the resources of the named release" }
+      ],
+      "examples": [
+        "helm status my-release",
+        "helm status my-release -n my-namespace",
+        "helm status my-release --revision 3",
+        "helm status my-release -o json",
+        "helm status my-release --show-desc",
+        "helm status my-release --show-resources"
+      ]
+    },
+    {
+      "name": "get all",
+      "description": "Download all information for a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Get the named release with revision", "type": "number" },
+        { "name": "--template", "description": "Go template for formatting the output", "type": "string" }
+      ],
+      "examples": [
+        "helm get all my-release",
+        "helm get all my-release -n my-namespace",
+        "helm get all my-release --revision 2"
+      ]
+    },
+    {
+      "name": "get hooks",
+      "description": "Download all hooks for a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Get the named release with revision", "type": "number" }
+      ],
+      "examples": [
+        "helm get hooks my-release",
+        "helm get hooks my-release -n my-namespace",
+        "helm get hooks my-release --revision 2"
+      ]
+    },
+    {
+      "name": "get manifest",
+      "description": "Download the manifest for a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Get the named release with revision", "type": "number" }
+      ],
+      "examples": [
+        "helm get manifest my-release",
+        "helm get manifest my-release -n my-namespace",
+        "helm get manifest my-release --revision 2"
+      ]
+    },
+    {
+      "name": "get notes",
+      "description": "Download the notes for a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Get the named release with revision", "type": "number" }
+      ],
+      "examples": [
+        "helm get notes my-release",
+        "helm get notes my-release -n my-namespace",
+        "helm get notes my-release --revision 2"
+      ]
+    },
+    {
+      "name": "get values",
+      "description": "Download the values file for a named release",
+      "args": [
+        { "name": "<release>", "type": "string", "required": true, "description": "Release name" }
+      ],
+      "options": [
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace of the release", "type": "string" },
+        { "name": "--revision", "description": "Get the named release with revision", "type": "number" },
+        { "name": "--all", "short": "-a", "description": "Dump all (computed) values" },
+        { "name": "--output", "short": "-o", "description": "Output format (table|json|yaml)", "type": "string" }
+      ],
+      "examples": [
+        "helm get values my-release",
+        "helm get values my-release -n my-namespace",
+        "helm get values my-release --all",
+        "helm get values my-release -o json",
+        "helm get values my-release --revision 2",
+        "helm get values my-release -a -o yaml > all-values.yaml"
+      ]
+    },
+    {
+      "name": "create",
+      "description": "Create a new chart with the given name",
+      "args": [
+        { "name": "<name>", "type": "string", "required": true, "description": "Name for the new chart" }
+      ],
+      "options": [
+        { "name": "--starter", "short": "-p", "description": "Name or absolute path to starter scaffold", "type": "string" }
+      ],
+      "examples": [
+        "helm create my-chart",
+        "helm create my-chart --starter my-starter"
+      ]
+    },
+    {
+      "name": "dependency build",
+      "description": "Rebuild the charts/ directory based on Chart.lock",
+      "args": [
+        { "name": "<chart>", "type": "path", "required": false, "description": "Chart path (default '.')" }
+      ],
+      "options": [
+        { "name": "--keyring", "description": "Keyring containing public keys", "type": "path" },
+        { "name": "--skip-refresh", "description": "Do not refresh the local repository cache" },
+        { "name": "--verify", "description": "Verify the packages against signatures" }
+      ],
+      "examples": [
+        "helm dependency build",
+        "helm dependency build ./my-chart",
+        "helm dependency build --skip-refresh"
+      ]
+    },
+    {
+      "name": "dependency list",
+      "description": "List the dependencies for the given chart",
+      "args": [
+        { "name": "<chart>", "type": "path", "required": false, "description": "Chart path (default '.')" }
+      ],
+      "options": [
+        { "name": "--max-col-width", "description": "Maximum column width for output table", "type": "number" }
+      ],
+      "examples": [
+        "helm dependency list",
+        "helm dependency list ./my-chart"
+      ]
+    },
+    {
+      "name": "dependency update",
+      "description": "Update charts/ based on the contents of Chart.yaml",
+      "args": [
+        { "name": "<chart>", "type": "path", "required": false, "description": "Chart path (default '.')" }
+      ],
+      "options": [
+        { "name": "--keyring", "description": "Keyring containing public keys", "type": "path" },
+        { "name": "--skip-refresh", "description": "Do not refresh the local repository cache" },
+        { "name": "--verify", "description": "Verify the packages against signatures" }
+      ],
+      "examples": [
+        "helm dependency update",
+        "helm dependency update ./my-chart",
+        "helm dependency update --skip-refresh"
+      ]
+    },
+    {
+      "name": "plugin install",
+      "description": "Install one or more Helm plugins",
+      "args": [
+        { "name": "<path|url>...", "type": "string", "required": true, "description": "Path to plugin directory or URL of a VCS repo" }
+      ],
+      "options": [
+        { "name": "--version", "description": "Specify a version constraint for the plugin", "type": "string" }
+      ],
+      "examples": [
+        "helm plugin install https://github.com/databus23/helm-diff",
+        "helm plugin install https://github.com/jkroepke/helm-secrets",
+        "helm plugin install https://github.com/databus23/helm-diff --version 3.8.1",
+        "helm plugin install ./my-plugin"
+      ]
+    },
+    {
+      "name": "plugin list",
+      "description": "List installed Helm plugins",
+      "args": [],
+      "options": [],
+      "examples": [
+        "helm plugin list"
+      ]
+    },
+    {
+      "name": "plugin uninstall",
+      "description": "Uninstall one or more Helm plugins",
+      "args": [
+        { "name": "<plugin>...", "type": "string", "required": true, "description": "Plugin name(s) to uninstall" }
+      ],
+      "options": [],
+      "examples": [
+        "helm plugin uninstall diff",
+        "helm plugin uninstall diff secrets"
+      ]
+    },
+    {
+      "name": "plugin update",
+      "description": "Update one or more Helm plugins",
+      "args": [
+        { "name": "<plugin>...", "type": "string", "required": true, "description": "Plugin name(s) to update" }
+      ],
+      "options": [],
+      "examples": [
+        "helm plugin update diff",
+        "helm plugin update diff secrets"
+      ]
+    },
+    {
+      "name": "env",
+      "description": "Helm client environment information",
+      "args": [],
+      "options": [],
+      "examples": [
+        "helm env",
+        "helm env HELM_REPOSITORY_CACHE",
+        "helm env HELM_DATA_HOME"
+      ]
+    },
+    {
+      "name": "verify",
+      "description": "Verify that a chart at the given path has been signed and is valid",
+      "args": [
+        { "name": "<path>", "type": "path", "required": true, "description": "Path to the chart archive" }
+      ],
+      "options": [
+        { "name": "--keyring", "description": "Keyring containing public keys", "type": "path" }
+      ],
+      "examples": [
+        "helm verify ./my-chart-0.1.0.tgz",
+        "helm verify ./my-chart-0.1.0.tgz --keyring public.gpg"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Print the client version information",
+      "args": [],
+      "options": [
+        { "name": "--short", "description": "Print the version number only" },
+        { "name": "--template", "description": "Template for the version string format", "type": "string" }
+      ],
+      "examples": [
+        "helm version",
+        "helm version --short",
+        "helm version --template '{{.Version}}'"
+      ]
+    },
+    {
+      "name": "completion",
+      "description": "Generate autocompletion scripts for the specified shell",
+      "args": [
+        { "name": "<shell>", "type": "string", "required": true, "description": "Shell type (bash|zsh|fish|powershell)" }
+      ],
+      "options": [
+        { "name": "--no-descriptions", "description": "Disable completion descriptions" }
+      ],
+      "examples": [
+        "helm completion bash",
+        "helm completion zsh",
+        "helm completion fish",
+        "helm completion powershell",
+        "source <(helm completion bash)",
+        "helm completion bash > /etc/bash_completion.d/helm",
+        "helm completion zsh > \"${fpath[1]}/_helm\"",
+        "helm completion fish | source"
+      ]
+    },
+    {
+      "name": "registry login",
+      "description": "Authenticate to an OCI registry",
+      "args": [
+        { "name": "<host>", "type": "string", "required": true, "description": "Registry host" }
+      ],
+      "options": [
+        { "name": "--username", "short": "-u", "description": "Registry username", "type": "string" },
+        { "name": "--password", "short": "-p", "description": "Registry password or identity token", "type": "string" },
+        { "name": "--password-stdin", "description": "Read password from stdin" },
+        { "name": "--ca-file", "description": "Verify certificates against this CA bundle", "type": "path" },
+        { "name": "--cert-file", "description": "Identify HTTPS client using this SSL certificate file", "type": "path" },
+        { "name": "--key-file", "description": "Identify HTTPS client using this SSL key file", "type": "path" },
+        { "name": "--insecure", "description": "Allow connections to TLS registry without certs" }
+      ],
+      "examples": [
+        "helm registry login registry.example.com -u admin -p secret",
+        "helm registry login ghcr.io -u USERNAME --password-stdin",
+        "echo $TOKEN | helm registry login registry.example.com -u admin --password-stdin"
+      ]
+    },
+    {
+      "name": "registry logout",
+      "description": "Remove credentials stored for a remote registry",
+      "args": [
+        { "name": "<host>", "type": "string", "required": true, "description": "Registry host" }
+      ],
+      "options": [],
+      "examples": [
+        "helm registry logout registry.example.com",
+        "helm registry logout ghcr.io"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--debug", "description": "Enable verbose output" },
+    { "name": "--kube-apiserver", "description": "The address and port of the Kubernetes API server", "type": "string" },
+    { "name": "--kube-as-group", "description": "Group to impersonate for the operation (repeatable)", "type": "string" },
+    { "name": "--kube-as-user", "description": "Username to impersonate for the operation", "type": "string" },
+    { "name": "--kube-ca-file", "description": "The certificate authority file for the Kubernetes API server connection", "type": "path" },
+    { "name": "--kube-context", "description": "Name of the kubeconfig context to use", "type": "string" },
+    { "name": "--kube-insecure-skip-tls-verify", "description": "Skip TLS certificate verification for Kubernetes API server" },
+    { "name": "--kube-tls-server-name", "description": "Server name to use for Kubernetes API server TLS certificate validation", "type": "string" },
+    { "name": "--kube-token", "description": "Bearer token used for authentication", "type": "string" },
+    { "name": "--kubeconfig", "description": "Path to the kubeconfig file", "type": "path" },
+    { "name": "--namespace", "short": "-n", "description": "Namespace scope for this request", "type": "string" },
+    { "name": "--registry-config", "description": "Path to the registry config file", "type": "path" },
+    { "name": "--repository-cache", "description": "Path to the directory containing cached repository indexes", "type": "path" },
+    { "name": "--repository-config", "description": "Path to the file containing repository names and URLs", "type": "path" },
+    { "name": "--burst-limit", "description": "Client-side default throttling limit", "type": "number" },
+    { "name": "--qps", "description": "Queries per second used when communicating with the Kubernetes API", "type": "number" }
+  ],
+  "examples": [
+    "helm install my-release bitnami/nginx",
+    "helm upgrade --install my-release bitnami/nginx -n production --create-namespace",
+    "helm uninstall my-release -n production",
+    "helm list --all-namespaces",
+    "helm repo add bitnami https://charts.bitnami.com/bitnami && helm repo update",
+    "helm search repo nginx --versions",
+    "helm show values bitnami/nginx > values.yaml",
+    "helm template my-release bitnami/nginx -f values.yaml",
+    "helm rollback my-release 1",
+    "helm history my-release -o json",
+    "helm get values my-release --all -o yaml",
+    "helm status my-release --show-resources",
+    "helm package ./my-chart && helm push my-chart-0.1.0.tgz oci://registry.example.com/charts",
+    "helm lint ./my-chart --strict",
+    "helm dependency update ./my-chart",
+    "helm create my-new-chart",
+    "helm plugin install https://github.com/databus23/helm-diff",
+    "helm diff upgrade my-release bitnami/nginx -f values.yaml",
+    "helm pull bitnami/nginx --untar",
+    "helm test my-release --logs"
+  ],
+  "relatedCommands": ["kubectl", "kustomize"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "releases",
+        "description": "All deployed Helm releases across all namespaces",
+        "command": "helm list --all-namespaces --no-headers",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "release_details",
+        "description": "Detailed Helm release information with status, chart, app version, and namespace in JSON format",
+        "command": "helm list -o json",
+        "parser": "json",
+        "cacheFor": 15,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "release_details_all",
+        "description": "Detailed Helm release information across all namespaces in JSON format",
+        "command": "helm list --all-namespaces -o json",
+        "parser": "json",
+        "cacheFor": 15,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "failed_releases",
+        "description": "Helm releases in a failed state across all namespaces",
+        "command": "helm list --all-namespaces --failed --no-headers",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "pending_releases",
+        "description": "Helm releases in a pending state across all namespaces",
+        "command": "helm list --all-namespaces --pending --no-headers",
+        "parser": "table",
+        "cacheFor": 10,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "repos",
+        "description": "Configured Helm chart repositories with names and URLs",
+        "command": "helm repo list --no-headers",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "repos_json",
+        "description": "Configured Helm chart repositories in JSON format",
+        "command": "helm repo list -o json",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "plugins",
+        "description": "Installed Helm plugins with name and version",
+        "command": "helm plugin list --no-headers",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "env_vars",
+        "description": "Helm client environment variables (data home, config home, cache, plugins, registry, repository paths)",
+        "command": "helm env",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "helm_version",
+        "description": "Installed Helm client version",
+        "command": "helm version --short",
+        "parser": "text",
+        "cacheFor": 600,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "kube_context",
+        "description": "Current active Kubernetes context used by Helm",
+        "command": "kubectl config current-context",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_contexts",
+        "description": "All available Kubernetes contexts",
+        "command": "kubectl config get-contexts --no-headers -o name",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "namespaces",
+        "description": "All Kubernetes namespaces available for Helm releases",
+        "command": "kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "chart_dependencies",
+        "description": "Dependencies of the Helm chart in the current directory",
+        "command": "helm dependency list . 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "release_history",
+        "description": "Revision history for all releases in the current namespace",
+        "command": "helm list --no-headers -q | xargs -I{} helm history {} --max 5 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "helm"
+      },
+      {
+        "name": "oci_registries",
+        "description": "Configured OCI registry authentication entries",
+        "command": "helm registry list 2>/dev/null || echo 'no registries configured'",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "helm"
+      }
+    ]
+  }
+}

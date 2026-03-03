@@ -1,0 +1,161 @@
+{
+  "name": "go",
+  "description": "Open-source programming language by Google",
+  "category": "runtime",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "build",
+      "description": "Compile packages and dependencies",
+      "args": [{ "name": "<packages>", "type": "path", "required": false, "description": "Packages to build" }],
+      "options": [
+        { "name": "-o", "description": "Output binary name", "type": "file" },
+        { "name": "-v", "description": "Verbose output" },
+        { "name": "-race", "description": "Enable race detector" },
+        { "name": "-ldflags", "description": "Linker flags", "type": "string" },
+        { "name": "-tags", "description": "Build tags", "type": "string" },
+        { "name": "-trimpath", "description": "Remove file system paths from binary" }
+      ],
+      "examples": ["go build", "go build -o myapp ./cmd/server", "go build -race -v ./...", "go build -ldflags='-s -w' ."]
+    },
+    {
+      "name": "run",
+      "description": "Compile and run Go program",
+      "args": [{ "name": "<files>", "type": "file", "required": true, "description": "Go source files" }],
+      "examples": ["go run main.go", "go run ./cmd/server", "go run ."]
+    },
+    {
+      "name": "test",
+      "description": "Run tests",
+      "args": [{ "name": "<packages>", "type": "path", "required": false, "description": "Packages to test" }],
+      "options": [
+        { "name": "-v", "description": "Verbose test output" },
+        { "name": "-run", "description": "Run tests matching regex", "type": "string" },
+        { "name": "-bench", "description": "Run benchmarks matching regex", "type": "string" },
+        { "name": "-cover", "description": "Enable coverage analysis" },
+        { "name": "-coverprofile", "description": "Write coverage profile to file", "type": "file" },
+        { "name": "-count", "description": "Run each test N times", "type": "number" },
+        { "name": "-race", "description": "Enable race detector" },
+        { "name": "-timeout", "description": "Test timeout", "type": "string" },
+        { "name": "-short", "description": "Skip long-running tests" },
+        { "name": "-parallel", "description": "Max parallel tests", "type": "number" }
+      ],
+      "examples": ["go test ./...", "go test -v ./...", "go test -cover -race ./...", "go test -run TestMyFunc ./pkg/mypackage"]
+    },
+    {
+      "name": "mod init",
+      "description": "Initialize a new module",
+      "args": [{ "name": "<module>", "type": "string", "required": true, "description": "Module path" }],
+      "examples": ["go mod init github.com/user/myproject"]
+    },
+    {
+      "name": "mod tidy",
+      "description": "Add missing and remove unused modules",
+      "examples": ["go mod tidy"]
+    },
+    {
+      "name": "mod download",
+      "description": "Download modules to local cache",
+      "examples": ["go mod download"]
+    },
+    {
+      "name": "mod vendor",
+      "description": "Make vendored copy of dependencies",
+      "examples": ["go mod vendor"]
+    },
+    {
+      "name": "mod edit",
+      "description": "Edit go.mod from tools or scripts",
+      "options": [
+        { "name": "-require", "description": "Add a requirement", "type": "string" },
+        { "name": "-droprequire", "description": "Drop a requirement", "type": "string" },
+        { "name": "-replace", "description": "Add a replacement", "type": "string" },
+        { "name": "-json", "description": "Print go.mod as JSON" }
+      ],
+      "examples": ["go mod edit -replace=old@v1=new@v2"]
+    },
+    {
+      "name": "get",
+      "description": "Add dependencies to current module and install them",
+      "args": [{ "name": "<packages>", "type": "string", "required": true, "description": "Package paths" }],
+      "options": [
+        { "name": "-u", "description": "Update to latest minor/patch" },
+        { "name": "-t", "description": "Include test dependencies" }
+      ],
+      "examples": ["go get github.com/gin-gonic/gin", "go get -u ./...", "go get github.com/lib/pq@v1.10.0"]
+    },
+    {
+      "name": "install",
+      "description": "Compile and install packages and dependencies",
+      "args": [{ "name": "<packages>", "type": "string", "required": true, "description": "Package paths" }],
+      "examples": ["go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"]
+    },
+    {
+      "name": "fmt",
+      "description": "Gofmt (reformat) package sources",
+      "args": [{ "name": "<files>", "type": "file", "required": false, "description": "Files to format" }],
+      "examples": ["go fmt ./...", "go fmt main.go"]
+    },
+    {
+      "name": "vet",
+      "description": "Report likely mistakes in packages",
+      "args": [{ "name": "<packages>", "type": "path", "required": false, "description": "Packages to vet" }],
+      "examples": ["go vet ./..."]
+    },
+    {
+      "name": "generate",
+      "description": "Generate Go files by processing source",
+      "examples": ["go generate ./..."]
+    },
+    {
+      "name": "clean",
+      "description": "Remove object files and cached files",
+      "options": [
+        { "name": "-cache", "description": "Remove entire build cache" },
+        { "name": "-testcache", "description": "Remove test results cache" },
+        { "name": "-modcache", "description": "Remove entire module cache" }
+      ],
+      "examples": ["go clean", "go clean -cache", "go clean -testcache"]
+    },
+    {
+      "name": "env",
+      "description": "Print Go environment information",
+      "args": [{ "name": "<variable>", "type": "string", "required": false, "description": "Env variable name" }],
+      "options": [
+        { "name": "-w", "description": "Set environment variable", "type": "string" },
+        { "name": "-json", "description": "Print as JSON" }
+      ],
+      "examples": ["go env", "go env GOPATH", "go env -json", "go env -w GOPROXY=https://proxy.golang.org,direct"]
+    },
+    {
+      "name": "doc",
+      "description": "Show documentation for package or symbol",
+      "args": [{ "name": "<package>", "type": "string", "required": false, "description": "Package or symbol" }],
+      "examples": ["go doc fmt", "go doc fmt.Println"]
+    },
+    {
+      "name": "work init",
+      "description": "Initialize workspace (Go workspaces)",
+      "args": [{ "name": "<modules>", "type": "path", "required": false, "description": "Module directories" }],
+      "examples": ["go work init ./mod1 ./mod2"]
+    },
+    {
+      "name": "work use",
+      "description": "Add modules to workspace",
+      "args": [{ "name": "<modules>", "type": "path", "required": true, "description": "Module directories" }],
+      "examples": ["go work use ./newmod"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "help", "description": "Show help for a command" },
+    { "name": "version", "description": "Print Go version" }
+  ],
+  "examples": [
+    "go mod init myproject && go mod tidy",
+    "go build -o app ./cmd/server && ./app",
+    "go test -v -cover ./...",
+    "go fmt ./... && go vet ./..."
+  ],
+  "relatedCommands": ["gofmt", "golangci-lint", "gore", "air", "delve"]
+}

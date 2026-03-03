@@ -1,0 +1,39 @@
+{
+  "name": "gh",
+  "description": "GitHub CLI - work with GitHub from the command line",
+  "category": "version-control",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    { "name": "auth login", "description": "Authenticate with GitHub", "examples": ["gh auth login", "gh auth login --with-token < token.txt"] },
+    { "name": "auth status", "description": "Check auth status", "examples": ["gh auth status"] },
+    { "name": "repo create", "description": "Create a new repository", "args": [{ "name": "<name>", "type": "string", "required": true, "description": "Repo name" }], "options": [{ "name": "--public", "description": "Public repo" }, { "name": "--private", "description": "Private repo" }, { "name": "--clone", "description": "Clone after creating" }], "examples": ["gh repo create myrepo --public", "gh repo create myrepo --private --clone"] },
+    { "name": "repo clone", "description": "Clone a repository", "args": [{ "name": "<repo>", "type": "string", "required": true, "description": "Repository (owner/repo)" }], "examples": ["gh repo clone owner/repo"] },
+    { "name": "repo fork", "description": "Fork a repository", "args": [{ "name": "<repo>", "type": "string", "required": false, "description": "Repository" }], "examples": ["gh repo fork", "gh repo fork owner/repo --clone"] },
+    { "name": "pr create", "description": "Create a pull request", "options": [{ "name": "--title", "short": "-t", "description": "PR title", "type": "string" }, { "name": "--body", "short": "-b", "description": "PR body", "type": "string" }, { "name": "--base", "short": "-B", "description": "Base branch", "type": "string" }, { "name": "--draft", "short": "-d", "description": "Create as draft" }, { "name": "--fill", "short": "-f", "description": "Use commit info for title/body" }], "examples": ["gh pr create --title 'feat: add login' --body 'Description'", "gh pr create --fill", "gh pr create --draft"] },
+    { "name": "pr list", "description": "List pull requests", "options": [{ "name": "--state", "short": "-s", "description": "Filter by state (open, closed, merged, all)", "type": "string" }, { "name": "--author", "description": "Filter by author", "type": "string" }], "examples": ["gh pr list", "gh pr list --state closed"] },
+    { "name": "pr merge", "description": "Merge a pull request", "args": [{ "name": "<number>", "type": "number", "required": false, "description": "PR number" }], "options": [{ "name": "--squash", "short": "-s", "description": "Squash merge" }, { "name": "--rebase", "short": "-r", "description": "Rebase merge" }, { "name": "--delete-branch", "short": "-d", "description": "Delete branch after merge" }], "examples": ["gh pr merge 42 --squash --delete-branch", "gh pr merge --rebase"] },
+    { "name": "pr checkout", "description": "Check out a pull request locally", "args": [{ "name": "<number>", "type": "number", "required": true, "description": "PR number" }], "examples": ["gh pr checkout 42"] },
+    { "name": "pr view", "description": "View a pull request", "args": [{ "name": "<number>", "type": "number", "required": false, "description": "PR number" }], "options": [{ "name": "--web", "short": "-w", "description": "Open in browser" }], "examples": ["gh pr view 42", "gh pr view --web"] },
+    { "name": "issue create", "description": "Create an issue", "options": [{ "name": "--title", "short": "-t", "description": "Issue title", "type": "string" }, { "name": "--body", "short": "-b", "description": "Issue body", "type": "string" }, { "name": "--label", "short": "-l", "description": "Labels", "type": "string" }], "examples": ["gh issue create --title 'Bug: crash on startup' --body 'Steps to reproduce...'"] },
+    { "name": "issue list", "description": "List issues", "options": [{ "name": "--state", "short": "-s", "description": "Filter by state", "type": "string" }, { "name": "--label", "short": "-l", "description": "Filter by label", "type": "string" }], "examples": ["gh issue list", "gh issue list --label bug"] },
+    { "name": "release create", "description": "Create a release", "args": [{ "name": "<tag>", "type": "string", "required": true, "description": "Tag name" }], "options": [{ "name": "--title", "short": "-t", "description": "Release title", "type": "string" }, { "name": "--notes", "short": "-n", "description": "Release notes", "type": "string" }, { "name": "--draft", "short": "-d", "description": "Create as draft" }, { "name": "--prerelease", "short": "-p", "description": "Mark as pre-release" }, { "name": "--generate-notes", "description": "Auto-generate release notes" }], "examples": ["gh release create v1.0.0 --title 'Release 1.0' --generate-notes"] },
+    { "name": "release list", "description": "List releases", "examples": ["gh release list"] },
+    { "name": "workflow run", "description": "Run a GitHub Actions workflow", "args": [{ "name": "<workflow>", "type": "string", "required": true, "description": "Workflow file or name" }], "examples": ["gh workflow run deploy.yml", "gh workflow run deploy.yml -f environment=production"] },
+    { "name": "workflow list", "description": "List workflows", "examples": ["gh workflow list"] },
+    { "name": "run list", "description": "List workflow runs", "examples": ["gh run list"] },
+    { "name": "run view", "description": "View a workflow run", "args": [{ "name": "<run-id>", "type": "number", "required": true, "description": "Run ID" }], "options": [{ "name": "--log", "description": "Show run log" }], "examples": ["gh run view 12345", "gh run view 12345 --log"] },
+    { "name": "gist create", "description": "Create a gist", "args": [{ "name": "<files>", "type": "file", "required": true, "description": "Files to include" }], "options": [{ "name": "--public", "short": "-p", "description": "Create public gist" }], "examples": ["gh gist create file.txt", "gh gist create -p script.sh"] },
+    { "name": "api", "description": "Make authenticated GitHub API requests", "args": [{ "name": "<endpoint>", "type": "string", "required": true, "description": "API endpoint" }], "options": [{ "name": "--method", "short": "-X", "description": "HTTP method", "type": "string" }, { "name": "--field", "short": "-f", "description": "Key-value pairs", "type": "string" }], "examples": ["gh api repos/owner/repo", "gh api -X POST repos/owner/repo/issues -f title='Bug'"] },
+    { "name": "codespace create", "description": "Create a GitHub Codespace", "examples": ["gh codespace create"] },
+    { "name": "codespace list", "description": "List codespaces", "examples": ["gh codespace list"] },
+    { "name": "copilot suggest", "description": "Get command suggestion from Copilot", "examples": ["gh copilot suggest 'list all running docker containers'"] }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help" },
+    { "name": "--version", "description": "Show version" },
+    { "name": "--repo", "short": "-R", "description": "Target repository (owner/repo)", "type": "string" }
+  ],
+  "examples": ["gh auth login", "gh pr create --fill", "gh release create v1.0.0 --generate-notes", "gh workflow run deploy.yml"],
+  "relatedCommands": ["git", "hub"]
+}

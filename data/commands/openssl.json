@@ -1,0 +1,288 @@
+{
+  "name": "openssl",
+  "description": "OpenSSL — cryptography and TLS/SSL toolkit for certificates, keys, and encryption",
+  "category": "security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "genrsa",
+      "description": "Generate an RSA private key",
+      "options": [
+        { "name": "-out", "description": "Output file path", "type": "file" },
+        { "name": "-aes256", "description": "Encrypt key with AES-256" },
+        { "name": "-passout", "description": "Output file passphrase source", "type": "string" }
+      ],
+      "examples": ["openssl genrsa -out private.key 4096", "openssl genrsa -aes256 -out private.key 4096"]
+    },
+    {
+      "name": "genpkey",
+      "description": "Generate a private key (modern, supports all algorithms)",
+      "options": [
+        { "name": "-algorithm", "description": "Key algorithm (RSA, EC, ED25519)", "type": "string" },
+        { "name": "-out", "description": "Output file", "type": "file" },
+        { "name": "-pkeyopt", "description": "Key generation option", "type": "string" },
+        { "name": "-aes256", "description": "Encrypt key with AES-256" }
+      ],
+      "examples": ["openssl genpkey -algorithm RSA -out private.key -pkeyopt rsa_keygen_bits:4096", "openssl genpkey -algorithm ED25519 -out private.key", "openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ec.key"]
+    },
+    {
+      "name": "req",
+      "description": "Create or process certificate signing requests (CSR)",
+      "options": [
+        { "name": "-new", "description": "Generate a new CSR" },
+        { "name": "-x509", "description": "Generate a self-signed certificate instead of CSR" },
+        { "name": "-key", "description": "Private key file", "type": "file" },
+        { "name": "-out", "description": "Output file", "type": "file" },
+        { "name": "-days", "description": "Number of days certificate is valid", "type": "number" },
+        { "name": "-subj", "description": "Subject distinguished name", "type": "string" },
+        { "name": "-newkey", "description": "Generate new private key of specified type", "type": "string" },
+        { "name": "-nodes", "description": "Do not encrypt private key (DEPRECATED; use -noenc)" },
+        { "name": "-noenc", "description": "Do not encrypt private key" },
+        { "name": "-keyout", "description": "Output file for new private key", "type": "file" },
+        { "name": "-config", "description": "OpenSSL config file", "type": "file" },
+        { "name": "-addext", "description": "Add X.509 extension", "type": "string" },
+        { "name": "-sha256", "description": "Use SHA-256 digest" },
+        { "name": "-text", "description": "Print CSR in text form" },
+        { "name": "-verify", "description": "Verify signature on CSR" },
+        { "name": "-in", "description": "Input CSR file", "type": "file" }
+      ],
+      "examples": [
+        "openssl req -new -key private.key -out request.csr",
+        "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -noenc",
+        "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=localhost'",
+        "openssl req -new -key private.key -out request.csr -subj '/C=US/ST=CA/L=SF/O=MyOrg/CN=example.com'",
+        "openssl req -in request.csr -text -noout",
+        "openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -keyout key.pem -out cert.pem -days 365"
+      ]
+    },
+    {
+      "name": "x509",
+      "description": "Display and manipulate X.509 certificates",
+      "options": [
+        { "name": "-in", "description": "Input certificate file", "type": "file" },
+        { "name": "-out", "description": "Output file", "type": "file" },
+        { "name": "-text", "description": "Print certificate in text form" },
+        { "name": "-noout", "description": "Don't output the encoded version" },
+        { "name": "-dates", "description": "Show start and end dates" },
+        { "name": "-subject", "description": "Show subject" },
+        { "name": "-issuer", "description": "Show issuer" },
+        { "name": "-serial", "description": "Show serial number" },
+        { "name": "-fingerprint", "description": "Show fingerprint" },
+        { "name": "-enddate", "description": "Show certificate expiry date" },
+        { "name": "-checkend", "description": "Check if cert expires within N seconds", "type": "number" },
+        { "name": "-req", "description": "Input is a CSR, not a certificate" },
+        { "name": "-signkey", "description": "Self-sign with this key", "type": "file" },
+        { "name": "-CA", "description": "CA certificate for signing", "type": "file" },
+        { "name": "-CAkey", "description": "CA private key", "type": "file" },
+        { "name": "-days", "description": "Days of validity", "type": "number" }
+      ],
+      "examples": [
+        "openssl x509 -in cert.pem -text -noout",
+        "openssl x509 -in cert.pem -dates -noout",
+        "openssl x509 -in cert.pem -subject -issuer -noout",
+        "openssl x509 -in cert.pem -fingerprint -sha256 -noout",
+        "openssl x509 -in cert.pem -checkend 2592000",
+        "openssl x509 -req -in request.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -days 365"
+      ]
+    },
+    {
+      "name": "s_client",
+      "description": "SSL/TLS client for testing connections",
+      "options": [
+        { "name": "-connect", "description": "Host:port to connect to", "type": "string" },
+        { "name": "-servername", "description": "SNI hostname", "type": "string" },
+        { "name": "-showcerts", "description": "Show full certificate chain" },
+        { "name": "-verify_return_error", "description": "Return errors on verification failure" },
+        { "name": "-CAfile", "description": "CA certificates file", "type": "file" },
+        { "name": "-cert", "description": "Client certificate file", "type": "file" },
+        { "name": "-key", "description": "Client private key file", "type": "file" },
+        { "name": "-tls1_2", "description": "Use only TLS 1.2" },
+        { "name": "-tls1_3", "description": "Use only TLS 1.3" },
+        { "name": "-starttls", "description": "Protocol for STARTTLS (smtp, imap, ftp)", "type": "string" }
+      ],
+      "examples": [
+        "openssl s_client -connect example.com:443",
+        "openssl s_client -connect example.com:443 -servername example.com",
+        "openssl s_client -connect example.com:443 -showcerts",
+        "echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates",
+        "openssl s_client -connect mail.example.com:587 -starttls smtp"
+      ]
+    },
+    {
+      "name": "enc",
+      "description": "Symmetric cipher encryption/decryption",
+      "options": [
+        { "name": "-e", "description": "Encrypt (default)" },
+        { "name": "-d", "description": "Decrypt" },
+        { "name": "-aes-256-cbc", "description": "Use AES-256-CBC cipher" },
+        { "name": "-in", "description": "Input file", "type": "file" },
+        { "name": "-out", "description": "Output file", "type": "file" },
+        { "name": "-pass", "description": "Passphrase source", "type": "string" },
+        { "name": "-pbkdf2", "description": "Use PBKDF2 key derivation" },
+        { "name": "-iter", "description": "PBKDF2 iterations", "type": "number" },
+        { "name": "-base64", "description": "Base64 encode/decode" },
+        { "name": "-a", "description": "Base64 encode/decode (alias)" }
+      ],
+      "examples": [
+        "openssl enc -aes-256-cbc -pbkdf2 -in plain.txt -out encrypted.bin",
+        "openssl enc -d -aes-256-cbc -pbkdf2 -in encrypted.bin -out plain.txt",
+        "echo 'hello' | openssl enc -aes-256-cbc -pbkdf2 -a",
+        "openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in file.txt -out file.enc"
+      ]
+    },
+    {
+      "name": "dgst",
+      "description": "Message digest / hash computation",
+      "options": [
+        { "name": "-sha256", "description": "SHA-256 hash" },
+        { "name": "-sha512", "description": "SHA-512 hash" },
+        { "name": "-md5", "description": "MD5 hash" },
+        { "name": "-sign", "description": "Sign digest with private key", "type": "file" },
+        { "name": "-verify", "description": "Verify signature with public key", "type": "file" },
+        { "name": "-hex", "description": "Output hash in hex" },
+        { "name": "-binary", "description": "Output hash in binary" }
+      ],
+      "examples": [
+        "openssl dgst -sha256 file.txt",
+        "openssl dgst -sha512 file.txt",
+        "openssl dgst -sha256 -sign private.key -out sig.bin file.txt",
+        "openssl dgst -sha256 -verify public.key -signature sig.bin file.txt"
+      ]
+    },
+    {
+      "name": "pkcs12",
+      "description": "PKCS#12 file utility",
+      "options": [
+        { "name": "-export", "description": "Create PKCS#12 file (combine cert + key)" },
+        { "name": "-in", "description": "Input certificate file", "type": "file" },
+        { "name": "-inkey", "description": "Input private key file", "type": "file" },
+        { "name": "-out", "description": "Output file", "type": "file" },
+        { "name": "-certfile", "description": "Additional certificates (CA chain)", "type": "file" },
+        { "name": "-nokeys", "description": "Don't output private keys" },
+        { "name": "-clcerts", "description": "Only output client certificates" },
+        { "name": "-cacerts", "description": "Only output CA certificates" }
+      ],
+      "examples": [
+        "openssl pkcs12 -export -out cert.pfx -inkey key.pem -in cert.pem -certfile ca.pem",
+        "openssl pkcs12 -in cert.pfx -out cert.pem -nokeys",
+        "openssl pkcs12 -in cert.pfx -out key.pem -nocerts"
+      ]
+    },
+    {
+      "name": "rsa",
+      "description": "RSA key management",
+      "options": [
+        { "name": "-in", "description": "Input key file", "type": "file" },
+        { "name": "-out", "description": "Output key file", "type": "file" },
+        { "name": "-pubout", "description": "Output public key" },
+        { "name": "-text", "description": "Print key in text form" },
+        { "name": "-check", "description": "Check RSA key consistency" },
+        { "name": "-noout", "description": "Don't output the key" }
+      ],
+      "examples": [
+        "openssl rsa -in private.key -pubout -out public.key",
+        "openssl rsa -in private.key -text -noout",
+        "openssl rsa -in private.key -check"
+      ]
+    },
+    {
+      "name": "rand",
+      "description": "Generate pseudo-random bytes",
+      "options": [
+        { "name": "-base64", "description": "Output in base64" },
+        { "name": "-hex", "description": "Output in hex" },
+        { "name": "-out", "description": "Output file", "type": "file" }
+      ],
+      "examples": [
+        "openssl rand -base64 32",
+        "openssl rand -hex 16",
+        "openssl rand -out random.bin 256"
+      ]
+    },
+    {
+      "name": "verify",
+      "description": "Verify a certificate chain",
+      "options": [
+        { "name": "-CAfile", "description": "CA certificates file", "type": "file" },
+        { "name": "-untrusted", "description": "Intermediate certificates", "type": "file" }
+      ],
+      "examples": [
+        "openssl verify -CAfile ca.pem cert.pem",
+        "openssl verify -CAfile ca.pem -untrusted intermediate.pem cert.pem"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show OpenSSL version information",
+      "options": [
+        { "name": "-a", "description": "Show all version info" }
+      ],
+      "examples": ["openssl version", "openssl version -a"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "-help", "description": "Display help for the command" }
+  ],
+  "examples": [
+    "openssl version",
+    "openssl genrsa -out key.pem 4096",
+    "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -noenc",
+    "openssl x509 -in cert.pem -text -noout",
+    "openssl s_client -connect example.com:443",
+    "openssl rand -base64 32"
+  ],
+  "relatedCommands": ["ssh-keygen", "certbot", "gpg", "ssh"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "openssl_version",
+        "description": "Installed OpenSSL version",
+        "command": "openssl version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "openssl"
+      },
+      {
+        "name": "available_ciphers",
+        "description": "Available cipher suites",
+        "command": "openssl ciphers -v 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "openssl"
+      },
+      {
+        "name": "local_certificates",
+        "description": "Certificate files in /etc/ssl/certs/ or current directory",
+        "command": "ls /etc/ssl/certs/*.pem 2>/dev/null | head -20 || ls *.pem *.crt *.cert 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "openssl"
+      },
+      {
+        "name": "local_keys",
+        "description": "Key files in current directory",
+        "command": "ls *.key *.pem 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "openssl"
+      },
+      {
+        "name": "ca_bundle_path",
+        "description": "System CA bundle location",
+        "command": "openssl version -d 2>/dev/null | awk '{print $2}' | tr -d '\"'",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "openssl"
+      },
+      {
+        "name": "supported_curves",
+        "description": "Supported elliptic curves",
+        "command": "openssl ecparam -list_curves 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "openssl"
+      }
+    ]
+  }
+}
