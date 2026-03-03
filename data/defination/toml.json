@@ -1,0 +1,251 @@
+{
+  "language": "toml",
+  "definitions": {
+    "table": {
+      "signature": "[table_name]",
+      "description": "Tables (also known as hash tables or dictionaries) are collections of key/value pairs. They are defined by headers, with square brackets on a line by themselves. All keys and their values beneath a header belong to that table until another header or EOF.",
+      "type": "structure",
+      "module": "TOML v1.0"
+    },
+    "array_of_tables": {
+      "signature": "[[array_name]]",
+      "description": "An array of tables can be expressed by using a header with double brackets. Each header with the same name defines an element in the array of tables. The tables are inserted in the order encountered.",
+      "type": "structure",
+      "module": "TOML v1.0"
+    },
+    "key_value": {
+      "signature": "key = value",
+      "description": "A key/value pair is the primary building block of a TOML document. Keys are on the left of the equals sign and values are on the right. Whitespace around the equals sign is ignored.",
+      "type": "structure",
+      "module": "TOML v1.0"
+    },
+    "dotted_key": {
+      "signature": "parent.child = value",
+      "description": "Dotted keys are a sequence of bare or quoted keys joined with a dot. This allows for grouping similar properties together without requiring separate table headers.",
+      "type": "structure",
+      "module": "TOML v1.0"
+    },
+    "inline_table": {
+      "signature": "name = { key1 = value1, key2 = value2 }",
+      "description": "Inline tables provide a more compact syntax for expressing tables. They are intended to appear on a single line. No newlines are allowed between the curly braces unless they are valid within a value.",
+      "type": "structure",
+      "module": "TOML v1.0"
+    },
+    "comment": {
+      "signature": "# comment text",
+      "description": "A hash symbol (#) marks the rest of the line as a comment, except when inside a string. Comments can appear on their own line or at the end of a line with a key-value pair.",
+      "type": "syntax",
+      "module": "TOML v1.0"
+    },
+    "string_basic": {
+      "signature": "key = \"value\"",
+      "description": "Basic strings are surrounded by quotation marks (\"). Any Unicode character may be used except those that must be escaped: quotation mark, backslash, and the control characters (U+0000 to U+001F, U+007F).",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "string_literal": {
+      "signature": "key = 'value'",
+      "description": "Literal strings are surrounded by single quotes. What you see is what you get — there is no escaping. Because there is no escaping, there is no way to write a single quote inside a literal string.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "string_multiline_basic": {
+      "signature": "key = \"\"\"\\nmulti-line content\\n\"\"\"",
+      "description": "Multi-line basic strings are surrounded on each side by three quotation marks and allow newlines. A newline immediately following the opening delimiter will be trimmed. All other content between the delimiters is interpreted as-is without modification.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "string_multiline_literal": {
+      "signature": "key = '''\\nmulti-line content\\n'''",
+      "description": "Multi-line literal strings are surrounded on each side by three single quotes and allow newlines. No escaping whatsoever is performed. A newline immediately following the opening delimiter will be trimmed.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "integer": {
+      "signature": "key = 42",
+      "description": "Integers are whole numbers. Positive numbers may be prefixed with a plus sign. Leading zeros are not allowed. Hex (0x), octal (0o), and binary (0b) representations are supported. Underscores between digits aid readability.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "float": {
+      "signature": "key = 3.14",
+      "description": "Floats should be implemented as IEEE 754 64-bit values. A float consists of an integer part followed by a fractional part and/or an exponent part. Special float values inf and nan are supported.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "boolean": {
+      "signature": "key = true",
+      "description": "Booleans are the tokens true or false, always lowercase.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "offset_datetime": {
+      "signature": "key = 2024-01-15T10:30:00+00:00",
+      "description": "An offset date-time represents a specific instant in time, specified as a full date, a T delimiter (or space), a full time, and a timezone offset. Conforms to RFC 3339.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "local_datetime": {
+      "signature": "key = 2024-01-15T10:30:00",
+      "description": "A local date-time omits the timezone offset. It represents a date-time without relation to any specific timezone or offset. Cannot be converted to an instant in time without additional information.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "local_date": {
+      "signature": "key = 2024-01-15",
+      "description": "A local date represents the date portion of an RFC 3339 formatted date-time without the time component. It represents a whole day without time or timezone.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "local_time": {
+      "signature": "key = 10:30:00",
+      "description": "A local time represents the time portion of an RFC 3339 formatted date-time without the date or timezone. Millisecond precision is supported.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "array": {
+      "signature": "key = [value1, value2, value3]",
+      "description": "Arrays are square brackets with values inside, separated by commas. Arrays can span multiple lines. A trailing comma after the last value is permitted. Arrays can contain mixed types.",
+      "type": "data_type",
+      "module": "TOML v1.0"
+    },
+    "cargo_package": {
+      "signature": "[package]",
+      "description": "Defines Rust package metadata in Cargo.toml. Contains fields like name, version, edition, description, license, authors, repository, documentation, homepage, and readme.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_dependencies": {
+      "signature": "[dependencies]",
+      "description": "Specifies the runtime dependencies of a Rust crate in Cargo.toml. Each entry maps a crate name to a version requirement, which can be a simple string or a table with version, features, optional, git, path, etc.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_dev_dependencies": {
+      "signature": "[dev-dependencies]",
+      "description": "Specifies dependencies only needed for development in Cargo.toml. These are used for compiling tests, examples, and benchmarks but are not propagated to dependent crates.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_build_dependencies": {
+      "signature": "[build-dependencies]",
+      "description": "Specifies dependencies needed by build scripts (build.rs) in Cargo.toml. These are compiled and made available to the build script before the main crate is compiled.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_features": {
+      "signature": "[features]",
+      "description": "Defines conditional compilation features for a Rust crate in Cargo.toml. Features can enable optional dependencies or other features. A 'default' key specifies features enabled by default.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_workspace": {
+      "signature": "[workspace]",
+      "description": "Defines a Cargo workspace for managing multiple related packages. Contains members (list of package paths), exclude, default-members, and resolver fields.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_lib": {
+      "signature": "[lib]",
+      "description": "Configures the library target in Cargo.toml. Fields include name, path, crate-type (lib, cdylib, staticlib, etc.), and doc/test/bench toggles.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_bin": {
+      "signature": "[[bin]]",
+      "description": "Defines a binary target in Cargo.toml. Each [[bin]] entry specifies a separate binary with name, path, and optional required-features.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_profile_release": {
+      "signature": "[profile.release]",
+      "description": "Customizes the release build profile in Cargo.toml. Common settings include opt-level, lto, codegen-units, panic, strip, and debug.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "cargo_profile_dev": {
+      "signature": "[profile.dev]",
+      "description": "Customizes the development build profile in Cargo.toml. The default profile used by `cargo build` and `cargo run`. Common settings include opt-level and debug.",
+      "type": "config_schema",
+      "module": "Cargo (Rust)"
+    },
+    "pyproject_build_system": {
+      "signature": "[build-system]",
+      "description": "Specifies the build system for a Python project in pyproject.toml, as defined by PEP 517/518. Contains 'requires' (list of build dependencies) and 'build-backend' (the build backend module).",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "pyproject_project": {
+      "signature": "[project]",
+      "description": "Declares core Python project metadata in pyproject.toml as defined by PEP 621. Fields include name, version, description, requires-python, license, authors, dependencies, classifiers, urls, scripts, and entry-points.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "pyproject_optional_dependencies": {
+      "signature": "[project.optional-dependencies]",
+      "description": "Defines optional dependency groups (extras) for a Python project. Users install them with `pip install package[extra]`. Each key maps a group name to a list of dependency specifiers.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_pytest": {
+      "signature": "[tool.pytest.ini_options]",
+      "description": "Configures Pytest within pyproject.toml. Supports testpaths, python_files, python_classes, python_functions, addopts, markers, filterwarnings, and more.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_black": {
+      "signature": "[tool.black]",
+      "description": "Configures the Black code formatter within pyproject.toml. Options include line-length, target-version, include/exclude patterns, and skip-string-normalization.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_ruff": {
+      "signature": "[tool.ruff]",
+      "description": "Configures the Ruff linter within pyproject.toml. Options include line-length, target-version, select/ignore rules, fixable/unfixable rules, and per-file overrides.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_mypy": {
+      "signature": "[tool.mypy]",
+      "description": "Configures the Mypy static type checker within pyproject.toml. Options include python_version, strict, warn_return_any, disallow_untyped_defs, and per-module overrides.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_setuptools": {
+      "signature": "[tool.setuptools]",
+      "description": "Configures setuptools within pyproject.toml for package discovery, package data, and dynamic versioning.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "tool_poetry": {
+      "signature": "[tool.poetry]",
+      "description": "Configures a Poetry-managed Python project within pyproject.toml. Includes name, version, description, authors, dependencies, dev-dependencies, scripts, and plugins.",
+      "type": "config_schema",
+      "module": "pyproject.toml (Python)"
+    },
+    "server_config": {
+      "signature": "[server]",
+      "description": "Common server configuration pattern in TOML config files. Typically includes host, port, TLS/SSL settings, timeouts, and worker counts.",
+      "type": "config_schema",
+      "module": "General Config"
+    },
+    "database_config": {
+      "signature": "[database]",
+      "description": "Common database configuration pattern in TOML config files. Typically includes connection URL, pool size, max idle connections, and timeout settings.",
+      "type": "config_schema",
+      "module": "General Config"
+    },
+    "logging_config": {
+      "signature": "[logging]",
+      "description": "Common logging configuration pattern in TOML config files. Typically includes log level, output file path, format (json/text), and rotation settings.",
+      "type": "config_schema",
+      "module": "General Config"
+    },
+    "auth_config": {
+      "signature": "[auth]",
+      "description": "Common authentication configuration pattern in TOML config files. Typically includes JWT secret key, token expiry duration, refresh token settings, and issuer.",
+      "type": "config_schema",
+      "module": "General Config"
+    }
+  }
+}
