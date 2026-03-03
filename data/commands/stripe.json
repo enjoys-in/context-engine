@@ -1,7 +1,7 @@
 {
   "name": "stripe",
-  "description": "Stripe CLI for managing Stripe resources and testing webhooks",
-  "category": "Security & APIs",
+  "description": "Stripe CLI - interact with Stripe via the command line",
+  "category": "api-security",
   "platforms": [
     "linux",
     "macos",
@@ -10,44 +10,302 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
       "name": "login",
-      "description": "Authenticate with Stripe"
+      "description": "Login to your Stripe Account",
+      "args": [],
+      "options": [
+        {
+          "name": "--interactive",
+          "short": "-i",
+          "description": "Login using the console instead of the browser"
+        },
+        {
+          "name": "--project-name",
+          "short": "-p",
+          "description": "Store configuration under a specific project",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "stripe login",
+        "stripe login --interactive"
+      ]
     },
     {
       "name": "listen",
-      "description": "Listen for webhook events"
+      "description": "Listen for webhook events",
+      "args": [],
+      "options": [
+        {
+          "name": "--events",
+          "short": "-e",
+          "description": "A comma-separated list of events to listen for (e.g., 'charge.succeeded,customer.created')",
+          "type": "string"
+        },
+        {
+          "name": "--forward-to",
+          "short": "-f",
+          "description": "The URL to forward webhook events to (e.g., 'http://localhost:3000/webhook')",
+          "type": "string"
+        },
+        {
+          "name": "--forward-connect-to",
+          "short": "-c",
+          "description": "The URL to forward Connect webhook events to",
+          "type": "string"
+        },
+        {
+          "name": "--print-json",
+          "short": "-j",
+          "description": "Format output as JSON"
+        },
+        {
+          "name": "--skip-verify",
+          "short": "-s",
+          "description": "Skip certificate verification when forwarding to HTTPS endpoints"
+        },
+        {
+          "name": "--use-configured-webhooks",
+          "description": "Load webhook endpoint configuration from the API"
+        }
+      ],
+      "examples": [
+        "stripe listen --forward-to localhost:3000/webhook",
+        "stripe listen --events charge.succeeded,charge.failed"
+      ]
     },
     {
       "name": "trigger",
-      "description": "Trigger webhook events"
+      "description": "Trigger specific webhook events",
+      "args": [
+        {
+          "name": "<event>",
+          "type": "string",
+          "required": true,
+          "description": "The event to trigger (e.g. charge.succeeded)"
+        }
+      ],
+      "options": [
+        {
+          "name": "--add",
+          "description": "A comma-separated list of overrides to apply to the generated payload",
+          "type": "string"
+        },
+        {
+          "name": "--api-version",
+          "description": "The API version to use for the generated event",
+          "type": "string"
+        },
+        {
+          "name": "--override",
+          "description": "A comma-separated list of paths to JSON files containing payload overrides",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "stripe trigger payment_intent.succeeded",
+        "stripe trigger charge.failed --add charge:amount=500"
+      ]
     },
     {
       "name": "logs",
-      "description": "Tail API request logs from your account"
-    }
-  ],
-  "globalOptions": [],
-  "examples": [
-    {
-      "command": "stripe listen --forward-to localhost:4242/webhook",
-      "description": "Forward webhooks to local server"
+      "description": "Tail API request logs",
+      "args": [
+        {
+          "name": "tail",
+          "type": "string",
+          "required": true,
+          "description": "Tail the logs"
+        }
+      ],
+      "options": [
+        {
+          "name": "--format",
+          "description": "Specifies the output format (default, JSON)",
+          "type": "string"
+        },
+        {
+          "name": "--filter-account",
+          "description": "Filter by account ID",
+          "type": "string"
+        },
+        {
+          "name": "--filter-api-version",
+          "description": "Filter by API version",
+          "type": "string"
+        },
+        {
+          "name": "--filter-http-method",
+          "description": "Filter by HTTP method",
+          "type": "string"
+        },
+        {
+          "name": "--filter-http-status",
+          "description": "Filter by HTTP status",
+          "type": "string"
+        },
+        {
+          "name": "--filter-request-path",
+          "description": "Filter by request path",
+          "type": "string"
+        },
+        {
+          "name": "--filter-source-ip",
+          "description": "Filter by source IP",
+          "type": "string"
+        },
+        {
+          "name": "--filter-status",
+          "description": "Filter by status (succeeded, failed)",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "stripe logs tail",
+        "stripe logs tail --filter-http-method POST --filter-status failed"
+      ]
     },
     {
-      "command": "stripe trigger payment_intent.succeeded",
-      "description": "Trigger a mock event"
+      "name": "events",
+      "description": "List or replay events",
+      "args": [
+        {
+          "name": "resend",
+          "type": "string",
+          "required": false,
+          "description": "Resend an event"
+        }
+      ],
+      "options": [
+        {
+          "name": "--event",
+          "description": "The ID of the event to resend",
+          "type": "string"
+        },
+        {
+          "name": "--webhook-endpoint",
+          "description": "The ID of the webhook endpoint to resend the event to",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "stripe events resend evt_12345"
+      ]
+    },
+    {
+      "name": "customers",
+      "description": "Manage customers",
+      "args": [
+        {
+          "name": "create|list|retrieve|update|delete",
+          "type": "string",
+          "required": true,
+          "description": "Action to perform"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "stripe customers list",
+        "stripe customers create --email 'test@example.com'"
+      ]
+    },
+    {
+      "name": "prices",
+      "description": "Manage prices",
+      "args": [
+        {
+          "name": "create|list|retrieve|update|delete",
+          "type": "string",
+          "required": true,
+          "description": "Action to perform"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "stripe prices list"
+      ]
+    },
+    {
+      "name": "products",
+      "description": "Manage products",
+      "args": [
+        {
+          "name": "create|list|retrieve|update|delete",
+          "type": "string",
+          "required": true,
+          "description": "Action to perform"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "stripe products list",
+        "stripe products create --name 'T-shirt'"
+      ]
     }
   ],
-  "relatedCommands": [],
+  "globalOptions": [
+    {
+      "name": "--api-key",
+      "description": "Your API key to use for the command",
+      "type": "string"
+    },
+    {
+      "name": "--config",
+      "description": "Path to your CLI configuration file",
+      "type": "path"
+    },
+    {
+      "name": "--device-name",
+      "description": "A customized device name for your CLI",
+      "type": "string"
+    },
+    {
+      "name": "--color",
+      "description": "Turn on/off color output (on, off, auto)",
+      "type": "string"
+    },
+    {
+      "name": "--log-level",
+      "description": "The logging level to use (debug, info, warn, error)",
+      "type": "string"
+    },
+    {
+      "name": "--project-name",
+      "short": "-p",
+      "description": "The project name to read from for config",
+      "type": "string"
+    },
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Help for stripe"
+    },
+    {
+      "name": "--version",
+      "short": "-v",
+      "description": "Version for stripe"
+    }
+  ],
+  "examples": [
+    "stripe login",
+    "stripe listen --forward-to localhost:4242/webhook",
+    "stripe trigger payment_intent.succeeded",
+    "stripe logs tail"
+  ],
+  "relatedCommands": [
+    "curl"
+  ],
   "contextEngine": {
     "detectors": [
       {
-        "name": "status",
-        "description": "Stripe Login Status",
-        "command": "stripe config --list | grep 'account_id' 2>/dev/null",
+        "name": "stripe_config",
+        "description": "Stripe CLI Config",
+        "command": "cat ~/.config/stripe/config.toml 2>/dev/null",
         "parser": "text",
         "cacheFor": 3600
       }

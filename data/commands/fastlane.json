@@ -1,0 +1,243 @@
+{
+  "name": "fastlane",
+  "description": "App automation for iOS and Android",
+  "category": "mobile",
+  "platforms": [
+    "macos",
+    "linux"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell"
+  ],
+  "subcommands": [
+    {
+      "name": "action",
+      "description": "Shows more information for a specific command",
+      "args": [
+        {
+          "name": "[tool_name]",
+          "type": "string",
+          "required": false,
+          "description": "The name of the tool you want to see the details of"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "fastlane action",
+        "fastlane action gym",
+        "fastlane action match"
+      ]
+    },
+    {
+      "name": "actions",
+      "description": "Lists all available fastlane actions",
+      "args": [],
+      "options": [],
+      "examples": [
+        "fastlane actions"
+      ]
+    },
+    {
+      "name": "add_plugin",
+      "description": "Add a new plugin to your fastlane setup",
+      "args": [
+        {
+          "name": "[plugin_name]",
+          "type": "string",
+          "required": false,
+          "description": "The name of the plugin"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "fastlane add_plugin increment_version_code"
+      ]
+    },
+    {
+      "name": "docs",
+      "description": "Generate a markdown based documentation based on the Fastfile",
+      "args": [],
+      "options": [
+        {
+          "name": "--force",
+          "short": "-f",
+          "description": "Overwrite the existing README.md in the ./fastlane folder"
+        }
+      ],
+      "examples": [
+        "fastlane docs"
+      ]
+    },
+    {
+      "name": "init",
+      "description": "Helps you with your initial fastlane setup",
+      "args": [],
+      "options": [
+        {
+          "name": "--swift",
+          "description": "Use Swift instead of Ruby"
+        }
+      ],
+      "examples": [
+        "fastlane init"
+      ]
+    },
+    {
+      "name": "match",
+      "description": "Easily sync your certificates and profiles across your team using Git",
+      "args": [],
+      "options": [
+        {
+          "name": "--type",
+          "description": "Create a certificate for (appstore, adhoc, developer, enterprise)",
+          "type": "string"
+        },
+        {
+          "name": "--readonly",
+          "description": "Only fetch existing certificates and profiles, don't generate new ones"
+        },
+        {
+          "name": "--app_identifier",
+          "short": "-a",
+          "description": "The bundle identifier of your app",
+          "type": "string"
+        },
+        {
+          "name": "--git_url",
+          "description": "URL to the git repo containing all the certificates",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "fastlane match appstore",
+        "fastlane match readonly"
+      ]
+    },
+    {
+      "name": "gym",
+      "description": "Build your iOS/macOS app",
+      "args": [],
+      "options": [
+        {
+          "name": "--workspace",
+          "short": "-w",
+          "description": "Path to the workspace file",
+          "type": "path"
+        },
+        {
+          "name": "--project",
+          "short": "-p",
+          "description": "Path to the project file",
+          "type": "path"
+        },
+        {
+          "name": "--scheme",
+          "short": "-s",
+          "description": "The project's scheme. Make sure it's marked as `Shared`",
+          "type": "string"
+        },
+        {
+          "name": "--clean",
+          "short": "-c",
+          "description": "Should the project be cleaned before building?"
+        },
+        {
+          "name": "--export_method",
+          "description": "Method used to export the archive. (app-store, ad-hoc, package, enterprise, development, developer-id, mac-application)",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "fastlane gym"
+      ]
+    },
+    {
+      "name": "scan",
+      "description": "Run tests for your iOS and Mac apps",
+      "args": [],
+      "options": [
+        {
+          "name": "--workspace",
+          "short": "-w",
+          "description": "Path to the workspace file",
+          "type": "path"
+        },
+        {
+          "name": "--project",
+          "short": "-p",
+          "description": "Path to the project file",
+          "type": "path"
+        },
+        {
+          "name": "--scheme",
+          "short": "-s",
+          "description": "The project's scheme. Make sure it's marked as `Shared`",
+          "type": "string"
+        },
+        {
+          "name": "--device",
+          "description": "The name of the simulator type you want to run tests on",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "fastlane scan"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--verbose",
+      "description": "Print out extra information and all commands"
+    },
+    {
+      "name": "--env",
+      "description": "Add environment(s) to use with `dotenv`",
+      "type": "string"
+    },
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Display help syntax"
+    },
+    {
+      "name": "--version",
+      "short": "-v",
+      "description": "Display version"
+    }
+  ],
+  "examples": [
+    "fastlane init",
+    "fastlane beta",
+    "fastlane release",
+    "fastlane match appstore"
+  ],
+  "relatedCommands": [
+    "xcodebuild",
+    "pod",
+    "flutter",
+    "ruby"
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "fastfile",
+        "description": "Fastlane configuration",
+        "command": "cat fastlane/Fastfile 2>/dev/null | grep -v '^#' | head -25",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "lanes",
+        "description": "Available lanes",
+        "command": "fastlane lanes 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "fastlane"
+      }
+    ]
+  }
+}

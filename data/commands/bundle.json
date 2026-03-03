@@ -1,7 +1,7 @@
 {
   "name": "bundle",
-  "description": "Ruby dependency manager (Bundler)",
-  "category": "PHP & Ruby Ecosystems",
+  "description": "Manage your Ruby application's dependencies",
+  "category": "package-manager",
   "platforms": [
     "linux",
     "macos",
@@ -10,33 +10,290 @@
   "shells": [
     "bash",
     "zsh",
-    "powershell",
-    "fish"
+    "fish",
+    "powershell"
   ],
   "subcommands": [
     {
       "name": "install",
-      "description": "Install dependencies from Gemfile"
+      "description": "Install the dependencies specified in your Gemfile",
+      "args": [],
+      "options": [
+        {
+          "name": "--binstubs",
+          "description": "Generate bin stubs for bundled gems to ./bin"
+        },
+        {
+          "name": "--clean",
+          "description": "Run bundle clean automatically after install"
+        },
+        {
+          "name": "--deployment",
+          "description": "Install using defaults tuned for deployment environments"
+        },
+        {
+          "name": "--gemfile",
+          "description": "Use the specified gemfile instead of Gemfile",
+          "type": "path"
+        },
+        {
+          "name": "--path",
+          "description": "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME).",
+          "type": "path"
+        },
+        {
+          "name": "--without",
+          "description": "Exclude gems that are part of the specified named group.",
+          "type": "string"
+        },
+        {
+          "name": "--with",
+          "description": "Include gems that are part of the specified named group.",
+          "type": "string"
+        },
+        {
+          "name": "--no-cache",
+          "description": "Do not update the cache in vendor/cache with the newly bundled gems."
+        },
+        {
+          "name": "--quiet",
+          "description": "Only output warnings and errors."
+        }
+      ],
+      "examples": [
+        "bundle install",
+        "bundle install --without test development",
+        "bundle install --path vendor/bundle"
+      ]
     },
     {
       "name": "update",
-      "description": "Update dependencies"
+      "description": "Update your gems to the latest available versions",
+      "args": [
+        {
+          "name": "[*gems]",
+          "type": "string",
+          "required": false,
+          "description": "Specific gems to update"
+        }
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Update all gems specified in Gemfile."
+        },
+        {
+          "name": "--group",
+          "short": "-g",
+          "description": "Update a specific group of gems.",
+          "type": "string"
+        },
+        {
+          "name": "--source",
+          "description": "The name of a :git or :path source used in the Gemfile.",
+          "type": "string"
+        },
+        {
+          "name": "--local",
+          "description": "Do not attempt to fetch gems remotely and use the gem cache instead."
+        },
+        {
+          "name": "--ruby",
+          "description": "Update ruby declaration in Gemfile.lock."
+        },
+        {
+          "name": "--bundler",
+          "description": "Update the locked version of bundler to the invoked bundler version."
+        }
+      ],
+      "examples": [
+        "bundle update",
+        "bundle update rails",
+        "bundle update --group development"
+      ]
     },
     {
       "name": "exec",
-      "description": "Execute a command in the context of the bundle"
-    }
-  ],
-  "globalOptions": [],
-  "examples": [
-    {
-      "command": "bundle install",
-      "description": "Install gems"
+      "description": "Execute a command in the context of the bundle",
+      "args": [
+        {
+          "name": "command",
+          "type": "string",
+          "required": true,
+          "description": "Command to execute"
+        },
+        {
+          "name": "[args...]",
+          "type": "string",
+          "required": false,
+          "description": "Arguments for the command"
+        }
+      ],
+      "options": [
+        {
+          "name": "--keep-file-descriptors",
+          "description": "Exec in Ruby 2.0 began discarding non-standard file descriptors."
+        }
+      ],
+      "examples": [
+        "bundle exec rake db:migrate",
+        "bundle exec rspec",
+        "bundle exec rails server"
+      ]
     },
     {
-      "command": "bundle exec rspec",
-      "description": "Run rspec from bundle"
+      "name": "add",
+      "description": "Add gem to the Gemfile and run bundle install",
+      "args": [
+        {
+          "name": "GEM",
+          "type": "string",
+          "required": true,
+          "description": "Name of the gem to add"
+        }
+      ],
+      "options": [
+        {
+          "name": "--version",
+          "short": "-v",
+          "description": "Specify version requirements.",
+          "type": "string"
+        },
+        {
+          "name": "--group",
+          "short": "-g",
+          "description": "Specify a group.",
+          "type": "string"
+        },
+        {
+          "name": "--source",
+          "short": "-s",
+          "description": "Specify a source.",
+          "type": "string"
+        },
+        {
+          "name": "--skip-install",
+          "description": "Adds the gem to the Gemfile but does not install it."
+        }
+      ],
+      "examples": [
+        "bundle add rails",
+        "bundle add rspec --group development test"
+      ]
+    },
+    {
+      "name": "remove",
+      "description": "Removes a gem from the Gemfile",
+      "args": [
+        {
+          "name": "GEM",
+          "type": "string",
+          "required": true,
+          "description": "Name of the gem to remove"
+        }
+      ],
+      "options": [
+        {
+          "name": "--install",
+          "description": "Run bundle install after removing them."
+        }
+      ],
+      "examples": [
+        "bundle remove rails"
+      ]
+    },
+    {
+      "name": "outdated",
+      "description": "List installed gems with newer versions available",
+      "args": [],
+      "options": [
+        {
+          "name": "--local",
+          "description": "Do not attempt to fetch gems remotely and use the gem cache instead."
+        },
+        {
+          "name": "--pre",
+          "description": "Check for newer pre-release gems."
+        },
+        {
+          "name": "--source",
+          "description": "Check against a specific source.",
+          "type": "string"
+        },
+        {
+          "name": "--strict",
+          "description": "Only list newer versions allowed by your Gemfile requirements."
+        },
+        {
+          "name": "--groups",
+          "description": "List gems by group."
+        }
+      ],
+      "examples": [
+        "bundle outdated",
+        "bundle outdated --strict"
+      ]
+    },
+    {
+      "name": "info",
+      "description": "Show information for the given gem",
+      "args": [
+        {
+          "name": "GEM",
+          "type": "string",
+          "required": true,
+          "description": "Name of the gem"
+        }
+      ],
+      "options": [
+        {
+          "name": "--path",
+          "description": "Print the path of the given gem"
+        }
+      ],
+      "examples": [
+        "bundle info rails",
+        "bundle info rails --path"
+      ]
+    },
+    {
+      "name": "init",
+      "description": "Generates a Gemfile into the current working directory",
+      "args": [],
+      "options": [
+        {
+          "name": "--gemspec",
+          "description": "Use the specified .gemspec to create the Gemfile",
+          "type": "path"
+        }
+      ],
+      "examples": [
+        "bundle init"
+      ]
     }
+  ],
+  "globalOptions": [
+    {
+      "name": "--no-color",
+      "description": "Disable colorization in output"
+    },
+    {
+      "name": "--retry",
+      "short": "-r",
+      "description": "Specify the number of times you wish to attempt network commands",
+      "type": "number"
+    },
+    {
+      "name": "--verbose",
+      "short": "-V",
+      "description": "Enable verbose output"
+    }
+  ],
+  "examples": [
+    "bundle install",
+    "bundle exec rails c",
+    "bundle update",
+    "bundle add devise"
   ],
   "relatedCommands": [
     "ruby",
@@ -46,11 +303,18 @@
   "contextEngine": {
     "detectors": [
       {
-        "name": "gemfile",
-        "description": "Gemfile contents",
-        "command": "cat Gemfile 2>/dev/null | grep '^gem' | head -10",
+        "name": "gemfile_deps",
+        "description": "Gemfile dependencies",
+        "command": "cat Gemfile 2>/dev/null | grep 'gem ' | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "ruby_version",
+        "description": "Ruby version required by Gemfile",
+        "command": "cat Gemfile 2>/dev/null | grep '^ruby '",
         "parser": "text",
-        "cacheFor": 300
+        "cacheFor": 60
       }
     ]
   }

@@ -1,7 +1,7 @@
 {
   "name": "adb",
   "description": "Android Debug Bridge",
-  "category": "Mobile Development",
+  "category": "mobile",
   "platforms": [
     "linux",
     "macos",
@@ -10,67 +10,312 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
       "name": "devices",
-      "description": "List connected devices"
+      "description": "list connected devices",
+      "args": [],
+      "options": [
+        {
+          "name": "-l",
+          "description": "list device qualifiers"
+        }
+      ],
+      "examples": [
+        "adb devices",
+        "adb devices -l"
+      ]
     },
     {
-      "name": "logcat",
-      "description": "View device log"
+      "name": "connect",
+      "description": "connect to a device via TCP/IP",
+      "args": [
+        {
+          "name": "host[:port]",
+          "type": "string",
+          "required": true,
+          "description": "host name and optional port"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "adb connect 192.168.1.100:5555"
+      ]
+    },
+    {
+      "name": "disconnect",
+      "description": "disconnect from a TCP/IP device",
+      "args": [
+        {
+          "name": "[host[:port]]",
+          "type": "string",
+          "required": false,
+          "description": "host name and optional port"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "adb disconnect",
+        "adb disconnect 192.168.1.100:5555"
+      ]
+    },
+    {
+      "name": "push",
+      "description": "copy local files/directories to device",
+      "args": [
+        {
+          "name": "local",
+          "type": "path",
+          "required": true,
+          "description": "local path"
+        },
+        {
+          "name": "remote",
+          "type": "path",
+          "required": true,
+          "description": "remote path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--sync",
+          "description": "only push files that are newer on the host than the device"
+        }
+      ],
+      "examples": [
+        "adb push file.txt /sdcard/"
+      ]
+    },
+    {
+      "name": "pull",
+      "description": "copy files/directories from device",
+      "args": [
+        {
+          "name": "remote",
+          "type": "path",
+          "required": true,
+          "description": "remote path"
+        },
+        {
+          "name": "[local]",
+          "type": "path",
+          "required": false,
+          "description": "local path"
+        }
+      ],
+      "options": [
+        {
+          "name": "-a",
+          "description": "preserve file timestamp and mode"
+        }
+      ],
+      "examples": [
+        "adb pull /sdcard/file.txt ."
+      ]
     },
     {
       "name": "install",
-      "description": "Push a single package to the device and install it"
+      "description": "push a single package to the device and install it",
+      "args": [
+        {
+          "name": "package",
+          "type": "path",
+          "required": true,
+          "description": "apk package path"
+        }
+      ],
+      "options": [
+        {
+          "name": "-r",
+          "description": "replace existing application"
+        },
+        {
+          "name": "-t",
+          "description": "allow test packages"
+        },
+        {
+          "name": "-d",
+          "description": "allow version code downgrade"
+        },
+        {
+          "name": "-g",
+          "description": "grant all runtime permissions"
+        }
+      ],
+      "examples": [
+        "adb install myapp.apk",
+        "adb install -r myapp.apk"
+      ]
+    },
+    {
+      "name": "uninstall",
+      "description": "remove this app package from the device",
+      "args": [
+        {
+          "name": "package",
+          "type": "string",
+          "required": true,
+          "description": "package name (e.g. com.example.myapp)"
+        }
+      ],
+      "options": [
+        {
+          "name": "-k",
+          "description": "keep the data and cache directories"
+        }
+      ],
+      "examples": [
+        "adb uninstall com.example.myapp"
+      ]
     },
     {
       "name": "shell",
-      "description": "Run a remote shell interactively"
+      "description": "run remote shell interactively or run shell command",
+      "args": [
+        {
+          "name": "[command]",
+          "type": "string",
+          "required": false,
+          "description": "command to run on device shell"
+        }
+      ],
+      "options": [
+        {
+          "name": "-T",
+          "description": "disable PTY allocation"
+        },
+        {
+          "name": "-t",
+          "description": "force PTY allocation"
+        },
+        {
+          "name": "-n",
+          "description": "don't read from stdin"
+        }
+      ],
+      "examples": [
+        "adb shell",
+        "adb shell ls -l",
+        "adb shell pm list packages"
+      ]
+    },
+    {
+      "name": "logcat",
+      "description": "view device log",
+      "args": [],
+      "options": [
+        {
+          "name": "-s",
+          "description": "set default filter to silent",
+          "type": "string"
+        },
+        {
+          "name": "-f",
+          "description": "output to file",
+          "type": "path"
+        },
+        {
+          "name": "-c",
+          "description": "clear (flush) the entire log and exit"
+        },
+        {
+          "name": "-d",
+          "description": "dump the log and then exit (don't block)"
+        }
+      ],
+      "examples": [
+        "adb logcat",
+        "adb logcat *:E",
+        "adb logcat | grep myapp"
+      ]
+    },
+    {
+      "name": "reboot",
+      "description": "reboots the device",
+      "args": [
+        {
+          "name": "[bootloader|recovery|sideload|sideload-auto-reboot]",
+          "type": "string",
+          "required": false,
+          "description": "reboot target"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "adb reboot",
+        "adb reboot bootloader"
+      ]
+    },
+    {
+      "name": "kill-server",
+      "description": "kill the server if it is running",
+      "args": [],
+      "options": [],
+      "examples": [
+        "adb kill-server"
+      ]
+    },
+    {
+      "name": "start-server",
+      "description": "ensure that there is a server running",
+      "args": [],
+      "options": [],
+      "examples": [
+        "adb start-server"
+      ]
     }
   ],
   "globalOptions": [
     {
+      "name": "-a",
+      "description": "listen on all network interfaces, not just localhost"
+    },
+    {
       "name": "-d",
-      "description": "Direct command to the only connected USB device"
+      "description": "use USB device (error if multiple devices connected)"
     },
     {
       "name": "-e",
-      "description": "Direct command to the only running emulator"
+      "description": "use TCP/IP device (error if multiple TCP/IP devices available)"
     },
     {
       "name": "-s",
-      "description": "Direct command to device with specific serial number",
-      "takesValue": true
+      "description": "use device with given serial",
+      "type": "string"
+    },
+    {
+      "name": "-H",
+      "description": "name of adb server host",
+      "type": "string"
+    },
+    {
+      "name": "-P",
+      "description": "port of adb server",
+      "type": "number"
     }
   ],
   "examples": [
-    {
-      "command": "adb devices",
-      "description": "List devices"
-    },
-    {
-      "command": "adb logcat",
-      "description": "Stream device logs"
-    },
-    {
-      "command": "adb install app.apk",
-      "description": "Install an APK"
-    }
+    "adb devices",
+    "adb -s emulator-5554 shell",
+    "adb install app.apk",
+    "adb logcat -c"
   ],
   "relatedCommands": [
-    "flutter",
-    "react-native"
+    "fastlane",
+    "flutter"
   ],
   "contextEngine": {
     "detectors": [
       {
-        "name": "connected_devices",
-        "description": "Connected ADB Devices",
-        "command": "adb devices | grep -v 'List of devices attached' | grep 'device$' 2>/dev/null || echo 'No devices'",
+        "name": "devices",
+        "description": "Connected Android Devices",
+        "command": "adb devices 2>/dev/null",
         "parser": "lines",
-        "cacheFor": 10
+        "cacheFor": 10,
+        "requiresCmd": "adb"
       }
     ]
   }

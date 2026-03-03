@@ -1,0 +1,580 @@
+{
+  "language": "go",
+  "hovers": {
+    "make": {
+      "contents": [
+        { "value": "```go\nfunc make(t Type, size ...IntegerType) Type\n```\nAllocates and initializes an object of type slice, map, or chan (only). Like `new`, the first argument is a type, not a value. Unlike `new`, `make`'s return type is the same as the type of its argument, not a pointer to it. For slices, the size specifies the length; a second integer specifies the capacity." }
+      ]
+    },
+    "new": {
+      "contents": [
+        { "value": "```go\nfunc new(Type) *Type\n```\nAllocates memory for a value of the specified type, initializes it to the zero value, and returns a pointer to it." }
+      ]
+    },
+    "append": {
+      "contents": [
+        { "value": "```go\nfunc append(slice []Type, elems ...Type) []Type\n```\nAppends elements to the end of a slice. If the slice has sufficient capacity, the destination is resliced to accommodate the new elements. If it does not, a new underlying array is allocated." }
+      ]
+    },
+    "copy": {
+      "contents": [
+        { "value": "```go\nfunc copy(dst, src []Type) int\n```\nCopies elements from a source slice into a destination slice. Returns the number of elements copied, which is the minimum of `len(src)` and `len(dst)`. Also supports copying from a string into `[]byte`." }
+      ]
+    },
+    "delete": {
+      "contents": [
+        { "value": "```go\nfunc delete(m map[Type]Type1, key Type)\n```\nDeletes the element with the specified key from the map. If the map is nil or there is no such element, `delete` is a no-op." }
+      ]
+    },
+    "len": {
+      "contents": [
+        { "value": "```go\nfunc len(v Type) int\n```\nReturns the length of `v` according to its type: number of elements in an array, pointer to array, slice, map, or channel buffer; number of bytes in a string." }
+      ]
+    },
+    "cap": {
+      "contents": [
+        { "value": "```go\nfunc cap(v Type) int\n```\nReturns the capacity of `v` according to its type: maximum length a slice can reach when resliced; length of the underlying array; or buffer capacity of a channel." }
+      ]
+    },
+    "close": {
+      "contents": [
+        { "value": "```go\nfunc close(c chan<- Type)\n```\nCloses the channel, indicating that no more values will be sent on it. Only the sender should close a channel, never the receiver. Sending to or closing an already-closed channel causes a panic." }
+      ]
+    },
+    "panic": {
+      "contents": [
+        { "value": "```go\nfunc panic(v any)\n```\nStops normal execution of the current goroutine. When a function F calls `panic`, normal execution of F stops immediately. Any deferred functions run, then F returns to its caller, which treats the call as a `panic`." }
+      ]
+    },
+    "recover": {
+      "contents": [
+        { "value": "```go\nfunc recover() any\n```\nAllows a program to manage behavior of a panicking goroutine. Executing a call to `recover` inside a deferred function stops the panicking sequence and returns the value passed to `panic`. Outside deferred functions, `recover` always returns `nil`." }
+      ]
+    },
+    "complex": {
+      "contents": [
+        { "value": "```go\nfunc complex(r, i FloatType) ComplexType\n```\nConstructs a complex value from two floating-point values. The real and imaginary parts must be of the same size (`float32` → `complex64`, `float64` → `complex128`)." }
+      ]
+    },
+    "real": {
+      "contents": [
+        { "value": "```go\nfunc real(c ComplexType) FloatType\n```\nReturns the real part of the complex number `c`. The return type is `float32` for `complex64` arguments, and `float64` for `complex128`." }
+      ]
+    },
+    "imag": {
+      "contents": [
+        { "value": "```go\nfunc imag(c ComplexType) FloatType\n```\nReturns the imaginary part of the complex number `c`. The return type is `float32` for `complex64` arguments, and `float64` for `complex128`." }
+      ]
+    },
+    "clear": {
+      "contents": [
+        { "value": "```go\nfunc clear[T ~[]Type | ~map[Type]Type1](t T)\n```\n(Go 1.21+) For maps, deletes all entries, resulting in an empty map. For slices, sets all elements up to the length to the zero value of the element type." }
+      ]
+    },
+    "min": {
+      "contents": [
+        { "value": "```go\nfunc min[T cmp.Ordered](x T, y ...T) T\n```\n(Go 1.21+) Returns the smallest value among its arguments. Works with any ordered type (integers, floats, strings)." }
+      ]
+    },
+    "max": {
+      "contents": [
+        { "value": "```go\nfunc max[T cmp.Ordered](x T, y ...T) T\n```\n(Go 1.21+) Returns the largest value among its arguments. Works with any ordered type (integers, floats, strings)." }
+      ]
+    },
+    "print": {
+      "contents": [
+        { "value": "```go\nfunc print(args ...Type)\n```\nFormats its arguments in an implementation-specific way and writes the result to standard error. Useful for bootstrapping and debugging; not guaranteed to stay in the language. Use `fmt` package for production code." }
+      ]
+    },
+    "println": {
+      "contents": [
+        { "value": "```go\nfunc println(args ...Type)\n```\nFormats its arguments in an implementation-specific way, adds spaces between arguments, and writes a newline to standard error. Use `fmt.Println` for production code." }
+      ]
+    },
+    "error": {
+      "contents": [
+        { "value": "```go\ntype error interface {\n    Error() string\n}\n```\nThe built-in error interface type. The conventional interface for representing an error condition, with the `nil` value representing no error." }
+      ]
+    },
+    "string": {
+      "contents": [
+        { "value": "```go\ntype string\n```\nThe set of all strings of 8-bit bytes, conventionally but not necessarily representing UTF-8-encoded text. A string may be empty, but not nil. Values of string type are immutable." }
+      ]
+    },
+    "int": {
+      "contents": [
+        { "value": "```go\ntype int\n```\nA signed integer type that is at least 32 bits in size. It is a distinct type, however, and not an alias for, say, `int32`. The size is platform-dependent: 32 bits on 32-bit systems, 64 bits on 64-bit systems." }
+      ]
+    },
+    "float64": {
+      "contents": [
+        { "value": "```go\ntype float64\n```\nThe set of all IEEE-754 64-bit floating-point numbers. The default floating-point type in Go." }
+      ]
+    },
+    "bool": {
+      "contents": [
+        { "value": "```go\ntype bool\n```\nThe set of boolean values, `true` and `false`. The zero value is `false`." }
+      ]
+    },
+    "byte": {
+      "contents": [
+        { "value": "```go\ntype byte = uint8\n```\nAn alias for `uint8`. Conventionally used to distinguish byte values from 8-bit unsigned integer values." }
+      ]
+    },
+    "rune": {
+      "contents": [
+        { "value": "```go\ntype rune = int32\n```\nAn alias for `int32`. Conventionally used to distinguish character values from integer values. Represents a Unicode code point." }
+      ]
+    },
+    "any": {
+      "contents": [
+        { "value": "```go\ntype any = interface{}\n```\n(Go 1.18+) An alias for `interface{}`. Can hold a value of any type." }
+      ]
+    },
+    "comparable": {
+      "contents": [
+        { "value": "```go\ntype comparable interface{ comparable }\n```\n(Go 1.18+) An interface implemented by all comparable types (booleans, numbers, strings, pointers, channels, arrays of comparable types, structs whose fields are all comparable types). Used as a type constraint." }
+      ]
+    },
+    "fmt.Println": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Println(a ...any) (n int, err error)\n```\nFormats using the default formats for its operands and writes to standard output. Spaces are always added between operands and a newline is appended. Returns the number of bytes written and any write error encountered." }
+      ]
+    },
+    "fmt.Printf": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Printf(format string, a ...any) (n int, err error)\n```\nFormats according to a format specifier and writes to standard output. Returns the number of bytes written and any write error encountered." }
+      ]
+    },
+    "fmt.Sprintf": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Sprintf(format string, a ...any) string\n```\nFormats according to a format specifier and returns the resulting string." }
+      ]
+    },
+    "fmt.Errorf": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Errorf(format string, a ...any) error\n```\nFormats according to a format specifier and returns the string as a value that satisfies `error`. Use `%w` to wrap an error so it can be unwrapped with `errors.Is` / `errors.As`." }
+      ]
+    },
+    "fmt.Fprintf": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Fprintf(w io.Writer, format string, a ...any) (n int, err error)\n```\nFormats according to a format specifier and writes to `w`. Returns the number of bytes written and any write error encountered." }
+      ]
+    },
+    "fmt.Sscanf": {
+      "contents": [
+        { "value": "```go\nfunc fmt.Sscanf(str string, format string, a ...any) (n int, err error)\n```\nScans the argument string, storing successive space-separated values into successive arguments as determined by the format. Returns the number of items successfully scanned." }
+      ]
+    },
+    "fmt.Stringer": {
+      "contents": [
+        { "value": "```go\ntype fmt.Stringer interface {\n    String() string\n}\n```\nThe `Stringer` interface is implemented by any value that has a `String` method, which defines the \"native\" format for that value. The `String` method is used by `fmt` package printing functions." }
+      ]
+    },
+    "os.Open": {
+      "contents": [
+        { "value": "```go\nfunc os.Open(name string) (*os.File, error)\n```\nOpens the named file for reading. If successful, methods on the returned `File` can be used for reading; the associated file descriptor has mode `O_RDONLY`." }
+      ]
+    },
+    "os.Create": {
+      "contents": [
+        { "value": "```go\nfunc os.Create(name string) (*os.File, error)\n```\nCreates or truncates the named file. If the file already exists, it is truncated. If it does not exist, it is created with mode 0666 (before umask). The `File` is opened for writing." }
+      ]
+    },
+    "os.ReadFile": {
+      "contents": [
+        { "value": "```go\nfunc os.ReadFile(name string) ([]byte, error)\n```\nReads the named file and returns the contents. A successful call returns `err == nil`, not `err == io.EOF`." }
+      ]
+    },
+    "os.WriteFile": {
+      "contents": [
+        { "value": "```go\nfunc os.WriteFile(name string, data []byte, perm os.FileMode) error\n```\nWrites data to the named file, creating it if necessary. If the file does not exist, `WriteFile` creates it with permissions `perm`; otherwise it truncates it before writing." }
+      ]
+    },
+    "os.Exit": {
+      "contents": [
+        { "value": "```go\nfunc os.Exit(code int)\n```\nCauses the current program to exit with the given status code. Conventionally, code zero indicates success, non-zero an error. The program terminates immediately; deferred functions are not run." }
+      ]
+    },
+    "os.Getenv": {
+      "contents": [
+        { "value": "```go\nfunc os.Getenv(key string) string\n```\nRetrieves the value of the environment variable named by the key. It returns the value, which will be empty if the variable is not present." }
+      ]
+    },
+    "os.Setenv": {
+      "contents": [
+        { "value": "```go\nfunc os.Setenv(key, value string) error\n```\nSets the value of the environment variable named by the key." }
+      ]
+    },
+    "os.MkdirAll": {
+      "contents": [
+        { "value": "```go\nfunc os.MkdirAll(path string, perm os.FileMode) error\n```\nCreates a directory named path, along with any necessary parents, and returns `nil`, or else returns an error." }
+      ]
+    },
+    "os.Remove": {
+      "contents": [
+        { "value": "```go\nfunc os.Remove(name string) error\n```\nRemoves the named file or (empty) directory. If there is an error, it will be of type `*PathError`." }
+      ]
+    },
+    "io.Reader": {
+      "contents": [
+        { "value": "```go\ntype io.Reader interface {\n    Read(p []byte) (n int, err error)\n}\n```\nThe interface that wraps the basic `Read` method. `Read` reads up to `len(p)` bytes into `p`. It returns the number of bytes read and any error encountered. At end of input, `Read` returns `0, io.EOF`." }
+      ]
+    },
+    "io.Writer": {
+      "contents": [
+        { "value": "```go\ntype io.Writer interface {\n    Write(p []byte) (n int, err error)\n}\n```\nThe interface that wraps the basic `Write` method. `Write` writes `len(p)` bytes from `p` to the underlying data stream." }
+      ]
+    },
+    "io.ReadAll": {
+      "contents": [
+        { "value": "```go\nfunc io.ReadAll(r io.Reader) ([]byte, error)\n```\nReads from `r` until an error or EOF and returns the data it read. A successful call returns `err == nil`, not `err == io.EOF`." }
+      ]
+    },
+    "io.Copy": {
+      "contents": [
+        { "value": "```go\nfunc io.Copy(dst io.Writer, src io.Reader) (written int64, err error)\n```\nCopies from `src` to `dst` until either EOF is reached on `src` or an error occurs. Returns the number of bytes copied and the first error encountered while copying, if any." }
+      ]
+    },
+    "io.NopCloser": {
+      "contents": [
+        { "value": "```go\nfunc io.NopCloser(r io.Reader) io.ReadCloser\n```\nReturns a `ReadCloser` with a no-op `Close` method wrapping the provided `Reader r`." }
+      ]
+    },
+    "strings.Contains": {
+      "contents": [
+        { "value": "```go\nfunc strings.Contains(s, substr string) bool\n```\nReports whether `substr` is within `s`." }
+      ]
+    },
+    "strings.HasPrefix": {
+      "contents": [
+        { "value": "```go\nfunc strings.HasPrefix(s, prefix string) bool\n```\nReports whether the string `s` begins with `prefix`." }
+      ]
+    },
+    "strings.Split": {
+      "contents": [
+        { "value": "```go\nfunc strings.Split(s, sep string) []string\n```\nSlices `s` into all substrings separated by `sep` and returns a slice of the substrings between those separators." }
+      ]
+    },
+    "strings.Join": {
+      "contents": [
+        { "value": "```go\nfunc strings.Join(elems []string, sep string) string\n```\nConcatenates the elements of its first argument to create a single string. The separator string `sep` is placed between elements." }
+      ]
+    },
+    "strings.TrimSpace": {
+      "contents": [
+        { "value": "```go\nfunc strings.TrimSpace(s string) string\n```\nReturns a slice of the string `s`, with all leading and trailing white space removed, as defined by Unicode." }
+      ]
+    },
+    "strings.Replace": {
+      "contents": [
+        { "value": "```go\nfunc strings.Replace(s, old, new string, n int) string\n```\nReturns a copy of the string `s` with the first `n` non-overlapping instances of `old` replaced by `new`. If `n < 0`, there is no limit on the number of replacements." }
+      ]
+    },
+    "strings.Builder": {
+      "contents": [
+        { "value": "```go\ntype strings.Builder struct { ... }\n```\nA `Builder` is used to efficiently build a string using `WriteString` and `Write` methods. It minimizes memory copying. The zero value is ready to use. Do not copy a non-zero Builder." }
+      ]
+    },
+    "strconv.Atoi": {
+      "contents": [
+        { "value": "```go\nfunc strconv.Atoi(s string) (int, error)\n```\nEquivalent to `ParseInt(s, 10, 0)`, converted to type `int`. Parses a string as a decimal integer." }
+      ]
+    },
+    "strconv.Itoa": {
+      "contents": [
+        { "value": "```go\nfunc strconv.Itoa(i int) string\n```\nEquivalent to `FormatInt(int64(i), 10)`. Returns the string representation of `i`." }
+      ]
+    },
+    "strconv.FormatFloat": {
+      "contents": [
+        { "value": "```go\nfunc strconv.FormatFloat(f float64, fmt byte, prec, bitSize int) string\n```\nConverts the floating-point number `f` to a string according to the format `fmt` and precision `prec`. The `bitSize` is 32 for `float32` and 64 for `float64`." }
+      ]
+    },
+    "strconv.ParseInt": {
+      "contents": [
+        { "value": "```go\nfunc strconv.ParseInt(s string, base int, bitSize int) (int64, error)\n```\nInterprets a string `s` in the given base (0, 2 to 36) and bit size (0 to 64) and returns the corresponding value." }
+      ]
+    },
+    "json.Marshal": {
+      "contents": [
+        { "value": "```go\nfunc json.Marshal(v any) ([]byte, error)\n```\nReturns the JSON encoding of `v`. Struct fields are encoded using the struct field name or the `json` tag if present." }
+      ]
+    },
+    "json.Unmarshal": {
+      "contents": [
+        { "value": "```go\nfunc json.Unmarshal(data []byte, v any) error\n```\nParses the JSON-encoded data and stores the result in the value pointed to by `v`. If `v` is nil or not a pointer, `Unmarshal` returns an error." }
+      ]
+    },
+    "json.NewEncoder": {
+      "contents": [
+        { "value": "```go\nfunc json.NewEncoder(w io.Writer) *json.Encoder\n```\nReturns a new encoder that writes to `w`. Call `Encode(v)` to write the JSON encoding of `v` to the stream, followed by a newline character." }
+      ]
+    },
+    "json.NewDecoder": {
+      "contents": [
+        { "value": "```go\nfunc json.NewDecoder(r io.Reader) *json.Decoder\n```\nReturns a new decoder that reads from `r`. Call `Decode(&v)` to decode the next JSON value from the input and store it in `v`." }
+      ]
+    },
+    "json.RawMessage": {
+      "contents": [
+        { "value": "```go\ntype json.RawMessage []byte\n```\nA raw encoded JSON value. It implements `Marshaler` and `Unmarshaler` and can be used to delay JSON decoding or precompute a JSON encoding." }
+      ]
+    },
+    "http.ListenAndServe": {
+      "contents": [
+        { "value": "```go\nfunc http.ListenAndServe(addr string, handler http.Handler) error\n```\nListens on the TCP network address `addr` and then calls `Serve` with `handler` to handle requests on incoming connections. If `handler` is `nil`, `DefaultServeMux` is used." }
+      ]
+    },
+    "http.HandleFunc": {
+      "contents": [
+        { "value": "```go\nfunc http.HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request))\n```\nRegisters the handler function for the given pattern in the `DefaultServeMux`." }
+      ]
+    },
+    "http.Get": {
+      "contents": [
+        { "value": "```go\nfunc http.Get(url string) (*http.Response, error)\n```\nIssues a GET to the specified URL. Caller should close `resp.Body` when done reading from it." }
+      ]
+    },
+    "http.NewRequest": {
+      "contents": [
+        { "value": "```go\nfunc http.NewRequest(method, url string, body io.Reader) (*http.Request, error)\n```\nReturns a new `Request` given a method, URL, and optional body. Use `http.NewRequestWithContext` to associate a context." }
+      ]
+    },
+    "http.Handler": {
+      "contents": [
+        { "value": "```go\ntype http.Handler interface {\n    ServeHTTP(ResponseWriter, *Request)\n}\n```\nThe `Handler` interface is implemented by objects that can handle HTTP requests. `ServeHTTP` should write reply headers and data to the `ResponseWriter` and then return." }
+      ]
+    },
+    "context.Context": {
+      "contents": [
+        { "value": "```go\ntype context.Context interface {\n    Deadline() (deadline time.Time, ok bool)\n    Done() <-chan struct{}\n    Err() error\n    Value(key any) any\n}\n```\nCarries a deadline, cancellation signal, and request-scoped values across API boundaries and between processes." }
+      ]
+    },
+    "context.Background": {
+      "contents": [
+        { "value": "```go\nfunc context.Background() context.Context\n```\nReturns a non-nil, empty `Context`. It is never canceled, has no values, and has no deadline. It is typically used by the main function, initialization, and tests, and as the top-level Context for incoming requests." }
+      ]
+    },
+    "context.WithCancel": {
+      "contents": [
+        { "value": "```go\nfunc context.WithCancel(parent context.Context) (ctx context.Context, cancel context.CancelFunc)\n```\nReturns a copy of parent with a new Done channel. The returned context's Done channel is closed when the returned cancel function is called or when the parent context's Done channel is closed." }
+      ]
+    },
+    "context.WithTimeout": {
+      "contents": [
+        { "value": "```go\nfunc context.WithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc)\n```\nReturns `WithDeadline(parent, time.Now().Add(timeout))`. The cancel function releases resources, so code should call cancel as soon as operations running in this Context complete." }
+      ]
+    },
+    "context.WithValue": {
+      "contents": [
+        { "value": "```go\nfunc context.WithValue(parent context.Context, key, val any) context.Context\n```\nReturns a copy of parent in which the value associated with `key` is `val`. Use context Values only for request-scoped data that transits processes and API boundaries." }
+      ]
+    },
+    "context.WithDeadline": {
+      "contents": [
+        { "value": "```go\nfunc context.WithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc)\n```\nReturns a copy of the parent context with the deadline adjusted to be no later than `d`. If the parent's deadline is already earlier, the returned context is semantically equivalent to parent." }
+      ]
+    },
+    "sync.Mutex": {
+      "contents": [
+        { "value": "```go\ntype sync.Mutex struct { ... }\n```\nA mutual exclusion lock. The zero value for a `Mutex` is an unlocked mutex. A `Mutex` must not be copied after first use. Call `Lock()` and `Unlock()` to acquire and release the lock." }
+      ]
+    },
+    "sync.WaitGroup": {
+      "contents": [
+        { "value": "```go\ntype sync.WaitGroup struct { ... }\n```\nA `WaitGroup` waits for a collection of goroutines to finish. The main goroutine calls `Add` to set the number of goroutines to wait for. Each goroutine calls `Done` when finished. `Wait` blocks until all goroutines have finished." }
+      ]
+    },
+    "sync.Once": {
+      "contents": [
+        { "value": "```go\ntype sync.Once struct { ... }\n```\nAn object that will perform exactly one action. Call `Do(f)` to invoke `f` only once, even if called from multiple goroutines." }
+      ]
+    },
+    "sync.Map": {
+      "contents": [
+        { "value": "```go\ntype sync.Map struct { ... }\n```\nA `Map` is like a Go `map[any]any` but safe for concurrent use by multiple goroutines without additional locking or coordination. Methods: `Store`, `Load`, `Delete`, `Range`, `LoadOrStore`, `LoadAndDelete`." }
+      ]
+    },
+    "sync.RWMutex": {
+      "contents": [
+        { "value": "```go\ntype sync.RWMutex struct { ... }\n```\nA reader/writer mutual exclusion lock. The lock can be held by an arbitrary number of readers or a single writer. Methods: `RLock`, `RUnlock`, `Lock`, `Unlock`." }
+      ]
+    },
+    "errors.New": {
+      "contents": [
+        { "value": "```go\nfunc errors.New(text string) error\n```\nReturns an error that formats as the given text. Each call to `New` returns a distinct error value even if the text is identical." }
+      ]
+    },
+    "errors.Is": {
+      "contents": [
+        { "value": "```go\nfunc errors.Is(err, target error) bool\n```\nReports whether any error in `err`'s tree matches `target`. An error is considered a match if it is equal to the target or if it implements `Is(error) bool` such that `Is(target)` returns true." }
+      ]
+    },
+    "errors.As": {
+      "contents": [
+        { "value": "```go\nfunc errors.As(err error, target any) bool\n```\nFinds the first error in `err`'s tree that matches `target`, and if one is found, sets `target` to that error value and returns true." }
+      ]
+    },
+    "errors.Join": {
+      "contents": [
+        { "value": "```go\nfunc errors.Join(errs ...error) error\n```\n(Go 1.20+) Returns an error that wraps the given errors. Any nil error values are discarded. Returns nil if every value in errs is nil." }
+      ]
+    },
+    "errors.Unwrap": {
+      "contents": [
+        { "value": "```go\nfunc errors.Unwrap(err error) error\n```\nReturns the result of calling the `Unwrap` method on `err`, if `err`'s type contains an `Unwrap` method returning `error`. Otherwise, `Unwrap` returns nil." }
+      ]
+    },
+    "time.Now": {
+      "contents": [
+        { "value": "```go\nfunc time.Now() time.Time\n```\nReturns the current local time." }
+      ]
+    },
+    "time.Since": {
+      "contents": [
+        { "value": "```go\nfunc time.Since(t time.Time) time.Duration\n```\nReturns the time elapsed since `t`. It is shorthand for `time.Now().Sub(t)`." }
+      ]
+    },
+    "time.Sleep": {
+      "contents": [
+        { "value": "```go\nfunc time.Sleep(d time.Duration)\n```\nPauses the current goroutine for at least the duration `d`. A negative or zero duration causes `Sleep` to return immediately." }
+      ]
+    },
+    "time.NewTicker": {
+      "contents": [
+        { "value": "```go\nfunc time.NewTicker(d time.Duration) *time.Ticker\n```\nReturns a new `Ticker` containing a channel that will send the current time on the channel after each tick. The ticker will adjust the intervals or drop ticks to make up for slow receivers." }
+      ]
+    },
+    "time.After": {
+      "contents": [
+        { "value": "```go\nfunc time.After(d time.Duration) <-chan time.Time\n```\nWaits for the duration to elapse and then sends the current time on the returned channel. The underlying `Timer` is not recovered by the garbage collector until the timer fires." }
+      ]
+    },
+    "time.Parse": {
+      "contents": [
+        { "value": "```go\nfunc time.Parse(layout, value string) (time.Time, error)\n```\nParses a formatted string and returns the time value it represents. The layout defines the format by showing how the reference time `Mon Jan 2 15:04:05 -0700 MST 2006` would be represented." }
+      ]
+    },
+    "sort.Slice": {
+      "contents": [
+        { "value": "```go\nfunc sort.Slice(x any, less func(i, j int) bool)\n```\nSorts the slice `x` given the provided `less` function. The sort is not guaranteed to be stable. `less` reports whether `x[i]` should be ordered before `x[j]`." }
+      ]
+    },
+    "sort.SliceStable": {
+      "contents": [
+        { "value": "```go\nfunc sort.SliceStable(x any, less func(i, j int) bool)\n```\nSorts the slice `x` using the provided `less` function, keeping equal elements in their original order." }
+      ]
+    },
+    "sort.Search": {
+      "contents": [
+        { "value": "```go\nfunc sort.Search(n int, f func(int) bool) int\n```\nUses binary search to find the smallest index `i` in `[0, n)` at which `f(i)` is true, assuming `f(i) == true` implies `f(i+1) == true`." }
+      ]
+    },
+    "slices.Sort": {
+      "contents": [
+        { "value": "```go\nfunc slices.Sort[S ~[]E, E cmp.Ordered](x S)\n```\n(Go 1.21+) Sorts a slice of any ordered type in ascending order. The sort is not guaranteed to be stable." }
+      ]
+    },
+    "slices.Contains": {
+      "contents": [
+        { "value": "```go\nfunc slices.Contains[S ~[]E, E comparable](s S, v E) bool\n```\n(Go 1.21+) Reports whether `v` is present in `s`." }
+      ]
+    },
+    "slices.Index": {
+      "contents": [
+        { "value": "```go\nfunc slices.Index[S ~[]E, E comparable](s S, v E) int\n```\n(Go 1.21+) Returns the index of the first occurrence of `v` in `s`, or -1 if not present." }
+      ]
+    },
+    "slices.SortFunc": {
+      "contents": [
+        { "value": "```go\nfunc slices.SortFunc[S ~[]E, E any](x S, cmp func(a, b E) int)\n```\n(Go 1.21+) Sorts the slice `x` in ascending order as determined by the `cmp` function. The `cmp` function should return a negative number, zero, or a positive number." }
+      ]
+    },
+    "slices.Compact": {
+      "contents": [
+        { "value": "```go\nfunc slices.Compact[S ~[]E, E comparable](s S) S\n```\n(Go 1.21+) Replaces consecutive runs of equal elements with a single copy. This is like the `uniq` command on a sorted slice. Modifies the contents of the slice `s`." }
+      ]
+    },
+    "maps.Keys": {
+      "contents": [
+        { "value": "```go\nfunc maps.Keys[M ~map[K]V, K comparable, V any](m M) []K\n```\n(Go 1.21+) Returns the keys of the map `m`. The keys will be in an indeterminate order." }
+      ]
+    },
+    "maps.Values": {
+      "contents": [
+        { "value": "```go\nfunc maps.Values[M ~map[K]V, K comparable, V any](m M) []V\n```\n(Go 1.21+) Returns the values of the map `m`. The values will be in an indeterminate order." }
+      ]
+    },
+    "maps.Clone": {
+      "contents": [
+        { "value": "```go\nfunc maps.Clone[M ~map[K]V, K comparable, V any](m M) M\n```\n(Go 1.21+) Returns a copy of `m`. This is a shallow clone: the new keys and values are set using ordinary assignment." }
+      ]
+    },
+    "slog.Info": {
+      "contents": [
+        { "value": "```go\nfunc slog.Info(msg string, args ...any)\n```\n(Go 1.21+) Logs at `LevelInfo` on the default logger. Arguments are handled in key-value pairs: `slog.Info(\"msg\", \"key1\", val1, \"key2\", val2)`." }
+      ]
+    },
+    "slog.Error": {
+      "contents": [
+        { "value": "```go\nfunc slog.Error(msg string, args ...any)\n```\n(Go 1.21+) Logs at `LevelError` on the default logger." }
+      ]
+    },
+    "slog.Debug": {
+      "contents": [
+        { "value": "```go\nfunc slog.Debug(msg string, args ...any)\n```\n(Go 1.21+) Logs at `LevelDebug` on the default logger." }
+      ]
+    },
+    "slog.Warn": {
+      "contents": [
+        { "value": "```go\nfunc slog.Warn(msg string, args ...any)\n```\n(Go 1.21+) Logs at `LevelWarn` on the default logger." }
+      ]
+    },
+    "slog.With": {
+      "contents": [
+        { "value": "```go\nfunc slog.With(args ...any) *slog.Logger\n```\n(Go 1.21+) Returns a `Logger` that includes the given attributes in each output operation. Arguments are converted to `Attr` as if by `Logger.Log`." }
+      ]
+    },
+    "log.Println": {
+      "contents": [
+        { "value": "```go\nfunc log.Println(v ...any)\n```\nCalls `Output` to print to the standard logger. Arguments are handled in the manner of `fmt.Println`. Includes timestamp prefix." }
+      ]
+    },
+    "log.Fatal": {
+      "contents": [
+        { "value": "```go\nfunc log.Fatal(v ...any)\n```\nEquivalent to `Print()` followed by a call to `os.Exit(1)`." }
+      ]
+    },
+    "log.Printf": {
+      "contents": [
+        { "value": "```go\nfunc log.Printf(format string, v ...any)\n```\nCalls `fmt.Sprintf` to format its arguments and calls `Output` to print to the standard logger." }
+      ]
+    },
+    "regexp.Compile": {
+      "contents": [
+        { "value": "```go\nfunc regexp.Compile(expr string) (*regexp.Regexp, error)\n```\nParses a regular expression and returns, if successful, a `Regexp` object that can be used to match against text." }
+      ]
+    },
+    "regexp.MustCompile": {
+      "contents": [
+        { "value": "```go\nfunc regexp.MustCompile(str string) *regexp.Regexp\n```\nLike `Compile` but panics if the expression cannot be parsed. It simplifies safe initialization of global variables holding compiled regular expressions." }
+      ]
+    },
+    "filepath.Join": {
+      "contents": [
+        { "value": "```go\nfunc filepath.Join(elem ...string) string\n```\nJoins any number of path elements into a single path, separating them with an OS specific separator. Empty elements are ignored." }
+      ]
+    },
+    "bufio.NewScanner": {
+      "contents": [
+        { "value": "```go\nfunc bufio.NewScanner(r io.Reader) *bufio.Scanner\n```\nReturns a new `Scanner` to read from `r`. The split function defaults to `ScanLines`. Call `Scan()` to advance, `Text()` to get the current token." }
+      ]
+    },
+    "bufio.NewReader": {
+      "contents": [
+        { "value": "```go\nfunc bufio.NewReader(rd io.Reader) *bufio.Reader\n```\nReturns a new `Reader` whose buffer has the default size (4096 bytes)." }
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "prisma",
   "description": "Next-generation ORM for Node.js and TypeScript",
-  "category": "Database ORMs & Migrations",
+  "category": "database",
   "platforms": [
     "linux",
     "macos",
@@ -10,40 +10,227 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
+      "name": "init",
+      "description": "Setup Prisma for your app",
+      "args": [],
+      "options": [
+        {
+          "name": "--datasource-provider",
+          "description": "Define the datasource provider (e.g. postgresql, mysql, sqlite)",
+          "type": "string"
+        },
+        {
+          "name": "--url",
+          "description": "Define a custom datasource url",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "prisma init",
+        "prisma init --datasource-provider mysql"
+      ]
+    },
+    {
       "name": "generate",
-      "description": "Generate artifacts (e.g. Prisma Client)"
+      "description": "Generate artifacts (e.g. Prisma Client)",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--watch",
+          "description": "Watch the Prisma schema and rerun after a change"
+        }
+      ],
+      "examples": [
+        "prisma generate",
+        "prisma generate --watch",
+        "prisma generate --schema=./schema.prisma"
+      ]
     },
     {
-      "name": "migrate",
-      "description": "Update the database schema with migrations"
+      "name": "db push",
+      "description": "Push the state from your Prisma schema to your database",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--force-reset",
+          "description": "Force a reset of the database before push"
+        },
+        {
+          "name": "--skip-generate",
+          "description": "Skip generating artifacts (e.g. Prisma Client)"
+        },
+        {
+          "name": "--accept-data-loss",
+          "description": "Ignore data loss warnings"
+        }
+      ],
+      "examples": [
+        "prisma db push",
+        "prisma db push --force-reset"
+      ]
     },
     {
-      "name": "db",
-      "description": "Manage your database schema and lifecycle"
+      "name": "db pull",
+      "description": "Pull the schema from an existing database, updating the Prisma schema",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--force",
+          "description": "Force the overwrite of manual changes made to schema"
+        },
+        {
+          "name": "--print",
+          "description": "Print the introspected schema to stdout"
+        }
+      ],
+      "examples": [
+        "prisma db pull",
+        "prisma db pull --force"
+      ]
+    },
+    {
+      "name": "db seed",
+      "description": "Seed your database",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        }
+      ],
+      "examples": [
+        "prisma db seed"
+      ]
+    },
+    {
+      "name": "migrate dev",
+      "description": "Create a migration from changes in Prisma schema, apply it to the database, trigger generators",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--name",
+          "short": "-n",
+          "description": "Name the migration",
+          "type": "string"
+        },
+        {
+          "name": "--create-only",
+          "description": "Create a new migration but do not apply it"
+        }
+      ],
+      "examples": [
+        "prisma migrate dev",
+        "prisma migrate dev --name init_db"
+      ]
+    },
+    {
+      "name": "migrate deploy",
+      "description": "Apply pending migrations to the database",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        }
+      ],
+      "examples": [
+        "prisma migrate deploy"
+      ]
+    },
+    {
+      "name": "migrate reset",
+      "description": "Reset your database and apply all migrations, all data will be lost",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--force",
+          "short": "-f",
+          "description": "Skip the confirmation prompt"
+        }
+      ],
+      "examples": [
+        "prisma migrate reset",
+        "prisma migrate reset --force"
+      ]
     },
     {
       "name": "studio",
-      "description": "Browse your data with Prisma Studio"
+      "description": "Browse your data with Prisma Studio",
+      "args": [],
+      "options": [
+        {
+          "name": "--schema",
+          "description": "Custom path to your Prisma schema",
+          "type": "path"
+        },
+        {
+          "name": "--port",
+          "short": "-p",
+          "description": "Port to start Studio on",
+          "type": "number"
+        },
+        {
+          "name": "--browser",
+          "short": "-b",
+          "description": "Browser to open Studio in",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "prisma studio",
+        "prisma studio --port 5555"
+      ]
     }
   ],
-  "globalOptions": [],
-  "examples": [
+  "globalOptions": [
     {
-      "command": "npx prisma generate",
-      "description": "Generate Prisma Client"
+      "name": "--help",
+      "short": "-h",
+      "description": "Display help syntax"
     },
     {
-      "command": "npx prisma migrate dev --name init",
-      "description": "Create a dev migration"
-    },
-    {
-      "command": "npx prisma db push",
-      "description": "Push state to DB"
+      "name": "--version",
+      "short": "-v",
+      "description": "Display Prisma version info"
     }
+  ],
+  "examples": [
+    "prisma migrate dev --name init",
+    "prisma generate",
+    "prisma db push",
+    "prisma studio"
   ],
   "relatedCommands": [
     "node",
@@ -53,10 +240,17 @@
     "detectors": [
       {
         "name": "schema",
-        "description": "Schema file",
-        "command": "cat prisma/schema.prisma 2>/dev/null | head -15",
+        "description": "Prisma Schema Config",
+        "command": "cat prisma/schema.prisma 2>/dev/null",
         "parser": "text",
         "cacheFor": 30
+      },
+      {
+        "name": "migrations",
+        "description": "Applied Migrations",
+        "command": "ls prisma/migrations 2>/dev/null | grep -v 'migration_lock' | tail -5",
+        "parser": "lines",
+        "cacheFor": 60
       }
     ]
   }

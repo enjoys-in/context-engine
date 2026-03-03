@@ -1,0 +1,561 @@
+{
+  "language": "go",
+  "definitions": {
+    "make": {
+      "signature": "func make(t Type, size ...IntegerType) Type",
+      "description": "Allocates and initializes an object of type slice, map, or chan. For slices, the second argument is length and optional third is capacity. For maps, an optional size hint. For channels, an optional buffer capacity.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "t", "type": "Type", "description": "The type to create (must be slice, map, or channel)" },
+        { "name": "size", "type": "...IntegerType", "description": "Length and optional capacity for slices; optional capacity for maps and channels" }
+      ],
+      "returns": "Type"
+    },
+    "new": {
+      "signature": "func new(Type) *Type",
+      "description": "Allocates zeroed storage for a new item of the given type and returns a pointer to it.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "Type", "type": "Type", "description": "The type to allocate" }
+      ],
+      "returns": "*Type"
+    },
+    "append": {
+      "signature": "func append(slice []Type, elems ...Type) []Type",
+      "description": "Appends elements to the end of a slice. If the backing array has sufficient capacity, the destination is resliced. If not, a new array is allocated and the returned slice will point to the newly allocated array.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "slice", "type": "[]Type", "description": "The original slice" },
+        { "name": "elems", "type": "...Type", "description": "Elements to append" }
+      ],
+      "returns": "[]Type"
+    },
+    "copy": {
+      "signature": "func copy(dst, src []Type) int",
+      "description": "Copies elements from src into dst. Returns the number of elements copied, which is the minimum of len(src) and len(dst). Also supports copying bytes from a string to []byte.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "dst", "type": "[]Type", "description": "Destination slice" },
+        { "name": "src", "type": "[]Type", "description": "Source slice" }
+      ],
+      "returns": "int"
+    },
+    "delete": {
+      "signature": "func delete(m map[Type]Type1, key Type)",
+      "description": "Deletes the element with the specified key from the map. If the map is nil or there is no such element, delete is a no-op.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "m", "type": "map[Type]Type1", "description": "The map" },
+        { "name": "key", "type": "Type", "description": "The key to delete" }
+      ],
+      "returns": ""
+    },
+    "len": {
+      "signature": "func len(v Type) int",
+      "description": "Returns the length of v: number of elements in array, slice, map, or channel buffer; number of bytes in a string.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "v", "type": "Type", "description": "Array, slice, map, string, or channel" }
+      ],
+      "returns": "int"
+    },
+    "cap": {
+      "signature": "func cap(v Type) int",
+      "description": "Returns the capacity of v: the maximum length a slice can reach; the length of the underlying array; or the channel buffer capacity.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "v", "type": "Type", "description": "Array, slice, or channel" }
+      ],
+      "returns": "int"
+    },
+    "close": {
+      "signature": "func close(c chan<- Type)",
+      "description": "Closes the channel, indicating no more values will be sent. Only the sender should close a channel.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "c", "type": "chan<- Type", "description": "The channel to close" }
+      ],
+      "returns": ""
+    },
+    "panic": {
+      "signature": "func panic(v any)",
+      "description": "Stops normal execution of the current goroutine. Deferred functions are still executed. Panics propagate up the call stack until recovered or the program crashes.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "v", "type": "any", "description": "The panic value" }
+      ],
+      "returns": ""
+    },
+    "recover": {
+      "signature": "func recover() any",
+      "description": "Allows a program to manage behavior of a panicking goroutine. Only useful inside deferred functions. Returns the value that was passed to panic, or nil if the goroutine is not panicking.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [],
+      "returns": "any"
+    },
+    "complex": {
+      "signature": "func complex(r, i FloatType) ComplexType",
+      "description": "Constructs a complex value from two floating-point values.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "r", "type": "FloatType", "description": "Real component" },
+        { "name": "i", "type": "FloatType", "description": "Imaginary component" }
+      ],
+      "returns": "ComplexType"
+    },
+    "real": {
+      "signature": "func real(c ComplexType) FloatType",
+      "description": "Returns the real part of a complex number.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "c", "type": "ComplexType", "description": "Complex number" }
+      ],
+      "returns": "FloatType"
+    },
+    "imag": {
+      "signature": "func imag(c ComplexType) FloatType",
+      "description": "Returns the imaginary part of a complex number.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "c", "type": "ComplexType", "description": "Complex number" }
+      ],
+      "returns": "FloatType"
+    },
+    "clear": {
+      "signature": "func clear[T ~[]Type | ~map[Type]Type1](t T)",
+      "description": "(Go 1.21+) For maps, deletes all entries. For slices, sets all elements up to the length to the zero value.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "t", "type": "T", "description": "Map or slice to clear" }
+      ],
+      "returns": ""
+    },
+    "min": {
+      "signature": "func min[T cmp.Ordered](x T, y ...T) T",
+      "description": "(Go 1.21+) Returns the smallest value of the fixed arguments. At least one argument is required.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "x", "type": "T", "description": "First value" },
+        { "name": "y", "type": "...T", "description": "Additional values" }
+      ],
+      "returns": "T"
+    },
+    "max": {
+      "signature": "func max[T cmp.Ordered](x T, y ...T) T",
+      "description": "(Go 1.21+) Returns the largest value of the fixed arguments. At least one argument is required.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "x", "type": "T", "description": "First value" },
+        { "name": "y", "type": "...T", "description": "Additional values" }
+      ],
+      "returns": "T"
+    },
+    "print": {
+      "signature": "func print(args ...Type)",
+      "description": "Formats its arguments in an implementation-specific way and writes to standard error. For production use, prefer the fmt package.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "args", "type": "...Type", "description": "Values to print" }
+      ],
+      "returns": ""
+    },
+    "println": {
+      "signature": "func println(args ...Type)",
+      "description": "Formats its arguments in an implementation-specific way and writes to standard error with spaces and a trailing newline.",
+      "type": "function",
+      "module": "builtin",
+      "parameters": [
+        { "name": "args", "type": "...Type", "description": "Values to print" }
+      ],
+      "returns": ""
+    },
+    "error": {
+      "signature": "type error interface { Error() string }",
+      "description": "The built-in error interface. The conventional interface for representing an error condition, with the nil value representing no error.",
+      "type": "interface",
+      "module": "builtin",
+      "members": {
+        "Error": { "signature": "Error() string", "description": "Returns a string describing the error.", "type": "method" }
+      }
+    },
+    "string": {
+      "signature": "type string",
+      "description": "The set of all strings of 8-bit bytes, conventionally but not necessarily representing UTF-8 text. A string may be empty but not nil. Values of string type are immutable.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "int": {
+      "signature": "type int",
+      "description": "A signed integer type that is at least 32 bits in size. Platform-dependent: 32 bits on 32-bit systems, 64 bits on 64-bit systems.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "float64": {
+      "signature": "type float64",
+      "description": "An IEEE-754 64-bit floating-point number. The default floating-point type in Go.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "bool": {
+      "signature": "type bool",
+      "description": "The set of boolean values: true and false.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "byte": {
+      "signature": "type byte = uint8",
+      "description": "An alias for uint8. Conventionally used to distinguish byte values from 8-bit unsigned integer values.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "rune": {
+      "signature": "type rune = int32",
+      "description": "An alias for int32. Represents a Unicode code point.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "any": {
+      "signature": "type any = interface{}",
+      "description": "(Go 1.18+) An alias for interface{}. Can hold a value of any type.",
+      "type": "type",
+      "module": "builtin"
+    },
+    "comparable": {
+      "signature": "type comparable interface{ comparable }",
+      "description": "(Go 1.18+) An interface implemented by all comparable types. Used as a type constraint in generic functions and types.",
+      "type": "interface",
+      "module": "builtin"
+    },
+    "fmt": {
+      "signature": "package fmt",
+      "description": "Implements formatted I/O with functions analogous to C's printf and scanf. The format 'verbs' are derived from C's but are simpler.",
+      "type": "package",
+      "module": "fmt",
+      "members": {
+        "Println": { "signature": "func Println(a ...any) (n int, err error)", "description": "Formats using default formats, writes to stdout, adds spaces and a newline.", "type": "function" },
+        "Printf": { "signature": "func Printf(format string, a ...any) (n int, err error)", "description": "Formats according to a format specifier and writes to stdout.", "type": "function" },
+        "Sprintf": { "signature": "func Sprintf(format string, a ...any) string", "description": "Formats according to a format specifier and returns the resulting string.", "type": "function" },
+        "Fprintf": { "signature": "func Fprintf(w io.Writer, format string, a ...any) (n int, err error)", "description": "Formats according to a format specifier and writes to w.", "type": "function" },
+        "Errorf": { "signature": "func Errorf(format string, a ...any) error", "description": "Formats and returns an error. Use %w to wrap errors.", "type": "function" },
+        "Sscanf": { "signature": "func Sscanf(str string, format string, a ...any) (n int, err error)", "description": "Scans the argument string, storing values into successive arguments.", "type": "function" },
+        "Stringer": { "signature": "type Stringer interface { String() string }", "description": "Implemented by any value that has a String method, defining the native format for printing.", "type": "interface" }
+      }
+    },
+    "os": {
+      "signature": "package os",
+      "description": "Provides a platform-independent interface to operating system functionality. The design is Unix-like, although the error handling is Go-like.",
+      "type": "package",
+      "module": "os",
+      "members": {
+        "Open": { "signature": "func Open(name string) (*File, error)", "description": "Opens the named file for reading.", "type": "function" },
+        "Create": { "signature": "func Create(name string) (*File, error)", "description": "Creates or truncates the named file.", "type": "function" },
+        "ReadFile": { "signature": "func ReadFile(name string) ([]byte, error)", "description": "Reads the named file and returns the contents.", "type": "function" },
+        "WriteFile": { "signature": "func WriteFile(name string, data []byte, perm FileMode) error", "description": "Writes data to the named file, creating it if necessary.", "type": "function" },
+        "Args": { "signature": "var Args []string", "description": "Command-line arguments, starting with the program name.", "type": "variable" },
+        "Exit": { "signature": "func Exit(code int)", "description": "Causes the current program to exit with the given status code.", "type": "function" },
+        "Getenv": { "signature": "func Getenv(key string) string", "description": "Retrieves the value of the environment variable named by the key.", "type": "function" },
+        "Setenv": { "signature": "func Setenv(key, value string) error", "description": "Sets the value of the environment variable named by the key.", "type": "function" },
+        "MkdirAll": { "signature": "func MkdirAll(path string, perm FileMode) error", "description": "Creates a directory named path along with any necessary parents.", "type": "function" },
+        "Remove": { "signature": "func Remove(name string) error", "description": "Removes the named file or empty directory.", "type": "function" },
+        "Stdin": { "signature": "var Stdin *File", "description": "Open file for standard input.", "type": "variable" },
+        "Stdout": { "signature": "var Stdout *File", "description": "Open file for standard output.", "type": "variable" },
+        "Stderr": { "signature": "var Stderr *File", "description": "Open file for standard error.", "type": "variable" }
+      }
+    },
+    "io": {
+      "signature": "package io",
+      "description": "Provides basic interfaces to I/O primitives. Its primary job is to wrap existing implementations of such primitives into shared public interfaces.",
+      "type": "package",
+      "module": "io",
+      "members": {
+        "Reader": { "signature": "type Reader interface { Read(p []byte) (n int, err error) }", "description": "The interface that wraps the basic Read method.", "type": "interface" },
+        "Writer": { "signature": "type Writer interface { Write(p []byte) (n int, err error) }", "description": "The interface that wraps the basic Write method.", "type": "interface" },
+        "ReadCloser": { "signature": "type ReadCloser interface { Reader; Closer }", "description": "Groups the basic Read and Close methods.", "type": "interface" },
+        "ReadAll": { "signature": "func ReadAll(r Reader) ([]byte, error)", "description": "Reads from r until error or EOF and returns data.", "type": "function" },
+        "Copy": { "signature": "func Copy(dst Writer, src Reader) (written int64, err error)", "description": "Copies from src to dst until EOF.", "type": "function" },
+        "NopCloser": { "signature": "func NopCloser(r Reader) ReadCloser", "description": "Returns a ReadCloser with a no-op Close method wrapping the Reader.", "type": "function" },
+        "EOF": { "signature": "var EOF = errors.New(\"EOF\")", "description": "The error returned by Read when no more input is available.", "type": "variable" }
+      }
+    },
+    "strings": {
+      "signature": "package strings",
+      "description": "Implements simple functions to manipulate UTF-8 encoded strings.",
+      "type": "package",
+      "module": "strings",
+      "members": {
+        "Contains": { "signature": "func Contains(s, substr string) bool", "description": "Reports whether substr is within s.", "type": "function" },
+        "HasPrefix": { "signature": "func HasPrefix(s, prefix string) bool", "description": "Reports whether the string s begins with prefix.", "type": "function" },
+        "HasSuffix": { "signature": "func HasSuffix(s, suffix string) bool", "description": "Reports whether the string s ends with suffix.", "type": "function" },
+        "Split": { "signature": "func Split(s, sep string) []string", "description": "Slices s into substrings separated by sep.", "type": "function" },
+        "Join": { "signature": "func Join(elems []string, sep string) string", "description": "Concatenates string slice elements with a separator.", "type": "function" },
+        "TrimSpace": { "signature": "func TrimSpace(s string) string", "description": "Returns a string with all leading and trailing white space removed.", "type": "function" },
+        "Replace": { "signature": "func Replace(s, old, new string, n int) string", "description": "Returns a copy of s with the first n non-overlapping instances of old replaced by new.", "type": "function" },
+        "ReplaceAll": { "signature": "func ReplaceAll(s, old, new string) string", "description": "Returns a copy of s with all non-overlapping instances of old replaced by new.", "type": "function" },
+        "ToUpper": { "signature": "func ToUpper(s string) string", "description": "Returns a copy of s with all Unicode letters mapped to their upper case.", "type": "function" },
+        "ToLower": { "signature": "func ToLower(s string) string", "description": "Returns a copy of s with all Unicode letters mapped to their lower case.", "type": "function" },
+        "Builder": { "signature": "type Builder struct { ... }", "description": "A Builder is used to efficiently build a string using Write methods.", "type": "struct" },
+        "NewReader": { "signature": "func NewReader(s string) *Reader", "description": "Returns a new Reader reading from s.", "type": "function" }
+      }
+    },
+    "strconv": {
+      "signature": "package strconv",
+      "description": "Implements conversions to and from string representations of basic data types.",
+      "type": "package",
+      "module": "strconv",
+      "members": {
+        "Atoi": { "signature": "func Atoi(s string) (int, error)", "description": "Parses a string as a decimal integer.", "type": "function" },
+        "Itoa": { "signature": "func Itoa(i int) string", "description": "Returns the string representation of the integer i.", "type": "function" },
+        "FormatFloat": { "signature": "func FormatFloat(f float64, fmt byte, prec, bitSize int) string", "description": "Converts the floating-point number f to a string.", "type": "function" },
+        "ParseInt": { "signature": "func ParseInt(s string, base int, bitSize int) (int64, error)", "description": "Interprets a string s in the given base and bit size.", "type": "function" },
+        "ParseFloat": { "signature": "func ParseFloat(s string, bitSize int) (float64, error)", "description": "Converts the string s to a floating-point number.", "type": "function" },
+        "FormatInt": { "signature": "func FormatInt(i int64, base int) string", "description": "Returns the string representation of i in the given base.", "type": "function" },
+        "ParseBool": { "signature": "func ParseBool(str string) (bool, error)", "description": "Returns the boolean value represented by the string.", "type": "function" }
+      }
+    },
+    "encoding/json": {
+      "signature": "package json",
+      "description": "Implements encoding and decoding of JSON as defined in RFC 7159.",
+      "type": "package",
+      "module": "encoding/json",
+      "members": {
+        "Marshal": { "signature": "func Marshal(v any) ([]byte, error)", "description": "Returns the JSON encoding of v.", "type": "function" },
+        "MarshalIndent": { "signature": "func MarshalIndent(v any, prefix, indent string) ([]byte, error)", "description": "Like Marshal but with indentation for readability.", "type": "function" },
+        "Unmarshal": { "signature": "func Unmarshal(data []byte, v any) error", "description": "Parses the JSON-encoded data and stores the result in v.", "type": "function" },
+        "NewEncoder": { "signature": "func NewEncoder(w io.Writer) *Encoder", "description": "Returns a new encoder that writes to w.", "type": "function" },
+        "NewDecoder": { "signature": "func NewDecoder(r io.Reader) *Decoder", "description": "Returns a new decoder that reads from r.", "type": "function" },
+        "RawMessage": { "signature": "type RawMessage []byte", "description": "A raw encoded JSON value. Can delay JSON decoding or precompute a JSON encoding.", "type": "type" },
+        "Valid": { "signature": "func Valid(data []byte) bool", "description": "Reports whether data is a valid JSON encoding.", "type": "function" }
+      }
+    },
+    "net/http": {
+      "signature": "package http",
+      "description": "Provides HTTP client and server implementations.",
+      "type": "package",
+      "module": "net/http",
+      "members": {
+        "ListenAndServe": { "signature": "func ListenAndServe(addr string, handler Handler) error", "description": "Listens on addr and serves requests using handler.", "type": "function" },
+        "HandleFunc": { "signature": "func HandleFunc(pattern string, handler func(ResponseWriter, *Request))", "description": "Registers the handler function for the given pattern.", "type": "function" },
+        "Get": { "signature": "func Get(url string) (*Response, error)", "description": "Issues a GET to the specified URL.", "type": "function" },
+        "Post": { "signature": "func Post(url, contentType string, body io.Reader) (*Response, error)", "description": "Issues a POST to the specified URL.", "type": "function" },
+        "NewRequest": { "signature": "func NewRequest(method, url string, body io.Reader) (*Request, error)", "description": "Returns a new Request given a method, URL, and optional body.", "type": "function" },
+        "NewServeMux": { "signature": "func NewServeMux() *ServeMux", "description": "Allocates and returns a new ServeMux.", "type": "function" },
+        "Handler": { "signature": "type Handler interface { ServeHTTP(ResponseWriter, *Request) }", "description": "Responds to an HTTP request.", "type": "interface" },
+        "ResponseWriter": { "signature": "type ResponseWriter interface { Header() Header; Write([]byte) (int, error); WriteHeader(statusCode int) }", "description": "Interface used by HTTP handler to construct an HTTP response.", "type": "interface" },
+        "Request": { "signature": "type Request struct { Method string; URL *url.URL; Header Header; Body io.ReadCloser; ... }", "description": "Represents an HTTP request received by a server or to be sent by a client.", "type": "struct" },
+        "StatusOK": { "signature": "const StatusOK = 200", "description": "HTTP 200 OK status code.", "type": "constant" },
+        "StatusNotFound": { "signature": "const StatusNotFound = 404", "description": "HTTP 404 Not Found status code.", "type": "constant" },
+        "StatusInternalServerError": { "signature": "const StatusInternalServerError = 500", "description": "HTTP 500 Internal Server Error status code.", "type": "constant" }
+      }
+    },
+    "context": {
+      "signature": "package context",
+      "description": "Defines the Context type, which carries deadlines, cancellation signals, and other request-scoped values across API boundaries and between processes.",
+      "type": "package",
+      "module": "context",
+      "members": {
+        "Context": { "signature": "type Context interface { Deadline() (time.Time, bool); Done() <-chan struct{}; Err() error; Value(key any) any }", "description": "Carries a deadline, cancellation signal, and request-scoped values across API boundaries.", "type": "interface" },
+        "Background": { "signature": "func Background() Context", "description": "Returns a non-nil, empty Context. Never canceled, no values, no deadline.", "type": "function" },
+        "TODO": { "signature": "func TODO() Context", "description": "Returns a non-nil, empty Context for when it's unclear which Context to use.", "type": "function" },
+        "WithCancel": { "signature": "func WithCancel(parent Context) (ctx Context, cancel CancelFunc)", "description": "Returns a copy of parent with a new Done channel.", "type": "function" },
+        "WithTimeout": { "signature": "func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)", "description": "Returns WithDeadline(parent, time.Now().Add(timeout)).", "type": "function" },
+        "WithDeadline": { "signature": "func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)", "description": "Returns a copy of parent with deadline adjusted to be no later than d.", "type": "function" },
+        "WithValue": { "signature": "func WithValue(parent Context, key, val any) Context", "description": "Returns a copy of parent with key associated with val.", "type": "function" },
+        "CancelFunc": { "signature": "type CancelFunc func()", "description": "Tells an operation to abandon its work. Does not wait for the work to stop.", "type": "type" }
+      }
+    },
+    "sync": {
+      "signature": "package sync",
+      "description": "Provides basic synchronization primitives such as mutual exclusion locks. Other than Once and WaitGroup, most are intended for use by low-level library routines.",
+      "type": "package",
+      "module": "sync",
+      "members": {
+        "Mutex": { "signature": "type Mutex struct { ... }", "description": "A mutual exclusion lock. Zero value is an unlocked mutex.", "type": "struct" },
+        "RWMutex": { "signature": "type RWMutex struct { ... }", "description": "A reader/writer mutual exclusion lock. Multiple readers or one writer.", "type": "struct" },
+        "WaitGroup": { "signature": "type WaitGroup struct { ... }", "description": "Waits for a collection of goroutines to finish. Call Add, Done, Wait.", "type": "struct" },
+        "Once": { "signature": "type Once struct { ... }", "description": "An object that will perform exactly one action. Call Do(f).", "type": "struct" },
+        "Map": { "signature": "type Map struct { ... }", "description": "A concurrent-safe map. Methods: Store, Load, Delete, Range.", "type": "struct" },
+        "Pool": { "signature": "type Pool struct { New func() any }", "description": "A pool of temporary objects that may be individually saved and retrieved.", "type": "struct" }
+      }
+    },
+    "errors": {
+      "signature": "package errors",
+      "description": "Implements functions to manipulate errors. The New function creates errors whose only content is a text message. The Is, As, and Unwrap functions work on errors that may wrap other errors.",
+      "type": "package",
+      "module": "errors",
+      "members": {
+        "New": { "signature": "func New(text string) error", "description": "Returns an error that formats as the given text.", "type": "function" },
+        "Is": { "signature": "func Is(err, target error) bool", "description": "Reports whether any error in err's tree matches target.", "type": "function" },
+        "As": { "signature": "func As(err error, target any) bool", "description": "Finds the first error in err's tree that matches target and sets target.", "type": "function" },
+        "Unwrap": { "signature": "func Unwrap(err error) error", "description": "Returns the result of calling Unwrap on err.", "type": "function" },
+        "Join": { "signature": "func Join(errs ...error) error", "description": "(Go 1.20+) Returns an error that wraps the given errors.", "type": "function" }
+      }
+    },
+    "time": {
+      "signature": "package time",
+      "description": "Provides functionality for measuring and displaying time. The calendrical calculations always assume a Gregorian calendar, with no leap seconds.",
+      "type": "package",
+      "module": "time",
+      "members": {
+        "Now": { "signature": "func Now() Time", "description": "Returns the current local time.", "type": "function" },
+        "Since": { "signature": "func Since(t Time) Duration", "description": "Returns the time elapsed since t.", "type": "function" },
+        "Until": { "signature": "func Until(t Time) Duration", "description": "Returns the duration until t.", "type": "function" },
+        "Sleep": { "signature": "func Sleep(d Duration)", "description": "Pauses the current goroutine for at least the duration d.", "type": "function" },
+        "NewTicker": { "signature": "func NewTicker(d Duration) *Ticker", "description": "Returns a new Ticker that sends the time on its channel at each tick.", "type": "function" },
+        "After": { "signature": "func After(d Duration) <-chan Time", "description": "Waits for duration then sends current time on returned channel.", "type": "function" },
+        "Parse": { "signature": "func Parse(layout, value string) (Time, error)", "description": "Parses a formatted string and returns the time value.", "type": "function" },
+        "Duration": { "signature": "type Duration int64", "description": "Represents elapsed time in nanoseconds between two instants.", "type": "type" },
+        "Time": { "signature": "type Time struct { ... }", "description": "Represents an instant in time with nanosecond precision.", "type": "struct" },
+        "Second": { "signature": "const Second Duration = 1000000000", "description": "One second duration constant.", "type": "constant" },
+        "Minute": { "signature": "const Minute Duration = 60 * Second", "description": "One minute duration constant.", "type": "constant" },
+        "Hour": { "signature": "const Hour Duration = 60 * Minute", "description": "One hour duration constant.", "type": "constant" },
+        "Millisecond": { "signature": "const Millisecond Duration = 1000000", "description": "One millisecond duration constant.", "type": "constant" },
+        "RFC3339": { "signature": "const RFC3339 = \"2006-01-02T15:04:05Z07:00\"", "description": "RFC 3339 time format layout.", "type": "constant" }
+      }
+    },
+    "sort": {
+      "signature": "package sort",
+      "description": "Provides primitives for sorting slices and user-defined collections.",
+      "type": "package",
+      "module": "sort",
+      "members": {
+        "Slice": { "signature": "func Slice(x any, less func(i, j int) bool)", "description": "Sorts the slice x using the provided less function.", "type": "function" },
+        "SliceStable": { "signature": "func SliceStable(x any, less func(i, j int) bool)", "description": "Sorts the slice x keeping equal elements in their original order.", "type": "function" },
+        "Search": { "signature": "func Search(n int, f func(int) bool) int", "description": "Uses binary search to find the smallest index i in [0, n) at which f(i) is true.", "type": "function" },
+        "Ints": { "signature": "func Ints(x []int)", "description": "Sorts a slice of ints in increasing order.", "type": "function" },
+        "Strings": { "signature": "func Strings(x []string)", "description": "Sorts a slice of strings in increasing order.", "type": "function" }
+      }
+    },
+    "slices": {
+      "signature": "package slices",
+      "description": "(Go 1.21+) Defines various functions useful with slices of any type. Unless otherwise specified, these functions all apply to the elements of a slice at index 0 <= i < len(s).",
+      "type": "package",
+      "module": "slices",
+      "members": {
+        "Sort": { "signature": "func Sort[S ~[]E, E cmp.Ordered](x S)", "description": "Sorts a slice of any ordered type in ascending order.", "type": "function" },
+        "SortFunc": { "signature": "func SortFunc[S ~[]E, E any](x S, cmp func(a, b E) int)", "description": "Sorts the slice x using the provided comparison function.", "type": "function" },
+        "SortStableFunc": { "signature": "func SortStableFunc[S ~[]E, E any](x S, cmp func(a, b E) int)", "description": "Sorts the slice x keeping equal elements in original order.", "type": "function" },
+        "Contains": { "signature": "func Contains[S ~[]E, E comparable](s S, v E) bool", "description": "Reports whether v is present in s.", "type": "function" },
+        "Index": { "signature": "func Index[S ~[]E, E comparable](s S, v E) int", "description": "Returns the index of the first occurrence of v, or -1.", "type": "function" },
+        "Compact": { "signature": "func Compact[S ~[]E, E comparable](s S) S", "description": "Replaces consecutive runs of equal elements with a single copy.", "type": "function" },
+        "Reverse": { "signature": "func Reverse[S ~[]E, E any](s S)", "description": "Reverses the elements of the slice in place.", "type": "function" },
+        "Min": { "signature": "func Min[S ~[]E, E cmp.Ordered](x S) E", "description": "Returns the minimal value in x. Panics if x is empty.", "type": "function" },
+        "Max": { "signature": "func Max[S ~[]E, E cmp.Ordered](x S) E", "description": "Returns the maximal value in x. Panics if x is empty.", "type": "function" }
+      }
+    },
+    "maps": {
+      "signature": "package maps",
+      "description": "(Go 1.21+) Defines various functions useful with maps of any type.",
+      "type": "package",
+      "module": "maps",
+      "members": {
+        "Keys": { "signature": "func Keys[M ~map[K]V, K comparable, V any](m M) []K", "description": "Returns the keys of the map m in indeterminate order.", "type": "function" },
+        "Values": { "signature": "func Values[M ~map[K]V, K comparable, V any](m M) []V", "description": "Returns the values of the map m in indeterminate order.", "type": "function" },
+        "Clone": { "signature": "func Clone[M ~map[K]V, K comparable, V any](m M) M", "description": "Returns a shallow copy of m.", "type": "function" },
+        "Copy": { "signature": "func Copy[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2)", "description": "Copies all key/value pairs from src into dst.", "type": "function" },
+        "DeleteFunc": { "signature": "func DeleteFunc[M ~map[K]V, K comparable, V any](m M, del func(K, V) bool)", "description": "Deletes entries from m for which del returns true.", "type": "function" },
+        "Equal": { "signature": "func Equal[M1 ~map[K]V, M2 ~map[K]V, K comparable, V comparable](m1 M1, m2 M2) bool", "description": "Reports whether two maps contain the same key/value pairs.", "type": "function" }
+      }
+    },
+    "log/slog": {
+      "signature": "package slog",
+      "description": "(Go 1.21+) Provides structured logging, with a Logger type that produces log records containing a message, a severity level, and various other attributes.",
+      "type": "package",
+      "module": "log/slog",
+      "members": {
+        "Info": { "signature": "func Info(msg string, args ...any)", "description": "Logs at LevelInfo on the default logger.", "type": "function" },
+        "Error": { "signature": "func Error(msg string, args ...any)", "description": "Logs at LevelError on the default logger.", "type": "function" },
+        "Debug": { "signature": "func Debug(msg string, args ...any)", "description": "Logs at LevelDebug on the default logger.", "type": "function" },
+        "Warn": { "signature": "func Warn(msg string, args ...any)", "description": "Logs at LevelWarn on the default logger.", "type": "function" },
+        "With": { "signature": "func With(args ...any) *Logger", "description": "Returns a Logger that includes given attributes in each output.", "type": "function" },
+        "New": { "signature": "func New(h Handler) *Logger", "description": "Creates a Logger that writes to h.", "type": "function" },
+        "NewTextHandler": { "signature": "func NewTextHandler(w io.Writer, opts *HandlerOptions) *TextHandler", "description": "Creates a TextHandler that writes to w.", "type": "function" },
+        "NewJSONHandler": { "signature": "func NewJSONHandler(w io.Writer, opts *HandlerOptions) *JSONHandler", "description": "Creates a JSONHandler that writes to w.", "type": "function" },
+        "SetDefault": { "signature": "func SetDefault(l *Logger)", "description": "Sets the default Logger.", "type": "function" }
+      }
+    },
+    "path/filepath": {
+      "signature": "package filepath",
+      "description": "Implements utility routines for manipulating filename paths in a way compatible with the target operating system-defined file paths.",
+      "type": "package",
+      "module": "path/filepath",
+      "members": {
+        "Join": { "signature": "func Join(elem ...string) string", "description": "Joins path elements into a single path with OS separator.", "type": "function" },
+        "Dir": { "signature": "func Dir(path string) string", "description": "Returns all but the last element of path.", "type": "function" },
+        "Base": { "signature": "func Base(path string) string", "description": "Returns the last element of path.", "type": "function" },
+        "Ext": { "signature": "func Ext(path string) string", "description": "Returns the file name extension.", "type": "function" },
+        "Walk": { "signature": "func Walk(root string, fn WalkFunc) error", "description": "Walks the file tree rooted at root, calling fn for each file or directory.", "type": "function" },
+        "Glob": { "signature": "func Glob(pattern string) (matches []string, err error)", "description": "Returns the names of all files matching the pattern.", "type": "function" },
+        "Abs": { "signature": "func Abs(path string) (string, error)", "description": "Returns the absolute representation of path.", "type": "function" },
+        "Rel": { "signature": "func Rel(basepath, targpath string) (string, error)", "description": "Returns a relative path.", "type": "function" }
+      }
+    },
+    "regexp": {
+      "signature": "package regexp",
+      "description": "Implements regular expression search. The syntax accepted is the same general syntax used by Perl, Python, and other languages (RE2 syntax).",
+      "type": "package",
+      "module": "regexp",
+      "members": {
+        "Compile": { "signature": "func Compile(expr string) (*Regexp, error)", "description": "Parses a regular expression and returns a Regexp object.", "type": "function" },
+        "MustCompile": { "signature": "func MustCompile(str string) *Regexp", "description": "Like Compile but panics if the expression cannot be parsed.", "type": "function" },
+        "MatchString": { "signature": "func MatchString(pattern string, s string) (matched bool, err error)", "description": "Reports whether the string s contains any match of the pattern.", "type": "function" }
+      }
+    },
+    "log": {
+      "signature": "package log",
+      "description": "Implements a simple logging package. It defines a type, Logger, with methods for formatting output.",
+      "type": "package",
+      "module": "log",
+      "members": {
+        "Println": { "signature": "func Println(v ...any)", "description": "Calls Output to print to the standard logger with timestamp.", "type": "function" },
+        "Printf": { "signature": "func Printf(format string, v ...any)", "description": "Calls fmt.Sprintf and prints to the standard logger.", "type": "function" },
+        "Fatal": { "signature": "func Fatal(v ...any)", "description": "Equivalent to Println() followed by os.Exit(1).", "type": "function" },
+        "Fatalf": { "signature": "func Fatalf(format string, v ...any)", "description": "Equivalent to Printf() followed by os.Exit(1).", "type": "function" },
+        "SetOutput": { "signature": "func SetOutput(w io.Writer)", "description": "Sets the output destination for the standard logger.", "type": "function" },
+        "New": { "signature": "func New(out io.Writer, prefix string, flag int) *Logger", "description": "Creates a new Logger.", "type": "function" }
+      }
+    },
+    "bytes": {
+      "signature": "package bytes",
+      "description": "Implements functions for the manipulation of byte slices. Analogous to the facilities of the strings package.",
+      "type": "package",
+      "module": "bytes",
+      "members": {
+        "Buffer": { "signature": "type Buffer struct { ... }", "description": "A variable-sized buffer of bytes with Read and Write methods.", "type": "struct" },
+        "NewReader": { "signature": "func NewReader(b []byte) *Reader", "description": "Returns a new Reader reading from b.", "type": "function" },
+        "Contains": { "signature": "func Contains(b, subslice []byte) bool", "description": "Reports whether subslice is within b.", "type": "function" },
+        "Equal": { "signature": "func Equal(a, b []byte) bool", "description": "Reports whether a and b are the same length and contain the same bytes.", "type": "function" },
+        "Join": { "signature": "func Join(s [][]byte, sep []byte) []byte", "description": "Concatenates byte slices with separator.", "type": "function" },
+        "Split": { "signature": "func Split(s, sep []byte) [][]byte", "description": "Slices s into subslices separated by sep.", "type": "function" }
+      }
+    },
+    "bufio": {
+      "signature": "package bufio",
+      "description": "Implements buffered I/O. It wraps an io.Reader or io.Writer object, creating another object that also implements the interface but provides buffering and some help for textual I/O.",
+      "type": "package",
+      "module": "bufio",
+      "members": {
+        "NewReader": { "signature": "func NewReader(rd io.Reader) *Reader", "description": "Returns a new Reader whose buffer has the default size.", "type": "function" },
+        "NewScanner": { "signature": "func NewScanner(r io.Reader) *Scanner", "description": "Returns a new Scanner to read from r.", "type": "function" },
+        "NewWriter": { "signature": "func NewWriter(w io.Writer) *Writer", "description": "Returns a new Writer whose buffer has the default size.", "type": "function" },
+        "Scanner": { "signature": "type Scanner struct { ... }", "description": "Provides a convenient interface for reading data such as a file of newline-delimited lines.", "type": "struct" }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "pm2",
-  "description": "Advanced Process Manager for Node.js",
-  "category": "Node Version & Process Managers",
+  "description": "Advanced, production process manager for Node.js",
+  "category": "process-manager",
   "platforms": [
     "linux",
     "macos",
@@ -10,48 +10,235 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
       "name": "start",
-      "description": "Start and daemonize an app"
+      "description": "Start and daemonize an app",
+      "args": [
+        {
+          "name": "[app_name|script|json_file]",
+          "type": "string",
+          "required": true,
+          "description": "App to start"
+        }
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "App name",
+          "type": "string"
+        },
+        {
+          "name": "--watch",
+          "description": "Watch folder for changes"
+        },
+        {
+          "name": "--max-memory-restart",
+          "description": "Restart if it exceeds amount of memory",
+          "type": "string"
+        },
+        {
+          "name": "--log",
+          "description": "Log file",
+          "type": "path"
+        },
+        {
+          "name": "--arg",
+          "description": "Pass arguments to script",
+          "type": "string"
+        },
+        {
+          "name": "--env",
+          "description": "Specify env to load",
+          "type": "string"
+        },
+        {
+          "name": "--instances",
+          "short": "-i",
+          "description": "Number of instances (for cluster mode)",
+          "type": "string"
+        },
+        {
+          "name": "--merge-logs",
+          "description": "Merge logs into single file"
+        }
+      ],
+      "examples": [
+        "pm2 start app.js",
+        "pm2 start npm --name myapp -- start",
+        "pm2 start ecosystem.config.js -i max",
+        "pm2 start app.js --watch --max-memory-restart 50M"
+      ]
     },
     {
       "name": "stop",
-      "description": "Stop a process"
+      "description": "Stop a process",
+      "args": [
+        {
+          "name": "<id|name|all>",
+          "type": "string",
+          "required": true,
+          "description": "App to stop"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "pm2 stop all",
+        "pm2 stop api"
+      ]
     },
     {
       "name": "restart",
-      "description": "Restart a process"
+      "description": "Restart a process",
+      "args": [
+        {
+          "name": "<id|name|all>",
+          "type": "string",
+          "required": true,
+          "description": "App to restart"
+        }
+      ],
+      "options": [
+        {
+          "name": "--update-env",
+          "description": "Update environment variables on restart"
+        }
+      ],
+      "examples": [
+        "pm2 restart all",
+        "pm2 restart api --update-env"
+      ]
+    },
+    {
+      "name": "reload",
+      "description": "Reload a process (0s downtime restart)",
+      "args": [
+        {
+          "name": "<id|name|all>",
+          "type": "string",
+          "required": true,
+          "description": "App to reload"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "pm2 reload all"
+      ]
+    },
+    {
+      "name": "delete",
+      "description": "Stop and delete a process from PM2 list",
+      "args": [
+        {
+          "name": "<id|name|all>",
+          "type": "string",
+          "required": true,
+          "description": "App to delete"
+        }
+      ],
+      "options": [],
+      "examples": [
+        "pm2 delete api"
+      ]
     },
     {
       "name": "list",
-      "description": "List all processes"
+      "description": "List all processes",
+      "args": [],
+      "options": [],
+      "examples": [
+        "pm2 list",
+        "pm2 ls"
+      ]
     },
     {
       "name": "logs",
-      "description": "Stream logs"
+      "description": "Stream logs from processes",
+      "args": [
+        {
+          "name": "[id|name|all]",
+          "type": "string",
+          "required": false,
+          "description": "App to show logs for"
+        }
+      ],
+      "options": [
+        {
+          "name": "--lines",
+          "description": "Number of lines to output",
+          "type": "number"
+        },
+        {
+          "name": "--raw",
+          "description": "Raw output"
+        },
+        {
+          "name": "--err",
+          "description": "Only show error logs"
+        },
+        {
+          "name": "--out",
+          "description": "Only show standard logs"
+        }
+      ],
+      "examples": [
+        "pm2 logs",
+        "pm2 logs api --lines 100",
+        "pm2 logs --err"
+      ]
     },
     {
       "name": "monit",
-      "description": "Monitor processes in a terminal UI"
+      "description": "Monitor all processes (terminal UI)",
+      "args": [],
+      "options": [],
+      "examples": [
+        "pm2 monit"
+      ]
+    },
+    {
+      "name": "save",
+      "description": "Save current process list (to resurrect on boot)",
+      "args": [],
+      "options": [],
+      "examples": [
+        "pm2 save"
+      ]
+    },
+    {
+      "name": "resurrect",
+      "description": "Restore previously saved processes",
+      "args": [],
+      "options": [],
+      "examples": [
+        "pm2 resurrect"
+      ]
     }
   ],
-  "globalOptions": [],
-  "examples": [
+  "globalOptions": [
     {
-      "command": "pm2 start app.js",
-      "description": "Start an app"
+      "name": "--no-color",
+      "description": "Disable color output"
     },
     {
-      "command": "pm2 list",
-      "description": "List running apps"
+      "name": "--version",
+      "short": "-v",
+      "description": "Print version"
     },
     {
-      "command": "pm2 logs app",
-      "description": "Tail logs for app"
+      "name": "--help",
+      "short": "-h",
+      "description": "Print help"
     }
+  ],
+  "examples": [
+    "pm2 start ecosystem.config.js",
+    "pm2 list",
+    "pm2 logs",
+    "pm2 save"
   ],
   "relatedCommands": [
     "node",
@@ -62,9 +249,10 @@
       {
         "name": "processes",
         "description": "PM2 Managed Processes",
-        "command": "pm2 jlist 2>/dev/null | jq '.[].name' -r 2>/dev/null || pm2 ls | grep 'online'",
-        "parser": "lines",
-        "cacheFor": 10
+        "command": "pm2 jlist 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 10,
+        "requiresCmd": "pm2"
       }
     ]
   }

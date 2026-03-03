@@ -1,49 +1,187 @@
 {
   "name": "tmux",
-  "description": "Terminal multiplexer",
-  "category": "Text Processing & Utilities",
+  "description": "terminal multiplexer",
+  "category": "utilities",
   "platforms": [
     "linux",
     "macos"
   ],
   "shells": [
     "bash",
-    "zsh"
+    "zsh",
+    "fish"
   ],
   "subcommands": [
     {
-      "name": "new-session",
-      "description": "Create a new session"
+      "name": "attach-session",
+      "description": "Attach to an existing session",
+      "args": [],
+      "options": [
+        {
+          "name": "-t",
+          "description": "Target session",
+          "type": "string"
+        },
+        {
+          "name": "-d",
+          "description": "Detach other clients attached to the session"
+        }
+      ],
+      "examples": [
+        "tmux attach-session -t my_session",
+        "tmux attach -t 0"
+      ]
     },
     {
-      "name": "attach-session",
-      "description": "Attach to an existing session"
+      "name": "new-session",
+      "description": "Create a new session",
+      "args": [],
+      "options": [
+        {
+          "name": "-s",
+          "description": "Session name",
+          "type": "string"
+        },
+        {
+          "name": "-n",
+          "description": "Window name",
+          "type": "string"
+        },
+        {
+          "name": "-d",
+          "description": "Start the session in the background (detached)"
+        }
+      ],
+      "examples": [
+        "tmux new-session -s coding",
+        "tmux new -s dev -n editor"
+      ]
     },
     {
       "name": "list-sessions",
-      "description": "List existing sessions"
+      "description": "List existing sessions",
+      "args": [],
+      "options": [
+        {
+          "name": "-F",
+          "description": "Format output",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "tmux list-sessions",
+        "tmux ls"
+      ]
     },
     {
       "name": "kill-session",
-      "description": "Destroy a session"
+      "description": "Kill an existing session",
+      "args": [],
+      "options": [
+        {
+          "name": "-t",
+          "description": "Target session to kill",
+          "type": "string"
+        },
+        {
+          "name": "-a",
+          "description": "Kill all sessions"
+        }
+      ],
+      "examples": [
+        "tmux kill-session -t my_session",
+        "tmux kill-session -a"
+      ]
+    },
+    {
+      "name": "split-window",
+      "description": "Split the current window",
+      "args": [
+        {
+          "name": "[command]",
+          "type": "string",
+          "required": false,
+          "description": "Command to run in the new pane"
+        }
+      ],
+      "options": [
+        {
+          "name": "-h",
+          "description": "Split horizontally"
+        },
+        {
+          "name": "-v",
+          "description": "Split vertically"
+        },
+        {
+          "name": "-p",
+          "description": "Set the pane size in percentage",
+          "type": "number"
+        },
+        {
+          "name": "-c",
+          "description": "Set the starting directory",
+          "type": "path"
+        }
+      ],
+      "examples": [
+        "tmux split-window -h",
+        "tmux split-window -v -p 30 top"
+      ]
+    },
+    {
+      "name": "send-keys",
+      "description": "Send keys to a window or pane",
+      "args": [
+        {
+          "name": "keys...",
+          "type": "string",
+          "required": true,
+          "description": "Keys to send"
+        }
+      ],
+      "options": [
+        {
+          "name": "-t",
+          "description": "Target pane",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "tmux send-keys -t my_session:0.1 'ls -l' C-m"
+      ]
     }
   ],
-  "globalOptions": [],
+  "globalOptions": [
+    {
+      "name": "-2",
+      "description": "Force tmux to assume the terminal supports 256 colours"
+    },
+    {
+      "name": "-V",
+      "description": "Report the tmux version"
+    },
+    {
+      "name": "-f",
+      "description": "Specify an alternative configuration file",
+      "type": "path"
+    },
+    {
+      "name": "-L",
+      "description": "Specify the socket name",
+      "type": "string"
+    }
+  ],
   "examples": [
-    {
-      "command": "tmux new -s mysession",
-      "description": "Start a new named session"
-    },
-    {
-      "command": "tmux ls",
-      "description": "List sessions"
-    },
-    {
-      "command": "tmux attach -t mysession",
-      "description": "Attach to session"
-    }
+    "tmux new -s myname",
+    "tmux attach -t myname",
+    "tmux ls"
   ],
-  "relatedCommands": [],
+  "relatedCommands": [
+    "sh",
+    "bash",
+    "zsh"
+  ],
   "contextEngine": {
     "detectors": [
       {
@@ -51,7 +189,8 @@
         "description": "Active tmux sessions",
         "command": "tmux ls 2>/dev/null",
         "parser": "lines",
-        "cacheFor": 10
+        "cacheFor": 10,
+        "requiresCmd": "tmux"
       }
     ]
   }

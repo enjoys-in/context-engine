@@ -1,7 +1,7 @@
 {
   "name": "flutter",
-  "description": "Flutter framework cross-platform SDK",
-  "category": "Mobile Development",
+  "description": "Flutter SDK command-line tool",
+  "category": "mobile",
   "platforms": [
     "linux",
     "macos",
@@ -10,54 +10,266 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
-      "name": "run",
-      "description": "Run your Flutter app on an attached device"
+      "name": "analyze",
+      "description": "Analyze the project's Dart code.",
+      "args": [
+        {
+          "name": "[directory]",
+          "type": "path",
+          "required": false,
+          "description": "The directory to analyze"
+        }
+      ],
+      "options": [
+        {
+          "name": "--watch",
+          "description": "Run analysis continuously, watching the filesystem for changes."
+        },
+        {
+          "name": "--pub",
+          "description": "Whether to run \"flutter pub get\" before executing this command."
+        },
+        {
+          "name": "--fatal-infos",
+          "description": "Treat info level issues as fatal."
+        },
+        {
+          "name": "--fatal-warnings",
+          "description": "Treat warning level issues as fatal."
+        }
+      ],
+      "examples": [
+        "flutter analyze",
+        "flutter analyze --watch"
+      ]
     },
     {
       "name": "build",
-      "description": "Build an executable app or install bundle"
+      "description": "Build an executable app or install bundle.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "flutter build apk",
+        "flutter build ios",
+        "flutter build web"
+      ]
     },
     {
-      "name": "doctor",
-      "description": "Show information about the installed tooling"
-    },
-    {
-      "name": "pub",
-      "description": "Commands for managing Flutter packages"
+      "name": "clean",
+      "description": "Delete the build/ and .dart_tool/ directories.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "flutter clean"
+      ]
     },
     {
       "name": "create",
-      "description": "Create a new Flutter project"
+      "description": "Create a new Flutter project.",
+      "args": [
+        {
+          "name": "<output directory>",
+          "type": "path",
+          "required": true,
+          "description": "Directory to create the project in"
+        }
+      ],
+      "options": [
+        {
+          "name": "--template",
+          "short": "-t",
+          "description": "Specify the type of project to create [app|module|package|plugin|skeleton].",
+          "type": "string"
+        },
+        {
+          "name": "--org",
+          "description": "The organization responsible for your new Flutter project, in reverse domain name notation.",
+          "type": "string"
+        },
+        {
+          "name": "--project-name",
+          "description": "The project name for this new Flutter project.",
+          "type": "string"
+        },
+        {
+          "name": "--ios-language",
+          "short": "-i",
+          "description": "Language to use for iOS-specific code [objc|swift].",
+          "type": "string"
+        },
+        {
+          "name": "--android-language",
+          "short": "-a",
+          "description": "Language to use for Android-specific code [java|kotlin].",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "flutter create my_app",
+        "flutter create --org com.example my_app",
+        "flutter create -t plugin my_plugin"
+      ]
+    },
+    {
+      "name": "doctor",
+      "description": "Show information about the installed tooling.",
+      "args": [],
+      "options": [
+        {
+          "name": "--android-licenses",
+          "description": "Run the Android SDK manager tool to accept the SDK's licenses."
+        },
+        {
+          "name": "--verbose",
+          "short": "-v",
+          "description": "Diagnostic output."
+        }
+      ],
+      "examples": [
+        "flutter doctor",
+        "flutter doctor -v",
+        "flutter doctor --android-licenses"
+      ]
+    },
+    {
+      "name": "pub",
+      "description": "Commands for managing Flutter packages.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "flutter pub get",
+        "flutter pub upgrade",
+        "flutter pub add dev_dependencies"
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Run your Flutter app on an attached device.",
+      "args": [
+        {
+          "name": "[file]",
+          "type": "path",
+          "required": false,
+          "description": "The main entry-point file"
+        }
+      ],
+      "options": [
+        {
+          "name": "--debug",
+          "description": "Build a debug version of your app (default)."
+        },
+        {
+          "name": "--profile",
+          "description": "Build a version of your app specialized for performance profiling."
+        },
+        {
+          "name": "--release",
+          "description": "Build a release version of your app."
+        },
+        {
+          "name": "--flavor",
+          "description": "Build a custom app flavor as defined by platform-specific build setup.",
+          "type": "string"
+        },
+        {
+          "name": "--route",
+          "description": "Which route to load when running the app.",
+          "type": "string"
+        },
+        {
+          "name": "--target",
+          "short": "-t",
+          "description": "The main entry-point file of the application.",
+          "type": "path"
+        },
+        {
+          "name": "--device-id",
+          "short": "-d",
+          "description": "Target device id or name (prefixes allowed).",
+          "type": "string"
+        },
+        {
+          "name": "--all",
+          "short": "-d all",
+          "description": "Run on all attached devices"
+        }
+      ],
+      "examples": [
+        "flutter run",
+        "flutter run -d chrome",
+        "flutter run --release"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Run Flutter unit tests for the current project.",
+      "args": [
+        {
+          "name": "[files or directories...]",
+          "type": "path",
+          "required": false,
+          "description": "Specific tests to run"
+        }
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "A regular expression matching substrings of the names of tests to run.",
+          "type": "string"
+        },
+        {
+          "name": "--plain-name",
+          "description": "A plain text string matching substrings of the names of tests to run.",
+          "type": "string"
+        },
+        {
+          "name": "--update-goldens",
+          "description": "Whether matchesGoldenFile() calls within your test methods should update the golden files."
+        },
+        {
+          "name": "--coverage",
+          "description": "Whether to collect coverage information."
+        }
+      ],
+      "examples": [
+        "flutter test",
+        "flutter test test/widget_test.rb",
+        "flutter test --coverage"
+      ]
     }
   ],
   "globalOptions": [
     {
-      "name": "-d",
-      "description": "Target device id or name",
-      "takesValue": true
+      "name": "--verbose",
+      "short": "-v",
+      "description": "Noisy logging, including all shell commands executed."
     },
     {
-      "name": "-v",
-      "description": "Verbose mode"
+      "name": "--device-id",
+      "short": "-d",
+      "description": "Target device id or name.",
+      "type": "string"
+    },
+    {
+      "name": "--version",
+      "description": "Reports the version of this tool."
+    },
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Print this usage information."
     }
   ],
   "examples": [
-    {
-      "command": "flutter doctor",
-      "description": "Check tooling status"
-    },
-    {
-      "command": "flutter run",
-      "description": "Run app"
-    },
-    {
-      "command": "flutter pub get",
-      "description": "Fetch dependencies"
-    }
+    "flutter doctor",
+    "flutter create app_name",
+    "flutter run",
+    "flutter build apk"
   ],
   "relatedCommands": [
     "dart",
@@ -67,18 +279,19 @@
   "contextEngine": {
     "detectors": [
       {
-        "name": "devices",
-        "description": "Connected Devices",
-        "command": "flutter devices | grep '\u2022' 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 10
+        "name": "pubspec",
+        "description": "Flutter Pubspec Config",
+        "command": "cat pubspec.yaml 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 120
       },
       {
-        "name": "pubspec",
-        "description": "Dependencies",
-        "command": "cat pubspec.yaml 2>/dev/null | grep -A 10 '^dependencies:'",
-        "parser": "text",
-        "cacheFor": 30
+        "name": "devices",
+        "description": "Attached Devices",
+        "command": "flutter devices --machine 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 30,
+        "requiresCmd": "flutter"
       }
     ]
   }

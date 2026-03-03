@@ -1,7 +1,7 @@
 {
   "name": "composer",
   "description": "Dependency Manager for PHP",
-  "category": "PHP & Ruby Ecosystems",
+  "category": "package-manager",
   "platforms": [
     "linux",
     "macos",
@@ -10,51 +10,470 @@
   "shells": [
     "bash",
     "zsh",
-    "powershell",
-    "fish"
+    "fish",
+    "powershell"
   ],
   "subcommands": [
     {
       "name": "install",
-      "description": "Installs the project dependencies from the composer.lock file"
-    },
-    {
-      "name": "update",
-      "description": "Updates dependencies to latest versions and updates composer.lock"
+      "description": "Installs the project dependencies from the composer.lock file if present, or falls back on the composer.json.",
+      "args": [],
+      "options": [
+        {
+          "name": "--no-dev",
+          "description": "Disables installation of require-dev packages."
+        },
+        {
+          "name": "--dry-run",
+          "description": "Outputs the operations but will not execute anything (implicitly enables --verbose)."
+        },
+        {
+          "name": "--no-autoloader",
+          "description": "Skips autoloader generation."
+        },
+        {
+          "name": "--no-scripts",
+          "description": "Skips the execution of all scripts defined in composer.json."
+        },
+        {
+          "name": "--no-progress",
+          "description": "Removes the progress display that can mess with some terminals or scripts which don't handle backspace characters."
+        },
+        {
+          "name": "--optimize-autoloader",
+          "short": "-o",
+          "description": "Optimize autoloader during autoloader dump."
+        },
+        {
+          "name": "--classmap-authoritative",
+          "short": "-a",
+          "description": "Autoload classes from the classmap only. Implicitly enables `--optimize-autoloader`."
+        },
+        {
+          "name": "--apcu-autoloader",
+          "description": "Use APCu to cache found/not-found classes."
+        },
+        {
+          "name": "--apcu-autoloader-prefix",
+          "description": "Use a custom prefix for the APCu autoloader cache. Implicitly enables --apcu-autoloader",
+          "type": "string"
+        },
+        {
+          "name": "--ignore-platform-req",
+          "description": "Ignore a specific platform requirement (php & ext- packages).",
+          "type": "string"
+        },
+        {
+          "name": "--ignore-platform-reqs",
+          "description": "Ignore all platform requirements (php & ext- packages)."
+        }
+      ],
+      "examples": [
+        "composer install",
+        "composer install --no-dev",
+        "composer install --optimize-autoloader --no-dev"
+      ]
     },
     {
       "name": "require",
-      "description": "Adds packages to composer.json and installs them"
+      "description": "Adds required packages to your composer.json and installs them.",
+      "args": [
+        {
+          "name": "<package>",
+          "type": "string",
+          "required": true,
+          "description": "Package name to require (e.g. vendor/package:version)"
+        }
+      ],
+      "options": [
+        {
+          "name": "--dev",
+          "description": "Add packages to require-dev."
+        },
+        {
+          "name": "--dry-run",
+          "description": "Outputs the operations but will not execute anything (implicitly enables --verbose)."
+        },
+        {
+          "name": "--no-progress",
+          "description": "Removes the progress display that can mess with some terminals or scripts which don't handle backspace characters."
+        },
+        {
+          "name": "--optimize-autoloader",
+          "short": "-o",
+          "description": "Optimize autoloader during autoloader dump."
+        },
+        {
+          "name": "--no-update",
+          "description": "Disables the automatic update of the dependencies (implies --no-install)."
+        },
+        {
+          "name": "--no-install",
+          "description": "Skip the install step after updating the composer.json file."
+        },
+        {
+          "name": "--update-with-dependencies",
+          "short": "-w",
+          "description": "Allows inherited dependencies to be updated, except those that are root requirements."
+        },
+        {
+          "name": "--update-with-all-dependencies",
+          "short": "-W",
+          "description": "Allows all inherited dependencies to be updated, including those that are root requirements."
+        },
+        {
+          "name": "--with-all-dependencies",
+          "description": "Alias for --update-with-all-dependencies"
+        }
+      ],
+      "examples": [
+        "composer require monolog/monolog",
+        "composer require phpunit/phpunit --dev"
+      ]
+    },
+    {
+      "name": "update",
+      "description": "Updates your dependencies to the latest version according to composer.json, and updates the composer.lock file.",
+      "args": [
+        {
+          "name": "<packages>",
+          "type": "string",
+          "required": false,
+          "description": "Specific packages to update"
+        }
+      ],
+      "options": [
+        {
+          "name": "--no-dev",
+          "description": "Run the dependency update with the --no-dev option."
+        },
+        {
+          "name": "--dry-run",
+          "description": "Outputs the operations but will not execute anything (implicitly enables --verbose)."
+        },
+        {
+          "name": "--no-autoloader",
+          "description": "Skips autoloader generation."
+        },
+        {
+          "name": "--no-scripts",
+          "description": "Skips the execution of all scripts defined in composer.json."
+        },
+        {
+          "name": "--optimize-autoloader",
+          "short": "-o",
+          "description": "Optimize autoloader during autoloader dump."
+        },
+        {
+          "name": "--info",
+          "short": "-i",
+          "description": "Show information about packages."
+        },
+        {
+          "name": "--with-dependencies",
+          "short": "-w",
+          "description": "Update also dependencies of packages in the command argument."
+        },
+        {
+          "name": "--with-all-dependencies",
+          "short": "-W",
+          "description": "Update also dependencies of packages in the command argument, including those which are root requirements."
+        }
+      ],
+      "examples": [
+        "composer update",
+        "composer update vendor/package vendor/package2",
+        "composer update --with-all-dependencies"
+      ]
+    },
+    {
+      "name": "remove",
+      "description": "Removes a package from the require or require-dev.",
+      "args": [
+        {
+          "name": "<packages>",
+          "type": "string",
+          "required": true,
+          "description": "Packages that should be removed."
+        }
+      ],
+      "options": [
+        {
+          "name": "--dev",
+          "description": "Remove packages from require-dev."
+        },
+        {
+          "name": "--dry-run",
+          "description": "Outputs the operations but will not execute anything (implicitly enables --verbose)."
+        },
+        {
+          "name": "--no-progress",
+          "description": "Removes the progress display that can mess with some terminals or scripts which don't handle backspace characters."
+        },
+        {
+          "name": "--no-update",
+          "description": "Disables the automatic update of the dependencies (implies --no-install)."
+        },
+        {
+          "name": "--no-install",
+          "description": "Skip the install step after updating the composer.json file."
+        },
+        {
+          "name": "--update-with-dependencies",
+          "short": "-w",
+          "description": "Allows inherited dependencies to be updated with explicit dependencies."
+        },
+        {
+          "name": "--update-with-all-dependencies",
+          "short": "-W",
+          "description": "Allows all inherited dependencies to be updated, including those that are root requirements."
+        }
+      ],
+      "examples": [
+        "composer remove vendor/package"
+      ]
     },
     {
       "name": "dump-autoload",
-      "description": "Dumps the autoloader"
+      "description": "Dumps the autoloader.",
+      "args": [],
+      "options": [
+        {
+          "name": "--optimize",
+          "short": "-o",
+          "description": "Optimize autoloader during autoloader dump."
+        },
+        {
+          "name": "--classmap-authoritative",
+          "short": "-a",
+          "description": "Autoload classes from the classmap only. Implicitly enables `--optimize`."
+        },
+        {
+          "name": "--apcu",
+          "description": "Use APCu to cache found/not-found classes."
+        },
+        {
+          "name": "--apcu-prefix",
+          "description": "Use a custom prefix for the APCu autoloader cache. Implicitly enables --apcu",
+          "type": "string"
+        },
+        {
+          "name": "--no-dev",
+          "description": "Disables autoload-dev rules."
+        },
+        {
+          "name": "--dry-run",
+          "description": "Outputs the operations but will not execute anything."
+        },
+        {
+          "name": "--strict-psr",
+          "description": "Return a failed status code if a PSR-4 or PSR-0 mapping error is found."
+        }
+      ],
+      "examples": [
+        "composer dump-autoload",
+        "composer dump-autoload -o"
+      ]
+    },
+    {
+      "name": "init",
+      "description": "Creates a basic composer.json file in current directory.",
+      "args": [],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Name of the package",
+          "type": "string"
+        },
+        {
+          "name": "--description",
+          "description": "Description of package",
+          "type": "string"
+        },
+        {
+          "name": "--author",
+          "description": "Author name of package",
+          "type": "string"
+        },
+        {
+          "name": "--type",
+          "description": "Type of package (e.g. library, project, metapackage, composer-plugin)",
+          "type": "string"
+        },
+        {
+          "name": "--homepage",
+          "description": "Homepage of package",
+          "type": "string"
+        },
+        {
+          "name": "--require",
+          "description": "Package to require with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0 or \"foo/bar 1.0.0\"",
+          "type": "string"
+        },
+        {
+          "name": "--require-dev",
+          "description": "Package to require for development with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0 or \"foo/bar 1.0.0\"",
+          "type": "string"
+        },
+        {
+          "name": "--stability",
+          "short": "-s",
+          "description": "Minimum stability (empty or one of: stable, RC, beta, alpha, dev)",
+          "type": "string"
+        },
+        {
+          "name": "--license",
+          "short": "-l",
+          "description": "License of package",
+          "type": "string"
+        },
+        {
+          "name": "--repository",
+          "description": "Add custom repositories, either by URL or using JSON arrays",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "composer init"
+      ]
+    },
+    {
+      "name": "show",
+      "description": "Shows information about packages.",
+      "args": [
+        {
+          "name": "<package>",
+          "type": "string",
+          "required": false,
+          "description": "Package name"
+        }
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "List all packages"
+        },
+        {
+          "name": "--installed",
+          "short": "-i",
+          "description": "List installed packages only (default)"
+        },
+        {
+          "name": "--platform",
+          "short": "-p",
+          "description": "List platform packages only"
+        },
+        {
+          "name": "--available",
+          "short": "-a",
+          "description": "List available packages only"
+        },
+        {
+          "name": "--self",
+          "short": "-s",
+          "description": "Show the root package information"
+        },
+        {
+          "name": "--name-only",
+          "short": "-N",
+          "description": "List package names only"
+        },
+        {
+          "name": "--path",
+          "short": "-P",
+          "description": "Show package paths"
+        },
+        {
+          "name": "--tree",
+          "short": "-t",
+          "description": "Show the dependencies as a tree"
+        }
+      ],
+      "examples": [
+        "composer show",
+        "composer show vendor/package",
+        "composer show -t"
+      ]
+    },
+    {
+      "name": "outdated",
+      "description": "Shows a list of installed packages that have updates available, including their current and latest versions.",
+      "args": [],
+      "options": [
+        {
+          "name": "--all",
+          "short": "-a",
+          "description": "Show all installed packages with their latest versions"
+        },
+        {
+          "name": "--direct",
+          "short": "-D",
+          "description": "Restricts the list of packages to your direct dependencies."
+        },
+        {
+          "name": "--strict",
+          "description": "Return a non-zero exit code when there are outdated packages."
+        },
+        {
+          "name": "--minor-only",
+          "short": "-m",
+          "description": "Show only packages that have minor SemVer-compatible updates."
+        },
+        {
+          "name": "--format",
+          "short": "-f",
+          "description": "Format of the output: text or json",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "composer outdated",
+        "composer outdated -D"
+      ]
     }
   ],
   "globalOptions": [
     {
-      "name": "--no-dev",
-      "description": "Disables installation of require-dev packages"
+      "name": "--verbose",
+      "short": "-v|-vv|-vvv",
+      "description": "Increase the verbosity of messages"
     },
     {
-      "name": "--optimize-autoloader",
-      "shorthand": "-o",
-      "description": "Optimize autoloader during install/update"
+      "name": "--help",
+      "short": "-h",
+      "description": "Display this help message"
+    },
+    {
+      "name": "--quiet",
+      "short": "-q",
+      "description": "Do not output any message"
+    },
+    {
+      "name": "--no-interaction",
+      "short": "-n",
+      "description": "Do not ask any interactive question"
+    },
+    {
+      "name": "--working-dir",
+      "short": "-d",
+      "description": "If specified, use the given directory as working directory.",
+      "type": "path"
+    },
+    {
+      "name": "--profile",
+      "description": "Display timing and memory usage information"
+    },
+    {
+      "name": "--version",
+      "short": "-V",
+      "description": "Display this application version"
     }
   ],
   "examples": [
-    {
-      "command": "composer install",
-      "description": "Install project dependencies"
-    },
-    {
-      "command": "composer require guzzlehttp/guzzle",
-      "description": "Add a new dependency"
-    },
-    {
-      "command": "composer update",
-      "description": "Update all dependencies"
-    }
+    "composer install",
+    "composer update",
+    "composer require vendor/package",
+    "composer dump-autoload -o"
   ],
   "relatedCommands": [
     "php",
@@ -65,9 +484,23 @@
       {
         "name": "composer_json",
         "description": "Composer dependencies",
-        "command": "cat composer.json 2>/dev/null | grep 'require' -A 10 | head -10",
+        "command": "cat composer.json 2>/dev/null | jq '.require' 2>/dev/null || cat composer.json 2>/dev/null | grep 'require' -A 10 | head -15",
         "parser": "text",
-        "cacheFor": 300
+        "cacheFor": 60
+      },
+      {
+        "name": "scripts",
+        "description": "Composer Scripts",
+        "command": "cat composer.json 2>/dev/null | jq '.scripts | keys' -r 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "namespaces",
+        "description": "Autoload Namespaces",
+        "command": "cat composer.json 2>/dev/null | jq '.autoload.\"psr-4\"' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
       }
     ]
   }

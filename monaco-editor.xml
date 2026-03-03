@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monaco_language_providers_context version="1.0.0">
+
+  <!-- ============================================================ -->
+  <!--  HOVER PROVIDER                                              -->
+  <!-- ============================================================ -->
+  <provider name="HoverProvider">
+    <register>monaco.languages.registerHoverProvider(languageId, provider)</register>
+
+    <return_type>monaco.languages.Hover | null | undefined</return_type>
+
+    <interfaces>
+
+      <interface name="HoverProvider">
+        <method name="provideHover">
+          <signature>provideHover(model: ITextModel, position: Position, token: CancellationToken): Hover | null | undefined</signature>
+          <params>
+            <param name="model"    type="ITextModel"         desc="The text model of the current editor" />
+            <param name="position" type="Position"           desc="The position of the cursor/hover" />
+            <param name="token"    type="CancellationToken"  desc="Cancellation token — check token.isCancellationRequested" />
+          </params>
+        </method>
+      </interface>
+
+      <interface name="Hover">
+        <property name="contents" type="IMarkdownString[]" required="true"  desc="Markdown content to display in tooltip" />
+        <property name="range"    type="IRange"            required="false" desc="Optional range to highlight when hovering" />
+      </interface>
+
+      <interface name="IMarkdownString">
+        <property name="value"             type="string"  required="true"  desc="Markdown text — supports code blocks, bold, italic" />
+        <property name="isTrusted"         type="boolean" required="false" desc="If true allows command links" />
+        <property name="supportThemeIcons" type="boolean" required="false" desc="If true renders $(icon-name) theme icons" />
+        <property name="supportHtml"       type="boolean" required="false" desc="If true renders inline HTML" />
+      </interface>
+
+    </interfaces>
+
+    <example><![CDATA[
+monaco.languages.registerHoverProvider('javascript', {
+  provideHover(model, position, token) {
+    const word = model.getWordAtPosition(position)
+    if (!word) return null
+
+    return {
+      contents: [
+        {
+          value: '**console**()\n\nProvides access to the browser debugging console.',
+          isTrusted: true,
+          supportThemeIcons: true,
+        }
+      ],
+      range: {
+        startLineNumber: position.lineNumber,
+        endLineNumber:   position.lineNumber,
+        startColumn:     word.startColumn,
+        endColumn:       word.endColumn,
+      }
+    }
+  }
+})
+    ]]></example>
+
+    <useful_model_methods>
+      <method name="model.getWordAtPosition(position)"            returns="WordAtPosition | null"   desc="Get word under cursor" />
+      <method name="model.getValueInRange(range)"                 returns="string"                  desc="Get text in range" />
+      <method name="model.getLineContent(lineNumber)"             returns="string"                  desc="Get full line text" />
+      <method name="model.getLineCount()"                         returns="number"                  desc="Total lines in file" />
+      <method name="model.getLineMaxColumn(lineNumber)"           returns="number"                  desc="Last column of line" />
+      <method name="model.getWordUntilPosition(position)"         returns="WordAtPosition"          desc="Partial word up to cursor" />
+      <method name="model.uri"                                    returns="monaco.Uri"              desc="File URI e.g. file:///src/main.ts" />
+      <method name="model.getLanguageId()"                        returns="string"                  desc="Language ID e.g. typescript" />
+    </useful_model_methods>
+  </provider>
+
+
+  <!-- ============================================================ -->
+  <!--  DEFINITION PROVIDER                                         -->
+  <!-- ============================================================ -->
+  <provider name="DefinitionProvider">
+    <register>monaco.languages.registerDefinitionProvider(languageId, provider)</register>
+
+    <return_type>Definition | null | undefined</return_type>
+    <definition_type>type Definition = Location | Location[] | LocationLink[]</definition_type>
+
+    <interfaces>
+
+      <interface name="DefinitionProvider">
+        <method name="provideDefinition">
+          <signature>provideDefinition(model: ITextModel, position: Position, token: CancellationToken): Definition | null | undefined</signature>
+          <params>
+            <param name="model"    type="ITextModel"        desc="Current editor model" />
+            <param name="position" type="Position"          desc="Cursor position" />
+            <param name="token"    type="CancellationToken" desc="Cancellation token" />
+          </params>
+        </method>
+      </interface>
+
+      <interface name="Location">
+        <property name="uri"   type="monaco.Uri" required="true" desc="File URI to navigate to" />
+        <property name="range" type="IRange"     required="true" desc="Target range in that file" />
+      </interface>
+
+      <interface name="LocationLink">
+        <property name="originSelectionRange" type="IRange"     required="false" desc="Range of the symbol in source file (highlights on Ctrl+click)" />
+        <property name="targetUri"            type="monaco.Uri" required="true"  desc="Target file URI" />
+        <property name="targetRange"          type="IRange"     required="true"  desc="Full range of the target e.g. whole function" />
+        <property name="targetSelectionRange" type="IRange"     required="true"  desc="Exact symbol range in target e.g. just function name" />
+      </interface>
+
+      <interface name="IRange">
+        <property name="startLineNumber" type="number" required="true" desc="1-based start line" />
+        <property name="startColumn"     type="number" required="true" desc="1-based start column" />
+        <property name="endLineNumber"   type="number" required="true" desc="1-based end line" />
+        <property name="endColumn"       type="number" required="true" desc="1-based end column" />
+      </interface>
+
+    </interfaces>
+
+    <example><![CDATA[
+monaco.languages.registerDefinitionProvider('typescript', {
+  provideDefinition(model, position, token) {
+    const word = model.getWordAtPosition(position)
+    if (!word) return null
+
+    // Return single location
+    return {
+      uri:   monaco.Uri.parse('file:///src/utils.ts'),
+      range: {
+        startLineNumber: 42,
+        startColumn:     1,
+        endLineNumber:   42,
+        endColumn:       20,
+      }
+    }
+
+    // OR return LocationLink for richer experience
+    return {
+      originSelectionRange: {
+        startLineNumber: position.lineNumber,
+        startColumn:     word.startColumn,
+        endLineNumber:   position.lineNumber,
+        endColumn:       word.endColumn,
+      },
+      targetUri:            monaco.Uri.parse('file:///src/utils.ts'),
+      targetRange: {
+        startLineNumber: 42, startColumn: 1,
+        endLineNumber:   50, endColumn:   1,
+      },
+      targetSelectionRange: {
+        startLineNumber: 42, startColumn: 10,
+        endLineNumber:   42, endColumn:   20,
+      }
+    }
+  }
+})
+    ]]></example>
+  </provider>
+
+
+  <!-- ============================================================ -->
+  <!--  COMPLETION PROVIDER                                         -->
+  <!-- ============================================================ -->
+  <provider name="CompletionProvider">
+    <register>monaco.languages.registerCompletionItemProvider(languageId, provider)</register>
+
+    <return_type>CompletionList | null | undefined</return_type>
+
+    <interfaces>
+
+      <interface name="CompletionItemProvider">
+        <property name="triggerCharacters" type="string[]" required="false" desc="Characters that trigger completion e.g. ['.', '/', '@', '\"']" />
+        <method name="provideCompletionItems">
+          <signature>provideCompletionItems(model: ITextModel, position: Position, context: CompletionContext, token: CancellationToken): CompletionList | null | undefined</signature>
+          <params>
+            <param name="model"    type="ITextModel"          desc="Current editor model" />
+            <param name="position" type="Position"            desc="Cursor position" />
+            <param name="context"  type="CompletionContext"   desc="How completion was triggered" />
+            <param name="token"    type="CancellationToken"   desc="Cancellation token" />
+          </params>
+        </method>
+        <method name="resolveCompletionItem" required="false">
+          <signature>resolveCompletionItem(item: CompletionItem, token: CancellationToken): CompletionItem</signature>
+          <desc>Optional — lazy load full details only when item is selected in dropdown. Use for expensive doc fetching.</desc>
+        </method>
+      </interface>
+
+      <interface name="CompletionContext">
+        <property name="triggerKind"      type="CompletionTriggerKind" required="true"  desc="How completion was triggered" />
+        <property name="triggerCharacter" type="string"                required="false" desc="The character that triggered if triggerKind=1" />
+        <triggerKind_values>
+          <value number="0" name="Invoke"                        desc="Triggered manually by Ctrl+Space" />
+          <value number="1" name="TriggerCharacter"              desc="Triggered by a triggerCharacter" />
+          <value number="2" name="TriggerForIncompleteCompletions" desc="Re-triggered because incomplete=true" />
+        </triggerKind_values>
+      </interface>
+
+      <interface name="CompletionList">
+        <property name="suggestions" type="CompletionItem[]" required="true"  desc="Array of completion items" />
+        <property name="incomplete"  type="boolean"          required="false" desc="If true Monaco re-triggers completion on next keystroke" />
+        <method   name="dispose"     required="false"        desc="Called when list is no longer needed" />
+      </interface>
+
+      <interface name="CompletionItem">
+        <property name="label"            type="string | CompletionItemLabel"                  required="true"  desc="Text shown in dropdown" />
+        <property name="kind"             type="CompletionItemKind"                            required="true"  desc="Icon and category — see kind values below" />
+        <property name="insertText"       type="string"                                        required="true"  desc="Text inserted on accept — use $1 $2 for tabstops" />
+        <property name="range"            type="IRange | { insert: IRange, replace: IRange }" required="true"  desc="Where to insert — usually word range at cursor" />
+        <property name="tags"             type="CompletionItemTag[]"                           required="false" desc="1=Deprecated (adds strikethrough)" />
+        <property name="detail"           type="string"                                        required="false" desc="Short description shown inline right of label" />
+        <property name="documentation"    type="string | IMarkdownString"                      required="false" desc="Full docs shown in detail pane — supports markdown" />
+        <property name="sortText"         type="string"                                        required="false" desc="Controls sort order — alphabetical by default" />
+        <property name="filterText"       type="string"                                        required="false" desc="Controls filtering — defaults to label" />
+        <property name="preselect"        type="boolean"                                       required="false" desc="If true this item is pre-selected in dropdown" />
+        <property name="insertTextRules"  type="CompletionItemInsertTextRule"                  required="false" desc="1=KeepWhitespace 4=InsertAsSnippet" />
+        <property name="commitCharacters" type="string[]"                                      required="false" desc="Characters that accept completion e.g. ['.', '(']" />
+        <property name="additionalTextEdits" type="ISingleEditOperation[]"                     required="false" desc="Additional edits applied on accept e.g. add import" />
+        <property name="command"          type="Command"                                       required="false" desc="Command executed after insertion e.g. trigger signature help" />
+      </interface>
+
+      <interface name="CompletionItemLabel">
+        <property name="label"       type="string" required="true"  desc="Main label text" />
+        <property name="detail"      type="string" required="false" desc="Rendered after label e.g. parameter types" />
+        <property name="description" type="string" required="false" desc="Rendered less prominently e.g. source module" />
+      </interface>
+
+      <interface name="InsertTextRules">
+        <value number="0" name="None"            desc="Plain text insertion" />
+        <value number="1" name="KeepWhitespace"  desc="Keep whitespace as-is" />
+        <value number="4" name="InsertAsSnippet" desc="Parse $1 $2 ${1:placeholder} tabstop syntax" />
+      </interface>
+
+    </interfaces>
+
+    <completion_item_kind_values>
+      <kind value="0"  name="Method"        icon="method"        use_for="class or object methods" />
+      <kind value="1"  name="Function"      icon="function"      use_for="standalone functions, built-ins" />
+      <kind value="2"  name="Constructor"   icon="constructor"   use_for="class constructors" />
+      <kind value="3"  name="Field"         icon="field"         use_for="struct fields, object fields" />
+      <kind value="4"  name="Variable"      icon="variable"      use_for="variables, constants, parameters" />
+      <kind value="5"  name="Class"         icon="class"         use_for="class declarations" />
+      <kind value="6"  name="Struct"        icon="struct"        use_for="struct types" />
+      <kind value="7"  name="Interface"     icon="interface"     use_for="interfaces, protocols, traits" />
+      <kind value="8"  name="Enum"          icon="enum"          use_for="enum types" />
+      <kind value="9"  name="Module"        icon="module"        use_for="modules, packages, namespaces" />
+      <kind value="10" name="Property"      icon="property"      use_for="object properties" />
+      <kind value="11" name="Unit"          icon="unit"          use_for="units, measurement values" />
+      <kind value="12" name="Value"         icon="value"         use_for="literal values" />
+      <kind value="13" name="Enum"          icon="enum-member"   use_for="enum members" />
+      <kind value="14" name="Keyword"       icon="keyword"       use_for="language keywords: if for while" />
+      <kind value="15" name="Snippet"       icon="snippet"       use_for="multi-line code templates" />
+      <kind value="16" name="Text"          icon="text"          use_for="plain text words" />
+      <kind value="17" name="Color"         icon="color"         use_for="color values" />
+      <kind value="18" name="File"          icon="file"          use_for="file paths" />
+      <kind value="19" name="Reference"     icon="reference"     use_for="references, links" />
+      <kind value="20" name="Folder"        icon="folder"        use_for="folder paths" />
+      <kind value="21" name="EnumMember"    icon="enum-member"   use_for="enum member values" />
+      <kind value="22" name="Constant"      icon="constant"      use_for="constants" />
+      <kind value="23" name="TypeParameter" icon="type-param"    use_for="generic type parameters T K V" />
+      <kind value="24" name="User"          icon="user"          use_for="user defined" />
+      <kind value="25" name="Issue"         icon="issue"         use_for="issue references" />
+      <kind value="26" name="Operator"      icon="operator"      use_for="operators" />
+    </completion_item_kind_values>
+
+    <tabstop_syntax>
+      <syntax pattern="$1 $2 $3"               desc="Simple tabstops — cursor jumps in order" />
+      <syntax pattern="${1:placeholder}"         desc="Tabstop with default placeholder text" />
+      <syntax pattern="${1|option1,option2|}"    desc="Tabstop with choice dropdown" />
+      <syntax pattern="$0"                       desc="Final cursor position after all tabstops" />
+      <syntax pattern="${TM_FILENAME}"           desc="Variable — current filename" />
+      <syntax pattern="${TM_FILENAME_BASE}"      desc="Variable — filename without extension" />
+      <syntax pattern="${TM_DIRECTORY}"          desc="Variable — current file directory" />
+      <syntax pattern="${TM_FILEPATH}"           desc="Variable — full file path" />
+      <syntax pattern="${TM_SELECTED_TEXT}"      desc="Variable — currently selected text" />
+      <syntax pattern="${TM_CURRENT_LINE}"       desc="Variable — current line content" />
+      <syntax pattern="${TM_CURRENT_WORD}"       desc="Variable — word under cursor" />
+      <syntax pattern="${CURRENT_YEAR}"          desc="Variable — current year" />
+      <syntax pattern="${CURRENT_MONTH}"         desc="Variable — current month (01-12)" />
+      <syntax pattern="${CURRENT_DATE}"          desc="Variable — current date (01-31)" />
+    </tabstop_syntax>
+
+    <example><![CDATA[
+monaco.languages.registerCompletionItemProvider('typescript', {
+  triggerCharacters: ['.', '"', "'", '/'],
+
+  provideCompletionItems(model, position, context, token) {
+    const word  = model.getWordUntilPosition(position)
+    const range = {
+      startLineNumber: position.lineNumber,
+      endLineNumber:   position.lineNumber,
+      startColumn:     word.startColumn,
+      endColumn:       word.endColumn,
+    }
+
+    return {
+      incomplete: false,
+      suggestions: [
+        // Snippet with tabstops
+        {
+          label:           'fn',
+          kind:            15,   // Snippet
+          insertText:      'function ${1:name}(${2:params}): ${3:void} {\n\t$0\n}',
+          insertTextRules: 4,    // InsertAsSnippet
+          documentation:   { value: '**function** snippet\n\nInserts a typed function declaration' },
+          detail:          'snippet',
+          range,
+        },
+        // Keyword
+        {
+          label:           'interface',
+          kind:            14,   // Keyword
+          insertText:      'interface ${1:Name} {\n\t$0\n}',
+          insertTextRules: 4,
+          documentation:   'Declare a TypeScript interface',
+          detail:          'keyword',
+          range,
+        },
+        // Built-in function
+        {
+          label:           'console.log',
+          kind:            1,    // Function
+          insertText:      'console.log(${1:value})',
+          insertTextRules: 4,
+          documentation:   { value: '**console.log**(value: any)\n\nLogs to browser console' },
+          detail:          'built-in',
+          preselect:       true,
+          range,
+        },
+        // With CompletionItemLabel for richer display
+        {
+          label: {
+            label:       'useState',
+            detail:      '<S>(initialState: S)',
+            description: 'react',
+          },
+          kind:            1,    // Function
+          insertText:      'const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:type}>(${3:initialValue})',
+          insertTextRules: 4,
+          documentation:   { value: '**useState**\n\nReact state hook' },
+          detail:          'hook',
+          range,
+        },
+      ]
+    }
+  },
+
+  // Lazy load docs only when item selected
+  resolveCompletionItem(item, token) {
+    return {
+      ...item,
+      documentation: { value: `Detailed docs for **${item.label}**` }
+    }
+  }
+})
+    ]]></example>
+  </provider>
+
+
+  <!-- ============================================================ -->
+  <!--  SHARED TYPES                                                -->
+  <!-- ============================================================ -->
+  <shared_types>
+
+    <interface name="IRange">
+      <property name="startLineNumber" type="number" desc="1-based line number" />
+      <property name="startColumn"     type="number" desc="1-based column number" />
+      <property name="endLineNumber"   type="number" desc="1-based line number" />
+      <property name="endColumn"       type="number" desc="1-based column number" />
+    </interface>
+
+    <interface name="Position">
+      <property name="lineNumber" type="number" desc="1-based line number" />
+      <property name="column"     type="number" desc="1-based column number" />
+    </interface>
+
+    <interface name="CancellationToken">
+      <property name="isCancellationRequested" type="boolean" desc="Check this before expensive operations" />
+      <method   name="onCancellationRequested" desc="Register callback for when cancelled" />
+    </interface>
+
+    <interface name="ITextModel">
+      <method name="getWordAtPosition(position)"          returns="WordAtPosition | null"  />
+      <method name="getWordUntilPosition(position)"       returns="WordAtPosition"         />
+      <method name="getValueInRange(range)"               returns="string"                 />
+      <method name="getLineContent(lineNumber)"           returns="string"                 />
+      <method name="getLineCount()"                       returns="number"                 />
+      <method name="getLineMaxColumn(lineNumber)"         returns="number"                 />
+      <method name="getFullModelRange()"                  returns="IRange"                 />
+      <method name="getValue()"                           returns="string"                 />
+      <method name="getLanguageId()"                      returns="string"                 />
+      <property name="uri"                                type="monaco.Uri"                />
+    </interface>
+
+    <interface name="WordAtPosition">
+      <property name="word"        type="string" desc="The word text" />
+      <property name="startColumn" type="number" desc="1-based start column" />
+      <property name="endColumn"   type="number" desc="1-based end column" />
+    </interface>
+
+  </shared_types>
+
+
+  <!-- ============================================================ -->
+  <!--  OTHER USEFUL PROVIDERS (QUICK REFERENCE)                   -->
+  <!-- ============================================================ -->
+  <other_providers>
+    <provider name="SignatureHelpProvider"    register="monaco.languages.registerSignatureHelpProvider"    desc="Show function signature when user types ( or ," />
+    <provider name="ReferenceProvider"        register="monaco.languages.registerReferenceProvider"        desc="Find all references to a symbol" />
+    <provider name="DocumentSymbolProvider"  register="monaco.languages.registerDocumentSymbolProvider"   desc="Outline view — list all symbols in file" />
+    <provider name="CodeActionProvider"       register="monaco.languages.registerCodeActionProvider"       desc="Lightbulb quick fixes" />
+    <provider name="CodeLensProvider"         register="monaco.languages.registerCodeLensProvider"         desc="Inline actionable annotations above code lines" />
+    <provider name="FoldingRangeProvider"     register="monaco.languages.registerFoldingRangeProvider"     desc="Code folding ranges" />
+    <provider name="ColorProvider"            register="monaco.languages.registerColorProvider"            desc="Color picker for color values" />
+    <provider name="RenameProvider"           register="monaco.languages.registerRenameProvider"           desc="Rename symbol across file" />
+    <provider name="DocumentFormattingEditProvider" register="monaco.languages.registerDocumentFormattingEditProvider" desc="Format whole document" />
+    <provider name="InlayHintsProvider"       register="monaco.languages.registerInlayHintsProvider"      desc="Inline type hints shown in editor" />
+    <provider name="LinkedEditingRangeProvider" register="monaco.languages.registerLinkedEditingRangeProvider" desc="Linked editing e.g. HTML tag pairs" />
+  </other_providers>
+
+</monaco_language_providers_context>

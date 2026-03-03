@@ -1,7 +1,7 @@
 {
   "name": "jq",
   "description": "Command-line JSON processor",
-  "category": "Text Processing & Utilities",
+  "category": "utilities",
   "platforms": [
     "linux",
     "macos",
@@ -10,36 +10,76 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [],
   "globalOptions": [
     {
-      "name": "-r",
-      "description": "Output raw strings, not JSON texts"
+      "name": "--version",
+      "short": "-V",
+      "description": "Output the jq version and exit with zero."
     },
     {
-      "name": "-c",
-      "description": "Compact instead of pretty-printed output"
+      "name": "--stream",
+      "description": "Parse the input in streaming fashion, outputting arrays of path and leaf values."
     },
     {
-      "name": "-s",
-      "description": "Read (slurp) all inputs into an array"
+      "name": "--slurp",
+      "short": "-s",
+      "description": "Read (slurp) all inputs into an array; apply filter to it."
+    },
+    {
+      "name": "--raw-input",
+      "short": "-R",
+      "description": "Don't parse the input as JSON."
+    },
+    {
+      "name": "--null-input",
+      "short": "-n",
+      "description": "Don't read any input at all! Instead, the filter is run once using `null` as the input."
+    },
+    {
+      "name": "--compact-output",
+      "short": "-c",
+      "description": "By default, jq pretty-prints JSON output. Using this option will result in more compact output."
+    },
+    {
+      "name": "--tab",
+      "description": "Use a tab for each indentation level instead of two spaces."
+    },
+    {
+      "name": "--color-output",
+      "short": "-C",
+      "description": "Output in color even if writing to a pipe or file."
+    },
+    {
+      "name": "--monochrome-output",
+      "short": "-M",
+      "description": "Output without color."
+    },
+    {
+      "name": "--sort-keys",
+      "short": "-S",
+      "description": "Output the fields of each object with the keys in sorted order."
+    },
+    {
+      "name": "--raw-output",
+      "short": "-r",
+      "description": "Output raw strings, not JSON texts."
+    },
+    {
+      "name": "--arg",
+      "description": "This option passes a value to the jq program as a predefined variable.",
+      "type": "string"
     }
   ],
   "examples": [
-    {
-      "command": "cat data.json | jq '.'",
-      "description": "Pretty print JSON"
-    },
-    {
-      "command": "jq -r '.name' package.json",
-      "description": "Extract specific field as raw string"
-    },
-    {
-      "command": "curl -s api.github.com/repos/stedolan/jq/commits | jq '.[0].commit.message'",
-      "description": "Parse API response"
-    }
+    "cat data.json | jq '.'",
+    "jq -r '.name' package.json",
+    "curl -s api.github.com/repos/stedolan/jq/commits | jq '.[0].commit.message'",
+    "jq -c '.[]' array.json",
+    "jq -s '.' file1.json file2.json"
   ],
   "relatedCommands": [
     "yq",
@@ -50,8 +90,8 @@
     "detectors": [
       {
         "name": "json_files",
-        "description": "JSON files in current directory",
-        "command": "ls *.json 2>/dev/null | head -5",
+        "description": "JSON files available",
+        "command": "ls *.json 2>/dev/null",
         "parser": "lines",
         "cacheFor": 30
       }

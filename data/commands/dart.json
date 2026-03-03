@@ -1,7 +1,7 @@
 {
   "name": "dart",
-  "description": "Dart command-line interface",
-  "category": "Mobile Development",
+  "description": "Dart SDK command-line tool",
+  "category": "mobile",
   "platforms": [
     "linux",
     "macos",
@@ -10,36 +10,194 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
-      "name": "run",
-      "description": "Run a Dart program"
+      "name": "analyze",
+      "description": "Analyze the project's Dart code.",
+      "args": [
+        {
+          "name": "[directory]",
+          "type": "path",
+          "required": false,
+          "description": "The directory to analyze"
+        }
+      ],
+      "options": [
+        {
+          "name": "--fatal-infos",
+          "description": "Treat info level issues as fatal."
+        },
+        {
+          "name": "--fatal-warnings",
+          "description": "Treat warning level issues as fatal."
+        }
+      ],
+      "examples": [
+        "dart analyze",
+        "dart analyze lib/"
+      ]
     },
     {
-      "name": "test",
-      "description": "Run tests in this package"
+      "name": "compile",
+      "description": "Compile Dart to various formats.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "dart compile exe bin/myapp.dart",
+        "dart compile js bin/myapp.dart"
+      ]
+    },
+    {
+      "name": "create",
+      "description": "Create a new Dart project.",
+      "args": [
+        {
+          "name": "<directory>",
+          "type": "path",
+          "required": true,
+          "description": "Directory to create the project in"
+        }
+      ],
+      "options": [
+        {
+          "name": "--template",
+          "short": "-t",
+          "description": "The template used to generate the project.",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "dart create cli_app",
+        "dart create -t server-shelf server_app"
+      ]
     },
     {
       "name": "format",
-      "description": "Idiomatically format Dart source code"
+      "description": "Idiomatically format Dart source code.",
+      "args": [
+        {
+          "name": "[files or directories...]",
+          "type": "path",
+          "required": false,
+          "description": "The files or directories to format"
+        }
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "short": "-o",
+          "description": "Set where to write formatted output [write|show|json|none].",
+          "type": "string"
+        },
+        {
+          "name": "--set-exit-if-changed",
+          "description": "Return exit code 1 if there are any formatting changes."
+        }
+      ],
+      "examples": [
+        "dart format lib/",
+        "dart format -o none --set-exit-if-changed ."
+      ]
     },
     {
-      "name": "analyze",
-      "description": "Analyze the project's Dart code"
+      "name": "pub",
+      "description": "Work with packages.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "dart pub get",
+        "dart pub upgrade",
+        "dart pub add http"
+      ]
+    },
+    {
+      "name": "run",
+      "description": "Run a Dart program.",
+      "args": [
+        {
+          "name": "<executable>",
+          "type": "string",
+          "required": true,
+          "description": "The program to run"
+        },
+        {
+          "name": "[args...]",
+          "type": "string",
+          "required": false,
+          "description": "Arguments to pass to the program"
+        }
+      ],
+      "options": [
+        {
+          "name": "--enable-asserts",
+          "description": "Enable assert statements."
+        },
+        {
+          "name": "--enable-experiment",
+          "description": "Enable one or more experimental features.",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "dart run bin/myapp.dart",
+        "dart run test"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Run tests for a project.",
+      "args": [
+        {
+          "name": "[files or directories...]",
+          "type": "path",
+          "required": false,
+          "description": "The tests to run"
+        }
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "short": "-n",
+          "description": "A regular expression matching the name of the test to run.",
+          "type": "string"
+        },
+        {
+          "name": "--tags",
+          "short": "-t",
+          "description": "Run only tests with all of the specified tags.",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "dart test",
+        "dart test test/my_test.dart"
+      ]
     }
   ],
-  "globalOptions": [],
-  "examples": [
+  "globalOptions": [
     {
-      "command": "dart run bin/main.dart",
-      "description": "Run dart file"
+      "name": "--verbose",
+      "short": "-v",
+      "description": "Show additional command output."
     },
     {
-      "command": "dart format .",
-      "description": "Format all dart files"
+      "name": "--version",
+      "description": "Print the Dart SDK version."
+    },
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Print this usage information."
     }
+  ],
+  "examples": [
+    "dart run bin/myapp.dart",
+    "dart pub get",
+    "dart format lib/",
+    "dart test"
   ],
   "relatedCommands": [
     "flutter"
@@ -47,8 +205,8 @@
   "contextEngine": {
     "detectors": [
       {
-        "name": "dart_version",
-        "description": "Dart Version",
+        "name": "version",
+        "description": "Dart SDK Version",
         "command": "dart --version 2>/dev/null",
         "parser": "text",
         "cacheFor": 3600

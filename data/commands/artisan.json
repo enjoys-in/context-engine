@@ -1,7 +1,7 @@
 {
   "name": "artisan",
   "description": "Laravel framework command-line interface",
-  "category": "PHP & Ruby Ecosystems",
+  "category": "framework",
   "platforms": [
     "linux",
     "macos",
@@ -10,53 +10,243 @@
   "shells": [
     "bash",
     "zsh",
-    "powershell",
-    "fish"
+    "fish",
+    "powershell"
   ],
   "subcommands": [
     {
       "name": "serve",
-      "description": "Serve the application on the PHP development server"
-    },
-    {
-      "name": "make:controller",
-      "description": "Create a new controller class"
-    },
-    {
-      "name": "make:model",
-      "description": "Create a new Eloquent model class"
+      "description": "Serve the application on the PHP development server",
+      "args": [],
+      "options": [
+        {
+          "name": "--host",
+          "description": "The host address to serve the application on",
+          "type": "string",
+          "default": "127.0.0.1"
+        },
+        {
+          "name": "--port",
+          "description": "The port to serve the application on",
+          "type": "number",
+          "default": 8000
+        },
+        {
+          "name": "--tries",
+          "description": "The max number of ports to attempt to serve from",
+          "type": "number"
+        },
+        {
+          "name": "--no-reload",
+          "description": "Do not reload the development server on .env file changes"
+        }
+      ],
+      "examples": [
+        "php artisan serve",
+        "php artisan serve --port=8080",
+        "php artisan serve --host=0.0.0.0"
+      ]
     },
     {
       "name": "migrate",
-      "description": "Run the database migrations"
+      "description": "Run the database migrations",
+      "args": [],
+      "options": [
+        {
+          "name": "--database",
+          "description": "The database connection to use",
+          "type": "string"
+        },
+        {
+          "name": "--force",
+          "description": "Force the operation to run when in production"
+        },
+        {
+          "name": "--path",
+          "description": "The path(s) to the migrations files to be executed",
+          "type": "path"
+        },
+        {
+          "name": "--realpath",
+          "description": "Indicate any provided migration file paths are pre-resolved absolute paths"
+        },
+        {
+          "name": "--schema-path",
+          "description": "The path to a schema dump file",
+          "type": "path"
+        },
+        {
+          "name": "--pretend",
+          "description": "Dump the SQL queries that would be run"
+        },
+        {
+          "name": "--seed",
+          "description": "Indicates if the seed task should be re-run"
+        },
+        {
+          "name": "--seeder",
+          "description": "The class name of the root seeder",
+          "type": "string"
+        },
+        {
+          "name": "--step",
+          "description": "Force the migrations to be run so they can be rolled back individually"
+        }
+      ],
+      "examples": [
+        "php artisan migrate",
+        "php artisan migrate --force",
+        "php artisan migrate --seed"
+      ]
+    },
+    {
+      "name": "make:model",
+      "description": "Create a new Eloquent model class",
+      "args": [
+        {
+          "name": "<name>",
+          "type": "string",
+          "required": true,
+          "description": "The name of the model"
+        }
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "short": "-a",
+          "description": "Generate a migration, seeder, factory, policy, resource controller, and form request classes for the model"
+        },
+        {
+          "name": "--controller",
+          "short": "-c",
+          "description": "Create a new controller for the model"
+        },
+        {
+          "name": "--factory",
+          "short": "-f",
+          "description": "Create a new factory for the model"
+        },
+        {
+          "name": "--force",
+          "description": "Create the class even if the model already exists"
+        },
+        {
+          "name": "--migration",
+          "short": "-m",
+          "description": "Create a new migration file for the model"
+        },
+        {
+          "name": "--morph-pivot",
+          "description": "Indicates if the generated model should be a custom polymorphic intermediate table model"
+        },
+        {
+          "name": "--policy",
+          "description": "Create a new policy for the model"
+        },
+        {
+          "name": "--seed",
+          "short": "-s",
+          "description": "Create a new seeder for the model"
+        },
+        {
+          "name": "--pivot",
+          "short": "-p",
+          "description": "Indicates if the generated model should be a custom intermediate table model"
+        },
+        {
+          "name": "--resource",
+          "short": "-r",
+          "description": "Indicates if the generated controller should be a resource controller"
+        },
+        {
+          "name": "--api",
+          "description": "Indicates if the generated controller should be an API resource controller"
+        },
+        {
+          "name": "--requests",
+          "short": "-R",
+          "description": "Create new form request classes and use them in the resource controller"
+        }
+      ],
+      "examples": [
+        "php artisan make:model User",
+        "php artisan make:model Post -a",
+        "php artisan make:model Product -mcr"
+      ]
     },
     {
       "name": "route:list",
-      "description": "List all registered routes"
+      "description": "List all registered routes",
+      "args": [],
+      "options": [
+        {
+          "name": "--compact",
+          "description": "Only show method, URI and action columns"
+        },
+        {
+          "name": "--json",
+          "description": "Output the route list as JSON"
+        },
+        {
+          "name": "--method",
+          "description": "Filter the routes by method",
+          "type": "string"
+        },
+        {
+          "name": "--path",
+          "description": "Filter the routes by path",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "php artisan route:list",
+        "php artisan route:list --path=api",
+        "php artisan route:list --compact"
+      ]
     },
     {
       "name": "tinker",
-      "description": "Interact with your application"
+      "description": "Interact with your application",
+      "args": [],
+      "options": [
+        {
+          "name": "--execute",
+          "description": "Execute the given code using Tinker",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "php artisan tinker"
+      ]
     }
   ],
-  "globalOptions": [],
-  "examples": [
+  "globalOptions": [
     {
-      "command": "php artisan serve",
-      "description": "Start dev server"
+      "name": "--env",
+      "description": "The environment the command should run under",
+      "type": "string"
     },
     {
-      "command": "php artisan migrate",
-      "description": "Run migrations"
+      "name": "--help",
+      "short": "-h",
+      "description": "Display help for the given command"
     },
     {
-      "command": "php artisan make:model User -m",
-      "description": "Create model with migration"
+      "name": "--version",
+      "short": "-V",
+      "description": "Display this application version"
     }
+  ],
+  "examples": [
+    "php artisan",
+    "php artisan serve",
+    "php artisan migrate",
+    "php artisan make:model User -m"
   ],
   "relatedCommands": [
     "php",
-    "composer"
+    "composer",
+    "npm"
   ],
   "contextEngine": {
     "detectors": [
@@ -69,10 +259,18 @@
       },
       {
         "name": "env",
-        "description": "Environment variables",
-        "command": "cat .env 2>/dev/null | grep -v '^#' | grep '=' | head -10",
+        "description": "Environment variables configuration",
+        "command": "cat .env 2>/dev/null | grep -v '^#' | grep '=' | head -15",
         "parser": "text",
-        "cacheFor": 30
+        "cacheFor": 60
+      },
+      {
+        "name": "routes",
+        "description": "Available API Routes",
+        "command": "php artisan route:list --path=api --compact 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "php"
       }
     ]
   }
