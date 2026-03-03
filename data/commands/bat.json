@@ -1,0 +1,84 @@
+{
+  "name": "bat",
+  "description": "A cat clone with syntax highlighting and Git integration. It provides syntax highlighting for a large number of programming and markup languages, shows git modifications, and integrates with other tools by design.",
+  "category": "utilities",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--language", "short": "-l", "description": "Explicitly set the language for syntax highlighting. The language can be specified as a name or file extension (e.g. 'py', 'python', 'rs')", "type": "string" },
+    { "name": "--list-languages", "short": "-L", "description": "Display a list of supported languages for syntax highlighting", "type": "boolean" },
+    { "name": "--theme", "description": "Set the theme for syntax highlighting. Use --list-themes to see all available themes. Use 'bat --list-themes | fzf --preview=\"bat --theme={} --color=always file\"' to preview", "type": "string" },
+    { "name": "--list-themes", "description": "Display a list of supported themes for syntax highlighting", "type": "boolean" },
+    { "name": "--style", "description": "Configure which elements to display with the output. Comma-separated list of components: full, auto, plain, changes, header, header-filename, header-filesize, grid, rule, numbers, snip", "type": "string" },
+    { "name": "--color", "description": "Control when to use colored output. Values: auto (default), never, always", "type": "string" },
+    { "name": "--italic-text", "description": "Enable or disable the use of italic text in the output. Values: always, never (default)", "type": "string" },
+    { "name": "--decorations", "description": "Control when to show decorations (line numbers, grid borders, header). Values: auto (default), never, always", "type": "string" },
+    { "name": "--force-colorization", "short": "-f", "description": "Force colorization even when piping output to another process. Alias for --decorations=always --color=always", "type": "boolean" },
+    { "name": "--paging", "description": "Control when to use the pager. Values: auto (default), never, always. Auto pages when output is larger than one screen", "type": "string" },
+    { "name": "--pager", "description": "Determine which pager to use. The default pager is 'less'. To control when the pager is used, use --paging", "type": "string" },
+    { "name": "--map-syntax", "short": "-m", "description": "Map a glob pattern to an existing syntax name. Usage: --map-syntax '*.build:Python' or --map-syntax 'Dockerfile*:Docker'", "type": "string" },
+    { "name": "--show-all", "short": "-A", "description": "Show non-printable characters like space, tab, and newline. Use --nonprintable-notation to control the notation", "type": "boolean" },
+    { "name": "--plain", "short": "-p", "description": "Only show plain style with no decorations. Equivalent to --style=plain. Use -pp to also disable paging (equivalent to -p --paging=never)", "type": "boolean" },
+    { "name": "--number", "short": "-n", "description": "Only show line numbers while suppressing the grid and header. Equivalent to --style=numbers", "type": "boolean" },
+    { "name": "--diff", "short": "-d", "description": "Only show lines that have been added/removed/modified with respect to the Git index. Use --diff-context to control the number of context lines", "type": "boolean" },
+    { "name": "--diff-context", "description": "Include N lines of context around added/removed/modified lines when using --diff. Default: 2", "type": "string" },
+    { "name": "--tabs", "description": "Set the tab width in spaces. Use 0 to pass tabs through directly. Default: 4", "type": "string" },
+    { "name": "--wrap", "description": "Specify the text-wrapping mode. Values: auto (default), never, character", "type": "string" },
+    { "name": "--terminal-width", "description": "Explicitly set the width of the terminal instead of detecting it automatically. Can use +N and -N for relative values", "type": "string" },
+    { "name": "--line-range", "short": "-r", "description": "Only print the specified range of lines for each file. e.g. '30:40' (lines 30-40), ':40' (first 40 lines), '40:' (from line 40)", "type": "string" },
+    { "name": "--highlight-line", "short": "-H", "description": "Highlight the specified line ranges. Can be specified multiple times. e.g. --highlight-line 40 or --highlight-line 30:40", "type": "string" },
+    { "name": "--file-name", "description": "Specify the name to display for a file. Useful when piping data to bat from STDIN and you want a meaningful header", "type": "string" },
+    { "name": "--strip-ansi", "description": "Specify when to strip ANSI escape sequences from the input. Values: auto (default), always, never", "type": "string" },
+    { "name": "--nonprintable-notation", "description": "Set the notation for non-printable characters when using --show-all. Values: unicode (default), caret", "type": "string" },
+    { "name": "--squeeze-blank", "short": "-s", "description": "Squeeze consecutive empty lines into a single empty line", "type": "boolean" },
+    { "name": "--squeeze-limit", "description": "Set the maximum number of consecutive empty lines to be printed when using --squeeze-blank. Default: 1", "type": "string" }
+  ],
+  "examples": [
+    "bat README.md",
+    "bat -l json data.txt",
+    "bat --theme='Monokai Extended' src/main.rs",
+    "bat --style=numbers,changes file.py",
+    "bat -r 10:20 large.log",
+    "bat --diff file1 file2",
+    "bat -pp Makefile",
+    "cat file.txt | bat -l sql",
+    "bat --list-themes | fzf --preview='bat --theme={} --color=always README.md'",
+    "bat -H 42 -r 35:50 main.py",
+    "bat --map-syntax '*.conf:INI' /etc/*.conf",
+    "bat --style=full --paging=always src/*.ts"
+  ],
+  "relatedCommands": ["cat", "less", "fzf"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "bat_version",
+        "description": "Detect bat version",
+        "command": "bat --version",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "bat_config_file",
+        "description": "Detect bat configuration file location",
+        "command": "bat --config-file",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "bat_config_dir",
+        "description": "Detect bat configuration directory for custom themes and syntaxes",
+        "command": "bat --config-dir",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "bat_theme",
+        "description": "Detect BAT_THEME environment variable",
+        "command": "echo $BAT_THEME",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

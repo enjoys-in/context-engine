@@ -1,0 +1,442 @@
+{
+  "name": "snyk",
+  "description": "Snyk developer security platform CLI for finding and fixing vulnerabilities in code, open source dependencies, container images, and IaC configurations",
+  "category": "security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "auth",
+      "description": "Authenticate the Snyk CLI with your Snyk account via browser or API token",
+      "args": [{ "name": "token", "type": "string", "required": false, "description": "API token for non-interactive authentication" }],
+      "options": [],
+      "examples": [
+        "snyk auth",
+        "snyk auth <api-token>"
+      ]
+    },
+    {
+      "name": "test",
+      "description": "Test a project for open source vulnerabilities and license issues",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to the project directory or file (defaults to current dir)" }],
+      "options": [
+        { "name": "--all-projects", "description": "Test all projects in the working directory" },
+        { "name": "--detection-depth", "description": "Maximum directory depth for project detection", "type": "string" },
+        { "name": "--exclude", "description": "Comma-separated list of directories to exclude", "type": "string" },
+        { "name": "--prune-repeated-subdependencies", "description": "Prune dependency tree to reduce noise" },
+        { "name": "--print-deps", "description": "Print the dependency tree before results" },
+        { "name": "--remote-repo-url", "description": "Set or override the remote repo URL", "type": "string" },
+        { "name": "--dev", "description": "Include development dependencies" },
+        { "name": "--org", "description": "Specify the Snyk organization", "type": "string" },
+        { "name": "--file", "description": "Specific manifest file to test", "type": "string" },
+        { "name": "--package-manager", "description": "Force a specific package manager", "type": "string" },
+        { "name": "--json", "description": "Output results in JSON format" },
+        { "name": "--sarif", "description": "Output results in SARIF format" },
+        { "name": "--severity-threshold", "description": "Only report issues at or above severity: low, medium, high, critical", "type": "string" },
+        { "name": "--fail-on", "description": "Fail only for issues that are: all, upgradable, patchable", "type": "string" },
+        { "name": "--policy-path", "description": "Path to a .snyk policy file", "type": "string" },
+        { "name": "--project-name", "description": "Custom name for the project", "type": "string" },
+        { "name": "--target-reference", "description": "Reference for the project (e.g., branch name)", "type": "string" },
+        { "name": "--project-environment", "description": "Environment: frontend, backend, internal, external, mobile, saas, onprem, hosted, distributed", "type": "string" },
+        { "name": "--project-lifecycle", "description": "Lifecycle: production, development, sandbox", "type": "string" },
+        { "name": "--project-business-criticality", "description": "Business criticality: critical, high, medium, low", "type": "string" },
+        { "name": "--project-tags", "description": "Tags in key=value format", "type": "string" },
+        { "name": "--json-file-output", "description": "Save JSON output to file while showing human-readable output", "type": "string" },
+        { "name": "--sarif-file-output", "description": "Save SARIF output to file", "type": "string" }
+      ],
+      "examples": [
+        "snyk test",
+        "snyk test --all-projects",
+        "snyk test --severity-threshold=high",
+        "snyk test --json --json-file-output=results.json",
+        "snyk test --file=package.json --dev",
+        "snyk test --all-projects --detection-depth=4 --exclude=node_modules,dist",
+        "snyk test --fail-on=upgradable --severity-threshold=medium",
+        "snyk test --sarif --sarif-file-output=results.sarif"
+      ]
+    },
+    {
+      "name": "monitor",
+      "description": "Monitor a project and create a snapshot on Snyk for continuous monitoring",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to the project" }],
+      "options": [
+        { "name": "--all-projects", "description": "Monitor all projects in the directory" },
+        { "name": "--detection-depth", "description": "Max depth for project detection", "type": "string" },
+        { "name": "--exclude", "description": "Directories to exclude", "type": "string" },
+        { "name": "--dev", "description": "Include dev dependencies" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--file", "description": "Specific manifest file", "type": "string" },
+        { "name": "--project-name", "description": "Custom project name", "type": "string" },
+        { "name": "--remote-repo-url", "description": "Remote repository URL", "type": "string" },
+        { "name": "--target-reference", "description": "Target reference (branch)", "type": "string" },
+        { "name": "--project-environment", "description": "Project environment", "type": "string" },
+        { "name": "--project-lifecycle", "description": "Project lifecycle stage", "type": "string" },
+        { "name": "--project-business-criticality", "description": "Business criticality", "type": "string" },
+        { "name": "--project-tags", "description": "Project tags", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "snyk monitor",
+        "snyk monitor --all-projects",
+        "snyk monitor --project-name='my-app' --org=my-org",
+        "snyk monitor --all-projects --target-reference=main"
+      ]
+    },
+    {
+      "name": "fix",
+      "description": "Apply the recommended fixes for vulnerabilities found in supported projects",
+      "args": [],
+      "options": [
+        { "name": "--all-projects", "description": "Fix all projects" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--file", "description": "Manifest file", "type": "string" },
+        { "name": "--dry-run", "description": "Preview fixes without applying them" },
+        { "name": "--sequential", "description": "Apply fixes one at a time" }
+      ],
+      "examples": [
+        "snyk fix",
+        "snyk fix --all-projects",
+        "snyk fix --dry-run"
+      ]
+    },
+    {
+      "name": "code test",
+      "description": "Run Static Application Security Testing (SAST) to find vulnerabilities in source code",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to source code" }],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--sarif", "description": "Output in SARIF format" },
+        { "name": "--severity-threshold", "description": "Minimum severity: low, medium, high", "type": "string" },
+        { "name": "--json-file-output", "description": "Save JSON output to file", "type": "string" },
+        { "name": "--sarif-file-output", "description": "Save SARIF output to file", "type": "string" }
+      ],
+      "examples": [
+        "snyk code test",
+        "snyk code test --severity-threshold=high",
+        "snyk code test --json --json-file-output=sast-results.json",
+        "snyk code test --sarif --sarif-file-output=code.sarif"
+      ]
+    },
+    {
+      "name": "container test",
+      "description": "Scan a container image for known vulnerabilities",
+      "args": [{ "name": "image", "type": "string", "required": true, "description": "Container image to test (e.g., nginx:latest)" }],
+      "options": [
+        { "name": "--file", "description": "Path to the Dockerfile for base image remediation", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--sarif", "description": "Output in SARIF format" },
+        { "name": "--severity-threshold", "description": "Minimum severity to report", "type": "string" },
+        { "name": "--exclude-base-image-vulns", "description": "Exclude vulnerabilities from the base image" },
+        { "name": "--platform", "description": "Target platform for multi-arch images", "type": "string" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--fail-on", "description": "Fail on: all, upgradable, patchable", "type": "string" },
+        { "name": "--nested-jars-depth", "description": "Depth for scanning nested JARs", "type": "string" },
+        { "name": "--app-vulns", "description": "Also scan application dependencies in the image" },
+        { "name": "--exclude-app-vulns", "description": "Exclude application vulnerabilities" },
+        { "name": "--json-file-output", "description": "Save JSON output to file", "type": "string" },
+        { "name": "--sarif-file-output", "description": "Save SARIF output to file", "type": "string" }
+      ],
+      "examples": [
+        "snyk container test nginx:latest",
+        "snyk container test --severity-threshold=high node:20-slim",
+        "snyk container test --file=Dockerfile --exclude-base-image-vulns myapp:latest",
+        "snyk container test --json --json-file-output=container.json python:3.11",
+        "snyk container test --platform=linux/amd64 myapp:latest"
+      ]
+    },
+    {
+      "name": "container monitor",
+      "description": "Monitor a container image for continuous vulnerability tracking",
+      "args": [{ "name": "image", "type": "string", "required": true, "description": "Container image to monitor" }],
+      "options": [
+        { "name": "--file", "description": "Path to Dockerfile", "type": "string" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--project-name", "description": "Custom project name", "type": "string" },
+        { "name": "--project-environment", "description": "Project environment", "type": "string" },
+        { "name": "--project-tags", "description": "Project tags", "type": "string" },
+        { "name": "--app-vulns", "description": "Also monitor app dependencies" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "snyk container monitor nginx:latest",
+        "snyk container monitor --project-name=my-nginx myapp:latest"
+      ]
+    },
+    {
+      "name": "iac test",
+      "description": "Scan Infrastructure as Code files for misconfigurations and security issues",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to IaC files or directory" }],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--sarif", "description": "Output in SARIF format" },
+        { "name": "--severity-threshold", "description": "Minimum severity", "type": "string" },
+        { "name": "--detection-depth", "description": "Max depth for file detection", "type": "string" },
+        { "name": "--rules", "description": "Path to custom rules bundle", "type": "string" },
+        { "name": "--report", "description": "Share results with Snyk web UI" },
+        { "name": "--target-name", "description": "Custom target name", "type": "string" },
+        { "name": "--target-reference", "description": "Target reference (branch)", "type": "string" },
+        { "name": "--scan", "description": "Scan type: resource-changes, planned-values", "type": "string" },
+        { "name": "--var-file", "description": "Path to Terraform variable definitions file", "type": "string" },
+        { "name": "--json-file-output", "description": "Save JSON output to file", "type": "string" },
+        { "name": "--sarif-file-output", "description": "Save SARIF output to file", "type": "string" }
+      ],
+      "examples": [
+        "snyk iac test",
+        "snyk iac test ./terraform",
+        "snyk iac test --severity-threshold=high .",
+        "snyk iac test --json --json-file-output=iac.json .",
+        "snyk iac test --report --target-name=my-infra ./infra",
+        "snyk iac test --var-file=terraform.tfvars ./terraform"
+      ]
+    },
+    {
+      "name": "iac describe",
+      "description": "Detect infrastructure drift and unmanaged cloud resources",
+      "args": [],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--from", "description": "IaC source: tfstate, tfstate+s3, tfstate+gs, tfstate+azurerm", "type": "string" },
+        { "name": "--to", "description": "Cloud provider to scan: aws+tf, azure+tf, gcp+tf, github+tf", "type": "string" },
+        { "name": "--service", "description": "Comma-separated services to scan", "type": "string" },
+        { "name": "--all", "description": "Show all resources" },
+        { "name": "--only-managed", "description": "Show only managed resources" },
+        { "name": "--only-unmanaged", "description": "Show only unmanaged resources" },
+        { "name": "--drift", "description": "Show only drifted resources" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--html", "description": "Output in HTML format" },
+        { "name": "--fetch-tfstate-headers", "description": "Custom headers for remote tfstate fetch", "type": "string" },
+        { "name": "--tf-provider-version", "description": "Terraform provider version", "type": "string" },
+        { "name": "--strict", "description": "Fail if any resource cannot be read" },
+        { "name": "--deep", "description": "Enable deep mode for detailed attribute scanning" },
+        { "name": "--tf-lockfile", "description": "Path to Terraform lockfile", "type": "string" }
+      ],
+      "examples": [
+        "snyk iac describe --from=tfstate --to=aws+tf",
+        "snyk iac describe --only-unmanaged --from=tfstate",
+        "snyk iac describe --drift --service=aws_s3 --json",
+        "snyk iac describe --from=tfstate+s3://mybucket/terraform.tfstate --to=aws+tf"
+      ]
+    },
+    {
+      "name": "iac capture",
+      "description": "Generate a mapping artifact for IaC drift detection",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to state file or Terraform directory" }],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" }
+      ],
+      "examples": ["snyk iac capture", "snyk iac capture ./terraform"]
+    },
+    {
+      "name": "iac rules init",
+      "description": "Initialize a new custom rules project",
+      "args": [],
+      "options": [],
+      "examples": ["snyk iac rules init"]
+    },
+    {
+      "name": "iac update-exclude-policy",
+      "description": "Update the .snyk exclude policy for IaC drift",
+      "args": [],
+      "options": [
+        { "name": "--exclude-changed", "description": "Exclude drifted resources" },
+        { "name": "--exclude-missing", "description": "Exclude deleted resources" },
+        { "name": "--exclude-unmanaged", "description": "Exclude unmanaged resources" }
+      ],
+      "examples": ["snyk iac update-exclude-policy --exclude-unmanaged"]
+    },
+    {
+      "name": "log4shell",
+      "description": "Scan for Log4Shell (CVE-2021-44228) vulnerabilities",
+      "args": [{ "name": "path", "type": "string", "required": false, "description": "Path to scan" }],
+      "options": [],
+      "examples": ["snyk log4shell", "snyk log4shell /path/to/project"]
+    },
+    {
+      "name": "sbom test",
+      "description": "Test an SBOM document for known vulnerabilities",
+      "args": [],
+      "options": [
+        { "name": "--file", "description": "Path to the SBOM file", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" }
+      ],
+      "examples": [
+        "snyk sbom test --file=sbom.cdx.json",
+        "snyk sbom test --file=sbom.spdx.json --json"
+      ]
+    },
+    {
+      "name": "sbom monitor",
+      "description": "Monitor an SBOM for continuous vulnerability checking",
+      "args": [],
+      "options": [
+        { "name": "--file", "description": "Path to the SBOM file", "type": "string" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" },
+        { "name": "--project-name", "description": "Custom project name", "type": "string" }
+      ],
+      "examples": ["snyk sbom monitor --file=sbom.cdx.json --project-name=my-sbom"]
+    },
+    {
+      "name": "config get",
+      "description": "Get a Snyk CLI config value",
+      "args": [{ "name": "key", "type": "string", "required": true, "description": "Config key to retrieve" }],
+      "options": [],
+      "examples": ["snyk config get org", "snyk config get api"]
+    },
+    {
+      "name": "config set",
+      "description": "Set a Snyk CLI config value",
+      "args": [{ "name": "key=value", "type": "string", "required": true, "description": "Config key=value pair" }],
+      "options": [],
+      "examples": [
+        "snyk config set org=my-org",
+        "snyk config set api=<api-token>",
+        "snyk config set endpoint=https://snyk.example.com/api"
+      ]
+    },
+    {
+      "name": "config unset",
+      "description": "Remove a Snyk CLI config value",
+      "args": [{ "name": "key", "type": "string", "required": true, "description": "Config key to remove" }],
+      "options": [],
+      "examples": ["snyk config unset org"]
+    },
+    {
+      "name": "config clear",
+      "description": "Clear all Snyk CLI configuration",
+      "args": [],
+      "options": [],
+      "examples": ["snyk config clear"]
+    },
+    {
+      "name": "policy wizard",
+      "description": "Interactive wizard to generate or update the .snyk policy file",
+      "args": [],
+      "options": [],
+      "examples": ["snyk policy wizard"]
+    },
+    {
+      "name": "ignore",
+      "description": "Add a vulnerability ignore rule to the .snyk policy file",
+      "args": [],
+      "options": [
+        { "name": "--id", "description": "Vulnerability ID to ignore", "type": "string" },
+        { "name": "--expiry", "description": "Expiry date for the ignore rule (YYYY-MM-DD)", "type": "string" },
+        { "name": "--reason", "description": "Reason for ignoring", "type": "string" },
+        { "name": "--path", "description": "Dependency path to ignore", "type": "string" }
+      ],
+      "examples": [
+        "snyk ignore --id=SNYK-JS-LODASH-590103 --reason='No fix available' --expiry=2025-12-31",
+        "snyk ignore --id=npm:lodash:20210101"
+      ]
+    },
+    {
+      "name": "wizard",
+      "description": "Interactive wizard to walk through finding and fixing known vulnerabilities",
+      "args": [],
+      "options": [],
+      "examples": ["snyk wizard"]
+    },
+    {
+      "name": "apps create",
+      "description": "Create a new Snyk App",
+      "args": [],
+      "options": [
+        { "name": "--name", "description": "App name", "type": "string" },
+        { "name": "--redirect-uris", "description": "Comma-separated redirect URIs", "type": "string" },
+        { "name": "--scopes", "description": "Comma-separated scopes", "type": "string" },
+        { "name": "--org", "description": "Snyk organization", "type": "string" }
+      ],
+      "examples": ["snyk apps create --name='My Integration' --redirect-uris=https://example.com/callback --scopes=org.read"]
+    },
+    {
+      "name": "apps list",
+      "description": "List Snyk Apps in the organization",
+      "args": [],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" }
+      ],
+      "examples": ["snyk apps list --org=my-org"]
+    },
+    {
+      "name": "apps delete",
+      "description": "Delete a Snyk App",
+      "args": [{ "name": "app-id", "type": "string", "required": true, "description": "App ID to delete" }],
+      "options": [
+        { "name": "--org", "description": "Snyk organization", "type": "string" }
+      ],
+      "examples": ["snyk apps delete <app-id> --org=my-org"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "description": "Show Snyk CLI version" },
+    { "name": "--json", "description": "Output results in JSON format" },
+    { "name": "--sarif", "description": "Output results in SARIF format" },
+    { "name": "--org", "description": "Specify the Snyk organization to use", "type": "string" },
+    { "name": "--severity-threshold", "description": "Minimum severity: low, medium, high, critical", "type": "string" },
+    { "name": "--debug", "short": "-d", "description": "Enable debug output" },
+    { "name": "--insecure", "description": "Ignore SSL certificate errors" },
+    { "name": "--all-projects", "description": "Scan all projects in the working directory" },
+    { "name": "--detection-depth", "description": "Maximum depth for project file detection", "type": "string" },
+    { "name": "--file", "description": "Specify a package manifest file to test or monitor", "type": "string" },
+    { "name": "--policy-path", "description": "Path to the .snyk policy file", "type": "string" }
+  ],
+  "examples": [
+    "snyk auth",
+    "snyk test",
+    "snyk test --all-projects --severity-threshold=high",
+    "snyk monitor --all-projects",
+    "snyk code test --severity-threshold=medium",
+    "snyk container test nginx:latest --severity-threshold=high",
+    "snyk container monitor myapp:latest --project-name=my-docker-app",
+    "snyk iac test ./terraform --severity-threshold=medium",
+    "snyk iac describe --from=tfstate --to=aws+tf --drift",
+    "snyk fix --all-projects --dry-run",
+    "snyk ignore --id=SNYK-JS-LODASH-590103 --reason='Accepted risk'",
+    "snyk config set org=my-org",
+    "snyk sbom test --file=sbom.cdx.json"
+  ],
+  "relatedCommands": ["trivy", "npm", "docker", "pip"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "snyk_version",
+        "description": "Detect installed Snyk CLI version",
+        "command": "snyk --version 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "snyk_auth",
+        "description": "Detect Snyk authentication status",
+        "command": "snyk config get api 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "snyk_org",
+        "description": "Detect configured Snyk organization",
+        "command": "snyk config get org 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "snyk_policy",
+        "description": "Detect .snyk policy file in the project",
+        "command": "test -f .snyk && echo 'found' || echo 'not found'",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "project_manifests",
+        "description": "Detect project manifest files for scanning context",
+        "command": "ls package.json requirements.txt Gemfile go.mod pom.xml build.gradle Pipfile composer.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

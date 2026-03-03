@@ -1,0 +1,219 @@
+{
+  "name": "sonar-scanner",
+  "description": "SonarQube/SonarCloud code quality and security scanner for static analysis, code coverage tracking, and quality gate enforcement across 30+ programming languages",
+  "category": "security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "scan",
+      "description": "Run the default SonarQube/SonarCloud analysis on the project (sonar-scanner is primarily invoked as a single command with -D property options)",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Unique key identifying the project in SonarQube/SonarCloud", "type": "string" },
+        { "name": "-Dsonar.organization", "description": "Organization key for SonarCloud", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "URL of the SonarQube server (e.g., https://sonarcloud.io or http://localhost:9000)", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token for the scanner", "type": "string" },
+        { "name": "-Dsonar.login", "description": "Authentication token or login (deprecated, use sonar.token)", "type": "string" },
+        { "name": "-Dsonar.projectName", "description": "Display name for the project", "type": "string" },
+        { "name": "-Dsonar.projectVersion", "description": "Version of the project being analyzed", "type": "string" },
+        { "name": "-Dsonar.sources", "description": "Comma-separated paths to source directories (relative to project base)", "type": "string" },
+        { "name": "-Dsonar.tests", "description": "Comma-separated paths to test source directories", "type": "string" },
+        { "name": "-Dsonar.language", "description": "Language of the source files (auto-detected if omitted)", "type": "string" },
+        { "name": "-Dsonar.sourceEncoding", "description": "Source file encoding (e.g., UTF-8)", "type": "string" },
+        { "name": "-Dsonar.java.binaries", "description": "Comma-separated paths to compiled Java bytecode directories (required for Java analysis)", "type": "string" },
+        { "name": "-Dsonar.exclusions", "description": "Comma-separated file path patterns to exclude from analysis", "type": "string" },
+        { "name": "-Dsonar.inclusions", "description": "Comma-separated file path patterns to include in analysis", "type": "string" },
+        { "name": "-Dsonar.test.exclusions", "description": "Comma-separated patterns to exclude from test analysis", "type": "string" },
+        { "name": "-Dsonar.coverage.exclusions", "description": "Comma-separated patterns to exclude from code coverage calculation", "type": "string" },
+        { "name": "-Dsonar.cpd.exclusions", "description": "Comma-separated patterns to exclude from duplication detection", "type": "string" },
+        { "name": "-Dsonar.qualitygate.wait", "description": "Wait for the quality gate result (true/false)", "type": "string" },
+        { "name": "-Dsonar.qualitygate.timeout", "description": "Timeout in seconds to wait for quality gate result (default: 300)", "type": "string" },
+        { "name": "-Dsonar.verbose", "description": "Enable verbose/debug logging (true/false)", "type": "string" },
+        { "name": "-Dsonar.log.level", "description": "Log level: TRACE, DEBUG, INFO, WARN", "type": "string" },
+        { "name": "-Dsonar.working.directory", "description": "Working directory for the scanner (default: .scannerwork)", "type": "string" },
+        { "name": "-Dsonar.scm.provider", "description": "SCM provider: git, svn, tfvc", "type": "string" },
+        { "name": "-Dsonar.scm.revision", "description": "SCM revision to associate with the analysis", "type": "string" },
+        { "name": "-Dsonar.scm.forceReloadAll", "description": "Force reload of all SCM data (true/false)", "type": "string" },
+        { "name": "-Dsonar.pullrequest.key", "description": "Pull request identifier for PR decoration", "type": "string" },
+        { "name": "-Dsonar.pullrequest.branch", "description": "Pull request source branch name", "type": "string" },
+        { "name": "-Dsonar.pullrequest.base", "description": "Pull request target/base branch name", "type": "string" },
+        { "name": "-Dsonar.pullrequest.provider", "description": "Pull request platform: github, gitlab, azure, bitbucket", "type": "string" },
+        { "name": "-Dsonar.pullrequest.github.repository", "description": "GitHub repository slug (owner/repo)", "type": "string" },
+        { "name": "-Dsonar.branch.name", "description": "Branch name for branch analysis", "type": "string" },
+        { "name": "-Dsonar.newCode.referenceBranch", "description": "Reference branch for new code definition", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.organization=my-org -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=sqp_xxxxx",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.sources=src -Dsonar.tests=test -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx",
+        "sonar-scanner -Dsonar.projectKey=my-java-app -Dsonar.sources=src/main/java -Dsonar.java.binaries=target/classes -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx"
+      ]
+    },
+    {
+      "name": "quality-gate",
+      "description": "Run analysis with quality gate enforcement that blocks CI pipelines on failure",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Project key", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "SonarQube server URL", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+        { "name": "-Dsonar.qualitygate.wait", "description": "Wait for quality gate: true", "type": "string" },
+        { "name": "-Dsonar.qualitygate.timeout", "description": "Quality gate timeout seconds", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.qualitygate.wait=true",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=600"
+      ]
+    },
+    {
+      "name": "pull-request",
+      "description": "Run analysis scoped to a pull request for PR decoration and review comments",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Project key", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "SonarQube server URL", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+        { "name": "-Dsonar.pullrequest.key", "description": "PR number/identifier", "type": "string" },
+        { "name": "-Dsonar.pullrequest.branch", "description": "PR source branch", "type": "string" },
+        { "name": "-Dsonar.pullrequest.base", "description": "PR target branch", "type": "string" },
+        { "name": "-Dsonar.pullrequest.provider", "description": "Platform: github, gitlab, azure, bitbucket", "type": "string" },
+        { "name": "-Dsonar.pullrequest.github.repository", "description": "GitHub repo slug", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.pullrequest.key=42 -Dsonar.pullrequest.branch=feature/new-api -Dsonar.pullrequest.base=main",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.organization=my-org -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=sqp_xxxxx -Dsonar.pullrequest.key=42 -Dsonar.pullrequest.branch=feature/auth -Dsonar.pullrequest.base=main -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.github.repository=myorg/myrepo"
+      ]
+    },
+    {
+      "name": "branch",
+      "description": "Run analysis for a specific branch (for SonarQube branch analysis or SonarCloud)",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Project key", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "SonarQube server URL", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+        { "name": "-Dsonar.branch.name", "description": "Branch name to analyze", "type": "string" },
+        { "name": "-Dsonar.newCode.referenceBranch", "description": "Reference branch for new code comparison", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.branch.name=develop",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.branch.name=release/v2 -Dsonar.newCode.referenceBranch=main"
+      ]
+    },
+    {
+      "name": "coverage",
+      "description": "Run analysis with external coverage reports (language-specific coverage properties)",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Project key", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "SonarQube server URL", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+        { "name": "-Dsonar.javascript.lcov.reportPaths", "description": "Paths to LCOV coverage reports for JS/TS", "type": "string" },
+        { "name": "-Dsonar.python.coverage.reportPaths", "description": "Paths to Python coverage XML reports", "type": "string" },
+        { "name": "-Dsonar.java.coveragePlugin", "description": "Java coverage plugin: jacoco", "type": "string" },
+        { "name": "-Dsonar.coverage.jacoco.xmlReportPaths", "description": "Paths to JaCoCo XML coverage reports", "type": "string" },
+        { "name": "-Dsonar.go.coverage.reportPaths", "description": "Paths to Go coverage reports", "type": "string" },
+        { "name": "-Dsonar.cs.opencover.reportsPaths", "description": "Paths to C# OpenCover reports", "type": "string" },
+        { "name": "-Dsonar.php.coverage.reportPaths", "description": "Paths to PHP Clover coverage reports", "type": "string" },
+        { "name": "-Dsonar.ruby.coverage.reportPaths", "description": "Paths to Ruby SimpleCov JSON reports", "type": "string" },
+        { "name": "-Dsonar.coverage.exclusions", "description": "Patterns to exclude from coverage", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-js-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info",
+        "sonar-scanner -Dsonar.projectKey=my-java-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.java.binaries=target/classes",
+        "sonar-scanner -Dsonar.projectKey=my-py-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.python.coverage.reportPaths=coverage.xml",
+        "sonar-scanner -Dsonar.projectKey=my-go-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.go.coverage.reportPaths=coverage.out"
+      ]
+    },
+    {
+      "name": "exclusions",
+      "description": "Run analysis with specific file/directory exclusion patterns",
+      "args": [],
+      "options": [
+        { "name": "-Dsonar.projectKey", "description": "Project key", "type": "string" },
+        { "name": "-Dsonar.host.url", "description": "SonarQube server URL", "type": "string" },
+        { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+        { "name": "-Dsonar.sources", "description": "Source directories", "type": "string" },
+        { "name": "-Dsonar.exclusions", "description": "Patterns to exclude from analysis (e.g., **/*.test.js, **/vendor/**)", "type": "string" },
+        { "name": "-Dsonar.inclusions", "description": "Patterns to include in analysis", "type": "string" },
+        { "name": "-Dsonar.test.exclusions", "description": "Patterns to exclude from test analysis", "type": "string" },
+        { "name": "-Dsonar.coverage.exclusions", "description": "Patterns to exclude from coverage", "type": "string" },
+        { "name": "-Dsonar.cpd.exclusions", "description": "Patterns to exclude from duplication detection", "type": "string" }
+      ],
+      "examples": [
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.exclusions='**/vendor/**,**/node_modules/**,**/*.test.js'",
+        "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.coverage.exclusions='**/test/**,**/mock/**' -Dsonar.cpd.exclusions='**/generated/**'"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "description": "Show scanner version" },
+    { "name": "-Dsonar.projectKey", "description": "Unique project identifier in SonarQube/SonarCloud", "type": "string" },
+    { "name": "-Dsonar.organization", "description": "Organization key (required for SonarCloud)", "type": "string" },
+    { "name": "-Dsonar.host.url", "description": "SonarQube server or SonarCloud URL", "type": "string" },
+    { "name": "-Dsonar.token", "description": "Authentication token", "type": "string" },
+    { "name": "-Dsonar.sources", "description": "Comma-separated source directories (relative)", "type": "string" },
+    { "name": "-Dsonar.tests", "description": "Comma-separated test directories", "type": "string" },
+    { "name": "-Dsonar.exclusions", "description": "File patterns to exclude from analysis", "type": "string" },
+    { "name": "-Dsonar.verbose", "description": "Enable verbose/debug logging (true/false)", "type": "string" },
+    { "name": "-Dsonar.log.level", "description": "Log verbosity: TRACE, DEBUG, INFO, WARN", "type": "string" },
+    { "name": "-Dsonar.qualitygate.wait", "description": "Block until quality gate computed (true/false)", "type": "string" },
+    { "name": "-Dsonar.working.directory", "description": "Scanner working directory", "type": "string" },
+    { "name": "-Dsonar.projectBaseDir", "description": "Base directory of the project to analyze", "type": "string" },
+    { "name": "-Dproject.settings", "description": "Path to sonar-project.properties file", "type": "string" }
+  ],
+  "examples": [
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.organization=my-org -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=sqp_xxxxx",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.sources=src -Dsonar.tests=test -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.qualitygate.wait=true",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.pullrequest.key=42 -Dsonar.pullrequest.branch=feature/x -Dsonar.pullrequest.base=main",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.branch.name=develop",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.exclusions='**/vendor/**,**/node_modules/**'",
+    "sonar-scanner -Dsonar.projectKey=my-js-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info",
+    "sonar-scanner -Dsonar.projectKey=my-java-app -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.java.binaries=target/classes -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml",
+    "sonar-scanner -Dsonar.projectKey=my-project -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_xxxxx -Dsonar.verbose=true -Dsonar.log.level=DEBUG"
+  ],
+  "relatedCommands": ["eslint", "prettier", "trivy"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "sonar_properties",
+        "description": "Detect sonar-project.properties configuration file",
+        "command": "test -f sonar-project.properties && cat sonar-project.properties || echo 'not found'",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "sonar_scanner_version",
+        "description": "Detect installed sonar-scanner version",
+        "command": "sonar-scanner --version 2>/dev/null || sonar-scanner.bat --version 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "sonar_project_key",
+        "description": "Extract project key from sonar-project.properties",
+        "command": "grep 'sonar.projectKey' sonar-project.properties 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sonar_host_url",
+        "description": "Extract SonarQube host URL from configuration",
+        "command": "grep 'sonar.host.url' sonar-project.properties 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "project_languages",
+        "description": "Detect project languages for scanner configuration hints",
+        "command": "ls *.java *.py *.js *.ts *.go *.cs *.rb *.php 2>/dev/null | head -10 || find src -maxdepth 2 -name '*.java' -o -name '*.py' -o -name '*.js' -o -name '*.ts' -o -name '*.go' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

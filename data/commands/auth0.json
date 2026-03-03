@@ -1,0 +1,648 @@
+{
+  "name": "auth0",
+  "description": "Auth0 CLI for managing Auth0 identity platform tenants, applications, APIs, users, roles, actions, and authentication configurations",
+  "category": "api-saas",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "login",
+      "description": "Authenticate the CLI with your Auth0 account using device authorization flow",
+      "args": [],
+      "options": [
+        { "name": "--domain", "short": "-d", "description": "Your Auth0 tenant domain", "type": "string" },
+        { "name": "--client-id", "description": "Client ID for authentication", "type": "string" },
+        { "name": "--client-secret", "description": "Client Secret for authentication", "type": "string" },
+        { "name": "--no-input", "description": "Disable interactivity" },
+        { "name": "--scopes", "description": "Additional scopes to request", "type": "string" }
+      ],
+      "examples": [
+        "auth0 login",
+        "auth0 login --domain my-tenant.us.auth0.com",
+        "auth0 login --client-id xxxx --client-secret xxxx --domain my-tenant.us.auth0.com"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Log out and remove stored credentials",
+      "args": [],
+      "options": [],
+      "examples": ["auth0 logout"]
+    },
+    {
+      "name": "tenants list",
+      "description": "List all configured Auth0 tenants",
+      "args": [],
+      "options": [
+        { "name": "--format", "description": "Output format (json, table)", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 tenants list", "auth0 tenants list --json"]
+    },
+    {
+      "name": "tenants use",
+      "description": "Set the active Auth0 tenant",
+      "args": [{ "name": "tenant", "type": "string", "required": true, "description": "Tenant domain to activate" }],
+      "options": [],
+      "examples": ["auth0 tenants use my-tenant.us.auth0.com"]
+    },
+    {
+      "name": "tenants open",
+      "description": "Open the Auth0 tenant dashboard in a browser",
+      "args": [],
+      "options": [],
+      "examples": ["auth0 tenants open"]
+    },
+    {
+      "name": "apps create",
+      "description": "Create a new Auth0 application",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Application name", "type": "string" },
+        { "name": "--type", "short": "-t", "description": "Application type: native, spa, regular, m2m", "type": "string" },
+        { "name": "--description", "description": "Application description", "type": "string" },
+        { "name": "--callbacks", "description": "Comma-separated list of allowed callback URLs", "type": "string" },
+        { "name": "--logout-urls", "description": "Comma-separated list of allowed logout URLs", "type": "string" },
+        { "name": "--origins", "description": "Comma-separated list of allowed origins", "type": "string" },
+        { "name": "--web-origins", "description": "Comma-separated list of allowed web origins", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--no-input", "description": "Disable interactivity" }
+      ],
+      "examples": [
+        "auth0 apps create",
+        "auth0 apps create --name 'My SPA' --type spa --callbacks https://localhost:3000/callback",
+        "auth0 apps create --name 'Backend API' --type m2m --json"
+      ]
+    },
+    {
+      "name": "apps show",
+      "description": "Show details of an Auth0 application",
+      "args": [{ "name": "client-id", "type": "string", "required": true, "description": "Client ID of the application" }],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--reveal-secrets", "description": "Reveal client secrets in output" }
+      ],
+      "examples": ["auth0 apps show <client-id>", "auth0 apps show <client-id> --json --reveal-secrets"]
+    },
+    {
+      "name": "apps update",
+      "description": "Update an existing Auth0 application",
+      "args": [{ "name": "client-id", "type": "string", "required": true, "description": "Client ID of the application" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "New application name", "type": "string" },
+        { "name": "--description", "description": "New application description", "type": "string" },
+        { "name": "--callbacks", "description": "Updated callback URLs", "type": "string" },
+        { "name": "--logout-urls", "description": "Updated logout URLs", "type": "string" },
+        { "name": "--origins", "description": "Updated allowed origins", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 apps update <client-id> --name 'Updated App' --callbacks https://app.example.com/callback"]
+    },
+    {
+      "name": "apps delete",
+      "description": "Delete an Auth0 application",
+      "args": [{ "name": "client-id", "type": "string", "required": true, "description": "Client ID of the application to delete" }],
+      "options": [
+        { "name": "--force", "description": "Skip confirmation prompt" },
+        { "name": "--no-input", "description": "Disable interactivity" }
+      ],
+      "examples": ["auth0 apps delete <client-id>", "auth0 apps delete <client-id> --force"]
+    },
+    {
+      "name": "apps list",
+      "description": "List all Auth0 applications in the tenant",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" },
+        { "name": "--number", "short": "-n", "description": "Number of results per page", "type": "string" },
+        { "name": "--reveal-secrets", "description": "Reveal client secrets" }
+      ],
+      "examples": ["auth0 apps list", "auth0 apps list --json", "auth0 apps list --number 50"]
+    },
+    {
+      "name": "apps open",
+      "description": "Open application settings in the dashboard",
+      "args": [{ "name": "client-id", "type": "string", "required": true, "description": "Client ID of the application" }],
+      "options": [],
+      "examples": ["auth0 apps open <client-id>"]
+    },
+    {
+      "name": "apis create",
+      "description": "Create a new Auth0 API",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "API name", "type": "string" },
+        { "name": "--identifier", "description": "API identifier (audience URI)", "type": "string" },
+        { "name": "--signing-alg", "description": "Signing algorithm (RS256, HS256)", "type": "string" },
+        { "name": "--scopes", "description": "Comma-separated list of scopes", "type": "string" },
+        { "name": "--token-lifetime", "description": "Token lifetime in seconds", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "auth0 apis create --name 'My API' --identifier https://api.example.com",
+        "auth0 apis create --name 'My API' --identifier https://api.example.com --scopes read:data,write:data"
+      ]
+    },
+    {
+      "name": "apis show",
+      "description": "Show details of an API",
+      "args": [{ "name": "api-id", "type": "string", "required": true, "description": "API ID or audience" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 apis show <api-id>"]
+    },
+    {
+      "name": "apis update",
+      "description": "Update an existing API",
+      "args": [{ "name": "api-id", "type": "string", "required": true, "description": "API ID to update" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "New API name", "type": "string" },
+        { "name": "--scopes", "description": "Updated scopes", "type": "string" },
+        { "name": "--token-lifetime", "description": "Updated token lifetime", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 apis update <api-id> --name 'Updated API' --token-lifetime 7200"]
+    },
+    {
+      "name": "apis delete",
+      "description": "Delete an API",
+      "args": [{ "name": "api-id", "type": "string", "required": true, "description": "API ID to delete" }],
+      "options": [{ "name": "--force", "description": "Skip confirmation" }],
+      "examples": ["auth0 apis delete <api-id> --force"]
+    },
+    {
+      "name": "apis list",
+      "description": "List all APIs in the tenant",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" }
+      ],
+      "examples": ["auth0 apis list", "auth0 apis list --json"]
+    },
+    {
+      "name": "apis scopes show",
+      "description": "Show scopes of an API",
+      "args": [{ "name": "api-id", "type": "string", "required": true, "description": "API ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 apis scopes show <api-id>"]
+    },
+    {
+      "name": "apis scopes update",
+      "description": "Update scopes of an API",
+      "args": [{ "name": "api-id", "type": "string", "required": true, "description": "API ID" }],
+      "options": [{ "name": "--scopes", "description": "Comma-separated list of scopes", "type": "string" }],
+      "examples": ["auth0 apis scopes update <api-id> --scopes read:data,write:data,delete:data"]
+    },
+    {
+      "name": "actions list",
+      "description": "List all actions in the tenant",
+      "args": [],
+      "options": [
+        { "name": "--trigger", "description": "Filter by trigger ID", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 actions list", "auth0 actions list --trigger post-login"]
+    },
+    {
+      "name": "actions show",
+      "description": "Show details of an action",
+      "args": [{ "name": "action-id", "type": "string", "required": true, "description": "Action ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 actions show <action-id>"]
+    },
+    {
+      "name": "actions create",
+      "description": "Create a new action",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Action name", "type": "string" },
+        { "name": "--trigger", "short": "-t", "description": "Trigger ID (post-login, credentials-exchange, etc.)", "type": "string" },
+        { "name": "--code", "description": "Path to JavaScript file with action code", "type": "string" },
+        { "name": "--dependency", "description": "Dependencies in name:version format", "type": "string" },
+        { "name": "--secret", "description": "Secrets in key=value format", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "auth0 actions create --name 'Enrich Token' --trigger post-login --code ./action.js",
+        "auth0 actions create --name 'Log Event' --trigger post-login --dependency axios:1.4.0"
+      ]
+    },
+    {
+      "name": "actions update",
+      "description": "Update an existing action",
+      "args": [{ "name": "action-id", "type": "string", "required": true, "description": "Action ID" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Updated name", "type": "string" },
+        { "name": "--code", "description": "Updated code file path", "type": "string" },
+        { "name": "--dependency", "description": "Updated dependencies", "type": "string" },
+        { "name": "--secret", "description": "Updated secrets", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 actions update <action-id> --name 'Updated Action' --code ./updated-action.js"]
+    },
+    {
+      "name": "actions delete",
+      "description": "Delete an action",
+      "args": [{ "name": "action-id", "type": "string", "required": true, "description": "Action ID" }],
+      "options": [{ "name": "--force", "description": "Skip confirmation" }],
+      "examples": ["auth0 actions delete <action-id> --force"]
+    },
+    {
+      "name": "actions deploy",
+      "description": "Deploy an action (create a new version)",
+      "args": [{ "name": "action-id", "type": "string", "required": true, "description": "Action ID to deploy" }],
+      "options": [],
+      "examples": ["auth0 actions deploy <action-id>"]
+    },
+    {
+      "name": "actions open",
+      "description": "Open action in the Auth0 dashboard",
+      "args": [{ "name": "action-id", "type": "string", "required": true, "description": "Action ID" }],
+      "options": [],
+      "examples": ["auth0 actions open <action-id>"]
+    },
+    {
+      "name": "connections list",
+      "description": "List all connections in the tenant",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" }
+      ],
+      "examples": ["auth0 connections list", "auth0 connections list --json"]
+    },
+    {
+      "name": "connections create",
+      "description": "Create a new connection",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Connection name", "type": "string" },
+        { "name": "--type", "short": "-t", "description": "Connection type/strategy", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 connections create --name 'Google OAuth' --type google-oauth2"]
+    },
+    {
+      "name": "connections show",
+      "description": "Show details of a connection",
+      "args": [{ "name": "connection-id", "type": "string", "required": true, "description": "Connection ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 connections show <connection-id>"]
+    },
+    {
+      "name": "connections update",
+      "description": "Update a connection",
+      "args": [{ "name": "connection-id", "type": "string", "required": true, "description": "Connection ID" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Updated name", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 connections update <connection-id> --name 'Updated Connection'"]
+    },
+    {
+      "name": "connections delete",
+      "description": "Delete a connection",
+      "args": [{ "name": "connection-id", "type": "string", "required": true, "description": "Connection ID" }],
+      "options": [{ "name": "--force", "description": "Skip confirmation" }],
+      "examples": ["auth0 connections delete <connection-id> --force"]
+    },
+    {
+      "name": "connections open",
+      "description": "Open connection in the dashboard",
+      "args": [{ "name": "connection-id", "type": "string", "required": true, "description": "Connection ID" }],
+      "options": [],
+      "examples": ["auth0 connections open <connection-id>"]
+    },
+    {
+      "name": "roles create",
+      "description": "Create a new role",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Role name", "type": "string" },
+        { "name": "--description", "short": "-d", "description": "Role description", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 roles create --name admin --description 'Administrator role'"]
+    },
+    {
+      "name": "roles list",
+      "description": "List all roles",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" },
+        { "name": "--number", "short": "-n", "description": "Results per page", "type": "string" }
+      ],
+      "examples": ["auth0 roles list", "auth0 roles list --json"]
+    },
+    {
+      "name": "roles show",
+      "description": "Show details of a role",
+      "args": [{ "name": "role-id", "type": "string", "required": true, "description": "Role ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 roles show <role-id>"]
+    },
+    {
+      "name": "roles update",
+      "description": "Update a role",
+      "args": [{ "name": "role-id", "type": "string", "required": true, "description": "Role ID" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Updated name", "type": "string" },
+        { "name": "--description", "short": "-d", "description": "Updated description", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 roles update <role-id> --name 'Super Admin'"]
+    },
+    {
+      "name": "roles delete",
+      "description": "Delete a role",
+      "args": [{ "name": "role-id", "type": "string", "required": true, "description": "Role ID" }],
+      "options": [{ "name": "--force", "description": "Skip confirmation" }],
+      "examples": ["auth0 roles delete <role-id> --force"]
+    },
+    {
+      "name": "roles permissions",
+      "description": "Manage permissions for a role",
+      "args": [{ "name": "role-id", "type": "string", "required": true, "description": "Role ID" }],
+      "options": [
+        { "name": "--api-id", "description": "API ID for the permissions", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 roles permissions <role-id>"]
+    },
+    {
+      "name": "users create",
+      "description": "Create a new user",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "User's full name", "type": "string" },
+        { "name": "--email", "short": "-e", "description": "User's email address", "type": "string" },
+        { "name": "--password", "short": "-p", "description": "User's password", "type": "string" },
+        { "name": "--connection-name", "short": "-c", "description": "Database connection name", "type": "string" },
+        { "name": "--username", "short": "-u", "description": "Username", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "auth0 users create --name 'John Doe' --email john@example.com --connection-name Username-Password-Authentication",
+        "auth0 users create --email jane@example.com --password 'S3cure!P@ss' --connection-name Username-Password-Authentication --json"
+      ]
+    },
+    {
+      "name": "users show",
+      "description": "Show details of a user",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 users show 'auth0|xxxxx'"]
+    },
+    {
+      "name": "users update",
+      "description": "Update a user profile",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID" }],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Updated name", "type": "string" },
+        { "name": "--email", "short": "-e", "description": "Updated email", "type": "string" },
+        { "name": "--password", "short": "-p", "description": "Updated password", "type": "string" },
+        { "name": "--blocked", "description": "Block or unblock the user", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 users update 'auth0|xxxxx' --name 'Jane Doe'"]
+    },
+    {
+      "name": "users delete",
+      "description": "Delete a user",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID to delete" }],
+      "options": [{ "name": "--force", "description": "Skip confirmation" }],
+      "examples": ["auth0 users delete 'auth0|xxxxx' --force"]
+    },
+    {
+      "name": "users list",
+      "description": "List all users in the tenant",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" },
+        { "name": "--number", "short": "-n", "description": "Number of results", "type": "string" }
+      ],
+      "examples": ["auth0 users list", "auth0 users list --json --number 100"]
+    },
+    {
+      "name": "users search",
+      "description": "Search for users using Lucene query syntax",
+      "args": [],
+      "options": [
+        { "name": "--query", "short": "-q", "description": "Search query in Lucene syntax", "type": "string" },
+        { "name": "--sort", "description": "Sort field and order", "type": "string" },
+        { "name": "--number", "short": "-n", "description": "Number of results", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": [
+        "auth0 users search --query 'email:*@example.com'",
+        "auth0 users search --query 'app_metadata.role:admin' --json"
+      ]
+    },
+    {
+      "name": "users roles",
+      "description": "Manage roles assigned to a user",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 users roles 'auth0|xxxxx'"]
+    },
+    {
+      "name": "users blocks",
+      "description": "Manage user blocks",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID" }],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 users blocks 'auth0|xxxxx'"]
+    },
+    {
+      "name": "users import",
+      "description": "Import users from a JSON file",
+      "args": [],
+      "options": [
+        { "name": "--connection-name", "short": "-c", "description": "Target database connection", "type": "string" },
+        { "name": "--file", "description": "Path to JSON import file", "type": "string" },
+        { "name": "--upsert", "description": "Update existing users on conflict" },
+        { "name": "--email-results", "description": "Send email when import completes" }
+      ],
+      "examples": ["auth0 users import --connection-name Username-Password-Authentication --file ./users.json --upsert"]
+    },
+    {
+      "name": "users export",
+      "description": "Export users to a file",
+      "args": [],
+      "options": [
+        { "name": "--connection-name", "short": "-c", "description": "Connection name to export from", "type": "string" },
+        { "name": "--format", "description": "Export format (json, csv)", "type": "string" },
+        { "name": "--fields", "description": "Fields to include in export", "type": "string" }
+      ],
+      "examples": ["auth0 users export --connection-name Username-Password-Authentication --format json"]
+    },
+    {
+      "name": "users open",
+      "description": "Open user in the Auth0 dashboard",
+      "args": [{ "name": "user-id", "type": "string", "required": true, "description": "User ID" }],
+      "options": [],
+      "examples": ["auth0 users open 'auth0|xxxxx'"]
+    },
+    {
+      "name": "logs list",
+      "description": "List tenant log events",
+      "args": [],
+      "options": [
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--csv", "description": "Output in CSV format" },
+        { "name": "--number", "short": "-n", "description": "Number of results", "type": "string" },
+        { "name": "--filter", "description": "Filter by log type", "type": "string" }
+      ],
+      "examples": ["auth0 logs list", "auth0 logs list --filter 'type:s' --number 50"]
+    },
+    {
+      "name": "logs tail",
+      "description": "Tail and stream live tenant logs",
+      "args": [],
+      "options": [
+        { "name": "--filter", "description": "Filter log events by type", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" },
+        { "name": "--no-color", "description": "Disable colored output" }
+      ],
+      "examples": ["auth0 logs tail", "auth0 logs tail --filter 'type:f'"]
+    },
+    {
+      "name": "logs streams list",
+      "description": "List all log streams",
+      "args": [],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 logs streams list"]
+    },
+    {
+      "name": "logs streams create",
+      "description": "Create a new log stream",
+      "args": [],
+      "options": [
+        { "name": "--name", "short": "-n", "description": "Log stream name", "type": "string" },
+        { "name": "--type", "short": "-t", "description": "Type of log stream", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 logs streams create --name 'DataDog stream' --type datadog"]
+    },
+    {
+      "name": "branding show",
+      "description": "Show branding configuration for the tenant",
+      "args": [],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 branding show"]
+    },
+    {
+      "name": "branding update",
+      "description": "Update tenant branding settings",
+      "args": [],
+      "options": [
+        { "name": "--accent", "description": "Accent color hex code", "type": "string" },
+        { "name": "--background", "description": "Background color hex code", "type": "string" },
+        { "name": "--logo", "description": "URL of the logo", "type": "string" },
+        { "name": "--favicon", "description": "URL of the favicon", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 branding update --accent '#FF5722' --logo https://example.com/logo.png"]
+    },
+    {
+      "name": "branding domains list",
+      "description": "List custom domains",
+      "args": [],
+      "options": [{ "name": "--json", "description": "Output in JSON format" }],
+      "examples": ["auth0 branding domains list"]
+    },
+    {
+      "name": "branding domains create",
+      "description": "Create a custom domain",
+      "args": [],
+      "options": [
+        { "name": "--domain", "short": "-d", "description": "Custom domain", "type": "string" },
+        { "name": "--type", "short": "-t", "description": "Provisioning type", "type": "string" },
+        { "name": "--json", "description": "Output in JSON format" }
+      ],
+      "examples": ["auth0 branding domains create --domain login.example.com"]
+    },
+    {
+      "name": "test login",
+      "description": "Test the Universal Login experience by initiating a login flow",
+      "args": [],
+      "options": [
+        { "name": "--client-id", "description": "Client ID of the application to test", "type": "string" },
+        { "name": "--connection-name", "short": "-c", "description": "Connection to test", "type": "string" },
+        { "name": "--audience", "description": "API audience to request", "type": "string" },
+        { "name": "--scope", "description": "Scopes to request", "type": "string" }
+      ],
+      "examples": [
+        "auth0 test login",
+        "auth0 test login --client-id <client-id> --audience https://api.example.com"
+      ]
+    },
+    {
+      "name": "test token",
+      "description": "Fetch a token for an application using client credentials",
+      "args": [],
+      "options": [
+        { "name": "--client-id", "description": "Client ID", "type": "string" },
+        { "name": "--client-secret", "description": "Client secret", "type": "string" },
+        { "name": "--audience", "description": "API audience", "type": "string" },
+        { "name": "--scope", "description": "Scopes to request", "type": "string" }
+      ],
+      "examples": [
+        "auth0 test token --client-id <client-id> --audience https://api.example.com"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "description": "Show Auth0 CLI version" },
+    { "name": "--tenant", "short": "-t", "description": "Specific Auth0 tenant to use", "type": "string" },
+    { "name": "--format", "description": "Output format: json or table", "type": "string" },
+    { "name": "--json", "description": "Output in JSON format" },
+    { "name": "--csv", "description": "Output in CSV format" },
+    { "name": "--no-input", "description": "Disable interactive prompts" },
+    { "name": "--no-color", "description": "Disable colored output" },
+    { "name": "--force", "description": "Skip confirmation prompts" }
+  ],
+  "examples": [
+    "auth0 login",
+    "auth0 tenants list",
+    "auth0 apps create --name 'My SPA' --type spa",
+    "auth0 apps list --json",
+    "auth0 apis create --name 'My API' --identifier https://api.example.com",
+    "auth0 users create --name 'John Doe' --email john@example.com --connection-name Username-Password-Authentication",
+    "auth0 users search --query 'email:*@example.com'",
+    "auth0 roles create --name admin --description 'Full access role'",
+    "auth0 actions list --trigger post-login",
+    "auth0 logs tail --filter 'type:f'",
+    "auth0 test login --client-id <client-id>",
+    "auth0 test token --client-id <client-id> --audience https://api.example.com"
+  ],
+  "relatedCommands": ["twilio", "curl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "auth0_tenant",
+        "description": "Detect configured Auth0 tenants",
+        "command": "auth0 tenants list --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "auth0_version",
+        "description": "Detect installed Auth0 CLI version",
+        "command": "auth0 --version",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "auth0_apps",
+        "description": "Detect Auth0 applications in tenant",
+        "command": "auth0 apps list --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

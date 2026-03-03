@@ -1,0 +1,382 @@
+{
+  "name": "twilio",
+  "description": "Twilio CLI for managing Twilio cloud communications platform resources including SMS, voice, serverless functions, and more",
+  "category": "api-saas",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "login",
+      "description": "Authenticate and create a new profile for the Twilio CLI",
+      "args": [],
+      "options": [
+        { "name": "--account-sid", "short": "-a", "description": "Your Twilio Account SID", "type": "string" },
+        { "name": "--auth-token", "description": "Your Twilio Auth Token", "type": "string" },
+        { "name": "--region", "description": "Twilio region for the profile", "type": "string" },
+        { "name": "--force", "short": "-f", "description": "Overwrite existing profile" }
+      ],
+      "examples": [
+        "twilio login",
+        "twilio login --account-sid ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      ]
+    },
+    {
+      "name": "profiles:list",
+      "description": "List all stored Twilio CLI profiles",
+      "args": [],
+      "options": [],
+      "examples": ["twilio profiles:list"]
+    },
+    {
+      "name": "profiles:use",
+      "description": "Set the active Twilio CLI profile",
+      "args": [{ "name": "profile-id", "type": "string", "required": true, "description": "The profile identifier to activate" }],
+      "options": [],
+      "examples": ["twilio profiles:use my-production"]
+    },
+    {
+      "name": "profiles:create",
+      "description": "Create a new profile with account credentials",
+      "args": [],
+      "options": [
+        { "name": "--account-sid", "short": "-a", "description": "Twilio Account SID", "type": "string" },
+        { "name": "--auth-token", "description": "Twilio Auth Token", "type": "string" },
+        { "name": "--profile", "short": "-p", "description": "Name for the new profile", "type": "string" },
+        { "name": "--region", "description": "Twilio region", "type": "string" }
+      ],
+      "examples": [
+        "twilio profiles:create --account-sid ACXXXXXXXX --profile staging"
+      ]
+    },
+    {
+      "name": "profiles:remove",
+      "description": "Remove a stored CLI profile",
+      "args": [{ "name": "profile-id", "type": "string", "required": true, "description": "The profile to remove" }],
+      "options": [],
+      "examples": ["twilio profiles:remove old-profile"]
+    },
+    {
+      "name": "phone-numbers:list",
+      "description": "List Twilio phone numbers on the account",
+      "args": [],
+      "options": [
+        { "name": "--account-sid", "short": "-a", "description": "Account SID to use", "type": "string" },
+        { "name": "--profile", "short": "-p", "description": "Profile to use", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" },
+        { "name": "--properties", "description": "Comma-separated list of properties to display", "type": "string" },
+        { "name": "--limit", "description": "Maximum number of results to return", "type": "string" },
+        { "name": "--no-limit", "description": "Remove default result limit" }
+      ],
+      "examples": [
+        "twilio phone-numbers:list",
+        "twilio phone-numbers:list --output-format json",
+        "twilio phone-numbers:list --properties sid,phoneNumber,friendlyName"
+      ]
+    },
+    {
+      "name": "phone-numbers:buy",
+      "description": "Purchase a new phone number",
+      "args": [{ "name": "phone-number", "type": "string", "required": true, "description": "The phone number to purchase in E.164 format" }],
+      "options": [
+        { "name": "--account-sid", "short": "-a", "description": "Account SID", "type": "string" },
+        { "name": "--profile", "short": "-p", "description": "Profile to use", "type": "string" },
+        { "name": "--sms-url", "description": "URL to handle incoming SMS", "type": "string" },
+        { "name": "--voice-url", "description": "URL to handle incoming calls", "type": "string" },
+        { "name": "--friendly-name", "description": "A friendly name for the number", "type": "string" }
+      ],
+      "examples": [
+        "twilio phone-numbers:buy +15551234567",
+        "twilio phone-numbers:buy +15551234567 --friendly-name 'Support Line'"
+      ]
+    },
+    {
+      "name": "phone-numbers:update",
+      "description": "Update the configuration of a phone number",
+      "args": [{ "name": "phone-number-sid", "type": "string", "required": true, "description": "The SID of the phone number to update" }],
+      "options": [
+        { "name": "--sms-url", "description": "URL for incoming SMS", "type": "string" },
+        { "name": "--voice-url", "description": "URL for incoming calls", "type": "string" },
+        { "name": "--friendly-name", "description": "Friendly name for the number", "type": "string" },
+        { "name": "--sms-fallback-url", "description": "Fallback URL for SMS", "type": "string" },
+        { "name": "--voice-fallback-url", "description": "Fallback URL for voice", "type": "string" }
+      ],
+      "examples": [
+        "twilio phone-numbers:update PNXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --friendly-name 'Main Line'"
+      ]
+    },
+    {
+      "name": "api:core:messages:create",
+      "description": "Send an SMS or MMS message",
+      "args": [],
+      "options": [
+        { "name": "--to", "description": "Recipient phone number in E.164 format", "type": "string" },
+        { "name": "--from", "description": "Sender phone number or messaging service SID", "type": "string" },
+        { "name": "--body", "description": "The text body of the message", "type": "string" },
+        { "name": "--media-url", "description": "URL of media to include (MMS)", "type": "string" },
+        { "name": "--status-callback", "description": "URL for delivery status webhooks", "type": "string" },
+        { "name": "--messaging-service-sid", "description": "Messaging Service SID to use", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" },
+        { "name": "--account-sid", "short": "-a", "description": "Account SID", "type": "string" }
+      ],
+      "examples": [
+        "twilio api:core:messages:create --to +15551234567 --from +15559876543 --body 'Hello World'",
+        "twilio api:core:messages:create --to +15551234567 --from +15559876543 --body 'Check this out' --media-url https://example.com/image.png"
+      ]
+    },
+    {
+      "name": "api:core:messages:list",
+      "description": "List SMS/MMS messages on the account",
+      "args": [],
+      "options": [
+        { "name": "--to", "description": "Filter by recipient number", "type": "string" },
+        { "name": "--from", "description": "Filter by sender number", "type": "string" },
+        { "name": "--date-sent", "description": "Filter by date sent", "type": "string" },
+        { "name": "--limit", "description": "Maximum results to return", "type": "string" },
+        { "name": "--no-limit", "description": "Remove default result limit" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" },
+        { "name": "--properties", "description": "Properties to display", "type": "string" }
+      ],
+      "examples": [
+        "twilio api:core:messages:list",
+        "twilio api:core:messages:list --from +15559876543 --limit 20",
+        "twilio api:core:messages:list --output-format json"
+      ]
+    },
+    {
+      "name": "api:core:calls:create",
+      "description": "Initiate a new outbound phone call",
+      "args": [],
+      "options": [
+        { "name": "--to", "description": "The phone number to call", "type": "string" },
+        { "name": "--from", "description": "The caller ID phone number", "type": "string" },
+        { "name": "--url", "description": "TwiML URL to execute when call is answered", "type": "string" },
+        { "name": "--twiml", "description": "Inline TwiML instructions", "type": "string" },
+        { "name": "--status-callback", "description": "URL for call status webhooks", "type": "string" },
+        { "name": "--record", "description": "Whether to record the call" },
+        { "name": "--timeout", "description": "Ring timeout in seconds", "type": "string" }
+      ],
+      "examples": [
+        "twilio api:core:calls:create --to +15551234567 --from +15559876543 --url https://handler.twilio.com/twiml/EHxxx",
+        "twilio api:core:calls:create --to +15551234567 --from +15559876543 --twiml '<Response><Say>Hello</Say></Response>'"
+      ]
+    },
+    {
+      "name": "api:core:calls:list",
+      "description": "List calls on the account",
+      "args": [],
+      "options": [
+        { "name": "--to", "description": "Filter by recipient number", "type": "string" },
+        { "name": "--from", "description": "Filter by caller number", "type": "string" },
+        { "name": "--status", "description": "Filter by call status", "type": "string" },
+        { "name": "--start-time", "description": "Filter by start time", "type": "string" },
+        { "name": "--limit", "description": "Maximum results", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" }
+      ],
+      "examples": [
+        "twilio api:core:calls:list",
+        "twilio api:core:calls:list --status completed --limit 50"
+      ]
+    },
+    {
+      "name": "api:core:accounts:fetch",
+      "description": "Fetch details of the current Twilio account",
+      "args": [],
+      "options": [
+        { "name": "--account-sid", "short": "-a", "description": "Account SID to fetch", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" }
+      ],
+      "examples": ["twilio api:core:accounts:fetch"]
+    },
+    {
+      "name": "api:core:accounts:update",
+      "description": "Update the account friendly name or status",
+      "args": [],
+      "options": [
+        { "name": "--friendly-name", "description": "New friendly name", "type": "string" },
+        { "name": "--status", "description": "Account status (active, suspended, closed)", "type": "string" }
+      ],
+      "examples": ["twilio api:core:accounts:update --friendly-name 'Production Account'"]
+    },
+    {
+      "name": "plugins:install",
+      "description": "Install a Twilio CLI plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name or npm package" }],
+      "options": [],
+      "examples": [
+        "twilio plugins:install @twilio-labs/plugin-serverless",
+        "twilio plugins:install @twilio-labs/plugin-signal2020"
+      ]
+    },
+    {
+      "name": "plugins:available",
+      "description": "List available Twilio CLI plugins",
+      "args": [],
+      "options": [],
+      "examples": ["twilio plugins:available"]
+    },
+    {
+      "name": "plugins:list",
+      "description": "List installed CLI plugins",
+      "args": [],
+      "options": [],
+      "examples": ["twilio plugins:list"]
+    },
+    {
+      "name": "plugins:remove",
+      "description": "Remove an installed plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name to remove" }],
+      "options": [],
+      "examples": ["twilio plugins:remove @twilio-labs/plugin-serverless"]
+    },
+    {
+      "name": "debugger:logs:list",
+      "description": "List Twilio debugger error logs and alerts",
+      "args": [],
+      "options": [
+        { "name": "--start-date", "description": "Start date for log filtering", "type": "string" },
+        { "name": "--end-date", "description": "End date for log filtering", "type": "string" },
+        { "name": "--log-level", "description": "Filter by log level (error, warning, notice)", "type": "string" },
+        { "name": "--limit", "description": "Maximum number of results", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" }
+      ],
+      "examples": [
+        "twilio debugger:logs:list",
+        "twilio debugger:logs:list --log-level error --limit 25"
+      ]
+    },
+    {
+      "name": "serverless:init",
+      "description": "Initialize a new Twilio serverless project",
+      "args": [{ "name": "name", "type": "string", "required": true, "description": "Project name" }],
+      "options": [
+        { "name": "--template", "description": "Template to use for initialization", "type": "string" },
+        { "name": "--typescript", "description": "Initialize with TypeScript support" },
+        { "name": "--empty", "description": "Initialize an empty project without example files" }
+      ],
+      "examples": [
+        "twilio serverless:init my-service",
+        "twilio serverless:init my-service --template hello-world",
+        "twilio serverless:init my-service --typescript"
+      ]
+    },
+    {
+      "name": "serverless:start",
+      "description": "Start a local development server for a serverless project",
+      "args": [],
+      "options": [
+        { "name": "--port", "description": "Port number for the local server", "type": "string" },
+        { "name": "--env", "description": "Path to .env file", "type": "string" },
+        { "name": "--ngrok", "description": "Start an ngrok tunnel" },
+        { "name": "--live", "description": "Enable live reloading" },
+        { "name": "--inspect", "description": "Enable Node.js inspector" },
+        { "name": "--logs", "description": "Enable request logging" }
+      ],
+      "examples": [
+        "twilio serverless:start",
+        "twilio serverless:start --port 3001 --ngrok"
+      ]
+    },
+    {
+      "name": "serverless:deploy",
+      "description": "Deploy a Twilio serverless project to the cloud",
+      "args": [],
+      "options": [
+        { "name": "--environment", "description": "Target deployment environment", "type": "string" },
+        { "name": "--service-name", "description": "Override the service name", "type": "string" },
+        { "name": "--production", "description": "Deploy to production environment" },
+        { "name": "--force", "description": "Force overwrite of existing deployment" },
+        { "name": "--env", "description": "Path to .env file", "type": "string" }
+      ],
+      "examples": [
+        "twilio serverless:deploy",
+        "twilio serverless:deploy --environment staging",
+        "twilio serverless:deploy --production --force"
+      ]
+    },
+    {
+      "name": "serverless:list",
+      "description": "List serverless services, environments, and builds",
+      "args": [{ "name": "type", "type": "string", "required": false, "description": "Type to list: services, environments, builds, functions, assets" }],
+      "options": [
+        { "name": "--service-sid", "description": "Service SID to scope the listing", "type": "string" },
+        { "name": "--environment", "description": "Environment to scope the listing", "type": "string" },
+        { "name": "--output-format", "description": "Output format (json, tsv)", "type": "string" }
+      ],
+      "examples": [
+        "twilio serverless:list services",
+        "twilio serverless:list functions --service-sid ZSXXXXXXXXXXX"
+      ]
+    },
+    {
+      "name": "email:send",
+      "description": "Send an email using Twilio SendGrid",
+      "args": [],
+      "options": [
+        { "name": "--to", "description": "Recipient email address", "type": "string" },
+        { "name": "--from", "description": "Sender email address", "type": "string" },
+        { "name": "--subject", "description": "Email subject line", "type": "string" },
+        { "name": "--body", "description": "Email body text", "type": "string" },
+        { "name": "--text", "description": "Plain text email body", "type": "string" },
+        { "name": "--attachment", "description": "Path to file attachment", "type": "string" }
+      ],
+      "examples": [
+        "twilio email:send --to user@example.com --from noreply@example.com --subject 'Test' --body 'Hello World'",
+        "twilio email:send --to user@example.com --from noreply@example.com --subject 'Report' --text 'See attached' --attachment ./report.pdf"
+      ]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "description": "Show Twilio CLI version" },
+    { "name": "--account-sid", "short": "-a", "description": "Twilio Account SID to use", "type": "string" },
+    { "name": "--profile", "short": "-p", "description": "CLI profile to use", "type": "string" },
+    { "name": "--output-format", "description": "Output format: json, tsv, or columns", "type": "string" },
+    { "name": "--silent", "description": "Suppress all output" },
+    { "name": "--no-limit", "description": "Remove the default result limit for list commands" }
+  ],
+  "examples": [
+    "twilio login",
+    "twilio profiles:list",
+    "twilio api:core:messages:create --to +15551234567 --from +15559876543 --body 'Hello from Twilio CLI'",
+    "twilio api:core:calls:create --to +15551234567 --from +15559876543 --url https://handler.twilio.com/twiml/EHxxx",
+    "twilio phone-numbers:list --output-format json",
+    "twilio serverless:init my-functions --typescript",
+    "twilio serverless:deploy --production",
+    "twilio debugger:logs:list --log-level error",
+    "twilio plugins:install @twilio-labs/plugin-serverless",
+    "twilio email:send --to user@example.com --from noreply@example.com --subject 'Test' --body 'Hello'"
+  ],
+  "relatedCommands": ["stripe", "curl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "twilio_profile",
+        "description": "Detect current Twilio CLI profile and account",
+        "command": "twilio profiles:list",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "twilio_version",
+        "description": "Detect installed Twilio CLI version",
+        "command": "twilio --version",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "twilio_plugins",
+        "description": "Detect installed Twilio CLI plugins",
+        "command": "twilio plugins:list",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "twilio_services",
+        "description": "Detect Twilio serverless services",
+        "command": "twilio serverless:list services",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

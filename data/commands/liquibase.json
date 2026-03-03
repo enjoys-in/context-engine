@@ -1,0 +1,399 @@
+{
+  "name": "liquibase",
+  "description": "Liquibase is an open-source database change management and schema migration tool supporting XML, YAML, JSON, and SQL changelog formats across multiple database platforms",
+  "category": "database-orm",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "update",
+      "description": "Deploy all unrun changesets from the changelog file to the database. This is the primary command for applying schema changes.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file (XML, YAML, JSON, or SQL)", "type": "string"},
+        {"name": "--url", "description": "Database JDBC connection URL", "type": "string"},
+        {"name": "--username", "description": "Database username", "type": "string"},
+        {"name": "--password", "description": "Database password", "type": "string"},
+        {"name": "--contexts", "description": "Comma-separated list of contexts to execute", "type": "string"},
+        {"name": "--labels", "description": "Label expression to filter changesets", "type": "string"},
+        {"name": "--label-filter", "description": "Label filter expression (replaces --labels)", "type": "string"}
+      ],
+      "examples": [
+        "liquibase update",
+        "liquibase --changelog-file=changelog.xml update",
+        "liquibase --url=jdbc:postgresql://localhost:5432/mydb --username=admin --password=secret update",
+        "liquibase update --contexts=dev",
+        "liquibase update --label-filter='!slow'"
+      ]
+    },
+    {
+      "name": "updateSQL",
+      "description": "Generate the SQL that would be executed by the update command without actually applying it. Useful for review and audit purposes.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--output-file", "description": "Write SQL output to a file instead of stdout", "type": "string"}
+      ],
+      "examples": [
+        "liquibase updateSQL",
+        "liquibase updateSQL --output-file=update.sql",
+        "liquibase --changelog-file=changelog.xml updateSQL"
+      ]
+    },
+    {
+      "name": "rollback",
+      "description": "Roll back changes to a specified tag, undoing all changesets applied after the tag was set.",
+      "args": [
+        {"name": "tag", "type": "string", "required": true, "description": "Tag to rollback to"}
+      ],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--url", "description": "Database connection URL", "type": "string"},
+        {"name": "--username", "description": "Database username", "type": "string"},
+        {"name": "--password", "description": "Database password", "type": "string"}
+      ],
+      "examples": [
+        "liquibase rollback v1.0",
+        "liquibase --changelog-file=changelog.xml rollback release-2024",
+        "liquibase rollback baseline --url=jdbc:mysql://localhost/mydb"
+      ]
+    },
+    {
+      "name": "rollbackSQL",
+      "description": "Output the SQL that would be executed by a rollback to a given tag, without actually performing the rollback.",
+      "args": [
+        {"name": "tag", "type": "string", "required": true, "description": "Tag to rollback to"}
+      ],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--output-file", "description": "Write SQL output to a file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase rollbackSQL v1.0",
+        "liquibase rollbackSQL v1.0 --output-file=rollback.sql"
+      ]
+    },
+    {
+      "name": "rollbackCount",
+      "description": "Roll back a specified number of the most recently applied changesets.",
+      "args": [
+        {"name": "count", "type": "string", "required": true, "description": "Number of changesets to roll back"}
+      ],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase rollbackCount 1",
+        "liquibase rollbackCount 3",
+        "liquibase --changelog-file=changelog.xml rollbackCount 2"
+      ]
+    },
+    {
+      "name": "rollbackToDate",
+      "description": "Roll back all changesets that were applied after a specified date and time.",
+      "args": [
+        {"name": "date", "type": "string", "required": true, "description": "Date to rollback to (yyyy-MM-dd'T'HH:mm:ss format)"}
+      ],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase rollbackToDate 2024-01-15T10:00:00",
+        "liquibase rollbackToDate 2024-06-01",
+        "liquibase --changelog-file=changelog.xml rollbackToDate 2024-03-01T00:00:00"
+      ]
+    },
+    {
+      "name": "generateChangeLog",
+      "description": "Generate a changelog file from the current database schema. Reverse-engineers the database into Liquibase changeset format.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Output path for the generated changelog", "type": "string"},
+        {"name": "--url", "description": "Database connection URL", "type": "string"},
+        {"name": "--username", "description": "Database username", "type": "string"},
+        {"name": "--password", "description": "Database password", "type": "string"},
+        {"name": "--data-output-directory", "description": "Directory for CSV data export files", "type": "string"},
+        {"name": "--diff-types", "description": "Types of objects to include (tables, views, columns, indexes, etc.)", "type": "string"},
+        {"name": "--schemas", "description": "Schemas to include", "type": "string"},
+        {"name": "--overwrite-output-file", "description": "Overwrite existing changelog file"}
+      ],
+      "examples": [
+        "liquibase --changelog-file=generated-changelog.xml generateChangeLog",
+        "liquibase generateChangeLog --diff-types=tables,views,columns",
+        "liquibase --url=jdbc:postgresql://localhost/mydb generateChangeLog --overwrite-output-file"
+      ]
+    },
+    {
+      "name": "diff",
+      "description": "Compare two databases and output the differences. Useful for detecting schema drift between environments.",
+      "args": [],
+      "options": [
+        {"name": "--url", "description": "Source database URL", "type": "string"},
+        {"name": "--reference-url", "description": "Reference (target) database URL for comparison", "type": "string"},
+        {"name": "--reference-username", "description": "Username for the reference database", "type": "string"},
+        {"name": "--reference-password", "description": "Password for the reference database", "type": "string"},
+        {"name": "--diff-types", "description": "Types of objects to compare", "type": "string"},
+        {"name": "--schemas", "description": "Schemas to compare", "type": "string"},
+        {"name": "--output-schemas", "description": "Schemas to include in diff output", "type": "string"},
+        {"name": "--format", "description": "Output format (json or default text)", "type": "string"}
+      ],
+      "examples": [
+        "liquibase diff --reference-url=jdbc:postgresql://prod-host/mydb",
+        "liquibase diff --url=jdbc:mysql://dev/mydb --reference-url=jdbc:mysql://staging/mydb",
+        "liquibase diff --diff-types=tables,columns,indexes --format=json"
+      ]
+    },
+    {
+      "name": "diffChangeLog",
+      "description": "Compare two databases and generate a changelog file containing the changes needed to synchronize them.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Output path for the diff changelog", "type": "string"},
+        {"name": "--reference-url", "description": "Reference database URL for comparison", "type": "string"},
+        {"name": "--reference-username", "description": "Username for the reference database", "type": "string"},
+        {"name": "--reference-password", "description": "Password for the reference database", "type": "string"},
+        {"name": "--diff-types", "description": "Types of objects to include", "type": "string"}
+      ],
+      "examples": [
+        "liquibase --changelog-file=diff-changelog.xml diffChangeLog --reference-url=jdbc:postgresql://prod/mydb",
+        "liquibase diffChangeLog --diff-types=tables,columns"
+      ]
+    },
+    {
+      "name": "snapshot",
+      "description": "Capture a snapshot of the current database schema, outputting the full structure as JSON or YAML.",
+      "args": [],
+      "options": [
+        {"name": "--url", "description": "Database connection URL", "type": "string"},
+        {"name": "--schemas", "description": "Schemas to snapshot", "type": "string"},
+        {"name": "--snapshot-format", "description": "Output format: json or yaml", "type": "string"},
+        {"name": "--output-file", "description": "Output file for the snapshot", "type": "string"}
+      ],
+      "examples": [
+        "liquibase snapshot",
+        "liquibase snapshot --snapshot-format=json",
+        "liquibase snapshot --output-file=snapshot.json --snapshot-format=json"
+      ]
+    },
+    {
+      "name": "snapshotReference",
+      "description": "Capture a snapshot of the reference database schema for comparison purposes.",
+      "args": [],
+      "options": [
+        {"name": "--reference-url", "description": "Reference database URL", "type": "string"},
+        {"name": "--snapshot-format", "description": "Output format", "type": "string"}
+      ],
+      "examples": [
+        "liquibase snapshotReference --reference-url=jdbc:postgresql://prod/mydb",
+        "liquibase snapshotReference --snapshot-format=json"
+      ]
+    },
+    {
+      "name": "status",
+      "description": "Display a list of changesets that have not been applied to the database yet (pending changes).",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--verbose", "description": "Show detailed information about each pending changeset"}
+      ],
+      "examples": [
+        "liquibase status",
+        "liquibase status --verbose",
+        "liquibase --changelog-file=changelog.xml status"
+      ]
+    },
+    {
+      "name": "validate",
+      "description": "Validate the changelog for errors such as duplicate IDs, invalid preconditions, or missing files without connecting to the database.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file to validate", "type": "string"}
+      ],
+      "examples": [
+        "liquibase validate",
+        "liquibase --changelog-file=changelog.xml validate"
+      ]
+    },
+    {
+      "name": "changelogSync",
+      "description": "Mark all unrun changesets as already executed in the database. Useful when you want to skip applying changes that have already been applied manually.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase changelogSync",
+        "liquibase --changelog-file=changelog.xml changelogSync"
+      ]
+    },
+    {
+      "name": "clearCheckSums",
+      "description": "Remove all stored checksums from the DATABASECHANGELOG table, forcing Liquibase to recalculate them on the next update.",
+      "args": [],
+      "options": [],
+      "examples": [
+        "liquibase clearCheckSums"
+      ]
+    },
+    {
+      "name": "tag",
+      "description": "Tag the current database state with a label for future rollback reference points.",
+      "args": [
+        {"name": "tagName", "type": "string", "required": true, "description": "Tag name to apply"}
+      ],
+      "options": [],
+      "examples": [
+        "liquibase tag v1.0",
+        "liquibase tag release-2024-03",
+        "liquibase tag before-migration"
+      ]
+    },
+    {
+      "name": "tagExists",
+      "description": "Check whether a specific tag exists in the database changelog.",
+      "args": [
+        {"name": "tagName", "type": "string", "required": true, "description": "Tag name to check"}
+      ],
+      "options": [],
+      "examples": [
+        "liquibase tagExists v1.0",
+        "liquibase tagExists release-2024-03"
+      ]
+    },
+    {
+      "name": "history",
+      "description": "Display the deployment history of all changes applied to the database, including timestamps and changeset details.",
+      "args": [],
+      "options": [
+        {"name": "--format", "description": "Output format (tabular or text)", "type": "string"},
+        {"name": "--output-file", "description": "Write history to a file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase history",
+        "liquibase history --format=tabular",
+        "liquibase history --output-file=history.txt"
+      ]
+    },
+    {
+      "name": "dropAll",
+      "description": "Drop all database objects in the configured schemas. WARNING: This is destructive and removes all tables, views, and procedures.",
+      "args": [],
+      "options": [
+        {"name": "--schemas", "description": "Schemas to drop objects from", "type": "string"}
+      ],
+      "examples": [
+        "liquibase dropAll",
+        "liquibase dropAll --schemas=public,myschema"
+      ]
+    },
+    {
+      "name": "futureRollbackSQL",
+      "description": "Generate the SQL that would be needed to rollback all pending (unrun) changesets, providing a preview of rollback scripts.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--output-file", "description": "Write SQL to a file", "type": "string"}
+      ],
+      "examples": [
+        "liquibase futureRollbackSQL",
+        "liquibase futureRollbackSQL --output-file=future-rollback.sql"
+      ]
+    },
+    {
+      "name": "unexpectedChangeSets",
+      "description": "List changesets that exist in the database but are not present in the current changelog file. Indicates potential drift.",
+      "args": [],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--verbose", "description": "Show detailed information"}
+      ],
+      "examples": [
+        "liquibase unexpectedChangeSets",
+        "liquibase unexpectedChangeSets --verbose"
+      ]
+    },
+    {
+      "name": "dbDoc",
+      "description": "Generate HTML documentation from the changelog and the current database schema, creating a browsable database documentation site.",
+      "args": [
+        {"name": "outputDirectory", "type": "string", "required": true, "description": "Output directory for the generated documentation"}
+      ],
+      "options": [
+        {"name": "--changelog-file", "description": "Path to the changelog file", "type": "string"},
+        {"name": "--schemas", "description": "Schemas to document", "type": "string"}
+      ],
+      "examples": [
+        "liquibase dbDoc docs/db",
+        "liquibase --changelog-file=changelog.xml dbDoc target/dbdoc"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--help", "short": "-h", "description": "Show help information"},
+    {"name": "--version", "description": "Show Liquibase version"},
+    {"name": "--changelog-file", "description": "Path to the root changelog file", "type": "string"},
+    {"name": "--url", "description": "Database JDBC connection URL", "type": "string"},
+    {"name": "--username", "description": "Database username", "type": "string"},
+    {"name": "--password", "description": "Database password", "type": "string"},
+    {"name": "--driver", "description": "Fully qualified JDBC driver class name", "type": "string"},
+    {"name": "--default-schema-name", "description": "Default database schema", "type": "string"},
+    {"name": "--liquibase-schema-name", "description": "Schema to use for Liquibase tables", "type": "string"},
+    {"name": "--database-changelog-table-name", "description": "Name of the changelog tracking table", "type": "string"},
+    {"name": "--database-changelog-lock-table-name", "description": "Name of the changelog lock table", "type": "string"},
+    {"name": "--log-level", "description": "Log level: OFF, SEVERE, WARNING, INFO, FINE, DEBUG", "type": "string"},
+    {"name": "--log-file", "description": "File to write log output to", "type": "string"},
+    {"name": "--defaults-file", "description": "Path to the liquibase.properties file", "type": "string"},
+    {"name": "--contexts", "description": "Contexts to activate", "type": "string"},
+    {"name": "--labels", "description": "Labels to filter changesets", "type": "string"},
+    {"name": "--output-file", "description": "File for command output", "type": "string"}
+  ],
+  "examples": [
+    "liquibase update",
+    "liquibase updateSQL",
+    "liquibase rollback v1.0",
+    "liquibase rollbackCount 1",
+    "liquibase status --verbose",
+    "liquibase validate",
+    "liquibase diff --reference-url=jdbc:postgresql://prod/mydb",
+    "liquibase generateChangeLog --changelog-file=generated.xml",
+    "liquibase tag v2.0",
+    "liquibase history",
+    "liquibase snapshot --snapshot-format=json",
+    "liquibase changelogSync",
+    "liquibase futureRollbackSQL --output-file=rollback.sql",
+    "liquibase dbDoc docs/database"
+  ],
+  "relatedCommands": ["flyway", "alembic", "dbmate"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "liquibase_config_detect",
+        "description": "Detect Liquibase properties files",
+        "command": "find . -maxdepth 2 -name 'liquibase.properties' -o -name 'liquibase.yml' 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "liquibase_changelog_detect",
+        "description": "Detect Liquibase changelog files",
+        "command": "find . -maxdepth 4 -name 'changelog*' -type f 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "liquibase_version",
+        "description": "Get installed Liquibase version",
+        "command": "liquibase --version 2>/dev/null | head -3 || echo 'not installed'",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "liquibase_status_detect",
+        "description": "Get current Liquibase migration status",
+        "command": "liquibase status 2>/dev/null | head -10 || echo 'not available'",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

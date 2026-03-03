@@ -1,0 +1,426 @@
+{
+  "name": "atlas",
+  "description": "Atlas is a modern database schema management tool by Ariga, providing declarative and versioned schema migrations with support for PostgreSQL, MySQL, SQLite, MariaDB, ClickHouse, and more",
+  "category": "database-orm",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "schema inspect",
+      "description": "Inspect the schema of a database and output it in HCL, SQL, or JSON format. Useful for understanding the current state of a database.",
+      "args": [],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Database connection URL to inspect", "type": "string"},
+        {"name": "--schema", "description": "List of schema names to inspect (comma-separated)", "type": "string"},
+        {"name": "--format", "description": "Output format: atlas (HCL), sql, or json", "type": "string"},
+        {"name": "--env", "description": "Environment from atlas.hcl config file", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for normalization", "type": "string"},
+        {"name": "--log", "description": "Log format template", "type": "string"},
+        {"name": "--exclude", "description": "List of glob patterns to exclude from inspection", "type": "string"},
+        {"name": "--config", "description": "Path to atlas configuration file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas schema inspect --url 'postgres://user:pass@localhost:5432/mydb?sslmode=disable'",
+        "atlas schema inspect --url 'mysql://root:pass@localhost:3306/mydb'",
+        "atlas schema inspect --url 'sqlite://file.db'",
+        "atlas schema inspect --url 'postgres://localhost/mydb' --format '{{ sql . }}'",
+        "atlas schema inspect --url 'postgres://localhost/mydb' --schema public --format json",
+        "atlas schema inspect --env local",
+        "atlas schema inspect --url 'postgres://localhost/mydb' --exclude 'internal_*'"
+      ]
+    },
+    {
+      "name": "schema apply",
+      "description": "Apply a desired schema state to a target database. Compares the desired state with the current database and generates/applies the necessary changes.",
+      "args": [],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Target database connection URL", "type": "string"},
+        {"name": "--to", "description": "Desired schema state: URL, HCL file, or migration directory", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for computing the diff", "type": "string"},
+        {"name": "--schema", "description": "Schemas to apply changes to", "type": "string"},
+        {"name": "--dry-run", "description": "Print SQL statements without executing them"},
+        {"name": "--auto-approve", "description": "Apply changes without interactive approval"},
+        {"name": "--env", "description": "Environment from atlas.hcl config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas configuration file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"},
+        {"name": "--tx-mode", "description": "Transaction mode: file, all, or none", "type": "string"},
+        {"name": "--exclude", "description": "Glob patterns to exclude from diff", "type": "string"},
+        {"name": "--log", "description": "Log format template", "type": "string"}
+      ],
+      "examples": [
+        "atlas schema apply --url 'postgres://user:pass@localhost:5432/mydb' --to file://schema.hcl --dev-url 'docker://postgres/15'",
+        "atlas schema apply --url 'mysql://root:pass@localhost:3306/mydb' --to file://schema.sql --dev-url 'docker://mysql/8'",
+        "atlas schema apply --env production --dry-run",
+        "atlas schema apply --url 'sqlite://file.db' --to file://desired.hcl --auto-approve",
+        "atlas schema apply --env local --auto-approve --tx-mode=all"
+      ]
+    },
+    {
+      "name": "schema diff",
+      "description": "Calculate the diff between two schemas and output the SQL statements needed to migrate from one to the other.",
+      "args": [],
+      "options": [
+        {"name": "--from", "description": "Source schema URL or file", "type": "string"},
+        {"name": "--to", "description": "Target schema URL or file", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for computing the diff", "type": "string"},
+        {"name": "--format", "description": "Output format for the diff", "type": "string"},
+        {"name": "--env", "description": "Environment from atlas.hcl config", "type": "string"},
+        {"name": "--schema", "description": "Schemas to include in diff", "type": "string"},
+        {"name": "--exclude", "description": "Glob patterns to exclude", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas schema diff --from 'postgres://localhost/dev' --to 'postgres://localhost/prod'",
+        "atlas schema diff --from file://old.hcl --to file://new.hcl --dev-url 'docker://postgres/15'",
+        "atlas schema diff --from 'mysql://root@localhost/db1' --to 'mysql://root@localhost/db2'",
+        "atlas schema diff --env local --to file://schema.hcl"
+      ]
+    },
+    {
+      "name": "schema clean",
+      "description": "Remove all objects from the target database schema. WARNING: Destructive operation.",
+      "args": [],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Database connection URL", "type": "string"},
+        {"name": "--schema", "description": "Schemas to clean", "type": "string"},
+        {"name": "--auto-approve", "description": "Skip confirmation prompt"},
+        {"name": "--env", "description": "Environment from config", "type": "string"}
+      ],
+      "examples": [
+        "atlas schema clean --url 'postgres://localhost/testdb' --auto-approve",
+        "atlas schema clean --env staging"
+      ]
+    },
+    {
+      "name": "schema fmt",
+      "description": "Format Atlas HCL schema files to a canonical style, similar to gofmt or terraform fmt.",
+      "args": [
+        {"name": "paths", "type": "string", "required": false, "description": "Paths to HCL files or directories to format (default: current directory)"}
+      ],
+      "options": [],
+      "examples": [
+        "atlas schema fmt",
+        "atlas schema fmt schema.hcl",
+        "atlas schema fmt ./schemas/"
+      ]
+    },
+    {
+      "name": "migrate diff",
+      "description": "Generate a new versioned migration file by computing the diff between the desired schema and the current migration directory state.",
+      "args": [
+        {"name": "name", "type": "string", "required": false, "description": "Optional name suffix for the migration file"}
+      ],
+      "options": [
+        {"name": "--to", "description": "Desired schema state: URL, HCL file, or directory", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for computing the diff", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL (default: file://migrations)", "type": "string"},
+        {"name": "--format", "description": "Format for the migration file (atlas or golang-migrate, goose, flyway, liquibase, dbmate)", "type": "string"},
+        {"name": "--env", "description": "Environment from atlas.hcl config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"},
+        {"name": "--schema", "description": "Schemas to diff", "type": "string"},
+        {"name": "--lock-timeout", "description": "Timeout for acquiring schema lock", "type": "string"},
+        {"name": "--qualifier", "description": "Schema qualifier for migration statements", "type": "string"},
+        {"name": "--edit", "description": "Open the generated migration file in an editor"}
+      ],
+      "examples": [
+        "atlas migrate diff add_users --to file://schema.hcl --dev-url 'docker://postgres/15'",
+        "atlas migrate diff --to file://schema.sql --dev-url 'docker://mysql/8' --dir file://migrations",
+        "atlas migrate diff create_orders --env local",
+        "atlas migrate diff --to 'postgres://localhost/mydb' --dev-url 'docker://postgres/15' --format golang-migrate",
+        "atlas migrate diff add_index --env dev --edit"
+      ]
+    },
+    {
+      "name": "migrate apply",
+      "description": "Apply pending migration files to a database. Reads the migration directory and executes unapplied files in order.",
+      "args": [
+        {"name": "count", "type": "string", "required": false, "description": "Number of migrations to apply (default: all pending)"}
+      ],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Target database connection URL", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--dry-run", "description": "Print planned SQL without executing"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"},
+        {"name": "--baseline", "description": "Version to set as baseline (skip migrations up to this version)", "type": "string"},
+        {"name": "--tx-mode", "description": "Transaction mode: file, all, or none", "type": "string"},
+        {"name": "--revisions-schema", "description": "Schema for the revisions tracking table", "type": "string"},
+        {"name": "--allow-dirty", "description": "Allow applying on a database with a dirty migration state"},
+        {"name": "--log", "description": "Log format template", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate apply --url 'postgres://user:pass@localhost:5432/mydb'",
+        "atlas migrate apply --url 'mysql://root:pass@localhost:3306/mydb' --dir file://migrations",
+        "atlas migrate apply 1 --url 'postgres://localhost/mydb'",
+        "atlas migrate apply --env production",
+        "atlas migrate apply --url 'postgres://localhost/mydb' --dry-run",
+        "atlas migrate apply --url 'postgres://localhost/mydb' --baseline 20240101000000",
+        "atlas migrate apply --url 'postgres://localhost/mydb' --tx-mode=all"
+      ]
+    },
+    {
+      "name": "migrate hash",
+      "description": "Recalculate and update the integrity hash file (atlas.sum) for the migration directory. Required after manually editing migration files.",
+      "args": [],
+      "options": [
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate hash",
+        "atlas migrate hash --dir file://migrations",
+        "atlas migrate hash --env local"
+      ]
+    },
+    {
+      "name": "migrate lint",
+      "description": "Analyze migration files for potential issues, destructive changes, and best-practice violations. Integrates with CI/CD pipelines.",
+      "args": [],
+      "options": [
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for analysis", "type": "string"},
+        {"name": "--latest", "description": "Number of latest migration files to analyze", "type": "string"},
+        {"name": "--git-base", "description": "Git base branch for diff analysis", "type": "string"},
+        {"name": "--git-dir", "description": "Git repository root", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--log", "description": "Log format template", "type": "string"},
+        {"name": "--format", "description": "Output format for lint results", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate lint --dev-url 'docker://postgres/15' --latest 1",
+        "atlas migrate lint --dev-url 'docker://mysql/8' --git-base main",
+        "atlas migrate lint --env ci --latest 5",
+        "atlas migrate lint --dev-url 'docker://postgres/15' --dir file://migrations --format '{{ json . }}'"
+      ]
+    },
+    {
+      "name": "migrate status",
+      "description": "Show the status of all migrations: which have been applied, which are pending, and detect any issues.",
+      "args": [],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Database connection URL", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--revisions-schema", "description": "Schema for the revisions table", "type": "string"},
+        {"name": "--log", "description": "Log format template", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate status --url 'postgres://user:pass@localhost:5432/mydb'",
+        "atlas migrate status --env production",
+        "atlas migrate status --url 'mysql://root@localhost/mydb' --dir file://migrations"
+      ]
+    },
+    {
+      "name": "migrate new",
+      "description": "Create a new empty migration file in the migration directory with proper formatting and hash updates.",
+      "args": [
+        {"name": "name", "type": "string", "required": false, "description": "Name for the migration file"}
+      ],
+      "options": [
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--edit", "description": "Open the new migration file in an editor"}
+      ],
+      "examples": [
+        "atlas migrate new add_users_table",
+        "atlas migrate new --dir file://migrations",
+        "atlas migrate new create_orders --env local --edit"
+      ]
+    },
+    {
+      "name": "migrate import",
+      "description": "Import migration files from another migration tool format (golang-migrate, goose, flyway, liquibase, dbmate) into Atlas format.",
+      "args": [],
+      "options": [
+        {"name": "--from", "description": "Source migration directory URL with format qualifier", "type": "string"},
+        {"name": "--dir", "description": "Target Atlas migration directory", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate import --from 'file://migrations?format=golang-migrate'",
+        "atlas migrate import --from 'file://db/migrations?format=goose'",
+        "atlas migrate import --from 'file://migrations?format=flyway' --dir file://atlas-migrations"
+      ]
+    },
+    {
+      "name": "migrate set",
+      "description": "Set the current migration version in the revisions table without applying any migrations. Similar to alembic stamp.",
+      "args": [
+        {"name": "version", "type": "string", "required": true, "description": "Migration version to set"}
+      ],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Database connection URL", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--revisions-schema", "description": "Schema for the revisions table", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate set 20240101000000 --url 'postgres://localhost/mydb'",
+        "atlas migrate set 20240301120000 --env production"
+      ]
+    },
+    {
+      "name": "migrate down",
+      "description": "Revert applied migration files from the database. Requires down migration files or uses Atlas planned rollbacks.",
+      "args": [
+        {"name": "count", "type": "string", "required": false, "description": "Number of migrations to roll back (default: 1)"}
+      ],
+      "options": [
+        {"name": "--url", "short": "-u", "description": "Database connection URL", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for rollback planning", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--log", "description": "Log format template", "type": "string"},
+        {"name": "--to-version", "description": "Target version to roll back to", "type": "string"},
+        {"name": "--to-tag", "description": "Target tag to roll back to", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate down --url 'postgres://localhost/mydb' --dev-url 'docker://postgres/15'",
+        "atlas migrate down 2 --url 'postgres://localhost/mydb' --dev-url 'docker://postgres/15'",
+        "atlas migrate down --env local --to-version 20240101000000"
+      ]
+    },
+    {
+      "name": "migrate checkpoint",
+      "description": "Create a checkpoint migration that represents the cumulative state of all previous migrations, allowing cleanup of old migration files.",
+      "args": [
+        {"name": "name", "type": "string", "required": false, "description": "Name for the checkpoint migration"}
+      ],
+      "options": [
+        {"name": "--dev-url", "description": "Dev database URL", "type": "string"},
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate checkpoint --dev-url 'docker://postgres/15'",
+        "atlas migrate checkpoint my_checkpoint --env local"
+      ]
+    },
+    {
+      "name": "migrate push",
+      "description": "Push the migration directory to Atlas Cloud for versioned schema management, CI/CD integration, and team collaboration.",
+      "args": [
+        {"name": "name", "type": "string", "required": true, "description": "Name/tag for the migration directory in Atlas Cloud"}
+      ],
+      "options": [
+        {"name": "--dir", "description": "Local migration directory to push", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for validation", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"},
+        {"name": "--tag", "description": "Tag for the pushed version", "type": "string"},
+        {"name": "--var", "description": "Input variable for atlas.hcl", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate push myapp --dev-url 'docker://postgres/15'",
+        "atlas migrate push myapp --tag v1.0 --env production"
+      ]
+    },
+    {
+      "name": "migrate validate",
+      "description": "Validate the integrity and correctness of the migration directory, checking hash consistency and file ordering.",
+      "args": [],
+      "options": [
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL for validation", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate validate",
+        "atlas migrate validate --dev-url 'docker://postgres/15'",
+        "atlas migrate validate --env local"
+      ]
+    },
+    {
+      "name": "migrate rebase",
+      "description": "Squash and rebase migration files from a specific version, combining them into a single migration for cleaner history.",
+      "args": [],
+      "options": [
+        {"name": "--dir", "description": "Migration directory URL", "type": "string"},
+        {"name": "--dev-url", "description": "Dev database URL", "type": "string"},
+        {"name": "--env", "description": "Environment from config", "type": "string"},
+        {"name": "--config", "description": "Path to atlas config file", "type": "string"}
+      ],
+      "examples": [
+        "atlas migrate rebase --dev-url 'docker://postgres/15'",
+        "atlas migrate rebase --env local"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--help", "short": "-h", "description": "Show help information"},
+    {"name": "--version", "description": "Show Atlas version"},
+    {"name": "--config", "description": "Path to atlas configuration file (atlas.hcl)", "type": "string"},
+    {"name": "--env", "description": "Environment to use from config file", "type": "string"},
+    {"name": "--var", "description": "Input variables for atlas.hcl (key=value format)", "type": "string"}
+  ],
+  "examples": [
+    "atlas schema inspect --url 'postgres://localhost/mydb'",
+    "atlas schema apply --url 'postgres://localhost/mydb' --to file://schema.hcl --dev-url 'docker://postgres/15'",
+    "atlas schema diff --from 'postgres://localhost/dev' --to 'postgres://localhost/staging'",
+    "atlas migrate diff add_users --to file://schema.hcl --dev-url 'docker://postgres/15'",
+    "atlas migrate apply --url 'postgres://localhost/mydb'",
+    "atlas migrate status --url 'postgres://localhost/mydb'",
+    "atlas migrate lint --dev-url 'docker://postgres/15' --latest 1",
+    "atlas migrate hash",
+    "atlas migrate new create_orders",
+    "atlas migrate down --url 'postgres://localhost/mydb' --dev-url 'docker://postgres/15'",
+    "atlas migrate validate --dev-url 'docker://postgres/15'",
+    "atlas migrate checkpoint --dev-url 'docker://postgres/15'",
+    "atlas schema fmt",
+    "atlas migrate push myapp --dev-url 'docker://postgres/15' --tag latest"
+  ],
+  "relatedCommands": ["flyway", "liquibase", "prisma", "alembic", "dbmate"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "atlas_config_detect",
+        "description": "Detect Atlas configuration file (atlas.hcl)",
+        "command": "find . -maxdepth 2 -name 'atlas.hcl' -type f 2>/dev/null | head -3",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "atlas_schema_detect",
+        "description": "Detect Atlas HCL schema files",
+        "command": "find . -maxdepth 3 -name 'schema.hcl' -o -name '*.hcl' -path '*/schema/*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "atlas_migrations_detect",
+        "description": "Detect Atlas migration files and atlas.sum",
+        "command": "find . -name 'atlas.sum' -o -path '*/migrations/*.sql' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "atlas_version",
+        "description": "Get installed Atlas version",
+        "command": "atlas version 2>/dev/null || echo 'not installed'",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "atlas_env_detect",
+        "description": "Detect configured Atlas environments",
+        "command": "grep -E '^env\\s' atlas.hcl 2>/dev/null | head -5 || echo 'no config'",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

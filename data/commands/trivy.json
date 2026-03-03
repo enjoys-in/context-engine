@@ -1,0 +1,367 @@
+{
+  "name": "trivy",
+  "description": "Comprehensive security scanner for vulnerabilities in container images, file systems, git repositories, IaC configurations, Kubernetes clusters, and more",
+  "category": "security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "image",
+      "description": "Scan a container image for vulnerabilities, misconfigurations, and secrets",
+      "args": [{ "name": "image", "type": "string", "required": true, "description": "Container image name and optional tag (e.g., nginx:latest)" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Comma-separated list of severities: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format: table, json, sarif, cyclonedx, spdx, template, cosign-vuln, github", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Write results to file instead of stdout", "type": "string" },
+        { "name": "--ignore-unfixed", "description": "Show only fixed vulnerabilities" },
+        { "name": "--vuln-type", "description": "Comma-separated vulnerability types: os, library", "type": "string" },
+        { "name": "--scanners", "description": "Comma-separated scanners: vuln, misconfig, secret, license", "type": "string" },
+        { "name": "--exit-code", "description": "Exit code when vulnerabilities are found", "type": "string" },
+        { "name": "--timeout", "description": "Timeout for the scan (e.g., 5m0s)", "type": "string" },
+        { "name": "--skip-files", "description": "Comma-separated file paths to skip", "type": "string" },
+        { "name": "--skip-dirs", "description": "Comma-separated directories to skip", "type": "string" },
+        { "name": "--list-all-pkgs", "description": "List all packages regardless of vulnerability status" },
+        { "name": "--input", "description": "Scan a saved image archive (tar file)", "type": "string" },
+        { "name": "--platform", "description": "Target platform for multi-arch images (linux/amd64)", "type": "string" },
+        { "name": "--db-repository", "description": "OCI repository for vulnerability DB", "type": "string" },
+        { "name": "--java-db-repository", "description": "OCI repository for Java vulnerability DB", "type": "string" },
+        { "name": "--offline-scan", "description": "Do not send any requests to the internet" },
+        { "name": "--template", "description": "Path to a custom output template file", "type": "string" },
+        { "name": "--secret-config", "description": "Path to a secret scanning config file", "type": "string" }
+      ],
+      "examples": [
+        "trivy image nginx:latest",
+        "trivy image --severity HIGH,CRITICAL alpine:3.18",
+        "trivy image --format json --output results.json myregistry/myapp:v1.2",
+        "trivy image --ignore-unfixed --exit-code 1 python:3.11-slim",
+        "trivy image --scanners vuln,secret --severity CRITICAL node:20",
+        "trivy image --format sarif --output trivy.sarif ghcr.io/myorg/myapp:latest",
+        "trivy image --list-all-pkgs --format cyclonedx --output sbom.json ubuntu:22.04"
+      ]
+    },
+    {
+      "name": "fs",
+      "description": "Scan a local filesystem or project directory for vulnerabilities in dependencies and misconfigurations",
+      "args": [{ "name": "path", "type": "string", "required": true, "description": "Path to the directory or file to scan" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Comma-separated severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--scanners", "description": "Scanners to use: vuln, misconfig, secret, license", "type": "string" },
+        { "name": "--skip-files", "description": "File paths to skip", "type": "string" },
+        { "name": "--skip-dirs", "description": "Directories to skip", "type": "string" },
+        { "name": "--exit-code", "description": "Exit code when issues found", "type": "string" },
+        { "name": "--config-file", "description": "Path to trivy config file", "type": "string" },
+        { "name": "--ignore-unfixed", "description": "Show only fixed vulnerabilities" },
+        { "name": "--secret-config", "description": "Path to secret scanning config", "type": "string" }
+      ],
+      "examples": [
+        "trivy fs .",
+        "trivy fs --severity HIGH,CRITICAL /path/to/project",
+        "trivy fs --scanners vuln,secret --format json --output results.json .",
+        "trivy fs --exit-code 1 --severity CRITICAL ./src"
+      ]
+    },
+    {
+      "name": "repo",
+      "description": "Scan a remote git repository for vulnerabilities",
+      "args": [{ "name": "repo-url", "type": "string", "required": true, "description": "Git repository URL or local path" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--branch", "description": "Branch to scan", "type": "string" },
+        { "name": "--commit", "description": "Commit hash to scan", "type": "string" },
+        { "name": "--tag", "description": "Tag to scan", "type": "string" },
+        { "name": "--scanners", "description": "Scanners to use", "type": "string" },
+        { "name": "--exit-code", "description": "Exit code on findings", "type": "string" }
+      ],
+      "examples": [
+        "trivy repo https://github.com/myorg/myrepo",
+        "trivy repo --branch develop --severity HIGH,CRITICAL https://github.com/myorg/myrepo",
+        "trivy repo --format json https://github.com/myorg/myrepo"
+      ]
+    },
+    {
+      "name": "rootfs",
+      "description": "Scan a root filesystem (e.g., host machine or exported container filesystem)",
+      "args": [{ "name": "path", "type": "string", "required": true, "description": "Path to the root filesystem" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--scanners", "description": "Scanners to use", "type": "string" },
+        { "name": "--exit-code", "description": "Exit code on findings", "type": "string" }
+      ],
+      "examples": [
+        "trivy rootfs /",
+        "trivy rootfs --severity CRITICAL /mnt/exported-fs"
+      ]
+    },
+    {
+      "name": "sbom",
+      "description": "Generate or scan a Software Bill of Materials (SBOM)",
+      "args": [{ "name": "target", "type": "string", "required": true, "description": "SBOM file path or image to generate SBOM from" }],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "SBOM format: cyclonedx, spdx, spdx-json", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--severity", "short": "-s", "description": "Severities for SBOM scanning", "type": "string" },
+        { "name": "--scanners", "description": "Scanners for SBOM scanning", "type": "string" },
+        { "name": "--artifact-type", "description": "Type of artifact (image, fs, repo)", "type": "string" }
+      ],
+      "examples": [
+        "trivy sbom --format cyclonedx --output sbom.json nginx:latest",
+        "trivy sbom ./sbom.json",
+        "trivy sbom --format spdx-json --output sbom-spdx.json ."
+      ]
+    },
+    {
+      "name": "config",
+      "description": "Scan IaC (Infrastructure as Code) files for misconfigurations (Terraform, CloudFormation, Dockerfile, Kubernetes, Helm, etc.)",
+      "args": [{ "name": "path", "type": "string", "required": true, "description": "Path to IaC files or directory" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--exit-code", "description": "Exit code on findings", "type": "string" },
+        { "name": "--skip-files", "description": "Files to skip", "type": "string" },
+        { "name": "--skip-dirs", "description": "Directories to skip", "type": "string" },
+        { "name": "--policy", "description": "Path to custom Rego policies", "type": "string" },
+        { "name": "--namespaces", "description": "Rego namespaces", "type": "string" },
+        { "name": "--tf-vars", "description": "Path to terraform.tfvars file", "type": "string" },
+        { "name": "--helm-set", "description": "Set Helm values on the command line", "type": "string" },
+        { "name": "--helm-values", "description": "Path to Helm values file", "type": "string" }
+      ],
+      "examples": [
+        "trivy config .",
+        "trivy config --severity HIGH,CRITICAL ./terraform",
+        "trivy config --format json --output misconfig.json ./k8s-manifests",
+        "trivy config --tf-vars terraform.tfvars ./infra",
+        "trivy config --exit-code 1 Dockerfile"
+      ]
+    },
+    {
+      "name": "kubernetes",
+      "description": "Scan a running Kubernetes cluster for vulnerabilities and misconfigurations",
+      "args": [{ "name": "context", "type": "string", "required": false, "description": "Kubernetes context or 'cluster' for full cluster scan" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--namespace", "short": "-n", "description": "Kubernetes namespace to scan", "type": "string" },
+        { "name": "--all-namespaces", "short": "-A", "description": "Scan all namespaces" },
+        { "name": "--scanners", "description": "Scanners: vuln, misconfig, secret", "type": "string" },
+        { "name": "--report", "description": "Report type: summary, all", "type": "string" },
+        { "name": "--components", "description": "Components to scan: workload, infra", "type": "string" },
+        { "name": "--kubeconfig", "description": "Path to kubeconfig file", "type": "string" },
+        { "name": "--context", "description": "Kubernetes context to use", "type": "string" },
+        { "name": "--parallel", "description": "Number of parallel scan goroutines", "type": "string" },
+        { "name": "--timeout", "description": "Timeout for the scan", "type": "string" },
+        { "name": "--exclude-owned", "description": "Exclude resources owned by other resources (e.g., ReplicaSets owned by Deployments)" },
+        { "name": "--tolerations", "description": "Tolerations for node-collector DaemonSet", "type": "string" }
+      ],
+      "examples": [
+        "trivy kubernetes --report summary cluster",
+        "trivy kubernetes --namespace default --severity HIGH,CRITICAL cluster",
+        "trivy kubernetes -A --format json --output k8s-report.json cluster",
+        "trivy kubernetes --scanners vuln,misconfig --report all cluster"
+      ]
+    },
+    {
+      "name": "vm",
+      "description": "Scan a virtual machine image for vulnerabilities",
+      "args": [{ "name": "vm-image", "type": "string", "required": true, "description": "VM image path or identifier" }],
+      "options": [
+        { "name": "--severity", "short": "-s", "description": "Severities to report", "type": "string" },
+        { "name": "--format", "short": "-f", "description": "Output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" },
+        { "name": "--scanners", "description": "Scanners to use", "type": "string" }
+      ],
+      "examples": [
+        "trivy vm --severity HIGH,CRITICAL ami:12345",
+        "trivy vm --format json ./disk.vmdk"
+      ]
+    },
+    {
+      "name": "server",
+      "description": "Run Trivy in server mode, providing a REST API for remote scanning",
+      "args": [],
+      "options": [
+        { "name": "--listen", "description": "Address and port to listen on", "type": "string" },
+        { "name": "--token", "description": "Bearer token for API authentication", "type": "string" },
+        { "name": "--token-header", "description": "Custom header name for token", "type": "string" },
+        { "name": "--db-repository", "description": "OCI repository for vulnerability DB", "type": "string" },
+        { "name": "--cache-dir", "description": "Cache directory path", "type": "string" }
+      ],
+      "examples": [
+        "trivy server --listen 0.0.0.0:4954",
+        "trivy server --listen :8080 --token mytoken"
+      ]
+    },
+    {
+      "name": "plugin install",
+      "description": "Install a Trivy plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name or repository URL" }],
+      "options": [],
+      "examples": [
+        "trivy plugin install github.com/aquasecurity/trivy-plugin-kubectl",
+        "trivy plugin install referrer"
+      ]
+    },
+    {
+      "name": "plugin list",
+      "description": "List installed Trivy plugins",
+      "args": [],
+      "options": [],
+      "examples": ["trivy plugin list"]
+    },
+    {
+      "name": "plugin info",
+      "description": "Show information about a plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name" }],
+      "options": [],
+      "examples": ["trivy plugin info kubectl"]
+    },
+    {
+      "name": "plugin uninstall",
+      "description": "Uninstall a Trivy plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name to uninstall" }],
+      "options": [],
+      "examples": ["trivy plugin uninstall kubectl"]
+    },
+    {
+      "name": "plugin run",
+      "description": "Run an installed plugin",
+      "args": [{ "name": "plugin", "type": "string", "required": true, "description": "Plugin name to run" }],
+      "options": [],
+      "examples": ["trivy plugin run kubectl -- get pods"]
+    },
+    {
+      "name": "plugin update",
+      "description": "Update installed plugins",
+      "args": [{ "name": "plugin", "type": "string", "required": false, "description": "Plugin name (all if omitted)" }],
+      "options": [],
+      "examples": ["trivy plugin update", "trivy plugin update kubectl"]
+    },
+    {
+      "name": "module install",
+      "description": "Install a WebAssembly module for custom analysis",
+      "args": [{ "name": "module", "type": "string", "required": true, "description": "Module repository URL" }],
+      "options": [],
+      "examples": ["trivy module install github.com/aquasecurity/trivy-module-spring4shell"]
+    },
+    {
+      "name": "module list",
+      "description": "List installed modules",
+      "args": [],
+      "options": [],
+      "examples": ["trivy module list"]
+    },
+    {
+      "name": "module uninstall",
+      "description": "Uninstall a module",
+      "args": [{ "name": "module", "type": "string", "required": true, "description": "Module name" }],
+      "options": [],
+      "examples": ["trivy module uninstall spring4shell"]
+    },
+    {
+      "name": "clean",
+      "description": "Remove cached data including vulnerability databases and scan caches",
+      "args": [],
+      "options": [
+        { "name": "--all", "short": "-a", "description": "Remove all cached data" },
+        { "name": "--vuln-db", "description": "Remove only the vulnerability database cache" },
+        { "name": "--java-db", "description": "Remove only the Java database cache" },
+        { "name": "--checks-bundle", "description": "Remove only the checks bundle cache" }
+      ],
+      "examples": [
+        "trivy clean --all",
+        "trivy clean --vuln-db",
+        "trivy clean --java-db"
+      ]
+    },
+    {
+      "name": "convert",
+      "description": "Convert between SBOM formats or trivy result formats",
+      "args": [{ "name": "input", "type": "string", "required": true, "description": "Input file path" }],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "Target output format", "type": "string" },
+        { "name": "--output", "short": "-o", "description": "Output file path", "type": "string" }
+      ],
+      "examples": [
+        "trivy convert --format cyclonedx --output sbom.cdx.json results.json",
+        "trivy convert --format sarif --output results.sarif results.json"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show Trivy version and build information",
+      "args": [],
+      "options": [
+        { "name": "--format", "short": "-f", "description": "Output format (json)", "type": "string" }
+      ],
+      "examples": ["trivy version", "trivy version --format json"]
+    }
+  ],
+  "globalOptions": [
+    { "name": "--help", "short": "-h", "description": "Show help information" },
+    { "name": "--version", "short": "-v", "description": "Show Trivy version" },
+    { "name": "--severity", "short": "-s", "description": "Severities of security issues to report: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL", "type": "string" },
+    { "name": "--format", "short": "-f", "description": "Output format: table, json, sarif, cyclonedx, spdx, template, cosign-vuln, github", "type": "string" },
+    { "name": "--output", "short": "-o", "description": "Write output to file", "type": "string" },
+    { "name": "--exit-code", "description": "Exit code when security issues found (default: 0)", "type": "string" },
+    { "name": "--timeout", "description": "Timeout for operations", "type": "string" },
+    { "name": "--cache-dir", "description": "Cache directory path", "type": "string" },
+    { "name": "--config-file", "description": "Path to Trivy config file (trivy.yaml)", "type": "string" },
+    { "name": "--quiet", "short": "-q", "description": "Suppress progress bar and log output" },
+    { "name": "--debug", "short": "-d", "description": "Enable debug logging" },
+    { "name": "--insecure", "description": "Allow insecure server connections for registries" }
+  ],
+  "examples": [
+    "trivy image nginx:latest",
+    "trivy image --severity HIGH,CRITICAL --ignore-unfixed alpine:3.18",
+    "trivy image --format json --output results.json myapp:latest",
+    "trivy fs --scanners vuln,secret .",
+    "trivy repo https://github.com/myorg/myrepo",
+    "trivy config --severity HIGH,CRITICAL ./terraform",
+    "trivy kubernetes --report summary cluster",
+    "trivy sbom --format cyclonedx --output sbom.json nginx:latest",
+    "trivy image --exit-code 1 --severity CRITICAL python:3.11-slim",
+    "trivy server --listen 0.0.0.0:4954",
+    "trivy clean --all",
+    "trivy version"
+  ],
+  "relatedCommands": ["snyk", "docker", "kubectl"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "trivy_version",
+        "description": "Detect installed Trivy version",
+        "command": "trivy version --format json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300
+      },
+      {
+        "name": "trivy_config",
+        "description": "Detect trivy.yaml configuration in the project",
+        "command": "test -f trivy.yaml && cat trivy.yaml || test -f .trivy.yaml && cat .trivy.yaml",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "trivy_plugins",
+        "description": "Detect installed Trivy plugins",
+        "command": "trivy plugin list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "container_images",
+        "description": "Detect local container images available for scanning",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}
