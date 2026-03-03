@@ -1,0 +1,536 @@
+{
+  "language": "dockerfile",
+  "completions": [
+    {
+      "label": "FROM",
+      "kind": 14,
+      "detail": "Set the base image",
+      "documentation": { "value": "Initialize a new build stage and set the base image.\n\n```dockerfile\nFROM ubuntu:22.04\nFROM node:20-alpine\nFROM --platform=linux/amd64 golang:1.21\n```" },
+      "insertText": "FROM ${1:image}:${2:tag}",
+      "insertTextRules": 4,
+      "sortText": "00_FROM"
+    },
+    {
+      "label": "FROM ... AS (multi-stage)",
+      "kind": 15,
+      "detail": "Multi-stage build base image",
+      "documentation": { "value": "Set a base image with a named build stage for multi-stage builds.\n\n```dockerfile\nFROM node:20-alpine AS builder\nRUN npm ci && npm run build\n\nFROM nginx:alpine AS production\nCOPY --from=builder /app/dist /usr/share/nginx/html\n```" },
+      "insertText": "FROM ${1:image}:${2:tag} AS ${3:stage_name}",
+      "insertTextRules": 4,
+      "sortText": "00_FROM_AS"
+    },
+    {
+      "label": "FROM scratch",
+      "kind": 15,
+      "detail": "Start from an empty image",
+      "documentation": { "value": "Use an empty base image. Commonly used for statically compiled binaries (Go, Rust).\n\n```dockerfile\nFROM scratch\nCOPY --from=builder /app/mybin /mybin\nENTRYPOINT [\"/mybin\"]\n```" },
+      "insertText": "FROM scratch",
+      "insertTextRules": 4,
+      "sortText": "00_FROM_scratch"
+    },
+    {
+      "label": "FROM --platform",
+      "kind": 15,
+      "detail": "Set base image with platform",
+      "documentation": { "value": "Specify the target platform for the build stage.\n\n```dockerfile\nFROM --platform=linux/amd64 ubuntu:22.04\nFROM --platform=$BUILDPLATFORM golang:1.21 AS builder\n```" },
+      "insertText": "FROM --platform=${1|linux/amd64,linux/arm64,$BUILDPLATFORM,$TARGETPLATFORM|} ${2:image}:${3:tag}",
+      "insertTextRules": 4,
+      "sortText": "00_FROM_platform"
+    },
+    {
+      "label": "RUN",
+      "kind": 14,
+      "detail": "Execute a command in the build",
+      "documentation": { "value": "Execute a command in a new layer on top of the current image.\n\n```dockerfile\nRUN apt-get update && apt-get install -y curl\nRUN pip install --no-cache-dir -r requirements.txt\n```" },
+      "insertText": "RUN ${1:command}",
+      "insertTextRules": 4,
+      "sortText": "01_RUN"
+    },
+    {
+      "label": "RUN (exec form)",
+      "kind": 15,
+      "detail": "Execute a command in exec form",
+      "documentation": { "value": "Execute a command using the exec form (JSON array). This avoids shell processing and is preferred when you don't need shell features.\n\n```dockerfile\nRUN [\"executable\", \"param1\", \"param2\"]\nRUN [\"apt-get\", \"install\", \"-y\", \"curl\"]\n```" },
+      "insertText": "RUN [\"${1:executable}\", \"${2:param1}\"]",
+      "insertTextRules": 4,
+      "sortText": "01_RUN_exec"
+    },
+    {
+      "label": "RUN --mount=type=cache",
+      "kind": 15,
+      "detail": "RUN with cache mount",
+      "documentation": { "value": "Mount a cache directory that persists across builds. Speeds up package manager installs.\n\n```dockerfile\nRUN --mount=type=cache,target=/var/cache/apt \\\n    apt-get update && apt-get install -y curl\n\nRUN --mount=type=cache,target=/root/.cache/pip \\\n    pip install -r requirements.txt\n```" },
+      "insertText": "RUN --mount=type=cache,target=${1:/var/cache/apt} \\\n    ${2:command}",
+      "insertTextRules": 4,
+      "sortText": "01_RUN_cache"
+    },
+    {
+      "label": "RUN --mount=type=secret",
+      "kind": 15,
+      "detail": "RUN with secret mount",
+      "documentation": { "value": "Mount a secret file that won't be stored in the final image.\n\n```dockerfile\nRUN --mount=type=secret,id=mysecret,target=/run/secrets/mysecret \\\n    cat /run/secrets/mysecret\n\n# Build: docker build --secret id=mysecret,src=secret.txt .\n```" },
+      "insertText": "RUN --mount=type=secret,id=${1:secret_id},target=${2:/run/secrets/$1} \\\n    ${3:command}",
+      "insertTextRules": 4,
+      "sortText": "01_RUN_secret"
+    },
+    {
+      "label": "RUN --mount=type=ssh",
+      "kind": 15,
+      "detail": "RUN with SSH agent forwarding",
+      "documentation": { "value": "Mount the SSH agent socket for accessing private repositories.\n\n```dockerfile\nRUN --mount=type=ssh \\\n    git clone git@github.com:private/repo.git\n\n# Build: docker build --ssh default .\n```" },
+      "insertText": "RUN --mount=type=ssh \\\n    ${1:git clone git@github.com:user/repo.git}",
+      "insertTextRules": 4,
+      "sortText": "01_RUN_ssh"
+    },
+    {
+      "label": "CMD",
+      "kind": 14,
+      "detail": "Default command for the container",
+      "documentation": { "value": "Set the default command to run when the container starts. Only the last CMD takes effect.\n\n```dockerfile\nCMD [\"node\", \"server.js\"]\nCMD [\"python\", \"app.py\"]\nCMD [\"nginx\", \"-g\", \"daemon off;\"]\n```" },
+      "insertText": "CMD [\"${1:executable}\", \"${2:param1}\"]",
+      "insertTextRules": 4,
+      "sortText": "02_CMD"
+    },
+    {
+      "label": "LABEL",
+      "kind": 14,
+      "detail": "Add metadata to an image",
+      "documentation": { "value": "Add metadata as key-value pairs to an image.\n\n```dockerfile\nLABEL maintainer=\"user@example.com\"\nLABEL version=\"1.0\" description=\"My app\"\nLABEL org.opencontainers.image.source=\"https://github.com/user/repo\"\n```" },
+      "insertText": "LABEL ${1:key}=\"${2:value}\"",
+      "insertTextRules": 4,
+      "sortText": "03_LABEL"
+    },
+    {
+      "label": "MAINTAINER",
+      "kind": 14,
+      "detail": "Set the author (deprecated)",
+      "documentation": { "value": "**Deprecated.** Use `LABEL maintainer=\"...\"` instead.\n\n```dockerfile\n# Deprecated:\nMAINTAINER user@example.com\n\n# Preferred:\nLABEL maintainer=\"user@example.com\"\n```" },
+      "insertText": "MAINTAINER ${1:name}",
+      "insertTextRules": 4,
+      "sortText": "04_MAINTAINER"
+    },
+    {
+      "label": "EXPOSE",
+      "kind": 14,
+      "detail": "Declare container listen port",
+      "documentation": { "value": "Inform Docker the container listens on the specified port(s) at runtime. This is documentation only — you still need `-p` to publish.\n\n```dockerfile\nEXPOSE 80\nEXPOSE 443\nEXPOSE 3000/tcp 3001/udp\n```" },
+      "insertText": "EXPOSE ${1:port}",
+      "insertTextRules": 4,
+      "sortText": "05_EXPOSE"
+    },
+    {
+      "label": "ENV",
+      "kind": 14,
+      "detail": "Set environment variable",
+      "documentation": { "value": "Set an environment variable that persists in the running container.\n\n```dockerfile\nENV NODE_ENV=production\nENV APP_HOME=/app\nENV PATH=\"/app/bin:$PATH\"\n```" },
+      "insertText": "ENV ${1:KEY}=${2:value}",
+      "insertTextRules": 4,
+      "sortText": "06_ENV"
+    },
+    {
+      "label": "ADD",
+      "kind": 14,
+      "detail": "Add files to the image",
+      "documentation": { "value": "Copy files, directories, or remote URLs into the image. Supports auto-extraction of tar archives. Prefer COPY unless you need tar extraction or URLs.\n\n```dockerfile\nADD app.tar.gz /app/\nADD https://example.com/file.txt /data/\nADD --chown=1000:1000 files/ /app/\n```" },
+      "insertText": "ADD ${1:src} ${2:dest}",
+      "insertTextRules": 4,
+      "sortText": "07_ADD"
+    },
+    {
+      "label": "COPY",
+      "kind": 14,
+      "detail": "Copy files into the image",
+      "documentation": { "value": "Copy files or directories from the build context into the image.\n\n```dockerfile\nCOPY . /app/\nCOPY package.json package-lock.json ./\nCOPY --chown=node:node src/ /app/src/\n```" },
+      "insertText": "COPY ${1:src} ${2:dest}",
+      "insertTextRules": 4,
+      "sortText": "08_COPY"
+    },
+    {
+      "label": "COPY --from",
+      "kind": 15,
+      "detail": "Copy files from another build stage",
+      "documentation": { "value": "Copy files from a named build stage or external image.\n\n```dockerfile\nCOPY --from=builder /app/dist /usr/share/nginx/html\nCOPY --from=0 /app/bin /usr/local/bin/\nCOPY --from=alpine:latest /etc/alpine-release /\n```" },
+      "insertText": "COPY --from=${1:stage} ${2:src} ${3:dest}",
+      "insertTextRules": 4,
+      "sortText": "08_COPY_from"
+    },
+    {
+      "label": "COPY --chown",
+      "kind": 15,
+      "detail": "Copy files with ownership",
+      "documentation": { "value": "Copy files and set ownership in a single step.\n\n```dockerfile\nCOPY --chown=node:node . /app/\nCOPY --chown=1000:1000 config/ /etc/app/\n```" },
+      "insertText": "COPY --chown=${1:user}:${2:group} ${3:src} ${4:dest}",
+      "insertTextRules": 4,
+      "sortText": "08_COPY_chown"
+    },
+    {
+      "label": "ENTRYPOINT",
+      "kind": 14,
+      "detail": "Configure the container executable",
+      "documentation": { "value": "Set the main executable for the container. CMD arguments are appended to ENTRYPOINT.\n\n```dockerfile\nENTRYPOINT [\"docker-entrypoint.sh\"]\nENTRYPOINT [\"python\", \"-m\", \"flask\"]\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```" },
+      "insertText": "ENTRYPOINT [\"${1:executable}\"]",
+      "insertTextRules": 4,
+      "sortText": "09_ENTRYPOINT"
+    },
+    {
+      "label": "VOLUME",
+      "kind": 14,
+      "detail": "Create a mount point",
+      "documentation": { "value": "Create a mount point for externally mounted volumes or other containers.\n\n```dockerfile\nVOLUME /data\nVOLUME [\"/var/log\", \"/data\"]\n```" },
+      "insertText": "VOLUME ${1:/data}",
+      "insertTextRules": 4,
+      "sortText": "10_VOLUME"
+    },
+    {
+      "label": "USER",
+      "kind": 14,
+      "detail": "Set the user for subsequent instructions",
+      "documentation": { "value": "Set the user (and optionally group) for RUN, CMD, and ENTRYPOINT instructions that follow.\n\n```dockerfile\nRUN groupadd -r appuser && useradd -r -g appuser appuser\nUSER appuser\nUSER 1000:1000\n```" },
+      "insertText": "USER ${1:user}",
+      "insertTextRules": 4,
+      "sortText": "11_USER"
+    },
+    {
+      "label": "WORKDIR",
+      "kind": 14,
+      "detail": "Set the working directory",
+      "documentation": { "value": "Set the working directory for RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow.\n\n```dockerfile\nWORKDIR /app\nWORKDIR /usr/src/app\n```" },
+      "insertText": "WORKDIR ${1:/app}",
+      "insertTextRules": 4,
+      "sortText": "12_WORKDIR"
+    },
+    {
+      "label": "ARG",
+      "kind": 14,
+      "detail": "Define a build-time variable",
+      "documentation": { "value": "Define a variable that users can pass at build time with `--build-arg`.\n\n```dockerfile\nARG NODE_VERSION=20\nARG APP_VERSION\nFROM node:${NODE_VERSION}-alpine\n```\n\nBuild: `docker build --build-arg NODE_VERSION=18 .`" },
+      "insertText": "ARG ${1:name}=${2:default}",
+      "insertTextRules": 4,
+      "sortText": "13_ARG"
+    },
+    {
+      "label": "ONBUILD",
+      "kind": 14,
+      "detail": "Add trigger instruction for downstream builds",
+      "documentation": { "value": "Add a trigger instruction that executes when the image is used as a base for another build.\n\n```dockerfile\nONBUILD COPY . /app/src\nONBUILD RUN npm install\n```" },
+      "insertText": "ONBUILD ${1:INSTRUCTION}",
+      "insertTextRules": 4,
+      "sortText": "14_ONBUILD"
+    },
+    {
+      "label": "STOPSIGNAL",
+      "kind": 14,
+      "detail": "Set the system call signal for stopping the container",
+      "documentation": { "value": "Set the signal that will be sent to the container to stop it.\n\n```dockerfile\nSTOPSIGNAL SIGTERM\nSTOPSIGNAL SIGQUIT\nSTOPSIGNAL 9\n```" },
+      "insertText": "STOPSIGNAL ${1|SIGTERM,SIGQUIT,SIGKILL,SIGINT|}",
+      "insertTextRules": 4,
+      "sortText": "15_STOPSIGNAL"
+    },
+    {
+      "label": "HEALTHCHECK",
+      "kind": 14,
+      "detail": "Define container health check",
+      "documentation": { "value": "Tell Docker how to test the container to check that it is still working.\n\n```dockerfile\nHEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \\\n  CMD curl -f http://localhost:8080/health || exit 1\n\nHEALTHCHECK NONE\n```" },
+      "insertText": "HEALTHCHECK --interval=${1:30s} --timeout=${2:10s} --start-period=${3:5s} --retries=${4:3} \\\n  CMD ${5:curl -f http://localhost:8080/health || exit 1}",
+      "insertTextRules": 4,
+      "sortText": "16_HEALTHCHECK"
+    },
+    {
+      "label": "SHELL",
+      "kind": 14,
+      "detail": "Override the default shell",
+      "documentation": { "value": "Override the default shell used for the shell form of commands.\n\n```dockerfile\nSHELL [\"/bin/bash\", \"-c\"]\nSHELL [\"powershell\", \"-command\"]\n```" },
+      "insertText": "SHELL [\"${1:/bin/bash}\", \"${2:-c}\"]",
+      "insertTextRules": 4,
+      "sortText": "17_SHELL"
+    },
+    {
+      "label": "FROM node",
+      "kind": 27,
+      "detail": "Node.js base image",
+      "documentation": { "value": "Use the official Node.js image as the base.\n\n```dockerfile\nFROM node:20-alpine\nFROM node:18-slim\nFROM node:20-bookworm\n```\n\nVariants: `alpine` (minimal ~50MB), `slim` (Debian minimal), `bookworm`/`bullseye` (full Debian)." },
+      "insertText": "FROM node:${1|20-alpine,20-slim,20-bookworm,18-alpine,18-slim,22-alpine|}",
+      "insertTextRules": 4,
+      "sortText": "20_node"
+    },
+    {
+      "label": "FROM python",
+      "kind": 27,
+      "detail": "Python base image",
+      "documentation": { "value": "Use the official Python image as the base.\n\n```dockerfile\nFROM python:3.12-slim\nFROM python:3.11-alpine\nFROM python:3.12-bookworm\n```\n\nVariants: `slim` (recommended for most apps), `alpine` (smallest), `bookworm` (full Debian)." },
+      "insertText": "FROM python:${1|3.12-slim,3.12-alpine,3.12-bookworm,3.11-slim,3.11-alpine|}",
+      "insertTextRules": 4,
+      "sortText": "20_python"
+    },
+    {
+      "label": "FROM golang",
+      "kind": 27,
+      "detail": "Go base image",
+      "documentation": { "value": "Use the official Go image as the base.\n\n```dockerfile\nFROM golang:1.22-alpine\nFROM golang:1.22-bookworm\n```\n\nGo binaries are statically linked by default — ideal for multi-stage builds with `FROM scratch`." },
+      "insertText": "FROM golang:${1|1.22-alpine,1.22-bookworm,1.21-alpine,1.21-bookworm|}",
+      "insertTextRules": 4,
+      "sortText": "20_golang"
+    },
+    {
+      "label": "FROM rust",
+      "kind": 27,
+      "detail": "Rust base image",
+      "documentation": { "value": "Use the official Rust image as the base.\n\n```dockerfile\nFROM rust:1.77-slim\nFROM rust:1.77-alpine\nFROM rust:1.77-bookworm\n```\n\nUse multi-stage builds to create minimal final images." },
+      "insertText": "FROM rust:${1|1.77-slim,1.77-alpine,1.77-bookworm|}",
+      "insertTextRules": 4,
+      "sortText": "20_rust"
+    },
+    {
+      "label": "FROM ubuntu",
+      "kind": 27,
+      "detail": "Ubuntu base image",
+      "documentation": { "value": "Use the official Ubuntu image as the base.\n\n```dockerfile\nFROM ubuntu:22.04\nFROM ubuntu:24.04\nFROM ubuntu:20.04\n```" },
+      "insertText": "FROM ubuntu:${1|24.04,22.04,20.04|}",
+      "insertTextRules": 4,
+      "sortText": "20_ubuntu"
+    },
+    {
+      "label": "FROM alpine",
+      "kind": 27,
+      "detail": "Alpine Linux base image",
+      "documentation": { "value": "Use Alpine Linux (~5MB) for minimal images.\n\n```dockerfile\nFROM alpine:3.19\nFROM alpine:3.18\n```\n\nUses `musl` libc and `apk` package manager. May have compatibility issues with some C libraries." },
+      "insertText": "FROM alpine:${1|3.19,3.18,3.17|}",
+      "insertTextRules": 4,
+      "sortText": "20_alpine"
+    },
+    {
+      "label": "FROM debian",
+      "kind": 27,
+      "detail": "Debian base image",
+      "documentation": { "value": "Use the official Debian image as the base.\n\n```dockerfile\nFROM debian:bookworm-slim\nFROM debian:bullseye-slim\n```\n\n`-slim` variants are much smaller and sufficient for most applications." },
+      "insertText": "FROM debian:${1|bookworm-slim,bullseye-slim,bookworm,bullseye|}",
+      "insertTextRules": 4,
+      "sortText": "20_debian"
+    },
+    {
+      "label": "FROM nginx",
+      "kind": 27,
+      "detail": "Nginx web server base image",
+      "documentation": { "value": "Use the official Nginx image.\n\n```dockerfile\nFROM nginx:alpine\nFROM nginx:1.25-alpine\n```\n\nDefault serves `/usr/share/nginx/html`. Config at `/etc/nginx/nginx.conf`." },
+      "insertText": "FROM nginx:${1|alpine,1.25-alpine,1.25-bookworm,stable-alpine|}",
+      "insertTextRules": 4,
+      "sortText": "20_nginx"
+    },
+    {
+      "label": "FROM redis",
+      "kind": 27,
+      "detail": "Redis base image",
+      "documentation": { "value": "Use the official Redis image.\n\n```dockerfile\nFROM redis:7-alpine\nFROM redis:7-bookworm\n```\n\nData directory: `/data`. Default port: 6379." },
+      "insertText": "FROM redis:${1|7-alpine,7-bookworm,6-alpine|}",
+      "insertTextRules": 4,
+      "sortText": "20_redis"
+    },
+    {
+      "label": "FROM postgres",
+      "kind": 27,
+      "detail": "PostgreSQL base image",
+      "documentation": { "value": "Use the official PostgreSQL image.\n\n```dockerfile\nFROM postgres:16-alpine\nFROM postgres:15-bookworm\n```\n\nSet `POSTGRES_PASSWORD`, `POSTGRES_USER`, `POSTGRES_DB` environment variables. Init scripts in `/docker-entrypoint-initdb.d/`." },
+      "insertText": "FROM postgres:${1|16-alpine,16-bookworm,15-alpine,15-bookworm|}",
+      "insertTextRules": 4,
+      "sortText": "20_postgres"
+    },
+    {
+      "label": "FROM mysql",
+      "kind": 27,
+      "detail": "MySQL base image",
+      "documentation": { "value": "Use the official MySQL image.\n\n```dockerfile\nFROM mysql:8.0\nFROM mysql:8.3\n```\n\nSet `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`. Init scripts in `/docker-entrypoint-initdb.d/`." },
+      "insertText": "FROM mysql:${1|8.3,8.0|}",
+      "insertTextRules": 4,
+      "sortText": "20_mysql"
+    },
+    {
+      "label": "apt-get install pattern",
+      "kind": 15,
+      "detail": "Best practice apt-get install with cleanup",
+      "documentation": { "value": "Install packages with apt-get following Docker best practices: combine update+install, use `--no-install-recommends`, and clean up in a single RUN layer.\n\n```dockerfile\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n    curl \\\n    ca-certificates \\\n  && rm -rf /var/lib/apt/lists/*\n```" },
+      "insertText": "RUN apt-get update && apt-get install -y --no-install-recommends \\\n    ${1:package} \\\n  && rm -rf /var/lib/apt/lists/*",
+      "insertTextRules": 4,
+      "sortText": "30_apt_install"
+    },
+    {
+      "label": "pip install pattern",
+      "kind": 15,
+      "detail": "Best practice pip install",
+      "documentation": { "value": "Install Python packages with pip following best practices: use `--no-cache-dir` to keep image small.\n\n```dockerfile\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n```" },
+      "insertText": "COPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt",
+      "insertTextRules": 4,
+      "sortText": "30_pip_install"
+    },
+    {
+      "label": "npm install pattern",
+      "kind": 15,
+      "detail": "Best practice npm install with layer caching",
+      "documentation": { "value": "Copy package files first to leverage Docker layer caching. Dependencies are only reinstalled when package files change.\n\n```dockerfile\nCOPY package.json package-lock.json ./\nRUN npm ci --only=production\nCOPY . .\n```" },
+      "insertText": "COPY package.json package-lock.json ./\nRUN npm ci ${1:--only=production}\nCOPY . .",
+      "insertTextRules": 4,
+      "sortText": "30_npm_install"
+    },
+    {
+      "label": "COPY package.json first",
+      "kind": 15,
+      "detail": "Layer caching pattern for package managers",
+      "documentation": { "value": "Copy dependency manifests before the rest of the code to leverage Docker's build cache. This way, dependencies are only reinstalled when the manifest changes.\n\n```dockerfile\n# Dependencies are cached unless package.json changes\nCOPY package.json package-lock.json ./\nRUN npm ci\n\n# Application code changes don't invalidate deps cache\nCOPY . .\n```" },
+      "insertText": "# Install dependencies (cached unless manifest changes)\nCOPY ${1:package.json} ${2:package-lock.json} ./\nRUN ${3:npm ci}\n\n# Copy application source\nCOPY . .",
+      "insertTextRules": 4,
+      "sortText": "30_copy_first"
+    },
+    {
+      "label": "ARG + ENV pattern",
+      "kind": 15,
+      "detail": "Use ARG to set ENV at build time",
+      "documentation": { "value": "Combine ARG and ENV to set environment variables that can be overridden at build time and persist at runtime.\n\n```dockerfile\nARG APP_VERSION=1.0.0\nENV APP_VERSION=${APP_VERSION}\n```\n\n`ARG` is only available during build. `ENV` persists in the running container." },
+      "insertText": "ARG ${1:VAR_NAME}=${2:default_value}\nENV ${1:VAR_NAME}=${${1:VAR_NAME}}",
+      "insertTextRules": 4,
+      "sortText": "31_arg_env"
+    },
+    {
+      "label": "HEALTHCHECK CMD",
+      "kind": 15,
+      "detail": "Health check with all options",
+      "documentation": { "value": "Configure a health check with interval, timeout, start period, and retries.\n\n```dockerfile\nHEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \\\n  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1\n```\n\nOptions:\n- `--interval=DURATION` (default 30s)\n- `--timeout=DURATION` (default 30s)\n- `--start-period=DURATION` (default 0s)\n- `--retries=N` (default 3)" },
+      "insertText": "HEALTHCHECK --interval=${1:30s} --timeout=${2:10s} --start-period=${3:40s} --retries=${4:3} \\\n  CMD ${5:wget --no-verbose --tries=1 --spider http://localhost:${6:8080}/health || exit 1}",
+      "insertTextRules": 4,
+      "sortText": "31_healthcheck"
+    },
+    {
+      "label": "Multi-stage builder pattern",
+      "kind": 15,
+      "detail": "Multi-stage build with builder stage",
+      "documentation": { "value": "Use a multi-stage build to compile/build in one stage and copy artifacts to a minimal final image.\n\n```dockerfile\nFROM node:20-alpine AS builder\nWORKDIR /app\nCOPY . .\nRUN npm ci && npm run build\n\nFROM nginx:alpine\nCOPY --from=builder /app/dist /usr/share/nginx/html\nEXPOSE 80\nCMD [\"nginx\", \"-g\", \"daemon off;\"]\n```" },
+      "insertText": "FROM ${1:node:20-alpine} AS builder\nWORKDIR /app\nCOPY . .\nRUN ${2:npm ci && npm run build}\n\nFROM ${3:nginx:alpine}\nCOPY --from=builder ${4:/app/dist} ${5:/usr/share/nginx/html}\nEXPOSE ${6:80}\nCMD [\"${7:nginx}\", \"${8:-g}\", \"${9:daemon off;}\"]",
+      "insertTextRules": 4,
+      "sortText": "32_multistage_builder"
+    },
+    {
+      "label": "Non-root user pattern",
+      "kind": 15,
+      "detail": "Create and switch to non-root user",
+      "documentation": { "value": "Security best practice: run the final container as a non-root user.\n\n```dockerfile\nRUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser\nUSER appuser\n```" },
+      "insertText": "RUN addgroup --system ${1:appgroup} && adduser --system --ingroup ${1:appgroup} ${2:appuser}\nUSER ${2:appuser}",
+      "insertTextRules": 4,
+      "sortText": "33_nonroot_user"
+    },
+    {
+      "label": "Dockerfile: Node.js app",
+      "kind": 15,
+      "detail": "Complete Dockerfile for a Node.js application",
+      "documentation": { "value": "Production-ready Dockerfile for a Node.js application with multi-stage build, non-root user, and health check.\n\n```dockerfile\nFROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:20-alpine\nRUN addgroup -S app && adduser -S app -G app\nWORKDIR /app\nCOPY --from=builder --chown=app:app /app/dist ./dist\nCOPY --from=builder --chown=app:app /app/node_modules ./node_modules\nCOPY --from=builder --chown=app:app /app/package.json ./\nUSER app\nEXPOSE 3000\nHEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD wget -qO- http://localhost:3000/health || exit 1\nCMD [\"node\", \"dist/index.js\"]\n```" },
+      "insertText": "FROM node:${1:20-alpine} AS builder\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:${1:20-alpine}\nRUN addgroup -S app && adduser -S app -G app\nWORKDIR /app\nCOPY --from=builder --chown=app:app /app/dist ./dist\nCOPY --from=builder --chown=app:app /app/node_modules ./node_modules\nCOPY --from=builder --chown=app:app /app/package.json ./\nUSER app\nEXPOSE ${2:3000}\nHEALTHCHECK --interval=30s --timeout=10s --retries=3 \\\n  CMD wget -qO- http://localhost:${2:3000}/health || exit 1\nCMD [\"node\", \"dist/index.js\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_node"
+    },
+    {
+      "label": "Dockerfile: Python app",
+      "kind": 15,
+      "detail": "Complete Dockerfile for a Python application",
+      "documentation": { "value": "Production-ready Dockerfile for a Python application with virtual env, non-root user, and best practices.\n\n```dockerfile\nFROM python:3.12-slim AS builder\nWORKDIR /app\nRUN python -m venv /opt/venv\nENV PATH=\"/opt/venv/bin:$PATH\"\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nFROM python:3.12-slim\nRUN useradd --create-home appuser\nWORKDIR /app\nCOPY --from=builder /opt/venv /opt/venv\nENV PATH=\"/opt/venv/bin:$PATH\"\nCOPY --chown=appuser:appuser . .\nUSER appuser\nEXPOSE 8000\nCMD [\"python\", \"-m\", \"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n```" },
+      "insertText": "FROM python:${1:3.12-slim} AS builder\nWORKDIR /app\nRUN python -m venv /opt/venv\nENV PATH=\"/opt/venv/bin:$$PATH\"\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nFROM python:${1:3.12-slim}\nRUN useradd --create-home appuser\nWORKDIR /app\nCOPY --from=builder /opt/venv /opt/venv\nENV PATH=\"/opt/venv/bin:$$PATH\"\nCOPY --chown=appuser:appuser . .\nUSER appuser\nEXPOSE ${2:8000}\nCMD [\"python\", \"-m\", \"${3:uvicorn}\", \"${4:main:app}\", \"--host\", \"0.0.0.0\", \"--port\", \"${2:8000}\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_python"
+    },
+    {
+      "label": "Dockerfile: Go app",
+      "kind": 15,
+      "detail": "Complete Dockerfile for a Go application",
+      "documentation": { "value": "Production-ready multi-stage Dockerfile for a Go application using scratch as the final image.\n\n```dockerfile\nFROM golang:1.22-alpine AS builder\nWORKDIR /app\nCOPY go.mod go.sum ./\nRUN go mod download\nCOPY . .\nRUN CGO_ENABLED=0 GOOS=linux go build -ldflags='-w -s' -o /app/server ./cmd/server\n\nFROM scratch\nCOPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/\nCOPY --from=builder /app/server /server\nEXPOSE 8080\nENTRYPOINT [\"/server\"]\n```" },
+      "insertText": "FROM golang:${1:1.22-alpine} AS builder\nWORKDIR /app\nCOPY go.mod go.sum ./\nRUN go mod download\nCOPY . .\nRUN CGO_ENABLED=0 GOOS=linux go build -ldflags='-w -s' -o /app/${2:server} ./${3:cmd/server}\n\nFROM scratch\nCOPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/\nCOPY --from=builder /app/${2:server} /${2:server}\nEXPOSE ${4:8080}\nENTRYPOINT [\"/${2:server}\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_go"
+    },
+    {
+      "label": "Dockerfile: Multi-stage build",
+      "kind": 15,
+      "detail": "Generic multi-stage build template",
+      "documentation": { "value": "A generic multi-stage build template. First stage builds, second stage runs.\n\n```dockerfile\n# Build stage\nFROM image:tag AS builder\nWORKDIR /app\nCOPY . .\nRUN make build\n\n# Production stage\nFROM image:tag\nWORKDIR /app\nCOPY --from=builder /app/output /app/\nEXPOSE 8080\nCMD [\"./app\"]\n```" },
+      "insertText": "# Build stage\nFROM ${1:image}:${2:tag} AS builder\nWORKDIR /app\nCOPY . .\nRUN ${3:make build}\n\n# Production stage\nFROM ${4:image}:${5:tag}\nWORKDIR /app\nCOPY --from=builder /app/${6:output} /app/\nEXPOSE ${7:8080}\nCMD [\"${8:./app}\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_multistage"
+    },
+    {
+      "label": "Dockerfile: Rust app",
+      "kind": 15,
+      "detail": "Complete Dockerfile for a Rust application",
+      "documentation": { "value": "Production-ready multi-stage Dockerfile for a Rust application.\n\n```dockerfile\nFROM rust:1.77-slim AS builder\nWORKDIR /app\nCOPY Cargo.toml Cargo.lock ./\nRUN mkdir src && echo 'fn main(){}' > src/main.rs && cargo build --release && rm -rf src\nCOPY src ./src\nRUN cargo build --release\n\nFROM debian:bookworm-slim\nRUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*\nCOPY --from=builder /app/target/release/myapp /usr/local/bin/myapp\nEXPOSE 8080\nCMD [\"myapp\"]\n```" },
+      "insertText": "FROM rust:${1:1.77-slim} AS builder\nWORKDIR /app\nCOPY Cargo.toml Cargo.lock ./\nRUN mkdir src && echo 'fn main(){}' > src/main.rs && cargo build --release && rm -rf src\nCOPY src ./src\nRUN cargo build --release\n\nFROM debian:bookworm-slim\nRUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*\nCOPY --from=builder /app/target/release/${2:myapp} /usr/local/bin/${2:myapp}\nEXPOSE ${3:8080}\nCMD [\"${2:myapp}\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_rust"
+    },
+    {
+      "label": "Dockerfile: Nginx static site",
+      "kind": 15,
+      "detail": "Dockerfile for serving static files with Nginx",
+      "documentation": { "value": "Serve a static website or SPA with Nginx.\n\n```dockerfile\nFROM nginx:alpine\nCOPY nginx.conf /etc/nginx/conf.d/default.conf\nCOPY dist/ /usr/share/nginx/html/\nEXPOSE 80\nHEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://localhost/ || exit 1\nCMD [\"nginx\", \"-g\", \"daemon off;\"]\n```" },
+      "insertText": "FROM nginx:alpine\nCOPY ${1:nginx.conf} /etc/nginx/conf.d/default.conf\nCOPY ${2:dist/} /usr/share/nginx/html/\nEXPOSE 80\nHEALTHCHECK --interval=30s --timeout=5s \\\n  CMD wget -qO- http://localhost/ || exit 1\nCMD [\"nginx\", \"-g\", \"daemon off;\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_nginx"
+    },
+    {
+      "label": "apk add pattern",
+      "kind": 15,
+      "detail": "Alpine package install with cleanup",
+      "documentation": { "value": "Install packages on Alpine Linux with `--no-cache` to avoid caching the index.\n\n```dockerfile\nRUN apk add --no-cache \\\n    curl \\\n    ca-certificates \\\n    tzdata\n```" },
+      "insertText": "RUN apk add --no-cache \\\n    ${1:package}",
+      "insertTextRules": 4,
+      "sortText": "30_apk_install"
+    },
+    {
+      "label": "ENTRYPOINT + CMD pattern",
+      "kind": 15,
+      "detail": "ENTRYPOINT with CMD as default args",
+      "documentation": { "value": "Use ENTRYPOINT for the executable and CMD for default arguments. Users can override CMD args at `docker run`.\n\n```dockerfile\nENTRYPOINT [\"python\", \"app.py\"]\nCMD [\"--port\", \"8000\"]\n\n# docker run myimage                  -> python app.py --port 8000\n# docker run myimage --port 9000      -> python app.py --port 9000\n```" },
+      "insertText": "ENTRYPOINT [\"${1:executable}\"]\nCMD [\"${2:--default-arg}\", \"${3:value}\"]",
+      "insertTextRules": 4,
+      "sortText": "31_entrypoint_cmd"
+    },
+    {
+      "label": ".dockerignore note",
+      "kind": 15,
+      "detail": "Reminder to create .dockerignore",
+      "documentation": { "value": "Always create a `.dockerignore` file to exclude files from the build context, reducing build time and image size.\n\n```\n# .dockerignore\nnode_modules\n.git\n.env\n*.md\nDockerfile\n.dockerignore\ndist\ncoverage\n.nyc_output\n```" },
+      "insertText": "# Remember to create a .dockerignore file:\n# node_modules\n# .git\n# .env\n# *.md\n# Dockerfile\n# .dockerignore",
+      "insertTextRules": 4,
+      "sortText": "50_dockerignore"
+    },
+    {
+      "label": "COPY --link",
+      "kind": 15,
+      "detail": "Copy with independent layer",
+      "documentation": { "value": "Use `--link` to create an independent layer that doesn't depend on previous layers, enabling better cache reuse.\n\n```dockerfile\nCOPY --link package.json ./\nCOPY --link --from=builder /app/dist ./dist\n```\n\nAvailable since BuildKit. The layer is not invalidated by changes to prior layers." },
+      "insertText": "COPY --link ${1:src} ${2:dest}",
+      "insertTextRules": 4,
+      "sortText": "08_COPY_link"
+    },
+    {
+      "label": "RUN --network=none",
+      "kind": 15,
+      "detail": "RUN with no network access",
+      "documentation": { "value": "Disable network access during a RUN step for security.\n\n```dockerfile\nRUN --network=none cat /etc/hostname\n```" },
+      "insertText": "RUN --network=none ${1:command}",
+      "insertTextRules": 4,
+      "sortText": "01_RUN_nonetwork"
+    },
+    {
+      "label": "LABEL OCI metadata",
+      "kind": 15,
+      "detail": "OCI standard image labels",
+      "documentation": { "value": "Apply standardized OCI annotations to your image.\n\n```dockerfile\nLABEL org.opencontainers.image.title=\"My App\" \\\n      org.opencontainers.image.description=\"Description\" \\\n      org.opencontainers.image.version=\"1.0.0\" \\\n      org.opencontainers.image.source=\"https://github.com/user/repo\" \\\n      org.opencontainers.image.licenses=\"MIT\"\n```" },
+      "insertText": "LABEL org.opencontainers.image.title=\"${1:App Name}\" \\\n      org.opencontainers.image.description=\"${2:Description}\" \\\n      org.opencontainers.image.version=\"${3:1.0.0}\" \\\n      org.opencontainers.image.source=\"${4:https://github.com/user/repo}\" \\\n      org.opencontainers.image.licenses=\"${5:MIT}\"",
+      "insertTextRules": 4,
+      "sortText": "03_LABEL_oci"
+    },
+    {
+      "label": "Dockerfile: Java Spring Boot app",
+      "kind": 15,
+      "detail": "Dockerfile for Java Spring Boot using layered JARs",
+      "documentation": { "value": "Multi-stage Dockerfile for a Spring Boot application with dependency layer caching.\n\n```dockerfile\nFROM eclipse-temurin:21-jdk-alpine AS builder\nWORKDIR /app\nCOPY . .\nRUN ./mvnw package -DskipTests\n\nFROM eclipse-temurin:21-jre-alpine\nWORKDIR /app\nCOPY --from=builder /app/target/*.jar app.jar\nRUN addgroup -S spring && adduser -S spring -G spring\nUSER spring\nEXPOSE 8080\nHEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD wget -qO- http://localhost:8080/actuator/health || exit 1\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```" },
+      "insertText": "FROM eclipse-temurin:${1:21-jdk-alpine} AS builder\nWORKDIR /app\nCOPY . .\nRUN ./mvnw package -DskipTests\n\nFROM eclipse-temurin:${2:21-jre-alpine}\nWORKDIR /app\nCOPY --from=builder /app/target/*.jar app.jar\nRUN addgroup -S spring && adduser -S spring -G spring\nUSER spring\nEXPOSE ${3:8080}\nHEALTHCHECK --interval=30s --timeout=10s --retries=3 \\\n  CMD wget -qO- http://localhost:${3:8080}/actuator/health || exit 1\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]",
+      "insertTextRules": 4,
+      "sortText": "40_full_java"
+    }
+  ]
+}

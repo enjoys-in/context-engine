@@ -1,0 +1,449 @@
+{
+  "name": "symfony",
+  "description": "Symfony Console CLI provides commands for creating projects, managing servers, generating code, handling database migrations, clearing caches, debugging routes, and more within the Symfony PHP framework.",
+  "category": "php-ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "new",
+      "description": "Create a new Symfony project in a specified directory",
+      "args": [{"name": "name", "type": "string", "required": true, "description": "Project directory name"}],
+      "options": [
+        {"name": "--version", "description": "Symfony version to install (e.g. 7.0, lts, stable, next)", "type": "string"},
+        {"name": "--full", "description": "Create a full Symfony application (webapp)"},
+        {"name": "--demo", "description": "Create a Symfony Demo application"},
+        {"name": "--webapp", "description": "Create a web application skeleton"},
+        {"name": "--api", "description": "Create an API-oriented project"},
+        {"name": "--no-git", "description": "Skip Git repository initialization"},
+        {"name": "--cloud", "description": "Initialize Platform.sh configuration"},
+        {"name": "--docker", "description": "Enable Docker configuration"},
+        {"name": "--php", "description": "PHP version to use", "type": "string"}
+      ],
+      "examples": [
+        "symfony new my_project",
+        "symfony new my_api --webapp",
+        "symfony new blog --demo",
+        "symfony new myapp --version=lts --docker"
+      ]
+    },
+    {
+      "name": "server:start",
+      "description": "Start the local Symfony development web server in the background",
+      "args": [],
+      "options": [
+        {"name": "--port", "short": "-p", "description": "Preferred port for the server", "type": "integer"},
+        {"name": "--daemon", "short": "-d", "description": "Run server in the background"},
+        {"name": "--no-tls", "description": "Disable TLS and use plain HTTP"},
+        {"name": "--document-root", "description": "Document root directory", "type": "string"},
+        {"name": "--passthru", "description": "Front controller script path", "type": "string"},
+        {"name": "--allow-http", "description": "Allow HTTP connections even when TLS is available"}
+      ],
+      "examples": [
+        "symfony server:start",
+        "symfony server:start -d",
+        "symfony server:start --port=9000 --no-tls",
+        "symfony server:start -d --port=8443"
+      ]
+    },
+    {
+      "name": "server:stop",
+      "description": "Stop the local Symfony development web server",
+      "args": [],
+      "options": [],
+      "examples": [
+        "symfony server:stop"
+      ]
+    },
+    {
+      "name": "make:controller",
+      "description": "Create a new controller class with optional route annotations",
+      "args": [{"name": "name", "type": "string", "required": true, "description": "Controller class name (e.g. ProductController)"}],
+      "options": [
+        {"name": "--no-template", "description": "Skip generating a Twig template"},
+        {"name": "--invokable", "description": "Create an invokable controller with __invoke method"}
+      ],
+      "examples": [
+        "php bin/console make:controller ProductController",
+        "php bin/console make:controller Admin/DashboardController",
+        "php bin/console make:controller ApiController --no-template",
+        "php bin/console make:controller HomeController --invokable"
+      ]
+    },
+    {
+      "name": "make:entity",
+      "description": "Create or update a Doctrine entity class with properties and repository",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Entity class name"}],
+      "options": [
+        {"name": "--api-resource", "description": "Add API Platform #[ApiResource] attribute"},
+        {"name": "--regenerate", "description": "Regenerate an existing entity class based on annotations"},
+        {"name": "--overwrite", "description": "Overwrite existing getter/setter methods"},
+        {"name": "--with-uuid", "description": "Use UUID as the entity identifier"}
+      ],
+      "examples": [
+        "php bin/console make:entity Product",
+        "php bin/console make:entity User --api-resource",
+        "php bin/console make:entity --regenerate App/Entity/Product",
+        "php bin/console make:entity BlogPost --with-uuid"
+      ]
+    },
+    {
+      "name": "make:form",
+      "description": "Create a new form class, optionally bound to an entity",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Form class name"}],
+      "options": [],
+      "examples": [
+        "php bin/console make:form ProductType",
+        "php bin/console make:form RegistrationType"
+      ]
+    },
+    {
+      "name": "make:migration",
+      "description": "Generate a new database migration by comparing current mapping to database schema",
+      "args": [],
+      "options": [
+        {"name": "--formatted", "description": "Format the generated SQL"}
+      ],
+      "examples": [
+        "php bin/console make:migration",
+        "php bin/console make:migration --formatted"
+      ]
+    },
+    {
+      "name": "make:command",
+      "description": "Create a new Symfony console command class",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Command class name"}],
+      "options": [],
+      "examples": [
+        "php bin/console make:command AppSyncUsersCommand",
+        "php bin/console make:command ImportDataCommand"
+      ]
+    },
+    {
+      "name": "make:subscriber",
+      "description": "Create a new event subscriber class",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Subscriber class name"}],
+      "options": [],
+      "examples": [
+        "php bin/console make:subscriber UserActivitySubscriber",
+        "php bin/console make:subscriber RequestLogSubscriber"
+      ]
+    },
+    {
+      "name": "make:test",
+      "description": "Create a new test class (unit, functional, or integration)",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Test class name"}],
+      "options": [
+        {"name": "--type", "description": "Type of test: Unit, Functional, or Integration", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console make:test",
+        "php bin/console make:test ProductServiceTest",
+        "php bin/console make:test --type=Functional ApiControllerTest"
+      ]
+    },
+    {
+      "name": "make:voter",
+      "description": "Create a new security voter class",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Voter class name"}],
+      "options": [],
+      "examples": [
+        "php bin/console make:voter PostVoter",
+        "php bin/console make:voter ProjectAccessVoter"
+      ]
+    },
+    {
+      "name": "make:fixture",
+      "description": "Create a new data fixture class for populating the database with sample data",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "Fixture class name"}],
+      "options": [],
+      "examples": [
+        "php bin/console make:fixture AppFixtures",
+        "php bin/console make:fixture UserFixtures"
+      ]
+    },
+    {
+      "name": "doctrine:migrations:migrate",
+      "description": "Execute database migrations up to the latest available version",
+      "args": [{"name": "version", "type": "string", "required": false, "description": "Target version to migrate to (default: latest)"}],
+      "options": [
+        {"name": "--dry-run", "description": "Execute migration as a dry run without applying changes"},
+        {"name": "--no-interaction", "short": "-n", "description": "Do not ask any interactive question"},
+        {"name": "--query-time", "description": "Show query execution time"},
+        {"name": "--all-or-nothing", "description": "Wrap migration in a transaction"},
+        {"name": "--allow-no-migration", "description": "Do not throw an exception when no migration is available"}
+      ],
+      "examples": [
+        "php bin/console doctrine:migrations:migrate",
+        "php bin/console doctrine:migrations:migrate --dry-run",
+        "php bin/console doctrine:migrations:migrate prev",
+        "php bin/console doctrine:migrations:migrate --no-interaction --all-or-nothing"
+      ]
+    },
+    {
+      "name": "doctrine:schema:update",
+      "description": "Execute or dump SQL to update the database schema to match current mapping information",
+      "args": [],
+      "options": [
+        {"name": "--force", "description": "Execute schema updates directly on the database"},
+        {"name": "--dump-sql", "description": "Display the SQL statements without executing them"},
+        {"name": "--complete", "description": "Drop tables and columns not defined in mapping"},
+        {"name": "--em", "description": "Name of the entity manager to use", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console doctrine:schema:update --dump-sql",
+        "php bin/console doctrine:schema:update --force",
+        "php bin/console doctrine:schema:update --force --complete"
+      ]
+    },
+    {
+      "name": "doctrine:schema:validate",
+      "description": "Validate the Doctrine mapping files and check sync with the database schema",
+      "args": [],
+      "options": [
+        {"name": "--skip-mapping", "description": "Skip mapping validation"},
+        {"name": "--skip-sync", "description": "Skip schema synchronization check"},
+        {"name": "--em", "description": "Name of the entity manager", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console doctrine:schema:validate",
+        "php bin/console doctrine:schema:validate --skip-sync"
+      ]
+    },
+    {
+      "name": "doctrine:fixtures:load",
+      "description": "Load data fixtures into the database",
+      "args": [],
+      "options": [
+        {"name": "--append", "description": "Append data to existing data, instead of purging"},
+        {"name": "--group", "description": "Only load fixtures from specific group(s)", "type": "string"},
+        {"name": "--purge-with-truncate", "description": "Use TRUNCATE to purge data instead of DELETE"},
+        {"name": "--em", "description": "Name of the entity manager to use", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console doctrine:fixtures:load",
+        "php bin/console doctrine:fixtures:load --append",
+        "php bin/console doctrine:fixtures:load --group=test --purge-with-truncate"
+      ]
+    },
+    {
+      "name": "cache:clear",
+      "description": "Clear the Symfony application cache",
+      "args": [],
+      "options": [
+        {"name": "--no-warmup", "description": "Do not warm up the cache after clearing"},
+        {"name": "--no-optional-warmers", "description": "Skip optional cache warmers"},
+        {"name": "--env", "short": "-e", "description": "The environment to clear cache for", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console cache:clear",
+        "php bin/console cache:clear --env=prod",
+        "php bin/console cache:clear --no-warmup"
+      ]
+    },
+    {
+      "name": "cache:warmup",
+      "description": "Warm up an empty cache directory",
+      "args": [],
+      "options": [
+        {"name": "--no-optional-warmers", "description": "Skip optional cache warmers"},
+        {"name": "--env", "short": "-e", "description": "The environment to warm up cache for", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console cache:warmup",
+        "php bin/console cache:warmup --env=prod"
+      ]
+    },
+    {
+      "name": "debug:router",
+      "description": "Display all configured routes in the application",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "A route name to show details for"}],
+      "options": [
+        {"name": "--show-controllers", "description": "Show controller action for each route"},
+        {"name": "--format", "description": "Output format (txt, xml, json, md)", "type": "string"},
+        {"name": "--raw", "description": "Show raw route information"}
+      ],
+      "examples": [
+        "php bin/console debug:router",
+        "php bin/console debug:router --format=json",
+        "php bin/console debug:router app_product_show",
+        "php bin/console debug:router --show-controllers"
+      ]
+    },
+    {
+      "name": "debug:container",
+      "description": "Display current services for an application",
+      "args": [{"name": "name", "type": "string", "required": false, "description": "A service name or search pattern"}],
+      "options": [
+        {"name": "--show-arguments", "description": "Show service arguments"},
+        {"name": "--show-hidden", "description": "Show hidden (internal) services"},
+        {"name": "--tag", "description": "Show services with a specific tag", "type": "string"},
+        {"name": "--tags", "description": "Display tagged services for an application"},
+        {"name": "--parameter", "description": "Display a specific parameter", "type": "string"},
+        {"name": "--parameters", "description": "Display all parameters"},
+        {"name": "--types", "description": "Display types for services"},
+        {"name": "--env-var", "description": "Display a specific env var", "type": "string"},
+        {"name": "--env-vars", "description": "Display all environment variables"},
+        {"name": "--format", "description": "Output format (txt, xml, json, md)", "type": "string"},
+        {"name": "--deprecations", "description": "Display deprecations"}
+      ],
+      "examples": [
+        "php bin/console debug:container",
+        "php bin/console debug:container --tag=controller.service_arguments",
+        "php bin/console debug:container App\\Service\\MyService",
+        "php bin/console debug:container --parameters",
+        "php bin/console debug:container --env-vars --format=json"
+      ]
+    },
+    {
+      "name": "debug:autowiring",
+      "description": "List all autowirable types and their aliases",
+      "args": [{"name": "search", "type": "string", "required": false, "description": "Search term to filter services"}],
+      "options": [
+        {"name": "--all", "description": "Show also services that are not aliased"}
+      ],
+      "examples": [
+        "php bin/console debug:autowiring",
+        "php bin/console debug:autowiring log",
+        "php bin/console debug:autowiring Doctrine --all"
+      ]
+    },
+    {
+      "name": "debug:config",
+      "description": "Dump the current configuration for an extension",
+      "args": [
+        {"name": "name", "type": "string", "required": false, "description": "Bundle name or extension alias"},
+        {"name": "path", "type": "string", "required": false, "description": "Configuration path (dot-separated)"}
+      ],
+      "options": [
+        {"name": "--format", "description": "Output format (txt, xml, json, yaml)", "type": "string"},
+        {"name": "--resolve-env", "description": "Resolve environment variable values"}
+      ],
+      "examples": [
+        "php bin/console debug:config",
+        "php bin/console debug:config framework",
+        "php bin/console debug:config framework router",
+        "php bin/console debug:config twig --format=json"
+      ]
+    },
+    {
+      "name": "assets:install",
+      "description": "Install bundle web assets under the public directory",
+      "args": [{"name": "target", "type": "string", "required": false, "description": "Target directory (default: public)"}],
+      "options": [
+        {"name": "--symlink", "description": "Install assets as symlinks"},
+        {"name": "--relative", "description": "Make relative symlinks"}
+      ],
+      "examples": [
+        "php bin/console assets:install",
+        "php bin/console assets:install --symlink",
+        "php bin/console assets:install --symlink --relative"
+      ]
+    },
+    {
+      "name": "messenger:consume",
+      "description": "Consume messages from one or more transports",
+      "args": [{"name": "receivers", "type": "string", "required": false, "description": "Name(s) of the transport(s) to consume"}],
+      "options": [
+        {"name": "--limit", "short": "-l", "description": "Limit the number of received messages", "type": "integer"},
+        {"name": "--failure-limit", "description": "Stop after N failed messages", "type": "integer"},
+        {"name": "--memory-limit", "short": "-m", "description": "Memory limit in bytes", "type": "string"},
+        {"name": "--time-limit", "short": "-t", "description": "Time limit in seconds", "type": "integer"},
+        {"name": "--sleep", "description": "Seconds to sleep when no messages (default: 1)", "type": "integer"},
+        {"name": "--bus", "short": "-b", "description": "Name of the message bus to use", "type": "string"},
+        {"name": "--queues", "description": "Restrict consuming to specific queues", "type": "string"},
+        {"name": "--no-reset", "description": "Do not reset services after each message"}
+      ],
+      "examples": [
+        "php bin/console messenger:consume async",
+        "php bin/console messenger:consume async --limit=100",
+        "php bin/console messenger:consume async --time-limit=3600 --memory-limit=256M",
+        "php bin/console messenger:consume async failed --limit=10"
+      ]
+    },
+    {
+      "name": "security:hash-password",
+      "description": "Hash a user password using the configured password hasher",
+      "args": [{"name": "password", "type": "string", "required": false, "description": "The plaintext password to hash"}],
+      "options": [
+        {"name": "--user-class", "description": "Security user class to use for hashing", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console security:hash-password mySecretPassword",
+        "php bin/console security:hash-password --user-class=App\\Entity\\Admin"
+      ]
+    },
+    {
+      "name": "lint:yaml",
+      "description": "Lint YAML files for syntax errors",
+      "args": [{"name": "filename", "type": "string", "required": false, "description": "File or directory to lint"}],
+      "options": [
+        {"name": "--format", "description": "Output format (txt, json, github)", "type": "string"},
+        {"name": "--parse-tags", "description": "Parse custom Symfony YAML tags"},
+        {"name": "--exclude", "description": "Paths to exclude", "type": "string"}
+      ],
+      "examples": [
+        "php bin/console lint:yaml config/",
+        "php bin/console lint:yaml config/services.yaml",
+        "php bin/console lint:yaml config/ --format=json"
+      ]
+    },
+    {
+      "name": "lint:container",
+      "description": "Check that arguments injected into services match their type declarations",
+      "args": [],
+      "options": [],
+      "examples": [
+        "php bin/console lint:container"
+      ]
+    },
+    {
+      "name": "lint:twig",
+      "description": "Lint Twig templates for syntax errors",
+      "args": [{"name": "filename", "type": "string", "required": false, "description": "File or directory to lint"}],
+      "options": [
+        {"name": "--format", "description": "Output format (txt, json, github)", "type": "string"},
+        {"name": "--show-deprecations", "description": "Show deprecation warnings"}
+      ],
+      "examples": [
+        "php bin/console lint:twig templates/",
+        "php bin/console lint:twig templates/base.html.twig",
+        "php bin/console lint:twig templates/ --show-deprecations"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--env", "short": "-e", "description": "The application environment (dev, prod, test)", "type": "string"},
+    {"name": "--no-debug", "description": "Disable debug mode"},
+    {"name": "--quiet", "short": "-q", "description": "Do not output any message"},
+    {"name": "--verbose", "short": "-v", "description": "Increase verbosity (-v, -vv, -vvv)"},
+    {"name": "--version", "short": "-V", "description": "Display application version"},
+    {"name": "--ansi", "description": "Force ANSI output"},
+    {"name": "--no-ansi", "description": "Disable ANSI output"},
+    {"name": "--no-interaction", "short": "-n", "description": "Do not ask any interactive question"},
+    {"name": "--format", "description": "Output format where applicable (txt, json, xml)", "type": "string"},
+    {"name": "--help", "short": "-h", "description": "Display help for the given command"}
+  ],
+  "examples": [
+    "symfony new my_project --webapp",
+    "symfony server:start -d --port=8080",
+    "php bin/console make:entity Product",
+    "php bin/console make:migration && php bin/console doctrine:migrations:migrate",
+    "php bin/console cache:clear --env=prod",
+    "php bin/console debug:router --format=json",
+    "php bin/console debug:container --parameters",
+    "php bin/console messenger:consume async --limit=100 --memory-limit=128M",
+    "php bin/console doctrine:fixtures:load --append",
+    "php bin/console lint:yaml config/ && php bin/console lint:twig templates/"
+  ],
+  "relatedCommands": ["php", "composer", "artisan"],
+  "contextEngine": {
+    "detectors": [
+      {"name": "symfony_lock_exists", "description": "Detect symfony.lock file indicating a Symfony project", "command": "test -f symfony.lock && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "bundles_php_exists", "description": "Detect config/bundles.php for Symfony bundle registration", "command": "test -f config/bundles.php && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "symfony_version", "description": "Detect installed Symfony version from composer.lock", "command": "grep -A2 '\"symfony/framework-bundle\"' composer.lock 2>/dev/null | grep '\"version\"' | head -1 | sed 's/.*: \"\\(.*\\)\".*/\\1/'", "parser": "lines", "cacheFor": 300},
+      {"name": "symfony_env", "description": "Get current Symfony environment from .env", "command": "grep '^APP_ENV=' .env 2>/dev/null | cut -d= -f2", "parser": "lines", "cacheFor": 30},
+      {"name": "symfony_bin_console", "description": "Check if Symfony console is available", "command": "test -f bin/console && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60}
+    ]
+  }
+}

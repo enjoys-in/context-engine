@@ -1,0 +1,265 @@
+{
+  "language": "lua",
+  "hovers": {
+    "print": {
+      "contents": [
+        { "value": "```lua\nprint(···)\n```\nReceives any number of arguments and prints their values to stdout, using `tostring` to convert each argument. A tab character separates each value, and a newline is written after the last value. Not intended for formatted output — use `string.format` and `io.write` for that." }
+      ]
+    },
+    "type": {
+      "contents": [
+        { "value": "```lua\ntype(v) -> string\n```\nReturns the type of its only argument, coded as a string. The possible results are `\"nil\"`, `\"number\"`, `\"string\"`, `\"boolean\"`, `\"table\"`, `\"function\"`, `\"thread\"`, and `\"userdata\"`." }
+      ]
+    },
+    "tostring": {
+      "contents": [
+        { "value": "```lua\ntostring(v) -> string\n```\nReceives a value of any type and converts it to a string in a human-readable format. If the metatable of `v` has a `__tostring` metamethod, `tostring` calls it with `v` as the argument and uses the result as the return value." }
+      ]
+    },
+    "tonumber": {
+      "contents": [
+        { "value": "```lua\ntonumber(e [, base]) -> number | nil\n```\nWhen called with no base, tries to convert its argument to a number. If the argument is already a number or a string convertible to a number, returns the number; otherwise returns `nil`. When called with `base`, the argument must be a string to be interpreted in that base (2–36)." }
+      ]
+    },
+    "pairs": {
+      "contents": [
+        { "value": "```lua\npairs(t) -> function, table, nil\n```\nIf `t` has a metamethod `__pairs`, calls it with `t` as argument and returns the first three results. Otherwise, returns the `next` function, the table `t`, and `nil`, so that `for k, v in pairs(t) do ... end` iterates over all key–value pairs of `t`." }
+      ]
+    },
+    "ipairs": {
+      "contents": [
+        { "value": "```lua\nipairs(t) -> function, table, 0\n```\nReturns three values: an iterator function, the table `t`, and `0`. The iterator traverses integer keys `1, 2, ...` until a `nil` value is found. Suitable for arrays/sequences." }
+      ]
+    },
+    "require": {
+      "contents": [
+        { "value": "```lua\nrequire(modname) -> any\n```\nLoads the given module. First checks `package.loaded[modname]`. If not loaded, searches for a loader using `package.searchers` (Lua 5.2+) or `package.loaders` (Lua 5.1). The module value is cached in `package.loaded`." }
+      ]
+    },
+    "pcall": {
+      "contents": [
+        { "value": "```lua\npcall(f [, arg1, ···]) -> boolean, ...\n```\nCalls function `f` with the given arguments in *protected mode*. If there are no errors during the call, returns `true` plus all results from the call. In case of any error, returns `false` plus the error object. Does not produce a traceback." }
+      ]
+    },
+    "xpcall": {
+      "contents": [
+        { "value": "```lua\nxpcall(f, msgh [, arg1, ···]) -> boolean, ...\n```\nSimilar to `pcall`, but sets the message handler `msgh` to be called in case of errors. Any error inside `f` is not propagated; instead `xpcall` catches the error, calls `msgh` with the original error object, and returns the handler's results.\n\n**Note:** Extra arguments to `f` are supported in Lua 5.2+ and LuaJIT 2.1." }
+      ]
+    },
+    "error": {
+      "contents": [
+        { "value": "```lua\nerror(message [, level])\n```\nRaises an error. The `message` can be any value (string, table, etc.). `level` specifies how to get the error position: 1 (default) = where `error` was called, 2 = where the function that called `error` was called, 0 = no position information." }
+      ]
+    },
+    "assert": {
+      "contents": [
+        { "value": "```lua\nassert(v [, message]) -> v, message\n```\nCalls `error` if the value of `v` is false (i.e., `nil` or `false`); otherwise returns all its arguments. In case of error, `message` is the error object (default is `\"assertion failed!\"`)." }
+      ]
+    },
+    "select": {
+      "contents": [
+        { "value": "```lua\nselect(index, ···) -> ...\n```\nIf `index` is a number, returns all arguments after argument number `index`; a negative number indexes from the end. If `index` is the string `\"#\"`, returns the total number of extra arguments it received." }
+      ]
+    },
+    "setmetatable": {
+      "contents": [
+        { "value": "```lua\nsetmetatable(table, metatable) -> table\n```\nSets the metatable for the given table. If `metatable` is `nil`, removes the metatable. If the original metatable has a `__metatable` field, raises an error. Returns `table`." }
+      ]
+    },
+    "getmetatable": {
+      "contents": [
+        { "value": "```lua\ngetmetatable(object) -> table | nil | any\n```\nIf `object` does not have a metatable, returns `nil`. Otherwise, if the object's metatable has a `__metatable` field, returns that value. Otherwise, returns the metatable of the given object." }
+      ]
+    },
+    "rawget": {
+      "contents": [
+        { "value": "```lua\nrawget(table, index) -> any\n```\nGets the real value of `table[index]`, without invoking the `__index` metamethod." }
+      ]
+    },
+    "rawset": {
+      "contents": [
+        { "value": "```lua\nrawset(table, index, value) -> table\n```\nSets the real value of `table[index]` to `value`, without invoking the `__newindex` metamethod. `table` must be a table, `index` any value different from `nil` and NaN." }
+      ]
+    },
+    "next": {
+      "contents": [
+        { "value": "```lua\nnext(table [, index]) -> key, value | nil\n```\nAllows a program to traverse all fields of a table. Its first argument is a table and its second is an index. A call to `next` returns the next index of the table and its associated value. When called with `nil` as the second argument, returns an initial index. Returns `nil` when there are no more elements." }
+      ]
+    },
+    "load": {
+      "contents": [
+        { "value": "```lua\nload(chunk [, chunkname [, mode [, env]]]) -> function | nil, string\n```\nLoads a chunk. If `chunk` is a string, loads that string. If it is a function, `load` calls it repeatedly to get the chunk pieces. Returns the compiled chunk as a function; otherwise returns `nil` plus the error message.\n\n**Lua 5.1:** Use `loadstring` for strings. Lua 5.2+ unified into `load`." }
+      ]
+    },
+    "collectgarbage": {
+      "contents": [
+        { "value": "```lua\ncollectgarbage([opt [, arg]]) -> varies\n```\nGeneric interface to the garbage collector. Options: `\"collect\"` (full GC cycle), `\"stop\"`, `\"restart\"`, `\"count\"` (returns KB used), `\"step\"`, `\"isrunning\"`, `\"incremental\"` (Lua 5.4), `\"generational\"` (Lua 5.4)." }
+      ]
+    },
+    "string.format": {
+      "contents": [
+        { "value": "```lua\nstring.format(formatstring, ···) -> string\n```\nReturns a formatted version of its variable number of arguments following the format description. Similar to C `sprintf`. Directives: `%d`, `%i`, `%u`, `%f`, `%e`, `%g`, `%x`, `%X`, `%o`, `%s`, `%q` (quoted), `%c` (char), `%%` (literal %)." }
+      ]
+    },
+    "string.find": {
+      "contents": [
+        { "value": "```lua\nstring.find(s, pattern [, init [, plain]]) -> number, number, ... | nil\n```\nLooks for the first match of `pattern` in the string `s`. If found, returns the start and end indices of the match and any captures. Returns `nil` if no match. If `plain` is true, pattern matching facilities are turned off and the function does a plain \"find substring\" operation." }
+      ]
+    },
+    "string.match": {
+      "contents": [
+        { "value": "```lua\nstring.match(s, pattern [, init]) -> string | ... | nil\n```\nLooks for the first match of `pattern` in `s`. If found, returns the captures from the pattern; otherwise returns `nil`. If `pattern` specifies no captures, the whole match is returned." }
+      ]
+    },
+    "string.gmatch": {
+      "contents": [
+        { "value": "```lua\nstring.gmatch(s, pattern [, init]) -> iterator function\n```\nReturns an iterator function that, each time it is called, returns the next captures from `pattern` over the string `s`. If `pattern` specifies no captures, the whole match is produced in each call.\n\n**Lua 5.4:** Added optional `init` parameter." }
+      ]
+    },
+    "string.gsub": {
+      "contents": [
+        { "value": "```lua\nstring.gsub(s, pattern, repl [, n]) -> string, number\n```\nReturns a copy of `s` in which all (or the first `n`, if given) occurrences of the pattern have been replaced by `repl`. `repl` can be a string, a table, or a function. Also returns, as its second value, the total number of matches that occurred." }
+      ]
+    },
+    "string.sub": {
+      "contents": [
+        { "value": "```lua\nstring.sub(s, i [, j]) -> string\n```\nReturns the substring of `s` that starts at `i` and continues until `j` (both inclusive). `i` and `j` can be negative (counting from the end). Default `j` is `-1` (end of string)." }
+      ]
+    },
+    "table.insert": {
+      "contents": [
+        { "value": "```lua\ntable.insert(list, [pos,] value)\n```\nInserts element `value` at position `pos` in `list`, shifting up the elements `list[pos], ..., list[#list]`. The default value for `pos` is `#list+1`, so that a call `table.insert(t, x)` appends `x` at the end of list `t`." }
+      ]
+    },
+    "table.remove": {
+      "contents": [
+        { "value": "```lua\ntable.remove(list [, pos]) -> any\n```\nRemoves from `list` the element at position `pos`, returning the value of the removed element. When `pos` is between 1 and `#list`, shifts down elements `list[pos+1], ..., list[#list]`. The default value for `pos` is `#list` (removes last element)." }
+      ]
+    },
+    "table.sort": {
+      "contents": [
+        { "value": "```lua\ntable.sort(list [, comp])\n```\nSorts list elements in a given order, *in-place*, from `list[1]` to `list[#list]`. If `comp` is given, it must be a function that receives two list elements and returns `true` when the first element must come before the second in the final order. The sort is not stable in Lua 5.1–5.3; Lua 5.4 does not guarantee stability either." }
+      ]
+    },
+    "table.concat": {
+      "contents": [
+        { "value": "```lua\ntable.concat(list [, sep [, i [, j]]]) -> string\n```\nGiven a list where all elements are strings or numbers, returns the string `list[i]..sep..list[i+1] ··· sep..list[j]`. The default for `sep` is `\"\"`, for `i` is `1`, and for `j` is `#list`." }
+      ]
+    },
+    "math.random": {
+      "contents": [
+        { "value": "```lua\nmath.random([m [, n]]) -> number\n```\nWhen called without arguments, returns a pseudo-random float with uniform distribution in the range [0,1). When called with an integer `m`, returns a pseudo-random integer in [1, m]. When called with `m` and `n`, returns a pseudo-random integer in [m, n].\n\n**Lua 5.4:** Uses the xoshiro256** algorithm with better statistical properties than earlier versions' `rand()`." }
+      ]
+    },
+    "math.floor": {
+      "contents": [
+        { "value": "```lua\nmath.floor(x) -> integer\n```\nReturns the largest integral value less than or equal to `x`. In Lua 5.3+, returns an integer; in earlier versions returns a float." }
+      ]
+    },
+    "math.ceil": {
+      "contents": [
+        { "value": "```lua\nmath.ceil(x) -> integer\n```\nReturns the smallest integral value greater than or equal to `x`. In Lua 5.3+, returns an integer; in earlier versions returns a float." }
+      ]
+    },
+    "io.open": {
+      "contents": [
+        { "value": "```lua\nio.open(filename [, mode]) -> file | nil, string\n```\nOpens a file, in the mode specified by the string `mode`. Returns a new file handle, or, in case of errors, `nil` plus an error message. Modes: `\"r\"` (read, default), `\"w\"` (write), `\"a\"` (append), `\"r+\"` (update/read), `\"w+\"` (update/write), `\"a+\"` (update/append). Append `\"b\"` for binary mode." }
+      ]
+    },
+    "io.read": {
+      "contents": [
+        { "value": "```lua\nio.read(···) -> string | number | nil\n```\nEquivalent to `io.input():read(···)`. Reads from the default input file. Formats: `\"*a\"`/`\"a\"` (whole file), `\"*l\"`/`\"l\"` (next line stripping newline, default), `\"*L\"`/`\"L\"` (next line keeping newline), `\"*n\"`/`\"n\"` (a number), or a number `n` (reads `n` bytes).\n\n**Lua 5.3+:** The `*` prefix is optional." }
+      ]
+    },
+    "os.time": {
+      "contents": [
+        { "value": "```lua\nos.time([table]) -> integer\n```\nReturns the current time when called without arguments, or a time representing the local date and time specified by the given table. The table must have fields `year`, `month`, and `day`, and may optionally have `hour` (default 12), `min` (default 0), `sec` (default 0), and `isdst`." }
+      ]
+    },
+    "os.date": {
+      "contents": [
+        { "value": "```lua\nos.date([format [, time]]) -> string | table\n```\nReturns a string or a table containing date and time, formatted according to the given string `format`. If the format string starts with `!`, the date is formatted in Coordinated Universal Time (UTC). If `format` is `\"*t\"`, returns a table with fields: `year`, `month`, `day`, `hour`, `min`, `sec`, `wday`, `yday`, `isdst`." }
+      ]
+    },
+    "os.clock": {
+      "contents": [
+        { "value": "```lua\nos.clock() -> number\n```\nReturns an approximation of the amount in seconds of CPU time used by the program, as returned by the underlying ISO C function `clock`." }
+      ]
+    },
+    "os.execute": {
+      "contents": [
+        { "value": "```lua\nos.execute([command]) -> boolean|nil, string, integer\n```\nPasses `command` to be executed by an operating system shell. Its first result is `true` if the command terminated successfully, or `nil` otherwise. After this first result the function returns a string plus a number: `\"exit\"` plus exit status, or `\"signal\"` plus signal number.\n\n**Lua 5.1:** Returns only the status code (a number)." }
+      ]
+    },
+    "coroutine.create": {
+      "contents": [
+        { "value": "```lua\ncoroutine.create(f) -> thread\n```\nCreates a new coroutine, with body `f`. `f` must be a function. Returns the new coroutine (an object with type `\"thread\"`)." }
+      ]
+    },
+    "coroutine.resume": {
+      "contents": [
+        { "value": "```lua\ncoroutine.resume(co [, val1, ···]) -> boolean, ...\n```\nStarts or continues the execution of coroutine `co`. The first time you resume a coroutine, it starts running its body. Values `val1, ...` are passed as the arguments to the body function (on first resume) or as the results of `yield` (on subsequent resumes). If the coroutine runs without any errors, `resume` returns `true` plus any values passed to `yield` or returned by the body function." }
+      ]
+    },
+    "coroutine.yield": {
+      "contents": [
+        { "value": "```lua\ncoroutine.yield(···) -> ...\n```\nSuspends the execution of the calling coroutine. Any arguments to `yield` are passed as extra results to `resume`. When the coroutine is resumed again, `yield` returns any extra arguments passed to `resume`." }
+      ]
+    },
+    "coroutine.wrap": {
+      "contents": [
+        { "value": "```lua\ncoroutine.wrap(f) -> function\n```\nCreates a new coroutine with body `f` and returns a function that resumes the coroutine each time it is called. Any arguments to the returned function go as extra arguments to `resume`. Returns the same values returned by `resume`, except the first boolean. In case of error, propagates the error." }
+      ]
+    },
+    "coroutine.status": {
+      "contents": [
+        { "value": "```lua\ncoroutine.status(co) -> string\n```\nReturns the status of coroutine `co`, as a string: `\"running\"` if the coroutine is running (i.e., it called `status`); `\"suspended\"` if the coroutine is suspended in a call to `yield`, or if it has not started running yet; `\"normal\"` if the coroutine is active but not running (it resumed another coroutine); `\"dead\"` if the coroutine has finished its body function or if it has stopped with an error." }
+      ]
+    },
+    "function": {
+      "contents": [
+        { "value": "```lua\nfunction name(params)\n    body\nend\n```\nDefines a function. Functions are first-class values in Lua. The `function` keyword creates a closure — a function value with access to local variables from the enclosing scope (upvalues). Functions can return multiple values. Use `local function` for local scope." }
+      ]
+    },
+    "local": {
+      "contents": [
+        { "value": "```lua\nlocal name [= expr]\nlocal function name(params) body end\n```\nDeclares a local variable or local function, restricting its scope to the current block. Local variables are faster to access than globals. In Lua 5.4, local variables can have attributes: `<const>` (compile-time constant) and `<close>` (to-be-closed)." }
+      ]
+    },
+    "if": {
+      "contents": [
+        { "value": "```lua\nif expr then block\n{elseif expr then block}\n[else block]\nend\n```\nConditional statement. Evaluates `expr`; if it is anything other than `false` or `nil`, executes the corresponding `then` block. Optional `elseif` and `else` branches. Note: in Lua, only `false` and `nil` are falsy — `0` and `\"\"` are truthy." }
+      ]
+    },
+    "for": {
+      "contents": [
+        { "value": "```lua\n-- Numeric for:\nfor var = start, stop [, step] do block end\n\n-- Generic for:\nfor var_1, ···, var_n in explist do block end\n```\nThe numeric `for` loop iterates from `start` to `stop` by `step` (default 1). The generic `for` loop iterates via an iterator function (commonly `pairs`, `ipairs`, or custom iterators). Loop variables are local to the loop body." }
+      ]
+    },
+    "while": {
+      "contents": [
+        { "value": "```lua\nwhile expr do\n    block\nend\n```\nRepeats `block` while `expr` is true (not `false` or `nil`). The condition is tested before each iteration. Use `break` to exit early." }
+      ]
+    },
+    "repeat": {
+      "contents": [
+        { "value": "```lua\nrepeat\n    block\nuntil expr\n```\nRepeats `block` until `expr` is true. The condition is tested after each iteration, so the body always executes at least once. Local variables declared inside `block` are visible in the `until` condition." }
+      ]
+    },
+    "return": {
+      "contents": [
+        { "value": "```lua\nreturn [explist]\n```\nReturns values from a function or chunk. Lua allows multiple return values: `return a, b, c`. Must be the last statement in a block. If you need to return in the middle of a block, use an explicit `do return end`." }
+      ]
+    },
+    "nil": {
+      "contents": [
+        { "value": "`nil`\n\nThe type `nil` has one single value, `nil`, whose main property is to be different from any other value. It represents the absence of a useful value. A global variable has a `nil` value by default (before assignment), and you can assign `nil` to a variable to delete it." }
+      ]
+    },
+    "debug.traceback": {
+      "contents": [
+        { "value": "```lua\ndebug.traceback([thread,] [message [, level]]) -> string\n```\nReturns a string with a traceback of the call stack. The optional `message` is prepended to the traceback. `level` specifies at which level to start (default 1, the function calling `traceback`). Commonly used as the message handler in `xpcall`." }
+      ]
+    }
+  }
+}

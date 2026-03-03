@@ -1,0 +1,113 @@
+{
+  "language": "dockerfile",
+  "definitions": {
+    "FROM": {
+      "signature": "FROM [--platform=<platform>] <image>[:<tag>|@<digest>] [AS <name>]",
+      "description": "Initialize a new build stage and set the base image. Every valid Dockerfile must begin with a FROM instruction (except ARG before FROM). Supports multi-stage builds via multiple FROM instructions. The optional AS keyword names the stage for COPY --from references.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "RUN": {
+      "signature": "RUN [--mount=<type>] [--network=<type>] [--security=<type>] <command> | RUN [\"executable\", \"param1\", \"param2\"]",
+      "description": "Execute a command in a new layer on top of the current image and commit the result. Shell form runs via /bin/sh -c (or SHELL override). Exec form (JSON array) runs directly without shell processing. Supports BuildKit mount types: cache, bind, secret, ssh, tmpfs. Each RUN creates a new image layer — combine related commands with && to reduce layers.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "CMD": {
+      "signature": "CMD [\"executable\", \"param1\", \"param2\"] | CMD [\"param1\", \"param2\"] | CMD command param1 param2",
+      "description": "Set the default command to execute when a container starts. Only the last CMD in a Dockerfile takes effect. Three forms: exec form (preferred, JSON array), as default parameters to ENTRYPOINT (JSON array), and shell form. CMD is overridden by arguments passed to docker run.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "LABEL": {
+      "signature": "LABEL <key>=<value> [<key>=<value> ...]",
+      "description": "Add metadata to an image as key-value pairs. Labels are inherited from base images and can be inspected with docker inspect. Use OCI standard annotations (org.opencontainers.image.*) for interoperability. Combine multiple labels in one instruction to create a single layer.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "MAINTAINER": {
+      "signature": "MAINTAINER <name>",
+      "description": "Set the Author field of the generated image. Deprecated in favor of LABEL: use LABEL maintainer=\"name <email>\" instead. Still parsed for backward compatibility but should not be used in new Dockerfiles.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "EXPOSE": {
+      "signature": "EXPOSE <port>[/<protocol>] [<port>[/<protocol>] ...]",
+      "description": "Inform Docker that the container listens on the specified network port(s) at runtime. Default protocol is TCP; specify /udp for UDP. EXPOSE does not actually publish the port — it documents which ports are intended to be published. Use -p at docker run or ports in compose to actually publish.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ENV": {
+      "signature": "ENV <key>=<value> [<key>=<value> ...]",
+      "description": "Set environment variables that persist in the built image and running containers. ENV values are available during build (in subsequent instructions) and at runtime. Use ARG for build-only variables. ENV values can be overridden at runtime with docker run --env. Each ENV instruction creates a new layer; combine related variables in one instruction.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ADD": {
+      "signature": "ADD [--chown=<user>:<group>] [--chmod=<perms>] [--checksum=<hash>] <src> ... <dest>",
+      "description": "Copy files, directories, or remote URLs from <src> to the filesystem of the image at <dest>. ADD has special features: automatic extraction of recognized archive formats (tar, gzip, bzip2, xz) and support for remote URLs. For plain file copies, COPY is preferred. --chown sets ownership (Linux only). --checksum validates remote URLs.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "COPY": {
+      "signature": "COPY [--from=<name|index>] [--chown=<user>:<group>] [--chmod=<perms>] [--link] <src> ... <dest>",
+      "description": "Copy files or directories from the build context (or a named build stage / external image with --from) into the image filesystem. Preferred over ADD for basic file copying. --chown sets ownership (Linux only). --link creates independent layers for better cache reuse. Paths are relative to the build context.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ENTRYPOINT": {
+      "signature": "ENTRYPOINT [\"executable\", \"param1\", \"param2\"] | ENTRYPOINT command param1 param2",
+      "description": "Configure the container to run as an executable. Arguments from CMD or docker run are appended to the exec form ENTRYPOINT. Only the last ENTRYPOINT takes effect. Exec form (JSON array) is preferred. Shell form runs as /bin/sh -c subcommand, which does not pass signals. Use ENTRYPOINT for the main process and CMD for default arguments.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "VOLUME": {
+      "signature": "VOLUME [\"/path\"] | VOLUME /path1 /path2",
+      "description": "Create a mount point with the specified path and mark it as holding externally mounted volumes from the host or other containers. Data in volumes persists beyond the container lifecycle. Changes to volumes after the VOLUME instruction are not preserved during build. Use named volumes or bind mounts at runtime for data persistence.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "USER": {
+      "signature": "USER <user>[:<group>] | USER <UID>[:<GID>]",
+      "description": "Set the user name (or UID) and optionally the group (or GID) for RUN, CMD, and ENTRYPOINT instructions that follow in the Dockerfile. The user must exist in the image (create with useradd/adduser). Running containers as non-root is a security best practice. The user can be overridden at runtime with docker run --user.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "WORKDIR": {
+      "signature": "WORKDIR /path/to/workdir",
+      "description": "Set the working directory for RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow. If the directory does not exist, it is created. WORKDIR can be set multiple times and is resolved relative to the previous WORKDIR. Use absolute paths for clarity. Environment variables set with ENV can be used in the path.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ARG": {
+      "signature": "ARG <name>[=<default value>]",
+      "description": "Define a build-time variable that users can pass with docker build --build-arg <name>=<value>. ARG values are not persisted in the final image (unlike ENV). ARG before FROM is available only for the FROM instruction. ARG after FROM is scoped to the current build stage. Predefined ARGs include HTTP_PROXY, BUILDPLATFORM, TARGETPLATFORM, etc.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ONBUILD": {
+      "signature": "ONBUILD <INSTRUCTION>",
+      "description": "Add a trigger instruction to the image metadata that executes when the image is used as a base for another build. The trigger fires immediately after the FROM instruction in the child Dockerfile. Useful for building generic base images. ONBUILD ONBUILD is not allowed. ONBUILD instructions are not inherited beyond one level.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "STOPSIGNAL": {
+      "signature": "STOPSIGNAL <signal>",
+      "description": "Set the system call signal sent to the container to stop it. The signal can be a signal name (e.g., SIGTERM, SIGKILL, SIGQUIT) or an unsigned number matching a position in the kernel's syscall table (e.g., 9 for SIGKILL). Default is SIGTERM. Can be overridden at runtime with docker run --stop-signal.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "HEALTHCHECK": {
+      "signature": "HEALTHCHECK [OPTIONS] CMD <command> | HEALTHCHECK NONE",
+      "description": "Tell Docker how to test the container to check that it is still working. Options: --interval=DURATION (default 30s), --timeout=DURATION (default 30s), --start-period=DURATION (default 0s, grace period for startup), --retries=N (default 3). The command exit code determines health: 0=healthy, 1=unhealthy. Only the last HEALTHCHECK takes effect. Use HEALTHCHECK NONE to disable.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "SHELL": {
+      "signature": "SHELL [\"executable\", \"parameters\"]",
+      "description": "Override the default shell used for the shell form of RUN, CMD, and ENTRYPOINT instructions. Default on Linux is [\"/bin/sh\", \"-c\"], on Windows is [\"cmd\", \"/S\", \"/C\"]. SHELL can appear multiple times and affects all subsequent shell-form instructions. Useful for switching to bash, powershell, or other shells.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    }
+  }
+}

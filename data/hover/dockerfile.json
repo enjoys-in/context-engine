@@ -1,0 +1,145 @@
+{
+  "language": "dockerfile",
+  "hovers": {
+    "FROM": {
+      "contents": [
+        { "value": "```dockerfile\nFROM [--platform=<platform>] <image>[:<tag>|@<digest>] [AS <name>]\n```\nInitialize a new build stage and set the base image for subsequent instructions. A valid Dockerfile must start with a FROM instruction (ARG is the only instruction allowed before FROM). Multi-stage builds use multiple FROM instructions — each begins a new stage and resets the build context. Use `AS <name>` to name a stage for `COPY --from` references." }
+      ]
+    },
+    "RUN": {
+      "contents": [
+        { "value": "```dockerfile\nRUN <command>                          # shell form\nRUN [\"executable\", \"param1\", \"param2\"] # exec form\n```\nExecute a command in a new layer on top of the current image and commit the result. The shell form runs via `/bin/sh -c` (or the `SHELL` override). The exec form (JSON array) runs the executable directly without shell processing. Each RUN instruction creates a new layer — combine commands with `&&` to reduce layers. BuildKit supports `--mount=type=cache|bind|secret|ssh|tmpfs` and `--network=default|none|host`." }
+      ]
+    },
+    "CMD": {
+      "contents": [
+        { "value": "```dockerfile\nCMD [\"executable\", \"param1\", \"param2\"]   # exec form (preferred)\nCMD [\"param1\", \"param2\"]                 # default params to ENTRYPOINT\nCMD command param1 param2                # shell form\n```\nProvide the default command for a running container. Only the **last** CMD in a Dockerfile takes effect. If the Dockerfile also has an ENTRYPOINT (exec form), CMD provides default arguments to it. CMD is overridden by any arguments passed to `docker run`." }
+      ]
+    },
+    "LABEL": {
+      "contents": [
+        { "value": "```dockerfile\nLABEL <key>=<value> [<key>=<value> ...]\n```\nAdd metadata to an image as key-value pairs. Labels are inherited by child images. Use quotes for values with spaces. Combine labels in a single instruction to minimize layers. Standard OCI labels: `org.opencontainers.image.title`, `org.opencontainers.image.version`, `org.opencontainers.image.source`, `org.opencontainers.image.licenses`." }
+      ]
+    },
+    "MAINTAINER": {
+      "contents": [
+        { "value": "```dockerfile\nMAINTAINER <name>\n```\n**Deprecated.** Sets the Author field of the generated image. Use `LABEL maintainer=\"name <email>\"` instead, which is more flexible and follows the label-based metadata convention." }
+      ]
+    },
+    "EXPOSE": {
+      "contents": [
+        { "value": "```dockerfile\nEXPOSE <port>[/<protocol>] [...]\n```\nDeclare that the container listens on the specified port(s) at runtime. The default protocol is TCP; append `/udp` for UDP. **EXPOSE does not publish the port** — it serves as documentation. Use `-p` flag in `docker run` or `ports:` in Docker Compose to actually publish ports to the host." }
+      ]
+    },
+    "ENV": {
+      "contents": [
+        { "value": "```dockerfile\nENV <key>=<value> [<key>=<value> ...]\n```\nSet environment variables that persist in both the build process and running containers. Variables set with ENV are available in subsequent Dockerfile instructions and at container runtime. Override at runtime with `docker run --env KEY=value`. For build-only variables, prefer `ARG`. Each ENV instruction creates a new layer." }
+      ]
+    },
+    "ADD": {
+      "contents": [
+        { "value": "```dockerfile\nADD [--chown=<user>:<group>] [--chmod=<perms>] [--checksum=<hash>] <src> ... <dest>\n```\nCopy files, directories, or remote URLs into the image. Unlike COPY, ADD has two extra features: automatic tar archive extraction (gzip, bzip2, xz) and fetching from remote URLs. For simple file copies, **prefer COPY** — it is more transparent. `--chown` sets ownership (Linux only). `--checksum` validates remote URL content." }
+      ]
+    },
+    "COPY": {
+      "contents": [
+        { "value": "```dockerfile\nCOPY [--from=<name|index>] [--chown=<user>:<group>] [--chmod=<perms>] [--link] <src> ... <dest>\n```\nCopy files or directories from the build context into the image filesystem. Preferred over ADD for straightforward copies. `--from=<stage>` copies from a named build stage or external image. `--chown` sets file ownership (Linux only). `--link` creates an independent layer for better cache reuse and parallel extraction. Paths are relative to the build context." }
+      ]
+    },
+    "ENTRYPOINT": {
+      "contents": [
+        { "value": "```dockerfile\nENTRYPOINT [\"executable\", \"param1\", \"param2\"]  # exec form (preferred)\nENTRYPOINT command param1 param2               # shell form\n```\nConfigure the container to run as an executable. Arguments from `CMD` or `docker run` are appended after the exec-form ENTRYPOINT. Only the last ENTRYPOINT takes effect. The exec form is preferred because it receives Unix signals directly (important for graceful shutdown). The shell form wraps in `/bin/sh -c`, which does not forward signals to the child process." }
+      ]
+    },
+    "VOLUME": {
+      "contents": [
+        { "value": "```dockerfile\nVOLUME [\"/path\"] | VOLUME /path1 /path2\n```\nCreate a mount point and mark it as holding externally mounted volumes. Data in a VOLUME persists beyond the container lifecycle. Any changes made to the volume directory **after** the VOLUME instruction during the build are discarded. Use named volumes or bind mounts at runtime for reliable persistence." }
+      ]
+    },
+    "USER": {
+      "contents": [
+        { "value": "```dockerfile\nUSER <user>[:<group>]\nUSER <UID>[:<GID>]\n```\nSet the user (and optionally group) for all subsequent `RUN`, `CMD`, and `ENTRYPOINT` instructions. The user must already exist in the image. Running as non-root is a **security best practice**. Override at runtime with `docker run --user`. Create users with `RUN adduser` or `RUN useradd` before the USER instruction." }
+      ]
+    },
+    "WORKDIR": {
+      "contents": [
+        { "value": "```dockerfile\nWORKDIR /path/to/workdir\n```\nSet the working directory for subsequent `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, and `ADD` instructions. The directory is created automatically if it doesn't exist. Can be set multiple times; relative paths resolve against the previous WORKDIR. Use absolute paths for clarity. Environment variables (from `ENV`) can be used in the path." }
+      ]
+    },
+    "ARG": {
+      "contents": [
+        { "value": "```dockerfile\nARG <name>[=<default value>]\n```\nDefine a build-time variable passed via `docker build --build-arg <name>=<value>`. Unlike ENV, ARG values are **not** persisted in the final image or available at container runtime. ARG before FROM applies only to the FROM instruction. ARG after FROM is scoped to the current build stage. Predefined ARGs: `HTTP_PROXY`, `HTTPS_PROXY`, `FTP_PROXY`, `NO_PROXY`, `BUILDPLATFORM`, `TARGETPLATFORM`, `TARGETOS`, `TARGETARCH`." }
+      ]
+    },
+    "ONBUILD": {
+      "contents": [
+        { "value": "```dockerfile\nONBUILD <INSTRUCTION>\n```\nRegister a trigger instruction that executes when this image is used as the base for another build. The trigger fires right after the child's FROM instruction. Useful for creating reusable base images (e.g., `ONBUILD COPY . /app`, `ONBUILD RUN npm install`). `ONBUILD ONBUILD` is not permitted. Triggers are not inherited beyond one level." }
+      ]
+    },
+    "STOPSIGNAL": {
+      "contents": [
+        { "value": "```dockerfile\nSTOPSIGNAL <signal>\n```\nSet the system call signal that will be sent to the container's PID 1 process to stop it. Accepts signal names (`SIGTERM`, `SIGKILL`, `SIGQUIT`, `SIGINT`) or unsigned numbers (e.g., `9`). Default is `SIGTERM`. Override at runtime with `docker run --stop-signal`. Ensure your application handles the chosen signal for graceful shutdown." }
+      ]
+    },
+    "HEALTHCHECK": {
+      "contents": [
+        { "value": "```dockerfile\nHEALTHCHECK [OPTIONS] CMD <command>\nHEALTHCHECK NONE\n```\nDefine how Docker tests whether the container is healthy. Options:\n- `--interval=DURATION` — time between checks (default 30s)\n- `--timeout=DURATION` — max time for a check to complete (default 30s)\n- `--start-period=DURATION` — grace period during startup (default 0s)\n- `--retries=N` — consecutive failures needed to mark unhealthy (default 3)\n\nThe command's exit code determines status: `0` = healthy, `1` = unhealthy. Only the last HEALTHCHECK takes effect. Use `HEALTHCHECK NONE` to disable a health check inherited from a base image." }
+      ]
+    },
+    "SHELL": {
+      "contents": [
+        { "value": "```dockerfile\nSHELL [\"executable\", \"parameters\"]\n```\nOverride the default shell for the shell form of `RUN`, `CMD`, and `ENTRYPOINT`. The default on Linux is `[\"/bin/sh\", \"-c\"]`; on Windows it is `[\"cmd\", \"/S\", \"/C\"]`. SHELL can appear multiple times — each occurrence affects subsequent shell-form instructions. Common use cases: switching to bash (`SHELL [\"/bin/bash\", \"-c\"]`) or PowerShell on Windows." }
+      ]
+    },
+    "AS": {
+      "contents": [
+        { "value": "```dockerfile\nFROM <image> AS <name>\n```\nName a build stage in a multi-stage build. The name can be referenced by `COPY --from=<name>` or `docker build --target=<name>`. Stage names are case-insensitive and must be unique within the Dockerfile. Naming stages makes Dockerfiles more readable and allows building specific stages with `--target`." }
+      ]
+    },
+    "COPY --from": {
+      "contents": [
+        { "value": "```dockerfile\nCOPY --from=<name|index> <src> <dest>\n```\nCopy files from a named build stage (using `AS <name>`) or by stage index (0-based). Can also reference an external image: `COPY --from=nginx:alpine /etc/nginx/nginx.conf /etc/nginx/`. This is the core mechanism for multi-stage builds — build in one stage, copy artifacts to the final image." }
+      ]
+    },
+    "--mount=type=cache": {
+      "contents": [
+        { "value": "```dockerfile\nRUN --mount=type=cache,target=<path>[,id=<id>][,sharing=<shared|private|locked>] <command>\n```\nMount a persistent cache directory that survives across builds. Ideal for package manager caches:\n- APT: `--mount=type=cache,target=/var/cache/apt`\n- pip: `--mount=type=cache,target=/root/.cache/pip`\n- Go: `--mount=type=cache,target=/root/.cache/go-build`\n- npm: `--mount=type=cache,target=/root/.npm`\n\nRequires BuildKit (`DOCKER_BUILDKIT=1`)." }
+      ]
+    },
+    "--mount=type=secret": {
+      "contents": [
+        { "value": "```dockerfile\nRUN --mount=type=secret,id=<id>[,target=<path>][,required=<bool>][,mode=<mode>][,uid=<uid>][,gid=<gid>] <command>\n```\nMount a secret file that is available during the build step but **not** stored in the final image or any layer. Build with: `docker build --secret id=mysecret,src=secret.txt .`. The secret is available at `/run/secrets/<id>` by default. Use for API keys, credentials, and private SSH keys." }
+      ]
+    },
+    "--mount=type=ssh": {
+      "contents": [
+        { "value": "```dockerfile\nRUN --mount=type=ssh <command>\n```\nForward the host's SSH agent socket into the build container, allowing access to private Git repositories without embedding SSH keys in the image. Build with: `docker build --ssh default .`. Requires BuildKit." }
+      ]
+    },
+    "--platform": {
+      "contents": [
+        { "value": "```dockerfile\nFROM --platform=<platform> <image>\n```\nSpecify the platform for the base image in multi-platform builds. Common values: `linux/amd64`, `linux/arm64`, `linux/arm/v7`. Use `$BUILDPLATFORM` for the build machine's platform and `$TARGETPLATFORM` for the target. Enables cross-compilation patterns in multi-stage builds." }
+      ]
+    },
+    "multi-stage build": {
+      "contents": [
+        { "value": "**Multi-stage builds** use multiple `FROM` instructions in a single Dockerfile. Each FROM begins a new stage. Stages can be named with `AS <name>`. Use `COPY --from=<name>` to copy build artifacts from one stage to another.\n\nBenefits:\n- Dramatically smaller final images (no build tools in production)\n- Single Dockerfile for build and runtime\n- Parallel stage execution with BuildKit\n- Selective stage building with `--target`\n\n```dockerfile\nFROM golang:1.22 AS builder\nRUN go build -o /app\n\nFROM alpine:3.19\nCOPY --from=builder /app /app\n```" }
+      ]
+    },
+    ".dockerignore": {
+      "contents": [
+        { "value": "**`.dockerignore`** excludes files from the build context sent to the Docker daemon. Follows `.gitignore` syntax. Place it in the build context root.\n\n```\nnode_modules\n.git\n.env\n*.md\nDockerfile\n.dockerignore\ndist\ncoverage\n__pycache__\n*.pyc\n.venv\n```\n\nReduces build context size, speeds up builds, and prevents sensitive files from being included in images." }
+      ]
+    },
+    "BuildKit": {
+      "contents": [
+        { "value": "**BuildKit** is Docker's next-generation build engine (default since Docker 23.0). Enable with `DOCKER_BUILDKIT=1` for older versions.\n\nFeatures:\n- Parallel stage execution in multi-stage builds\n- `RUN --mount` (cache, secret, ssh, bind, tmpfs)\n- `COPY --link` for independent layers\n- Better caching and faster builds\n- Build secrets that don't leak into image layers\n- Syntax directives: `# syntax=docker/dockerfile:1`" }
+      ]
+    },
+    "scratch": {
+      "contents": [
+        { "value": "```dockerfile\nFROM scratch\n```\n`scratch` is an explicitly empty image — the most minimal base image possible. Contains no files, no shell, no libraries. Use for:\n- Statically compiled Go binaries (`CGO_ENABLED=0`)\n- Statically linked Rust binaries\n- Minimal containers with single-binary applications\n\nYou must COPY everything the binary needs, including CA certificates if making HTTPS requests:\n```dockerfile\nCOPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/\n```" }
+      ]
+    }
+  }
+}

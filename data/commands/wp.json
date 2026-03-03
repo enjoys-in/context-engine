@@ -1,0 +1,857 @@
+{
+  "name": "wp",
+  "description": "WP-CLI is the official command-line interface for WordPress, enabling management of posts, plugins, themes, users, databases, and more without a web browser.",
+  "category": "php-ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "core download",
+      "description": "Download WordPress core files",
+      "args": [],
+      "options": [
+        {"name": "--path", "description": "Specify the path in which to install WordPress", "type": "string"},
+        {"name": "--locale", "description": "Select which language you want to download", "type": "string"},
+        {"name": "--version", "description": "Select which version you want to download", "type": "string"},
+        {"name": "--force", "description": "Overwrites existing files if present"}
+      ],
+      "examples": [
+        "wp core download",
+        "wp core download --locale=ja --version=6.4",
+        "wp core download --path=/var/www/html --force"
+      ]
+    },
+    {
+      "name": "core install",
+      "description": "Install WordPress with provided configuration",
+      "args": [],
+      "options": [
+        {"name": "--url", "description": "The address of the new site", "type": "string"},
+        {"name": "--title", "description": "The title of the new site", "type": "string"},
+        {"name": "--admin_user", "description": "The name of the admin user", "type": "string"},
+        {"name": "--admin_password", "description": "The password for the admin user", "type": "string"},
+        {"name": "--admin_email", "description": "The email address for the admin user", "type": "string"},
+        {"name": "--skip-email", "description": "Don't send the installation email"}
+      ],
+      "examples": [
+        "wp core install --url=example.com --title='My Site' --admin_user=admin --admin_password=secret --admin_email=admin@example.com",
+        "wp core install --url=localhost:8080 --title='Dev Site' --admin_user=dev --admin_password=dev --admin_email=dev@dev.local --skip-email"
+      ]
+    },
+    {
+      "name": "core update",
+      "description": "Update WordPress core to the latest release or a specified version",
+      "args": [],
+      "options": [
+        {"name": "--version", "description": "Update to a specific version", "type": "string"},
+        {"name": "--force", "description": "Update even when installed version is greater than the requested version"},
+        {"name": "--minor", "description": "Only perform minor updates"},
+        {"name": "--locale", "description": "Select which language you want to update to", "type": "string"}
+      ],
+      "examples": [
+        "wp core update",
+        "wp core update --version=6.4.2",
+        "wp core update --minor"
+      ]
+    },
+    {
+      "name": "core version",
+      "description": "Display the WordPress version",
+      "args": [],
+      "options": [
+        {"name": "--extra", "description": "Show extended version information"}
+      ],
+      "examples": [
+        "wp core version",
+        "wp core version --extra"
+      ]
+    },
+    {
+      "name": "plugin install",
+      "description": "Install one or more plugins from wordpress.org, a URL, or a local zip file",
+      "args": [{"name": "plugin", "type": "string", "required": true, "description": "Plugin slug, URL, or path to a zip file"}],
+      "options": [
+        {"name": "--version", "description": "Install a specific version of the plugin", "type": "string"},
+        {"name": "--activate", "description": "Activate the plugin after installation"},
+        {"name": "--activate-network", "description": "Network-activate the plugin after installation"},
+        {"name": "--force", "description": "Overwrite if the plugin already exists"},
+        {"name": "--insecure", "description": "Retry downloads without certificate verification"}
+      ],
+      "examples": [
+        "wp plugin install akismet",
+        "wp plugin install akismet --activate",
+        "wp plugin install woocommerce --version=8.5.0 --activate",
+        "wp plugin install https://example.com/my-plugin.zip --force"
+      ]
+    },
+    {
+      "name": "plugin activate",
+      "description": "Activate one or more plugins",
+      "args": [{"name": "plugin", "type": "string", "required": false, "description": "Plugin slug to activate"}],
+      "options": [
+        {"name": "--all", "description": "Activate all plugins"},
+        {"name": "--network", "description": "Network-activate the plugin"}
+      ],
+      "examples": [
+        "wp plugin activate akismet",
+        "wp plugin activate --all",
+        "wp plugin activate woocommerce --network"
+      ]
+    },
+    {
+      "name": "plugin deactivate",
+      "description": "Deactivate one or more plugins",
+      "args": [{"name": "plugin", "type": "string", "required": false, "description": "Plugin slug to deactivate"}],
+      "options": [
+        {"name": "--all", "description": "Deactivate all plugins"},
+        {"name": "--uninstall", "description": "Uninstall the plugin after deactivation"},
+        {"name": "--network", "description": "Network-deactivate the plugin"}
+      ],
+      "examples": [
+        "wp plugin deactivate akismet",
+        "wp plugin deactivate --all",
+        "wp plugin deactivate hello-dolly --uninstall"
+      ]
+    },
+    {
+      "name": "plugin delete",
+      "description": "Delete one or more plugins",
+      "args": [{"name": "plugin", "type": "string", "required": true, "description": "Plugin slug to delete"}],
+      "options": [
+        {"name": "--all", "description": "Delete all plugins"}
+      ],
+      "examples": [
+        "wp plugin delete hello-dolly",
+        "wp plugin delete akismet hello-dolly"
+      ]
+    },
+    {
+      "name": "plugin list",
+      "description": "List all installed plugins with status and update availability",
+      "args": [],
+      "options": [
+        {"name": "--status", "description": "Filter by plugin status (active, inactive, must-use, dropin)", "type": "string"},
+        {"name": "--field", "description": "Print the value of a single field for each plugin", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated list of fields to show", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp plugin list",
+        "wp plugin list --status=active --format=json",
+        "wp plugin list --field=name --status=inactive"
+      ]
+    },
+    {
+      "name": "plugin update",
+      "description": "Update one or more plugins",
+      "args": [{"name": "plugin", "type": "string", "required": false, "description": "Plugin slug to update"}],
+      "options": [
+        {"name": "--all", "description": "Update all plugins"},
+        {"name": "--version", "description": "Update to a specific version", "type": "string"},
+        {"name": "--dry-run", "description": "Preview updates without applying them"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, summary)", "type": "string"},
+        {"name": "--minor", "description": "Only perform minor updates"},
+        {"name": "--patch", "description": "Only perform patch updates"}
+      ],
+      "examples": [
+        "wp plugin update --all",
+        "wp plugin update akismet",
+        "wp plugin update woocommerce --version=8.6.0",
+        "wp plugin update --all --dry-run"
+      ]
+    },
+    {
+      "name": "plugin search",
+      "description": "Search the wordpress.org plugin directory",
+      "args": [{"name": "search", "type": "string", "required": true, "description": "Search term"}],
+      "options": [
+        {"name": "--per-page", "description": "Number of results per page", "type": "integer"},
+        {"name": "--page", "description": "Page number to display", "type": "integer"},
+        {"name": "--field", "description": "Print a single field", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated list of fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp plugin search seo",
+        "wp plugin search cache --per-page=5 --format=json",
+        "wp plugin search ecommerce --fields=name,slug,rating"
+      ]
+    },
+    {
+      "name": "theme install",
+      "description": "Install one or more themes from wordpress.org, a URL, or a local zip file",
+      "args": [{"name": "theme", "type": "string", "required": true, "description": "Theme slug, URL, or path to a zip file"}],
+      "options": [
+        {"name": "--version", "description": "Install a specific theme version", "type": "string"},
+        {"name": "--activate", "description": "Activate the theme after installation"},
+        {"name": "--force", "description": "Overwrite if theme already exists"},
+        {"name": "--insecure", "description": "Retry download without certificate verification"}
+      ],
+      "examples": [
+        "wp theme install flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor flavor twent twentytwentyfour",
+        "wp theme install flavor --activate",
+        "wp theme install flavor twentytwentyfour --activate",
+        "wp theme install flavor https://example.com/my-theme.zip --force"
+      ]
+    },
+    {
+      "name": "theme activate",
+      "description": "Activate a theme",
+      "args": [{"name": "theme", "type": "string", "required": true, "description": "Theme slug to activate"}],
+      "options": [],
+      "examples": [
+        "wp theme activate twentytwentyfour"
+      ]
+    },
+    {
+      "name": "theme delete",
+      "description": "Delete one or more themes",
+      "args": [{"name": "theme", "type": "string", "required": true, "description": "Theme slug to delete"}],
+      "options": [
+        {"name": "--all", "description": "Delete all inactive themes"},
+        {"name": "--force", "description": "Delete active theme without confirmation"}
+      ],
+      "examples": [
+        "wp theme delete flavor twentytwentythree",
+        "wp theme delete --all"
+      ]
+    },
+    {
+      "name": "theme list",
+      "description": "List all installed themes",
+      "args": [],
+      "options": [
+        {"name": "--status", "description": "Filter by theme status (active, inactive, parent)", "type": "string"},
+        {"name": "--field", "description": "Print the value of a single field", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated list of fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp theme list",
+        "wp theme list --status=inactive --format=json"
+      ]
+    },
+    {
+      "name": "theme update",
+      "description": "Update one or more themes",
+      "args": [{"name": "theme", "type": "string", "required": false, "description": "Theme slug to update"}],
+      "options": [
+        {"name": "--all", "description": "Update all themes"},
+        {"name": "--version", "description": "Update to a specific version", "type": "string"},
+        {"name": "--dry-run", "description": "Preview updates"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, summary)", "type": "string"}
+      ],
+      "examples": [
+        "wp theme update --all",
+        "wp theme update twentytwentyfour --version=1.2"
+      ]
+    },
+    {
+      "name": "theme search",
+      "description": "Search the wordpress.org theme directory",
+      "args": [{"name": "search", "type": "string", "required": true, "description": "Search term"}],
+      "options": [
+        {"name": "--per-page", "description": "Number of results per page", "type": "integer"},
+        {"name": "--page", "description": "Page number to display", "type": "integer"},
+        {"name": "--fields", "description": "Comma-separated list of fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp theme search developer",
+        "wp theme search blog --per-page=5 --format=json"
+      ]
+    },
+    {
+      "name": "post create",
+      "description": "Create a new post",
+      "args": [],
+      "options": [
+        {"name": "--post_title", "description": "Title of the post", "type": "string"},
+        {"name": "--post_content", "description": "Content of the post", "type": "string"},
+        {"name": "--post_status", "description": "Post status (publish, draft, pending, private, future)", "type": "string"},
+        {"name": "--post_type", "description": "Post type (post, page, custom)", "type": "string"},
+        {"name": "--post_author", "description": "Author ID", "type": "integer"},
+        {"name": "--post_excerpt", "description": "Post excerpt", "type": "string"},
+        {"name": "--post_date", "description": "Post date in Y-m-d H:i:s format", "type": "string"},
+        {"name": "--post_category", "description": "Comma-separated category IDs", "type": "string"},
+        {"name": "--tags_input", "description": "Comma-separated tag names", "type": "string"},
+        {"name": "--porcelain", "description": "Output just the new post ID"},
+        {"name": "--edit", "description": "Open system editor to write content"}
+      ],
+      "examples": [
+        "wp post create --post_title='Hello World' --post_status=publish",
+        "wp post create --post_type=page --post_title='About' --post_content='About us page' --post_status=draft",
+        "wp post create --post_title='Scheduled Post' --post_status=future --post_date='2026-12-01 09:00:00'",
+        "wp post create ./content.txt --post_title='From File' --post_status=publish"
+      ]
+    },
+    {
+      "name": "post update",
+      "description": "Update one or more existing posts",
+      "args": [{"name": "id", "type": "integer", "required": true, "description": "Post ID(s) to update"}],
+      "options": [
+        {"name": "--post_title", "description": "New title", "type": "string"},
+        {"name": "--post_content", "description": "New content", "type": "string"},
+        {"name": "--post_status", "description": "New status", "type": "string"},
+        {"name": "--post_author", "description": "New author ID", "type": "integer"},
+        {"name": "--post_excerpt", "description": "New excerpt", "type": "string"}
+      ],
+      "examples": [
+        "wp post update 123 --post_title='Updated Title'",
+        "wp post update 123 456 --post_status=draft"
+      ]
+    },
+    {
+      "name": "post delete",
+      "description": "Delete an existing post",
+      "args": [{"name": "id", "type": "integer", "required": true, "description": "Post ID(s) to delete"}],
+      "options": [
+        {"name": "--force", "description": "Skip trash and permanently delete"},
+        {"name": "--defer-term-counting", "description": "Avoid recounting terms"}
+      ],
+      "examples": [
+        "wp post delete 123",
+        "wp post delete 123 --force",
+        "wp post delete $(wp post list --post_type=revision --format=ids)"
+      ]
+    },
+    {
+      "name": "post list",
+      "description": "List posts with filtering options",
+      "args": [],
+      "options": [
+        {"name": "--post_type", "description": "Post type (post, page, any)", "type": "string"},
+        {"name": "--post_status", "description": "Post status", "type": "string"},
+        {"name": "--posts_per_page", "description": "Number of posts per page", "type": "integer"},
+        {"name": "--field", "description": "Print a single field", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated list of fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, ids, count)", "type": "string"},
+        {"name": "--orderby", "description": "Sort by field (date, title, ID, modified, rand)", "type": "string"},
+        {"name": "--order", "description": "Sort order (ASC, DESC)", "type": "string"},
+        {"name": "--s", "description": "Search keyword", "type": "string"}
+      ],
+      "examples": [
+        "wp post list",
+        "wp post list --post_type=page --format=json",
+        "wp post list --post_status=draft --fields=ID,post_title,post_date",
+        "wp post list --posts_per_page=5 --orderby=date --order=DESC"
+      ]
+    },
+    {
+      "name": "post get",
+      "description": "Get details about a specific post",
+      "args": [{"name": "id", "type": "integer", "required": true, "description": "Post ID"}],
+      "options": [
+        {"name": "--field", "description": "Get the value of a specific field", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated list of fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml)", "type": "string"}
+      ],
+      "examples": [
+        "wp post get 123",
+        "wp post get 123 --field=post_title",
+        "wp post get 123 --format=json"
+      ]
+    },
+    {
+      "name": "user create",
+      "description": "Create a new WordPress user",
+      "args": [
+        {"name": "user-login", "type": "string", "required": true, "description": "User login name"},
+        {"name": "user-email", "type": "string", "required": true, "description": "User email address"}
+      ],
+      "options": [
+        {"name": "--role", "description": "User role (administrator, editor, author, contributor, subscriber)", "type": "string"},
+        {"name": "--user_pass", "description": "User password", "type": "string"},
+        {"name": "--display_name", "description": "Display name", "type": "string"},
+        {"name": "--first_name", "description": "First name", "type": "string"},
+        {"name": "--last_name", "description": "Last name", "type": "string"},
+        {"name": "--user_url", "description": "User website URL", "type": "string"},
+        {"name": "--send-email", "description": "Send user notification email"},
+        {"name": "--porcelain", "description": "Output just the new user ID"}
+      ],
+      "examples": [
+        "wp user create bob bob@example.com --role=author",
+        "wp user create alice alice@example.com --role=editor --first_name=Alice --last_name=Smith --send-email",
+        "wp user create admin2 admin2@example.com --role=administrator --user_pass=strongpassword"
+      ]
+    },
+    {
+      "name": "user update",
+      "description": "Update an existing user",
+      "args": [{"name": "user", "type": "string", "required": true, "description": "User ID, login, or email"}],
+      "options": [
+        {"name": "--user_pass", "description": "New password", "type": "string"},
+        {"name": "--display_name", "description": "New display name", "type": "string"},
+        {"name": "--first_name", "description": "First name", "type": "string"},
+        {"name": "--last_name", "description": "Last name", "type": "string"},
+        {"name": "--role", "description": "New role", "type": "string"},
+        {"name": "--user_email", "description": "New email", "type": "string"}
+      ],
+      "examples": [
+        "wp user update 123 --display_name='John Doe'",
+        "wp user update bob --role=editor",
+        "wp user update bob@example.com --user_pass=newpassword"
+      ]
+    },
+    {
+      "name": "user delete",
+      "description": "Delete one or more users",
+      "args": [{"name": "user", "type": "string", "required": true, "description": "User ID, login, or email"}],
+      "options": [
+        {"name": "--reassign", "description": "Reassign posts to this user ID", "type": "integer"},
+        {"name": "--yes", "description": "Skip confirmation"}
+      ],
+      "examples": [
+        "wp user delete 123 --reassign=1",
+        "wp user delete bob --yes"
+      ]
+    },
+    {
+      "name": "user list",
+      "description": "List all WordPress users",
+      "args": [],
+      "options": [
+        {"name": "--role", "description": "Filter by role", "type": "string"},
+        {"name": "--field", "description": "Single field to print", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, ids, count)", "type": "string"},
+        {"name": "--orderby", "description": "Order by (ID, login, nicename, email, registered)", "type": "string"},
+        {"name": "--order", "description": "Sort order (ASC, DESC)", "type": "string"}
+      ],
+      "examples": [
+        "wp user list",
+        "wp user list --role=administrator --format=json",
+        "wp user list --fields=ID,user_login,user_email,roles"
+      ]
+    },
+    {
+      "name": "user get",
+      "description": "Get details about a specific user",
+      "args": [{"name": "user", "type": "string", "required": true, "description": "User ID, login, or email"}],
+      "options": [
+        {"name": "--field", "description": "Get a single field", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml)", "type": "string"}
+      ],
+      "examples": [
+        "wp user get 1",
+        "wp user get admin --format=json",
+        "wp user get admin --field=user_email"
+      ]
+    },
+    {
+      "name": "db create",
+      "description": "Create the database defined in wp-config.php",
+      "args": [],
+      "options": [
+        {"name": "--dbuser", "description": "Database username", "type": "string"},
+        {"name": "--dbpass", "description": "Database password", "type": "string"}
+      ],
+      "examples": [
+        "wp db create"
+      ]
+    },
+    {
+      "name": "db drop",
+      "description": "Delete the database defined in wp-config.php",
+      "args": [],
+      "options": [
+        {"name": "--yes", "description": "Skip confirmation"}
+      ],
+      "examples": [
+        "wp db drop --yes"
+      ]
+    },
+    {
+      "name": "db optimize",
+      "description": "Optimize the WordPress database",
+      "args": [],
+      "options": [],
+      "examples": [
+        "wp db optimize"
+      ]
+    },
+    {
+      "name": "db repair",
+      "description": "Repair the WordPress database",
+      "args": [],
+      "options": [],
+      "examples": [
+        "wp db repair"
+      ]
+    },
+    {
+      "name": "db export",
+      "description": "Export the database to a file or STDOUT",
+      "args": [{"name": "file", "type": "string", "required": false, "description": "Output file path (defaults to STDOUT)"}],
+      "options": [
+        {"name": "--tables", "description": "Comma-separated list of specific tables to export", "type": "string"},
+        {"name": "--exclude_tables", "description": "Tables to exclude", "type": "string"},
+        {"name": "--porcelain", "description": "Output filename only"},
+        {"name": "--add-drop-table", "description": "Include DROP TABLE statements"}
+      ],
+      "examples": [
+        "wp db export",
+        "wp db export backup.sql",
+        "wp db export --tables=wp_posts,wp_postmeta backup_posts.sql",
+        "wp db export - | gzip > backup.sql.gz"
+      ]
+    },
+    {
+      "name": "db import",
+      "description": "Import a database from a file or STDIN",
+      "args": [{"name": "file", "type": "string", "required": false, "description": "Input file path (defaults to STDIN)"}],
+      "options": [
+        {"name": "--skip-optimization", "description": "Skip setting key_buffer_size"}
+      ],
+      "examples": [
+        "wp db import backup.sql",
+        "gunzip < backup.sql.gz | wp db import -"
+      ]
+    },
+    {
+      "name": "db query",
+      "description": "Execute a SQL query against the database",
+      "args": [{"name": "query", "type": "string", "required": false, "description": "SQL query to execute"}],
+      "options": [],
+      "examples": [
+        "wp db query 'SELECT * FROM wp_options LIMIT 10'",
+        "wp db query 'SELECT COUNT(*) FROM wp_posts WHERE post_status=\"publish\"'",
+        "wp db query < query.sql"
+      ]
+    },
+    {
+      "name": "option get",
+      "description": "Get the value of a site option",
+      "args": [{"name": "key", "type": "string", "required": true, "description": "Option key"}],
+      "options": [
+        {"name": "--format", "description": "Output format (var_export, json, yaml)", "type": "string"}
+      ],
+      "examples": [
+        "wp option get siteurl",
+        "wp option get blogname",
+        "wp option get active_plugins --format=json"
+      ]
+    },
+    {
+      "name": "option update",
+      "description": "Update a site option value",
+      "args": [
+        {"name": "key", "type": "string", "required": true, "description": "Option key"},
+        {"name": "value", "type": "string", "required": true, "description": "New value"}
+      ],
+      "options": [
+        {"name": "--autoload", "description": "Set autoload (yes or no)", "type": "string"},
+        {"name": "--format", "description": "Format of the value (plaintext, json)", "type": "string"}
+      ],
+      "examples": [
+        "wp option update blogname 'My Awesome Site'",
+        "wp option update siteurl 'https://example.com'",
+        "wp option update blogdescription 'Just another WordPress site'"
+      ]
+    },
+    {
+      "name": "option delete",
+      "description": "Delete a site option",
+      "args": [{"name": "key", "type": "string", "required": true, "description": "Option key to delete"}],
+      "options": [],
+      "examples": [
+        "wp option delete my_custom_option"
+      ]
+    },
+    {
+      "name": "option list",
+      "description": "List site options",
+      "args": [],
+      "options": [
+        {"name": "--search", "description": "Filter by option name pattern", "type": "string"},
+        {"name": "--autoload", "description": "Filter by autoload status", "type": "string"},
+        {"name": "--fields", "description": "Comma-separated fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp option list",
+        "wp option list --search='*siteurl*'",
+        "wp option list --autoload=yes --format=json"
+      ]
+    },
+    {
+      "name": "config create",
+      "description": "Generate a wp-config.php file",
+      "args": [],
+      "options": [
+        {"name": "--dbname", "description": "Database name", "type": "string"},
+        {"name": "--dbuser", "description": "Database user", "type": "string"},
+        {"name": "--dbpass", "description": "Database password", "type": "string"},
+        {"name": "--dbhost", "description": "Database host (default: localhost)", "type": "string"},
+        {"name": "--dbprefix", "description": "Table prefix (default: wp_)", "type": "string"},
+        {"name": "--dbcharset", "description": "Database charset (default: utf8)", "type": "string"},
+        {"name": "--locale", "description": "WordPress locale", "type": "string"},
+        {"name": "--skip-salts", "description": "Skip generating unique auth keys and salts"},
+        {"name": "--skip-check", "description": "Skip database connection check"},
+        {"name": "--force", "description": "Overwrite existing wp-config.php"}
+      ],
+      "examples": [
+        "wp config create --dbname=wordpress --dbuser=root --dbpass=secret",
+        "wp config create --dbname=wp --dbuser=wp_user --dbpass=pw --dbhost=db.example.com --dbprefix=mysite_"
+      ]
+    },
+    {
+      "name": "config get",
+      "description": "Get the value of a wp-config.php constant or variable",
+      "args": [{"name": "name", "type": "string", "required": true, "description": "Constant or variable name"}],
+      "options": [
+        {"name": "--type", "description": "Type of config value (constant, variable)", "type": "string"},
+        {"name": "--format", "description": "Output format (var_export, json, yaml)", "type": "string"}
+      ],
+      "examples": [
+        "wp config get DB_NAME",
+        "wp config get DB_HOST",
+        "wp config get table_prefix --type=variable"
+      ]
+    },
+    {
+      "name": "config set",
+      "description": "Set the value of a wp-config.php constant or variable",
+      "args": [
+        {"name": "name", "type": "string", "required": true, "description": "Constant or variable name"},
+        {"name": "value", "type": "string", "required": true, "description": "Value to set"}
+      ],
+      "options": [
+        {"name": "--type", "description": "Type of config value (constant, variable)", "type": "string"},
+        {"name": "--raw", "description": "Place the value without wrapping in quotes"},
+        {"name": "--add", "description": "Add the value if it doesn't exist"}
+      ],
+      "examples": [
+        "wp config set WP_DEBUG true --raw",
+        "wp config set WP_DEBUG_LOG true --raw",
+        "wp config set DISALLOW_FILE_EDIT true --raw",
+        "wp config set WP_MEMORY_LIMIT '256M'"
+      ]
+    },
+    {
+      "name": "config delete",
+      "description": "Delete a constant or variable from wp-config.php",
+      "args": [{"name": "name", "type": "string", "required": true, "description": "Constant or variable name"}],
+      "options": [
+        {"name": "--type", "description": "Type of config value (constant, variable)", "type": "string"}
+      ],
+      "examples": [
+        "wp config delete WP_DEBUG"
+      ]
+    },
+    {
+      "name": "config list",
+      "description": "List variables, constants, and file includes defined in wp-config.php",
+      "args": [],
+      "options": [
+        {"name": "--fields", "description": "Comma-separated fields to display", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml)", "type": "string"},
+        {"name": "--strict", "description": "Only output values from wp-config.php itself"}
+      ],
+      "examples": [
+        "wp config list",
+        "wp config list --format=json",
+        "wp config list --fields=name,value --strict"
+      ]
+    },
+    {
+      "name": "media import",
+      "description": "Import files as attachments into the WordPress media library",
+      "args": [{"name": "file", "type": "string", "required": true, "description": "Path or URL to file(s)"}],
+      "options": [
+        {"name": "--title", "description": "Attachment title", "type": "string"},
+        {"name": "--caption", "description": "Attachment caption", "type": "string"},
+        {"name": "--alt", "description": "Alt text", "type": "string"},
+        {"name": "--desc", "description": "Attachment description", "type": "string"},
+        {"name": "--post_id", "description": "Attach to a specific post ID", "type": "integer"},
+        {"name": "--featured_image", "description": "Set as the featured image of the post"},
+        {"name": "--porcelain", "description": "Output just the attachment IDs"},
+        {"name": "--preserve-filetime", "description": "Preserve file modified time"}
+      ],
+      "examples": [
+        "wp media import /path/to/image.jpg",
+        "wp media import https://example.com/photo.jpg --title='My Photo'",
+        "wp media import ~/images/*.jpg --post_id=123 --featured_image"
+      ]
+    },
+    {
+      "name": "search-replace",
+      "description": "Search and replace strings in the database, handling serialized data",
+      "args": [
+        {"name": "old", "type": "string", "required": true, "description": "String to search for"},
+        {"name": "new", "type": "string", "required": true, "description": "Replacement string"}
+      ],
+      "options": [
+        {"name": "--dry-run", "description": "Show report without making changes"},
+        {"name": "--precise", "description": "Force regex-based search"},
+        {"name": "--recurse-objects", "description": "Recurse into nested objects"},
+        {"name": "--all-tables-with-prefix", "description": "Replace in all tables with the configured prefix"},
+        {"name": "--all-tables", "description": "Replace in all tables"},
+        {"name": "--export", "description": "Write transformed data as SQL to file", "type": "string"},
+        {"name": "--network", "description": "Search and replace on all network sites"},
+        {"name": "--skip-tables", "description": "Tables to skip", "type": "string"},
+        {"name": "--skip-columns", "description": "Columns to skip", "type": "string"},
+        {"name": "--include-columns", "description": "Only include specific columns", "type": "string"},
+        {"name": "--format", "description": "Output format (table, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp search-replace 'http://old-domain.com' 'https://new-domain.com' --dry-run",
+        "wp search-replace 'http://old-domain.com' 'https://new-domain.com' --all-tables-with-prefix",
+        "wp search-replace 'foo' 'bar' wp_posts wp_postmeta",
+        "wp search-replace '/staging\\.example\\.com/' 'example.com' --regex"
+      ]
+    },
+    {
+      "name": "cache flush",
+      "description": "Flush the object cache",
+      "args": [],
+      "options": [],
+      "examples": [
+        "wp cache flush"
+      ]
+    },
+    {
+      "name": "cache clear",
+      "description": "Clear a specific cache group or all transients",
+      "args": [],
+      "options": [
+        {"name": "--expired", "description": "Only clear expired transients"},
+        {"name": "--all", "description": "Clear all transients (including non-expired)"},
+        {"name": "--network", "description": "Clear network transients"}
+      ],
+      "examples": [
+        "wp transient delete --all",
+        "wp transient delete --expired",
+        "wp cache flush"
+      ]
+    },
+    {
+      "name": "rewrite flush",
+      "description": "Flush rewrite rules",
+      "args": [],
+      "options": [
+        {"name": "--hard", "description": "Perform a hard flush by updating .htaccess or web.config"}
+      ],
+      "examples": [
+        "wp rewrite flush",
+        "wp rewrite flush --hard"
+      ]
+    },
+    {
+      "name": "rewrite structure",
+      "description": "Update the permalink structure",
+      "args": [{"name": "permastruct", "type": "string", "required": true, "description": "Permalink structure string"}],
+      "options": [
+        {"name": "--category-base", "description": "Category base prefix", "type": "string"},
+        {"name": "--tag-base", "description": "Tag base prefix", "type": "string"},
+        {"name": "--hard", "description": "Perform a hard flush"}
+      ],
+      "examples": [
+        "wp rewrite structure '/%year%/%monthnum%/%postname%/'",
+        "wp rewrite structure '/%postname%/' --hard",
+        "wp rewrite structure '/%category%/%postname%/' --category-base=topics"
+      ]
+    },
+    {
+      "name": "cron event list",
+      "description": "List scheduled cron events",
+      "args": [],
+      "options": [
+        {"name": "--fields", "description": "Comma-separated fields", "type": "string"},
+        {"name": "--format", "description": "Output format (table, csv, json, yaml, ids, count)", "type": "string"}
+      ],
+      "examples": [
+        "wp cron event list",
+        "wp cron event list --format=json",
+        "wp cron event list --fields=hook,next_run_relative"
+      ]
+    },
+    {
+      "name": "cron event run",
+      "description": "Run a cron event immediately",
+      "args": [{"name": "hook", "type": "string", "required": true, "description": "Name of the cron hook to run"}],
+      "options": [
+        {"name": "--due-now", "description": "Run all events that are due now"},
+        {"name": "--all", "description": "Run all registered events"}
+      ],
+      "examples": [
+        "wp cron event run wp_cron",
+        "wp cron event run --due-now",
+        "wp cron event run --all"
+      ]
+    },
+    {
+      "name": "cron event schedule",
+      "description": "Schedule a new cron event",
+      "args": [
+        {"name": "hook", "type": "string", "required": true, "description": "Hook name for the event"},
+        {"name": "next-run", "type": "string", "required": false, "description": "Unix timestamp or relative time for next run"}
+      ],
+      "options": [
+        {"name": "--recurrence", "description": "Recurrence schedule (hourly, twicedaily, daily, weekly)", "type": "string"}
+      ],
+      "examples": [
+        "wp cron event schedule my_custom_hook now hourly",
+        "wp cron event schedule cleanup_task '+1 hour' --recurrence=daily"
+      ]
+    },
+    {
+      "name": "maintenance-mode activate",
+      "description": "Activate maintenance mode by creating .maintenance file",
+      "args": [],
+      "options": [
+        {"name": "--force", "description": "Force enable even if already active"}
+      ],
+      "examples": [
+        "wp maintenance-mode activate"
+      ]
+    },
+    {
+      "name": "maintenance-mode deactivate",
+      "description": "Deactivate maintenance mode by removing .maintenance file",
+      "args": [],
+      "options": [],
+      "examples": [
+        "wp maintenance-mode deactivate"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--path", "description": "Path to the WordPress files", "type": "string"},
+    {"name": "--url", "description": "Pretend the request came from the given URL", "type": "string"},
+    {"name": "--user", "description": "Set the WordPress user for the command", "type": "string"},
+    {"name": "--skip-plugins", "description": "Skip loading all plugins or a comma-separated list of plugins", "type": "string"},
+    {"name": "--skip-themes", "description": "Skip loading all themes or a comma-separated list of themes", "type": "string"},
+    {"name": "--quiet", "short": "-q", "description": "Suppress informational messages"},
+    {"name": "--debug", "description": "Show all PHP errors and add verbosity to WP-CLI output"},
+    {"name": "--color", "description": "Force colored output"},
+    {"name": "--no-color", "description": "Disable colored output"},
+    {"name": "--format", "description": "Output format (table, json, csv, yaml, count)", "type": "string"},
+    {"name": "--prompt", "description": "Prompt the user to enter values for all command arguments"},
+    {"name": "--exec", "description": "Execute PHP code before running the command", "type": "string"},
+    {"name": "--require", "description": "Load PHP file before running the command", "type": "string"},
+    {"name": "--version", "short": "-V", "description": "Show WP-CLI version"},
+    {"name": "--help", "short": "-h", "description": "Show help for a command"}
+  ],
+  "examples": [
+    "wp core download && wp config create --dbname=wp --dbuser=root --dbpass='' && wp db create && wp core install --url=localhost --title='Site' --admin_user=admin --admin_password=admin --admin_email=admin@local.test",
+    "wp plugin list --status=active --format=json",
+    "wp search-replace 'http://old.com' 'https://new.com' --all-tables --dry-run",
+    "wp db export backup-$(date +%Y%m%d).sql",
+    "wp user create editor editor@example.com --role=editor --send-email",
+    "wp cache flush && wp rewrite flush --hard",
+    "wp post list --post_type=post --post_status=publish --format=ids | xargs wp post delete --force",
+    "wp cron event list --format=table"
+  ],
+  "relatedCommands": ["php", "composer", "mysql"],
+  "contextEngine": {
+    "detectors": [
+      {"name": "wp_config_exists", "description": "Detect wp-config.php in current or parent directories", "command": "test -f wp-config.php && echo 'found' || test -f ../wp-config.php && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "wp_content_dir", "description": "Detect wp-content directory indicating WordPress installation", "command": "test -d wp-content && echo 'found' || test -d ../wp-content && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "wp_cli_version", "description": "Check installed WP-CLI version", "command": "wp cli version 2>/dev/null", "parser": "lines", "cacheFor": 300},
+      {"name": "wp_plugins_active", "description": "List currently active plugins", "command": "wp plugin list --status=active --field=name 2>/dev/null", "parser": "lines", "cacheFor": 30},
+      {"name": "wp_theme_active", "description": "Get the currently active theme", "command": "wp theme list --status=active --field=name 2>/dev/null", "parser": "lines", "cacheFor": 30}
+    ]
+  }
+}

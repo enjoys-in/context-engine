@@ -1,0 +1,217 @@
+{
+  "name": "drizzle-kit",
+  "description": "Drizzle ORM CLI kit for generating and managing database migrations, schema introspection, and launching Drizzle Studio",
+  "category": "database-orm",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "generate",
+      "description": "Generate SQL migration files based on schema changes. Compares current schema definitions against previous snapshots and produces incremental migration SQL files.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--schema", "description": "Path to TypeScript schema file(s) or glob pattern", "type": "string"},
+        {"name": "--out", "description": "Output directory for migration files", "type": "string"},
+        {"name": "--dialect", "description": "Database dialect to use", "type": "string"},
+        {"name": "--driver", "description": "Driver to use for database connection", "type": "string"},
+        {"name": "--name", "description": "Custom name for the generated migration", "type": "string"},
+        {"name": "--breakpoints", "description": "Include breakpoint comments in SQL migration files"},
+        {"name": "--custom", "description": "Generate an empty custom migration file for manual SQL"}
+      ],
+      "examples": [
+        "drizzle-kit generate",
+        "drizzle-kit generate --config=drizzle.config.ts",
+        "drizzle-kit generate --schema=./src/db/schema.ts --out=./drizzle/migrations",
+        "drizzle-kit generate --dialect=postgresql --name=add_users_table",
+        "drizzle-kit generate --custom --name=seed_data"
+      ]
+    },
+    {
+      "name": "push",
+      "description": "Push schema changes directly to the database without generating migration files. Useful for rapid prototyping and development environments.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--schema", "description": "Path to TypeScript schema file(s)", "type": "string"},
+        {"name": "--dialect", "description": "Database dialect (postgresql, mysql, sqlite)", "type": "string"},
+        {"name": "--driver", "description": "Driver to use for database connection", "type": "string"},
+        {"name": "--url", "description": "Database connection URL", "type": "string"},
+        {"name": "--verbose", "description": "Show verbose output including SQL statements"},
+        {"name": "--strict", "description": "Always ask for confirmation on data-loss statements"},
+        {"name": "--force", "description": "Auto-accept all data-loss statements"},
+        {"name": "--host", "description": "Database host", "type": "string"},
+        {"name": "--port", "description": "Database port number", "type": "string"},
+        {"name": "--user", "description": "Database user", "type": "string"},
+        {"name": "--password", "description": "Database password", "type": "string"},
+        {"name": "--database", "description": "Database name", "type": "string"},
+        {"name": "--ssl", "description": "Use SSL for database connection"}
+      ],
+      "examples": [
+        "drizzle-kit push",
+        "drizzle-kit push --dialect=postgresql --url=postgres://user:pass@localhost:5432/mydb",
+        "drizzle-kit push --config=drizzle.config.ts --verbose",
+        "drizzle-kit push --strict",
+        "drizzle-kit push --force"
+      ]
+    },
+    {
+      "name": "drop",
+      "description": "Drop a previously generated migration by selecting from a list of available migrations. Removes migration files and updates the snapshot journal.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--out", "description": "Migrations directory path", "type": "string"}
+      ],
+      "examples": [
+        "drizzle-kit drop",
+        "drizzle-kit drop --out=./drizzle/migrations",
+        "drizzle-kit drop --config=drizzle.config.ts"
+      ]
+    },
+    {
+      "name": "pull",
+      "description": "Introspect an existing database and generate a TypeScript Drizzle schema from the current database structure. Also known as database introspection.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--dialect", "description": "Database dialect (postgresql, mysql, sqlite)", "type": "string"},
+        {"name": "--driver", "description": "Driver to use for database connection", "type": "string"},
+        {"name": "--url", "description": "Database connection URL", "type": "string"},
+        {"name": "--out", "description": "Output directory for schema files", "type": "string"},
+        {"name": "--host", "description": "Database host", "type": "string"},
+        {"name": "--port", "description": "Database port number", "type": "string"},
+        {"name": "--user", "description": "Database user", "type": "string"},
+        {"name": "--password", "description": "Database password", "type": "string"},
+        {"name": "--database", "description": "Database name", "type": "string"},
+        {"name": "--schema", "description": "Schema/namespace to introspect", "type": "string"},
+        {"name": "--breakpoints", "description": "Include breakpoint comments in SQL files"},
+        {"name": "--casing", "description": "Column casing style: camelCase or snake_case", "type": "string"}
+      ],
+      "examples": [
+        "drizzle-kit pull",
+        "drizzle-kit pull --dialect=postgresql --url=postgres://user:pass@localhost:5432/mydb",
+        "drizzle-kit pull --config=drizzle.config.ts --out=./src/db/schema",
+        "drizzle-kit pull --dialect=mysql --host=localhost --port=3306 --user=root --database=mydb",
+        "drizzle-kit pull --casing=camelCase"
+      ]
+    },
+    {
+      "name": "check",
+      "description": "Check consistency of generated migrations. Verifies that migration files have not been modified after generation and match expected snapshots.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--out", "description": "Migrations directory path", "type": "string"},
+        {"name": "--dialect", "description": "Database dialect", "type": "string"}
+      ],
+      "examples": [
+        "drizzle-kit check",
+        "drizzle-kit check --config=drizzle.config.ts",
+        "drizzle-kit check --out=./drizzle/migrations"
+      ]
+    },
+    {
+      "name": "up",
+      "description": "Apply pending migrations to the database. Upgrades migration snapshots to the latest version of the Drizzle Kit journal format.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--out", "description": "Migrations directory path", "type": "string"},
+        {"name": "--dialect", "description": "Database dialect", "type": "string"}
+      ],
+      "examples": [
+        "drizzle-kit up",
+        "drizzle-kit up --config=drizzle.config.ts",
+        "drizzle-kit up --out=./drizzle/migrations --dialect=postgresql"
+      ]
+    },
+    {
+      "name": "studio",
+      "description": "Open Drizzle Studio, a visual database browser and editor GUI. Runs a local web server for browsing tables, editing data, and running queries.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"},
+        {"name": "--port", "description": "Port for the Drizzle Studio server", "type": "string"},
+        {"name": "--host", "description": "Host for the Drizzle Studio server", "type": "string"},
+        {"name": "--verbose", "description": "Show verbose output"}
+      ],
+      "examples": [
+        "drizzle-kit studio",
+        "drizzle-kit studio --port=4983",
+        "drizzle-kit studio --config=drizzle.config.ts --verbose"
+      ]
+    },
+    {
+      "name": "migrate",
+      "description": "Run all pending migrations against the database. Reads the migration directory and applies any unapplied migration files in order.",
+      "args": [],
+      "options": [
+        {"name": "--config", "description": "Path to drizzle config file", "type": "string"}
+      ],
+      "examples": [
+        "drizzle-kit migrate",
+        "drizzle-kit migrate --config=drizzle.config.ts"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--version", "short": "-V", "description": "Show drizzle-kit version"},
+    {"name": "--help", "short": "-h", "description": "Show help information"},
+    {"name": "--config", "description": "Path to the drizzle configuration file", "type": "string"},
+    {"name": "--dialect", "description": "Database dialect: postgresql, mysql, sqlite, turso", "type": "string"},
+    {"name": "--verbose", "description": "Enable verbose logging output"}
+  ],
+  "examples": [
+    "npx drizzle-kit generate",
+    "npx drizzle-kit push --dialect=postgresql",
+    "npx drizzle-kit pull --url=postgres://user:pass@localhost:5432/mydb",
+    "npx drizzle-kit studio",
+    "npx drizzle-kit generate --name=add_users_table",
+    "npx drizzle-kit push --config=./drizzle.config.ts --verbose",
+    "npx drizzle-kit drop",
+    "npx drizzle-kit check",
+    "npx drizzle-kit up",
+    "npx drizzle-kit migrate"
+  ],
+  "relatedCommands": ["prisma", "typeorm", "node", "npm", "npx"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "drizzle_config_detect",
+        "description": "Detect drizzle configuration file in the project",
+        "command": "find . -maxdepth 2 -name 'drizzle.config.*' -type f 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "drizzle_schema_detect",
+        "description": "Detect drizzle schema files in the project",
+        "command": "find . -path '*/db/schema*' -o -path '*/drizzle/schema*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "drizzle_migrations_detect",
+        "description": "Detect existing drizzle migration files",
+        "command": "find . -path '*/drizzle/migrations/*' -name '*.sql' -type f 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "drizzle_kit_version",
+        "description": "Get installed drizzle-kit version",
+        "command": "npx drizzle-kit --version 2>/dev/null || echo 'not installed'",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "drizzle_package_detect",
+        "description": "Detect drizzle-kit in package.json dependencies",
+        "command": "cat package.json 2>/dev/null | grep -E 'drizzle-(kit|orm)' | head -5",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

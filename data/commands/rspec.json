@@ -1,0 +1,257 @@
+{
+  "name": "rspec",
+  "description": "RSpec is a Behaviour-Driven Development (BDD) testing framework for Ruby that provides expressive syntax, powerful matchers, mocking/stubbing, and detailed output for writing and running automated tests.",
+  "category": "ruby-ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [
+    {
+      "name": "init",
+      "description": "Initialize a project for RSpec by creating .rspec config and spec/spec_helper.rb files",
+      "args": [],
+      "options": [],
+      "examples": [
+        "rspec --init"
+      ]
+    },
+    {
+      "name": "spec/",
+      "description": "Run all spec files in the spec/ directory",
+      "args": [{"name": "files_or_dirs", "type": "string", "required": false, "description": "Specific spec files, directories, or line references to run"}],
+      "options": [
+        {"name": "--format", "short": "-f", "description": "Output format: progress (default), documentation, html, json", "type": "string"},
+        {"name": "--color", "description": "Enable color output"},
+        {"name": "--no-color", "description": "Disable color output"},
+        {"name": "--profile", "short": "-p", "description": "Show the N slowest examples (default: 10)", "type": "integer"},
+        {"name": "--fail-fast", "description": "Stop running after the first failure"},
+        {"name": "--order", "description": "Run examples in specified order: defined, random, rand:SEED", "type": "string"},
+        {"name": "--seed", "description": "Equivalent to --order rand:SEED for reproducible random order", "type": "integer"},
+        {"name": "--tag", "short": "-t", "description": "Run only examples with the specified tag", "type": "string"},
+        {"name": "--exclude-tag", "description": "Exclude examples with the specified tag", "type": "string"},
+        {"name": "--example", "short": "-e", "description": "Run examples whose full description matches the given string", "type": "string"},
+        {"name": "--pattern", "short": "-P", "description": "Load files matching the given pattern (default: spec/**/*_spec.rb)", "type": "string"},
+        {"name": "--exclude-pattern", "description": "Exclude files matching the pattern from loading", "type": "string"},
+        {"name": "--dry-run", "description": "Print the formatter output without running any examples"},
+        {"name": "--warnings", "short": "-w", "description": "Enable Ruby warnings"},
+        {"name": "--require", "short": "-r", "description": "Require a Ruby file before loading spec files", "type": "string"},
+        {"name": "--only-failures", "description": "Run only previously failed examples"},
+        {"name": "--next-failure", "description": "Run only the next failure (equivalent to --only-failures --fail-fast)"},
+        {"name": "--backtrace", "short": "-b", "description": "Enable full backtrace instead of filtered"},
+        {"name": "--out", "short": "-o", "description": "Write output to a file instead of STDOUT", "type": "string"},
+        {"name": "--bisect", "description": "Find the minimal set of examples that reproduce a failure"},
+        {"name": "--force-color", "description": "Force color output even when not connected to a TTY"}
+      ],
+      "examples": [
+        "rspec",
+        "rspec spec/models/",
+        "rspec spec/models/user_spec.rb",
+        "rspec spec/models/user_spec.rb:42",
+        "rspec --format documentation",
+        "rspec --tag smoke",
+        "rspec --fail-fast --order random"
+      ]
+    },
+    {
+      "name": "run single file",
+      "description": "Execute specs from a single file, optionally at a specific line",
+      "args": [{"name": "file", "type": "string", "required": true, "description": "Path to the spec file, optionally with :LINE_NUMBER"}],
+      "options": [
+        {"name": "--format", "short": "-f", "description": "Output format", "type": "string"},
+        {"name": "--fail-fast", "description": "Abort after first failure"},
+        {"name": "--backtrace", "short": "-b", "description": "Show full backtrace"}
+      ],
+      "examples": [
+        "rspec spec/models/user_spec.rb",
+        "rspec spec/models/user_spec.rb:25",
+        "rspec spec/controllers/users_controller_spec.rb:100 --format documentation"
+      ]
+    },
+    {
+      "name": "run by tag",
+      "description": "Run only examples annotated with specific tags or metadata",
+      "args": [],
+      "options": [
+        {"name": "--tag", "short": "-t", "description": "Include examples with this tag", "type": "string"},
+        {"name": "--exclude-tag", "description": "Exclude examples with this tag", "type": "string"}
+      ],
+      "examples": [
+        "rspec --tag focus",
+        "rspec --tag type:feature",
+        "rspec --tag ~slow",
+        "rspec --tag smoke --tag regression",
+        "rspec --exclude-tag flaky"
+      ]
+    },
+    {
+      "name": "run by example name",
+      "description": "Run examples whose full description matches a string or pattern",
+      "args": [],
+      "options": [
+        {"name": "--example", "short": "-e", "description": "Run examples matching this string/regex", "type": "string"}
+      ],
+      "examples": [
+        "rspec -e 'creates a new user'",
+        "rspec -e 'validates'",
+        "rspec -e 'authentication' --format documentation"
+      ]
+    },
+    {
+      "name": "bisect",
+      "description": "Use bisection to find the minimal set of examples that reproduce an ordering-dependent failure",
+      "args": [],
+      "options": [
+        {"name": "--seed", "description": "Seed for the random order that produced the failure", "type": "integer"},
+        {"name": "--bisect", "description": "Enable bisect mode"},
+        {"name": "--format", "short": "-f", "description": "Output format", "type": "string"}
+      ],
+      "examples": [
+        "rspec --bisect --seed 12345",
+        "rspec --bisect=verbose --seed 12345"
+      ]
+    },
+    {
+      "name": "format output",
+      "description": "Run specs with different output formatters for CI, documentation, or debugging",
+      "args": [],
+      "options": [
+        {"name": "--format", "short": "-f", "description": "Formatter: progress, documentation, html, json, failures", "type": "string"},
+        {"name": "--out", "short": "-o", "description": "Output file for the formatter", "type": "string"}
+      ],
+      "examples": [
+        "rspec --format documentation",
+        "rspec --format html --out report.html",
+        "rspec --format json --out results.json",
+        "rspec --format progress --format json --out results.json",
+        "rspec -f documentation -f html -o report.html"
+      ]
+    },
+    {
+      "name": "only-failures",
+      "description": "Re-run only the examples that failed in the previous run",
+      "args": [],
+      "options": [
+        {"name": "--only-failures", "description": "Run only previously failed examples"},
+        {"name": "--next-failure", "description": "Run only the next failure, then stop"}
+      ],
+      "examples": [
+        "rspec --only-failures",
+        "rspec --next-failure"
+      ]
+    },
+    {
+      "name": "profile",
+      "description": "Display the slowest examples to identify performance bottlenecks",
+      "args": [],
+      "options": [
+        {"name": "--profile", "short": "-p", "description": "Show N slowest examples", "type": "integer"}
+      ],
+      "examples": [
+        "rspec --profile",
+        "rspec --profile 20",
+        "rspec spec/features/ --profile 5"
+      ]
+    },
+    {
+      "name": "random order",
+      "description": "Run examples in random order to detect order-dependent failures",
+      "args": [],
+      "options": [
+        {"name": "--order", "description": "Ordering method: defined, random, rand:SEED, recently-modified", "type": "string"},
+        {"name": "--seed", "description": "Set the random seed for reproducible ordering", "type": "integer"}
+      ],
+      "examples": [
+        "rspec --order random",
+        "rspec --order random --seed 54321",
+        "rspec --order defined",
+        "rspec --seed 12345"
+      ]
+    },
+    {
+      "name": "parallel specs",
+      "description": "Run specs in parallel using parallel_tests gem integration (when configured)",
+      "args": [],
+      "options": [
+        {"name": "--pattern", "short": "-P", "description": "File pattern to match", "type": "string"}
+      ],
+      "examples": [
+        "parallel_rspec spec/",
+        "parallel_rspec spec/models/",
+        "parallel_rspec --group-by filesize"
+      ]
+    },
+    {
+      "name": "dry-run",
+      "description": "Print formatted output without actually running any examples",
+      "args": [],
+      "options": [
+        {"name": "--dry-run", "description": "Do not run examples, just print them"},
+        {"name": "--format", "short": "-f", "description": "Output format", "type": "string"}
+      ],
+      "examples": [
+        "rspec --dry-run",
+        "rspec --dry-run --format documentation",
+        "rspec spec/models/ --dry-run"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {"name": "--format", "short": "-f", "description": "Choose output format: progress (default), documentation, html, json", "type": "string"},
+    {"name": "--color", "description": "Enable color in the output"},
+    {"name": "--no-color", "description": "Disable color in the output"},
+    {"name": "--force-color", "description": "Force color output even without a TTY"},
+    {"name": "--profile", "short": "-p", "description": "Show the N slowest examples and example groups", "type": "integer"},
+    {"name": "--no-profile", "description": "Disable profiling of slow examples"},
+    {"name": "--fail-fast", "description": "Abort the run after the first failure"},
+    {"name": "--failure-exit-code", "description": "Override the exit code used when there are failing specs", "type": "integer"},
+    {"name": "--order", "description": "Run examples in the specified order: defined, random, rand:SEED, recently-modified", "type": "string"},
+    {"name": "--seed", "description": "Random seed for ordering (equivalent to --order rand:SEED)", "type": "integer"},
+    {"name": "--bisect", "description": "Find the minimal reproduction set for ordering-dependent failures"},
+    {"name": "--tag", "short": "-t", "description": "Run only examples with the given tag (use ~tag to exclude)", "type": "string"},
+    {"name": "--exclude-tag", "description": "Exclude examples with the given tag", "type": "string"},
+    {"name": "--example", "short": "-e", "description": "Run examples whose full nested description matches this string", "type": "string"},
+    {"name": "--pattern", "short": "-P", "description": "Glob pattern to load spec files (default: spec/**/*_spec.rb)", "type": "string"},
+    {"name": "--exclude-pattern", "description": "Glob pattern to exclude from loading", "type": "string"},
+    {"name": "--dry-run", "description": "Print formatter output without running examples"},
+    {"name": "--warnings", "short": "-w", "description": "Enable Ruby warnings"},
+    {"name": "--require", "short": "-r", "description": "Require a Ruby file before loading specs", "type": "string"},
+    {"name": "--init", "description": "Initialize a project with .rspec and spec/spec_helper.rb"},
+    {"name": "--only-failures", "description": "Filter to run only examples that failed on the previous run"},
+    {"name": "--next-failure", "description": "Apply --only-failures and --fail-fast together"},
+    {"name": "--backtrace", "short": "-b", "description": "Enable full backtrace output"},
+    {"name": "--out", "short": "-o", "description": "Write output to a file instead of $stdout", "type": "string"},
+    {"name": "--deprecation-out", "description": "Write deprecation warnings to a file", "type": "string"},
+    {"name": "--default-path", "description": "Set the default path where RSpec looks for spec files", "type": "string"},
+    {"name": "--error-exit-code", "description": "Exit code to use when there is an error loading specs", "type": "integer"},
+    {"name": "--version", "short": "-V", "description": "Display the installed RSpec version"},
+    {"name": "--help", "short": "-h", "description": "Display help information"}
+  ],
+  "examples": [
+    "rspec",
+    "rspec spec/models/user_spec.rb",
+    "rspec spec/models/user_spec.rb:42",
+    "rspec --format documentation",
+    "rspec --format json --out results.json",
+    "rspec --format html --out report.html",
+    "rspec --tag focus",
+    "rspec --tag ~slow",
+    "rspec -e 'creates a user'",
+    "rspec --fail-fast --order random",
+    "rspec --only-failures",
+    "rspec --next-failure",
+    "rspec --profile 10",
+    "rspec --bisect --seed 12345",
+    "rspec --dry-run --format documentation",
+    "rspec spec/ --format progress --format json --out ci-results.json"
+  ],
+  "relatedCommands": ["ruby", "rake", "bundle"],
+  "contextEngine": {
+    "detectors": [
+      {"name": "rspec_config_exists", "description": "Detect .rspec configuration file in the current directory", "command": "test -f .rspec && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "spec_dir_exists", "description": "Detect spec/ directory indicating RSpec is in use", "command": "test -d spec && echo 'found' || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "spec_helper_exists", "description": "Detect spec/spec_helper.rb or spec/rails_helper.rb", "command": "test -f spec/spec_helper.rb && echo 'spec_helper' || (test -f spec/rails_helper.rb && echo 'rails_helper' || echo 'not_found')", "parser": "lines", "cacheFor": 60},
+      {"name": "rspec_version", "description": "Get installed RSpec version", "command": "rspec --version 2>/dev/null | head -1", "parser": "lines", "cacheFor": 300},
+      {"name": "rspec_in_gemfile", "description": "Check if rspec is listed in the Gemfile", "command": "grep -E 'rspec|rspec-rails' Gemfile 2>/dev/null || echo 'not_found'", "parser": "lines", "cacheFor": 60},
+      {"name": "spec_file_count", "description": "Count the number of spec files", "command": "find spec -name '*_spec.rb' 2>/dev/null | wc -l", "parser": "lines", "cacheFor": 30}
+    ]
+  }
+}
