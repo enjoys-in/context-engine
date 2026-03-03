@@ -1,0 +1,230 @@
+{
+  "language": "sql",
+  "hovers": {
+    "SELECT": {
+      "contents": [
+        { "value": "```sql\nSELECT [DISTINCT] column1, column2, ...\nFROM table_name\n[WHERE condition]\n[GROUP BY column]\n[HAVING condition]\n[ORDER BY column [ASC|DESC]]\n[LIMIT n [OFFSET m]]\n```\nRetrieves rows from one or more tables. The most fundamental SQL statement for querying data." }
+      ]
+    },
+    "INSERT": {
+      "contents": [
+        { "value": "```sql\nINSERT INTO table_name (column1, column2, ...)\nVALUES (value1, value2, ...)\n```\nInserts one or more new rows into a table. Use multiple value lists for bulk inserts, or `INSERT INTO ... SELECT` to insert from a query." }
+      ]
+    },
+    "UPDATE": {
+      "contents": [
+        { "value": "```sql\nUPDATE table_name\nSET column1 = value1, column2 = value2, ...\n[WHERE condition]\n```\nModifies existing rows in a table. **Always use a WHERE clause** to avoid updating all rows unintentionally." }
+      ]
+    },
+    "DELETE": {
+      "contents": [
+        { "value": "```sql\nDELETE FROM table_name\n[WHERE condition]\n```\nRemoves rows from a table matching the WHERE condition. Without WHERE, **all rows are deleted**. Use TRUNCATE for faster bulk deletion." }
+      ]
+    },
+    "CREATE TABLE": {
+      "contents": [
+        { "value": "```sql\nCREATE TABLE [IF NOT EXISTS] table_name (\n  column1 data_type [constraints],\n  column2 data_type [constraints],\n  ...\n  [TABLE constraints]\n)\n```\nCreates a new table with specified columns, data types, and constraints (PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK, DEFAULT)." }
+      ]
+    },
+    "ALTER TABLE": {
+      "contents": [
+        { "value": "```sql\nALTER TABLE table_name\n  ADD [COLUMN] column_name data_type\n  | DROP [COLUMN] column_name\n  | MODIFY [COLUMN] column_name new_data_type\n  | RENAME TO new_table_name\n  | ADD CONSTRAINT constraint_name ...\n```\nModifies the structure of an existing table — add, remove, or change columns and constraints." }
+      ]
+    },
+    "DROP TABLE": {
+      "contents": [
+        { "value": "```sql\nDROP TABLE [IF EXISTS] table_name [CASCADE]\n```\nPermanently removes a table and all its data. **This action cannot be undone.** Use IF EXISTS to avoid errors. CASCADE drops dependent objects." }
+      ]
+    },
+    "WHERE": {
+      "contents": [
+        { "value": "```sql\nWHERE condition\n  [AND|OR condition ...]\n```\nFilters rows based on conditions. Supports comparison (`=`, `!=`, `<`, `>`, `<=`, `>=`), logical (`AND`, `OR`, `NOT`), pattern (`LIKE`, `IN`, `BETWEEN`), and NULL checks (`IS NULL`, `IS NOT NULL`)." }
+      ]
+    },
+    "JOIN": {
+      "contents": [
+        { "value": "```sql\n-- INNER JOIN: matching rows from both tables\nSELECT ... FROM t1 INNER JOIN t2 ON t1.col = t2.col\n\n-- LEFT JOIN: all from left + matching from right\nSELECT ... FROM t1 LEFT JOIN t2 ON t1.col = t2.col\n\n-- RIGHT JOIN: all from right + matching from left\nSELECT ... FROM t1 RIGHT JOIN t2 ON t1.col = t2.col\n\n-- FULL OUTER JOIN: all from both tables\nSELECT ... FROM t1 FULL OUTER JOIN t2 ON t1.col = t2.col\n\n-- CROSS JOIN: Cartesian product\nSELECT ... FROM t1 CROSS JOIN t2\n```\nCombines rows from two or more tables based on related columns." }
+      ]
+    },
+    "INNER JOIN": {
+      "contents": [
+        { "value": "```sql\nSELECT columns\nFROM table1\nINNER JOIN table2 ON table1.col = table2.col\n```\nReturns only the rows that have matching values in both tables." }
+      ]
+    },
+    "LEFT JOIN": {
+      "contents": [
+        { "value": "```sql\nSELECT columns\nFROM table1\nLEFT JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from the left table and matching rows from the right table. Non-matching right-side columns are NULL." }
+      ]
+    },
+    "RIGHT JOIN": {
+      "contents": [
+        { "value": "```sql\nSELECT columns\nFROM table1\nRIGHT JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from the right table and matching rows from the left table. Non-matching left-side columns are NULL." }
+      ]
+    },
+    "FULL OUTER JOIN": {
+      "contents": [
+        { "value": "```sql\nSELECT columns\nFROM table1\nFULL OUTER JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from both tables with NULLs where there is no match. Not supported in MySQL (use UNION of LEFT and RIGHT JOIN)." }
+      ]
+    },
+    "GROUP BY": {
+      "contents": [
+        { "value": "```sql\nSELECT column, aggregate_function(column)\nFROM table\n[WHERE condition]\nGROUP BY column1, column2, ...\n[HAVING aggregate_condition]\n```\nGroups rows sharing common values into summary rows. Every non-aggregated column in SELECT must appear in GROUP BY." }
+      ]
+    },
+    "HAVING": {
+      "contents": [
+        { "value": "```sql\nSELECT column, COUNT(*)\nFROM table\nGROUP BY column\nHAVING COUNT(*) > 5\n```\nFilters grouped results based on aggregate conditions. Use HAVING instead of WHERE when filtering on aggregated values." }
+      ]
+    },
+    "ORDER BY": {
+      "contents": [
+        { "value": "```sql\nORDER BY column1 [ASC|DESC], column2 [ASC|DESC], ...\n```\nSorts the result set. ASC (ascending) is the default. Multiple columns create a secondary sort. NULL handling varies by database (NULLS FIRST/LAST in PostgreSQL)." }
+      ]
+    },
+    "UNION": {
+      "contents": [
+        { "value": "```sql\nSELECT columns FROM table1\nUNION [ALL]\nSELECT columns FROM table2\n```\nCombines results from multiple SELECT statements. UNION removes duplicates (slower). UNION ALL keeps all rows including duplicates (faster). Both queries must have the same column count and compatible types." }
+      ]
+    },
+    "WITH": {
+      "contents": [
+        { "value": "```sql\nWITH cte_name AS (\n  SELECT columns FROM table WHERE condition\n)\nSELECT * FROM cte_name\n\n-- Recursive CTE\nWITH RECURSIVE cte AS (\n  SELECT ... -- base case\n  UNION ALL\n  SELECT ... FROM cte WHERE ... -- recursive step\n)\nSELECT * FROM cte\n```\nCommon Table Expression (CTE): a temporary named result set. Improves readability and supports recursive queries for hierarchical data." }
+      ]
+    },
+    "CASE": {
+      "contents": [
+        { "value": "```sql\nCASE\n  WHEN condition1 THEN result1\n  WHEN condition2 THEN result2\n  ELSE default_result\nEND\n\n-- Simple form\nCASE expression\n  WHEN value1 THEN result1\n  WHEN value2 THEN result2\n  ELSE default_result\nEND\n```\nConditional expression — returns a value based on the first matching condition. Can be used in SELECT, WHERE, ORDER BY, and other clauses." }
+      ]
+    },
+    "EXISTS": {
+      "contents": [
+        { "value": "```sql\nSELECT columns\nFROM table1 t1\nWHERE EXISTS (\n  SELECT 1 FROM table2 t2\n  WHERE t2.foreign_key = t1.id\n)\n```\nReturns TRUE if the subquery returns at least one row. Often more efficient than `IN` for correlated subqueries with large datasets." }
+      ]
+    },
+    "LIKE": {
+      "contents": [
+        { "value": "```sql\nWHERE column LIKE pattern\n\n-- Wildcards:\n--   %  matches any sequence of characters\n--   _  matches exactly one character\n\n-- Examples:\nWHERE name LIKE 'John%'       -- starts with John\nWHERE name LIKE '%son'        -- ends with son\nWHERE name LIKE '%oh%'        -- contains oh\nWHERE code LIKE 'A_B'         -- A, any char, B\n```\nPattern matching operator for string comparisons. Use `ILIKE` (PostgreSQL) for case-insensitive matching." }
+      ]
+    },
+    "BETWEEN": {
+      "contents": [
+        { "value": "```sql\nWHERE column BETWEEN low_value AND high_value\n\n-- Equivalent to:\nWHERE column >= low_value AND column <= high_value\n\n-- Works with dates:\nWHERE created_at BETWEEN '2024-01-01' AND '2024-12-31'\n```\nInclusive range filter for numbers, dates, and strings." }
+      ]
+    },
+    "IN": {
+      "contents": [
+        { "value": "```sql\n-- With a value list\nWHERE column IN ('value1', 'value2', 'value3')\n\n-- With a subquery\nWHERE column IN (SELECT column FROM other_table)\n\n-- Negation\nWHERE column NOT IN ('value1', 'value2')\n```\nTests whether a value matches any value in a list or subquery result." }
+      ]
+    },
+    "LIMIT": {
+      "contents": [
+        { "value": "```sql\n-- Basic limit\nSELECT * FROM table LIMIT 10\n\n-- With offset (pagination)\nSELECT * FROM table LIMIT 10 OFFSET 20\n\n-- Standard SQL equivalent\nSELECT * FROM table\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY\n```\nRestricts the number of rows returned. Combined with OFFSET for pagination." }
+      ]
+    },
+    "COUNT": {
+      "contents": [
+        { "value": "```sql\nCOUNT(*)              -- count all rows (including NULLs)\nCOUNT(column)         -- count non-NULL values\nCOUNT(DISTINCT column) -- count unique non-NULL values\n```\nAggregate function that returns the number of matching rows." }
+      ]
+    },
+    "SUM": {
+      "contents": [
+        { "value": "```sql\nSUM(column)            -- sum of all non-NULL values\nSUM(DISTINCT column)   -- sum of unique values\n```\nAggregate function that returns the total sum of a numeric column. Returns NULL if no rows match." }
+      ]
+    },
+    "AVG": {
+      "contents": [
+        { "value": "```sql\nAVG(column)            -- average of all non-NULL values\nAVG(DISTINCT column)   -- average of unique values\n```\nAggregate function that returns the mean value. NULL values are ignored in the calculation." }
+      ]
+    },
+    "COALESCE": {
+      "contents": [
+        { "value": "```sql\nCOALESCE(value1, value2, ..., default_value)\n\n-- Example: use nickname, fall back to first_name, then 'Unknown'\nSELECT COALESCE(nickname, first_name, 'Unknown') AS display_name\nFROM users\n```\nReturns the first non-NULL value from the argument list. Essential for handling NULL values and providing defaults." }
+      ]
+    },
+    "CAST": {
+      "contents": [
+        { "value": "```sql\nCAST(expression AS target_type)\n\n-- Examples:\nCAST('2024-01-15' AS DATE)\nCAST(price AS DECIMAL(10,2))\nCAST(123 AS VARCHAR(10))\n```\nConverts a value from one data type to another. Standard SQL syntax supported across all major databases." }
+      ]
+    },
+    "ROW_NUMBER": {
+      "contents": [
+        { "value": "```sql\nROW_NUMBER() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Example: number rows per department\nSELECT name, dept,\n  ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) AS rn\nFROM employees\n```\nWindow function that assigns unique sequential integers to rows within each partition." }
+      ]
+    },
+    "RANK": {
+      "contents": [
+        { "value": "```sql\nRANK() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Result with ties: 1, 2, 2, 4 (gap after tie)\n```\nWindow function that assigns ranks with gaps. Tied values receive the same rank; the next rank is skipped." }
+      ]
+    },
+    "DENSE_RANK": {
+      "contents": [
+        { "value": "```sql\nDENSE_RANK() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Result with ties: 1, 2, 2, 3 (no gaps)\n```\nWindow function that assigns ranks without gaps. Tied values get the same rank, and the next rank follows immediately." }
+      ]
+    },
+    "LEAD": {
+      "contents": [
+        { "value": "```sql\nLEAD(column, offset, default) OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column\n)\n\n-- Example: compare with next row's value\nSELECT date, revenue,\n  LEAD(revenue, 1) OVER (ORDER BY date) AS next_day_revenue\nFROM daily_sales\n```\nWindow function that accesses a subsequent row's column value without a self-join. Offset defaults to 1." }
+      ]
+    },
+    "LAG": {
+      "contents": [
+        { "value": "```sql\nLAG(column, offset, default) OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column\n)\n\n-- Example: compare with previous row's value\nSELECT date, revenue,\n  LAG(revenue, 1) OVER (ORDER BY date) AS prev_day_revenue\nFROM daily_sales\n```\nWindow function that accesses a preceding row's column value. Useful for calculating differences between consecutive rows." }
+      ]
+    },
+    "PRIMARY KEY": {
+      "contents": [
+        { "value": "```sql\n-- Inline definition\nCREATE TABLE users (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  ...\n);\n\n-- Table-level (composite key)\nCREATE TABLE order_items (\n  order_id INT,\n  item_id INT,\n  PRIMARY KEY (order_id, item_id)\n);\n```\nUniquely identifies each row in a table. Combines NOT NULL and UNIQUE. Only one primary key per table." }
+      ]
+    },
+    "FOREIGN KEY": {
+      "contents": [
+        { "value": "```sql\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  user_id INT,\n  CONSTRAINT fk_user\n    FOREIGN KEY (user_id)\n    REFERENCES users(id)\n    ON DELETE CASCADE\n    ON UPDATE CASCADE\n);\n\n-- Actions: CASCADE, SET NULL, RESTRICT, NO ACTION, SET DEFAULT\n```\nEnforces referential integrity by ensuring values in a column match values in another table's primary key." }
+      ]
+    },
+    "INDEX": {
+      "contents": [
+        { "value": "```sql\n-- Create index\nCREATE INDEX idx_name ON table(column);\nCREATE UNIQUE INDEX idx_email ON users(email);\nCREATE INDEX idx_composite ON table(col1, col2);\n\n-- Drop index\nDROP INDEX idx_name ON table;\n```\nIndexes speed up data retrieval at the cost of additional storage and slower writes. Essential for columns used in WHERE, JOIN, and ORDER BY." }
+      ]
+    },
+    "BEGIN": {
+      "contents": [
+        { "value": "```sql\nBEGIN TRANSACTION;\n  -- SQL statements\n  INSERT INTO ...\n  UPDATE ...\nCOMMIT;\n\n-- On error:\nROLLBACK;\n\n-- With savepoints:\nBEGIN;\n  SAVEPOINT sp1;\n  -- statements\n  ROLLBACK TO sp1;\nCOMMIT;\n```\nStarts a transaction. All subsequent operations are grouped and applied atomically with COMMIT, or undone with ROLLBACK." }
+      ]
+    },
+    "EXPLAIN": {
+      "contents": [
+        { "value": "```sql\nEXPLAIN SELECT * FROM users WHERE email = 'test@example.com';\n\n-- With actual execution stats (PostgreSQL)\nEXPLAIN ANALYZE SELECT ...;\n\n-- MySQL extended\nEXPLAIN FORMAT=JSON SELECT ...;\n```\nDisplays the query execution plan chosen by the database optimizer. Shows index usage, join strategies, and estimated row counts. Essential for query performance tuning." }
+      ]
+    },
+    "CONCAT": {
+      "contents": [
+        { "value": "```sql\nCONCAT(string1, string2, ...)\n\n-- Examples:\nSELECT CONCAT(first_name, ' ', last_name) AS full_name\nFROM users;\n\n-- PostgreSQL also supports:\nSELECT first_name || ' ' || last_name\nFROM users;\n```\nConcatenates two or more strings. Returns NULL if any argument is NULL in standard SQL." }
+      ]
+    },
+    "SUBSTRING": {
+      "contents": [
+        { "value": "```sql\nSUBSTRING(string, start, length)\nSUBSTRING(string FROM start FOR length)\n\n-- Examples:\nSELECT SUBSTRING('Hello World', 1, 5);  -- 'Hello'\nSELECT SUBSTRING(email, 1, POSITION('@' IN email) - 1) AS username\nFROM users;\n```\nExtracts a portion of a string starting at a 1-based position for the given length." }
+      ]
+    },
+    "NOW": {
+      "contents": [
+        { "value": "```sql\n-- Current date and time\nSELECT NOW();               -- 2024-03-15 14:30:00\nSELECT CURRENT_TIMESTAMP;   -- equivalent\nSELECT CURRENT_DATE;        -- date only\nSELECT CURRENT_TIME;        -- time only\n```\nReturns the current date and time. Useful for timestamps, age calculations, and filtering by date." }
+      ]
+    },
+    "EXTRACT": {
+      "contents": [
+        { "value": "```sql\nEXTRACT(part FROM date_expression)\n\n-- Parts: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, DOW, DOY\nSELECT EXTRACT(YEAR FROM created_at) AS year,\n       EXTRACT(MONTH FROM created_at) AS month\nFROM orders;\n```\nExtracts a specific component from a date or timestamp value. Standard SQL syntax." }
+      ]
+    },
+    "TRUNCATE": {
+      "contents": [
+        { "value": "```sql\nTRUNCATE TABLE table_name;\n```\nRemoves all rows from a table very quickly. Unlike DELETE, it does not log individual row deletions, resets auto-increment counters, and **cannot be rolled back** in most databases." }
+      ]
+    },
+    "GRANT": {
+      "contents": [
+        { "value": "```sql\n-- Grant specific privileges\nGRANT SELECT, INSERT ON database.table TO 'user'@'host';\n\n-- Grant all privileges\nGRANT ALL PRIVILEGES ON database.* TO 'user'@'host';\n\n-- Allow user to grant to others\nGRANT SELECT ON table TO user WITH GRANT OPTION;\n```\nGrants access privileges on database objects to users or roles." }
+      ]
+    }
+  }
+}

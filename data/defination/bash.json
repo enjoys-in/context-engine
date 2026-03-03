@@ -1,0 +1,565 @@
+{
+  "language": "bash",
+  "definitions": {
+    "echo": {
+      "signature": "echo [-neE] [string ...]",
+      "description": "Display a line of text to stdout. `-n` suppresses the trailing newline, `-e` enables interpretation of backslash escapes, `-E` disables it (default).",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "printf": {
+      "signature": "printf [-v var] format [arguments ...]",
+      "description": "Write formatted output to stdout. Supports C-style format specifiers: %s (string), %d (integer), %f (float), %x (hex). With `-v`, stores result in variable instead of printing.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "read": {
+      "signature": "read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]",
+      "description": "Read a line from standard input (or file descriptor) and split it into fields using $IFS. Results are assigned to named variables; excess fields go to the last variable.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "cd": {
+      "signature": "cd [-L|-P] [directory]",
+      "description": "Change the shell working directory. With no arguments, changes to $HOME. `-L` follows symbolic links (default), `-P` uses the physical directory structure.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "pwd": {
+      "signature": "pwd [-LP]",
+      "description": "Print the absolute pathname of the current working directory. `-L` shows the logical path (default), `-P` resolves symlinks.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "export": {
+      "signature": "export [-fn] [-p] [name[=value] ...]",
+      "description": "Mark variables and functions for export to child processes. `-n` removes the export property. `-f` exports functions. `-p` lists all exported variables.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "source": {
+      "signature": "source filename [arguments]",
+      "description": "Read and execute commands from filename in the current shell environment. Equivalent to the dot (.) command. Returns the exit status of the last command executed.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "alias": {
+      "signature": "alias [-p] [name[=value] ...]",
+      "description": "Define or display aliases. Without arguments, prints all aliases. With a name, prints that alias. With name=value, creates an alias.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "unalias": {
+      "signature": "unalias [-a] name [name ...]",
+      "description": "Remove alias definitions. `-a` removes all aliases.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "type": {
+      "signature": "type [-afptP] name [name ...]",
+      "description": "Indicate how each name would be interpreted if used as a command. `-t` prints a single word (alias, keyword, function, builtin, file). `-a` shows all matches.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "eval": {
+      "signature": "eval [arguments]",
+      "description": "Concatenate all arguments into a single string and execute the result as a shell command in the current environment.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "exec": {
+      "signature": "exec [-cl] [-a name] [command [arguments ...]] [redirections ...]",
+      "description": "Replace the shell with the specified command without creating a new process. If no command is given, redirections take effect in the current shell.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "exit": {
+      "signature": "exit [n]",
+      "description": "Exit the shell with status n. If n is omitted, the exit status is that of the last command executed. Values are modulo 256.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "return": {
+      "signature": "return [n]",
+      "description": "Return from a shell function with return value n. If n is not supplied, the return value is the exit status of the last command executed in the function.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "shift": {
+      "signature": "shift [n]",
+      "description": "Shift positional parameters to the left by n positions (default 1). Parameter $1 takes the value of $[n+1], and so on. $# is decremented by n.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "trap": {
+      "signature": "trap [-lp] [action] [signal ...]",
+      "description": "Execute action when the shell receives the specified signal(s). Common signals: EXIT (0), INT (2), TERM (15), ERR, DEBUG, RETURN. `-l` lists signal names. `-p` prints trap commands.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "set": {
+      "signature": "set [-abefhkmnptuvxBCEHPT] [-o option] [--] [arg ...]",
+      "description": "Set shell options and positional parameters. Common flags: `-e` (exit on error), `-u` (error on unset), `-x` (debug trace), `-o pipefail` (pipe error propagation). `--` separates options from positional parameters.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "unset": {
+      "signature": "unset [-fv] [name ...]",
+      "description": "Remove variable or function definitions. `-v` removes variables (default), `-f` removes functions. If neither is given, tries variable first, then function.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "declare": {
+      "signature": "declare [-aAfFgiIlnrtux] [-p] [name[=value] ...]",
+      "description": "Declare variables and set attributes. `-i` integer, `-a` indexed array, `-A` associative array, `-r` readonly, `-x` export, `-l` lowercase, `-u` uppercase, `-n` nameref, `-g` global (inside functions).",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "local": {
+      "signature": "local [-aAfFgiIlnrtux] [name[=value] ...]",
+      "description": "Create a local variable within a function. The variable is visible only in the function and its children. Same attributes as declare. Can only be used inside a function.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "readonly": {
+      "signature": "readonly [-aAf] [-p] [name[=value] ...]",
+      "description": "Mark variables as readonly, preventing reassignment or unsetting. `-a` for arrays, `-A` for associative arrays, `-f` for functions. `-p` displays all readonly variables.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "test": {
+      "signature": "test expression   or   [ expression ]",
+      "description": "Evaluate a conditional expression and return 0 (true) or 1 (false). Supports file tests (-f, -d, -e, -r, -w, -x, -s, -L), string tests (-z, -n, =, !=), and integer comparisons (-eq, -ne, -gt, -lt, -ge, -le).",
+      "type": "builtin",
+      "module": "builtins",
+      "members": {
+        "-f": { "signature": "test -f file", "description": "True if file exists and is a regular file.", "type": "operator" },
+        "-d": { "signature": "test -d file", "description": "True if file exists and is a directory.", "type": "operator" },
+        "-e": { "signature": "test -e file", "description": "True if file exists (any type).", "type": "operator" },
+        "-r": { "signature": "test -r file", "description": "True if file exists and is readable.", "type": "operator" },
+        "-w": { "signature": "test -w file", "description": "True if file exists and is writable.", "type": "operator" },
+        "-x": { "signature": "test -x file", "description": "True if file exists and is executable.", "type": "operator" },
+        "-s": { "signature": "test -s file", "description": "True if file exists and has size greater than zero.", "type": "operator" },
+        "-L": { "signature": "test -L file", "description": "True if file exists and is a symbolic link.", "type": "operator" },
+        "-z": { "signature": "test -z string", "description": "True if the length of string is zero.", "type": "operator" },
+        "-n": { "signature": "test -n string", "description": "True if the length of string is non-zero.", "type": "operator" },
+        "-eq": { "signature": "arg1 -eq arg2", "description": "True if arg1 is equal to arg2 (integer comparison).", "type": "operator" },
+        "-ne": { "signature": "arg1 -ne arg2", "description": "True if arg1 is not equal to arg2.", "type": "operator" },
+        "-gt": { "signature": "arg1 -gt arg2", "description": "True if arg1 is greater than arg2.", "type": "operator" },
+        "-lt": { "signature": "arg1 -lt arg2", "description": "True if arg1 is less than arg2.", "type": "operator" },
+        "-ge": { "signature": "arg1 -ge arg2", "description": "True if arg1 is greater than or equal to arg2.", "type": "operator" },
+        "-le": { "signature": "arg1 -le arg2", "description": "True if arg1 is less than or equal to arg2.", "type": "operator" }
+      }
+    },
+    "[[": {
+      "signature": "[[ expression ]]",
+      "description": "Extended conditional command. Supports all test operators plus pattern matching (==, =~), logical operators (&&, ||, !), and grouping with parentheses. Word splitting and pathname expansion are not performed.",
+      "type": "keyword",
+      "module": "builtins"
+    },
+    "getopts": {
+      "signature": "getopts optstring name [args]",
+      "description": "Parse positional parameters as options. optstring contains expected option letters; a colon after a letter means it requires an argument. Sets OPTARG and OPTIND.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "wait": {
+      "signature": "wait [-fn] [-p varname] [id ...]",
+      "description": "Wait for background jobs to complete. Without arguments, waits for all children. With a PID or job spec, waits for that specific process. `-n` waits for the next job to terminate.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "jobs": {
+      "signature": "jobs [-lnprs] [jobspec ...]",
+      "description": "Display status of background jobs. `-l` includes PIDs, `-p` shows PIDs only, `-r` shows running only, `-s` shows stopped only.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "kill": {
+      "signature": "kill [-s sigspec] [-n signum] [-sigspec] pid|jobspec ...",
+      "description": "Send a signal to a process or job. Default signal is TERM. Common signals: HUP (1), INT (2), KILL (9), TERM (15), CONT (18), STOP (19).",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "bg": {
+      "signature": "bg [jobspec ...]",
+      "description": "Resume a suspended job in the background, as if it had been started with &.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "fg": {
+      "signature": "fg [jobspec]",
+      "description": "Move a job to the foreground, making it the current job. The shell waits for the job to complete.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "pushd": {
+      "signature": "pushd [-n] [+n|-n|dir]",
+      "description": "Add a directory to the top of the directory stack and change to it. `-n` suppresses the directory change.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "popd": {
+      "signature": "popd [-n] [+n|-n]",
+      "description": "Remove the top entry from the directory stack and change to the new top. `-n` suppresses the directory change.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "mapfile": {
+      "signature": "mapfile [-d delim] [-n count] [-O origin] [-s count] [-t] [-u fd] [-C callback] [-c quantum] [array]",
+      "description": "Read lines from stdin into an indexed array variable. `-t` removes trailing delimiter. `-n count` reads at most count lines. Default array is MAPFILE.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "let": {
+      "signature": "let expression [expression ...]",
+      "description": "Evaluate arithmetic expressions. Returns 0 if the last expression evaluates to non-zero, 1 otherwise. Equivalent to ((expression)).",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "history": {
+      "signature": "history [-c] [-d offset] [n]  or  history -anrw [filename]",
+      "description": "Display or manipulate the command history list. `-c` clears history, `-d n` deletes entry at offset n, `-a` appends new entries to history file, `-r` reads history file.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "complete": {
+      "signature": "complete [-abcdefgjksuv] [-o option] [-A action] [-G globpat] [-W wordlist] [-F function] [-C command] [-X filterpat] [-P prefix] [-S suffix] name [name ...]",
+      "description": "Specify programmable completion for a command. Defines how arguments to a specific command are completed when the user presses Tab.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "compgen": {
+      "signature": "compgen [-abcdefgjksuv] [-o option] [-A action] [-G globpat] [-W wordlist] [-F function] [-C command] [-X filterpat] [-P prefix] [-S suffix] [word]",
+      "description": "Generate possible completion matches for word according to the specified options. Used within programmable completion functions.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "enable": {
+      "signature": "enable [-a] [-dnps] [-f filename] [name ...]",
+      "description": "Enable or disable shell builtin commands. `-n` disables a builtin. `-a` lists all builtins showing enabled/disabled status.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "shopt": {
+      "signature": "shopt [-pqsu] [-o] [optname ...]",
+      "description": "Set and unset shell optional behavior. `-s` enables, `-u` disables an option. Common options: extglob, globstar, nullglob, dotglob, nocasematch.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "ulimit": {
+      "signature": "ulimit [-HSabcdefiklmnpqrstuvxPRT] [limit]",
+      "description": "Get or set user-level resource limits. `-n` for open files, `-u` for max processes, `-v` for virtual memory, `-s` for stack size.",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "umask": {
+      "signature": "umask [-p] [-S] [mode]",
+      "description": "Set the file creation mask. The mask is subtracted from the default permissions (777 for dirs, 666 for files). Common: `umask 022` (owner full, others read/execute).",
+      "type": "builtin",
+      "module": "builtins"
+    },
+    "$?": {
+      "signature": "$?",
+      "description": "The exit status of the most recently executed foreground pipeline. 0 typically indicates success, non-zero indicates failure.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$#": {
+      "signature": "$#",
+      "description": "The number of positional parameters (arguments) passed to the script or function.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$@": {
+      "signature": "$@",
+      "description": "All positional parameters as separate words. When double-quoted (\"$@\"), each parameter expands as a separate word, preserving whitespace.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$*": {
+      "signature": "$*",
+      "description": "All positional parameters as a single word. When double-quoted (\"$*\"), expands to a single string with parameters separated by the first character of $IFS.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$$": {
+      "signature": "$$",
+      "description": "The process ID (PID) of the current shell. In a subshell, it expands to the PID of the parent shell, not the subshell.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$!": {
+      "signature": "$!",
+      "description": "The process ID of the most recently executed background (asynchronous) command or pipeline.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$0": {
+      "signature": "$0",
+      "description": "The name of the shell or shell script. Set at shell startup. In a script, it is the filename used to invoke the script.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$_": {
+      "signature": "$_",
+      "description": "The last argument of the previous command. At shell startup, set to the absolute pathname used to invoke the shell.",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "$-": {
+      "signature": "$-",
+      "description": "The current option flags as specified on invocation, by the set builtin, or those set by the shell itself (e.g., -i for interactive).",
+      "type": "special_variable",
+      "module": "parameters"
+    },
+    "IFS": {
+      "signature": "IFS",
+      "description": "Internal Field Separator. Used for word splitting after expansion and by read to split lines into fields. Default value is space, tab, newline (<space><tab><newline>).",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "PATH": {
+      "signature": "PATH",
+      "description": "A colon-separated list of directories in which the shell looks for commands. Searched left to right. Modifying PATH affects which programs the shell can find.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "HOME": {
+      "signature": "HOME",
+      "description": "The home directory of the current user. Set automatically at login. Used as the default argument for the cd builtin and for tilde (~) expansion.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "PWD": {
+      "signature": "PWD",
+      "description": "The current working directory as set by cd. Updated automatically when the directory changes.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "OLDPWD": {
+      "signature": "OLDPWD",
+      "description": "The previous working directory as set by cd. `cd -` changes to $OLDPWD.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "SHELL": {
+      "signature": "SHELL",
+      "description": "The pathname of the current user's login shell.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "USER": {
+      "signature": "USER",
+      "description": "The name of the current user. Typically set at login.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "HOSTNAME": {
+      "signature": "HOSTNAME",
+      "description": "The name of the current host. Set automatically at shell startup.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "RANDOM": {
+      "signature": "RANDOM",
+      "description": "Each time this parameter is referenced, it expands to a random integer between 0 and 32767. Assigning a value seeds the random number generator.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "SECONDS": {
+      "signature": "SECONDS",
+      "description": "The number of seconds since the shell was started. If assigned a value, returns the assigned value plus the number of seconds since the assignment.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "LINENO": {
+      "signature": "LINENO",
+      "description": "The line number in the script or shell function currently executing. Useful for debugging and error messages.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "FUNCNAME": {
+      "signature": "FUNCNAME",
+      "description": "An array variable containing the names of all shell functions currently in the execution call stack. ${FUNCNAME[0]} is the currently executing function.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "BASH_SOURCE": {
+      "signature": "BASH_SOURCE",
+      "description": "An array variable whose members are the source filenames corresponding to the elements in the FUNCNAME array. ${BASH_SOURCE[0]} is the current file.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "BASH_LINENO": {
+      "signature": "BASH_LINENO",
+      "description": "An array of line numbers corresponding to calls in FUNCNAME. ${BASH_LINENO[$i]} is the line number in ${BASH_SOURCE[$i+1]} where ${FUNCNAME[$i]} was called.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "PIPESTATUS": {
+      "signature": "PIPESTATUS",
+      "description": "An array containing the exit statuses of the processes in the most recently executed foreground pipeline. ${PIPESTATUS[0]} is the first command's exit status.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "OPTARG": {
+      "signature": "OPTARG",
+      "description": "Set by getopts to the value of the last option argument processed. Contains the argument when the option requires one.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "OPTIND": {
+      "signature": "OPTIND",
+      "description": "The index of the next argument to be processed by getopts. Initialized to 1 each time the shell or a script is invoked.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "REPLY": {
+      "signature": "REPLY",
+      "description": "Set by read when no variable names are supplied. Also set by select to the user's input.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "BASH_REMATCH": {
+      "signature": "BASH_REMATCH",
+      "description": "An array variable whose members are assigned by the =~ binary operator in [[ ]]. Element 0 is the entire match, elements 1+ are capture group matches.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "BASH_VERSION": {
+      "signature": "BASH_VERSION",
+      "description": "The version number of the current instance of Bash.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "EUID": {
+      "signature": "EUID",
+      "description": "The effective user ID of the current user. Read-only. 0 indicates root.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "UID": {
+      "signature": "UID",
+      "description": "The real user ID of the current user. Read-only.",
+      "type": "variable",
+      "module": "parameters"
+    },
+    "array": {
+      "signature": "name=(value1 value2 ...) or name[index]=value",
+      "description": "Indexed arrays hold ordered lists of values. Elements are accessed by integer index starting at 0. Supports ${arr[@]} (all elements), ${#arr[@]} (length), ${!arr[@]} (indices).",
+      "type": "datatype",
+      "module": "builtins",
+      "members": {
+        "[@]": { "signature": "${array[@]}", "description": "Expand to all elements of the array as separate words.", "type": "expansion" },
+        "[*]": { "signature": "${array[*]}", "description": "Expand to all elements as a single word joined by the first character of IFS.", "type": "expansion" },
+        "#": { "signature": "${#array[@]}", "description": "Return the number of elements in the array.", "type": "expansion" },
+        "!": { "signature": "${!array[@]}", "description": "Return all indices (keys) of the array.", "type": "expansion" },
+        "append": { "signature": "array+=(value)", "description": "Append one or more elements to the end of an indexed array.", "type": "operation" },
+        "slice": { "signature": "${array[@]:offset:length}", "description": "Extract a slice of the array starting at offset for length elements.", "type": "expansion" },
+        "unset_element": { "signature": "unset 'array[index]'", "description": "Remove a specific element from the array.", "type": "operation" }
+      }
+    },
+    "associative_array": {
+      "signature": "declare -A name=([key1]=value1 [key2]=value2 ...)",
+      "description": "Associative arrays use arbitrary strings as keys. Must be declared with `declare -A`. Supports ${map[@]}, ${!map[@]} (keys), ${#map[@]} (size).",
+      "type": "datatype",
+      "module": "builtins",
+      "members": {
+        "[@]": { "signature": "${assoc[@]}", "description": "Expand to all values.", "type": "expansion" },
+        "!keys": { "signature": "${!assoc[@]}", "description": "Expand to all keys of the associative array.", "type": "expansion" },
+        "#size": { "signature": "${#assoc[@]}", "description": "Return the number of key-value pairs.", "type": "expansion" },
+        "set": { "signature": "assoc[key]=value", "description": "Set or update a value for a given key.", "type": "operation" },
+        "unset_key": { "signature": "unset 'assoc[key]'", "description": "Remove a key-value pair.", "type": "operation" }
+      }
+    },
+    "string_operations": {
+      "signature": "${parameter...}",
+      "description": "Bash provides extensive string manipulation via parameter expansion. Includes substitution, default values, substring extraction, pattern removal, case modification, and length.",
+      "type": "datatype",
+      "module": "builtins",
+      "members": {
+        "length": { "signature": "${#var}", "description": "Length of the string stored in var.", "type": "expansion" },
+        "substring": { "signature": "${var:offset:length}", "description": "Extract substring starting at offset for length characters.", "type": "expansion" },
+        "default": { "signature": "${var:-default}", "description": "Use default if var is unset or null.", "type": "expansion" },
+        "assign_default": { "signature": "${var:=default}", "description": "Assign default to var if var is unset or null.", "type": "expansion" },
+        "alternate": { "signature": "${var:+alternate}", "description": "Use alternate if var IS set and non-null.", "type": "expansion" },
+        "error": { "signature": "${var:?message}", "description": "Display error message and exit if var is unset or null.", "type": "expansion" },
+        "prefix_short": { "signature": "${var#pattern}", "description": "Remove shortest leading match of pattern.", "type": "expansion" },
+        "prefix_long": { "signature": "${var##pattern}", "description": "Remove longest leading match of pattern.", "type": "expansion" },
+        "suffix_short": { "signature": "${var%pattern}", "description": "Remove shortest trailing match of pattern.", "type": "expansion" },
+        "suffix_long": { "signature": "${var%%pattern}", "description": "Remove longest trailing match of pattern.", "type": "expansion" },
+        "replace_first": { "signature": "${var/pattern/replacement}", "description": "Replace the first match of pattern with replacement.", "type": "expansion" },
+        "replace_all": { "signature": "${var//pattern/replacement}", "description": "Replace all matches of pattern with replacement.", "type": "expansion" },
+        "uppercase_first": { "signature": "${var^}", "description": "Convert first character to uppercase.", "type": "expansion" },
+        "uppercase_all": { "signature": "${var^^}", "description": "Convert all characters to uppercase.", "type": "expansion" },
+        "lowercase_first": { "signature": "${var,}", "description": "Convert first character to lowercase.", "type": "expansion" },
+        "lowercase_all": { "signature": "${var,,}", "description": "Convert all characters to lowercase.", "type": "expansion" }
+      }
+    },
+    "arithmetic": {
+      "signature": "$(( expression ))  or  (( expression ))  or  let expression",
+      "description": "Bash supports integer arithmetic using C-style expressions. Operators: + - * / % ** (power), ++ --, << >> & | ^ ~ (bitwise), && || ! (logical), ternary (?:), comma, and assignment operators (= += -= *= /= %= etc.).",
+      "type": "datatype",
+      "module": "builtins",
+      "members": {
+        "addition": { "signature": "$((a + b))", "description": "Addition of integers.", "type": "operator" },
+        "subtraction": { "signature": "$((a - b))", "description": "Subtraction of integers.", "type": "operator" },
+        "multiplication": { "signature": "$((a * b))", "description": "Multiplication of integers.", "type": "operator" },
+        "division": { "signature": "$((a / b))", "description": "Integer division (truncates toward zero).", "type": "operator" },
+        "modulo": { "signature": "$((a % b))", "description": "Remainder after integer division.", "type": "operator" },
+        "power": { "signature": "$((a ** b))", "description": "Exponentiation (a to the power of b).", "type": "operator" },
+        "increment": { "signature": "$((a++))", "description": "Post-increment a by 1.", "type": "operator" },
+        "decrement": { "signature": "$((a--))", "description": "Post-decrement a by 1.", "type": "operator" },
+        "ternary": { "signature": "$((condition ? val1 : val2))", "description": "Ternary conditional: return val1 if condition is non-zero, else val2.", "type": "operator" },
+        "bitwise_and": { "signature": "$((a & b))", "description": "Bitwise AND.", "type": "operator" },
+        "bitwise_or": { "signature": "$((a | b))", "description": "Bitwise OR.", "type": "operator" },
+        "bitwise_xor": { "signature": "$((a ^ b))", "description": "Bitwise XOR.", "type": "operator" },
+        "left_shift": { "signature": "$((a << n))", "description": "Left shift a by n bits.", "type": "operator" },
+        "right_shift": { "signature": "$((a >> n))", "description": "Right shift a by n bits.", "type": "operator" }
+      }
+    },
+    "if": {
+      "signature": "if list; then list; [elif list; then list;] ... [else list;] fi",
+      "description": "Execute commands conditionally. The if list is executed; if its exit status is zero, the then list is executed. Otherwise, each elif list is tested in turn.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "for": {
+      "signature": "for name [in words ...]; do list; done   or   for (( expr1; expr2; expr3 )); do list; done",
+      "description": "Execute commands for each member in a list. The for-in form iterates over words. The arithmetic form works like C for loops.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "while": {
+      "signature": "while list-1; do list-2; done",
+      "description": "Execute commands repeatedly while a condition is true. The exit status of the while command is the exit status of the last command in list-2, or zero if none executed.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "until": {
+      "signature": "until list-1; do list-2; done",
+      "description": "Execute commands repeatedly until a condition becomes true. Equivalent to `while ! condition; do ... done`.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "case": {
+      "signature": "case word in [[(] pattern [| pattern] ...) list ;;] ... esac",
+      "description": "Execute commands matching a pattern. Each pattern is tested in order. `;;` terminates, `;&` falls through, `;;&` tests next pattern.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "select": {
+      "signature": "select name [in words ...]; do list; done",
+      "description": "Generate a numbered menu from words. The user's choice is stored in name, the input line in REPLY. Loops until break or EOF.",
+      "type": "keyword",
+      "module": "control_flow"
+    },
+    "function": {
+      "signature": "name () compound-command [redirections]   or   function name [()] compound-command [redirections]",
+      "description": "Define a function. Parameters are accessed via $1, $2, etc. Local variables with `local`. Return value via `return n`.",
+      "type": "keyword",
+      "module": "control_flow"
+    }
+  }
+}

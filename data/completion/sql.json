@@ -1,0 +1,887 @@
+{
+  "language": "sql",
+  "completions": [
+    {
+      "label": "SELECT",
+      "kind": 14,
+      "detail": "Select rows from tables",
+      "documentation": { "value": "Retrieves rows from one or more tables. Supports filtering, grouping, ordering, and limiting results." },
+      "insertText": "SELECT ${1:columns} FROM ${2:table}",
+      "insertTextRules": 4,
+      "sortText": "00_SELECT"
+    },
+    {
+      "label": "SELECT DISTINCT",
+      "kind": 15,
+      "detail": "Select unique rows",
+      "documentation": { "value": "Retrieves only distinct (unique) rows from a query result, eliminating duplicate records." },
+      "insertText": "SELECT DISTINCT ${1:columns} FROM ${2:table}",
+      "insertTextRules": 4,
+      "sortText": "00_SELECT_DISTINCT"
+    },
+    {
+      "label": "SELECT * FROM",
+      "kind": 15,
+      "detail": "Select all columns from a table",
+      "documentation": { "value": "Retrieves all columns from the specified table." },
+      "insertText": "SELECT * FROM ${1:table}",
+      "insertTextRules": 4,
+      "sortText": "00_SELECT_ALL"
+    },
+    {
+      "label": "INSERT INTO",
+      "kind": 14,
+      "detail": "Insert rows into a table",
+      "documentation": { "value": "Inserts one or more rows into a table with specified column values." },
+      "insertText": "INSERT INTO ${1:table} (${2:columns}) VALUES (${3:values})",
+      "insertTextRules": 4,
+      "sortText": "01_INSERT"
+    },
+    {
+      "label": "INSERT INTO SELECT",
+      "kind": 15,
+      "detail": "Insert rows from a query",
+      "documentation": { "value": "Inserts rows into a table using the result of a SELECT statement." },
+      "insertText": "INSERT INTO ${1:target_table} (${2:columns})\nSELECT ${3:columns} FROM ${4:source_table}\nWHERE ${5:condition}",
+      "insertTextRules": 4,
+      "sortText": "01_INSERT_SELECT"
+    },
+    {
+      "label": "UPDATE",
+      "kind": 14,
+      "detail": "Update rows in a table",
+      "documentation": { "value": "Modifies existing rows in a table that match an optional WHERE condition." },
+      "insertText": "UPDATE ${1:table} SET ${2:column} = ${3:value} WHERE ${4:condition}",
+      "insertTextRules": 4,
+      "sortText": "01_UPDATE"
+    },
+    {
+      "label": "DELETE FROM",
+      "kind": 14,
+      "detail": "Delete rows from a table",
+      "documentation": { "value": "Removes rows from a table that match the specified WHERE condition. Omitting WHERE deletes all rows." },
+      "insertText": "DELETE FROM ${1:table} WHERE ${2:condition}",
+      "insertTextRules": 4,
+      "sortText": "01_DELETE"
+    },
+    {
+      "label": "CREATE TABLE",
+      "kind": 15,
+      "detail": "Create a new table",
+      "documentation": { "value": "Creates a new table with the specified columns, data types, and constraints." },
+      "insertText": "CREATE TABLE ${1:table_name} (\n\t${2:id} INT PRIMARY KEY AUTO_INCREMENT,\n\t${3:column_name} ${4:VARCHAR(255)} ${5:NOT NULL},\n\tCREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n)",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_TABLE"
+    },
+    {
+      "label": "CREATE TABLE IF NOT EXISTS",
+      "kind": 15,
+      "detail": "Create table if it doesn't exist",
+      "documentation": { "value": "Creates a new table only if a table with the same name does not already exist." },
+      "insertText": "CREATE TABLE IF NOT EXISTS ${1:table_name} (\n\t${2:id} INT PRIMARY KEY AUTO_INCREMENT,\n\t${3:column_name} ${4:VARCHAR(255)}\n)",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_TABLE_IF"
+    },
+    {
+      "label": "CREATE INDEX",
+      "kind": 15,
+      "detail": "Create an index on a table",
+      "documentation": { "value": "Creates an index on one or more columns to improve query performance." },
+      "insertText": "CREATE INDEX ${1:idx_name} ON ${2:table} (${3:column})",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_INDEX"
+    },
+    {
+      "label": "CREATE UNIQUE INDEX",
+      "kind": 15,
+      "detail": "Create a unique index",
+      "documentation": { "value": "Creates a unique index ensuring no duplicate values in the indexed columns." },
+      "insertText": "CREATE UNIQUE INDEX ${1:idx_name} ON ${2:table} (${3:column})",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_UNIQUE_INDEX"
+    },
+    {
+      "label": "CREATE VIEW",
+      "kind": 15,
+      "detail": "Create a view",
+      "documentation": { "value": "Creates a virtual table based on a SELECT query. Views simplify complex queries and provide abstraction." },
+      "insertText": "CREATE VIEW ${1:view_name} AS\nSELECT ${2:columns}\nFROM ${3:table}\nWHERE ${4:condition}",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_VIEW"
+    },
+    {
+      "label": "CREATE DATABASE",
+      "kind": 15,
+      "detail": "Create a new database",
+      "documentation": { "value": "Creates a new database with the specified name." },
+      "insertText": "CREATE DATABASE ${1:database_name}",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_DATABASE"
+    },
+    {
+      "label": "ALTER TABLE ADD COLUMN",
+      "kind": 15,
+      "detail": "Add a column to a table",
+      "documentation": { "value": "Adds a new column to an existing table with the specified data type and constraints." },
+      "insertText": "ALTER TABLE ${1:table} ADD COLUMN ${2:column_name} ${3:data_type}",
+      "insertTextRules": 4,
+      "sortText": "03_ALTER_ADD"
+    },
+    {
+      "label": "ALTER TABLE DROP COLUMN",
+      "kind": 15,
+      "detail": "Remove a column from a table",
+      "documentation": { "value": "Removes an existing column from a table. This is a destructive operation." },
+      "insertText": "ALTER TABLE ${1:table} DROP COLUMN ${2:column_name}",
+      "insertTextRules": 4,
+      "sortText": "03_ALTER_DROP"
+    },
+    {
+      "label": "ALTER TABLE MODIFY COLUMN",
+      "kind": 15,
+      "detail": "Modify a column definition",
+      "documentation": { "value": "Changes the data type or constraints of an existing column." },
+      "insertText": "ALTER TABLE ${1:table} MODIFY COLUMN ${2:column_name} ${3:new_data_type}",
+      "insertTextRules": 4,
+      "sortText": "03_ALTER_MODIFY"
+    },
+    {
+      "label": "ALTER TABLE RENAME",
+      "kind": 15,
+      "detail": "Rename a table",
+      "documentation": { "value": "Renames an existing table to a new name." },
+      "insertText": "ALTER TABLE ${1:old_name} RENAME TO ${2:new_name}",
+      "insertTextRules": 4,
+      "sortText": "03_ALTER_RENAME"
+    },
+    {
+      "label": "DROP TABLE",
+      "kind": 14,
+      "detail": "Drop a table",
+      "documentation": { "value": "Permanently removes a table and all its data from the database." },
+      "insertText": "DROP TABLE IF EXISTS ${1:table_name}",
+      "insertTextRules": 4,
+      "sortText": "03_DROP_TABLE"
+    },
+    {
+      "label": "DROP INDEX",
+      "kind": 14,
+      "detail": "Drop an index",
+      "documentation": { "value": "Removes an index from the database." },
+      "insertText": "DROP INDEX ${1:index_name} ON ${2:table}",
+      "insertTextRules": 4,
+      "sortText": "03_DROP_INDEX"
+    },
+    {
+      "label": "DROP DATABASE",
+      "kind": 14,
+      "detail": "Drop a database",
+      "documentation": { "value": "Permanently removes a database and all its tables." },
+      "insertText": "DROP DATABASE IF EXISTS ${1:database_name}",
+      "insertTextRules": 4,
+      "sortText": "03_DROP_DATABASE"
+    },
+    {
+      "label": "WHERE",
+      "kind": 14,
+      "detail": "Filter rows by condition",
+      "documentation": { "value": "Filters rows based on a specified condition. Used with SELECT, UPDATE, and DELETE statements." },
+      "insertText": "WHERE ${1:condition}",
+      "insertTextRules": 4,
+      "sortText": "04_WHERE"
+    },
+    {
+      "label": "INNER JOIN",
+      "kind": 14,
+      "detail": "Inner join two tables",
+      "documentation": { "value": "Returns rows that have matching values in both tables." },
+      "insertText": "INNER JOIN ${1:table} ON ${2:condition}",
+      "insertTextRules": 4,
+      "sortText": "05_INNER_JOIN"
+    },
+    {
+      "label": "LEFT JOIN",
+      "kind": 14,
+      "detail": "Left outer join",
+      "documentation": { "value": "Returns all rows from the left table and matched rows from the right table. Non-matching right rows are NULL." },
+      "insertText": "LEFT JOIN ${1:table} ON ${2:condition}",
+      "insertTextRules": 4,
+      "sortText": "05_LEFT_JOIN"
+    },
+    {
+      "label": "RIGHT JOIN",
+      "kind": 14,
+      "detail": "Right outer join",
+      "documentation": { "value": "Returns all rows from the right table and matched rows from the left table. Non-matching left rows are NULL." },
+      "insertText": "RIGHT JOIN ${1:table} ON ${2:condition}",
+      "insertTextRules": 4,
+      "sortText": "05_RIGHT_JOIN"
+    },
+    {
+      "label": "FULL OUTER JOIN",
+      "kind": 14,
+      "detail": "Full outer join",
+      "documentation": { "value": "Returns all rows from both tables with NULLs where there is no match." },
+      "insertText": "FULL OUTER JOIN ${1:table} ON ${2:condition}",
+      "insertTextRules": 4,
+      "sortText": "05_FULL_JOIN"
+    },
+    {
+      "label": "CROSS JOIN",
+      "kind": 14,
+      "detail": "Cross join (Cartesian product)",
+      "documentation": { "value": "Returns the Cartesian product of both tables — every combination of rows." },
+      "insertText": "CROSS JOIN ${1:table}",
+      "insertTextRules": 4,
+      "sortText": "05_CROSS_JOIN"
+    },
+    {
+      "label": "SELF JOIN",
+      "kind": 15,
+      "detail": "Join a table with itself",
+      "documentation": { "value": "Joins a table to itself using aliases, useful for hierarchical or comparative queries." },
+      "insertText": "SELECT a.${1:column}, b.${2:column}\nFROM ${3:table} a\nINNER JOIN ${3:table} b ON a.${4:key} = b.${5:key}",
+      "insertTextRules": 4,
+      "sortText": "05_SELF_JOIN"
+    },
+    {
+      "label": "GROUP BY",
+      "kind": 14,
+      "detail": "Group rows by column(s)",
+      "documentation": { "value": "Groups rows sharing a value in specified columns into summary rows. Commonly used with aggregate functions." },
+      "insertText": "GROUP BY ${1:column}",
+      "insertTextRules": 4,
+      "sortText": "06_GROUP_BY"
+    },
+    {
+      "label": "HAVING",
+      "kind": 14,
+      "detail": "Filter grouped rows",
+      "documentation": { "value": "Filters groups created by GROUP BY based on aggregate conditions. Similar to WHERE but for groups." },
+      "insertText": "HAVING ${1:condition}",
+      "insertTextRules": 4,
+      "sortText": "06_HAVING"
+    },
+    {
+      "label": "ORDER BY",
+      "kind": 14,
+      "detail": "Sort result set",
+      "documentation": { "value": "Sorts the result set by one or more columns in ascending (ASC) or descending (DESC) order." },
+      "insertText": "ORDER BY ${1:column} ${2|ASC,DESC|}",
+      "insertTextRules": 4,
+      "sortText": "06_ORDER_BY"
+    },
+    {
+      "label": "LIMIT",
+      "kind": 14,
+      "detail": "Limit number of rows returned",
+      "documentation": { "value": "Restricts the number of rows returned by a query." },
+      "insertText": "LIMIT ${1:count}",
+      "insertTextRules": 4,
+      "sortText": "06_LIMIT"
+    },
+    {
+      "label": "OFFSET",
+      "kind": 14,
+      "detail": "Skip rows before returning",
+      "documentation": { "value": "Skips the specified number of rows before returning results. Used with LIMIT for pagination." },
+      "insertText": "OFFSET ${1:count}",
+      "insertTextRules": 4,
+      "sortText": "06_OFFSET"
+    },
+    {
+      "label": "LIMIT OFFSET",
+      "kind": 15,
+      "detail": "Paginate results",
+      "documentation": { "value": "Combines LIMIT and OFFSET for pagination. LIMIT controls page size, OFFSET controls starting position." },
+      "insertText": "LIMIT ${1:page_size} OFFSET ${2:start}",
+      "insertTextRules": 4,
+      "sortText": "06_LIMIT_OFFSET"
+    },
+    {
+      "label": "UNION",
+      "kind": 14,
+      "detail": "Combine result sets (deduplicated)",
+      "documentation": { "value": "Combines the result sets of two or more SELECT statements, removing duplicates." },
+      "insertText": "UNION\nSELECT ${1:columns} FROM ${2:table}",
+      "insertTextRules": 4,
+      "sortText": "07_UNION"
+    },
+    {
+      "label": "UNION ALL",
+      "kind": 14,
+      "detail": "Combine result sets (with duplicates)",
+      "documentation": { "value": "Combines the result sets of two or more SELECT statements, including duplicates. Faster than UNION." },
+      "insertText": "UNION ALL\nSELECT ${1:columns} FROM ${2:table}",
+      "insertTextRules": 4,
+      "sortText": "07_UNION_ALL"
+    },
+    {
+      "label": "EXISTS",
+      "kind": 14,
+      "detail": "Check for subquery results",
+      "documentation": { "value": "Returns TRUE if the subquery returns one or more rows. Often used in WHERE clauses." },
+      "insertText": "EXISTS (SELECT 1 FROM ${1:table} WHERE ${2:condition})",
+      "insertTextRules": 4,
+      "sortText": "07_EXISTS"
+    },
+    {
+      "label": "IN",
+      "kind": 14,
+      "detail": "Match against a list of values",
+      "documentation": { "value": "Tests whether a value matches any value in a list or subquery." },
+      "insertText": "IN (${1:values})",
+      "insertTextRules": 4,
+      "sortText": "07_IN"
+    },
+    {
+      "label": "NOT IN",
+      "kind": 14,
+      "detail": "Exclude a list of values",
+      "documentation": { "value": "Tests whether a value does not match any value in a list or subquery." },
+      "insertText": "NOT IN (${1:values})",
+      "insertTextRules": 4,
+      "sortText": "07_NOT_IN"
+    },
+    {
+      "label": "BETWEEN",
+      "kind": 14,
+      "detail": "Range filter",
+      "documentation": { "value": "Filters values within a specified inclusive range. Works with numbers, dates, and strings." },
+      "insertText": "BETWEEN ${1:start} AND ${2:end}",
+      "insertTextRules": 4,
+      "sortText": "07_BETWEEN"
+    },
+    {
+      "label": "LIKE",
+      "kind": 14,
+      "detail": "Pattern matching",
+      "documentation": { "value": "Filters rows by pattern matching. Use '%' for any sequence of characters and '_' for a single character." },
+      "insertText": "LIKE '${1:pattern}'",
+      "insertTextRules": 4,
+      "sortText": "07_LIKE"
+    },
+    {
+      "label": "CASE WHEN",
+      "kind": 15,
+      "detail": "Conditional expression",
+      "documentation": { "value": "Evaluates conditions and returns a value when the first condition is met, similar to IF-THEN-ELSE." },
+      "insertText": "CASE\n\tWHEN ${1:condition} THEN ${2:result}\n\tWHEN ${3:condition} THEN ${4:result}\n\tELSE ${5:default}\nEND",
+      "insertTextRules": 4,
+      "sortText": "07_CASE"
+    },
+    {
+      "label": "AS",
+      "kind": 14,
+      "detail": "Alias for column or table",
+      "documentation": { "value": "Creates an alias for a column or table, making the output more readable." },
+      "insertText": "AS ${1:alias}",
+      "insertTextRules": 4,
+      "sortText": "08_AS"
+    },
+    {
+      "label": "WITH (CTE)",
+      "kind": 15,
+      "detail": "Common Table Expression",
+      "documentation": { "value": "Defines a temporary named result set (CTE) that can be referenced within the main query. Improves readability for complex queries." },
+      "insertText": "WITH ${1:cte_name} AS (\n\tSELECT ${2:columns}\n\tFROM ${3:table}\n\tWHERE ${4:condition}\n)\nSELECT * FROM ${1:cte_name}",
+      "insertTextRules": 4,
+      "sortText": "00_WITH_CTE"
+    },
+    {
+      "label": "WITH RECURSIVE (CTE)",
+      "kind": 15,
+      "detail": "Recursive Common Table Expression",
+      "documentation": { "value": "Defines a recursive CTE for querying hierarchical or tree-structured data." },
+      "insertText": "WITH RECURSIVE ${1:cte_name} AS (\n\tSELECT ${2:columns}\n\tFROM ${3:table}\n\tWHERE ${4:base_condition}\n\tUNION ALL\n\tSELECT ${5:columns}\n\tFROM ${3:table}\n\tINNER JOIN ${1:cte_name} ON ${6:join_condition}\n)\nSELECT * FROM ${1:cte_name}",
+      "insertTextRules": 4,
+      "sortText": "00_WITH_RECURSIVE"
+    },
+    {
+      "label": "DISTINCT",
+      "kind": 14,
+      "detail": "Remove duplicate rows",
+      "documentation": { "value": "Eliminates duplicate rows from the result set." },
+      "insertText": "DISTINCT",
+      "insertTextRules": 0,
+      "sortText": "08_DISTINCT"
+    },
+    {
+      "label": "IS NULL",
+      "kind": 14,
+      "detail": "Check for NULL values",
+      "documentation": { "value": "Tests whether a value is NULL." },
+      "insertText": "IS NULL",
+      "insertTextRules": 0,
+      "sortText": "08_IS_NULL"
+    },
+    {
+      "label": "IS NOT NULL",
+      "kind": 14,
+      "detail": "Check for non-NULL values",
+      "documentation": { "value": "Tests whether a value is not NULL." },
+      "insertText": "IS NOT NULL",
+      "insertTextRules": 0,
+      "sortText": "08_IS_NOT_NULL"
+    },
+    {
+      "label": "COUNT",
+      "kind": 1,
+      "detail": "Count rows",
+      "documentation": { "value": "Returns the number of rows matching the query. COUNT(*) counts all rows; COUNT(column) counts non-NULL values." },
+      "insertText": "COUNT(${1:*})",
+      "insertTextRules": 4,
+      "sortText": "10_COUNT"
+    },
+    {
+      "label": "SUM",
+      "kind": 1,
+      "detail": "Sum of values",
+      "documentation": { "value": "Returns the total sum of a numeric column." },
+      "insertText": "SUM(${1:column})",
+      "insertTextRules": 4,
+      "sortText": "10_SUM"
+    },
+    {
+      "label": "AVG",
+      "kind": 1,
+      "detail": "Average of values",
+      "documentation": { "value": "Returns the average value of a numeric column, ignoring NULLs." },
+      "insertText": "AVG(${1:column})",
+      "insertTextRules": 4,
+      "sortText": "10_AVG"
+    },
+    {
+      "label": "MIN",
+      "kind": 1,
+      "detail": "Minimum value",
+      "documentation": { "value": "Returns the smallest value in a column." },
+      "insertText": "MIN(${1:column})",
+      "insertTextRules": 4,
+      "sortText": "10_MIN"
+    },
+    {
+      "label": "MAX",
+      "kind": 1,
+      "detail": "Maximum value",
+      "documentation": { "value": "Returns the largest value in a column." },
+      "insertText": "MAX(${1:column})",
+      "insertTextRules": 4,
+      "sortText": "10_MAX"
+    },
+    {
+      "label": "GROUP_CONCAT",
+      "kind": 1,
+      "detail": "Concatenate grouped values",
+      "documentation": { "value": "Concatenates values from multiple rows into a single string, with an optional separator. MySQL-specific; use STRING_AGG in PostgreSQL." },
+      "insertText": "GROUP_CONCAT(${1:column} SEPARATOR '${2:,}')",
+      "insertTextRules": 4,
+      "sortText": "10_GROUP_CONCAT"
+    },
+    {
+      "label": "CONCAT",
+      "kind": 1,
+      "detail": "Concatenate strings",
+      "documentation": { "value": "Concatenates two or more strings into one." },
+      "insertText": "CONCAT(${1:string1}, ${2:string2})",
+      "insertTextRules": 4,
+      "sortText": "11_CONCAT"
+    },
+    {
+      "label": "SUBSTRING",
+      "kind": 1,
+      "detail": "Extract part of a string",
+      "documentation": { "value": "Returns a portion of a string starting at a specified position for a given length." },
+      "insertText": "SUBSTRING(${1:string}, ${2:start}, ${3:length})",
+      "insertTextRules": 4,
+      "sortText": "11_SUBSTRING"
+    },
+    {
+      "label": "TRIM",
+      "kind": 1,
+      "detail": "Remove leading/trailing spaces",
+      "documentation": { "value": "Removes leading and trailing whitespace (or specified characters) from a string." },
+      "insertText": "TRIM(${1:string})",
+      "insertTextRules": 4,
+      "sortText": "11_TRIM"
+    },
+    {
+      "label": "UPPER",
+      "kind": 1,
+      "detail": "Convert to uppercase",
+      "documentation": { "value": "Converts all characters in a string to uppercase." },
+      "insertText": "UPPER(${1:string})",
+      "insertTextRules": 4,
+      "sortText": "11_UPPER"
+    },
+    {
+      "label": "LOWER",
+      "kind": 1,
+      "detail": "Convert to lowercase",
+      "documentation": { "value": "Converts all characters in a string to lowercase." },
+      "insertText": "LOWER(${1:string})",
+      "insertTextRules": 4,
+      "sortText": "11_LOWER"
+    },
+    {
+      "label": "LENGTH",
+      "kind": 1,
+      "detail": "String length",
+      "documentation": { "value": "Returns the number of characters in a string." },
+      "insertText": "LENGTH(${1:string})",
+      "insertTextRules": 4,
+      "sortText": "11_LENGTH"
+    },
+    {
+      "label": "REPLACE",
+      "kind": 1,
+      "detail": "Replace occurrences in a string",
+      "documentation": { "value": "Replaces all occurrences of a substring within a string with a new substring." },
+      "insertText": "REPLACE(${1:string}, ${2:old}, ${3:new})",
+      "insertTextRules": 4,
+      "sortText": "11_REPLACE"
+    },
+    {
+      "label": "COALESCE",
+      "kind": 1,
+      "detail": "Return first non-NULL value",
+      "documentation": { "value": "Returns the first non-NULL value from the argument list. Useful for providing default values." },
+      "insertText": "COALESCE(${1:value1}, ${2:value2})",
+      "insertTextRules": 4,
+      "sortText": "11_COALESCE"
+    },
+    {
+      "label": "IFNULL",
+      "kind": 1,
+      "detail": "Replace NULL with a value",
+      "documentation": { "value": "Returns the first argument if it is not NULL; otherwise returns the second argument. MySQL-specific." },
+      "insertText": "IFNULL(${1:expression}, ${2:default_value})",
+      "insertTextRules": 4,
+      "sortText": "11_IFNULL"
+    },
+    {
+      "label": "CAST",
+      "kind": 1,
+      "detail": "Convert data type",
+      "documentation": { "value": "Converts a value from one data type to another." },
+      "insertText": "CAST(${1:expression} AS ${2:data_type})",
+      "insertTextRules": 4,
+      "sortText": "11_CAST"
+    },
+    {
+      "label": "NOW",
+      "kind": 1,
+      "detail": "Current date and time",
+      "documentation": { "value": "Returns the current date and time as a DATETIME value." },
+      "insertText": "NOW()",
+      "insertTextRules": 0,
+      "sortText": "12_NOW"
+    },
+    {
+      "label": "CURRENT_TIMESTAMP",
+      "kind": 14,
+      "detail": "Current timestamp",
+      "documentation": { "value": "Returns the current date and time. Equivalent to NOW() in most databases." },
+      "insertText": "CURRENT_TIMESTAMP",
+      "insertTextRules": 0,
+      "sortText": "12_CURRENT_TIMESTAMP"
+    },
+    {
+      "label": "DATE_ADD",
+      "kind": 1,
+      "detail": "Add interval to a date",
+      "documentation": { "value": "Adds a specified time interval to a date." },
+      "insertText": "DATE_ADD(${1:date}, INTERVAL ${2:value} ${3|DAY,MONTH,YEAR,HOUR,MINUTE,SECOND|})",
+      "insertTextRules": 4,
+      "sortText": "12_DATE_ADD"
+    },
+    {
+      "label": "DATEDIFF",
+      "kind": 1,
+      "detail": "Difference between dates",
+      "documentation": { "value": "Returns the number of days between two dates." },
+      "insertText": "DATEDIFF(${1:date1}, ${2:date2})",
+      "insertTextRules": 4,
+      "sortText": "12_DATEDIFF"
+    },
+    {
+      "label": "EXTRACT",
+      "kind": 1,
+      "detail": "Extract part of a date",
+      "documentation": { "value": "Extracts a specific part (YEAR, MONTH, DAY, HOUR, etc.) from a date or timestamp." },
+      "insertText": "EXTRACT(${1|YEAR,MONTH,DAY,HOUR,MINUTE,SECOND|} FROM ${2:date})",
+      "insertTextRules": 4,
+      "sortText": "12_EXTRACT"
+    },
+    {
+      "label": "DATE_FORMAT",
+      "kind": 1,
+      "detail": "Format a date value",
+      "documentation": { "value": "Formats a date value according to the specified format string. MySQL-specific." },
+      "insertText": "DATE_FORMAT(${1:date}, '${2:%Y-%m-%d}')",
+      "insertTextRules": 4,
+      "sortText": "12_DATE_FORMAT"
+    },
+    {
+      "label": "ROW_NUMBER",
+      "kind": 1,
+      "detail": "Assign sequential row numbers",
+      "documentation": { "value": "Assigns a unique sequential integer to each row within a partition, starting at 1." },
+      "insertText": "ROW_NUMBER() OVER (${1:PARTITION BY ${2:column}} ORDER BY ${3:column})",
+      "insertTextRules": 4,
+      "sortText": "13_ROW_NUMBER"
+    },
+    {
+      "label": "RANK",
+      "kind": 1,
+      "detail": "Assign rank with gaps",
+      "documentation": { "value": "Assigns a rank to each row within a partition. Rows with equal values receive the same rank, leaving gaps." },
+      "insertText": "RANK() OVER (${1:PARTITION BY ${2:column}} ORDER BY ${3:column})",
+      "insertTextRules": 4,
+      "sortText": "13_RANK"
+    },
+    {
+      "label": "DENSE_RANK",
+      "kind": 1,
+      "detail": "Assign rank without gaps",
+      "documentation": { "value": "Assigns a rank to each row within a partition. Equal values receive the same rank with no gaps in ranking." },
+      "insertText": "DENSE_RANK() OVER (${1:PARTITION BY ${2:column}} ORDER BY ${3:column})",
+      "insertTextRules": 4,
+      "sortText": "13_DENSE_RANK"
+    },
+    {
+      "label": "LEAD",
+      "kind": 1,
+      "detail": "Access next row's value",
+      "documentation": { "value": "Returns the value of a column from the next row (or N rows ahead) within a partition." },
+      "insertText": "LEAD(${1:column}, ${2:offset}, ${3:default}) OVER (${4:PARTITION BY ${5:column}} ORDER BY ${6:column})",
+      "insertTextRules": 4,
+      "sortText": "13_LEAD"
+    },
+    {
+      "label": "LAG",
+      "kind": 1,
+      "detail": "Access previous row's value",
+      "documentation": { "value": "Returns the value of a column from the previous row (or N rows behind) within a partition." },
+      "insertText": "LAG(${1:column}, ${2:offset}, ${3:default}) OVER (${4:PARTITION BY ${5:column}} ORDER BY ${6:column})",
+      "insertTextRules": 4,
+      "sortText": "13_LAG"
+    },
+    {
+      "label": "NTILE",
+      "kind": 1,
+      "detail": "Divide rows into buckets",
+      "documentation": { "value": "Distributes rows into a specified number of approximately equal groups." },
+      "insertText": "NTILE(${1:num_buckets}) OVER (ORDER BY ${2:column})",
+      "insertTextRules": 4,
+      "sortText": "13_NTILE"
+    },
+    {
+      "label": "OVER",
+      "kind": 14,
+      "detail": "Window function clause",
+      "documentation": { "value": "Defines the window (set of rows) for a window function. Can include PARTITION BY and ORDER BY." },
+      "insertText": "OVER (${1:PARTITION BY ${2:column}} ORDER BY ${3:column})",
+      "insertTextRules": 4,
+      "sortText": "13_OVER"
+    },
+    {
+      "label": "PARTITION BY",
+      "kind": 14,
+      "detail": "Partition window rows",
+      "documentation": { "value": "Divides the result set into partitions for window function calculations." },
+      "insertText": "PARTITION BY ${1:column}",
+      "insertTextRules": 4,
+      "sortText": "13_PARTITION_BY"
+    },
+    {
+      "label": "PRIMARY KEY",
+      "kind": 15,
+      "detail": "Primary key constraint",
+      "documentation": { "value": "Defines a column as the primary key, ensuring uniqueness and creating a clustered index." },
+      "insertText": "PRIMARY KEY (${1:column})",
+      "insertTextRules": 4,
+      "sortText": "14_PRIMARY_KEY"
+    },
+    {
+      "label": "FOREIGN KEY",
+      "kind": 15,
+      "detail": "Foreign key constraint",
+      "documentation": { "value": "Defines a foreign key relationship between two tables, enforcing referential integrity." },
+      "insertText": "FOREIGN KEY (${1:column}) REFERENCES ${2:parent_table}(${3:parent_column})",
+      "insertTextRules": 4,
+      "sortText": "14_FOREIGN_KEY"
+    },
+    {
+      "label": "CONSTRAINT FOREIGN KEY",
+      "kind": 15,
+      "detail": "Named foreign key constraint",
+      "documentation": { "value": "Defines a named foreign key constraint with optional ON DELETE and ON UPDATE actions." },
+      "insertText": "CONSTRAINT ${1:fk_name} FOREIGN KEY (${2:column})\n\tREFERENCES ${3:parent_table}(${4:parent_column})\n\tON DELETE ${5|CASCADE,SET NULL,RESTRICT,NO ACTION|}\n\tON UPDATE ${6|CASCADE,SET NULL,RESTRICT,NO ACTION|}",
+      "insertTextRules": 4,
+      "sortText": "14_CONSTRAINT_FK"
+    },
+    {
+      "label": "UNIQUE",
+      "kind": 14,
+      "detail": "Unique constraint",
+      "documentation": { "value": "Ensures all values in a column or set of columns are unique." },
+      "insertText": "UNIQUE (${1:column})",
+      "insertTextRules": 4,
+      "sortText": "14_UNIQUE"
+    },
+    {
+      "label": "NOT NULL",
+      "kind": 14,
+      "detail": "Not null constraint",
+      "documentation": { "value": "Ensures a column cannot contain NULL values." },
+      "insertText": "NOT NULL",
+      "insertTextRules": 0,
+      "sortText": "14_NOT_NULL"
+    },
+    {
+      "label": "DEFAULT",
+      "kind": 14,
+      "detail": "Default value",
+      "documentation": { "value": "Sets a default value for a column when no value is specified during INSERT." },
+      "insertText": "DEFAULT ${1:value}",
+      "insertTextRules": 4,
+      "sortText": "14_DEFAULT"
+    },
+    {
+      "label": "CHECK",
+      "kind": 14,
+      "detail": "Check constraint",
+      "documentation": { "value": "Defines a condition that each row must satisfy." },
+      "insertText": "CHECK (${1:condition})",
+      "insertTextRules": 4,
+      "sortText": "14_CHECK"
+    },
+    {
+      "label": "BEGIN TRANSACTION",
+      "kind": 15,
+      "detail": "Start a transaction",
+      "documentation": { "value": "Starts a new database transaction. Changes are not committed until COMMIT is called." },
+      "insertText": "BEGIN TRANSACTION;\n${1:-- statements}\nCOMMIT;",
+      "insertTextRules": 4,
+      "sortText": "15_BEGIN"
+    },
+    {
+      "label": "COMMIT",
+      "kind": 14,
+      "detail": "Commit a transaction",
+      "documentation": { "value": "Saves all changes made during the current transaction to the database." },
+      "insertText": "COMMIT",
+      "insertTextRules": 0,
+      "sortText": "15_COMMIT"
+    },
+    {
+      "label": "ROLLBACK",
+      "kind": 14,
+      "detail": "Rollback a transaction",
+      "documentation": { "value": "Undoes all changes made during the current transaction." },
+      "insertText": "ROLLBACK",
+      "insertTextRules": 0,
+      "sortText": "15_ROLLBACK"
+    },
+    {
+      "label": "SAVEPOINT",
+      "kind": 14,
+      "detail": "Create a savepoint",
+      "documentation": { "value": "Creates a point within a transaction to which you can later roll back." },
+      "insertText": "SAVEPOINT ${1:savepoint_name}",
+      "insertTextRules": 4,
+      "sortText": "15_SAVEPOINT"
+    },
+    {
+      "label": "TRUNCATE TABLE",
+      "kind": 14,
+      "detail": "Remove all rows from a table",
+      "documentation": { "value": "Removes all rows from a table quickly without logging individual row deletions. Cannot be rolled back in some databases." },
+      "insertText": "TRUNCATE TABLE ${1:table_name}",
+      "insertTextRules": 4,
+      "sortText": "03_TRUNCATE"
+    },
+    {
+      "label": "EXPLAIN",
+      "kind": 14,
+      "detail": "Show query execution plan",
+      "documentation": { "value": "Displays the execution plan for a query, useful for performance optimization." },
+      "insertText": "EXPLAIN ${1:query}",
+      "insertTextRules": 4,
+      "sortText": "16_EXPLAIN"
+    },
+    {
+      "label": "GRANT",
+      "kind": 14,
+      "detail": "Grant privileges",
+      "documentation": { "value": "Grants specific privileges on database objects to users or roles." },
+      "insertText": "GRANT ${1|SELECT,INSERT,UPDATE,DELETE,ALL PRIVILEGES|} ON ${2:table} TO '${3:user}'@'${4:host}'",
+      "insertTextRules": 4,
+      "sortText": "16_GRANT"
+    },
+    {
+      "label": "REVOKE",
+      "kind": 14,
+      "detail": "Revoke privileges",
+      "documentation": { "value": "Removes previously granted privileges from a user or role." },
+      "insertText": "REVOKE ${1|SELECT,INSERT,UPDATE,DELETE,ALL PRIVILEGES|} ON ${2:table} FROM '${3:user}'@'${4:host}'",
+      "insertTextRules": 4,
+      "sortText": "16_REVOKE"
+    },
+    {
+      "label": "SUBQUERY",
+      "kind": 27,
+      "detail": "Inline subquery",
+      "documentation": { "value": "A SELECT statement nested inside another statement. Can be used in WHERE, FROM, or SELECT clauses." },
+      "insertText": "(SELECT ${1:column} FROM ${2:table} WHERE ${3:condition})",
+      "insertTextRules": 4,
+      "sortText": "17_SUBQUERY"
+    },
+    {
+      "label": "CORRELATED SUBQUERY",
+      "kind": 27,
+      "detail": "Correlated subquery",
+      "documentation": { "value": "A subquery that references columns from the outer query. Evaluated once per row of the outer query." },
+      "insertText": "SELECT ${1:columns}\nFROM ${2:table} t1\nWHERE ${3:column} ${4:operator} (\n\tSELECT ${5:aggregate}(${6:column})\n\tFROM ${2:table} t2\n\tWHERE t2.${7:key} = t1.${7:key}\n)",
+      "insertTextRules": 4,
+      "sortText": "17_CORRELATED_SUBQUERY"
+    },
+    {
+      "label": "INDEX",
+      "kind": 14,
+      "detail": "Index keyword",
+      "documentation": { "value": "Used with CREATE or DROP to manage indexes which speed up data retrieval." },
+      "insertText": "INDEX ${1:index_name} (${2:column})",
+      "insertTextRules": 4,
+      "sortText": "14_INDEX"
+    },
+    {
+      "label": "CREATE PROCEDURE",
+      "kind": 15,
+      "detail": "Create a stored procedure",
+      "documentation": { "value": "Creates a stored procedure that can be called to execute a predefined set of SQL statements." },
+      "insertText": "CREATE PROCEDURE ${1:procedure_name}(${2:parameters})\nBEGIN\n\t${3:-- SQL statements}\nEND",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_PROCEDURE"
+    },
+    {
+      "label": "CREATE TRIGGER",
+      "kind": 15,
+      "detail": "Create a trigger",
+      "documentation": { "value": "Creates a trigger that automatically executes a set of SQL statements when a specified event occurs on a table." },
+      "insertText": "CREATE TRIGGER ${1:trigger_name}\n${2|BEFORE,AFTER|} ${3|INSERT,UPDATE,DELETE|} ON ${4:table}\nFOR EACH ROW\nBEGIN\n\t${5:-- SQL statements}\nEND",
+      "insertTextRules": 4,
+      "sortText": "02_CREATE_TRIGGER"
+    },
+    {
+      "label": "WINDOW FUNCTION",
+      "kind": 27,
+      "detail": "Window function with OVER clause",
+      "documentation": { "value": "Template for using aggregate or ranking functions as window functions with PARTITION BY and ORDER BY." },
+      "insertText": "${1|ROW_NUMBER,RANK,DENSE_RANK,SUM,AVG,COUNT,MIN,MAX|}() OVER (\n\tPARTITION BY ${2:partition_column}\n\tORDER BY ${3:order_column}\n)",
+      "insertTextRules": 4,
+      "sortText": "13_WINDOW_FUNCTION"
+    }
+  ]
+}
