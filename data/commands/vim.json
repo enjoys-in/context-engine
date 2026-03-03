@@ -1,0 +1,85 @@
+{
+  "name": "vim",
+  "description": "Vi IMproved - a highly configurable, powerful text editor for efficient text editing",
+  "category": "Text Editors",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--help", "description": "Show usage summary and exit" },
+    { "name": "--version", "description": "Print version and feature information, then exit" },
+    { "name": "-c", "description": "Execute given Ex command after loading the first file", "takesValue": true },
+    { "name": "--cmd", "description": "Execute given Ex command before loading any vimrc", "takesValue": true },
+    { "name": "-S", "description": "Source (execute) a Vim script file after loading the first file", "takesValue": true },
+    { "name": "-u", "description": "Use specified vimrc file instead of default (use NONE to skip all)", "takesValue": true },
+    { "name": "-N", "description": "Start in nocompatible mode (not Vi compatible)" },
+    { "name": "-R", "description": "Read-only mode - set 'readonly' option to prevent accidental writes" },
+    { "name": "-b", "description": "Binary mode - set options for editing binary files" },
+    { "name": "-d", "description": "Diff mode - open two or more files and show differences side by side" },
+    { "name": "-o", "description": "Open N files in horizontally split windows (one above the other)", "takesValue": true },
+    { "name": "-O", "description": "Open N files in vertically split windows (side by side)", "takesValue": true },
+    { "name": "-p", "description": "Open N files in separate tab pages", "takesValue": true },
+    { "name": "-r", "description": "Recovery mode - recover a previously edited file from swap file", "takesValue": true },
+    { "name": "-n", "description": "No swap file - editing will not create a .swp file (for fast editing of temp files)" },
+    { "name": "-e", "description": "Start in Ex mode (line-oriented editing, like running ex)" },
+    { "name": "-s", "description": "Silent (batch) mode - used with -e for scripted Ex commands from stdin" },
+    { "name": "-x", "description": "Encryption mode - prompt for an encryption key to encrypt the file on save" },
+    { "name": "--noplugin", "description": "Skip loading all plugins (plugin scripts are not sourced)" },
+    { "name": "--clean", "description": "Start Vim with default settings and no plugins (like -u DEFAULTS --noplugin)" },
+    { "name": "-t", "description": "Jump to a tag - find the tag in the tags file and position cursor there", "takesValue": true },
+    { "name": "+", "description": "Start at the end of the file" },
+    { "name": "+N", "description": "Start at line number N", "takesValue": true },
+    { "name": "+/pattern", "description": "Start at the first occurrence of search pattern", "takesValue": true },
+    { "name": "-i", "description": "Use specified viminfo file instead of default", "takesValue": true },
+    { "name": "-V", "description": "Verbose mode - set verbosity level (0-15) for debugging", "takesValue": true },
+    { "name": "-w", "description": "Record all typed characters to a script file", "takesValue": true },
+    { "name": "-W", "description": "Overwrite and record all typed characters to a script file", "takesValue": true },
+    { "name": "-Z", "description": "Restricted mode - disable shell commands and external programs" },
+    { "name": "--remote", "description": "Open files in an already running Vim server", "takesValue": true },
+    { "name": "--servername", "description": "Set the Vim server name for --remote communication", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "vim file.txt", "description": "Open a file for editing" },
+    { "command": "vim -d file1 file2", "description": "Open two files in diff mode (vimdiff)" },
+    { "command": "vim -o file1 file2", "description": "Open files in horizontal splits" },
+    { "command": "vim -O file1 file2", "description": "Open files in vertical splits" },
+    { "command": "vim +42 file.txt", "description": "Open file and jump to line 42" },
+    { "command": "vim -c 'set number' file.txt", "description": "Open file with line numbers enabled" },
+    { "command": "vim -R /etc/passwd", "description": "Open file in read-only mode" },
+    { "command": "vim -p *.js", "description": "Open all JS files in separate tabs" },
+    { "command": "vim -r file.txt", "description": "Recover file from swap file after a crash" },
+    { "command": "vim --clean file.txt", "description": "Open file with no plugins or custom config" },
+    { "command": "vim -u NONE -N file.txt", "description": "Open file with no vimrc in nocompatible mode" },
+    { "command": "vim +/TODO file.txt", "description": "Open file and jump to first 'TODO'" },
+    { "command": "vim -b binary.dat", "description": "Open a binary file in binary mode" }
+  ],
+  "relatedCommands": ["nvim", "vi", "nano", "emacs"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Vim version and patch level",
+        "command": "vim --version 2>/dev/null | head -2",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "vim"
+      },
+      {
+        "name": "features",
+        "description": "Compiled Vim features",
+        "command": "vim --version 2>/dev/null | grep -E '^\\+|^-' | head -5",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "vim"
+      },
+      {
+        "name": "vimrc",
+        "description": "Detect user vimrc location",
+        "command": "ls ~/.vimrc 2>/dev/null || ls ~/.vim/vimrc 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "vim"
+      }
+    ]
+  }
+}

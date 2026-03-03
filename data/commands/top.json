@@ -1,0 +1,61 @@
+{
+  "name": "top",
+  "description": "Display and manage Linux processes in real-time with an interactive full-screen interface",
+  "category": "System Monitoring",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-h", "description": "Show usage information and exit" },
+    { "name": "-v", "description": "Show version info and exit" },
+    { "name": "-b", "description": "Batch mode - send output to stdout or file (useful for scripting, no interactive input)" },
+    { "name": "-c", "description": "Toggle full command line display vs. program name only" },
+    { "name": "-d", "description": "Delay time interval in seconds between screen updates (supports fractional seconds)", "takesValue": true },
+    { "name": "-H", "description": "Show individual threads instead of aggregating by process" },
+    { "name": "-i", "description": "Toggle idle process display - when set, tasks that have not used any CPU since the last update are hidden" },
+    { "name": "-n", "description": "Maximum number of iterations (refreshes) before exiting", "takesValue": true },
+    { "name": "-o", "description": "Sort by specified field name (e.g., %CPU, %MEM, TIME+, RES, PID)", "takesValue": true },
+    { "name": "-O", "description": "Print all available sort field names and exit" },
+    { "name": "-p", "description": "Monitor only processes with specified PIDs (comma-separated, max 20)", "takesValue": true },
+    { "name": "-u", "description": "Show only processes owned by the specified user (name or UID)", "takesValue": true },
+    { "name": "-U", "description": "Show only processes owned by the specified user (matches real, effective, saved, filesystem UID)", "takesValue": true },
+    { "name": "-1", "description": "Toggle single/separate CPU states display (show per-CPU stats)" },
+    { "name": "-E", "description": "Scale summary area memory units (k, m, g, t, p, e)", "takesValue": true },
+    { "name": "-e", "description": "Scale task area memory units (k, m, g, t, p, e)", "takesValue": true },
+    { "name": "-w", "description": "Set output width (in batch mode); without value uses 512 columns", "takesValue": true },
+    { "name": "-S", "description": "Toggle cumulative time mode (include dead child process time)" }
+  ],
+  "examples": [
+    { "command": "top", "description": "Launch interactive process viewer" },
+    { "command": "top -b -n 1", "description": "Batch mode with single iteration (for scripting)" },
+    { "command": "top -u www-data", "description": "Show only processes owned by www-data" },
+    { "command": "top -p 1234,5678", "description": "Monitor specific processes by PID" },
+    { "command": "top -o %MEM", "description": "Sort processes by memory usage" },
+    { "command": "top -d 5", "description": "Update display every 5 seconds" },
+    { "command": "top -b -n 5 -d 2 > top_output.txt", "description": "Capture 5 iterations at 2s intervals to a file" },
+    { "command": "top -H -p 1234", "description": "Show threads for a specific process" },
+    { "command": "top -1", "description": "Show individual CPU core statistics" },
+    { "command": "top -c -b -n 1 | head -30", "description": "Show full command lines in batch mode" }
+  ],
+  "relatedCommands": ["htop", "btop", "ps", "vmstat", "iostat"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "top version information",
+        "command": "top -v 2>&1 | head -1",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "top"
+      },
+      {
+        "name": "snapshot",
+        "description": "Current top snapshot summary",
+        "command": "top -b -n 1 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "top"
+      }
+    ]
+  }
+}

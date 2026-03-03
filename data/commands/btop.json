@@ -1,0 +1,59 @@
+{
+  "name": "btop",
+  "description": "Resource monitor showing usage and stats for processor, memory, disks, network and processes (btop++)",
+  "category": "System Monitoring",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show help message and exit" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version information" },
+    { "name": "--utf-force", "description": "Force UTF-8 Unicode output regardless of locale" },
+    { "name": "--debug", "description": "Start in debug mode, logging to btop.log" },
+    { "name": "--low-color", "shorthand": "-lc", "description": "Disable truecolor, use 256-color or 16-color mode" },
+    { "name": "--tty-mode", "shorthand": "-t", "description": "Force TTY mode (16 color, simplified UI for TTY terminals)" },
+    { "name": "--update", "description": "Set update interval in milliseconds (minimum 100)", "takesValue": true },
+    { "name": "--preset", "shorthand": "-p", "description": "Start with a preset layout (0-9) as defined in config", "takesValue": true },
+    { "name": "--theme", "description": "Set color theme (name or full path to .theme file)", "takesValue": true },
+    { "name": "--no-update-check", "description": "Disable check for newer versions at startup" }
+  ],
+  "examples": [
+    { "command": "btop", "description": "Launch the resource monitor" },
+    { "command": "btop --utf-force", "description": "Force UTF-8 output (fix rendering issues)" },
+    { "command": "btop -t", "description": "Run in TTY-compatible mode" },
+    { "command": "btop --preset 2", "description": "Start with layout preset 2" },
+    { "command": "btop --update 500", "description": "Update every 500 milliseconds" },
+    { "command": "btop -lc", "description": "Run with low-color mode (no truecolor)" },
+    { "command": "btop --theme gruvbox_dark", "description": "Start with the gruvbox_dark theme" },
+    { "command": "btop --debug", "description": "Run in debug mode for troubleshooting" }
+  ],
+  "relatedCommands": ["htop", "top", "ps"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "btop version",
+        "command": "btop --version 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "btop"
+      },
+      {
+        "name": "config",
+        "description": "btop config location",
+        "command": "ls ~/.config/btop/btop.conf 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "btop"
+      },
+      {
+        "name": "themes",
+        "description": "Available btop themes",
+        "command": "ls ~/.config/btop/themes/ 2>/dev/null || ls /usr/share/btop/themes/ 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "btop"
+      }
+    ]
+  }
+}

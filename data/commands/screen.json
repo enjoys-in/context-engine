@@ -1,0 +1,101 @@
+{
+  "name": "screen",
+  "description": "GNU Screen terminal multiplexer - manage multiple terminal sessions within a single window",
+  "category": "Terminal Multiplexers",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "-S", "description": "Create a new named session", "args": [{ "name": "session_name", "description": "Name for the new screen session", "required": true }], "options": [
+      { "name": "-d", "description": "Detach the session elsewhere before attaching" },
+      { "name": "-m", "description": "Force creation of a new session (ignore $STY)" },
+      { "name": "-A", "description": "Adapt window sizes to current terminal" },
+      { "name": "-L", "description": "Enable output logging to screenlog.N files" },
+      { "name": "-T", "description": "Set terminal type for the session", "takesValue": true }
+    ]},
+    { "name": "-r", "description": "Reattach to a detached session", "args": [{ "name": "session", "description": "Session name or PID to reattach to", "required": false }], "options": [
+      { "name": "-d", "description": "Detach the session first if attached elsewhere" },
+      { "name": "-D", "description": "Detach and logout remote session before reattaching" },
+      { "name": "-e", "description": "Change command character (default: ^Aa)", "takesValue": true },
+      { "name": "-p", "description": "Preselect a named window", "takesValue": true }
+    ]},
+    { "name": "-d", "description": "Detach a running session remotely", "args": [{ "name": "session", "description": "Session name or PID to detach", "required": false }], "options": [
+      { "name": "-r", "description": "Reattach after detaching" },
+      { "name": "-R", "description": "Reattach if possible, otherwise start new session" },
+      { "name": "-RR", "description": "Use the first session if multiple detached" }
+    ]},
+    { "name": "-ls", "description": "List all screen sessions and their states", "options": [
+      { "name": "-S", "description": "Filter listed sessions by name prefix", "takesValue": true }
+    ]},
+    { "name": "-x", "description": "Multiattach - attach to an already attached session (shared screen)", "args": [{ "name": "session", "description": "Session name or PID to multi-attach to", "required": false }], "options": [
+      { "name": "-S", "description": "Specify session name", "takesValue": true },
+      { "name": "-p", "description": "Preselect a named window", "takesValue": true },
+      { "name": "-r", "description": "Reattach if session is detached instead" }
+    ]},
+    { "name": "-X", "description": "Send a command to a running session", "args": [{ "name": "command", "description": "Screen command to execute (e.g., quit, stuff, select)", "required": true }], "options": [
+      { "name": "-S", "description": "Target session name", "takesValue": true },
+      { "name": "-p", "description": "Target window number or name", "takesValue": true },
+      { "name": "-Q", "description": "Send command and wait for query response" }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show usage information" },
+    { "name": "--version", "shorthand": "-v", "description": "Print version and compile date" },
+    { "name": "-S", "description": "Specify session name", "takesValue": true },
+    { "name": "-r", "description": "Reattach to a detached session", "takesValue": true },
+    { "name": "-R", "description": "Reattach or create session if none exists" },
+    { "name": "-d", "description": "Detach a running session" },
+    { "name": "-D", "description": "Detach and logout" },
+    { "name": "-ls", "description": "List all screen sessions" },
+    { "name": "-list", "description": "Same as -ls" },
+    { "name": "-x", "description": "Multi-attach to an attached session" },
+    { "name": "-X", "description": "Send a command to a named session", "takesValue": true },
+    { "name": "-m", "description": "Ignore $STY, create a new session" },
+    { "name": "-c", "description": "Use specified screenrc file instead of default", "takesValue": true },
+    { "name": "-e", "description": "Change command characters (default ^Aa)", "takesValue": true },
+    { "name": "-fn", "description": "Turn off flow control" },
+    { "name": "-fa", "description": "Turn on automatic flow control" },
+    { "name": "-A", "description": "Adapt all windows to current terminal size" },
+    { "name": "-L", "description": "Turn on output logging" },
+    { "name": "-Logfile", "description": "Set logfile name", "takesValue": true },
+    { "name": "-p", "description": "Preselect a window", "takesValue": true },
+    { "name": "-q", "description": "Quiet mode, suppress error messages" },
+    { "name": "-Q", "description": "Query a running session command and return result" },
+    { "name": "-t", "description": "Set window title", "takesValue": true },
+    { "name": "-T", "description": "Set terminal type ($TERM)", "takesValue": true },
+    { "name": "-U", "description": "Run in UTF-8 mode" },
+    { "name": "-wipe", "description": "Remove dead sessions instead of listing them" }
+  ],
+  "examples": [
+    { "command": "screen -S mysession", "description": "Start a new named session called 'mysession'" },
+    { "command": "screen -r mysession", "description": "Reattach to the detached session 'mysession'" },
+    { "command": "screen -ls", "description": "List all screen sessions" },
+    { "command": "screen -d -r", "description": "Detach elsewhere and reattach here" },
+    { "command": "screen -X quit", "description": "Send quit command to a running session" },
+    { "command": "screen -x mysession", "description": "Multi-attach to 'mysession' (shared viewing)" },
+    { "command": "screen -d -m -S bg_task ./long_script.sh", "description": "Start a detached session running a script" },
+    { "command": "screen -S mysession -X stuff 'ls\\n'", "description": "Type 'ls' and Enter into a running session" },
+    { "command": "screen -wipe", "description": "Clean up dead screen sessions" },
+    { "command": "screen -r -d mysession", "description": "Force detach from elsewhere and reattach here" }
+  ],
+  "relatedCommands": ["tmux"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Screen version",
+        "command": "screen --version 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "screen"
+      },
+      {
+        "name": "sessions",
+        "description": "Active screen sessions",
+        "command": "screen -ls 2>/dev/null | grep -E '\\(|Socket'",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "screen"
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "name": "nvim",
+  "description": "Neovim - hyperextensible Vim-based text editor with Lua scripting, built-in LSP, and modern terminal features",
+  "category": "Text Editors",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show usage summary and exit" },
+    { "name": "--version", "shorthand": "-v", "description": "Print version information and exit" },
+    { "name": "-c", "description": "Execute an Ex command after loading the first file", "takesValue": true },
+    { "name": "--cmd", "description": "Execute an Ex command before loading any config", "takesValue": true },
+    { "name": "-S", "description": "Source (execute) a Vim/Lua script file after loading the first file", "takesValue": true },
+    { "name": "-u", "description": "Use specified init file instead of default init.vim/init.lua (NONE to skip)", "takesValue": true },
+    { "name": "-N", "description": "Start in nocompatible mode (always enabled in Neovim, accepted for compatibility)" },
+    { "name": "-R", "description": "Read-only mode - set 'readonly' option" },
+    { "name": "-b", "description": "Binary mode - set options for editing binary files" },
+    { "name": "-d", "description": "Diff mode - open files and show differences" },
+    { "name": "-o", "description": "Open N files in horizontally split windows", "takesValue": true },
+    { "name": "-O", "description": "Open N files in vertically split windows", "takesValue": true },
+    { "name": "-p", "description": "Open N files in separate tab pages", "takesValue": true },
+    { "name": "-r", "description": "Recovery mode - recover a file from swap file", "takesValue": true },
+    { "name": "-n", "description": "No swap file - do not create .swp files" },
+    { "name": "-e", "description": "Start in Ex mode (line-oriented editing)" },
+    { "name": "-s", "description": "Silent (batch) mode - read Normal mode commands from a file", "takesValue": true },
+    { "name": "--noplugin", "description": "Skip loading all plugins" },
+    { "name": "--clean", "description": "Start with default settings, no config, no plugins (mimics factory defaults)" },
+    { "name": "-t", "description": "Jump to a tag", "takesValue": true },
+    { "name": "+", "description": "Start at the end of the file" },
+    { "name": "+N", "description": "Start at line number N", "takesValue": true },
+    { "name": "+/pattern", "description": "Start at the first occurrence of search pattern", "takesValue": true },
+    { "name": "--headless", "description": "Start without a UI (for scripting, LSP, automation)" },
+    { "name": "--listen", "description": "Start an RPC server listening on the given address (pipe or TCP)", "takesValue": true },
+    { "name": "--remote", "description": "Edit files in an already running Neovim instance via --listen address", "takesValue": true },
+    { "name": "--embed", "description": "Use stdin/stdout as an msgpack-RPC channel (for GUI frontends)" },
+    { "name": "--startuptime", "description": "Write startup timing messages to specified file", "takesValue": true },
+    { "name": "--api-info", "description": "Print msgpack-encoded API metadata to stdout and exit" },
+    { "name": "-l", "description": "Execute a Lua script (non-editor mode, Neovim acts as Lua interpreter)", "takesValue": true },
+    { "name": "-ll", "description": "Execute a Lua module (like require('module'), non-editor mode)", "takesValue": true },
+    { "name": "-i", "description": "Use specified ShaDa (shared data) file instead of default", "takesValue": true },
+    { "name": "-V", "description": "Verbose mode - set verbosity level for debugging", "takesValue": true },
+    { "name": "-w", "description": "Record all typed characters to a script file (append)", "takesValue": true },
+    { "name": "-W", "description": "Record all typed characters to a script file (overwrite)", "takesValue": true },
+    { "name": "--luamod-dev", "description": "Enable Lua module development mode (add cwd to package.path)" }
+  ],
+  "examples": [
+    { "command": "nvim file.txt", "description": "Open a file for editing" },
+    { "command": "nvim --headless -c 'q'", "description": "Start headless and quit (verify startup works)" },
+    { "command": "nvim -d file1 file2", "description": "Open two files in diff mode" },
+    { "command": "nvim --listen /tmp/nvim.sock", "description": "Start Neovim as an RPC server on a Unix socket" },
+    { "command": "nvim --startuptime startup.log file.txt", "description": "Profile startup time and save to log" },
+    { "command": "nvim -l script.lua", "description": "Execute a Lua script using Neovim as interpreter" },
+    { "command": "nvim -o file1 file2", "description": "Open files in horizontal splits" },
+    { "command": "nvim -p *.py", "description": "Open all Python files in tabs" },
+    { "command": "nvim +42 file.txt", "description": "Open file and jump to line 42" },
+    { "command": "nvim --clean file.txt", "description": "Open file with no config or plugins" },
+    { "command": "nvim -c 'set number' -c 'colorscheme desert' file.txt", "description": "Open file with line numbers and a colorscheme" },
+    { "command": "nvim --headless -c 'TSInstall python' -c 'q'", "description": "Install a Treesitter parser headlessly" },
+    { "command": "nvim --remote file.txt", "description": "Open file in an already running Neovim instance" },
+    { "command": "nvim -ll luamodule", "description": "Execute a Lua module in non-editor mode" }
+  ],
+  "relatedCommands": ["vim", "vi", "nano", "emacs"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Neovim version and build info",
+        "command": "nvim --version 2>/dev/null | head -3",
+        "parser": "lines",
+        "cacheFor": 600,
+        "requiresCmd": "nvim"
+      },
+      {
+        "name": "config",
+        "description": "Detect Neovim config location",
+        "command": "ls ~/.config/nvim/init.lua 2>/dev/null || ls ~/.config/nvim/init.vim 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "nvim"
+      },
+      {
+        "name": "plugins",
+        "description": "Detect plugin manager and installed plugins",
+        "command": "ls ~/.local/share/nvim/lazy/ 2>/dev/null | head -15 || ls ~/.local/share/nvim/site/pack/*/start/ 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "nvim"
+      }
+    ]
+  }
+}
