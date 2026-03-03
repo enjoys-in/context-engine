@@ -1,0 +1,100 @@
+{
+  "name": "cypress",
+  "description": "End-to-end testing framework for web applications",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "open", "description": "Open Cypress Test Runner UI", "options": [
+      { "name": "--project", "shorthand": "-P", "description": "Project directory", "takesValue": true },
+      { "name": "--config", "shorthand": "-C", "description": "Config file", "takesValue": true },
+      { "name": "--config-file", "description": "Config file path", "takesValue": true },
+      { "name": "--env", "shorthand": "-e", "description": "Set environment variables", "takesValue": true },
+      { "name": "--browser", "shorthand": "-b", "description": "Browser (chrome, chromium, edge, electron, firefox)", "takesValue": true },
+      { "name": "--component", "description": "Open component testing" },
+      { "name": "--e2e", "description": "Open E2E testing" },
+      { "name": "--global", "description": "Open in global mode" },
+      { "name": "--port", "shorthand": "-p", "description": "Override default port", "takesValue": true }
+    ]},
+    { "name": "run", "description": "Run tests headlessly", "options": [
+      { "name": "--spec", "shorthand": "-s", "description": "Spec files to run", "takesValue": true },
+      { "name": "--browser", "shorthand": "-b", "description": "Browser to use", "takesValue": true },
+      { "name": "--headed", "description": "Run in headed mode" },
+      { "name": "--no-exit", "description": "Keep runner open after finish" },
+      { "name": "--parallel", "description": "Run in parallel (Cypress Cloud)" },
+      { "name": "--record", "description": "Record run to Cypress Cloud" },
+      { "name": "--key", "shorthand": "-k", "description": "Record key", "takesValue": true },
+      { "name": "--group", "description": "Group parallel runs", "takesValue": true },
+      { "name": "--tag", "description": "Tag for recording", "takesValue": true },
+      { "name": "--reporter", "shorthand": "-r", "description": "Test reporter", "takesValue": true },
+      { "name": "--reporter-options", "shorthand": "-o", "description": "Reporter options", "takesValue": true },
+      { "name": "--config", "shorthand": "-C", "description": "Config overrides", "takesValue": true },
+      { "name": "--config-file", "description": "Config file", "takesValue": true },
+      { "name": "--env", "shorthand": "-e", "description": "Environment variables", "takesValue": true },
+      { "name": "--project", "shorthand": "-P", "description": "Project directory", "takesValue": true },
+      { "name": "--component", "description": "Run component tests" },
+      { "name": "--e2e", "description": "Run E2E tests" },
+      { "name": "--quiet", "shorthand": "-q", "description": "Quiet output" }
+    ]},
+    { "name": "install", "description": "Install Cypress binary", "options": [
+      { "name": "--force", "description": "Force reinstall" }
+    ]},
+    { "name": "verify", "description": "Verify Cypress installation" },
+    { "name": "cache", "description": "Cache management", "subcommands": [
+      { "name": "path", "description": "Print cache path" },
+      { "name": "list", "description": "List cached versions" },
+      { "name": "clear", "description": "Clear cache" },
+      { "name": "prune", "description": "Remove old cached versions" }
+    ]},
+    { "name": "info", "description": "Show system and Cypress info" },
+    { "name": "version", "description": "Show version" }
+  ],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "npx cypress open", "description": "Open test runner" },
+    { "command": "npx cypress run", "description": "Run all tests headlessly" },
+    { "command": "npx cypress run --spec 'cypress/e2e/login.cy.js'", "description": "Run specific spec" },
+    { "command": "npx cypress run --browser chrome", "description": "Run in Chrome" },
+    { "command": "npx cypress run --headed", "description": "Headed mode" },
+    { "command": "npx cypress run --record --key $KEY", "description": "Record to Cloud" },
+    { "command": "npx cypress run --component", "description": "Component tests" },
+    { "command": "npx cypress open --e2e --browser firefox", "description": "E2E in Firefox" }
+  ],
+  "relatedCommands": ["playwright", "jest"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "Cypress configuration",
+        "command": "cat cypress.config.ts 2>/dev/null || cat cypress.config.js 2>/dev/null || cat cypress.json 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "spec_files",
+        "description": "Test spec files",
+        "command": "find cypress -name '*.cy.*' -o -name '*.spec.*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "cypress_info",
+        "description": "Cypress system info",
+        "command": "npx cypress info 2>/dev/null | head -15",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "support_files",
+        "description": "Support and fixture files",
+        "command": "ls cypress/support/ cypress/fixtures/ 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

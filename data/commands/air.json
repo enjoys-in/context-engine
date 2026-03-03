@@ -1,0 +1,59 @@
+{
+  "name": "air",
+  "description": "Live reload for Go applications during development",
+  "category": "Go Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "init", "description": "Generate default .air.toml config file" }
+  ],
+  "globalOptions": [
+    { "name": "-c", "description": "Config file path", "takesValue": true },
+    { "name": "-d", "description": "Debug mode" },
+    { "name": "--build.cmd", "description": "Build command", "takesValue": true },
+    { "name": "--build.bin", "description": "Binary output path", "takesValue": true },
+    { "name": "--build.include_ext", "description": "File extensions to watch", "takesValue": true },
+    { "name": "--build.exclude_dir", "description": "Directories to exclude", "takesValue": true },
+    { "name": "--build.delay", "description": "Delay before rebuild (ms)", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "air", "description": "Start live reload with default config" },
+    { "command": "air init", "description": "Generate .air.toml config" },
+    { "command": "air -c .air.toml", "description": "Use specific config" },
+    { "command": "air -d", "description": "Run with debug output" },
+    { "command": "air --build.cmd 'go build -o ./tmp/main ./cmd/api'", "description": "Custom build command" }
+  ],
+  "relatedCommands": ["go", "gofmt", "golangci-lint"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "air_config",
+        "description": "Air configuration file",
+        "command": "cat .air.toml 2>/dev/null || cat .air.conf 2>/dev/null || echo 'no config found'",
+        "parser": "text",
+        "cacheFor": 30
+      },
+      {
+        "name": "go_module",
+        "description": "Go module name",
+        "command": "head -1 go.mod 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "main_packages",
+        "description": "Go main packages",
+        "command": "grep -rl 'func main()' --include='*.go' . 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "tmp_dir",
+        "description": "Air temp build output",
+        "command": "ls tmp/ 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 15
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "name": "playwright",
+  "description": "Playwright end-to-end testing and browser automation framework",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "test", "description": "Run tests", "options": [
+      { "name": "--project", "description": "Run specific project", "takesValue": true },
+      { "name": "--grep", "shorthand": "-g", "description": "Filter by title regex", "takesValue": true },
+      { "name": "--grep-invert", "description": "Invert grep filter", "takesValue": true },
+      { "name": "--headed", "description": "Run in headed browser mode" },
+      { "name": "--debug", "description": "Debug mode with inspector" },
+      { "name": "--ui", "description": "Open Playwright UI mode" },
+      { "name": "--workers", "shorthand": "-j", "description": "Max parallel workers", "takesValue": true },
+      { "name": "--retries", "description": "Retry failed tests", "takesValue": true },
+      { "name": "--timeout", "description": "Test timeout (ms)", "takesValue": true },
+      { "name": "--reporter", "description": "Reporter (list, dot, line, json, junit, html)", "takesValue": true },
+      { "name": "--output", "description": "Output directory for artifacts", "takesValue": true },
+      { "name": "--config", "shorthand": "-c", "description": "Config file", "takesValue": true },
+      { "name": "--shard", "description": "Shard (current/total)", "takesValue": true },
+      { "name": "--update-snapshots", "shorthand": "-u", "description": "Update snapshots" },
+      { "name": "--repeat-each", "description": "Run each test N times", "takesValue": true },
+      { "name": "--fully-parallel", "description": "Run all tests in parallel" },
+      { "name": "--forbid-only", "description": "Fail on test.only" },
+      { "name": "--pass-with-no-tests", "description": "Pass with no tests" },
+      { "name": "--trace", "description": "Capture trace (on, off, retain-on-failure)", "takesValue": true },
+      { "name": "--last-failed", "description": "Rerun only failed tests" },
+      { "name": "--list", "description": "List all tests" }
+    ]},
+    { "name": "show-report", "description": "Show HTML report", "args": [{ "name": "path", "description": "Report path", "required": false }] },
+    { "name": "codegen", "description": "Generate test code by recording actions", "args": [{ "name": "url", "description": "URL to open", "required": false }], "options": [
+      { "name": "--target", "description": "Language (javascript, python, java, csharp)", "takesValue": true },
+      { "name": "--output", "shorthand": "-o", "description": "Output file", "takesValue": true },
+      { "name": "--browser", "shorthand": "-b", "description": "Browser (chromium, firefox, webkit)", "takesValue": true }
+    ]},
+    { "name": "open", "description": "Open browser for inspection", "args": [{ "name": "url", "description": "URL to open", "required": false }] },
+    { "name": "install", "description": "Install browsers", "args": [{ "name": "browser", "description": "Specific browser", "required": false }], "options": [
+      { "name": "--with-deps", "description": "Install OS dependencies" },
+      { "name": "--force", "description": "Force reinstall" }
+    ]},
+    { "name": "screenshot", "description": "Take a screenshot", "args": [{ "name": "url", "description": "URL", "required": true }, { "name": "filename", "description": "Output file", "required": true }] },
+    { "name": "pdf", "description": "Save page as PDF" },
+    { "name": "clear-cache", "description": "Clear browser cache" }
+  ],
+  "globalOptions": [
+    { "name": "--browser", "description": "Browser (chromium, firefox, webkit, all)", "takesValue": true },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-V", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "npx playwright test", "description": "Run all tests" },
+    { "command": "npx playwright test --ui", "description": "Open UI mode" },
+    { "command": "npx playwright test --headed", "description": "Run with visible browsers" },
+    { "command": "npx playwright test --project chromium", "description": "Run only Chromium" },
+    { "command": "npx playwright test -g 'login'", "description": "Filter by title" },
+    { "command": "npx playwright codegen example.com", "description": "Record test" },
+    { "command": "npx playwright show-report", "description": "Open HTML report" },
+    { "command": "npx playwright test --debug", "description": "Debug mode" },
+    { "command": "npx playwright install --with-deps", "description": "Install browsers + deps" },
+    { "command": "npx playwright test --shard 1/3", "description": "Run first shard" }
+  ],
+  "relatedCommands": ["cypress", "jest"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "Playwright configuration",
+        "command": "cat playwright.config.ts 2>/dev/null || cat playwright.config.js 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "test_files",
+        "description": "Test files",
+        "command": "find . -name '*.spec.*' -o -name '*.test.*' 2>/dev/null | grep -v node_modules | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "browsers",
+        "description": "Installed browsers",
+        "command": "npx playwright install --dry-run 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "npx"
+      },
+      {
+        "name": "projects",
+        "description": "Configured projects",
+        "command": "grep -A2 'name:' playwright.config.ts 2>/dev/null | head -15",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

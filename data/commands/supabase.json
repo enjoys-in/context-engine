@@ -1,0 +1,108 @@
+{
+  "name": "supabase",
+  "description": "Supabase CLI for managing Supabase projects locally and in the cloud",
+  "category": "Cloud CLIs",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "init", "description": "Initialize a Supabase project" },
+    { "name": "start", "description": "Start local Supabase stack", "options": [{ "name": "--ignore-health-check", "description": "Skip health check" }] },
+    { "name": "stop", "description": "Stop local Supabase stack", "options": [{ "name": "--backup", "description": "Backup local database" }] },
+    { "name": "status", "description": "Show local Supabase status" },
+    { "name": "login", "description": "Log in to Supabase" },
+    { "name": "link", "description": "Link to a remote Supabase project", "options": [{ "name": "--project-ref", "description": "Project reference ID", "takesValue": true }] },
+    { "name": "db", "description": "Manage database", "subcommands": [
+      { "name": "push", "description": "Push local migrations to remote database", "options": [{ "name": "--dry-run", "description": "Print SQL without executing" }] },
+      { "name": "pull", "description": "Pull remote schema changes", "options": [{ "name": "--schema", "shorthand": "-s", "description": "Schemas to pull", "takesValue": true }] },
+      { "name": "reset", "description": "Reset local database to clean state" },
+      { "name": "diff", "description": "Show diff between local and remote", "options": [{ "name": "--schema", "shorthand": "-s", "description": "Schemas to diff", "takesValue": true }, { "name": "--file", "shorthand": "-f", "description": "Save diff to file", "takesValue": true }] },
+      { "name": "dump", "description": "Dump database to file", "options": [{ "name": "--data-only", "description": "Dump only data" }, { "name": "--file", "shorthand": "-f", "description": "Output file", "takesValue": true }] },
+      { "name": "lint", "description": "Lint local database for errors" }
+    ]},
+    { "name": "migration", "description": "Manage migrations", "subcommands": [
+      { "name": "new", "description": "Create a new migration", "args": [{ "name": "name", "description": "Migration name", "required": true }] },
+      { "name": "list", "description": "List migrations" },
+      { "name": "repair", "description": "Repair migration history", "options": [{ "name": "--status", "description": "Set migration status", "takesValue": true }] },
+      { "name": "squash", "description": "Squash migrations", "options": [{ "name": "--version", "description": "Target version", "takesValue": true }] }
+    ]},
+    { "name": "functions", "description": "Manage Edge Functions", "subcommands": [
+      { "name": "new", "description": "Create a new function", "args": [{ "name": "name", "description": "Function name", "required": true }] },
+      { "name": "serve", "description": "Serve functions locally", "options": [{ "name": "--env-file", "description": "Path to env file", "takesValue": true }] },
+      { "name": "deploy", "description": "Deploy functions", "args": [{ "name": "name", "description": "Function name", "required": false }], "options": [{ "name": "--no-verify-jwt", "description": "Disable JWT verification" }] },
+      { "name": "delete", "description": "Delete a function", "args": [{ "name": "name", "description": "Function name", "required": true }] }
+    ]},
+    { "name": "secrets", "description": "Manage secrets", "subcommands": [
+      { "name": "list", "description": "List all secrets" },
+      { "name": "set", "description": "Set secrets from stdin or env file", "options": [{ "name": "--env-file", "description": "Load from env file", "takesValue": true }] },
+      { "name": "unset", "description": "Unset secrets", "args": [{ "name": "names", "description": "Secret names", "required": true }] }
+    ]},
+    { "name": "gen", "description": "Generate types and keys", "subcommands": [
+      { "name": "types", "description": "Generate TypeScript types", "subcommands": [
+        { "name": "typescript", "description": "Generate TS types from schema", "options": [{ "name": "--local", "description": "Use local database" }, { "name": "--linked", "description": "Use linked project" }, { "name": "--schema", "shorthand": "-s", "description": "Schemas to include", "takesValue": true }] }
+      ]},
+      { "name": "keys", "description": "Generate project API keys" }
+    ]},
+    { "name": "projects", "description": "Manage Supabase projects", "subcommands": [
+      { "name": "list", "description": "List all projects" },
+      { "name": "create", "description": "Create a new project", "args": [{ "name": "name", "description": "Project name", "required": true }], "options": [{ "name": "--org-id", "description": "Organization ID", "takesValue": true }, { "name": "--db-password", "description": "Database password", "takesValue": true }, { "name": "--region", "description": "Region", "takesValue": true }] }
+    ]},
+    { "name": "orgs", "description": "Manage organizations", "subcommands": [
+      { "name": "list", "description": "List organizations" }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "--debug", "description": "Enable debug output" },
+    { "name": "--workdir", "description": "Working directory", "takesValue": true },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "supabase init", "description": "Initialize new Supabase project" },
+    { "command": "supabase start", "description": "Start local dev stack" },
+    { "command": "supabase db push", "description": "Push migrations to remote" },
+    { "command": "supabase migration new add_users_table", "description": "Create a new migration" },
+    { "command": "supabase gen types typescript --local > types/supabase.ts", "description": "Generate TypeScript types" },
+    { "command": "supabase functions deploy my-function", "description": "Deploy an edge function" }
+  ],
+  "relatedCommands": ["firebase", "psql"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "local_status",
+        "description": "Local Supabase status",
+        "command": "supabase status 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "supabase"
+      },
+      {
+        "name": "projects",
+        "description": "Linked Supabase projects",
+        "command": "supabase projects list 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "supabase"
+      },
+      {
+        "name": "migrations",
+        "description": "Database migrations",
+        "command": "ls -1 supabase/migrations/*.sql 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "edge_functions",
+        "description": "Edge functions",
+        "command": "ls -1d supabase/functions/*/ 2>/dev/null | xargs -I{} basename {}",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "config",
+        "description": "Supabase config",
+        "command": "cat supabase/config.toml 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

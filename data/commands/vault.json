@@ -1,0 +1,144 @@
+{
+  "name": "vault",
+  "description": "HashiCorp Vault - secrets management, encryption, and access control",
+  "category": "DevOps/Infra",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "server", "description": "Start Vault server", "options": [
+      { "name": "-dev", "description": "Dev mode (in-memory, unsealed)" },
+      { "name": "-dev-root-token-id", "description": "Dev root token", "takesValue": true },
+      { "name": "-config", "description": "Config file/dir", "takesValue": true },
+      { "name": "-log-level", "description": "Log level", "takesValue": true }
+    ]},
+    { "name": "status", "description": "Show Vault seal status" },
+    { "name": "login", "description": "Authenticate to Vault", "options": [
+      { "name": "-method", "description": "Auth method", "takesValue": true },
+      { "name": "-token-only", "description": "Print only the token" },
+      { "name": "-no-store", "description": "Don't persist token" }
+    ]},
+    { "name": "kv", "description": "KV secrets engine", "subcommands": [
+      { "name": "put", "description": "Write a secret", "args": [{ "name": "path", "description": "Secret path", "required": true }] },
+      { "name": "get", "description": "Read a secret", "args": [{ "name": "path", "description": "Secret path", "required": true }], "options": [{ "name": "-format", "description": "Output format", "takesValue": true }, { "name": "-field", "description": "Specific field", "takesValue": true }] },
+      { "name": "delete", "description": "Delete a secret" },
+      { "name": "list", "description": "List secrets at path" },
+      { "name": "metadata", "description": "Manage secret metadata", "subcommands": [
+        { "name": "get", "description": "Get metadata" },
+        { "name": "put", "description": "Set metadata" },
+        { "name": "delete", "description": "Delete metadata" }
+      ]},
+      { "name": "patch", "description": "Patch a secret" },
+      { "name": "rollback", "description": "Rollback to previous version" },
+      { "name": "undelete", "description": "Undelete versions" },
+      { "name": "destroy", "description": "Permanently destroy versions" }
+    ]},
+    { "name": "secrets", "description": "Secrets engine management", "subcommands": [
+      { "name": "enable", "description": "Enable secrets engine" },
+      { "name": "disable", "description": "Disable secrets engine" },
+      { "name": "list", "description": "List enabled engines" },
+      { "name": "tune", "description": "Tune secrets engine" },
+      { "name": "move", "description": "Move secrets engine" }
+    ]},
+    { "name": "auth", "description": "Auth method management", "subcommands": [
+      { "name": "enable", "description": "Enable auth method" },
+      { "name": "disable", "description": "Disable auth method" },
+      { "name": "list", "description": "List enabled auth methods" },
+      { "name": "tune", "description": "Tune auth method" }
+    ]},
+    { "name": "policy", "description": "Policy management", "subcommands": [
+      { "name": "write", "description": "Write policy" },
+      { "name": "read", "description": "Read policy" },
+      { "name": "delete", "description": "Delete policy" },
+      { "name": "list", "description": "List policies" },
+      { "name": "fmt", "description": "Format policy" }
+    ]},
+    { "name": "token", "description": "Token management", "subcommands": [
+      { "name": "create", "description": "Create token" },
+      { "name": "lookup", "description": "Lookup token" },
+      { "name": "renew", "description": "Renew token" },
+      { "name": "revoke", "description": "Revoke token" },
+      { "name": "capabilities", "description": "Check capabilities" }
+    ]},
+    { "name": "operator", "description": "Cluster operations", "subcommands": [
+      { "name": "init", "description": "Initialize Vault" },
+      { "name": "unseal", "description": "Unseal Vault" },
+      { "name": "seal", "description": "Seal Vault" },
+      { "name": "rekey", "description": "Rekey Vault" },
+      { "name": "raft", "description": "Raft operations" },
+      { "name": "step-down", "description": "Step down as leader" }
+    ]},
+    { "name": "read", "description": "Read data from Vault", "args": [{ "name": "path", "description": "Path to read", "required": true }] },
+    { "name": "write", "description": "Write data to Vault", "args": [{ "name": "path", "description": "Path to write", "required": true }] },
+    { "name": "delete", "description": "Delete data from Vault", "args": [{ "name": "path", "description": "Path to delete", "required": true }] },
+    { "name": "list", "description": "List data at path", "args": [{ "name": "path", "description": "Path to list", "required": true }] },
+    { "name": "lease", "description": "Lease management", "subcommands": [
+      { "name": "renew", "description": "Renew lease" },
+      { "name": "revoke", "description": "Revoke lease" },
+      { "name": "lookup", "description": "Lookup lease" }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "-address", "description": "Vault server address", "takesValue": true },
+    { "name": "-token", "description": "Vault token", "takesValue": true },
+    { "name": "-namespace", "description": "Vault namespace", "takesValue": true },
+    { "name": "-format", "description": "Output format (table, json, yaml)", "takesValue": true },
+    { "name": "-field", "description": "Print specific field", "takesValue": true },
+    { "name": "-tls-skip-verify", "description": "Skip TLS verification" },
+    { "name": "-output-curl-string", "description": "Show equivalent curl" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "vault server -dev", "description": "Start dev server" },
+    { "command": "vault kv put secret/myapp key=value", "description": "Store a secret" },
+    { "command": "vault kv get -format=json secret/myapp", "description": "Read a secret as JSON" },
+    { "command": "vault kv list secret/", "description": "List secrets" },
+    { "command": "vault secrets list", "description": "List secrets engines" },
+    { "command": "vault status", "description": "Check seal status" },
+    { "command": "vault login -method=userpass username=admin", "description": "Login with userpass" },
+    { "command": "vault policy write my-policy policy.hcl", "description": "Create policy" }
+  ],
+  "relatedCommands": ["consul", "nomad", "terraform"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "status",
+        "description": "Vault status",
+        "command": "vault status -format=json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 15,
+        "requiresCmd": "vault"
+      },
+      {
+        "name": "secrets_engines",
+        "description": "Enabled secrets engines",
+        "command": "vault secrets list -format=json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "vault"
+      },
+      {
+        "name": "auth_methods",
+        "description": "Enabled auth methods",
+        "command": "vault auth list -format=json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "vault"
+      },
+      {
+        "name": "policies",
+        "description": "Available policies",
+        "command": "vault policy list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "vault"
+      },
+      {
+        "name": "env",
+        "description": "Vault environment",
+        "command": "echo \"VAULT_ADDR=$VAULT_ADDR\nVAULT_NAMESPACE=$VAULT_NAMESPACE\"",
+        "parser": "keyvalue",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

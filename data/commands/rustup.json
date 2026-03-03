@@ -1,0 +1,103 @@
+{
+  "name": "rustup",
+  "description": "Rust toolchain installer and manager",
+  "category": "Rust Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "show", "description": "Show installed and active toolchains", "subcommands": [
+      { "name": "active-toolchain", "description": "Show active toolchain" },
+      { "name": "home", "description": "Show RUSTUP_HOME" },
+      { "name": "profile", "description": "Show current profile" }
+    ]},
+    { "name": "update", "description": "Update toolchains and rustup", "args": [{ "name": "toolchain", "description": "Specific toolchain to update", "required": false }] },
+    { "name": "default", "description": "Set default toolchain", "args": [{ "name": "toolchain", "description": "Toolchain name (stable, beta, nightly, etc.)", "required": true }] },
+    { "name": "toolchain", "description": "Manage toolchains", "subcommands": [
+      { "name": "list", "description": "List installed toolchains" },
+      { "name": "install", "description": "Install a toolchain", "args": [{ "name": "toolchain", "description": "Toolchain name", "required": true }] },
+      { "name": "uninstall", "description": "Uninstall a toolchain", "args": [{ "name": "toolchain", "description": "Toolchain name", "required": true }] },
+      { "name": "link", "description": "Symlink a custom toolchain", "args": [{ "name": "toolchain", "description": "Name", "required": true }, { "name": "path", "description": "Path", "required": true }] }
+    ]},
+    { "name": "target", "description": "Manage compilation targets", "subcommands": [
+      { "name": "list", "description": "List available targets" },
+      { "name": "add", "description": "Add a target", "args": [{ "name": "target", "description": "Target triple", "required": true }] },
+      { "name": "remove", "description": "Remove a target", "args": [{ "name": "target", "description": "Target triple", "required": true }] }
+    ]},
+    { "name": "component", "description": "Manage components", "subcommands": [
+      { "name": "list", "description": "List available components" },
+      { "name": "add", "description": "Add a component", "args": [{ "name": "component", "description": "Component name (clippy, rustfmt, etc.)", "required": true }] },
+      { "name": "remove", "description": "Remove a component", "args": [{ "name": "component", "description": "Component name", "required": true }] }
+    ]},
+    { "name": "override", "description": "Manage directory toolchain overrides", "subcommands": [
+      { "name": "set", "description": "Set override for current directory", "args": [{ "name": "toolchain", "description": "Toolchain name", "required": true }] },
+      { "name": "unset", "description": "Remove override" },
+      { "name": "list", "description": "List overrides" }
+    ]},
+    { "name": "run", "description": "Run a command with a specific toolchain", "args": [{ "name": "toolchain", "description": "Toolchain", "required": true }, { "name": "command", "description": "Command to run", "required": true }] },
+    { "name": "which", "description": "Show path to a binary", "args": [{ "name": "command", "description": "Binary name", "required": true }] },
+    { "name": "doc", "description": "Open Rust docs in browser" },
+    { "name": "self", "description": "Manage rustup itself", "subcommands": [
+      { "name": "update", "description": "Update rustup" },
+      { "name": "uninstall", "description": "Uninstall rustup" }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "--verbose", "shorthand": "-v", "description": "Verbose output" },
+    { "name": "--quiet", "shorthand": "-q", "description": "Quiet output" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-V", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "rustup show", "description": "Show installed toolchains" },
+    { "command": "rustup update", "description": "Update all toolchains" },
+    { "command": "rustup default nightly", "description": "Switch to nightly" },
+    { "command": "rustup target add wasm32-unknown-unknown", "description": "Add WASM target" },
+    { "command": "rustup component add clippy rustfmt", "description": "Add clippy and rustfmt" },
+    { "command": "rustup toolchain install nightly", "description": "Install nightly toolchain" },
+    { "command": "rustup override set nightly", "description": "Use nightly in current dir" }
+  ],
+  "relatedCommands": ["cargo", "rust"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed_toolchains",
+        "description": "Installed Rust toolchains",
+        "command": "rustup toolchain list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "active_toolchain",
+        "description": "Active toolchain",
+        "command": "rustup show active-toolchain 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "installed_targets",
+        "description": "Installed compilation targets",
+        "command": "rustup target list --installed 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "installed_components",
+        "description": "Installed components",
+        "command": "rustup component list --installed 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "rustup"
+      },
+      {
+        "name": "rust_toolchain_file",
+        "description": "Project toolchain override",
+        "command": "cat rust-toolchain.toml 2>/dev/null || cat rust-toolchain 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

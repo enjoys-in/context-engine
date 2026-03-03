@@ -1,0 +1,105 @@
+{
+  "name": "nft",
+  "description": "nftables - Linux kernel packet classification framework (iptables successor)",
+  "category": "Linux Coreutils",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "list", "description": "List objects", "subcommands": [
+      { "name": "ruleset", "description": "List entire ruleset" },
+      { "name": "tables", "description": "List all tables" },
+      { "name": "table", "description": "List specific table", "args": [{ "name": "family table", "description": "Family and table name", "required": true }] },
+      { "name": "chains", "description": "List all chains" },
+      { "name": "chain", "description": "List specific chain" },
+      { "name": "sets", "description": "List all sets" },
+      { "name": "set", "description": "List specific set" },
+      { "name": "maps", "description": "List all maps" },
+      { "name": "counters", "description": "List counters" }
+    ]},
+    { "name": "add", "description": "Add objects", "subcommands": [
+      { "name": "table", "description": "Add table", "args": [{ "name": "family name", "description": "e.g. inet filter", "required": true }] },
+      { "name": "chain", "description": "Add chain" },
+      { "name": "rule", "description": "Add rule" },
+      { "name": "set", "description": "Add set" },
+      { "name": "map", "description": "Add map" },
+      { "name": "element", "description": "Add set element" },
+      { "name": "counter", "description": "Add named counter" }
+    ]},
+    { "name": "delete", "description": "Delete objects", "subcommands": [
+      { "name": "table", "description": "Delete table" },
+      { "name": "chain", "description": "Delete chain" },
+      { "name": "rule", "description": "Delete rule" },
+      { "name": "set", "description": "Delete set" }
+    ]},
+    { "name": "insert", "description": "Insert rule at position" },
+    { "name": "replace", "description": "Replace rule" },
+    { "name": "flush", "description": "Flush objects", "subcommands": [
+      { "name": "ruleset", "description": "Flush entire ruleset" },
+      { "name": "table", "description": "Flush table" },
+      { "name": "chain", "description": "Flush chain" },
+      { "name": "set", "description": "Flush set" }
+    ]},
+    { "name": "rename", "description": "Rename chain" },
+    { "name": "export", "description": "Export ruleset", "options": [{ "name": "json", "description": "Export as JSON" }] },
+    { "name": "import", "description": "Import ruleset" },
+    { "name": "monitor", "description": "Monitor ruleset events" }
+  ],
+  "globalOptions": [
+    { "name": "-f", "description": "Read commands from file", "takesValue": true },
+    { "name": "-i", "description": "Interactive mode" },
+    { "name": "-n", "description": "Numeric output (no hostname resolution)" },
+    { "name": "-s", "description": "Stateless output" },
+    { "name": "-a", "description": "Show rule handles in output" },
+    { "name": "-j", "description": "JSON output" },
+    { "name": "-c", "description": "Check commands without committing" },
+    { "name": "-e", "description": "Echo what was added/inserted" },
+    { "name": "--debug", "description": "Debug output", "takesValue": true },
+    { "name": "--handle", "description": "Show handle numbers in output" }
+  ],
+  "examples": [
+    { "command": "sudo nft list ruleset", "description": "Show all rules" },
+    { "command": "sudo nft add table inet filter", "description": "Create table" },
+    { "command": "sudo nft add chain inet filter input '{ type filter hook input priority 0; }'", "description": "Create input chain" },
+    { "command": "sudo nft add rule inet filter input tcp dport 80 accept", "description": "Allow HTTP" },
+    { "command": "sudo nft add rule inet filter input tcp dport 22 accept", "description": "Allow SSH" },
+    { "command": "sudo nft -f /etc/nftables.conf", "description": "Load rules from file" },
+    { "command": "sudo nft flush ruleset", "description": "Clear all rules" },
+    { "command": "sudo nft list ruleset -j", "description": "JSON output" },
+    { "command": "sudo nft delete rule inet filter input handle 10", "description": "Delete specific rule" }
+  ],
+  "relatedCommands": ["iptables", "ufw"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "ruleset",
+        "description": "Current nftables ruleset",
+        "command": "sudo nft list ruleset 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 15,
+        "requiresCmd": "nft"
+      },
+      {
+        "name": "tables",
+        "description": "Current tables",
+        "command": "sudo nft list tables 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "nft"
+      },
+      {
+        "name": "config_file",
+        "description": "nftables config file",
+        "command": "cat /etc/nftables.conf 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "interfaces",
+        "description": "Network interfaces",
+        "command": "ip -br link show 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

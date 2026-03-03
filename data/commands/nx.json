@@ -1,0 +1,82 @@
+{
+  "name": "nx",
+  "description": "Nx - smart monorepo build system with computation caching and task orchestration",
+  "category": "Node Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "run", "description": "Run a target for a project", "args": [{ "name": "target", "description": "project:target[:configuration]", "required": true }], "options": [{ "name": "--configuration", "shorthand": "-c", "description": "Configuration", "takesValue": true }, { "name": "--skip-nx-cache", "description": "Skip cache" }] },
+    { "name": "run-many", "description": "Run target for multiple projects", "options": [{ "name": "--target", "shorthand": "-t", "description": "Target to run", "takesValue": true }, { "name": "--projects", "shorthand": "-p", "description": "Projects to run", "takesValue": true }, { "name": "--all", "description": "Run for all projects" }, { "name": "--parallel", "description": "Max parallel tasks", "takesValue": true }, { "name": "--skip-nx-cache", "description": "Skip cache" }] },
+    { "name": "affected", "description": "Run targets for affected projects", "options": [{ "name": "--target", "shorthand": "-t", "description": "Target to run", "takesValue": true }, { "name": "--base", "description": "Base commit", "takesValue": true }, { "name": "--head", "description": "Head commit", "takesValue": true }, { "name": "--parallel", "description": "Max parallel", "takesValue": true }] },
+    { "name": "graph", "description": "Show project dependency graph", "options": [{ "name": "--file", "description": "Output file", "takesValue": true }, { "name": "--focus", "description": "Focus on project", "takesValue": true }, { "name": "--affected", "description": "Show only affected" }] },
+    { "name": "generate", "description": "Run a generator", "args": [{ "name": "generator", "description": "Generator (plugin:generator)", "required": true }], "options": [{ "name": "--name", "description": "Name", "takesValue": true }, { "name": "--directory", "description": "Directory", "takesValue": true }, { "name": "--dry-run", "description": "Preview changes" }] },
+    { "name": "migrate", "description": "Update Nx and workspace", "args": [{ "name": "package", "description": "Package to migrate", "required": false }], "options": [{ "name": "--run-migrations", "description": "Run pending migrations" }, { "name": "--from", "description": "Current version", "takesValue": true }, { "name": "--to", "description": "Target version", "takesValue": true }] },
+    { "name": "list", "description": "List installed and available plugins", "args": [{ "name": "plugin", "description": "Plugin name for details", "required": false }] },
+    { "name": "init", "description": "Add Nx to an existing workspace" },
+    { "name": "show", "description": "Show information", "subcommands": [
+      { "name": "projects", "description": "List projects", "options": [{ "name": "--affected", "description": "Show affected only" }, { "name": "--type", "description": "Project type (app, lib)", "takesValue": true }] },
+      { "name": "project", "description": "Show project details", "args": [{ "name": "name", "description": "Project name", "required": true }] }
+    ]},
+    { "name": "reset", "description": "Reset Nx cache and daemon" },
+    { "name": "daemon", "description": "Manage Nx daemon", "subcommands": [
+      { "name": "start", "description": "Start daemon" },
+      { "name": "stop", "description": "Stop daemon" }
+    ]},
+    { "name": "format", "description": "Format files", "subcommands": [
+      { "name": "write", "description": "Format and write files" },
+      { "name": "check", "description": "Check formatting" }
+    ]},
+    { "name": "connect", "description": "Connect to Nx Cloud" },
+    { "name": "report", "description": "Report workspace config and installed plugins" }
+  ],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "description": "Show version" },
+    { "name": "--verbose", "description": "Verbose output" },
+    { "name": "--nx-bail", "description": "Stop on first failure" },
+    { "name": "--nx-ignore-cycles", "description": "Ignore dependency cycles" }
+  ],
+  "examples": [
+    { "command": "nx run myapp:build", "description": "Build a specific project" },
+    { "command": "nx run-many -t build test", "description": "Run build and test for all projects" },
+    { "command": "nx affected -t test --base=main", "description": "Test affected projects" },
+    { "command": "nx generate @nx/react:app my-app", "description": "Generate a React app" },
+    { "command": "nx graph", "description": "Open dependency graph" },
+    { "command": "nx show projects --affected", "description": "Show affected projects" }
+  ],
+  "relatedCommands": ["turbo", "npm", "pnpm"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "projects",
+        "description": "Workspace projects",
+        "command": "nx show projects 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "nx"
+      },
+      {
+        "name": "nx_config",
+        "description": "Nx configuration",
+        "command": "cat nx.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60
+      },
+      {
+        "name": "plugins",
+        "description": "Installed Nx plugins",
+        "command": "nx report 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nx"
+      },
+      {
+        "name": "workspaces",
+        "description": "Workspace structure",
+        "command": "cat workspace.json 2>/dev/null || cat angular.json 2>/dev/null | head -30",
+        "parser": "json",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

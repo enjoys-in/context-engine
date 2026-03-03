@@ -1,0 +1,79 @@
+{
+  "name": "flask",
+  "description": "Flask CLI for running and managing Flask web applications",
+  "category": "Python Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "run", "description": "Run the development server", "options": [{ "name": "--host", "shorthand": "-h", "description": "Bind host", "takesValue": true }, { "name": "--port", "shorthand": "-p", "description": "Bind port", "takesValue": true }, { "name": "--reload", "description": "Enable reloader" }, { "name": "--no-reload", "description": "Disable reloader" }, { "name": "--debugger", "description": "Enable debugger" }, { "name": "--no-debugger", "description": "Disable debugger" }, { "name": "--with-threads", "description": "Enable threading" }, { "name": "--cert", "description": "SSL cert file", "takesValue": true }, { "name": "--key", "description": "SSL key file", "takesValue": true }] },
+    { "name": "shell", "description": "Open interactive shell with app context" },
+    { "name": "routes", "description": "Show all registered URL routes", "options": [{ "name": "--sort", "shorthand": "-s", "description": "Sort by (endpoint, methods, rule, match)", "takesValue": true }, { "name": "--all-methods", "description": "Show HEAD and OPTIONS" }] },
+    { "name": "db", "description": "Database commands (Flask-Migrate)", "subcommands": [
+      { "name": "init", "description": "Initialize migrations directory" },
+      { "name": "migrate", "description": "Generate migration", "options": [{ "name": "--message", "shorthand": "-m", "description": "Migration message", "takesValue": true }] },
+      { "name": "upgrade", "description": "Apply migrations", "args": [{ "name": "revision", "description": "Target revision", "required": false }] },
+      { "name": "downgrade", "description": "Revert migrations", "args": [{ "name": "revision", "description": "Target revision", "required": false }] },
+      { "name": "history", "description": "Show migration history" },
+      { "name": "current", "description": "Show current migration" },
+      { "name": "heads", "description": "Show head migrations" },
+      { "name": "stamp", "description": "Stamp revision without migrating", "args": [{ "name": "revision", "description": "Revision", "required": true }] }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "--app", "shorthand": "-A", "description": "Flask application module", "takesValue": true },
+    { "name": "--debug", "description": "Enable debug mode" },
+    { "name": "--env-file", "shorthand": "-e", "description": "Environment file", "takesValue": true },
+    { "name": "--help", "description": "Show help" },
+    { "name": "--version", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "flask run", "description": "Run development server" },
+    { "command": "flask run --host 0.0.0.0 --port 5000", "description": "Run on all interfaces" },
+    { "command": "flask routes", "description": "Show URL routes" },
+    { "command": "flask shell", "description": "Open Python shell with app context" },
+    { "command": "flask db migrate -m 'Add users table'", "description": "Create migration" },
+    { "command": "flask db upgrade", "description": "Apply pending migrations" },
+    { "command": "FLASK_APP=app.py flask run --debug", "description": "Run with debug mode" }
+  ],
+  "relatedCommands": ["python", "gunicorn", "uvicorn"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "flask_app",
+        "description": "Flask app entry point",
+        "command": "echo $FLASK_APP 2>/dev/null; grep -rl 'Flask(__name__)' *.py 2>/dev/null | head -3",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "routes",
+        "description": "Registered routes",
+        "command": "flask routes 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "flask"
+      },
+      {
+        "name": "blueprints",
+        "description": "Flask blueprints",
+        "command": "grep -rl 'Blueprint(' . --include='*.py' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "migrations",
+        "description": "Migration files",
+        "command": "ls migrations/versions/*.py 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "env_file",
+        "description": "Flask environment config",
+        "command": "cat .flaskenv 2>/dev/null || cat .env 2>/dev/null | head -10",
+        "parser": "text",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "name": "consul",
+  "description": "HashiCorp Consul - service mesh, service discovery, and configuration",
+  "category": "DevOps/Infra",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "agent", "description": "Run a Consul agent", "options": [
+      { "name": "-dev", "description": "Development mode" },
+      { "name": "-server", "description": "Server mode" },
+      { "name": "-client", "description": "Client mode" },
+      { "name": "-config-file", "description": "Config file", "takesValue": true },
+      { "name": "-config-dir", "description": "Config directory", "takesValue": true },
+      { "name": "-data-dir", "description": "Data directory", "takesValue": true },
+      { "name": "-bind", "description": "Bind address", "takesValue": true },
+      { "name": "-bootstrap-expect", "description": "Expected servers for bootstrap", "takesValue": true },
+      { "name": "-datacenter", "shorthand": "-dc", "description": "Datacenter name", "takesValue": true },
+      { "name": "-node", "description": "Node name", "takesValue": true },
+      { "name": "-join", "description": "Join cluster address", "takesValue": true },
+      { "name": "-ui", "description": "Enable web UI" }
+    ]},
+    { "name": "members", "description": "List cluster members" },
+    { "name": "catalog", "description": "Catalog operations", "subcommands": [
+      { "name": "services", "description": "List services" },
+      { "name": "nodes", "description": "List nodes" },
+      { "name": "datacenters", "description": "List datacenters" }
+    ]},
+    { "name": "kv", "description": "KV store operations", "subcommands": [
+      { "name": "put", "description": "Set KV pair", "args": [{ "name": "key", "description": "Key", "required": true }, { "name": "value", "description": "Value", "required": false }] },
+      { "name": "get", "description": "Get KV pair", "args": [{ "name": "key", "description": "Key", "required": true }] },
+      { "name": "delete", "description": "Delete KV pair" },
+      { "name": "export", "description": "Export KV tree" },
+      { "name": "import", "description": "Import KV tree" }
+    ]},
+    { "name": "services", "description": "Service management", "subcommands": [
+      { "name": "register", "description": "Register a service" },
+      { "name": "deregister", "description": "Deregister a service" }
+    ]},
+    { "name": "connect", "description": "Service mesh (Connect)", "subcommands": [
+      { "name": "proxy", "description": "Run connect proxy" },
+      { "name": "envoy", "description": "Run Envoy proxy" },
+      { "name": "ca", "description": "CA management" }
+    ]},
+    { "name": "intention", "description": "Service intentions", "subcommands": [
+      { "name": "create", "description": "Create intention" },
+      { "name": "delete", "description": "Delete intention" },
+      { "name": "list", "description": "List intentions" },
+      { "name": "check", "description": "Check intention" },
+      { "name": "match", "description": "Match intentions" }
+    ]},
+    { "name": "snapshot", "description": "Snapshot operations", "subcommands": [
+      { "name": "save", "description": "Save snapshot" },
+      { "name": "restore", "description": "Restore snapshot" },
+      { "name": "inspect", "description": "Inspect snapshot" }
+    ]},
+    { "name": "acl", "description": "ACL management", "subcommands": [
+      { "name": "bootstrap", "description": "Bootstrap ACLs" },
+      { "name": "token", "description": "Token management" },
+      { "name": "policy", "description": "Policy management" },
+      { "name": "role", "description": "Role management" }
+    ]},
+    { "name": "operator", "description": "Cluster operations", "subcommands": [
+      { "name": "raft", "description": "Raft operations" },
+      { "name": "autopilot", "description": "Autopilot settings" }
+    ]},
+    { "name": "monitor", "description": "Stream logs from Consul agent" },
+    { "name": "reload", "description": "Reload agent configuration" },
+    { "name": "leave", "description": "Gracefully leave cluster" },
+    { "name": "info", "description": "Show agent debug info" },
+    { "name": "version", "description": "Show version" }
+  ],
+  "globalOptions": [
+    { "name": "-http-addr", "description": "Consul HTTP address", "takesValue": true },
+    { "name": "-token", "description": "ACL token", "takesValue": true },
+    { "name": "-datacenter", "description": "Datacenter", "takesValue": true },
+    { "name": "-stale", "description": "Allow stale reads" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "consul agent -dev", "description": "Start dev agent" },
+    { "command": "consul members", "description": "List members" },
+    { "command": "consul catalog services", "description": "List services" },
+    { "command": "consul kv put config/db/host 10.0.0.1", "description": "Set KV value" },
+    { "command": "consul kv get config/db/host", "description": "Get KV value" },
+    { "command": "consul snapshot save backup.snap", "description": "Save snapshot" },
+    { "command": "consul intention create web api", "description": "Allow web->api" }
+  ],
+  "relatedCommands": ["vault", "nomad", "terraform"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "members",
+        "description": "Cluster members",
+        "command": "consul members 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "consul"
+      },
+      {
+        "name": "services",
+        "description": "Registered services",
+        "command": "consul catalog services 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "consul"
+      },
+      {
+        "name": "datacenters",
+        "description": "Available datacenters",
+        "command": "consul catalog datacenters 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "consul"
+      },
+      {
+        "name": "kv_tree",
+        "description": "KV store keys",
+        "command": "consul kv export 2>/dev/null | head -30",
+        "parser": "json",
+        "cacheFor": 30,
+        "requiresCmd": "consul"
+      }
+    ]
+  }
+}

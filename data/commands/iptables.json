@@ -1,0 +1,86 @@
+{
+  "name": "iptables",
+  "description": "Linux kernel packet filter administration tool",
+  "category": "Linux Coreutils",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--append", "shorthand": "-A", "description": "Append rule to chain", "takesValue": true },
+    { "name": "--delete", "shorthand": "-D", "description": "Delete rule from chain", "takesValue": true },
+    { "name": "--insert", "shorthand": "-I", "description": "Insert rule at position", "takesValue": true },
+    { "name": "--replace", "shorthand": "-R", "description": "Replace rule at position", "takesValue": true },
+    { "name": "--list", "shorthand": "-L", "description": "List rules in chain" },
+    { "name": "--list-rules", "shorthand": "-S", "description": "Print rules as commands" },
+    { "name": "--flush", "shorthand": "-F", "description": "Flush (delete all rules in) chain" },
+    { "name": "--zero", "shorthand": "-Z", "description": "Zero packet/byte counters" },
+    { "name": "--new-chain", "shorthand": "-N", "description": "Create new chain", "takesValue": true },
+    { "name": "--delete-chain", "shorthand": "-X", "description": "Delete chain" },
+    { "name": "--policy", "shorthand": "-P", "description": "Set chain policy", "takesValue": true },
+    { "name": "--table", "shorthand": "-t", "description": "Table (filter, nat, mangle, raw, security)", "takesValue": true },
+    { "name": "--protocol", "shorthand": "-p", "description": "Protocol (tcp, udp, icmp, all)", "takesValue": true },
+    { "name": "--source", "shorthand": "-s", "description": "Source address", "takesValue": true },
+    { "name": "--destination", "shorthand": "-d", "description": "Destination address", "takesValue": true },
+    { "name": "--in-interface", "shorthand": "-i", "description": "Input interface", "takesValue": true },
+    { "name": "--out-interface", "shorthand": "-o", "description": "Output interface", "takesValue": true },
+    { "name": "--jump", "shorthand": "-j", "description": "Target (ACCEPT, DROP, REJECT, LOG, MASQUERADE, SNAT, DNAT)", "takesValue": true },
+    { "name": "--dport", "description": "Destination port", "takesValue": true },
+    { "name": "--sport", "description": "Source port", "takesValue": true },
+    { "name": "--match", "shorthand": "-m", "description": "Match extension", "takesValue": true },
+    { "name": "--state", "description": "Connection state (NEW, ESTABLISHED, RELATED, INVALID)", "takesValue": true },
+    { "name": "--numeric", "shorthand": "-n", "description": "Numeric output" },
+    { "name": "--verbose", "shorthand": "-v", "description": "Verbose output" },
+    { "name": "--line-numbers", "description": "Show line numbers" },
+    { "name": "--exact", "shorthand": "-x", "description": "Expand numbers" },
+    { "name": "--wait", "shorthand": "-w", "description": "Wait for xtables lock", "takesValue": true },
+    { "name": "--comment", "description": "Add comment to rule", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "sudo iptables -L -n -v", "description": "List all rules" },
+    { "command": "sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT", "description": "Allow HTTP" },
+    { "command": "sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT", "description": "Allow SSH" },
+    { "command": "sudo iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT", "description": "Allow subnet" },
+    { "command": "sudo iptables -P INPUT DROP", "description": "Default drop incoming" },
+    { "command": "sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT", "description": "Allow established" },
+    { "command": "sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE", "description": "NAT masquerade" },
+    { "command": "sudo iptables -D INPUT 5", "description": "Delete rule #5" },
+    { "command": "sudo iptables-save > /etc/iptables.rules", "description": "Save rules" },
+    { "command": "sudo iptables-restore < /etc/iptables.rules", "description": "Restore rules" }
+  ],
+  "relatedCommands": ["ufw", "nft"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "filter_rules",
+        "description": "Current filter table rules",
+        "command": "sudo iptables -L -n --line-numbers 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 15,
+        "requiresCmd": "iptables"
+      },
+      {
+        "name": "nat_rules",
+        "description": "NAT table rules",
+        "command": "sudo iptables -t nat -L -n 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 15,
+        "requiresCmd": "iptables"
+      },
+      {
+        "name": "interfaces",
+        "description": "Network interfaces",
+        "command": "ip -br link show 2>/dev/null || ifconfig -s 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "chains",
+        "description": "All chains with policies",
+        "command": "sudo iptables -S 2>/dev/null | grep '^-P' | head -10",
+        "parser": "lines",
+        "cacheFor": 15,
+        "requiresCmd": "iptables"
+      }
+    ]
+  }
+}

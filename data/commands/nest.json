@@ -1,0 +1,69 @@
+{
+  "name": "nest",
+  "description": "NestJS CLI for generating and managing NestJS applications",
+  "category": "Node Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "new", "description": "Create a new NestJS project", "args": [{ "name": "name", "description": "Project name", "required": true }], "options": [{ "name": "--directory", "shorthand": "-d", "description": "Directory name", "takesValue": true }, { "name": "--package-manager", "shorthand": "-p", "description": "Package manager (npm, yarn, pnpm)", "takesValue": true }, { "name": "--language", "shorthand": "-l", "description": "Language (TS, JS)", "takesValue": true }, { "name": "--strict", "description": "Enable strict mode" }, { "name": "--skip-git", "shorthand": "-g", "description": "Skip git init" }, { "name": "--skip-install", "shorthand": "-s", "description": "Skip npm install" }] },
+    { "name": "generate", "description": "Generate NestJS elements", "args": [{ "name": "schematic", "description": "Schematic type (controller, service, module, etc.)", "required": true }, { "name": "name", "description": "Element name", "required": true }], "options": [{ "name": "--flat", "description": "No subfolder" }, { "name": "--no-spec", "description": "Skip test file" }, { "name": "--dry-run", "shorthand": "-d", "description": "Preview changes" }, { "name": "--project", "shorthand": "-p", "description": "Project name", "takesValue": true }] },
+    { "name": "build", "description": "Build the application", "options": [{ "name": "--watch", "shorthand": "-w", "description": "Watch mode" }, { "name": "--webpack", "description": "Use webpack" }, { "name": "--tsc", "description": "Use tsc" }, { "name": "--path", "shorthand": "-p", "description": "tsconfig path", "takesValue": true }] },
+    { "name": "start", "description": "Start the application", "options": [{ "name": "--watch", "shorthand": "-w", "description": "Watch mode" }, { "name": "--debug", "shorthand": "-d", "description": "Debug mode", "takesValue": true }, { "name": "--exec", "shorthand": "-e", "description": "Executable", "takesValue": true }, { "name": "--preserveWatchOutput", "description": "Don't clear screen" }] },
+    { "name": "info", "description": "Show Nest project information" },
+    { "name": "add", "description": "Add a library to the project", "args": [{ "name": "library", "description": "Library to add", "required": true }] },
+    { "name": "update", "description": "Update NestJS dependencies", "options": [{ "name": "--force", "shorthand": "-f", "description": "Force update" }, { "name": "--tag", "shorthand": "-t", "description": "Version tag", "takesValue": true }] }
+  ],
+  "globalOptions": [
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "nest new my-api", "description": "Create a new NestJS project" },
+    { "command": "nest generate controller users", "description": "Generate a users controller" },
+    { "command": "nest generate service auth --no-spec", "description": "Generate auth service without test" },
+    { "command": "nest generate module products", "description": "Generate products module" },
+    { "command": "nest generate resource orders", "description": "Generate full CRUD resource" },
+    { "command": "nest start --watch", "description": "Start in watch mode" },
+    { "command": "nest build", "description": "Build the project" }
+  ],
+  "relatedCommands": ["npm", "node", "tsc"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "nest_config",
+        "description": "NestJS CLI configuration",
+        "command": "cat nest-cli.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60
+      },
+      {
+        "name": "modules",
+        "description": "NestJS modules",
+        "command": "find src -name '*.module.ts' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "controllers",
+        "description": "NestJS controllers",
+        "command": "find src -name '*.controller.ts' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "services",
+        "description": "NestJS services",
+        "command": "find src -name '*.service.ts' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "dependencies",
+        "description": "NestJS dependencies",
+        "command": "node -e \"const p=require('./package.json');Object.keys({...p.dependencies,...p.devDependencies}).filter(d=>d.startsWith('@nestjs')).forEach(d=>console.log(d))\" 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
+}

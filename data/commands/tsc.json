@@ -1,0 +1,85 @@
+{
+  "name": "tsc",
+  "description": "TypeScript compiler - compile TypeScript to JavaScript",
+  "category": "Node Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--init", "description": "Create a tsconfig.json file" },
+    { "name": "--project", "shorthand": "-p", "description": "Compile from tsconfig path", "takesValue": true },
+    { "name": "--build", "shorthand": "-b", "description": "Build project references" },
+    { "name": "--watch", "shorthand": "-w", "description": "Watch for changes" },
+    { "name": "--outDir", "description": "Output directory", "takesValue": true },
+    { "name": "--outFile", "description": "Concatenate to single output file", "takesValue": true },
+    { "name": "--rootDir", "description": "Root directory of source files", "takesValue": true },
+    { "name": "--target", "description": "ECMAScript target (ES5, ES6, ES2015-ES2022, ESNext)", "takesValue": true },
+    { "name": "--module", "description": "Module system (commonjs, es2015, es2020, esnext, nodenext)", "takesValue": true },
+    { "name": "--moduleResolution", "description": "Resolution strategy (node, nodenext, bundler)", "takesValue": true },
+    { "name": "--strict", "description": "Enable all strict checks" },
+    { "name": "--noEmit", "description": "Don't emit output files" },
+    { "name": "--declaration", "shorthand": "-d", "description": "Generate .d.ts files" },
+    { "name": "--declarationMap", "description": "Generate declaration sourcemaps" },
+    { "name": "--sourceMap", "description": "Generate source maps" },
+    { "name": "--jsx", "description": "JSX mode (preserve, react, react-jsx, react-jsxdev)", "takesValue": true },
+    { "name": "--lib", "description": "Library files to include", "takesValue": true },
+    { "name": "--types", "description": "Type packages to include", "takesValue": true },
+    { "name": "--esModuleInterop", "description": "Enable ES module interop" },
+    { "name": "--resolveJsonModule", "description": "Enable JSON module resolution" },
+    { "name": "--skipLibCheck", "description": "Skip type checking of .d.ts files" },
+    { "name": "--noUnusedLocals", "description": "Report unused locals" },
+    { "name": "--noUnusedParameters", "description": "Report unused parameters" },
+    { "name": "--noImplicitAny", "description": "Error on implicit any" },
+    { "name": "--noImplicitReturns", "description": "Error on missing returns" },
+    { "name": "--pretty", "description": "Pretty-print errors" },
+    { "name": "--showConfig", "description": "Print resolved config" },
+    { "name": "--listFiles", "description": "List files in compilation" },
+    { "name": "--incremental", "description": "Enable incremental compilation" },
+    { "name": "--composite", "description": "Enable project references" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "tsc", "description": "Compile using tsconfig.json" },
+    { "command": "tsc --init", "description": "Create tsconfig.json" },
+    { "command": "tsc --watch", "description": "Compile in watch mode" },
+    { "command": "tsc --noEmit", "description": "Type-check without emitting" },
+    { "command": "tsc -p tsconfig.build.json", "description": "Compile with specific config" },
+    { "command": "tsc -b", "description": "Build project references" },
+    { "command": "tsc --showConfig", "description": "Show resolved config" },
+    { "command": "tsc src/index.ts --outDir dist --target ES2020", "description": "Compile single file" }
+  ],
+  "relatedCommands": ["node", "eslint", "prettier"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "tsconfig",
+        "description": "TypeScript configuration",
+        "command": "cat tsconfig.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 30
+      },
+      {
+        "name": "tsconfig_files",
+        "description": "All tsconfig files",
+        "command": "find . -maxdepth 3 -name 'tsconfig*.json' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "ts_version",
+        "description": "Installed TypeScript version",
+        "command": "npx tsc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "ts_files",
+        "description": "TypeScript source files",
+        "command": "find src -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

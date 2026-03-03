@@ -1,0 +1,82 @@
+{
+  "name": "jest",
+  "description": "JavaScript testing framework with focus on simplicity",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--watch", "description": "Watch mode - rerun on file changes" },
+    { "name": "--watchAll", "description": "Watch all files" },
+    { "name": "--coverage", "description": "Collect coverage information" },
+    { "name": "--verbose", "description": "Verbose output with individual test results" },
+    { "name": "--silent", "description": "Suppress console.log output" },
+    { "name": "--bail", "shorthand": "-b", "description": "Stop after first failure" },
+    { "name": "--ci", "description": "CI mode (fail on no tests, snapshots)" },
+    { "name": "--config", "shorthand": "-c", "description": "Config file path", "takesValue": true },
+    { "name": "--env", "description": "Test environment (jsdom, node)", "takesValue": true },
+    { "name": "--runInBand", "shorthand": "-i", "description": "Run tests serially" },
+    { "name": "--maxWorkers", "shorthand": "-w", "description": "Max worker threads", "takesValue": true },
+    { "name": "--forceExit", "description": "Force exit after tests" },
+    { "name": "--detectOpenHandles", "description": "Detect async operations preventing exit" },
+    { "name": "--testPathPattern", "shorthand": "-t", "description": "Regex to match test files", "takesValue": true },
+    { "name": "--testNamePattern", "description": "Regex to match test names", "takesValue": true },
+    { "name": "--updateSnapshot", "shorthand": "-u", "description": "Update snapshots" },
+    { "name": "--clearCache", "description": "Clear cache and exit" },
+    { "name": "--passWithNoTests", "description": "Pass when no tests found" },
+    { "name": "--changedSince", "description": "Run tests for changes since commit/branch", "takesValue": true },
+    { "name": "--onlyChanged", "shorthand": "-o", "description": "Run tests for changed files" },
+    { "name": "--json", "description": "JSON output" },
+    { "name": "--outputFile", "description": "Write results to file", "takesValue": true },
+    { "name": "--reporters", "description": "Test reporters", "takesValue": true },
+    { "name": "--roots", "description": "Root directories for tests", "takesValue": true },
+    { "name": "--setupFilesAfterFramework", "description": "Setup files", "takesValue": true },
+    { "name": "--showConfig", "description": "Show resolved config" },
+    { "name": "--listTests", "description": "List matching test files" }
+  ],
+  "examples": [
+    { "command": "jest", "description": "Run all tests" },
+    { "command": "jest --watch", "description": "Watch mode" },
+    { "command": "jest --coverage", "description": "Run with coverage" },
+    { "command": "jest auth.test.ts", "description": "Run specific test file" },
+    { "command": "jest -t 'should login'", "description": "Run matching test names" },
+    { "command": "jest --bail --verbose", "description": "Verbose, stop on first failure" },
+    { "command": "jest --ci --coverage --forceExit", "description": "CI mode" },
+    { "command": "jest --updateSnapshot", "description": "Update snapshots" },
+    { "command": "jest --changedSince main", "description": "Changed files since main" }
+  ],
+  "relatedCommands": ["vitest", "mocha"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "Jest configuration",
+        "command": "cat jest.config.js 2>/dev/null || cat jest.config.ts 2>/dev/null || cat jest.config.mjs 2>/dev/null || node -e \"try{const p=require('./package.json');if(p.jest)console.log(JSON.stringify(p.jest))}catch(e){}\" 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "test_files",
+        "description": "Test files",
+        "command": "find . -name '*.test.*' -o -name '*.spec.*' 2>/dev/null | grep -v node_modules | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "test_suites",
+        "description": "Available test files",
+        "command": "npx jest --listTests 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "jest"
+      },
+      {
+        "name": "snapshots",
+        "description": "Snapshot files",
+        "command": "find . -name '*.snap' -not -path '*/node_modules/*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

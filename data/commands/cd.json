@@ -1,0 +1,48 @@
+{
+  "name": "cd",
+  "description": "Change the current working directory",
+  "category": "Linux Coreutils",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-L", "description": "Follow symbolic links (default)" },
+    { "name": "-P", "description": "Use physical directory structure (no symlinks)" },
+    { "name": "-e", "description": "Exit with non-zero if -P and pwd fails" },
+    { "name": "-@", "description": "Present file with extended attributes as directory (macOS)" }
+  ],
+  "examples": [
+    { "command": "cd /var/log", "description": "Change to absolute path" },
+    { "command": "cd ..", "description": "Go up one directory" },
+    { "command": "cd ~", "description": "Go to home directory" },
+    { "command": "cd -", "description": "Go to previous directory" },
+    { "command": "cd ~/projects/myapp", "description": "Go to project directory" },
+    { "command": "cd \"dir with spaces\"", "description": "Directory with spaces" }
+  ],
+  "relatedCommands": ["ls", "pwd"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "subdirectories",
+        "description": "Directories in current location",
+        "command": "ls -d */ 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 5
+      },
+      {
+        "name": "recent_dirs",
+        "description": "Recently used directories",
+        "command": "dirs -v 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 5
+      },
+      {
+        "name": "home_dirs",
+        "description": "Home directory contents",
+        "command": "ls -d ~/*/ 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

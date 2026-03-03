@@ -1,0 +1,83 @@
+{
+  "name": "gunicorn",
+  "description": "Green Unicorn - Python WSGI HTTP server for Unix",
+  "category": "Python Ecosystem",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--bind", "shorthand": "-b", "description": "Bind address (HOST:PORT)", "takesValue": true },
+    { "name": "--workers", "shorthand": "-w", "description": "Number of worker processes", "takesValue": true },
+    { "name": "--worker-class", "shorthand": "-k", "description": "Worker class (sync, gevent, uvicorn.workers.UvicornWorker)", "takesValue": true },
+    { "name": "--threads", "description": "Worker threads", "takesValue": true },
+    { "name": "--timeout", "shorthand": "-t", "description": "Worker timeout seconds", "takesValue": true },
+    { "name": "--graceful-timeout", "description": "Graceful shutdown timeout", "takesValue": true },
+    { "name": "--keep-alive", "description": "Keep-alive timeout", "takesValue": true },
+    { "name": "--max-requests", "description": "Max requests per worker", "takesValue": true },
+    { "name": "--max-requests-jitter", "description": "Max requests jitter", "takesValue": true },
+    { "name": "--reload", "description": "Auto-reload on code changes" },
+    { "name": "--reload-engine", "description": "Reload engine (auto, poll, inotify)", "takesValue": true },
+    { "name": "--preload", "description": "Preload application" },
+    { "name": "--daemon", "shorthand": "-D", "description": "Run as daemon" },
+    { "name": "--pid", "shorthand": "-p", "description": "PID file", "takesValue": true },
+    { "name": "--user", "shorthand": "-u", "description": "Switch to user", "takesValue": true },
+    { "name": "--group", "shorthand": "-g", "description": "Switch to group", "takesValue": true },
+    { "name": "--log-level", "description": "Log level (debug, info, warning, error, critical)", "takesValue": true },
+    { "name": "--log-file", "description": "Log file", "takesValue": true },
+    { "name": "--access-logfile", "description": "Access log file", "takesValue": true },
+    { "name": "--access-logformat", "description": "Access log format", "takesValue": true },
+    { "name": "--error-logfile", "description": "Error log file", "takesValue": true },
+    { "name": "--capture-output", "description": "Redirect stdout/stderr to logs" },
+    { "name": "--config", "shorthand": "-c", "description": "Config file", "takesValue": true },
+    { "name": "--certfile", "description": "SSL cert", "takesValue": true },
+    { "name": "--keyfile", "description": "SSL key", "takesValue": true },
+    { "name": "--forwarded-allow-ips", "description": "Trusted proxy IPs", "takesValue": true },
+    { "name": "--proxy-protocol", "description": "Enable proxy protocol" },
+    { "name": "--chdir", "description": "Change directory", "takesValue": true },
+    { "name": "--check-config", "description": "Check configuration" },
+    { "name": "--print-config", "description": "Print configuration" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "gunicorn app:app", "description": "Run WSGI app" },
+    { "command": "gunicorn -w 4 -b 0.0.0.0:8000 app:app", "description": "4 workers on all interfaces" },
+    { "command": "gunicorn -k uvicorn.workers.UvicornWorker main:app", "description": "Run ASGI app via uvicorn worker" },
+    { "command": "gunicorn --reload app:app", "description": "Dev mode with reload" },
+    { "command": "gunicorn -w 4 --threads 2 --timeout 120 app:app", "description": "Workers with threads and timeout" },
+    { "command": "gunicorn -D -p gunicorn.pid app:app", "description": "Run as daemon" }
+  ],
+  "relatedCommands": ["uvicorn", "python", "flask", "django-admin"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "gunicorn_config",
+        "description": "Gunicorn configuration",
+        "command": "cat gunicorn.conf.py 2>/dev/null || cat gunicorn_config.py 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "wsgi_apps",
+        "description": "WSGI application files",
+        "command": "find . -maxdepth 2 -name 'wsgi.py' -o -name 'app.py' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "procfile",
+        "description": "Procfile configuration",
+        "command": "cat Procfile 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active virtual environment",
+        "command": "echo $VIRTUAL_ENV 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

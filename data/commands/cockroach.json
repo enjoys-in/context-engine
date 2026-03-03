@@ -1,0 +1,92 @@
+{
+  "name": "cockroach",
+  "description": "CockroachDB command-line interface for cluster management and SQL",
+  "category": "Database",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "sql", "description": "Open SQL shell", "options": [
+      { "name": "--url", "description": "Connection URL", "takesValue": true },
+      { "name": "--host", "description": "Server host", "takesValue": true },
+      { "name": "--port", "description": "Server port", "takesValue": true },
+      { "name": "--user", "description": "Username", "takesValue": true },
+      { "name": "--database", "shorthand": "-d", "description": "Database name", "takesValue": true },
+      { "name": "--execute", "shorthand": "-e", "description": "Execute SQL", "takesValue": true },
+      { "name": "--format", "description": "Output format (table, csv, tsv, json, html, raw, records)", "takesValue": true }
+    ]},
+    { "name": "start", "description": "Start a node", "options": [
+      { "name": "--listen-addr", "description": "Listen address", "takesValue": true },
+      { "name": "--advertise-addr", "description": "Advertise address", "takesValue": true },
+      { "name": "--join", "description": "Join addresses", "takesValue": true },
+      { "name": "--store", "description": "Store spec", "takesValue": true },
+      { "name": "--insecure", "description": "Insecure mode" },
+      { "name": "--certs-dir", "description": "Certs directory", "takesValue": true },
+      { "name": "--background", "description": "Run in background" }
+    ]},
+    { "name": "start-single-node", "description": "Start single-node cluster", "options": [
+      { "name": "--listen-addr", "description": "Listen address", "takesValue": true },
+      { "name": "--store", "description": "Store spec", "takesValue": true },
+      { "name": "--insecure", "description": "Insecure mode" }
+    ]},
+    { "name": "init", "description": "Initialize a cluster" },
+    { "name": "node", "description": "Node management", "subcommands": [
+      { "name": "ls", "description": "List nodes" },
+      { "name": "status", "description": "Node status" },
+      { "name": "decommission", "description": "Decommission nodes" },
+      { "name": "recommission", "description": "Recommission nodes" },
+      { "name": "drain", "description": "Drain a node" }
+    ]},
+    { "name": "dump", "description": "Dump SQL tables", "args": [{ "name": "database", "description": "Database name", "required": true }] },
+    { "name": "demo", "description": "Start temporary in-memory cluster" },
+    { "name": "cert", "description": "Certificate management", "subcommands": [
+      { "name": "create-ca", "description": "Create CA cert" },
+      { "name": "create-node", "description": "Create node cert" },
+      { "name": "create-client", "description": "Create client cert" },
+      { "name": "list", "description": "List certificates" }
+    ]},
+    { "name": "version", "description": "Show version" }
+  ],
+  "globalOptions": [
+    { "name": "--url", "description": "Connection URL", "takesValue": true },
+    { "name": "--certs-dir", "description": "Certificate directory", "takesValue": true },
+    { "name": "--insecure", "description": "Insecure mode" },
+    { "name": "--help", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "cockroach sql --insecure", "description": "Open SQL shell" },
+    { "command": "cockroach start-single-node --insecure --store=node1", "description": "Start single node" },
+    { "command": "cockroach sql -e 'SHOW DATABASES' --insecure", "description": "List databases" },
+    { "command": "cockroach demo", "description": "Temporary demo cluster" },
+    { "command": "cockroach node status --insecure", "description": "Show node status" },
+    { "command": "cockroach sql --url 'postgresql://root@localhost:26257/mydb?sslmode=disable'", "description": "Connect via URL" }
+  ],
+  "relatedCommands": ["psql", "pg_dump"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "databases",
+        "description": "CockroachDB databases",
+        "command": "cockroach sql --insecure -e 'SHOW DATABASES' --format=csv 2>/dev/null | tail -n +2",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "cockroach"
+      },
+      {
+        "name": "node_status",
+        "description": "Cluster node status",
+        "command": "cockroach node status --insecure 2>/dev/null | head -10",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "cockroach"
+      },
+      {
+        "name": "version",
+        "description": "CockroachDB version",
+        "command": "cockroach version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "cockroach"
+      }
+    ]
+  }
+}

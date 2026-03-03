@@ -1,0 +1,75 @@
+{
+  "name": "mocha",
+  "description": "Feature-rich JavaScript testing framework for Node.js",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--watch", "shorthand": "-w", "description": "Watch mode" },
+    { "name": "--bail", "shorthand": "-b", "description": "Abort after first failure" },
+    { "name": "--recursive", "description": "Include subdirectories" },
+    { "name": "--reporter", "shorthand": "-R", "description": "Reporter (spec, dot, nyan, json, min, list, progress)", "takesValue": true },
+    { "name": "--timeout", "shorthand": "-t", "description": "Test timeout (ms)", "takesValue": true },
+    { "name": "--slow", "shorthand": "-s", "description": "Slow threshold (ms)", "takesValue": true },
+    { "name": "--grep", "shorthand": "-g", "description": "Filter tests by name pattern", "takesValue": true },
+    { "name": "--fgrep", "shorthand": "-f", "description": "Filter tests by string", "takesValue": true },
+    { "name": "--invert", "shorthand": "-i", "description": "Invert grep match" },
+    { "name": "--require", "shorthand": "-r", "description": "Require module before tests", "takesValue": true },
+    { "name": "--file", "description": "Include file before test suite", "takesValue": true },
+    { "name": "--spec", "shorthand": "-S", "description": "Spec file patterns", "takesValue": true },
+    { "name": "--sort", "description": "Sort test files" },
+    { "name": "--retries", "description": "Number of retries for failed tests", "takesValue": true },
+    { "name": "--config", "description": "Config file path", "takesValue": true },
+    { "name": "--parallel", "shorthand": "-p", "description": "Run tests in parallel" },
+    { "name": "--jobs", "shorthand": "-j", "description": "Max parallel jobs", "takesValue": true },
+    { "name": "--diff", "description": "Show diff on failures" },
+    { "name": "--exit", "description": "Force exit after tests" },
+    { "name": "--no-timeouts", "description": "Disable timeouts" },
+    { "name": "--check-leaks", "description": "Check for global leaks" },
+    { "name": "--colors", "shorthand": "-c", "description": "Force colors" },
+    { "name": "--no-colors", "shorthand": "-C", "description": "Force no colors" },
+    { "name": "--dry-run", "description": "Report without executing" },
+    { "name": "--list-files", "description": "List matching test files" },
+    { "name": "--list-reporters", "description": "List available reporters" },
+    { "name": "--node-option", "shorthand": "-n", "description": "Node.js option", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "mocha", "description": "Run tests in ./test" },
+    { "command": "mocha --recursive", "description": "Include subdirectories" },
+    { "command": "mocha --watch", "description": "Watch mode" },
+    { "command": "mocha -g 'auth'", "description": "Filter by name pattern" },
+    { "command": "mocha --reporter dot", "description": "Dot reporter" },
+    { "command": "mocha --timeout 5000", "description": "5 second timeout" },
+    { "command": "mocha --parallel -j 4", "description": "Run 4 workers in parallel" },
+    { "command": "mocha 'src/**/*.test.js'", "description": "Custom glob pattern" },
+    { "command": "mocha --bail --exit", "description": "Stop on first failure, force exit" }
+  ],
+  "relatedCommands": ["jest", "vitest"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "Mocha configuration",
+        "command": "cat .mocharc.yml 2>/dev/null || cat .mocharc.yaml 2>/dev/null || cat .mocharc.js 2>/dev/null || cat .mocharc.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "test_files",
+        "description": "Test files",
+        "command": "find . -path './test/**' -name '*.js' -o -name '*.test.*' 2>/dev/null | grep -v node_modules | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "reporters",
+        "description": "Available reporters",
+        "command": "npx mocha --list-reporters 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "mocha"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "chown",
+  "description": "Change file owner and group",
+  "category": "Linux Coreutils",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--recursive", "shorthand": "-R", "description": "Operate recursively on directories" },
+    { "name": "--verbose", "shorthand": "-v", "description": "Verbose output" },
+    { "name": "--changes", "shorthand": "-c", "description": "Report only when changes are made" },
+    { "name": "--silent", "shorthand": "-f", "description": "Suppress error messages" },
+    { "name": "--no-dereference", "shorthand": "-h", "description": "Affect symbolic links (not referenced file)" },
+    { "name": "--from", "description": "Change only if current owner/group matches", "takesValue": true },
+    { "name": "--reference", "description": "Use reference file's owner/group", "takesValue": true },
+    { "name": "--dereference", "description": "Affect dereferenced file (default)" },
+    { "name": "-H", "description": "If -R, traverse symlinks on command line" },
+    { "name": "-L", "description": "If -R, traverse all symlinks" },
+    { "name": "-P", "description": "If -R, never traverse symlinks (default)" },
+    { "name": "--preserve-root", "description": "Don't recurse on /" },
+    { "name": "--no-preserve-root", "description": "Allow recursion on /" },
+    { "name": "--help", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "chown user:group file.txt", "description": "Change owner and group" },
+    { "command": "chown -R www-data:www-data /var/www", "description": "Recursive ownership change" },
+    { "command": "chown user file.txt", "description": "Change only owner" },
+    { "command": "chown :group file.txt", "description": "Change only group" },
+    { "command": "chown --reference=ref.txt target.txt", "description": "Match reference file" },
+    { "command": "chown -Rv deploy:deploy /opt/app", "description": "Verbose recursive change" },
+    { "command": "sudo chown root:root /etc/config", "description": "Change to root ownership" }
+  ],
+  "relatedCommands": ["chmod", "ls"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "users",
+        "description": "System users",
+        "command": "cut -d: -f1 /etc/passwd 2>/dev/null | sort | head -30",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "groups",
+        "description": "System groups",
+        "command": "cut -d: -f1 /etc/group 2>/dev/null | sort | head -30",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "current_ownership",
+        "description": "Current file ownership",
+        "command": "ls -la 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 10
+      }
+    ]
+  }
+}

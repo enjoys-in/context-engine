@@ -1,0 +1,88 @@
+{
+  "name": "vitest",
+  "description": "Blazing fast Vite-native unit testing framework",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "run", "description": "Run tests once without watch", "options": [
+      { "name": "--reporter", "description": "Test reporter", "takesValue": true },
+      { "name": "--outputFile", "description": "Write results to file", "takesValue": true }
+    ]},
+    { "name": "watch", "description": "Run tests in watch mode" },
+    { "name": "dev", "description": "Alias for watch mode" },
+    { "name": "bench", "description": "Run benchmarks" },
+    { "name": "typecheck", "description": "Run type checking tests" },
+    { "name": "related", "description": "Run tests related to source files", "args": [{ "name": "files", "description": "Source files", "required": true }] },
+    { "name": "init", "description": "Initialize Vitest config" },
+    { "name": "list", "description": "List matching test files" }
+  ],
+  "globalOptions": [
+    { "name": "--config", "shorthand": "-c", "description": "Config file path", "takesValue": true },
+    { "name": "--root", "shorthand": "-r", "description": "Root path", "takesValue": true },
+    { "name": "--update", "shorthand": "-u", "description": "Update snapshots" },
+    { "name": "--coverage", "description": "Enable coverage" },
+    { "name": "--environment", "description": "Test environment (node, jsdom, happy-dom)", "takesValue": true },
+    { "name": "--threads", "description": "Enable threads" },
+    { "name": "--no-threads", "description": "Disable threads" },
+    { "name": "--pool", "description": "Pool (threads, forks, vmThreads)", "takesValue": true },
+    { "name": "--silent", "description": "Suppress console output" },
+    { "name": "--reporter", "description": "Reporter (verbose, dot, json, junit, html)", "takesValue": true },
+    { "name": "--bail", "description": "Stop after N failures", "takesValue": true },
+    { "name": "--globals", "description": "Inject global APIs" },
+    { "name": "--dom", "description": "Enable JSDOM" },
+    { "name": "--api", "description": "Enable API server", "takesValue": true },
+    { "name": "--ui", "description": "Open Vitest UI" },
+    { "name": "--open", "description": "Open UI in browser" },
+    { "name": "--changed", "description": "Run affected tests since commit", "takesValue": true },
+    { "name": "--sequence.shuffle", "description": "Randomize test order" },
+    { "name": "--passWithNoTests", "description": "Pass with no tests" },
+    { "name": "--isolate", "description": "Isolate test environment" },
+    { "name": "--dir", "description": "Test directory", "takesValue": true },
+    { "name": "--mode", "description": "Vite mode", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "vitest", "description": "Run in watch mode" },
+    { "command": "vitest run", "description": "Run once without watch" },
+    { "command": "vitest run --coverage", "description": "Run with coverage" },
+    { "command": "vitest auth.test.ts", "description": "Run specific file" },
+    { "command": "vitest --ui", "description": "Open Vitest UI" },
+    { "command": "vitest bench", "description": "Run benchmarks" },
+    { "command": "vitest run --reporter json --outputFile results.json", "description": "JSON output" },
+    { "command": "vitest --changed main", "description": "Run changed since main" },
+    { "command": "vitest typecheck", "description": "Type checking tests" }
+  ],
+  "relatedCommands": ["jest", "vite"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "Vitest configuration",
+        "command": "cat vitest.config.ts 2>/dev/null || cat vitest.config.js 2>/dev/null || cat vitest.config.mts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "test_files",
+        "description": "Test files",
+        "command": "find . -name '*.test.*' -o -name '*.spec.*' 2>/dev/null | grep -v node_modules | head -20",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "workspace",
+        "description": "Vitest workspace",
+        "command": "cat vitest.workspace.ts 2>/dev/null || cat vitest.workspace.js 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "vite_config",
+        "description": "Vite configuration (fallback)",
+        "command": "cat vite.config.ts 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "mongosh",
+  "description": "MongoDB Shell - modern interactive JavaScript interface for MongoDB",
+  "category": "Database",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--host", "description": "Server hostname", "takesValue": true },
+    { "name": "--port", "description": "Server port", "takesValue": true },
+    { "name": "--username", "shorthand": "-u", "description": "Username", "takesValue": true },
+    { "name": "--password", "shorthand": "-p", "description": "Password", "takesValue": true },
+    { "name": "--authenticationDatabase", "description": "Auth database", "takesValue": true },
+    { "name": "--authenticationMechanism", "description": "Auth mechanism", "takesValue": true },
+    { "name": "--eval", "description": "Evaluate JavaScript expression", "takesValue": true },
+    { "name": "--file", "description": "Execute JavaScript file", "takesValue": true },
+    { "name": "--shell", "description": "Open shell after script" },
+    { "name": "--nodb", "description": "Don't connect to database" },
+    { "name": "--norc", "description": "Don't read .mongoshrc.js" },
+    { "name": "--quiet", "description": "Suppress non-error output" },
+    { "name": "--json", "description": "JSON output mode" },
+    { "name": "--tls", "description": "Enable TLS/SSL" },
+    { "name": "--tlsCertificateKeyFile", "description": "TLS certificate file", "takesValue": true },
+    { "name": "--tlsCAFile", "description": "TLS CA file", "takesValue": true },
+    { "name": "--apiVersion", "description": "Versioned API version", "takesValue": true },
+    { "name": "--retryWrites", "description": "Enable retry writes" }
+  ],
+  "examples": [
+    { "command": "mongosh", "description": "Connect to local MongoDB" },
+    { "command": "mongosh mongodb://localhost:27017/mydb", "description": "Connect to specific database" },
+    { "command": "mongosh --eval 'db.users.find()'", "description": "Execute query" },
+    { "command": "mongosh --host rs0/host1:27017,host2:27017", "description": "Connect to replica set" },
+    { "command": "mongosh 'mongodb+srv://user:pass@cluster.mongodb.net/mydb'", "description": "Connect to Atlas" },
+    { "command": "mongosh --file script.js", "description": "Execute script file" },
+    { "command": "mongosh --json --eval 'db.stats()'", "description": "JSON output" }
+  ],
+  "relatedCommands": ["mysql", "psql", "redis-cli"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "databases",
+        "description": "Available databases",
+        "command": "mongosh --quiet --eval 'db.adminCommand({listDatabases:1}).databases.map(d=>d.name).join(\"\\n\")' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "mongosh"
+      },
+      {
+        "name": "collections",
+        "description": "Collections in current database",
+        "command": "mongosh --quiet --eval 'db.getCollectionNames().join(\"\\n\")' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "mongosh"
+      },
+      {
+        "name": "server_status",
+        "description": "Server status",
+        "command": "mongosh --quiet --eval 'JSON.stringify({version:db.version(),host:db.serverStatus().host})' 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 60,
+        "requiresCmd": "mongosh"
+      },
+      {
+        "name": "mongosh_config",
+        "description": "Mongosh config file",
+        "command": "cat ~/.mongoshrc.js 2>/dev/null | head -10",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
+}

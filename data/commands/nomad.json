@@ -1,0 +1,139 @@
+{
+  "name": "nomad",
+  "description": "HashiCorp Nomad - workload orchestrator for deploying applications",
+  "category": "DevOps/Infra",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "agent", "description": "Start a Nomad agent", "options": [
+      { "name": "-dev", "description": "Development mode" },
+      { "name": "-server", "description": "Server mode" },
+      { "name": "-client", "description": "Client mode" },
+      { "name": "-config", "description": "Config file/dir", "takesValue": true },
+      { "name": "-data-dir", "description": "Data directory", "takesValue": true },
+      { "name": "-bind", "description": "Bind address", "takesValue": true },
+      { "name": "-bootstrap-expect", "description": "Expected servers", "takesValue": true }
+    ]},
+    { "name": "job", "description": "Job management", "subcommands": [
+      { "name": "run", "description": "Submit a job", "args": [{ "name": "jobfile", "description": "Job file", "required": true }] },
+      { "name": "plan", "description": "Dry-run a job submission" },
+      { "name": "stop", "description": "Stop a running job" },
+      { "name": "status", "description": "Show job status" },
+      { "name": "inspect", "description": "Inspect a job" },
+      { "name": "history", "description": "Show job version history" },
+      { "name": "revert", "description": "Revert job to older version" },
+      { "name": "promote", "description": "Promote a canary deployment" },
+      { "name": "dispatch", "description": "Dispatch parameterized job" },
+      { "name": "deployments", "description": "List deployments" },
+      { "name": "eval-status", "description": "Show evaluation status" },
+      { "name": "validate", "description": "Validate a job file" },
+      { "name": "init", "description": "Create example job file" },
+      { "name": "scale", "description": "Scale task group" },
+      { "name": "periodic", "description": "Periodic job operations" },
+      { "name": "tag", "description": "Tag management" }
+    ]},
+    { "name": "alloc", "description": "Allocation operations", "subcommands": [
+      { "name": "status", "description": "Allocation status" },
+      { "name": "logs", "description": "Stream allocation logs" },
+      { "name": "exec", "description": "Execute command in allocation" },
+      { "name": "fs", "description": "Browse allocation filesystem" },
+      { "name": "signal", "description": "Signal allocation" },
+      { "name": "restart", "description": "Restart allocation" },
+      { "name": "stop", "description": "Stop allocation" }
+    ]},
+    { "name": "node", "description": "Node operations", "subcommands": [
+      { "name": "status", "description": "Node status" },
+      { "name": "drain", "description": "Set node as draining" },
+      { "name": "eligibility", "description": "Set scheduling eligibility" }
+    ]},
+    { "name": "server", "description": "Server operations", "subcommands": [
+      { "name": "members", "description": "List server members" },
+      { "name": "join", "description": "Join cluster" },
+      { "name": "force-leave", "description": "Force remove node" }
+    ]},
+    { "name": "namespace", "description": "Namespace management", "subcommands": [
+      { "name": "list", "description": "List namespaces" },
+      { "name": "apply", "description": "Create/update namespace" },
+      { "name": "delete", "description": "Delete namespace" },
+      { "name": "inspect", "description": "Inspect namespace" },
+      { "name": "status", "description": "Namespace status" }
+    ]},
+    { "name": "var", "description": "Variables management", "subcommands": [
+      { "name": "put", "description": "Create/update variable" },
+      { "name": "get", "description": "Read variable" },
+      { "name": "list", "description": "List variables" },
+      { "name": "purge", "description": "Delete variable" }
+    ]},
+    { "name": "acl", "description": "ACL management", "subcommands": [
+      { "name": "bootstrap", "description": "Bootstrap ACL" },
+      { "name": "token", "description": "Token management" },
+      { "name": "policy", "description": "Policy management" }
+    ]},
+    { "name": "status", "description": "High-level system status" },
+    { "name": "monitor", "description": "Stream logs" },
+    { "name": "ui", "description": "Open web UI" },
+    { "name": "version", "description": "Show version" }
+  ],
+  "globalOptions": [
+    { "name": "-address", "description": "Nomad API address", "takesValue": true },
+    { "name": "-region", "description": "Target region", "takesValue": true },
+    { "name": "-namespace", "description": "Target namespace", "takesValue": true },
+    { "name": "-token", "description": "ACL token", "takesValue": true },
+    { "name": "-tls-skip-verify", "description": "Skip TLS verification" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+  ],
+  "examples": [
+    { "command": "nomad agent -dev", "description": "Start dev agent" },
+    { "command": "nomad job run webapp.nomad", "description": "Deploy job" },
+    { "command": "nomad job status", "description": "List all jobs" },
+    { "command": "nomad job status webapp", "description": "Show job details" },
+    { "command": "nomad alloc logs <alloc-id>", "description": "View allocation logs" },
+    { "command": "nomad alloc exec <alloc-id> /bin/sh", "description": "Exec into allocation" },
+    { "command": "nomad node status", "description": "List nodes" },
+    { "command": "nomad job init", "description": "Create example job file" }
+  ],
+  "relatedCommands": ["consul", "vault", "terraform"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "jobs",
+        "description": "Running jobs",
+        "command": "nomad job status -short 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "nomad"
+      },
+      {
+        "name": "nodes",
+        "description": "Cluster nodes",
+        "command": "nomad node status -short 2>/dev/null | head -10",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "nomad"
+      },
+      {
+        "name": "namespaces",
+        "description": "Available namespaces",
+        "command": "nomad namespace list -short 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "nomad"
+      },
+      {
+        "name": "job_files",
+        "description": "Nomad job files",
+        "command": "find . -maxdepth 2 \\( -name '*.nomad' -o -name '*.nomad.hcl' \\) 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "server_members",
+        "description": "Server cluster members",
+        "command": "nomad server members 2>/dev/null | head -10",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "nomad"
+      }
+    ]
+  }
+}

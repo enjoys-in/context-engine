@@ -1,0 +1,83 @@
+{
+  "name": "locust",
+  "description": "Python-based load testing tool with web UI for scalable performance testing",
+  "category": "Testing Tools",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "--locustfile", "shorthand": "-f", "description": "Locust file path", "takesValue": true },
+    { "name": "--host", "shorthand": "-H", "description": "Target host URL", "takesValue": true },
+    { "name": "--users", "shorthand": "-u", "description": "Number of concurrent users", "takesValue": true },
+    { "name": "--spawn-rate", "shorthand": "-r", "description": "Users spawned per second", "takesValue": true },
+    { "name": "--run-time", "shorthand": "-t", "description": "Run time duration", "takesValue": true },
+    { "name": "--headless", "description": "Run without web UI" },
+    { "name": "--autostart", "description": "Start automatically" },
+    { "name": "--autoquit", "description": "Quit after seconds with no activity", "takesValue": true },
+    { "name": "--web-host", "description": "Web UI host", "takesValue": true },
+    { "name": "--web-port", "shorthand": "-P", "description": "Web UI port", "takesValue": true },
+    { "name": "--web-auth", "description": "Web UI auth (user:password)", "takesValue": true },
+    { "name": "--master", "description": "Run as master" },
+    { "name": "--worker", "description": "Run as worker" },
+    { "name": "--master-host", "description": "Master host for workers", "takesValue": true },
+    { "name": "--master-port", "description": "Master port for workers", "takesValue": true },
+    { "name": "--expect-workers", "description": "Expected number of workers", "takesValue": true },
+    { "name": "--csv", "description": "CSV output prefix", "takesValue": true },
+    { "name": "--csv-full-history", "description": "Store full CSV stats history" },
+    { "name": "--html", "description": "HTML report output", "takesValue": true },
+    { "name": "--json", "description": "JSON report output" },
+    { "name": "--logfile", "description": "Log file path", "takesValue": true },
+    { "name": "--loglevel", "shorthand": "-L", "description": "Log level", "takesValue": true },
+    { "name": "--tags", "shorthand": "-T", "description": "Include tasks with tag", "takesValue": true },
+    { "name": "--exclude-tags", "shorthand": "-E", "description": "Exclude tasks with tag", "takesValue": true },
+    { "name": "--skip-log-setup", "description": "Skip logging setup" },
+    { "name": "--stop-timeout", "description": "Stop timeout seconds", "takesValue": true },
+    { "name": "--equal-weights", "description": "Equal user weights" },
+    { "name": "--class-picker", "description": "Show user class picker in UI" },
+    { "name": "--config", "description": "Config file path", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "locust", "description": "Run with web UI (default locustfile.py)" },
+    { "command": "locust -f load_test.py", "description": "Specify test file" },
+    { "command": "locust -f load_test.py --headless -u 100 -r 10 -t 5m", "description": "Headless with 100 users" },
+    { "command": "locust -H http://localhost:3000", "description": "Specify target host" },
+    { "command": "locust --master", "description": "Start master node" },
+    { "command": "locust --worker --master-host 192.168.1.1", "description": "Start worker" },
+    { "command": "locust -f test.py --csv results --headless -u 50 -r 5 -t 2m", "description": "CSV report headless" },
+    { "command": "locust -f test.py --html report.html", "description": "Generate HTML report" }
+  ],
+  "relatedCommands": ["k6", "pytest"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "locustfiles",
+        "description": "Locust test files",
+        "command": "find . -maxdepth 2 -name 'locustfile.py' -o -name '*locust*.py' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "user_classes",
+        "description": "User classes defined",
+        "command": "grep -rn 'class.*User\\|class.*HttpUser\\|class.*TaskSet' --include='*.py' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "config",
+        "description": "Locust configuration",
+        "command": "cat locust.conf 2>/dev/null || cat .locust.conf 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "version",
+        "description": "Locust version",
+        "command": "locust --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "locust"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "vite",
+  "description": "Vite - next generation frontend build tool with HMR and optimized builds",
+  "category": "Node Ecosystem",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [
+    { "name": "dev", "description": "Start development server", "options": [{ "name": "--host", "description": "Bind host", "takesValue": true }, { "name": "--port", "description": "Port number", "takesValue": true }, { "name": "--open", "description": "Open browser on start" }, { "name": "--strictPort", "description": "Exit on port conflict" }, { "name": "--force", "description": "Force re-optimize deps" }, { "name": "--https", "description": "Enable HTTPS" }, { "name": "--mode", "shorthand": "-m", "description": "Set mode", "takesValue": true }] },
+    { "name": "build", "description": "Build for production", "options": [{ "name": "--outDir", "description": "Output directory", "takesValue": true }, { "name": "--assetsDir", "description": "Assets directory", "takesValue": true }, { "name": "--sourcemap", "description": "Generate sourcemaps" }, { "name": "--minify", "description": "Minification (esbuild, terser, false)", "takesValue": true }, { "name": "--mode", "shorthand": "-m", "description": "Set mode", "takesValue": true }, { "name": "--watch", "shorthand": "-w", "description": "Watch mode" }, { "name": "--emptyOutDir", "description": "Empty output dir" }, { "name": "--ssr", "description": "SSR entry", "takesValue": true }] },
+    { "name": "preview", "description": "Preview production build locally", "options": [{ "name": "--host", "description": "Bind host", "takesValue": true }, { "name": "--port", "description": "Port", "takesValue": true }, { "name": "--open", "description": "Open browser" }, { "name": "--strictPort", "description": "Exit on port conflict" }] },
+    { "name": "optimize", "description": "Pre-bundle dependencies", "options": [{ "name": "--force", "description": "Force re-optimization" }] }
+  ],
+  "globalOptions": [
+    { "name": "--config", "shorthand": "-c", "description": "Config file path", "takesValue": true },
+    { "name": "--base", "description": "Public base path", "takesValue": true },
+    { "name": "--logLevel", "shorthand": "-l", "description": "Log level (info, warn, error, silent)", "takesValue": true },
+    { "name": "--clearScreen", "description": "Allow/disable screen clearing" },
+    { "name": "--debug", "shorthand": "-d", "description": "Enable debug output", "takesValue": true },
+    { "name": "--filter", "shorthand": "-f", "description": "Filter debug output", "takesValue": true },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "shorthand": "-v", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "vite", "description": "Start dev server" },
+    { "command": "vite build", "description": "Build for production" },
+    { "command": "vite preview", "description": "Preview production build" },
+    { "command": "vite dev --port 5000 --open", "description": "Dev server on port 5000" },
+    { "command": "vite build --mode staging", "description": "Build with staging mode" }
+  ],
+  "relatedCommands": ["next", "npm", "turbo"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "vite_config",
+        "description": "Vite configuration file",
+        "command": "cat vite.config.ts 2>/dev/null || cat vite.config.js 2>/dev/null || cat vite.config.mts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30
+      },
+      {
+        "name": "dependencies",
+        "description": "Project dependencies",
+        "command": "node -e \"const p=require('./package.json');Object.keys({...p.dependencies,...p.devDependencies}).forEach(d=>console.log(d))\" 2>/dev/null | head -40",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "package_scripts",
+        "description": "Package.json scripts",
+        "command": "node -e \"const p=require('./package.json');Object.entries(p.scripts||{}).forEach(([k,v])=>console.log(k+': '+v))\" 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "env_files",
+        "description": "Environment files",
+        "command": "ls -1 .env* 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}
