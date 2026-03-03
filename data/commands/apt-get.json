@@ -1,0 +1,81 @@
+{
+  "name": "apt-get",
+  "description": "Low-level APT package management tool for Debian/Ubuntu",
+  "category": "Package Managers",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "install", "description": "Install packages", "args": [{ "name": "packages", "description": "Package names", "required": true }], "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--no-install-recommends", "description": "Skip recommended packages" },
+      { "name": "--reinstall", "description": "Reinstall" },
+      { "name": "-d", "description": "Download only" },
+      { "name": "--allow-unauthenticated", "description": "Allow unauthenticated packages" },
+      { "name": "--allow-downgrades", "description": "Allow downgrade" }
+    ]},
+    { "name": "remove", "description": "Remove packages", "args": [{ "name": "packages", "description": "Package names", "required": true }] },
+    { "name": "purge", "description": "Remove packages with config files" },
+    { "name": "update", "description": "Update package index" },
+    { "name": "upgrade", "description": "Upgrade packages" },
+    { "name": "dist-upgrade", "description": "Distribution upgrade" },
+    { "name": "autoremove", "description": "Remove unneeded packages" },
+    { "name": "autoclean", "description": "Clean old package archives" },
+    { "name": "clean", "description": "Clear local repository" },
+    { "name": "download", "description": "Download package .deb", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "source", "description": "Download source package" },
+    { "name": "build-dep", "description": "Install build dependencies", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "check", "description": "Verify no broken dependencies" },
+    { "name": "changelog", "description": "Download and display changelog" },
+    { "name": "indextargets", "description": "List index targets" }
+  ],
+  "globalOptions": [
+    { "name": "-y", "description": "Assume yes" },
+    { "name": "-q", "description": "Quiet" },
+    { "name": "-qq", "description": "Very quiet" },
+    { "name": "-s", "description": "Simulate (dry run)" },
+    { "name": "-d", "description": "Download only" },
+    { "name": "-f", "description": "Fix broken dependencies" },
+    { "name": "-o", "description": "Set config option", "takesValue": true },
+    { "name": "-t", "description": "Target release", "takesValue": true },
+    { "name": "--force-yes", "description": "Force yes (deprecated)" },
+    { "name": "--print-uris", "description": "Print URIs instead of downloading" }
+  ],
+  "examples": [
+    { "command": "sudo apt-get update", "description": "Update package index" },
+    { "command": "sudo apt-get upgrade -y", "description": "Upgrade all packages" },
+    { "command": "sudo apt-get install -y curl wget", "description": "Install packages" },
+    { "command": "sudo apt-get install --no-install-recommends nginx", "description": "Minimal install" },
+    { "command": "sudo apt-get remove nginx", "description": "Remove package" },
+    { "command": "sudo apt-get purge nginx", "description": "Remove with config" },
+    { "command": "sudo apt-get autoremove", "description": "Remove unused" },
+    { "command": "sudo apt-get dist-upgrade", "description": "Distribution upgrade" },
+    { "command": "sudo apt-get build-dep python3", "description": "Install build deps" },
+    { "command": "apt-get -s install nginx", "description": "Simulate install" }
+  ],
+  "relatedCommands": ["apt", "dpkg"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Installed packages",
+        "command": "dpkg -l 2>/dev/null | grep '^ii' | tail -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "broken",
+        "description": "Broken packages",
+        "command": "dpkg -l 2>/dev/null | grep -v '^ii' | grep -v '^||' | grep -v '^Desired' | grep -v '^+' | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sources",
+        "description": "Repository sources",
+        "command": "cat /etc/apt/sources.list 2>/dev/null | grep -v '^#' | grep -v '^$' | head -10",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
+}

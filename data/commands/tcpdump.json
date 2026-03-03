@@ -1,0 +1,77 @@
+{
+  "name": "tcpdump",
+  "description": "Command-line packet analyzer for network traffic capture and analysis",
+  "category": "Network/Security",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-i", "description": "Network interface", "takesValue": true },
+    { "name": "-c", "description": "Capture count (stop after N packets)", "takesValue": true },
+    { "name": "-w", "description": "Write to pcap file", "takesValue": true },
+    { "name": "-r", "description": "Read from pcap file", "takesValue": true },
+    { "name": "-n", "description": "Don't resolve hostnames" },
+    { "name": "-nn", "description": "Don't resolve hostnames or ports" },
+    { "name": "-v", "description": "Verbose" },
+    { "name": "-vv", "description": "More verbose" },
+    { "name": "-vvv", "description": "Most verbose" },
+    { "name": "-X", "description": "Print hex and ASCII" },
+    { "name": "-XX", "description": "Print hex and ASCII including link header" },
+    { "name": "-A", "description": "Print ASCII" },
+    { "name": "-e", "description": "Print link-level header" },
+    { "name": "-q", "description": "Quick/quiet output" },
+    { "name": "-t", "description": "Don't print timestamp" },
+    { "name": "-tt", "description": "Print epoch timestamp" },
+    { "name": "-ttt", "description": "Print delta timestamp" },
+    { "name": "-tttt", "description": "Print date and time" },
+    { "name": "-s", "description": "Snap length (bytes to capture)", "takesValue": true },
+    { "name": "-S", "description": "Print absolute TCP sequence numbers" },
+    { "name": "-D", "description": "List available interfaces" },
+    { "name": "-l", "description": "Line-buffered output" },
+    { "name": "-G", "description": "Rotate file every N seconds", "takesValue": true },
+    { "name": "-C", "description": "Rotate file every N MB", "takesValue": true },
+    { "name": "-W", "description": "Max number of rotated files", "takesValue": true },
+    { "name": "-Z", "description": "Drop privileges to user", "takesValue": true },
+    { "name": "-K", "description": "Don't verify checksums" },
+    { "name": "--immediate-mode", "description": "Immediate mode" }
+  ],
+  "examples": [
+    { "command": "tcpdump -i eth0", "description": "Capture on eth0" },
+    { "command": "tcpdump -i any -c 100 -nn", "description": "Capture 100 packets, no resolve" },
+    { "command": "tcpdump -i eth0 port 80", "description": "HTTP traffic only" },
+    { "command": "tcpdump -i eth0 host 10.0.0.1", "description": "Traffic to/from host" },
+    { "command": "tcpdump -i eth0 -w capture.pcap", "description": "Write to file" },
+    { "command": "tcpdump -r capture.pcap", "description": "Read from file" },
+    { "command": "tcpdump -i eth0 'tcp port 443 and host example.com'", "description": "HTTPS to specific host" },
+    { "command": "tcpdump -i eth0 -nn -X 'port 53'", "description": "DNS traffic hex/ASCII" },
+    { "command": "tcpdump -i any -c 50 'icmp'", "description": "Capture ICMP (ping)" },
+    { "command": "tcpdump -D", "description": "List interfaces" }
+  ],
+  "relatedCommands": ["nmap", "wireshark"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "interfaces",
+        "description": "Available capture interfaces",
+        "command": "tcpdump -D 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "tcpdump"
+      },
+      {
+        "name": "pcap_files",
+        "description": "Existing pcap files",
+        "command": "find . -maxdepth 2 -name '*.pcap' -o -name '*.pcapng' -o -name '*.cap' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "listening_ports",
+        "description": "Listening ports for filtering",
+        "command": "ss -tlnp 2>/dev/null | head -15 || netstat -tlnp 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  }
+}

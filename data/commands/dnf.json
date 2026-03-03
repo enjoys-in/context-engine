@@ -1,0 +1,137 @@
+{
+  "name": "dnf",
+  "description": "Next-generation package manager for Fedora/RHEL/CentOS",
+  "category": "Package Managers",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "install", "description": "Install packages", "args": [{ "name": "packages", "description": "Package names", "required": true }], "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--allowerasing", "description": "Allow erasing to resolve deps" },
+      { "name": "--enablerepo", "description": "Enable repo", "takesValue": true },
+      { "name": "--disablerepo", "description": "Disable repo", "takesValue": true },
+      { "name": "--skip-broken", "description": "Skip broken packages" }
+    ]},
+    { "name": "remove", "description": "Remove packages", "args": [{ "name": "packages", "description": "Package names", "required": true }] },
+    { "name": "update", "description": "Update packages (alias for upgrade)" },
+    { "name": "upgrade", "description": "Upgrade packages", "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--security", "description": "Security updates only" },
+      { "name": "--bugfix", "description": "Bugfix updates only" }
+    ]},
+    { "name": "downgrade", "description": "Downgrade package" },
+    { "name": "reinstall", "description": "Reinstall package" },
+    { "name": "search", "description": "Search packages", "args": [{ "name": "query", "description": "Search term", "required": true }] },
+    { "name": "info", "description": "Package information", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "list", "description": "List packages", "options": [
+      { "name": "--installed", "description": "Installed" },
+      { "name": "--available", "description": "Available" },
+      { "name": "--upgrades", "description": "Upgradable" }
+    ]},
+    { "name": "provides", "description": "Find package providing a file" },
+    { "name": "check-update", "description": "Check for updates" },
+    { "name": "clean", "description": "Clean cache", "subcommands": [
+      { "name": "all", "description": "Clean all" },
+      { "name": "metadata", "description": "Clean metadata" },
+      { "name": "packages", "description": "Clean packages" },
+      { "name": "dbcache", "description": "Clean dbcache" }
+    ]},
+    { "name": "makecache", "description": "Generate metadata cache" },
+    { "name": "group", "description": "Group operations", "subcommands": [
+      { "name": "install", "description": "Install group" },
+      { "name": "remove", "description": "Remove group" },
+      { "name": "list", "description": "List groups" },
+      { "name": "info", "description": "Group info" }
+    ]},
+    { "name": "module", "description": "Module operations", "subcommands": [
+      { "name": "list", "description": "List modules" },
+      { "name": "enable", "description": "Enable module" },
+      { "name": "disable", "description": "Disable module" },
+      { "name": "install", "description": "Install module" },
+      { "name": "reset", "description": "Reset module" },
+      { "name": "info", "description": "Module info" }
+    ]},
+    { "name": "repolist", "description": "List repositories" },
+    { "name": "repoquery", "description": "Query packages from repos" },
+    { "name": "history", "description": "Transaction history", "subcommands": [
+      { "name": "list", "description": "List history" },
+      { "name": "info", "description": "Transaction info" },
+      { "name": "undo", "description": "Undo transaction" },
+      { "name": "redo", "description": "Redo transaction" },
+      { "name": "rollback", "description": "Rollback to transaction" }
+    ]},
+    { "name": "autoremove", "description": "Remove unneeded packages" },
+    { "name": "swap", "description": "Swap package for another" },
+    { "name": "mark", "description": "Mark package as user-installed" },
+    { "name": "config-manager", "description": "Manage repos", "options": [
+      { "name": "--add-repo", "description": "Add repository", "takesValue": true },
+      { "name": "--enable", "description": "Enable repo", "takesValue": true },
+      { "name": "--disable", "description": "Disable repo", "takesValue": true }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "-y", "description": "Assume yes" },
+    { "name": "-q", "description": "Quiet" },
+    { "name": "-v", "description": "Verbose" },
+    { "name": "--enablerepo", "description": "Enable repo", "takesValue": true },
+    { "name": "--disablerepo", "description": "Disable repo", "takesValue": true },
+    { "name": "--best", "description": "Best available version" },
+    { "name": "--nobest", "description": "Allow non-best version" },
+    { "name": "--nogpgcheck", "description": "Skip GPG checks" },
+    { "name": "--refresh", "description": "Refresh metadata" },
+    { "name": "--downloadonly", "description": "Download only" },
+    { "name": "--setopt", "description": "Set option", "takesValue": true },
+    { "name": "-C", "description": "Use cache only" },
+    { "name": "--releasever", "description": "Release version", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "sudo dnf install nginx", "description": "Install package" },
+    { "command": "sudo dnf install -y git curl", "description": "Install with auto-yes" },
+    { "command": "sudo dnf upgrade", "description": "Upgrade all packages" },
+    { "command": "sudo dnf upgrade --security", "description": "Security updates only" },
+    { "command": "dnf search redis", "description": "Search packages" },
+    { "command": "dnf info nginx", "description": "Package info" },
+    { "command": "dnf list --installed", "description": "List installed" },
+    { "command": "sudo dnf remove httpd", "description": "Remove package" },
+    { "command": "dnf repolist", "description": "List repos" },
+    { "command": "sudo dnf module list nodejs", "description": "List nodejs modules" },
+    { "command": "sudo dnf history undo last", "description": "Undo last transaction" }
+  ],
+  "relatedCommands": ["yum", "rpm"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Installed packages",
+        "command": "dnf list --installed 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "dnf"
+      },
+      {
+        "name": "repos",
+        "description": "Configured repositories",
+        "command": "dnf repolist 2>/dev/null | tail -10",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "dnf"
+      },
+      {
+        "name": "modules",
+        "description": "Available modules",
+        "command": "dnf module list 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "dnf"
+      },
+      {
+        "name": "updates",
+        "description": "Available updates",
+        "command": "dnf check-update 2>/dev/null | tail -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "dnf"
+      }
+    ]
+  }
+}

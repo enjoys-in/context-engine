@@ -1,0 +1,91 @@
+{
+  "name": "apt",
+  "description": "High-level package management tool for Debian/Ubuntu",
+  "category": "Package Managers",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "install", "description": "Install packages", "args": [{ "name": "packages", "description": "Package names", "required": true }], "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--no-install-recommends", "description": "Skip recommended packages" },
+      { "name": "--reinstall", "description": "Reinstall package" },
+      { "name": "--fix-broken", "description": "Fix broken dependencies" },
+      { "name": "-d", "description": "Download only" }
+    ]},
+    { "name": "remove", "description": "Remove packages", "args": [{ "name": "packages", "description": "Package names", "required": true }], "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--purge", "description": "Remove config files too" }
+    ]},
+    { "name": "purge", "description": "Remove packages and config files" },
+    { "name": "update", "description": "Update package index" },
+    { "name": "upgrade", "description": "Upgrade installed packages", "options": [
+      { "name": "-y", "description": "Assume yes" }
+    ]},
+    { "name": "full-upgrade", "description": "Full upgrade (may remove packages)" },
+    { "name": "dist-upgrade", "description": "Distribution upgrade" },
+    { "name": "autoremove", "description": "Remove unneeded packages" },
+    { "name": "autoclean", "description": "Clean old downloaded packages" },
+    { "name": "clean", "description": "Clean local package cache" },
+    { "name": "search", "description": "Search package names and descriptions", "args": [{ "name": "query", "description": "Search term", "required": true }] },
+    { "name": "show", "description": "Show package details", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "list", "description": "List packages", "options": [
+      { "name": "--installed", "description": "Show installed" },
+      { "name": "--upgradable", "description": "Show upgradable" },
+      { "name": "--all-versions", "description": "Show all versions" }
+    ]},
+    { "name": "depends", "description": "Show package dependencies", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "rdepends", "description": "Show reverse dependencies", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "policy", "description": "Show package policy/versions", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "edit-sources", "description": "Edit sources.list" },
+    { "name": "satisfy", "description": "Satisfy dependency strings" }
+  ],
+  "globalOptions": [
+    { "name": "-y", "description": "Automatic yes" },
+    { "name": "-q", "description": "Quiet output" },
+    { "name": "-s", "description": "Dry run / simulate" },
+    { "name": "-d", "description": "Download only" },
+    { "name": "--fix-broken", "shorthand": "-f", "description": "Fix broken dependencies" },
+    { "name": "-o", "description": "Set config option", "takesValue": true },
+    { "name": "-t", "description": "Target release", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "sudo apt update", "description": "Update package index" },
+    { "command": "sudo apt upgrade -y", "description": "Upgrade all packages" },
+    { "command": "sudo apt install nginx", "description": "Install nginx" },
+    { "command": "sudo apt install -y --no-install-recommends curl git", "description": "Install minimal" },
+    { "command": "apt search redis", "description": "Search for Redis" },
+    { "command": "apt show nginx", "description": "Show package details" },
+    { "command": "apt list --installed", "description": "List installed packages" },
+    { "command": "apt list --upgradable", "description": "List upgradable" },
+    { "command": "sudo apt remove --purge nginx", "description": "Complete removal" },
+    { "command": "sudo apt autoremove", "description": "Remove unused packages" }
+  ],
+  "relatedCommands": ["apt-get", "dpkg"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Installed packages",
+        "command": "apt list --installed 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "apt"
+      },
+      {
+        "name": "upgradable",
+        "description": "Upgradable packages",
+        "command": "apt list --upgradable 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "apt"
+      },
+      {
+        "name": "sources",
+        "description": "Configured repositories",
+        "command": "cat /etc/apt/sources.list 2>/dev/null | grep -v '^#' | grep -v '^$' | head -10",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
+}

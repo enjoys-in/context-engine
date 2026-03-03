@@ -1,0 +1,140 @@
+{
+  "name": "brew",
+  "description": "Homebrew package manager for macOS and Linux",
+  "category": "Package Managers",
+  "platforms": ["macos", "linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "install", "description": "Install packages (formulae or casks)", "args": [{ "name": "formula", "description": "Formula/cask name", "required": true }], "options": [
+      { "name": "--cask", "description": "Install as cask" },
+      { "name": "--build-from-source", "description": "Build from source" },
+      { "name": "--force", "description": "Force install" },
+      { "name": "--verbose", "description": "Verbose" },
+      { "name": "--HEAD", "description": "Install HEAD version" },
+      { "name": "--fetch-HEAD", "description": "Fetch HEAD version" }
+    ]},
+    { "name": "uninstall", "description": "Uninstall formula", "args": [{ "name": "formula", "description": "Formula name", "required": true }], "options": [
+      { "name": "--force", "description": "Force uninstall" },
+      { "name": "--zap", "description": "Remove all files (casks)" }
+    ]},
+    { "name": "update", "description": "Update Homebrew itself" },
+    { "name": "upgrade", "description": "Upgrade packages", "args": [{ "name": "formula", "description": "Specific formula (optional)", "required": false }], "options": [
+      { "name": "--cask", "description": "Upgrade casks" },
+      { "name": "--greedy", "description": "Also upgrade auto-updated casks" }
+    ]},
+    { "name": "search", "description": "Search formulae and casks", "args": [{ "name": "query", "description": "Search text", "required": true }] },
+    { "name": "info", "description": "Formula/cask info", "args": [{ "name": "formula", "description": "Formula name", "required": true }], "options": [
+      { "name": "--json", "description": "JSON output" },
+      { "name": "--cask", "description": "Cask info" }
+    ]},
+    { "name": "list", "description": "List installed", "options": [
+      { "name": "--cask", "description": "List casks" },
+      { "name": "--versions", "description": "Show versions" },
+      { "name": "--formula", "description": "Only formulae" }
+    ]},
+    { "name": "outdated", "description": "Show outdated packages", "options": [
+      { "name": "--cask", "description": "Outdated casks" },
+      { "name": "--greedy", "description": "Include auto-updated" }
+    ]},
+    { "name": "pin", "description": "Pin formula version", "args": [{ "name": "formula", "description": "Formula to pin", "required": true }] },
+    { "name": "unpin", "description": "Unpin formula" },
+    { "name": "cleanup", "description": "Clean old versions", "options": [
+      { "name": "--prune", "description": "Remove older than N days", "takesValue": true },
+      { "name": "-s", "description": "Scrub cache" },
+      { "name": "-n", "description": "Dry run" }
+    ]},
+    { "name": "doctor", "description": "Diagnose issues" },
+    { "name": "config", "description": "Show Homebrew config" },
+    { "name": "deps", "description": "Show dependencies", "args": [{ "name": "formula", "description": "Formula name", "required": true }], "options": [
+      { "name": "--tree", "description": "Tree view" },
+      { "name": "--installed", "description": "Installed deps" }
+    ]},
+    { "name": "uses", "description": "Show dependents", "args": [{ "name": "formula", "description": "Formula name", "required": true }] },
+    { "name": "leaves", "description": "Show formulae not depended on" },
+    { "name": "services", "description": "Manage background services", "subcommands": [
+      { "name": "list", "description": "List services" },
+      { "name": "start", "description": "Start service" },
+      { "name": "stop", "description": "Stop service" },
+      { "name": "restart", "description": "Restart service" },
+      { "name": "run", "description": "Run service (foreground)" }
+    ]},
+    { "name": "tap", "description": "Tap (add) a repository", "args": [{ "name": "repo", "description": "user/repo", "required": false }] },
+    { "name": "untap", "description": "Remove a tapped repository" },
+    { "name": "link", "description": "Symlink formula" },
+    { "name": "unlink", "description": "Unsymlink formula" },
+    { "name": "switch", "description": "Switch to specific version" },
+    { "name": "bundle", "description": "Bundler for Homebrew", "subcommands": [
+      { "name": "dump", "description": "Write Brewfile" },
+      { "name": "install", "description": "Install from Brewfile" },
+      { "name": "check", "description": "Check Brewfile" },
+      { "name": "cleanup", "description": "Remove unlisted" },
+      { "name": "list", "description": "List from Brewfile" }
+    ]}
+  ],
+  "globalOptions": [
+    { "name": "--verbose", "shorthand": "-v", "description": "Verbose output" },
+    { "name": "--debug", "shorthand": "-d", "description": "Debug mode" },
+    { "name": "--quiet", "shorthand": "-q", "description": "Quiet mode" },
+    { "name": "--help", "shorthand": "-h", "description": "Show help" },
+    { "name": "--version", "description": "Show version" }
+  ],
+  "examples": [
+    { "command": "brew install node", "description": "Install Node.js" },
+    { "command": "brew install --cask visual-studio-code", "description": "Install VS Code" },
+    { "command": "brew update && brew upgrade", "description": "Update and upgrade all" },
+    { "command": "brew search redis", "description": "Search for Redis" },
+    { "command": "brew info nginx", "description": "Nginx formula info" },
+    { "command": "brew list", "description": "List installed formulae" },
+    { "command": "brew outdated", "description": "Show outdated" },
+    { "command": "brew services list", "description": "List services" },
+    { "command": "brew services start postgresql", "description": "Start PostgreSQL" },
+    { "command": "brew cleanup -s", "description": "Clean cache" },
+    { "command": "brew doctor", "description": "Diagnose issues" },
+    { "command": "brew bundle dump", "description": "Create Brewfile" }
+  ],
+  "relatedCommands": ["apt", "pacman"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Installed formulae",
+        "command": "brew list --formula --versions 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "brew"
+      },
+      {
+        "name": "casks",
+        "description": "Installed casks",
+        "command": "brew list --cask 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "brew"
+      },
+      {
+        "name": "outdated",
+        "description": "Outdated packages",
+        "command": "brew outdated 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "brew"
+      },
+      {
+        "name": "services",
+        "description": "Homebrew services",
+        "command": "brew services list 2>/dev/null | tail -15",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "brew"
+      },
+      {
+        "name": "taps",
+        "description": "Tapped repositories",
+        "command": "brew tap 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "brew"
+      }
+    ]
+  }
+}

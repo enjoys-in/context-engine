@@ -1,0 +1,87 @@
+{
+  "name": "apachectl",
+  "description": "Apache HTTP Server control interface",
+  "category": "Network/Security",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "start", "description": "Start Apache" },
+    { "name": "stop", "description": "Stop Apache" },
+    { "name": "restart", "description": "Restart Apache" },
+    { "name": "graceful", "description": "Graceful restart (no dropped connections)" },
+    { "name": "graceful-stop", "description": "Graceful stop" },
+    { "name": "status", "description": "Display server status (requires mod_status)" },
+    { "name": "fullstatus", "description": "Full server status" },
+    { "name": "configtest", "description": "Test configuration syntax" }
+  ],
+  "globalOptions": [
+    { "name": "-d", "description": "Server root directory", "takesValue": true },
+    { "name": "-f", "description": "Config file path", "takesValue": true },
+    { "name": "-C", "description": "directive processed before config", "takesValue": true },
+    { "name": "-c", "description": "directive processed after config", "takesValue": true },
+    { "name": "-D", "description": "Define a parameter", "takesValue": true },
+    { "name": "-e", "description": "Log level for startup", "takesValue": true },
+    { "name": "-E", "description": "Log startup errors to file", "takesValue": true },
+    { "name": "-k", "description": "Signal (start, restart, graceful, graceful-stop, stop)", "takesValue": true },
+    { "name": "-R", "description": "Server root for SHARED_CORE", "takesValue": true },
+    { "name": "-n", "description": "Service name (Windows)", "takesValue": true },
+    { "name": "-t", "description": "Test config and dump parsed settings" },
+    { "name": "-v", "description": "Show version" },
+    { "name": "-V", "description": "Show version and build options" },
+    { "name": "-h", "description": "Show help" },
+    { "name": "-l", "description": "List compiled-in modules" },
+    { "name": "-L", "description": "List available directives" },
+    { "name": "-M", "description": "List loaded modules" },
+    { "name": "-S", "description": "Show parsed VirtualHost settings" },
+    { "name": "-T", "description": "Start without DocumentRoot check" },
+    { "name": "-t", "description": "Syntax check" },
+    { "name": "-X", "description": "Debug mode (single process)" }
+  ],
+  "examples": [
+    { "command": "apachectl start", "description": "Start Apache" },
+    { "command": "apachectl stop", "description": "Stop Apache" },
+    { "command": "apachectl graceful", "description": "Graceful restart" },
+    { "command": "apachectl configtest", "description": "Test configuration" },
+    { "command": "apachectl -M", "description": "List loaded modules" },
+    { "command": "apachectl -S", "description": "Parsed VirtualHost settings" },
+    { "command": "apachectl -V", "description": "Version and compile settings" },
+    { "command": "apachectl -t -D DUMP_VHOSTS", "description": "Dump VirtualHosts" },
+    { "command": "apachectl -t -D DUMP_MODULES", "description": "Dump loaded modules" }
+  ],
+  "relatedCommands": ["nginx", "certbot", "httpd"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "modules",
+        "description": "Loaded Apache modules",
+        "command": "apachectl -M 2>/dev/null | tail -30",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "apachectl"
+      },
+      {
+        "name": "vhosts",
+        "description": "Virtual host configuration",
+        "command": "apachectl -S 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "apachectl"
+      },
+      {
+        "name": "config_files",
+        "description": "Apache config files",
+        "command": "ls /etc/apache2/sites-enabled/ 2>/dev/null || ls /etc/httpd/conf.d/ 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "status",
+        "description": "Apache status",
+        "command": "apachectl status 2>/dev/null | head -10 || systemctl status apache2 2>/dev/null | head -5 || systemctl status httpd 2>/dev/null | head -5",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "apachectl"
+      }
+    ]
+  }
+}

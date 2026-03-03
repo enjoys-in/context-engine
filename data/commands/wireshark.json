@@ -1,0 +1,81 @@
+{
+  "name": "wireshark",
+  "description": "Network protocol analyzer with GUI and CLI (tshark) for deep packet inspection",
+  "category": "Network/Security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-i", "description": "Capture interface", "takesValue": true },
+    { "name": "-f", "description": "Capture filter (BPF)", "takesValue": true },
+    { "name": "-Y", "description": "Display filter", "takesValue": true },
+    { "name": "-r", "description": "Read from pcap file", "takesValue": true },
+    { "name": "-w", "description": "Write to pcap file (tshark)", "takesValue": true },
+    { "name": "-c", "description": "Stop after N packets", "takesValue": true },
+    { "name": "-a", "description": "Auto-stop condition (duration:N, filesize:N)", "takesValue": true },
+    { "name": "-b", "description": "Ring buffer (duration:N, filesize:N, files:N)", "takesValue": true },
+    { "name": "-T", "description": "Output format (fields, json, jsonraw, pdml, ps, psml, tabs, text, ek)", "takesValue": true },
+    { "name": "-e", "description": "Field to print (with -T fields)", "takesValue": true },
+    { "name": "-E", "description": "Field print options", "takesValue": true },
+    { "name": "-V", "description": "Packet details (verbose)" },
+    { "name": "-x", "description": "Print hex dump" },
+    { "name": "-n", "description": "Disable network name resolution" },
+    { "name": "-N", "description": "Name resolving flags", "takesValue": true },
+    { "name": "-q", "description": "Quiet mode (statistics only)" },
+    { "name": "-z", "description": "Statistics (io,stat, conv,tcp, http,tree, etc.)", "takesValue": true },
+    { "name": "-D", "description": "List interfaces" },
+    { "name": "-L", "description": "List link-layer types" },
+    { "name": "-s", "description": "Snap length", "takesValue": true },
+    { "name": "-2", "description": "Two-pass analysis" },
+    { "name": "-o", "description": "Set preference", "takesValue": true },
+    { "name": "-K", "description": "Keytab file for Kerberos", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "wireshark", "description": "Launch GUI" },
+    { "command": "wireshark -i eth0", "description": "GUI capture on eth0" },
+    { "command": "wireshark -r capture.pcap", "description": "Open capture file" },
+    { "command": "tshark -i eth0 -c 100", "description": "CLI capture 100 packets" },
+    { "command": "tshark -r capture.pcap -Y 'http'", "description": "Filter HTTP in file" },
+    { "command": "tshark -i eth0 -f 'port 443' -w tls.pcap", "description": "Capture TLS to file" },
+    { "command": "tshark -r file.pcap -T json", "description": "JSON output" },
+    { "command": "tshark -r file.pcap -T fields -e ip.src -e ip.dst -e tcp.port", "description": "Extract fields" },
+    { "command": "tshark -r file.pcap -q -z io,stat,1", "description": "I/O statistics per second" },
+    { "command": "tshark -r file.pcap -q -z conv,tcp", "description": "TCP conversations" }
+  ],
+  "relatedCommands": ["tcpdump", "nmap"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "interfaces",
+        "description": "Capture interfaces",
+        "command": "tshark -D 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "tshark"
+      },
+      {
+        "name": "pcap_files",
+        "description": "Pcap files in directory",
+        "command": "find . -maxdepth 2 \\( -name '*.pcap' -o -name '*.pcapng' -o -name '*.cap' \\) 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "version",
+        "description": "Wireshark/tshark version",
+        "command": "tshark --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "tshark"
+      },
+      {
+        "name": "display_filters",
+        "description": "Common protocols",
+        "command": "tshark -G protocols 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "tshark"
+      }
+    ]
+  }
+}

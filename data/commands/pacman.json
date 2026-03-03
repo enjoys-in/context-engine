@@ -1,0 +1,82 @@
+{
+  "name": "pacman",
+  "description": "Package manager for Arch Linux and derivatives",
+  "category": "Package Managers",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-S", "description": "Sync / Install packages", "takesValue": true },
+    { "name": "-Sy", "description": "Sync database" },
+    { "name": "-Syu", "description": "Full system upgrade" },
+    { "name": "-Syyu", "description": "Force refresh and upgrade" },
+    { "name": "-Ss", "description": "Search remote packages", "takesValue": true },
+    { "name": "-Si", "description": "Remote package info", "takesValue": true },
+    { "name": "-Sc", "description": "Clean old cached packages" },
+    { "name": "-Scc", "description": "Clean all cached packages" },
+    { "name": "-Sg", "description": "List package groups" },
+    { "name": "-Sw", "description": "Download without installing" },
+    { "name": "-R", "description": "Remove package", "takesValue": true },
+    { "name": "-Rs", "description": "Remove with unused dependencies", "takesValue": true },
+    { "name": "-Rns", "description": "Remove with deps and config", "takesValue": true },
+    { "name": "-Rdd", "description": "Remove skipping dep checks", "takesValue": true },
+    { "name": "-Q", "description": "Query installed packages" },
+    { "name": "-Qs", "description": "Search installed packages", "takesValue": true },
+    { "name": "-Qi", "description": "Installed package info", "takesValue": true },
+    { "name": "-Ql", "description": "Files owned by package", "takesValue": true },
+    { "name": "-Qe", "description": "Explicitly installed packages" },
+    { "name": "-Qm", "description": "Foreign (AUR) packages" },
+    { "name": "-Qdt", "description": "Orphaned packages" },
+    { "name": "-Qo", "description": "Which package owns a file", "takesValue": true },
+    { "name": "-U", "description": "Install local package file", "takesValue": true },
+    { "name": "-F", "description": "File database query" },
+    { "name": "-Fy", "description": "Refresh file database" },
+    { "name": "--noconfirm", "description": "Skip confirmation prompts" },
+    { "name": "--needed", "description": "Skip already installed" },
+    { "name": "--overwrite", "description": "Overwrite conflicting files" },
+    { "name": "--color", "description": "Color mode (auto, always, never)", "takesValue": true },
+    { "name": "--cachedir", "description": "Alternate cache directory", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "sudo pacman -Syu", "description": "Full system upgrade" },
+    { "command": "sudo pacman -S nginx", "description": "Install package" },
+    { "command": "sudo pacman -S --noconfirm git curl", "description": "Install without confirm" },
+    { "command": "pacman -Ss redis", "description": "Search packages" },
+    { "command": "pacman -Qi nginx", "description": "Package info" },
+    { "command": "pacman -Ql nginx", "description": "List package files" },
+    { "command": "sudo pacman -Rns nginx", "description": "Full removal" },
+    { "command": "pacman -Qe", "description": "Explicitly installed" },
+    { "command": "pacman -Qdt", "description": "Find orphans" },
+    { "command": "sudo pacman -Sc", "description": "Clean cache" },
+    { "command": "pacman -Qo /usr/bin/vim", "description": "Find owning package" }
+  ],
+  "relatedCommands": ["yay", "paru"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Explicitly installed packages",
+        "command": "pacman -Qe 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "pacman"
+      },
+      {
+        "name": "orphans",
+        "description": "Orphaned packages",
+        "command": "pacman -Qdt 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "pacman"
+      },
+      {
+        "name": "foreign",
+        "description": "AUR/foreign packages",
+        "command": "pacman -Qm 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "pacman"
+      }
+    ]
+  }
+}

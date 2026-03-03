@@ -1,0 +1,98 @@
+{
+  "name": "yum",
+  "description": "Package manager for RHEL/CentOS (legacy, replaced by dnf)",
+  "category": "Package Managers",
+  "platforms": ["linux"],
+  "shells": ["bash", "zsh", "fish"],
+  "subcommands": [
+    { "name": "install", "description": "Install packages", "args": [{ "name": "packages", "description": "Package names", "required": true }], "options": [
+      { "name": "-y", "description": "Assume yes" },
+      { "name": "--enablerepo", "description": "Enable repository", "takesValue": true },
+      { "name": "--disablerepo", "description": "Disable repository", "takesValue": true }
+    ]},
+    { "name": "update", "description": "Update packages", "args": [{ "name": "packages", "description": "Specific packages (optional)", "required": false }] },
+    { "name": "remove", "description": "Remove packages", "args": [{ "name": "packages", "description": "Package names", "required": true }] },
+    { "name": "erase", "description": "Alias for remove" },
+    { "name": "list", "description": "List packages", "options": [
+      { "name": "installed", "description": "Only installed" },
+      { "name": "available", "description": "Only available" },
+      { "name": "updates", "description": "Only updates" }
+    ]},
+    { "name": "search", "description": "Search packages", "args": [{ "name": "query", "description": "Search term", "required": true }] },
+    { "name": "info", "description": "Show package information", "args": [{ "name": "package", "description": "Package name", "required": true }] },
+    { "name": "provides", "description": "Find package providing a file", "args": [{ "name": "file", "description": "File path or glob", "required": true }] },
+    { "name": "check-update", "description": "Check for available updates" },
+    { "name": "upgrade", "description": "Upgrade all packages" },
+    { "name": "downgrade", "description": "Downgrade a package" },
+    { "name": "reinstall", "description": "Reinstall a package" },
+    { "name": "clean", "description": "Clean caches", "subcommands": [
+      { "name": "all", "description": "Clean all caches" },
+      { "name": "metadata", "description": "Clean metadata" },
+      { "name": "packages", "description": "Clean packages" },
+      { "name": "dbcache", "description": "Clean dbcache" },
+      { "name": "expire-cache", "description": "Expire cache" }
+    ]},
+    { "name": "makecache", "description": "Generate metadata cache" },
+    { "name": "groupinstall", "description": "Install a group", "args": [{ "name": "group", "description": "Group name", "required": true }] },
+    { "name": "grouplist", "description": "List groups" },
+    { "name": "groupinfo", "description": "Group details" },
+    { "name": "repolist", "description": "List repositories" },
+    { "name": "repoinfo", "description": "Repository details" },
+    { "name": "deplist", "description": "List dependencies" },
+    { "name": "history", "description": "Transaction history" },
+    { "name": "localinstall", "description": "Install local RPM" }
+  ],
+  "globalOptions": [
+    { "name": "-y", "description": "Assume yes" },
+    { "name": "-q", "description": "Quiet" },
+    { "name": "-v", "description": "Verbose" },
+    { "name": "--enablerepo", "description": "Enable repo", "takesValue": true },
+    { "name": "--disablerepo", "description": "Disable repo", "takesValue": true },
+    { "name": "--nogpgcheck", "description": "Skip GPG checks" },
+    { "name": "--skip-broken", "description": "Skip broken packages" },
+    { "name": "-C", "description": "Use cache only" },
+    { "name": "--downloadonly", "description": "Download without installing" },
+    { "name": "--setopt", "description": "Set config option", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "sudo yum install nginx", "description": "Install nginx" },
+    { "command": "sudo yum install -y git curl wget", "description": "Install with auto-yes" },
+    { "command": "sudo yum update", "description": "Update all packages" },
+    { "command": "sudo yum remove httpd", "description": "Remove package" },
+    { "command": "yum search redis", "description": "Search packages" },
+    { "command": "yum info nginx", "description": "Package details" },
+    { "command": "yum list installed", "description": "List installed" },
+    { "command": "yum check-update", "description": "Check for updates" },
+    { "command": "yum repolist", "description": "List enabled repos" },
+    { "command": "sudo yum clean all", "description": "Clean all caches" }
+  ],
+  "relatedCommands": ["dnf", "rpm"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "installed",
+        "description": "Installed packages",
+        "command": "yum list installed 2>/dev/null | tail -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "yum"
+      },
+      {
+        "name": "repos",
+        "description": "Configured repositories",
+        "command": "yum repolist 2>/dev/null | tail -10",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "yum"
+      },
+      {
+        "name": "updates",
+        "description": "Available updates",
+        "command": "yum check-update 2>/dev/null | tail -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "yum"
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "name": "nmap",
+  "description": "Network exploration and security auditing tool",
+  "category": "Network/Security",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell", "fish"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-sS", "description": "TCP SYN scan (stealth)" },
+    { "name": "-sT", "description": "TCP connect scan" },
+    { "name": "-sU", "description": "UDP scan" },
+    { "name": "-sV", "description": "Version detection" },
+    { "name": "-sC", "description": "Default script scan" },
+    { "name": "-sn", "description": "Ping scan (no port scan)" },
+    { "name": "-sP", "description": "Ping scan (legacy)" },
+    { "name": "-sA", "description": "ACK scan" },
+    { "name": "-sW", "description": "Window scan" },
+    { "name": "-sF", "description": "FIN scan" },
+    { "name": "-sX", "description": "Xmas scan" },
+    { "name": "-sN", "description": "Null scan" },
+    { "name": "-sI", "description": "Idle scan", "takesValue": true },
+    { "name": "-O", "description": "OS detection" },
+    { "name": "-A", "description": "Aggressive scan (OS, version, script, traceroute)" },
+    { "name": "-T", "description": "Timing template (0-5, paranoid to insane)", "takesValue": true },
+    { "name": "-p", "description": "Port specification", "takesValue": true },
+    { "name": "--top-ports", "description": "Scan top N ports", "takesValue": true },
+    { "name": "-F", "description": "Fast scan (100 ports)" },
+    { "name": "-Pn", "description": "Skip host discovery" },
+    { "name": "-n", "description": "No DNS resolution" },
+    { "name": "-v", "description": "Verbose" },
+    { "name": "-vv", "description": "Very verbose" },
+    { "name": "-oN", "description": "Normal output to file", "takesValue": true },
+    { "name": "-oX", "description": "XML output to file", "takesValue": true },
+    { "name": "-oG", "description": "Grepable output to file", "takesValue": true },
+    { "name": "-oA", "description": "Output all formats", "takesValue": true },
+    { "name": "--script", "description": "NSE scripts to run", "takesValue": true },
+    { "name": "--script-args", "description": "Script arguments", "takesValue": true },
+    { "name": "-iL", "description": "Input from host list file", "takesValue": true },
+    { "name": "--exclude", "description": "Exclude hosts", "takesValue": true },
+    { "name": "--excludefile", "description": "Exclude hosts from file", "takesValue": true },
+    { "name": "-6", "description": "IPv6 scanning" },
+    { "name": "--open", "description": "Show only open ports" },
+    { "name": "--reason", "description": "Show port state reason" },
+    { "name": "--traceroute", "description": "Trace route to host" },
+    { "name": "-e", "description": "Network interface", "takesValue": true },
+    { "name": "--max-retries", "description": "Maximum retries", "takesValue": true },
+    { "name": "--min-rate", "description": "Minimum packet rate", "takesValue": true },
+    { "name": "--max-rate", "description": "Maximum packet rate", "takesValue": true },
+    { "name": "-D", "description": "Decoy scan", "takesValue": true },
+    { "name": "-S", "description": "Spoof source address", "takesValue": true }
+  ],
+  "examples": [
+    { "command": "nmap 192.168.1.1", "description": "Basic scan" },
+    { "command": "nmap -sS -sV -O 10.0.0.1", "description": "SYN scan with version and OS detection" },
+    { "command": "nmap -A -T4 192.168.1.0/24", "description": "Aggressive scan of subnet" },
+    { "command": "nmap -p 80,443 example.com", "description": "Scan specific ports" },
+    { "command": "nmap -p- 10.0.0.1", "description": "Scan all 65535 ports" },
+    { "command": "nmap --top-ports 1000 192.168.1.1", "description": "Top 1000 ports" },
+    { "command": "nmap -sn 192.168.1.0/24", "description": "Host discovery only" },
+    { "command": "nmap --script vuln 10.0.0.1", "description": "Vulnerability scripts" },
+    { "command": "nmap -sU -p 53,161 10.0.0.1", "description": "UDP scan on DNS and SNMP" },
+    { "command": "nmap -oA scan_results 192.168.1.0/24", "description": "All output formats" }
+  ],
+  "relatedCommands": ["tcpdump", "openssl", "ssh"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "interfaces",
+        "description": "Network interfaces",
+        "command": "ip -brief addr show 2>/dev/null || ifconfig -a 2>/dev/null | grep -E 'inet |flags' | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "nse_scripts",
+        "description": "Available NSE script categories",
+        "command": "ls /usr/share/nmap/scripts/ 2>/dev/null | head -10 || ls /usr/local/share/nmap/scripts/ 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "nmap"
+      },
+      {
+        "name": "version",
+        "description": "Nmap version",
+        "command": "nmap --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nmap"
+      }
+    ]
+  }
+}
