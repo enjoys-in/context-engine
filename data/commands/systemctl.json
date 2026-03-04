@@ -2,30 +2,807 @@
   "name": "systemctl",
   "description": "Control the systemd system and service manager",
   "category": "system",
-  "platforms": ["linux"],
-  "shells": ["bash", "zsh", "fish"],
+  "platforms": [
+    "linux"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish"
+  ],
   "subcommands": [
-    { "name": "start", "description": "Start a service", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl start nginx", "systemctl start docker"] },
-    { "name": "stop", "description": "Stop a service", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl stop nginx"] },
-    { "name": "restart", "description": "Restart a service", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl restart nginx"] },
-    { "name": "reload", "description": "Reload a service configuration", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl reload nginx"] },
-    { "name": "status", "description": "Show service status", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl status nginx", "systemctl status docker"] },
-    { "name": "enable", "description": "Enable a service to start at boot", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "options": [{ "name": "--now", "description": "Also start the service" }], "examples": ["systemctl enable nginx", "systemctl enable --now docker"] },
-    { "name": "disable", "description": "Disable a service from starting at boot", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl disable nginx"] },
-    { "name": "is-active", "description": "Check if a service is active", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl is-active nginx"] },
-    { "name": "is-enabled", "description": "Check if a service is enabled", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl is-enabled nginx"] },
-    { "name": "list-units", "description": "List loaded units", "options": [{ "name": "--type", "description": "Filter by unit type", "type": "string" }, { "name": "--state", "description": "Filter by state", "type": "string" }], "examples": ["systemctl list-units", "systemctl list-units --type=service", "systemctl list-units --state=failed"] },
-    { "name": "daemon-reload", "description": "Reload systemd manager configuration", "examples": ["systemctl daemon-reload"] },
-    { "name": "cat", "description": "Show unit file contents", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl cat nginx"] },
-    { "name": "edit", "description": "Edit a unit file", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl edit nginx", "systemctl edit --full nginx"] },
-    { "name": "mask", "description": "Mask a unit (prevent starting)", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl mask nginx"] },
-    { "name": "unmask", "description": "Unmask a unit", "args": [{ "name": "<unit>", "type": "string", "required": true, "description": "Service unit name" }], "examples": ["systemctl unmask nginx"] }
+    {
+      "name": "start",
+      "description": "Start (activate) one or more units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s) to start"
+        }
+      ],
+      "examples": [
+        "systemctl start nginx",
+        "systemctl start nginx postgresql redis"
+      ]
+    },
+    {
+      "name": "stop",
+      "description": "Stop (deactivate) one or more units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s) to stop"
+        }
+      ],
+      "examples": [
+        "systemctl stop nginx",
+        "systemctl stop nginx.service"
+      ]
+    },
+    {
+      "name": "restart",
+      "description": "Restart one or more units (stop then start)",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl restart nginx",
+        "systemctl restart nginx php8.2-fpm"
+      ]
+    },
+    {
+      "name": "reload",
+      "description": "Reload service configuration without full restart",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl reload nginx"
+      ]
+    },
+    {
+      "name": "reload-or-restart",
+      "description": "Reload if supported, otherwise restart",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl reload-or-restart nginx"
+      ]
+    },
+    {
+      "name": "try-restart",
+      "description": "Restart only if the unit is already running",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl try-restart nginx"
+      ]
+    },
+    {
+      "name": "status",
+      "description": "Show runtime status of one or more units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit name(s)"
+        }
+      ],
+      "options": [
+        {
+          "name": "-l",
+          "description": "Show full log output"
+        },
+        {
+          "name": "--no-pager",
+          "description": "Don't use pager"
+        }
+      ],
+      "examples": [
+        "systemctl status",
+        "systemctl status nginx",
+        "systemctl status nginx --no-pager -l"
+      ]
+    },
+    {
+      "name": "show",
+      "description": "Show properties of one or more units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit name(s)"
+        }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Show specific property",
+          "type": "string"
+        },
+        {
+          "name": "--value",
+          "description": "Only show value, not key=value"
+        }
+      ],
+      "examples": [
+        "systemctl show nginx",
+        "systemctl show nginx -p MainPID --value",
+        "systemctl show nginx -p ActiveState,SubState"
+      ]
+    },
+    {
+      "name": "enable",
+      "description": "Enable unit to start at boot",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "options": [
+        {
+          "name": "--now",
+          "description": "Also start the unit immediately"
+        },
+        {
+          "name": "--no-reload",
+          "description": "Don't reload daemon after enabling"
+        }
+      ],
+      "examples": [
+        "systemctl enable nginx",
+        "systemctl enable --now nginx",
+        "systemctl enable nginx postgresql redis"
+      ]
+    },
+    {
+      "name": "disable",
+      "description": "Disable unit from starting at boot",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "options": [
+        {
+          "name": "--now",
+          "description": "Also stop the unit immediately"
+        }
+      ],
+      "examples": [
+        "systemctl disable nginx",
+        "systemctl disable --now nginx"
+      ]
+    },
+    {
+      "name": "reenable",
+      "description": "Disable and then enable (reset symlinks)",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl reenable nginx"
+      ]
+    },
+    {
+      "name": "is-active",
+      "description": "Check whether unit is active (exit code 0 = active)",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl is-active nginx",
+        "systemctl is-active nginx && echo 'Running'"
+      ]
+    },
+    {
+      "name": "is-enabled",
+      "description": "Check whether unit is enabled (exit code 0 = enabled)",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl is-enabled nginx"
+      ]
+    },
+    {
+      "name": "is-failed",
+      "description": "Check whether unit is in failed state",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl is-failed nginx"
+      ]
+    },
+    {
+      "name": "list-units",
+      "description": "List loaded units",
+      "options": [
+        {
+          "name": "--type",
+          "description": "Filter by unit type (service, socket, timer, mount, etc.)",
+          "type": "string"
+        },
+        {
+          "name": "--state",
+          "description": "Filter by state (running, failed, active, inactive, etc.)",
+          "type": "string"
+        },
+        {
+          "name": "--all",
+          "description": "Show all loaded units including inactive"
+        },
+        {
+          "name": "--plain",
+          "description": "Plain output (no tree, no colors)"
+        }
+      ],
+      "examples": [
+        "systemctl list-units",
+        "systemctl list-units --type=service",
+        "systemctl list-units --type=service --state=running",
+        "systemctl list-units --state=failed",
+        "systemctl list-units --all --type=timer"
+      ]
+    },
+    {
+      "name": "list-unit-files",
+      "description": "List installed unit files and their enablement state",
+      "options": [
+        {
+          "name": "--type",
+          "description": "Filter by unit type",
+          "type": "string"
+        },
+        {
+          "name": "--state",
+          "description": "Filter by enablement state (enabled, disabled, static, masked)",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "systemctl list-unit-files",
+        "systemctl list-unit-files --type=service",
+        "systemctl list-unit-files --state=enabled"
+      ]
+    },
+    {
+      "name": "list-timers",
+      "description": "List timer units with next/last trigger times",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Show all timers including inactive"
+        }
+      ],
+      "examples": [
+        "systemctl list-timers",
+        "systemctl list-timers --all"
+      ]
+    },
+    {
+      "name": "list-sockets",
+      "description": "List socket units and their listeners",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Show all sockets"
+        }
+      ],
+      "examples": [
+        "systemctl list-sockets"
+      ]
+    },
+    {
+      "name": "list-dependencies",
+      "description": "Show dependency tree of a unit",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit name"
+        }
+      ],
+      "options": [
+        {
+          "name": "--reverse",
+          "description": "Show reverse dependencies (what depends on this)"
+        },
+        {
+          "name": "--all",
+          "description": "Show all dependencies recursively"
+        }
+      ],
+      "examples": [
+        "systemctl list-dependencies nginx",
+        "systemctl list-dependencies nginx --reverse"
+      ]
+    },
+    {
+      "name": "daemon-reload",
+      "description": "Reload systemd manager configuration (after editing unit files)",
+      "examples": [
+        "systemctl daemon-reload"
+      ]
+    },
+    {
+      "name": "daemon-reexec",
+      "description": "Re-execute the systemd manager",
+      "examples": [
+        "systemctl daemon-reexec"
+      ]
+    },
+    {
+      "name": "cat",
+      "description": "Show the unit file and drop-in snippets",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name"
+        }
+      ],
+      "examples": [
+        "systemctl cat nginx",
+        "systemctl cat nginx.service"
+      ]
+    },
+    {
+      "name": "edit",
+      "description": "Edit a unit file or create a drop-in override",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name"
+        }
+      ],
+      "options": [
+        {
+          "name": "--full",
+          "description": "Edit the full unit file instead of creating a drop-in"
+        },
+        {
+          "name": "--force",
+          "description": "Create new unit file if it doesn't exist"
+        }
+      ],
+      "examples": [
+        "systemctl edit nginx",
+        "systemctl edit --full nginx",
+        "systemctl edit --force myapp.service"
+      ]
+    },
+    {
+      "name": "mask",
+      "description": "Mask a unit — completely prevent it from starting",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl mask nginx"
+      ]
+    },
+    {
+      "name": "unmask",
+      "description": "Unmask a unit — allow it to be started again",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "examples": [
+        "systemctl unmask nginx"
+      ]
+    },
+    {
+      "name": "kill",
+      "description": "Send a signal to processes of a unit",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name(s)"
+        }
+      ],
+      "options": [
+        {
+          "name": "-s",
+          "description": "Signal to send (SIGTERM, SIGKILL, SIGHUP, etc.)",
+          "type": "string"
+        },
+        {
+          "name": "--kill-who",
+          "description": "Who to kill: main, control, all",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "systemctl kill nginx",
+        "systemctl kill -s SIGHUP nginx",
+        "systemctl kill --kill-who=main nginx"
+      ]
+    },
+    {
+      "name": "reset-failed",
+      "description": "Reset the failed state of units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit name(s) or all if omitted"
+        }
+      ],
+      "examples": [
+        "systemctl reset-failed",
+        "systemctl reset-failed nginx"
+      ]
+    },
+    {
+      "name": "isolate",
+      "description": "Start one unit and stop all others (switch target)",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Target to isolate"
+        }
+      ],
+      "examples": [
+        "systemctl isolate multi-user.target",
+        "systemctl isolate rescue.target"
+      ]
+    },
+    {
+      "name": "get-default",
+      "description": "Show the default boot target",
+      "examples": [
+        "systemctl get-default"
+      ]
+    },
+    {
+      "name": "set-default",
+      "description": "Set the default boot target",
+      "args": [
+        {
+          "name": "<target>",
+          "type": "string",
+          "required": true,
+          "description": "Target name"
+        }
+      ],
+      "examples": [
+        "systemctl set-default multi-user.target",
+        "systemctl set-default graphical.target"
+      ]
+    },
+    {
+      "name": "reboot",
+      "description": "Reboot the system",
+      "options": [
+        {
+          "name": "--firmware-setup",
+          "description": "Reboot into UEFI firmware settings"
+        }
+      ],
+      "examples": [
+        "systemctl reboot"
+      ]
+    },
+    {
+      "name": "poweroff",
+      "description": "Power off the system",
+      "examples": [
+        "systemctl poweroff"
+      ]
+    },
+    {
+      "name": "suspend",
+      "description": "Suspend the system",
+      "examples": [
+        "systemctl suspend"
+      ]
+    },
+    {
+      "name": "hibernate",
+      "description": "Hibernate the system",
+      "examples": [
+        "systemctl hibernate"
+      ]
+    },
+    {
+      "name": "set-property",
+      "description": "Set runtime property on a unit",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": true,
+          "description": "Unit name"
+        },
+        {
+          "name": "<property>=<value>",
+          "type": "string",
+          "required": true,
+          "description": "Property to set"
+        }
+      ],
+      "options": [
+        {
+          "name": "--runtime",
+          "description": "Only apply until next reboot"
+        }
+      ],
+      "examples": [
+        "systemctl set-property nginx CPUQuota=50%",
+        "systemctl set-property nginx MemoryMax=2G",
+        "systemctl set-property --runtime nginx CPUWeight=200"
+      ]
+    }
   ],
   "globalOptions": [
-    { "name": "--help", "short": "-h", "description": "Show help" },
-    { "name": "--no-pager", "description": "Do not pipe output into pager" },
-    { "name": "--user", "description": "Operate on user instance" }
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Show help"
+    },
+    {
+      "name": "--version",
+      "description": "Show version"
+    },
+    {
+      "name": "--no-pager",
+      "description": "Do not pipe output into pager"
+    },
+    {
+      "name": "--no-legend",
+      "description": "Do not print header/footer legend"
+    },
+    {
+      "name": "--no-ask-password",
+      "description": "Do not ask for password"
+    },
+    {
+      "name": "--user",
+      "description": "Operate on user instance of systemd"
+    },
+    {
+      "name": "--system",
+      "description": "Operate on system instance (default)"
+    },
+    {
+      "name": "--host",
+      "short": "-H",
+      "description": "Operate on remote host",
+      "type": "string"
+    },
+    {
+      "name": "--machine",
+      "short": "-M",
+      "description": "Operate on container",
+      "type": "string"
+    },
+    {
+      "name": "--type",
+      "short": "-t",
+      "description": "Filter by unit type",
+      "type": "string"
+    },
+    {
+      "name": "--state",
+      "description": "Filter by unit state",
+      "type": "string"
+    },
+    {
+      "name": "--plain",
+      "description": "Use plain output format"
+    },
+    {
+      "name": "--now",
+      "description": "Also start/stop when enabling/disabling"
+    },
+    {
+      "name": "--quiet",
+      "short": "-q",
+      "description": "Suppress output"
+    },
+    {
+      "name": "--no-block",
+      "description": "Don't wait for operation to complete"
+    },
+    {
+      "name": "--no-wall",
+      "description": "Don't send wall message before reboot/poweroff"
+    },
+    {
+      "name": "--force",
+      "short": "-f",
+      "description": "Force the operation"
+    },
+    {
+      "name": "--failed",
+      "description": "Show only failed units"
+    }
   ],
-  "examples": ["systemctl start nginx", "systemctl status docker", "systemctl enable --now nginx", "systemctl list-units --type=service --state=running"],
-  "relatedCommands": ["journalctl", "service", "init", "timedatectl", "hostnamectl"]
+  "examples": [
+    "systemctl start nginx",
+    "systemctl stop nginx",
+    "systemctl restart nginx",
+    "systemctl reload nginx",
+    "systemctl reload-or-restart nginx",
+    "systemctl status nginx",
+    "systemctl status nginx -l --no-pager",
+    "systemctl enable --now nginx",
+    "systemctl disable nginx",
+    "systemctl is-active nginx && echo 'Running'",
+    "systemctl is-enabled nginx",
+    "systemctl daemon-reload",
+    "systemctl list-units --type=service --state=running",
+    "systemctl list-units --state=failed",
+    "systemctl list-unit-files --type=service --state=enabled",
+    "systemctl list-timers --all",
+    "systemctl list-sockets",
+    "systemctl list-dependencies nginx",
+    "systemctl cat nginx",
+    "systemctl edit nginx",
+    "systemctl edit --full nginx",
+    "systemctl show nginx -p MainPID --value",
+    "systemctl show nginx -p ActiveState,SubState",
+    "systemctl mask nginx",
+    "systemctl unmask nginx",
+    "systemctl kill -s SIGHUP nginx",
+    "systemctl reset-failed",
+    "systemctl set-property nginx CPUQuota=50%",
+    "systemctl set-property nginx MemoryMax=2G",
+    "systemctl get-default",
+    "systemctl set-default multi-user.target",
+    "systemctl isolate rescue.target",
+    "systemctl reboot"
+  ],
+  "relatedCommands": [
+    "journalctl",
+    "systemd-analyze",
+    "loginctl",
+    "timedatectl",
+    "hostnamectl",
+    "service",
+    "init"
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "failed_units",
+        "description": "List all failed systemd units",
+        "command": "systemctl --failed --no-legend --plain 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 10,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "running_services",
+        "description": "Count of running services",
+        "command": "systemctl list-units --type=service --state=running --no-legend --plain 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 15,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "active_timers",
+        "description": "List active timers with next trigger",
+        "command": "systemctl list-timers --no-legend --plain 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "listening_sockets",
+        "description": "List listening sockets",
+        "command": "systemctl list-sockets --no-legend --plain 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "system_state",
+        "description": "Overall system state",
+        "command": "systemctl is-system-running 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 10,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "boot_target",
+        "description": "Default boot target",
+        "command": "systemctl get-default 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "enabled_services",
+        "description": "List enabled services",
+        "command": "systemctl list-unit-files --type=service --state=enabled --no-legend --plain 2>/dev/null | awk '{print $1}' | head -30",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "systemctl"
+      },
+      {
+        "name": "masked_units",
+        "description": "List masked units",
+        "command": "systemctl list-unit-files --state=masked --no-legend --plain 2>/dev/null | awk '{print $1}' | head -10",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "systemctl"
+      }
+    ]
+  }
 }

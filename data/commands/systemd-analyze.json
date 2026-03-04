@@ -1,0 +1,239 @@
+{
+  "name": "systemd-analyze",
+  "description": "Analyze and debug system manager — boot performance, unit dependencies, security",
+  "category": "system",
+  "platforms": [
+    "linux"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish"
+  ],
+  "subcommands": [
+    {
+      "name": "time",
+      "description": "Show overall boot time breakdown (kernel, initrd, userspace)",
+      "examples": [
+        "systemd-analyze time"
+      ]
+    },
+    {
+      "name": "blame",
+      "description": "List units by startup time (slowest first)",
+      "options": [
+        {
+          "name": "--no-pager",
+          "description": "Don't pipe through pager"
+        }
+      ],
+      "examples": [
+        "systemd-analyze blame",
+        "systemd-analyze blame | head -20"
+      ]
+    },
+    {
+      "name": "critical-chain",
+      "description": "Show time-critical chain of units for boot",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit to trace"
+        }
+      ],
+      "examples": [
+        "systemd-analyze critical-chain",
+        "systemd-analyze critical-chain nginx.service"
+      ]
+    },
+    {
+      "name": "plot",
+      "description": "Generate SVG boot timeline chart",
+      "examples": [
+        "systemd-analyze plot > boot.svg"
+      ]
+    },
+    {
+      "name": "dot",
+      "description": "Generate GraphViz dependency graph",
+      "options": [
+        {
+          "name": "--to-pattern",
+          "description": "Filter to units matching pattern",
+          "type": "string"
+        },
+        {
+          "name": "--from-pattern",
+          "description": "Filter from units matching pattern",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "systemd-analyze dot | dot -Tsvg > deps.svg",
+        "systemd-analyze dot --to-pattern='*.target' | dot -Tsvg > targets.svg"
+      ]
+    },
+    {
+      "name": "verify",
+      "description": "Verify unit file correctness",
+      "args": [
+        {
+          "name": "<unit-file>",
+          "type": "file",
+          "required": true,
+          "description": "Unit file(s) to verify"
+        }
+      ],
+      "examples": [
+        "systemd-analyze verify myapp.service",
+        "systemd-analyze verify /etc/systemd/system/myapp.service"
+      ]
+    },
+    {
+      "name": "security",
+      "description": "Analyze security exposure of service units",
+      "args": [
+        {
+          "name": "<unit>",
+          "type": "string",
+          "required": false,
+          "description": "Unit to analyze (or all)"
+        }
+      ],
+      "examples": [
+        "systemd-analyze security",
+        "systemd-analyze security nginx.service",
+        "systemd-analyze security --no-pager"
+      ]
+    },
+    {
+      "name": "calendar",
+      "description": "Test and normalize OnCalendar expressions",
+      "args": [
+        {
+          "name": "<expression>",
+          "type": "string",
+          "required": true,
+          "description": "Calendar expression"
+        }
+      ],
+      "options": [
+        {
+          "name": "--iterations",
+          "description": "Show N future iterations",
+          "type": "number"
+        }
+      ],
+      "examples": [
+        "systemd-analyze calendar daily",
+        "systemd-analyze calendar '*-*-* 02:00:00'",
+        "systemd-analyze calendar 'Mon *-*-* 09:00:00' --iterations=5"
+      ]
+    },
+    {
+      "name": "timespan",
+      "description": "Normalize time span expression",
+      "args": [
+        {
+          "name": "<span>",
+          "type": "string",
+          "required": true,
+          "description": "Time span expression"
+        }
+      ],
+      "examples": [
+        "systemd-analyze timespan '2h 30min'",
+        "systemd-analyze timespan '1d 6h'"
+      ]
+    },
+    {
+      "name": "cat-config",
+      "description": "Show configuration file with drop-ins",
+      "args": [
+        {
+          "name": "<path>",
+          "type": "string",
+          "required": true,
+          "description": "Config file path"
+        }
+      ],
+      "examples": [
+        "systemd-analyze cat-config systemd/system.conf"
+      ]
+    },
+    {
+      "name": "unit-paths",
+      "description": "List directories where unit files are searched",
+      "examples": [
+        "systemd-analyze unit-paths"
+      ]
+    },
+    {
+      "name": "log-level",
+      "description": "Get or set log level",
+      "args": [
+        {
+          "name": "<level>",
+          "type": "string",
+          "required": false,
+          "description": "Log level: emerg, alert, crit, err, warning, notice, info, debug"
+        }
+      ],
+      "examples": [
+        "systemd-analyze log-level",
+        "systemd-analyze log-level debug"
+      ]
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "short": "-h",
+      "description": "Show help"
+    },
+    {
+      "name": "--no-pager",
+      "description": "Don't pipe through pager"
+    },
+    {
+      "name": "--user",
+      "description": "Operate on user instance"
+    },
+    {
+      "name": "--system",
+      "description": "Operate on system instance (default)"
+    },
+    {
+      "name": "--order",
+      "description": "Show only After/Before ordering in dot"
+    },
+    {
+      "name": "--require",
+      "description": "Show only Requires/Wants dependencies in dot"
+    }
+  ],
+  "examples": [
+    "systemd-analyze",
+    "systemd-analyze time",
+    "systemd-analyze blame",
+    "systemd-analyze blame | head -20",
+    "systemd-analyze critical-chain",
+    "systemd-analyze critical-chain nginx.service",
+    "systemd-analyze plot > boot.svg",
+    "systemd-analyze verify myapp.service",
+    "systemd-analyze security",
+    "systemd-analyze security nginx.service",
+    "systemd-analyze calendar daily",
+    "systemd-analyze calendar '*-*-* 02:00:00'",
+    "systemd-analyze calendar 'Mon *-*-* 09:00:00' --iterations=5",
+    "systemd-analyze timespan '2h 30min'",
+    "systemd-analyze unit-paths"
+  ],
+  "relatedCommands": [
+    "systemctl",
+    "journalctl",
+    "timedatectl"
+  ]
+}

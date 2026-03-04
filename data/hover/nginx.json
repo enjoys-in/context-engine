@@ -4,84 +4,126 @@
     "server": {
       "contents": [
         {
-          "value": "```nginx\nserver {\n    listen 80;\n    server_name example.com;\n    root /var/www/html;\n}\n```\n**server** block defines a virtual host. Each server block listens on specific ports and responds to specific domain names."
+          "value": "```nginx\nserver {\n    listen 80;\n    listen [::]:80;\n    server_name example.com www.example.com;\n\n    root /var/www/example.com/html;\n    index index.html index.htm;\n\n    location / {\n        try_files $uri $uri/ =404;\n    }\n}\n```\n**server** block defines a virtual host. Nginx selects the server based on `listen` address/port and `server_name`. Use `default_server` for fallback."
         }
       ]
     },
     "location": {
       "contents": [
         {
-          "value": "```nginx\nlocation / { ... }          # prefix match\nlocation = /exact { ... }    # exact match\nlocation ~ \\.php$ { ... }    # regex match\nlocation ^~ /images/ { ... } # prefix priority\n```\n**location** matches request URIs and applies configuration. Priority: exact (=) > prefix (^~) > regex (~, ~*) > prefix."
+          "value": "```nginx\n# Priority order (highest to lowest):\nlocation = /exact { }        # 1. Exact match\nlocation ^~ /images/ { }     # 2. Prefix priority (no regex check)\nlocation ~ \\.php$ { }        # 3. Regex (case-sensitive)\nlocation ~* \\.(jpg|png)$ { } # 4. Regex (case-insensitive)\nlocation /prefix { }          # 5. Prefix match (longest wins)\nlocation / { }                # 6. Default prefix\n```\n**location** matches request URIs. Nginx first checks exact (`=`), then prefix matches (longest wins), then regex (first match wins). `^~` stops regex checking."
         }
       ]
     },
     "upstream": {
       "contents": [
         {
-          "value": "```nginx\nupstream backend {\n    server 10.0.0.1:8080;\n    server 10.0.0.2:8080;\n}\n```\n**upstream** defines a group of backend servers for load balancing. Default method is round-robin."
+          "value": "```nginx\nupstream backend {\n    least_conn;                       # or ip_hash; or hash $uri;\n    server 10.0.0.1:8080 weight=3;   # 3x traffic\n    server 10.0.0.2:8080;            # default weight=1\n    server 10.0.0.3:8080 backup;     # only when others fail\n    server 10.0.0.4:8080 down;       # marked offline\n    server 10.0.0.5:8080 max_fails=3 fail_timeout=30s;\n\n    keepalive 32;  # connection pool to backends\n}\n```\n**upstream** defines load-balanced backends. Methods: `round-robin` (default), `least_conn`, `ip_hash` (sticky), `hash` (custom key). `weight` controls distribution."
         }
       ]
     },
     "listen": {
       "contents": [
         {
-          "value": "```nginx\nlisten 80;\nlisten 443 ssl;\nlisten [::]:80;\n```\n**listen** sets the address and port. Supports IPv4, IPv6, SSL, and HTTP/2."
+          "value": "```nginx\nlisten 80;                          # IPv4 port 80\nlisten [::]:80;                     # IPv6 port 80\nlisten 443 ssl http2;               # HTTPS with HTTP/2\nlisten 8080 default_server;         # default for this port\nlisten unix:/var/run/nginx.sock;    # Unix socket\nlisten 80 reuseport;                # kernel load balancing\nlisten 127.0.0.1:8080;              # localhost only\n```\n**listen** sets address, port, and options. Use both IPv4 and IPv6 (`[::]:80`) for dual-stack. `default_server` catches unmatched requests."
         }
       ]
     },
     "proxy_pass": {
       "contents": [
         {
-          "value": "```nginx\nlocation /api {\n    proxy_pass http://backend:3000;\n}\n```\n**proxy_pass** forwards requests to a backend server (reverse proxy). The URL can be an upstream name or direct address."
+          "value": "```nginx\n# Simple proxy:\nlocation /api/ {\n    proxy_pass http://backend:3000;    # keeps /api/ prefix\n}\n\n# Strip prefix:\nlocation /api/ {\n    proxy_pass http://backend:3000/;   # trailing / strips /api/\n}\n\n# To upstream group:\nlocation / {\n    proxy_pass http://my_upstream;\n}\n\n# Essential headers:\nproxy_set_header Host              $host;\nproxy_set_header X-Real-IP         $remote_addr;\nproxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;\nproxy_set_header X-Forwarded-Proto $scheme;\n```\n**proxy_pass** forwards requests to backend servers. Trailing `/` in URL controls whether the location prefix is stripped. Always set forwarding headers."
         }
       ]
     },
-    "ssl_certificate": {
+    "ssl": {
       "contents": [
         {
-          "value": "```nginx\nssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\nssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n```\n**SSL certificate** directives specify the public certificate and private key for HTTPS."
+          "value": "```nginx\n# Modern SSL configuration (A+ rating):\nssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;\nssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n\nssl_protocols TLSv1.2 TLSv1.3;\nssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;\nssl_prefer_server_ciphers off;\n\nssl_session_cache shared:SSL:10m;\nssl_session_timeout 1d;\nssl_session_tickets off;\n\nssl_stapling on;\nssl_stapling_verify on;\n```\n**SSL/TLS** configuration. Use Let's Encrypt with `certbot --nginx`. Test with `ssllabs.com`. Only enable TLSv1.2+ for modern security."
         }
       ]
     },
     "try_files": {
       "contents": [
         {
-          "value": "```nginx\nlocation / {\n    try_files $uri $uri/ /index.html;\n}\n```\n**try_files** checks for file existence in order. Commonly used for SPA fallback routing."
-        }
-      ]
-    },
-    "rewrite": {
-      "contents": [
-        {
-          "value": "```nginx\nrewrite ^/blog/(.*)$ /articles/$1 permanent;\n```\n**rewrite** transforms the request URI using regex. Flags: last, break, redirect (302), permanent (301)."
+          "value": "```nginx\n# Static site:\nlocation / {\n    try_files $uri $uri/ =404;\n}\n\n# SPA (React/Vue/Angular):\nlocation / {\n    try_files $uri $uri/ /index.html;\n}\n\n# PHP (Laravel/WordPress):\nlocation / {\n    try_files $uri $uri/ /index.php?$query_string;\n}\n\n# Named location fallback:\nlocation / {\n    try_files $uri @backend;\n}\nlocation @backend {\n    proxy_pass http://app:3000;\n}\n```\n**try_files** checks file existence in order. The last argument is the fallback (URI or error code). Essential for SPA routing and PHP frameworks."
         }
       ]
     },
     "gzip": {
       "contents": [
         {
-          "value": "```nginx\ngzip on;\ngzip_types text/plain text/css application/json;\ngzip_min_length 1000;\n```\n**gzip** enables response compression. Reduces bandwidth but uses CPU. Set gzip_types for which MIME types to compress."
+          "value": "```nginx\ngzip on;\ngzip_vary on;\ngzip_proxied any;\ngzip_comp_level 6;\ngzip_min_length 256;\ngzip_types\n    text/plain\n    text/css\n    text/javascript\n    application/javascript\n    application/json\n    application/xml\n    image/svg+xml\n    font/woff2;\n```\n**gzip** compression reduces response size by 60-80%. Level 4-6 is the sweet spot. Don't compress images (already compressed) or responses under 256 bytes. `gzip_vary` is essential for CDN caching."
         }
       ]
     },
-    "rate_limit": {
+    "rate_limiting": {
       "contents": [
         {
-          "value": "```nginx\nlimit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;\nlimit_req zone=api burst=20 nodelay;\n```\n**Rate limiting** restricts request rates per client IP. burst allows temporary spikes. nodelay processes burst immediately."
+          "value": "```nginx\n# Define zone in http block:\nlimit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;\nlimit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;\n\n# Apply in location:\nlocation /api/ {\n    limit_req zone=api burst=20 nodelay;\n    limit_req_status 429;\n}\n\nlocation /login {\n    limit_req zone=login burst=5;\n}\n```\n**Rate limiting** uses leaky bucket algorithm. `rate=10r/s` allows 10 req/sec. `burst=20` buffers 20 extra. `nodelay` processes burst immediately instead of queuing."
         }
       ]
     },
-    "client_max_body_size": {
+    "security_headers": {
       "contents": [
         {
-          "value": "```nginx\nclient_max_body_size 50M;\n```\n**client_max_body_size** sets the max upload size. Returns 413 (Request Entity Too Large) if exceeded. Default is 1M."
+          "value": "```nginx\n# Prevent clickjacking:\nadd_header X-Frame-Options \"SAMEORIGIN\" always;\n\n# Prevent MIME sniffing:\nadd_header X-Content-Type-Options \"nosniff\" always;\n\n# Force HTTPS:\nadd_header Strict-Transport-Security \"max-age=63072000; includeSubDomains; preload\" always;\n\n# Content Security Policy:\nadd_header Content-Security-Policy \"default-src 'self'\" always;\n\n# Referrer policy:\nadd_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\n\n# Permissions policy:\nadd_header Permissions-Policy \"camera=(), microphone=()\" always;\n```\n**Security headers** protect against common web attacks. Use `always` to send on error pages too. Test at securityheaders.com."
         }
       ]
     },
-    "add_header": {
+    "rewrite": {
       "contents": [
         {
-          "value": "```nginx\nadd_header X-Frame-Options SAMEORIGIN;\nadd_header X-Content-Type-Options nosniff;\nadd_header Strict-Transport-Security \"max-age=31536000\";\n```\n**add_header** adds security and custom headers to responses."
+          "value": "```nginx\n# Permanent redirect (301):\nrewrite ^/old/(.*)$ /new/$1 permanent;\n\n# Temporary redirect (302):\nrewrite ^/temp/(.*)$ /alt/$1 redirect;\n\n# Internal rewrite (invisible to client):\nrewrite ^/api/v1/(.*)$ /api/v2/$1 last;\n\n# Stop processing:\nrewrite ^/done/(.*)$ /$1 break;\n\n# Prefer return for simple redirects:\nreturn 301 https://$host$request_uri;\n```\n**rewrite** transforms URIs with regex. `last` restarts location matching. `break` stops rewrite processing. For simple redirects, `return` is faster than `rewrite`."
+        }
+      ]
+    },
+    "websocket": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /ws/ {\n    proxy_pass http://backend:8080;\n    proxy_http_version 1.1;\n    proxy_set_header Upgrade $http_upgrade;\n    proxy_set_header Connection \"upgrade\";\n    proxy_set_header Host $host;\n    proxy_set_header X-Real-IP $remote_addr;\n\n    # Long timeouts for persistent connections:\n    proxy_read_timeout 86400s;\n    proxy_send_timeout 86400s;\n}\n```\n**WebSocket** proxying requires HTTP/1.1, Upgrade and Connection headers. Set long timeouts (86400s = 24h) to prevent idle disconnection."
+        }
+      ]
+    },
+    "map": {
+      "contents": [
+        {
+          "value": "```nginx\n# Map User-Agent to mobile flag:\nmap $http_user_agent $is_mobile {\n    default        0;\n    ~*mobile       1;\n    ~*android      1;\n    ~*iphone       1;\n}\n\n# Map URI to backend:\nmap $uri $backend {\n    default         http://app:3000;\n    ~^/api/         http://api:8080;\n    ~^/admin/       http://admin:9090;\n}\n\n# Use in config:\nif ($is_mobile) {\n    rewrite ^ /mobile$uri last;\n}\n```\n**map** creates variables based on other variables. Evaluated lazily (only when used). More efficient than multiple if statements."
+        }
+      ]
+    },
+    "fastcgi": {
+      "contents": [
+        {
+          "value": "```nginx\n# PHP-FPM via Unix socket (recommended):\nlocation ~ \\.php$ {\n    include fastcgi_params;\n    fastcgi_pass unix:/run/php/php8.2-fpm.sock;\n    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n    fastcgi_index index.php;\n    fastcgi_intercept_errors on;\n    fastcgi_buffer_size 16k;\n    fastcgi_buffers 4 16k;\n}\n\n# PHP-FPM via TCP (for separate server):\nlocation ~ \\.php$ {\n    fastcgi_pass 10.0.0.5:9000;\n    # ...\n}\n```\n**FastCGI** connects nginx to PHP-FPM, Python (via flup), or other FastCGI apps. Unix sockets are faster for same-server setups. TCP for remote."
+        }
+      ]
+    },
+    "logging": {
+      "contents": [
+        {
+          "value": "```nginx\n# Standard combined log:\naccess_log /var/log/nginx/access.log;\n\n# JSON log for ELK/Grafana:\nlog_format json escape=json\n    '{\"time\":\"$time_iso8601\",'\n    '\"ip\":\"$remote_addr\",'\n    '\"method\":\"$request_method\",'\n    '\"uri\":\"$uri\",'\n    '\"status\":$status,'\n    '\"size\":$body_bytes_sent,'\n    '\"time_ms\":$request_time,'\n    '\"upstream_ms\":\"$upstream_response_time\"}';\naccess_log /var/log/nginx/access.json json;\n\n# Conditional logging (skip health checks):\nmap $uri $loggable {\n    /health  0;\n    default  1;\n}\naccess_log /var/log/nginx/access.log combined if=$loggable;\n\n# Disable for static assets:\nlocation ~* \\.(css|js|png|jpg)$ {\n    access_log off;\n}\n```\n**Logging** - JSON format integrates with ELK/Grafana Loki. Use conditional logging to reduce noise. `$request_time` measures total request processing time."
+        }
+      ]
+    },
+    "variables": {
+      "contents": [
+        {
+          "value": "```nginx\n# Request variables:\n$host              # Host header (or server_name)\n$uri               # Current URI (after rewrites)\n$request_uri       # Original URI with query string\n$args              # Query string\n$request_method    # GET, POST, etc.\n$scheme            # http or https\n$server_port       # Port number\n\n# Client variables:\n$remote_addr            # Client IP\n$binary_remote_addr     # Client IP (binary, for zones)\n$http_user_agent        # User-Agent header\n$http_referer           # Referer header\n$http_cookie            # Cookie header\n$http_<header>          # Any request header\n\n# Proxy variables:\n$proxy_add_x_forwarded_for  # X-Forwarded-For chain\n$upstream_cache_status      # HIT, MISS, etc.\n$upstream_response_time     # Backend response time\n```\n**Variables** are available in most directives. `$http_*` accesses any request header. Variables are evaluated lazily."
+        }
+      ]
+    },
+    "performance": {
+      "contents": [
+        {
+          "value": "```nginx\n# Worker tuning:\nworker_processes auto;          # = CPU cores\nworker_rlimit_nofile 65535;     # max open files per worker\n\nevents {\n    worker_connections 4096;     # connections per worker\n    multi_accept on;             # accept all new connections\n    use epoll;                   # Linux: epoll, FreeBSD: kqueue\n}\n\n# TCP optimization:\nsendfile on;        # zero-copy file serving\ntcp_nopush on;      # combine headers + data\ntcp_nodelay on;     # disable Nagle's algorithm\n\n# Keepalive:\nkeepalive_timeout 65;\nkeepalive_requests 1000;\n\n# Buffer sizes:\nclient_body_buffer_size   16k;\nclient_header_buffer_size 1k;\nlarge_client_header_buffers 4 16k;\n\n# File caching:\nopen_file_cache max=1000 inactive=20s;\nopen_file_cache_valid 30s;\nopen_file_cache_min_uses 2;\n```\n**Performance tuning** - match workers to CPUs, tune connections to expected load, enable sendfile for static content. Monitor with `stub_status` module."
+        }
+      ]
+    },
+    "stub_status": {
+      "contents": [
+        {
+          "value": "```nginx\n# Enable status page (restrict access!):\nlocation /nginx_status {\n    stub_status on;\n    allow 127.0.0.1;\n    allow 10.0.0.0/8;\n    deny all;\n}\n\n# Output:\n# Active connections: 291\n# server accepts handled requests\n#  16630948 16630948 31070465\n# Reading: 6 Writing: 179 Waiting: 106\n```\n**stub_status** provides basic metrics. Active connections = reading + writing + waiting. Use for monitoring with Prometheus (via nginx-exporter) or Datadog."
         }
       ]
     }

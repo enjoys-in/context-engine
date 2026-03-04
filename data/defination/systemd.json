@@ -1,107 +1,589 @@
 {
   "language": "systemd",
   "definitions": {
-    "Unit": {
+    "[Unit]": {
       "signature": "[Unit]",
-      "description": "Contains generic information about the unit - description, dependencies, ordering.",
-      "type": "section",
-      "module": "systemd.unit"
+      "description": "Generic unit configuration. Defines dependencies, ordering, conditions. Present in all unit types.",
+      "type": "section"
     },
-    "Service": {
+    "[Service]": {
       "signature": "[Service]",
-      "description": "Configuration specific to service units - how to start, stop, and manage the process.",
-      "type": "section",
-      "module": "systemd.service"
+      "description": "Service-specific configuration: startup type, exec commands, restart policy, resource limits, security sandbox.",
+      "type": "section"
     },
-    "Install": {
+    "[Install]": {
       "signature": "[Install]",
-      "description": "Installation info used by systemctl enable/disable. Defines which target pulls in this unit.",
-      "type": "section",
-      "module": "systemd.unit"
+      "description": "Installation info for systemctl enable/disable. Defines which target pulls this unit.",
+      "type": "section"
     },
-    "Timer": {
+    "[Timer]": {
       "signature": "[Timer]",
-      "description": "Timer unit configuration. Modern replacement for cron jobs.",
-      "type": "section",
-      "module": "systemd.timer"
+      "description": "Timer configuration. Calendar or monotonic schedules. Replaces cron with more features.",
+      "type": "section"
+    },
+    "[Socket]": {
+      "signature": "[Socket]",
+      "description": "Socket activation. Systemd listens, starts service on connection. Enables zero-downtime restarts.",
+      "type": "section"
+    },
+    "[Path]": {
+      "signature": "[Path]",
+      "description": "Path-based activation. Watches filesystem paths and starts a unit when conditions are met.",
+      "type": "section"
+    },
+    "[Mount]": {
+      "signature": "[Mount]",
+      "description": "Mount point configuration. Equivalent to fstab entries but managed by systemd.",
+      "type": "section"
+    },
+    "[Swap]": {
+      "signature": "[Swap]",
+      "description": "Swap device/file configuration.",
+      "type": "section"
+    },
+    "[Slice]": {
+      "signature": "[Slice]",
+      "description": "Resource control configuration for a group of units using cgroup hierarchy.",
+      "type": "section"
+    },
+    "Description": {
+      "signature": "Description=string",
+      "description": "Human-readable description of the unit. Shown in status output and logs.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "Documentation": {
+      "signature": "Documentation=URL [URL ...]",
+      "description": "URIs pointing to documentation. Supports http://, https://, file:, info:, man: schemes.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "After": {
+      "signature": "After=unit [unit ...]",
+      "description": "Ordering dependency — start this unit after the listed units. Does NOT create a requirement, only ordering.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "Before": {
+      "signature": "Before=unit [unit ...]",
+      "description": "Start this unit before the listed units.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "Requires": {
+      "signature": "Requires=unit [unit ...]",
+      "description": "Hard requirement. If any required unit fails to start, this unit is also not started. Use with After= for ordering.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "Wants": {
+      "signature": "Wants=unit [unit ...]",
+      "description": "Soft requirement. Like Requires but this unit still starts even if wanted unit fails. Preferred over Requires.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "BindsTo": {
+      "signature": "BindsTo=unit [unit ...]",
+      "description": "Stronger than Requires: this unit is stopped when the bound unit is stopped (not just when it fails to start).",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "PartOf": {
+      "signature": "PartOf=unit [unit ...]",
+      "description": "When the listed unit is stopped or restarted, this unit is also stopped/restarted. Does not affect starting.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "Conflicts": {
+      "signature": "Conflicts=unit [unit ...]",
+      "description": "Negative dependency. Starting this unit stops conflicting units and vice versa.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "ConditionPathExists": {
+      "signature": "ConditionPathExists=[!]path",
+      "description": "Check if path exists before starting. Prefix with ! to negate. Prefix with - to make non-fatal.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "ConditionFileNotEmpty": {
+      "signature": "ConditionFileNotEmpty=[!]path",
+      "description": "Check if file exists and is not empty.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "ConditionDirectoryNotEmpty": {
+      "signature": "ConditionDirectoryNotEmpty=[!]path",
+      "description": "Check if directory exists and is not empty.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "AssertPathExists": {
+      "signature": "AssertPathExists=[!]path",
+      "description": "Like ConditionPathExists but causes a failure (not skip) if not met.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "OnFailure": {
+      "signature": "OnFailure=unit [unit ...]",
+      "description": "Units to activate when this unit enters a 'failed' state. Useful for alerting.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "OnSuccess": {
+      "signature": "OnSuccess=unit [unit ...]",
+      "description": "Units to activate when this unit succeeds (deactivates cleanly).",
+      "type": "directive",
+      "section": "[Unit]"
     },
     "Type": {
-      "signature": "Type=simple|forking|oneshot|notify|dbus",
-      "description": "Defines the process start-up type. simple: main process stays in foreground. forking: traditional daemon. oneshot: runs once.",
+      "signature": "Type=simple|exec|forking|oneshot|notify|dbus|idle",
+      "description": "Service startup type. simple: process is the service. forking: forks to background. notify: sends sd_notify(). oneshot: runs and exits. exec: like simple but 'started' after exec() succeeds.",
       "type": "directive",
-      "module": "systemd.service"
+      "section": "[Service]"
     },
     "ExecStart": {
-      "signature": "ExecStart=/path/to/command",
-      "description": "The command to run when the service is started. Must be an absolute path.",
+      "signature": "ExecStart=command",
+      "description": "Main command to start the service. Must be an absolute path. Use $MAINPID for the main process PID.",
       "type": "directive",
-      "module": "systemd.service"
+      "section": "[Service]"
+    },
+    "ExecStartPre": {
+      "signature": "ExecStartPre=[-]command",
+      "description": "Commands to run before ExecStart. Prefix with '-' to ignore failure. Prefix with '+' to run as root.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ExecStartPost": {
+      "signature": "ExecStartPost=[-]command",
+      "description": "Commands to run after ExecStart. Runs after the service is considered 'started'.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ExecStop": {
+      "signature": "ExecStop=command",
+      "description": "Command to stop the service. If not set, SIGTERM is sent. $MAINPID holds the main process PID.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ExecStopPost": {
+      "signature": "ExecStopPost=[-]command",
+      "description": "Commands to run after the service is stopped. Runs even on failure.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ExecReload": {
+      "signature": "ExecReload=command",
+      "description": "Command to reload configuration. Commonly: /bin/kill -HUP $MAINPID.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "Restart": {
       "signature": "Restart=no|on-success|on-failure|on-abnormal|on-watchdog|on-abort|always",
-      "description": "Configures when the service should be automatically restarted.",
+      "description": "When to restart: on-failure (non-zero exit, signal, timeout, watchdog). always: restart unconditionally. on-abnormal: signal, timeout, watchdog.",
       "type": "directive",
-      "module": "systemd.service"
+      "section": "[Service]"
     },
     "RestartSec": {
-      "signature": "RestartSec=5",
-      "description": "Time to sleep before restarting a service. Default is 100ms.",
+      "signature": "RestartSec=time",
+      "description": "Time to wait before restarting. Default: 100ms. Accepts s, min, h, ms, us units.",
       "type": "directive",
-      "module": "systemd.service"
+      "section": "[Service]"
+    },
+    "StartLimitBurst": {
+      "signature": "StartLimitBurst=n",
+      "description": "Maximum number of starts within StartLimitIntervalSec before the unit is held back. Default: 5.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "StartLimitIntervalSec": {
+      "signature": "StartLimitIntervalSec=time",
+      "description": "Time window for start rate limiting. Default: 10s. Set to 0 to disable.",
+      "type": "directive",
+      "section": "[Unit]"
+    },
+    "TimeoutStartSec": {
+      "signature": "TimeoutStartSec=time",
+      "description": "Timeout for service to start. If exceeded, service is killed (SIGTERM then SIGKILL). Default: 90s.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "TimeoutStopSec": {
+      "signature": "TimeoutStopSec=time",
+      "description": "Timeout for service to stop. After this, SIGKILL is sent. Default: 90s.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "WatchdogSec": {
+      "signature": "WatchdogSec=time",
+      "description": "Watchdog timeout. Service must call sd_notify(WATCHDOG=1) within this interval or be restarted.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "KillMode": {
+      "signature": "KillMode=control-group|mixed|process|none",
+      "description": "How to kill processes: control-group (all in cgroup), mixed (SIGTERM main, SIGKILL rest), process (main only).",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "KillSignal": {
+      "signature": "KillSignal=signal",
+      "description": "Signal to send when stopping. Default: SIGTERM. Also: SIGINT, SIGQUIT, etc.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "User": {
       "signature": "User=username",
-      "description": "Run the service as the specified user.",
+      "description": "Run the service as this user. Creates a user namespace if DynamicUser=yes.",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
+    },
+    "Group": {
+      "signature": "Group=groupname",
+      "description": "Run the service with this group.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "DynamicUser": {
+      "signature": "DynamicUser=yes|no",
+      "description": "Allocate a dynamic user/group at runtime. Automatically enables other sandboxing options.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "WorkingDirectory": {
-      "signature": "WorkingDirectory=/path",
-      "description": "Set the working directory for the executed process.",
+      "signature": "WorkingDirectory=path",
+      "description": "Set working directory before starting. Special: ~ for user home, - prefix to ignore if missing.",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
+    },
+    "RootDirectory": {
+      "signature": "RootDirectory=path",
+      "description": "Set root directory (chroot) for the service.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "Environment": {
-      "signature": "Environment=KEY=value",
-      "description": "Set environment variables for the service process.",
+      "signature": "Environment=KEY=value [KEY2=value2 ...]",
+      "description": "Set environment variables. For multiple: use multiple Environment= lines or EnvironmentFile=.",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
     },
     "EnvironmentFile": {
-      "signature": "EnvironmentFile=/path/to/file",
-      "description": "Load environment variables from a file. Prefix with - to ignore if missing.",
+      "signature": "EnvironmentFile=[-]path",
+      "description": "Read environment variables from file (KEY=value format). Prefix with - to ignore if missing.",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
     },
-    "After": {
-      "signature": "After=unit.target",
-      "description": "Defines ordering - start this unit after the listed units.",
+    "StandardOutput": {
+      "signature": "StandardOutput=inherit|null|tty|journal|kmsg|socket|file:path|append:path",
+      "description": "Where to send stdout. journal: systemd journal. file:path: write to file. append:path: append.",
       "type": "directive",
-      "module": "systemd.unit"
+      "section": "[Service]"
     },
-    "WantedBy": {
-      "signature": "WantedBy=multi-user.target",
-      "description": "When enabled, this unit will be started by the specified target.",
+    "StandardError": {
+      "signature": "StandardError=inherit|null|tty|journal|kmsg|socket|file:path|append:path",
+      "description": "Where to send stderr. inherit: same as StandardOutput.",
       "type": "directive",
-      "module": "systemd.unit"
+      "section": "[Service]"
     },
-    "OnCalendar": {
-      "signature": "OnCalendar=*-*-* 00:00:00",
-      "description": "Calendar event expression for timer units. Supports: daily, weekly, hourly, or specific timestamps.",
+    "SyslogIdentifier": {
+      "signature": "SyslogIdentifier=string",
+      "description": "Identifier for syslog/journal entries. Defaults to process name. Used with journalctl -u.",
       "type": "directive",
-      "module": "systemd.timer"
+      "section": "[Service]"
+    },
+    "PIDFile": {
+      "signature": "PIDFile=path",
+      "description": "Path to PID file. Required for Type=forking so systemd can track the main process.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "RemainAfterExit": {
+      "signature": "RemainAfterExit=yes|no",
+      "description": "Service remains active after main process exits. Essential for Type=oneshot.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "NotifyAccess": {
+      "signature": "NotifyAccess=none|main|exec|all",
+      "description": "Which processes can send sd_notify() messages. Required for Type=notify.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "LimitNOFILE": {
-      "signature": "LimitNOFILE=65536",
-      "description": "Set the max number of open file descriptors for the process.",
+      "signature": "LimitNOFILE=[soft:]hard",
+      "description": "Maximum open file descriptors. Commonly set to 65535 for servers. Maps to ulimit -n.",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
+    },
+    "LimitNPROC": {
+      "signature": "LimitNPROC=[soft:]hard",
+      "description": "Maximum number of processes for the user. Maps to ulimit -u.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "LimitCORE": {
+      "signature": "LimitCORE=[soft:]hard",
+      "description": "Core dump file size. Set to infinity for debugging, 0 for production.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "LimitMEMLOCK": {
+      "signature": "LimitMEMLOCK=[soft:]hard",
+      "description": "Maximum locked-in-memory size. Set to infinity for apps like Elasticsearch.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "MemoryMax": {
+      "signature": "MemoryMax=bytes",
+      "description": "Hard cgroup memory limit. Service is OOM-killed if exceeded. Supports K, M, G, T suffixes.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "MemoryHigh": {
+      "signature": "MemoryHigh=bytes",
+      "description": "Soft cgroup memory limit. Processes throttled (swapped) but not killed.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "CPUQuota": {
+      "signature": "CPUQuota=percentage",
+      "description": "CPU time limit. 100% = 1 CPU core. 200% = 2 cores.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "TasksMax": {
+      "signature": "TasksMax=number|infinity",
+      "description": "Maximum tasks (threads + processes). Default: 4915 (15% of kernel limit).",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "NoNewPrivileges": {
+      "signature": "NoNewPrivileges=yes|no",
+      "description": "Prevent privilege escalation via setuid/setgid binaries. Always enable for untrusted services.",
+      "type": "directive",
+      "section": "[Service]"
     },
     "ProtectSystem": {
-      "signature": "ProtectSystem=strict|full|true",
-      "description": "Mount /usr and /boot as read-only. strict also mounts /etc as read-only.",
+      "signature": "ProtectSystem=yes|full|strict",
+      "description": "Filesystem protection. yes: /usr,/boot readonly. full: + /etc readonly. strict: everything readonly (use ReadWritePaths= for exceptions).",
       "type": "directive",
-      "module": "systemd.exec"
+      "section": "[Service]"
+    },
+    "ProtectHome": {
+      "signature": "ProtectHome=yes|read-only|tmpfs",
+      "description": "Protect home directories. yes: inaccessible. tmpfs: empty tmpfs mounted over /home.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "PrivateTmp": {
+      "signature": "PrivateTmp=yes|no",
+      "description": "Private /tmp and /var/tmp. Prevents temp file race conditions between services.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "PrivateDevices": {
+      "signature": "PrivateDevices=yes|no",
+      "description": "Private /dev without physical devices. Only pseudo-devices like /dev/null, /dev/zero.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectKernelTunables": {
+      "signature": "ProtectKernelTunables=yes|no",
+      "description": "Make /proc/sys, /sys readonly. Prevents kernel parameter modification.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectKernelModules": {
+      "signature": "ProtectKernelModules=yes|no",
+      "description": "Deny loading kernel modules.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectKernelLogs": {
+      "signature": "ProtectKernelLogs=yes|no",
+      "description": "Deny access to kernel log ring buffer (/dev/kmsg).",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectControlGroups": {
+      "signature": "ProtectControlGroups=yes|no",
+      "description": "Make cgroup hierarchy readonly.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectHostname": {
+      "signature": "ProtectHostname=yes|no",
+      "description": "Prevent changing system hostname.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ProtectClock": {
+      "signature": "ProtectClock=yes|no",
+      "description": "Prevent changing system clock.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ReadWritePaths": {
+      "signature": "ReadWritePaths=path [path ...]",
+      "description": "Whitelist writable paths when using ProtectSystem=strict.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "ReadOnlyPaths": {
+      "signature": "ReadOnlyPaths=path [path ...]",
+      "description": "Make additional paths read-only.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "InaccessiblePaths": {
+      "signature": "InaccessiblePaths=path [path ...]",
+      "description": "Make paths completely inaccessible.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "CapabilityBoundingSet": {
+      "signature": "CapabilityBoundingSet=cap [cap ...]",
+      "description": "Restrict Linux capabilities. Empty = no capabilities. Common: CAP_NET_BIND_SERVICE (ports < 1024).",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "AmbientCapabilities": {
+      "signature": "AmbientCapabilities=cap [cap ...]",
+      "description": "Capabilities given to unprivileged processes. Allows binding port 80 without root.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "SystemCallFilter": {
+      "signature": "SystemCallFilter=[@set|syscall] ...",
+      "description": "Restrict system calls. Sets: @system-service, @basic-io, @file-system, @network-io, @process, @signal.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "SystemCallArchitectures": {
+      "signature": "SystemCallArchitectures=native|x86|x86-64|...",
+      "description": "Restrict syscall ABIs. 'native' = only the host architecture.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "RestrictNamespaces": {
+      "signature": "RestrictNamespaces=yes|no|cgroup ipc net mnt pid user uts",
+      "description": "Restrict namespace creation. yes = deny all. Or specify allowed types.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "RestrictAddressFamilies": {
+      "signature": "RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX ...",
+      "description": "Restrict socket address families. Limits network access by protocol.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "MemoryDenyWriteExecute": {
+      "signature": "MemoryDenyWriteExecute=yes|no",
+      "description": "Deny memory mappings that are both writable and executable. Prevents JIT and code injection.",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "LockPersonality": {
+      "signature": "LockPersonality=yes|no",
+      "description": "Lock the execution personality (prevents changing ABI).",
+      "type": "directive",
+      "section": "[Service]"
+    },
+    "WantedBy": {
+      "signature": "WantedBy=target [target ...]",
+      "description": "Target that pulls this unit via 'systemctl enable'. multi-user.target = boot. timers.target = timer units.",
+      "type": "directive",
+      "section": "[Install]"
+    },
+    "RequiredBy": {
+      "signature": "RequiredBy=target [target ...]",
+      "description": "Hard requirement from target. Rarely used — prefer WantedBy.",
+      "type": "directive",
+      "section": "[Install]"
+    },
+    "Also": {
+      "signature": "Also=unit [unit ...]",
+      "description": "Additional units to enable/disable together with this unit.",
+      "type": "directive",
+      "section": "[Install]"
+    },
+    "OnCalendar": {
+      "signature": "OnCalendar=expression",
+      "description": "Calendar event expression. Format: DayOfWeek Year-Month-Day Hour:Min:Sec. Shortcuts: minutely, hourly, daily, weekly, monthly, yearly.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "OnBootSec": {
+      "signature": "OnBootSec=time",
+      "description": "Trigger timer this long after boot.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "OnUnitActiveSec": {
+      "signature": "OnUnitActiveSec=time",
+      "description": "Trigger this long after the associated unit was last activated. Creates repeating timer.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "OnUnitInactiveSec": {
+      "signature": "OnUnitInactiveSec=time",
+      "description": "Trigger this long after the associated unit was last deactivated.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "Persistent": {
+      "signature": "Persistent=yes|no",
+      "description": "If timer missed while system was off, trigger immediately on next boot.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "RandomizedDelaySec": {
+      "signature": "RandomizedDelaySec=time",
+      "description": "Add random delay to prevent multiple timers firing simultaneously (thundering herd).",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "AccuracySec": {
+      "signature": "AccuracySec=time",
+      "description": "Timer accuracy. Lower = more precise, higher = more battery-friendly. Default: 1min.",
+      "type": "directive",
+      "section": "[Timer]"
+    },
+    "%n": {
+      "signature": "%n",
+      "description": "Full unit name (e.g., myapp@8080.service).",
+      "type": "specifier"
+    },
+    "%N": {
+      "signature": "%N",
+      "description": "Unescaped full unit name.",
+      "type": "specifier"
+    },
+    "%p": {
+      "signature": "%p",
+      "description": "Prefix name (before @ for template instances).",
+      "type": "specifier"
+    },
+    "%i": {
+      "signature": "%i",
+      "description": "Instance name (between @ and suffix). E.g., 8080 in myapp@8080.service.",
+      "type": "specifier"
+    },
+    "%I": {
+      "signature": "%I",
+      "description": "Unescaped instance name.",
+      "type": "specifier"
+    },
+    "%H": {
+      "signature": "%H",
+      "description": "Machine hostname.",
+      "type": "specifier"
+    },
+    "$MAINPID": {
+      "signature": "$MAINPID",
+      "description": "PID of the main process. Available in ExecReload=, ExecStop=.",
+      "type": "specifier"
     }
   }
 }

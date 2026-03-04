@@ -4,49 +4,84 @@
     "Unit": {
       "contents": [
         {
-          "value": "```ini\n[Unit]\nDescription=My Web Application\nAfter=network.target postgresql.service\nRequires=postgresql.service\n```\n**[Unit]** section defines metadata and dependencies. `After` controls startup order. `Requires` enforces hard dependencies."
+          "value": "```ini\n[Unit]\nDescription=My Web Application\nDocumentation=https://docs.example.com\n\n# Dependencies (what to start):\nRequires=postgresql.service     # Hard: fail if postgres fails\nWants=redis.service             # Soft: ok if redis fails\nBindsTo=docker.service          # Stop if docker stops\n\n# Ordering (when to start):\nAfter=network-online.target postgresql.service\nBefore=nginx.service\n\n# Conditions:\nConditionPathExists=/etc/myapp/config.yml\nConditionFileNotEmpty=/etc/myapp/license.key\n\n# On failure:\nOnFailure=notify-admin@%n.service\n```\n**[Unit]** defines metadata and dependencies. Ordering (After/Before) and requirements (Requires/Wants) are independent — use both for correct startup order."
         }
       ]
     },
     "Service": {
       "contents": [
         {
-          "value": "```ini\n[Service]\nType=simple\nUser=www-data\nExecStart=/opt/app/server\nRestart=on-failure\nRestartSec=5\n```\n**[Service]** section defines how to run the service. Type, user, command, restart policy, and environment are set here."
+          "value": "```ini\n[Service]\n# Startup types:\n# simple  - process IS the service (default)\n# exec    - like simple, started after exec()\n# forking - traditional daemon (fork+exit parent)\n# oneshot - run and exit (scripts)\n# notify  - sends sd_notify() when ready\n# dbus    - ready when D-Bus name acquired\nType=simple\n\nUser=appuser\nGroup=appuser\nWorkingDirectory=/opt/app\n\nExecStartPre=-/opt/app/pre-check.sh  # - = ignore failure\nExecStart=/opt/app/bin/server\nExecReload=/bin/kill -HUP $MAINPID\n\nRestart=on-failure\nRestartSec=5\nStartLimitBurst=3\nStartLimitIntervalSec=60\n\nEnvironment=NODE_ENV=production\nEnvironmentFile=-/opt/app/.env\n\nStandardOutput=journal\nSyslogIdentifier=myapp\n```\n**[Service]** configures how the service starts, stops, and restarts. Choose Type= carefully — it affects how systemd determines readiness."
         }
       ]
     },
     "Type": {
       "contents": [
         {
-          "value": "```ini\nType=simple    # default, main process stays foreground\nType=forking   # traditional daemon (forks to background)\nType=oneshot   # run once and exit\nType=notify    # signals readiness via sd_notify()\n```\n**Type** defines the process start-up type. Most modern services use `simple`."
+          "value": "```ini\n# Type=simple (default, most common)\n# Process started by ExecStart IS the main process\nType=simple\nExecStart=/usr/bin/node server.js\n\n# Type=exec (like simple, but started after exec())\n# More reliable startup detection\nType=exec\n\n# Type=forking (traditional daemons)\n# Parent forks, exits; child is the daemon\nType=forking\nPIDFile=/var/run/myapp.pid\nExecStart=/usr/sbin/mydaemon -d\n\n# Type=notify (modern services)\n# Service calls sd_notify(READY=1) when ready\nType=notify\nNotifyAccess=main\n\n# Type=oneshot (scripts, setup tasks)\n# Runs to completion, then considered started\nType=oneshot\nRemainAfterExit=yes\nExecStart=/opt/scripts/setup.sh\n```\n**Type** determines how systemd considers the service 'started'. Use `simple` for foreground processes, `forking` for traditional daemons, `notify` for sd_notify()-capable services, `oneshot` for scripts."
         }
       ]
     },
     "Restart": {
       "contents": [
         {
-          "value": "```ini\nRestart=on-failure   # restart on non-zero exit, signal, timeout\nRestart=always       # restart no matter what\nRestart=no           # never restart (default)\nRestartSec=5         # wait 5 seconds before restart\n```\n**Restart** controls automatic restart behavior. Use `on-failure` for production services."
+          "value": "```ini\n# Restart conditions:\n# no          - never restart (default)\n# always      - always restart\n# on-failure  - non-zero exit, signal, timeout, watchdog\n# on-abnormal - signal, timeout, watchdog (not clean non-zero)\n# on-abort    - unclean signal only\n# on-watchdog - watchdog timeout only\n# on-success  - clean exit (exit 0) only\n\nRestart=on-failure\nRestartSec=5                    # Wait 5s before restart\n\n# Rate limiting:\nStartLimitBurst=5               # Max 5 restarts...\nStartLimitIntervalSec=60        # ...in 60 seconds\n# After limit: unit enters 'failed' state\n\n# What counts as failure:\n# Exit code != 0, killed by signal, core dump,\n# timeout, watchdog timeout\n\n# Override exit codes:\nSuccessExitStatus=143           # Treat SIGTERM exit as success\nRestartPreventExitStatus=1      # Don't restart on exit 1\nRestartForceExitStatus=SIGABRT  # Always restart on SIGABRT\n```\n**Restart** policy determines when the service is automatically restarted. `on-failure` is most common. Combine with `RestartSec` and `StartLimitBurst` to prevent restart loops."
         }
       ]
     },
     "Timer": {
       "contents": [
         {
-          "value": "```ini\n[Timer]\nOnCalendar=*-*-* 02:00:00   # daily at 2 AM\nOnCalendar=Mon *-*-* 09:00  # Mondays at 9 AM\nOnCalendar=hourly           # every hour\nPersistent=true             # catch up missed runs\n```\n**Timer** units are the modern systemd alternative to cron. More flexible and integrated with logging."
+          "value": "```ini\n# Calendar expressions:\nOnCalendar=*-*-* 02:00:00       # Daily at 2 AM\nOnCalendar=Mon *-*-* 09:00:00   # Every Monday 9 AM\nOnCalendar=*-*-01 00:00:00      # 1st of each month\nOnCalendar=*:0/15               # Every 15 minutes\nOnCalendar=hourly               # Every hour\nOnCalendar=daily                # Every day at midnight\nOnCalendar=weekly               # Every Monday midnight\nOnCalendar=monthly              # 1st of month midnight\n\n# Monotonic timers:\nOnBootSec=5min                  # 5 min after boot\nOnUnitActiveSec=15min           # Every 15 min (repeating)\nOnStartupSec=30s                # 30s after systemd starts\n\n# Options:\nPersistent=true                 # Run missed events\nRandomizedDelaySec=300          # Random 0-5min delay\nAccuracySec=1s                  # Precision (default: 1min)\n\n# Test expressions:\n# systemd-analyze calendar '*-*-* 02:00:00'\n# systemd-analyze calendar 'Mon *-*-* 09:00:00' --iterations=5\n```\n**Timers** replace cron with more features: persistent (catch-up after downtime), randomized delay (prevent thundering herd), and monotonic schedules. Use `systemd-analyze calendar` to test expressions."
         }
       ]
     },
     "Install": {
       "contents": [
         {
-          "value": "```ini\n[Install]\nWantedBy=multi-user.target  # start on boot (non-GUI)\nWantedBy=graphical.target   # start on boot (GUI)\n```\n**[Install]** defines how `systemctl enable` sets up the unit. `WantedBy` creates a dependency symlink."
+          "value": "```ini\n[Install]\n# Most common — start at boot:\nWantedBy=multi-user.target\n\n# For graphical login:\nWantedBy=graphical.target\n\n# For timer units:\nWantedBy=timers.target\n\n# For socket units:\nWantedBy=sockets.target\n\n# Enable companion units together:\nAlso=myapp.socket\nAlso=myapp.timer\n\n# How it works:\n# 'systemctl enable myapp.service' creates a symlink:\n# /etc/systemd/system/multi-user.target.wants/myapp.service\n#   -> /etc/systemd/system/myapp.service\n#\n# This makes the target 'want' the service,\n# so it starts automatically at boot.\n```\n**[Install]** tells systemd what happens when you `systemctl enable` a unit. `WantedBy=multi-user.target` means 'start at boot'. This section is only used by enable/disable."
         }
       ]
     },
     "security": {
       "contents": [
         {
-          "value": "```ini\nProtectSystem=strict\nProtectHome=true\nNoNewPrivileges=true\nPrivateTmp=true\nReadOnlyPaths=/\nReadWritePaths=/var/lib/myapp\n```\n**Security hardening** restricts what the service can access. Use `systemd-analyze security myservice` to audit."
+          "value": "```ini\n# Progressive security hardening:\n\n# Level 1: Basic isolation\nNoNewPrivileges=true\nPrivateTmp=true\nProtectHome=true\nProtectSystem=strict\nReadWritePaths=/opt/app/data\n\n# Level 2: + Kernel protection\nProtectKernelTunables=true\nProtectKernelModules=true\nProtectKernelLogs=true\nProtectControlGroups=true\nProtectHostname=true\nProtectClock=true\n\n# Level 3: + Capability dropping\nCapabilityBoundingSet=\n# CAP_NET_BIND_SERVICE for port < 1024\nAmbientCapabilities=CAP_NET_BIND_SERVICE\n\n# Level 4: + Syscall filtering\nSystemCallFilter=@system-service\nSystemCallErrorNumber=EPERM\nSystemCallArchitectures=native\n\n# Level 5: + Network restrictions\nRestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\nRestrictNamespaces=true\nLockPersonality=true\nMemoryDenyWriteExecute=true\n\n# Audit your security:\n# systemd-analyze security myapp.service\n```\n**Security hardening** is progressive — start with basic isolation and add more restrictions. Use `systemd-analyze security` to audit your service. Score of 0-2 = good."
+        }
+      ]
+    },
+    "Socket": {
+      "contents": [
+        {
+          "value": "```ini\n# myapp.socket — triggers myapp.service on connection\n[Unit]\nDescription=MyApp Socket\n\n[Socket]\n# TCP port:\nListenStream=8080\n\n# Unix socket:\nListenStream=/run/myapp.sock\nSocketUser=www-data\nSocketGroup=www-data\nSocketMode=0660\n\n# UDP:\nListenDatagram=514\n\n# Options:\nAccept=no          # no: one service for all (default)\n                   # yes: one service per connection\nBacklog=128\nMaxConnections=256\nKeepAlive=true\nNoDelay=true\nFreeBind=true      # Bind even if address not yet available\n\n[Install]\nWantedBy=sockets.target\n\n# Benefits:\n# - Service starts on first connection (lazy loading)\n# - Zero-downtime restarts (socket stays open)\n# - systemd handles socket permissions\n```\n**Socket activation** lets systemd manage the listening socket. The service starts on first connection, enabling lazy loading and zero-downtime restarts."
+        }
+      ]
+    },
+    "template": {
+      "contents": [
+        {
+          "value": "```ini\n# Template unit: myapp@.service (note the @)\n# Run multiple instances with different parameters\n\n[Unit]\nDescription=MyApp on port %i\nAfter=network-online.target\n\n[Service]\nType=simple\nUser=appuser\nExecStart=/opt/myapp/bin/server --port %i\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target\n\n# Usage:\n# systemctl start myapp@8080.service\n# systemctl start myapp@8081.service\n# systemctl enable myapp@8080.service\n\n# Specifiers in templates:\n# %i  Instance name (e.g., 8080)\n# %I  Unescaped instance name\n# %p  Prefix (e.g., myapp)\n# %n  Full name (e.g., myapp@8080.service)\n\n# List instances:\n# systemctl list-units 'myapp@*'\n```\n**Template units** (name@.service) create parameterized services. The instance name after @ is available as %i. Great for running multiple copies on different ports, configs, or users."
+        }
+      ]
+    },
+    "journalctl": {
+      "contents": [
+        {
+          "value": "```bash\n# View logs for a service:\njournalctl -u myapp.service\n\n# Follow (tail) logs:\njournalctl -u myapp.service -f\n\n# Since last boot:\njournalctl -u myapp.service -b\n\n# Last 100 lines:\njournalctl -u myapp.service -n 100\n\n# Time range:\njournalctl -u myapp --since '2024-01-01' --until '2024-01-02'\njournalctl -u myapp --since '1 hour ago'\n\n# Priority filter:\njournalctl -u myapp -p err        # Errors and above\njournalctl -u myapp -p warning     # Warnings and above\n\n# Output formats:\njournalctl -u myapp -o json        # JSON output\njournalctl -u myapp -o json-pretty # Pretty JSON\njournalctl -u myapp -o short-iso   # ISO timestamps\n\n# Disk usage:\njournalctl --disk-usage\njournalctl --vacuum-size=500M      # Reduce to 500MB\njournalctl --vacuum-time=30d       # Keep 30 days\n```\n**journalctl** reads the systemd journal. Use `-u` for service logs, `-f` to follow, `-p` for priority filtering. JSON output is useful for log aggregation."
+        }
+      ]
+    },
+    "targets": {
+      "contents": [
+        {
+          "value": "```bash\n# Common targets:\n# multi-user.target  - Normal multi-user system (most services)\n# graphical.target   - GUI environment\n# network.target     - Network stack is up\n# network-online.target - Network is fully configured (use this!)\n# timers.target      - Timer units auto-start\n# sockets.target     - Socket units auto-start\n# basic.target       - Basic system initialization\n# sysinit.target     - System initialization\n# rescue.target      - Single-user rescue mode\n# emergency.target   - Emergency shell\n# shutdown.target    - System is shutting down\n# reboot.target      - System is rebooting\n# poweroff.target    - System is powering off\n\n# Check default target:\nsystemctl get-default\n\n# Set default:\nsystemctl set-default multi-user.target\n\n# Switch target now:\nsystemctl isolate rescue.target\n\n# List all targets:\nsystemctl list-units --type=target\n```\n**Targets** are systemd's equivalent of run levels. Most services use `WantedBy=multi-user.target` (boot). Use `network-online.target` (not network.target) for services needing network."
+        }
+      ]
+    },
+    "environment": {
+      "contents": [
+        {
+          "value": "```ini\n# Single variable:\nEnvironment=NODE_ENV=production\n\n# Multiple on one line (space-separated):\nEnvironment=NODE_ENV=production PORT=3000 LOG_LEVEL=info\n\n# Multiple lines:\nEnvironment=NODE_ENV=production\nEnvironment=PORT=3000\nEnvironment=DATABASE_URL=postgres://...\n\n# From file (KEY=VALUE format):\nEnvironmentFile=/opt/app/.env\nEnvironmentFile=-/opt/app/.env.local  # - = ignore if missing\n\n# .env file format:\n# NODE_ENV=production\n# PORT=3000\n# # Comments allowed\n# DATABASE_URL=\"postgres://user:pass@host/db\"\n\n# Override per-instance (drop-in):\n# systemctl edit myapp.service\n# Creates: /etc/systemd/system/myapp.service.d/override.conf\n# [Service]\n# Environment=DEBUG=true\n```\n**Environment** variables can be set inline, from files, or via drop-in overrides. File format is simple KEY=VALUE. Use `-` prefix on EnvironmentFile to ignore missing files."
         }
       ]
     }

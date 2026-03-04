@@ -1,6 +1,18 @@
 {
   "language": "nginx",
   "definitions": {
+    "http": {
+      "signature": "http { ... }",
+      "description": "The top-level block for all HTTP configuration. Contains server blocks, upstream definitions, and global HTTP settings.",
+      "type": "block",
+      "module": "ngx_http_core_module"
+    },
+    "events": {
+      "signature": "events { ... }",
+      "description": "Configure connection processing parameters: worker_connections, multi_accept, use (epoll/kqueue).",
+      "type": "block",
+      "module": "ngx_core_module"
+    },
     "server": {
       "signature": "server { ... }",
       "description": "Defines a virtual server. Each server block can listen on different ports and respond to different domain names.",
@@ -9,85 +21,307 @@
     },
     "location": {
       "signature": "location [modifier] uri { ... }",
-      "description": "Sets configuration based on the request URI. Modifiers: = (exact), ~ (regex), ~* (case-insensitive regex), ^~ (prefix priority).",
+      "description": "Sets configuration based on request URI. Modifiers: = (exact), ~ (regex), ~* (case-insensitive regex), ^~ (prefix priority). Priority: = > ^~ > ~/~* > prefix.",
       "type": "block",
       "module": "ngx_http_core_module"
     },
     "upstream": {
       "signature": "upstream name { ... }",
-      "description": "Defines a group of servers for load balancing. Supports round-robin, least_conn, ip_hash, and hash methods.",
+      "description": "Defines a group of servers for load balancing. Methods: round-robin (default), least_conn, ip_hash, hash, random.",
       "type": "block",
       "module": "ngx_http_upstream_module"
     },
+    "map": {
+      "signature": "map $variable $new_variable { ... }",
+      "description": "Creates a new variable whose value depends on values of one or more source variables. Supports regex and default.",
+      "type": "block",
+      "module": "ngx_http_map_module"
+    },
+    "geo": {
+      "signature": "geo [$address] $variable { ... }",
+      "description": "Creates variables based on client IP address or CIDR ranges.",
+      "type": "block",
+      "module": "ngx_http_geo_module"
+    },
+    "types": {
+      "signature": "types { ... }",
+      "description": "Maps file extensions to MIME types. Usually included from mime.types file.",
+      "type": "block",
+      "module": "ngx_http_core_module"
+    },
+    "stream": {
+      "signature": "stream { ... }",
+      "description": "TCP/UDP proxy configuration block. Used for non-HTTP protocols like MySQL, PostgreSQL, DNS.",
+      "type": "block",
+      "module": "ngx_stream_core_module"
+    },
     "listen": {
-      "signature": "listen address[:port] [ssl] [http2]",
-      "description": "Sets the address and port on which the server accepts requests. Can include ssl and http2 parameters.",
+      "signature": "listen address[:port] [ssl] [http2] [default_server] [backlog=n]",
+      "description": "Sets the address and port for the server. Supports IPv4, IPv6 ([::]:80), Unix sockets, ssl, http2, and default_server.",
       "type": "directive",
       "module": "ngx_http_core_module"
     },
     "server_name": {
       "signature": "server_name name [...]",
-      "description": "Sets the virtual server names. Supports exact names, wildcard names (*.example.com), and regex names.",
+      "description": "Sets virtual server names. Supports: exact names, wildcard (*.example.com), regex (~^www\\.(.+)\\.com$). Checked in that order.",
       "type": "directive",
       "module": "ngx_http_core_module"
     },
     "root": {
       "signature": "root path",
-      "description": "Sets the root directory for requests. The full path is formed by appending the URI to the root path.",
+      "description": "Sets the root directory for requests. Full path = root + URI. Use alias to replace the location prefix instead.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "alias": {
+      "signature": "alias path",
+      "description": "Replaces the matched location prefix with the specified path. Unlike root, does not append the URI.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "index": {
+      "signature": "index file [...]",
+      "description": "Defines files used as an index when URI ends with /. Checked in order, first found is used.",
+      "type": "directive",
+      "module": "ngx_http_index_module"
+    },
+    "autoindex": {
+      "signature": "autoindex on|off",
+      "description": "Enables or disables directory listing when no index file is found.",
+      "type": "directive",
+      "module": "ngx_http_autoindex_module"
+    },
+    "error_page": {
+      "signature": "error_page code ... [=response] uri",
+      "description": "Defines custom error pages. Can also change response code: error_page 404 =200 /empty.gif",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "include": {
+      "signature": "include file|mask",
+      "description": "Include another config file or files matching a glob pattern.",
+      "type": "directive",
+      "module": "ngx_core_module"
+    },
+    "default_type": {
+      "signature": "default_type mime-type",
+      "description": "Sets the default MIME type for responses when the type cannot be determined.",
       "type": "directive",
       "module": "ngx_http_core_module"
     },
     "proxy_pass": {
       "signature": "proxy_pass URL",
-      "description": "Passes the request to a proxied server. The URL can include protocol, server address, and optional URI.",
+      "description": "Passes the request to a proxied server. URL can include protocol, address, URI. A trailing / on the URL replaces the location prefix.",
       "type": "directive",
       "module": "ngx_http_proxy_module"
     },
     "proxy_set_header": {
       "signature": "proxy_set_header field value",
-      "description": "Redefines or appends fields to the request header passed to the proxied server.",
+      "description": "Redefines request headers passed to the proxied server. Essential: Host, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_http_version": {
+      "signature": "proxy_http_version 1.0|1.1",
+      "description": "Sets the HTTP protocol version for proxying. Use 1.1 for keepalive connections and WebSocket support.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_redirect": {
+      "signature": "proxy_redirect default|off|redirect replacement",
+      "description": "Changes the Location and Refresh response headers from the proxied server.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_buffering": {
+      "signature": "proxy_buffering on|off",
+      "description": "Enables buffering of responses from the proxied server. Off = pass through immediately (useful for streaming).",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_cache": {
+      "signature": "proxy_cache zone|off",
+      "description": "Defines a shared memory zone used for caching proxied responses.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_cache_path": {
+      "signature": "proxy_cache_path path levels= keys_zone= [max_size=] [inactive=]",
+      "description": "Sets the path and parameters for the proxy cache. levels defines directory hierarchy, keys_zone defines shared memory.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_cache_valid": {
+      "signature": "proxy_cache_valid [code ...] time",
+      "description": "Sets caching time for different response codes. E.g., proxy_cache_valid 200 302 10m;",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_connect_timeout": {
+      "signature": "proxy_connect_timeout time",
+      "description": "Timeout for establishing a connection with the proxied server. Default: 60s.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_read_timeout": {
+      "signature": "proxy_read_timeout time",
+      "description": "Timeout for reading a response from the proxied server. Default: 60s.",
+      "type": "directive",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_send_timeout": {
+      "signature": "proxy_send_timeout time",
+      "description": "Timeout for transmitting a request to the proxied server. Default: 60s.",
       "type": "directive",
       "module": "ngx_http_proxy_module"
     },
     "ssl_certificate": {
       "signature": "ssl_certificate file",
-      "description": "Specifies the PEM-format certificate file for the server. Can include intermediate certificates.",
+      "description": "Specifies the PEM-format certificate file (public key). Should include intermediate certificates (fullchain).",
       "type": "directive",
       "module": "ngx_http_ssl_module"
     },
     "ssl_certificate_key": {
       "signature": "ssl_certificate_key file",
-      "description": "Specifies the PEM-format private key file for the server certificate.",
+      "description": "Specifies the PEM-format private key file.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_protocols": {
+      "signature": "ssl_protocols [SSLv2] [SSLv3] [TLSv1] [TLSv1.1] [TLSv1.2] [TLSv1.3]",
+      "description": "Enables the specified SSL/TLS protocols. Modern: TLSv1.2 TLSv1.3.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_ciphers": {
+      "signature": "ssl_ciphers ciphers",
+      "description": "Specifies the enabled ciphers in OpenSSL format. Use openssl ciphers to list available.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_prefer_server_ciphers": {
+      "signature": "ssl_prefer_server_ciphers on|off",
+      "description": "Prefer server ciphers over client ciphers. Recommended for TLSv1.2, not needed for TLSv1.3.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_session_cache": {
+      "signature": "ssl_session_cache off|none|shared:name:size",
+      "description": "Configure SSL session cache. shared:SSL:10m stores ~40000 sessions.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_session_timeout": {
+      "signature": "ssl_session_timeout time",
+      "description": "Timeout for SSL session reuse. Default: 5m.",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_stapling": {
+      "signature": "ssl_stapling on|off",
+      "description": "Enable OCSP stapling. Sends certificate status during TLS handshake (faster verification).",
+      "type": "directive",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_dhparam": {
+      "signature": "ssl_dhparam file",
+      "description": "Specifies DH parameters file for DHE ciphers. Generate: openssl dhparam -out dhparam.pem 2048",
       "type": "directive",
       "module": "ngx_http_ssl_module"
     },
     "try_files": {
       "signature": "try_files file ... uri | =code",
-      "description": "Checks the existence of files in order, and uses the first found. Often used for SPA routing with =404 fallback.",
+      "description": "Checks files in order, returns first found. Last parameter is fallback URI or error code. Essential for SPA and CMS routing.",
       "type": "directive",
       "module": "ngx_http_core_module"
     },
     "rewrite": {
       "signature": "rewrite regex replacement [flag]",
-      "description": "Rewrites the request URI using PCRE regex. Flags: last, break, redirect (302), permanent (301).",
+      "description": "Rewrites URI using PCRE regex. Flags: last (restart processing), break (stop rewriting), redirect (302), permanent (301).",
       "type": "directive",
       "module": "ngx_http_rewrite_module"
     },
     "return": {
       "signature": "return code [text|URL]",
-      "description": "Stops processing and returns the specified code. Commonly used with 301/302 for redirects.",
+      "description": "Stops processing and returns response. Codes 301/302/303/307/308 + URL for redirects. 200 + text for direct response.",
+      "type": "directive",
+      "module": "ngx_http_rewrite_module"
+    },
+    "set": {
+      "signature": "set $variable value",
+      "description": "Sets the value of a variable. Variables can then be used in other directives.",
+      "type": "directive",
+      "module": "ngx_http_rewrite_module"
+    },
+    "if": {
+      "signature": "if (condition) { ... }",
+      "description": "Conditional evaluation. Conditions: variable, =, !=, ~, ~*, !~, -f, -d, -e, -x. Use sparingly (nginx's 'if is evil').",
       "type": "directive",
       "module": "ngx_http_rewrite_module"
     },
     "gzip": {
       "signature": "gzip on|off",
-      "description": "Enables or disables gzip compression of responses. Reduces transfer size at the cost of CPU.",
+      "description": "Enables gzip compression of responses. Reduces transfer size but uses CPU.",
       "type": "directive",
       "module": "ngx_http_gzip_module"
     },
+    "gzip_types": {
+      "signature": "gzip_types mime-type ...",
+      "description": "MIME types to compress in addition to text/html (always compressed).",
+      "type": "directive",
+      "module": "ngx_http_gzip_module"
+    },
+    "gzip_vary": {
+      "signature": "gzip_vary on|off",
+      "description": "Adds Vary: Accept-Encoding header. Important for proxy caches to store both compressed and uncompressed versions.",
+      "type": "directive",
+      "module": "ngx_http_gzip_module"
+    },
+    "gzip_comp_level": {
+      "signature": "gzip_comp_level level",
+      "description": "Compression level 1-9. Higher = more compression but more CPU. 4-6 is a good balance.",
+      "type": "directive",
+      "module": "ngx_http_gzip_module"
+    },
+    "gzip_min_length": {
+      "signature": "gzip_min_length length",
+      "description": "Minimum response length to compress. Default: 20. Set higher (256-1000) to avoid compressing tiny responses.",
+      "type": "directive",
+      "module": "ngx_http_gzip_module"
+    },
+    "gzip_proxied": {
+      "signature": "gzip_proxied off|expired|no-cache|no-store|private|no_last_modified|no_etag|auth|any",
+      "description": "Enables compression for proxied requests based on request/response headers.",
+      "type": "directive",
+      "module": "ngx_http_gzip_module"
+    },
+    "limit_req_zone": {
+      "signature": "limit_req_zone key zone=name:size rate=rate",
+      "description": "Defines shared memory zone for rate limiting. Key: usually $binary_remote_addr. Rate: requests per second (r/s) or minute (r/m).",
+      "type": "directive",
+      "module": "ngx_http_limit_req_module"
+    },
+    "limit_req": {
+      "signature": "limit_req zone=name [burst=n] [nodelay|delay=n]",
+      "description": "Enables rate limiting in a location. burst allows temporary spikes. nodelay processes burst immediately.",
+      "type": "directive",
+      "module": "ngx_http_limit_req_module"
+    },
+    "limit_conn_zone": {
+      "signature": "limit_conn_zone key zone=name:size",
+      "description": "Defines shared memory zone for connection limiting.",
+      "type": "directive",
+      "module": "ngx_http_limit_conn_module"
+    },
+    "limit_conn": {
+      "signature": "limit_conn zone number",
+      "description": "Limits the number of concurrent connections from a single key (usually IP).",
+      "type": "directive",
+      "module": "ngx_http_limit_conn_module"
+    },
     "access_log": {
-      "signature": "access_log path [format]",
-      "description": "Sets the path, format, and configuration for the access log.",
+      "signature": "access_log path [format] [if=condition]",
+      "description": "Sets access log path and format. Can be conditional. Use 'off' to disable.",
       "type": "directive",
       "module": "ngx_http_log_module"
     },
@@ -97,35 +331,185 @@
       "type": "directive",
       "module": "ngx_core_module"
     },
-    "client_max_body_size": {
-      "signature": "client_max_body_size size",
-      "description": "Sets the maximum allowed size of the client request body. Default is 1m. Set to 0 to disable checking.",
+    "log_format": {
+      "signature": "log_format name [escape=default|json|none] string ...",
+      "description": "Defines a named log format. Variables: $remote_addr, $request, $status, $body_bytes_sent, etc.",
       "type": "directive",
-      "module": "ngx_http_core_module"
+      "module": "ngx_http_log_module"
     },
     "add_header": {
       "signature": "add_header name value [always]",
-      "description": "Adds a custom header to the response. Use always to add header regardless of response code.",
+      "description": "Adds a response header. Use 'always' to add regardless of response code (including 4xx/5xx).",
       "type": "directive",
       "module": "ngx_http_headers_module"
-    },
-    "limit_req_zone": {
-      "signature": "limit_req_zone key zone=name:size rate=rate",
-      "description": "Defines a shared memory zone for rate limiting. Key is typically $binary_remote_addr.",
-      "type": "directive",
-      "module": "ngx_http_limit_req_module"
     },
     "expires": {
       "signature": "expires [modified] time | epoch | max | off",
-      "description": "Sets the Expires header and Cache-Control max-age. Common values: 30d, 1h, max.",
+      "description": "Sets Expires and Cache-Control headers. Values: 30d, 1h, max, off. epoch = no-cache.",
       "type": "directive",
       "module": "ngx_http_headers_module"
     },
-    "index": {
-      "signature": "index file [...]",
-      "description": "Defines files that will be used as an index. Checked in order, the first found is used.",
+    "allow": {
+      "signature": "allow address|CIDR|all",
+      "description": "Allow access from the specified address or network.",
       "type": "directive",
-      "module": "ngx_http_index_module"
+      "module": "ngx_http_access_module"
+    },
+    "deny": {
+      "signature": "deny address|CIDR|all",
+      "description": "Deny access from the specified address or network.",
+      "type": "directive",
+      "module": "ngx_http_access_module"
+    },
+    "auth_basic": {
+      "signature": "auth_basic string|off",
+      "description": "Enable HTTP Basic authentication. String is the realm name shown in the browser dialog.",
+      "type": "directive",
+      "module": "ngx_http_auth_basic_module"
+    },
+    "auth_basic_user_file": {
+      "signature": "auth_basic_user_file file",
+      "description": "Path to the htpasswd file. Generate: htpasswd -c /etc/nginx/.htpasswd username",
+      "type": "directive",
+      "module": "ngx_http_auth_basic_module"
+    },
+    "client_max_body_size": {
+      "signature": "client_max_body_size size",
+      "description": "Maximum allowed client request body size. Returns 413 if exceeded. Default: 1m. Use 0 to disable.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "client_body_timeout": {
+      "signature": "client_body_timeout time",
+      "description": "Timeout for reading the client request body. Default: 60s.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "client_header_timeout": {
+      "signature": "client_header_timeout time",
+      "description": "Timeout for reading the client request header. Default: 60s.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "sendfile": {
+      "signature": "sendfile on|off",
+      "description": "Enables kernel sendfile() for serving static files. Bypasses user-space copying (zero-copy).",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "tcp_nopush": {
+      "signature": "tcp_nopush on|off",
+      "description": "Enables TCP_CORK/TCP_NOPUSH. Sends response headers and beginning of file in one packet.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "tcp_nodelay": {
+      "signature": "tcp_nodelay on|off",
+      "description": "Enables TCP_NODELAY for keepalive connections. Disables Nagle's algorithm.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "keepalive_timeout": {
+      "signature": "keepalive_timeout timeout [header_timeout]",
+      "description": "First value: server-side keepalive timeout. Second: Keep-Alive header value sent to client.",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "worker_processes": {
+      "signature": "worker_processes number|auto",
+      "description": "Number of worker processes. auto = number of CPU cores. Set in main context only.",
+      "type": "directive",
+      "module": "ngx_core_module"
+    },
+    "worker_connections": {
+      "signature": "worker_connections number",
+      "description": "Maximum simultaneous connections each worker can handle. Total connections = workers x connections.",
+      "type": "directive",
+      "module": "ngx_event_module"
+    },
+    "resolver": {
+      "signature": "resolver address ... [valid=time]",
+      "description": "Configure DNS resolvers for upstream, SSL stapling, etc. Example: 8.8.8.8 1.1.1.1 valid=300s;",
+      "type": "directive",
+      "module": "ngx_http_core_module"
+    },
+    "fastcgi_pass": {
+      "signature": "fastcgi_pass address",
+      "description": "Sets the address of a FastCGI server (PHP-FPM). Can be TCP or Unix socket.",
+      "type": "directive",
+      "module": "ngx_http_fastcgi_module"
+    },
+    "fastcgi_param": {
+      "signature": "fastcgi_param parameter value",
+      "description": "Sets a parameter passed to the FastCGI server. SCRIPT_FILENAME is essential for PHP.",
+      "type": "directive",
+      "module": "ngx_http_fastcgi_module"
+    },
+    "fastcgi_index": {
+      "signature": "fastcgi_index name",
+      "description": "Sets the index file name for FastCGI requests ending with /.",
+      "type": "directive",
+      "module": "ngx_http_fastcgi_module"
+    },
+    "$host": {
+      "signature": "$host",
+      "description": "Request Host header, or server_name if Host is missing. Most commonly used variable.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$uri": {
+      "signature": "$uri",
+      "description": "Current (possibly rewritten) URI without query string.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$request_uri": {
+      "signature": "$request_uri",
+      "description": "Original full URI with query string, as sent by the client.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$remote_addr": {
+      "signature": "$remote_addr",
+      "description": "Client IP address.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$scheme": {
+      "signature": "$scheme",
+      "description": "Request scheme: http or https.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$args": {
+      "signature": "$args",
+      "description": "Query string arguments.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$http_upgrade": {
+      "signature": "$http_upgrade",
+      "description": "Value of the Upgrade request header. Used for WebSocket proxying.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
+    },
+    "$proxy_add_x_forwarded_for": {
+      "signature": "$proxy_add_x_forwarded_for",
+      "description": "X-Forwarded-For header with $remote_addr appended. Preserves the original client chain.",
+      "type": "variable",
+      "module": "ngx_http_proxy_module"
+    },
+    "$upstream_cache_status": {
+      "signature": "$upstream_cache_status",
+      "description": "Cache status: MISS, HIT, EXPIRED, BYPASS, STALE, UPDATING, REVALIDATED.",
+      "type": "variable",
+      "module": "ngx_http_upstream_module"
+    },
+    "$binary_remote_addr": {
+      "signature": "$binary_remote_addr",
+      "description": "Client IP in binary form (4 bytes for IPv4). Efficient key for limit_req_zone/limit_conn_zone.",
+      "type": "variable",
+      "module": "ngx_http_core_module"
     }
   }
 }

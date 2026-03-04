@@ -1,86 +1,223 @@
 {
   "name": "journalctl",
-  "description": "Query and display systemd journal logs",
-  "category": "Linux Coreutils",
-  "platforms": ["linux"],
-  "shells": ["bash", "zsh", "fish"],
+  "description": "Query and display messages from the systemd journal",
+  "category": "system",
+  "platforms": [
+    "linux"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish"
+  ],
   "subcommands": [],
   "globalOptions": [
-    { "name": "--unit", "shorthand": "-u", "description": "Filter by systemd unit", "takesValue": true },
-    { "name": "--user-unit", "description": "Filter by user unit", "takesValue": true },
-    { "name": "--follow", "shorthand": "-f", "description": "Follow log output (like tail -f)" },
-    { "name": "--lines", "shorthand": "-n", "description": "Number of lines to show", "takesValue": true },
-    { "name": "--reverse", "shorthand": "-r", "description": "Reverse output (newest first)" },
-    { "name": "--output", "shorthand": "-o", "description": "Output format (short, json, cat, verbose, export)", "takesValue": true },
-    { "name": "--priority", "shorthand": "-p", "description": "Filter by priority (emerg, alert, crit, err, warning, notice, info, debug)", "takesValue": true },
-    { "name": "--since", "shorthand": "-S", "description": "Show entries since time", "takesValue": true },
-    { "name": "--until", "shorthand": "-U", "description": "Show entries until time", "takesValue": true },
-    { "name": "--boot", "shorthand": "-b", "description": "Show messages from specific boot", "takesValue": true },
-    { "name": "--kernel", "shorthand": "-k", "description": "Show kernel messages" },
-    { "name": "--dmesg", "description": "Show kernel ring buffer" },
-    { "name": "--identifier", "shorthand": "-t", "description": "Filter by syslog identifier", "takesValue": true },
-    { "name": "--grep", "shorthand": "-g", "description": "Filter by regex pattern", "takesValue": true },
-    { "name": "--case-sensitive", "description": "Case sensitive grep", "takesValue": true },
-    { "name": "--catalog", "shorthand": "-x", "description": "Add message explanations" },
-    { "name": "--no-pager", "description": "Don't pipe through pager" },
-    { "name": "--all", "shorthand": "-a", "description": "Show all fields" },
-    { "name": "--disk-usage", "description": "Show journal disk usage" },
-    { "name": "--list-boots", "description": "List boot entries" },
-    { "name": "--vacuum-size", "description": "Reduce journal size to limit", "takesValue": true },
-    { "name": "--vacuum-time", "description": "Remove journal older than", "takesValue": true },
-    { "name": "--vacuum-files", "description": "Keep only N journal files", "takesValue": true },
-    { "name": "--verify", "description": "Verify journal file consistency" },
-    { "name": "--field", "shorthand": "-F", "description": "List unique values of field", "takesValue": true },
-    { "name": "--header", "description": "Show journal header" },
-    { "name": "_PID", "description": "Filter by PID", "takesValue": true },
-    { "name": "_UID", "description": "Filter by UID", "takesValue": true },
-    { "name": "_COMM", "description": "Filter by command name", "takesValue": true }
+    {
+      "name": "-u",
+      "description": "Show logs for a specific unit",
+      "type": "string"
+    },
+    {
+      "name": "-f",
+      "description": "Follow — show new log entries as they appear"
+    },
+    {
+      "name": "-n",
+      "description": "Number of lines to show (default: 10)",
+      "type": "number"
+    },
+    {
+      "name": "-b",
+      "description": "Show logs from a specific boot (0=current, -1=previous)",
+      "type": "string"
+    },
+    {
+      "name": "-p",
+      "description": "Priority filter: emerg, alert, crit, err, warning, notice, info, debug",
+      "type": "string"
+    },
+    {
+      "name": "--since",
+      "description": "Start time (YYYY-MM-DD HH:MM:SS or relative: '1 hour ago')",
+      "type": "string"
+    },
+    {
+      "name": "--until",
+      "description": "End time",
+      "type": "string"
+    },
+    {
+      "name": "-o",
+      "description": "Output format: short, short-iso, json, json-pretty, cat, verbose",
+      "type": "string"
+    },
+    {
+      "name": "-r",
+      "description": "Reverse output (newest first)"
+    },
+    {
+      "name": "-e",
+      "description": "Jump to end of journal"
+    },
+    {
+      "name": "-x",
+      "description": "Add explanatory text from message catalog"
+    },
+    {
+      "name": "-k",
+      "description": "Show only kernel messages (dmesg equivalent)"
+    },
+    {
+      "name": "-t",
+      "description": "Filter by syslog identifier (tag)",
+      "type": "string"
+    },
+    {
+      "name": "--no-pager",
+      "description": "Don't pipe through pager"
+    },
+    {
+      "name": "--no-hostname",
+      "description": "Don't show hostname field"
+    },
+    {
+      "name": "--no-full",
+      "description": "Ellipsize long lines"
+    },
+    {
+      "name": "--disk-usage",
+      "description": "Show journal disk usage"
+    },
+    {
+      "name": "--vacuum-size",
+      "description": "Reduce journal to this size",
+      "type": "string"
+    },
+    {
+      "name": "--vacuum-time",
+      "description": "Remove entries older than this",
+      "type": "string"
+    },
+    {
+      "name": "--vacuum-files",
+      "description": "Limit number of journal files",
+      "type": "number"
+    },
+    {
+      "name": "--list-boots",
+      "description": "List recorded boots"
+    },
+    {
+      "name": "--grep",
+      "short": "-g",
+      "description": "Filter by regex pattern in message",
+      "type": "string"
+    },
+    {
+      "name": "--case-sensitive",
+      "description": "Case-sensitive grep (default: no)",
+      "type": "string"
+    },
+    {
+      "name": "_PID",
+      "description": "Filter by process ID",
+      "type": "number"
+    },
+    {
+      "name": "_UID",
+      "description": "Filter by user ID",
+      "type": "number"
+    },
+    {
+      "name": "_COMM",
+      "description": "Filter by process name",
+      "type": "string"
+    },
+    {
+      "name": "--user",
+      "description": "Show user journal entries"
+    },
+    {
+      "name": "--system",
+      "description": "Show system journal entries (default)"
+    },
+    {
+      "name": "--header",
+      "description": "Show journal header information"
+    },
+    {
+      "name": "--verify",
+      "description": "Verify journal file consistency"
+    },
+    {
+      "name": "-q",
+      "description": "Quiet — suppress info messages"
+    },
+    {
+      "name": "-a",
+      "description": "Show all fields including unprintable"
+    }
   ],
   "examples": [
-    { "command": "journalctl -u nginx", "description": "Show nginx logs" },
-    { "command": "journalctl -u nginx -f", "description": "Follow nginx logs" },
-    { "command": "journalctl -u nginx --since '1 hour ago'", "description": "Last hour of logs" },
-    { "command": "journalctl -p err", "description": "Show only errors" },
-    { "command": "journalctl -k", "description": "Kernel messages" },
-    { "command": "journalctl -b -1", "description": "Previous boot logs" },
-    { "command": "journalctl --disk-usage", "description": "Show disk usage" },
-    { "command": "journalctl -o json-pretty -n 10", "description": "JSON output" },
-    { "command": "journalctl --vacuum-time=7d", "description": "Clean logs older than 7 days" },
-    { "command": "journalctl -u docker -g 'error|fail' --since today", "description": "Docker errors today" }
+    "journalctl",
+    "journalctl -u nginx",
+    "journalctl -u nginx -f",
+    "journalctl -u nginx -n 100",
+    "journalctl -u nginx -b",
+    "journalctl -u nginx -b -1",
+    "journalctl -u nginx --since '1 hour ago'",
+    "journalctl -u nginx --since '2024-01-01' --until '2024-01-02'",
+    "journalctl -u nginx -p err",
+    "journalctl -u nginx -p warning",
+    "journalctl -u nginx -o json",
+    "journalctl -u nginx -o json-pretty",
+    "journalctl -u nginx -o short-iso",
+    "journalctl -u nginx -o cat",
+    "journalctl -u nginx --grep 'error|failed'",
+    "journalctl -u nginx -r -n 50",
+    "journalctl -k",
+    "journalctl -k -b -1",
+    "journalctl _PID=1234",
+    "journalctl _COMM=sshd",
+    "journalctl -p err -b --no-pager",
+    "journalctl --list-boots",
+    "journalctl --disk-usage",
+    "journalctl --vacuum-size=500M",
+    "journalctl --vacuum-time=30d",
+    "journalctl -u nginx -u php-fpm --since today",
+    "journalctl --since '5 minutes ago' -p err..emerg",
+    "journalctl -xe"
   ],
-  "relatedCommands": ["systemctl", "dmesg"],
+  "relatedCommands": [
+    "systemctl",
+    "systemd-analyze",
+    "dmesg",
+    "syslog"
+  ],
   "contextEngine": {
     "detectors": [
       {
-        "name": "units",
-        "description": "Active systemd units",
-        "command": "systemctl list-units --type=service --state=running --no-pager --plain 2>/dev/null | awk '{print $1}' | head -30",
-        "parser": "lines",
-        "cacheFor": 30,
-        "requiresCmd": "systemctl"
-      },
-      {
-        "name": "boots",
-        "description": "Boot entries",
-        "command": "journalctl --list-boots --no-pager 2>/dev/null | head -10",
-        "parser": "lines",
+        "name": "journal_size",
+        "description": "Journal disk usage",
+        "command": "journalctl --disk-usage 2>/dev/null | awk '{print $NF}'",
+        "parser": "text",
         "cacheFor": 120,
         "requiresCmd": "journalctl"
       },
       {
-        "name": "disk_usage",
-        "description": "Journal disk usage",
-        "command": "journalctl --disk-usage 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 60,
+        "name": "recent_errors",
+        "description": "Recent error-level journal entries",
+        "command": "journalctl -p err --since '1 hour ago' --no-pager -q 2>/dev/null | tail -10",
+        "parser": "lines",
+        "cacheFor": 15,
         "requiresCmd": "journalctl"
       },
       {
-        "name": "recent_errors",
-        "description": "Recent error messages",
-        "command": "journalctl -p err --no-pager -n 5 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 15,
+        "name": "boot_count",
+        "description": "Number of recorded boots",
+        "command": "journalctl --list-boots --no-pager -q 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 300,
         "requiresCmd": "journalctl"
       }
     ]

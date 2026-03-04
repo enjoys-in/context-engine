@@ -2,6 +2,28 @@
   "language": "nginx",
   "completions": [
     {
+      "label": "http block",
+      "kind": 15,
+      "detail": "HTTP block",
+      "documentation": {
+        "value": "Top-level block for HTTP server configuration."
+      },
+      "insertText": "http {\n    include       mime.types;\n    default_type  application/octet-stream;\n    sendfile      on;\n    keepalive_timeout  65;\n\n    ${1:# server blocks}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_http"
+    },
+    {
+      "label": "events block",
+      "kind": 15,
+      "detail": "Events block",
+      "documentation": {
+        "value": "Configure connection processing."
+      },
+      "insertText": "events {\n    worker_connections  ${1:1024};\n    multi_accept on;\n    use epoll;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_events"
+    },
+    {
       "label": "server block",
       "kind": 15,
       "detail": "Server block",
@@ -11,6 +33,28 @@
       "insertText": "server {\n    listen ${1:80};\n    server_name ${2:example.com};\n\n    location / {\n        ${3:root /var/www/html;}\n    }\n}",
       "insertTextRules": 4,
       "sortText": "00_server"
+    },
+    {
+      "label": "server block HTTPS",
+      "kind": 15,
+      "detail": "HTTPS Server",
+      "documentation": {
+        "value": "Full HTTPS server block with SSL, security headers, and HTTP/2."
+      },
+      "insertText": "server {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name ${1:example.com};\n\n    ssl_certificate     /etc/letsencrypt/live/${1:example.com}/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/${1:example.com}/privkey.pem;\n    ssl_protocols       TLSv1.2 TLSv1.3;\n    ssl_ciphers         HIGH:!aNULL:!MD5;\n    ssl_prefer_server_ciphers on;\n    ssl_session_cache   shared:SSL:10m;\n    ssl_session_timeout 1d;\n\n    add_header Strict-Transport-Security \"max-age=63072000\" always;\n    add_header X-Frame-Options DENY;\n    add_header X-Content-Type-Options nosniff;\n\n    root /var/www/${1:example.com}/html;\n    index index.html;\n\n    location / {\n        try_files \\$uri \\$uri/ =404;\n    }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_serverhttps"
+    },
+    {
+      "label": "HTTP to HTTPS redirect",
+      "kind": 15,
+      "detail": "Force HTTPS",
+      "documentation": {
+        "value": "Redirect all HTTP traffic to HTTPS."
+      },
+      "insertText": "server {\n    listen 80;\n    listen [::]:80;\n    server_name ${1:example.com} www.${1:example.com};\n    return 301 https://\\$host\\$request_uri;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_redirect_https"
     },
     {
       "label": "location block",
@@ -24,15 +68,92 @@
       "sortText": "00_location"
     },
     {
+      "label": "location exact",
+      "kind": 15,
+      "detail": "Exact match location",
+      "documentation": {
+        "value": "Exact URI match — highest priority."
+      },
+      "insertText": "location = ${1:/} {\n    ${2:return 200 'OK';}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_location_exact"
+    },
+    {
+      "label": "location regex",
+      "kind": 15,
+      "detail": "Regex location",
+      "documentation": {
+        "value": "Case-sensitive regex URI match."
+      },
+      "insertText": "location ~ ${1:\\.php$} {\n    ${2:fastcgi_pass unix:/run/php/php-fpm.sock;}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_location_regex"
+    },
+    {
+      "label": "location regex case-insensitive",
+      "kind": 15,
+      "detail": "Case-insensitive regex",
+      "documentation": {
+        "value": "Case-insensitive regex URI match."
+      },
+      "insertText": "location ~* ${1:\\.(jpg|jpeg|png|gif|ico|css|js)$} {\n    expires ${2:30d};\n    add_header Cache-Control \"public, immutable\";\n}",
+      "insertTextRules": 4,
+      "sortText": "00_location_regexci"
+    },
+    {
+      "label": "location prefix priority",
+      "kind": 15,
+      "detail": "Prefix priority ^~",
+      "documentation": {
+        "value": "Prefix match that takes priority over regex."
+      },
+      "insertText": "location ^~ ${1:/static/} {\n    alias ${2:/var/www/static/};\n    expires 30d;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_location_prefix"
+    },
+    {
       "label": "upstream block",
       "kind": 15,
       "detail": "Upstream (load balancing)",
       "documentation": {
         "value": "Define a group of backend servers for load balancing."
       },
-      "insertText": "upstream ${1:backend} {\n    server ${2:127.0.0.1:8001};\n    server ${3:127.0.0.1:8002};\n}",
+      "insertText": "upstream ${1:backend} {\n    ${2:least_conn;}\n    server ${3:127.0.0.1:8001};\n    server ${4:127.0.0.1:8002};\n    server ${5:127.0.0.1:8003} backup;\n}",
       "insertTextRules": 4,
       "sortText": "00_upstream"
+    },
+    {
+      "label": "upstream ip_hash",
+      "kind": 15,
+      "detail": "Sticky sessions upstream",
+      "documentation": {
+        "value": "IP hash load balancing for session persistence."
+      },
+      "insertText": "upstream ${1:backend} {\n    ip_hash;\n    server ${2:10.0.0.1:8080};\n    server ${3:10.0.0.2:8080};\n    server ${4:10.0.0.3:8080};\n}",
+      "insertTextRules": 4,
+      "sortText": "00_upstream_iphash"
+    },
+    {
+      "label": "map block",
+      "kind": 15,
+      "detail": "Map block",
+      "documentation": {
+        "value": "Create a variable whose value depends on another variable."
+      },
+      "insertText": "map \\$${1:uri} \\$${2:new} {\n    default       0;\n    ~^/old/(.*)   /new/\\$1;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_map"
+    },
+    {
+      "label": "geo block",
+      "kind": 15,
+      "detail": "Geo block",
+      "documentation": {
+        "value": "Create variables based on client IP address."
+      },
+      "insertText": "geo \\$${1:blocked} {\n    default       0;\n    ${2:10.0.0.0/8}  1;\n    ${3:192.168.0.0/16}  1;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_geo"
     },
     {
       "label": "listen",
@@ -48,233 +169,596 @@
     {
       "label": "listen 443 ssl",
       "kind": 14,
-      "detail": "Listen HTTPS",
+      "detail": "Listen SSL",
       "documentation": {
-        "value": "Listen on port 443 with SSL/TLS enabled."
+        "value": "Listen on HTTPS port with SSL."
       },
-      "insertText": "listen 443 ssl;\nssl_certificate ${1:/etc/ssl/certs/cert.pem};\nssl_certificate_key ${2:/etc/ssl/private/key.pem};",
+      "insertText": "listen 443 ssl http2;\nlisten [::]:443 ssl http2;",
       "insertTextRules": 4,
       "sortText": "01_listen_ssl"
+    },
+    {
+      "label": "listen unix socket",
+      "kind": 14,
+      "detail": "Listen on Unix socket",
+      "documentation": {
+        "value": "Listen on a Unix domain socket."
+      },
+      "insertText": "listen unix:${1:/var/run/nginx.sock};",
+      "insertTextRules": 4,
+      "sortText": "01_listen_unix"
     },
     {
       "label": "server_name",
       "kind": 14,
       "detail": "Server name",
       "documentation": {
-        "value": "Set the virtual host names this server block responds to."
+        "value": "Set virtual server domain names."
       },
-      "insertText": "server_name ${1:example.com www.example.com};",
+      "insertText": "server_name ${1:example.com} www.${1:example.com};",
       "insertTextRules": 4,
-      "sortText": "01_servername"
+      "sortText": "01_server_name"
     },
     {
       "label": "root",
       "kind": 14,
       "detail": "Document root",
       "documentation": {
-        "value": "Set the root directory for serving static files."
+        "value": "Set the root directory for requests."
       },
       "insertText": "root ${1:/var/www/html};",
       "insertTextRules": 4,
       "sortText": "01_root"
     },
     {
+      "label": "alias",
+      "kind": 14,
+      "detail": "Alias directive",
+      "documentation": {
+        "value": "Replace location path prefix with specified path."
+      },
+      "insertText": "alias ${1:/var/www/static/};",
+      "insertTextRules": 4,
+      "sortText": "01_alias"
+    },
+    {
       "label": "index",
       "kind": 14,
       "detail": "Index files",
       "documentation": {
-        "value": "Define the default files to serve when a directory is requested."
+        "value": "Define default files to serve."
       },
       "insertText": "index ${1:index.html index.htm};",
       "insertTextRules": 4,
       "sortText": "01_index"
     },
     {
+      "label": "autoindex",
+      "kind": 14,
+      "detail": "Directory listing",
+      "documentation": {
+        "value": "Enable or disable directory listing."
+      },
+      "insertText": "autoindex ${1:on};",
+      "insertTextRules": 4,
+      "sortText": "01_autoindex"
+    },
+    {
+      "label": "error_page",
+      "kind": 14,
+      "detail": "Error page",
+      "documentation": {
+        "value": "Define custom error pages."
+      },
+      "insertText": "error_page ${1:404} /${2:404.html};\nerror_page 500 502 503 504 /${3:50x.html};",
+      "insertTextRules": 4,
+      "sortText": "01_error_page"
+    },
+    {
       "label": "proxy_pass",
       "kind": 14,
       "detail": "Reverse proxy",
       "documentation": {
-        "value": "Forward requests to a backend server (reverse proxy)."
+        "value": "Forward requests to a backend server."
       },
-      "insertText": "proxy_pass http://${1:localhost}:${2:3000};",
+      "insertText": "proxy_pass http://${1:localhost:3000};",
       "insertTextRules": 4,
-      "sortText": "01_proxy"
+      "sortText": "02_proxy"
+    },
+    {
+      "label": "proxy full config",
+      "kind": 15,
+      "detail": "Full proxy setup",
+      "documentation": {
+        "value": "Complete reverse proxy configuration with headers and timeouts."
+      },
+      "insertText": "proxy_pass          http://${1:backend};\nproxy_http_version  1.1;\nproxy_set_header    Host              \\$host;\nproxy_set_header    X-Real-IP         \\$remote_addr;\nproxy_set_header    X-Forwarded-For   \\$proxy_add_x_forwarded_for;\nproxy_set_header    X-Forwarded-Proto \\$scheme;\nproxy_connect_timeout  ${2:60}s;\nproxy_send_timeout     ${3:60}s;\nproxy_read_timeout     ${4:60}s;\nproxy_buffering        on;\nproxy_buffer_size      128k;\nproxy_buffers          4 256k;",
+      "insertTextRules": 4,
+      "sortText": "02_proxy_full"
     },
     {
       "label": "proxy_set_header",
       "kind": 14,
       "detail": "Proxy header",
       "documentation": {
-        "value": "Set or modify HTTP headers passed to the proxied server."
+        "value": "Set headers for the proxied request."
       },
-      "insertText": "proxy_set_header ${1:Host} ${2:$host};",
+      "insertText": "proxy_set_header ${1:X-Real-IP} \\$${2:remote_addr};",
       "insertTextRules": 4,
-      "sortText": "01_proxyheader"
+      "sortText": "02_proxy_header"
     },
     {
-      "label": "proxy headers (full)",
-      "kind": 15,
-      "detail": "Common proxy headers",
+      "label": "proxy_redirect",
+      "kind": 14,
+      "detail": "Proxy redirect rewrite",
       "documentation": {
-        "value": "Commonly used proxy headers for reverse proxy setups."
+        "value": "Rewrite the Location and Refresh headers from the backend."
       },
-      "insertText": "proxy_set_header Host $host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\nproxy_set_header X-Forwarded-Proto $scheme;",
+      "insertText": "proxy_redirect ${1:off};",
       "insertTextRules": 4,
-      "sortText": "01_proxyheaders"
+      "sortText": "02_proxy_redirect"
+    },
+    {
+      "label": "proxy_cache",
+      "kind": 15,
+      "detail": "Proxy cache",
+      "documentation": {
+        "value": "Enable proxy response caching."
+      },
+      "insertText": "proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=${1:my_cache}:10m max_size=1g inactive=60m;\n\nlocation / {\n    proxy_cache ${1:my_cache};\n    proxy_cache_valid 200 302 10m;\n    proxy_cache_valid 404 1m;\n    add_header X-Cache-Status \\$upstream_cache_status;\n    proxy_pass http://${2:backend};\n}",
+      "insertTextRules": 4,
+      "sortText": "02_proxy_cache"
+    },
+    {
+      "label": "websocket proxy",
+      "kind": 15,
+      "detail": "WebSocket proxy",
+      "documentation": {
+        "value": "Proxy WebSocket connections to a backend."
+      },
+      "insertText": "location ${1:/ws} {\n    proxy_pass http://${2:backend};\n    proxy_http_version 1.1;\n    proxy_set_header Upgrade \\$http_upgrade;\n    proxy_set_header Connection \"upgrade\";\n    proxy_set_header Host \\$host;\n    proxy_read_timeout 86400s;\n    proxy_send_timeout 86400s;\n}",
+      "insertTextRules": 4,
+      "sortText": "02_websocket"
     },
     {
       "label": "ssl_certificate",
       "kind": 14,
       "detail": "SSL certificate",
       "documentation": {
-        "value": "Path to the SSL/TLS certificate file."
+        "value": "Path to the SSL certificate file."
       },
-      "insertText": "ssl_certificate ${1:/etc/letsencrypt/live/example.com/fullchain.pem};",
+      "insertText": "ssl_certificate     ${1:/etc/letsencrypt/live/example.com/fullchain.pem};",
       "insertTextRules": 4,
-      "sortText": "02_sslcert"
+      "sortText": "03_ssl_cert"
     },
     {
       "label": "ssl_certificate_key",
       "kind": 14,
-      "detail": "SSL certificate key",
+      "detail": "SSL private key",
       "documentation": {
-        "value": "Path to the SSL/TLS private key file."
+        "value": "Path to the SSL private key file."
       },
       "insertText": "ssl_certificate_key ${1:/etc/letsencrypt/live/example.com/privkey.pem};",
       "insertTextRules": 4,
-      "sortText": "02_sslkey"
+      "sortText": "03_ssl_key"
     },
     {
-      "label": "return",
-      "kind": 14,
-      "detail": "Return response",
+      "label": "ssl full config",
+      "kind": 15,
+      "detail": "Full SSL configuration",
       "documentation": {
-        "value": "Return a specific HTTP status code and optional redirect URL."
+        "value": "Complete SSL/TLS hardened configuration."
       },
-      "insertText": "return ${1:301} ${2:https://$host$request_uri};",
+      "insertText": "ssl_certificate     ${1:/etc/letsencrypt/live/example.com/fullchain.pem};\nssl_certificate_key ${2:/etc/letsencrypt/live/example.com/privkey.pem};\nssl_trusted_certificate ${3:/etc/letsencrypt/live/example.com/chain.pem};\n\nssl_protocols TLSv1.2 TLSv1.3;\nssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;\nssl_prefer_server_ciphers off;\n\nssl_session_cache shared:SSL:10m;\nssl_session_timeout 1d;\nssl_session_tickets off;\n\nssl_stapling on;\nssl_stapling_verify on;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;",
       "insertTextRules": 4,
-      "sortText": "02_return"
+      "sortText": "03_ssl_full"
     },
     {
-      "label": "rewrite",
+      "label": "ssl_dhparam",
       "kind": 14,
-      "detail": "URL rewrite",
+      "detail": "DH parameters",
       "documentation": {
-        "value": "Rewrite the request URI using a regex pattern."
+        "value": "Path to DH parameters file for forward secrecy."
       },
-      "insertText": "rewrite ${1:^/old/(.*)} ${2:/new/$1} ${3:permanent};",
+      "insertText": "ssl_dhparam ${1:/etc/ssl/certs/dhparam.pem};",
       "insertTextRules": 4,
-      "sortText": "02_rewrite"
+      "sortText": "03_ssl_dhparam"
     },
     {
       "label": "try_files",
       "kind": 14,
       "detail": "Try files",
       "documentation": {
-        "value": "Check for file existence in order and serve the first match."
+        "value": "Check file existence in order and use first found."
       },
-      "insertText": "try_files $uri $uri/ ${1:=404};",
+      "insertText": "try_files \\$uri \\$uri/ ${1:/index.html};",
       "insertTextRules": 4,
-      "sortText": "02_tryfiles"
+      "sortText": "04_tryfiles"
     },
     {
-      "label": "access_log",
-      "kind": 14,
-      "detail": "Access log",
+      "label": "try_files SPA",
+      "kind": 15,
+      "detail": "SPA fallback",
       "documentation": {
-        "value": "Set the path for the access log file."
+        "value": "Route all requests to index.html for single-page apps (React, Vue, Angular)."
       },
-      "insertText": "access_log ${1:/var/log/nginx/access.log};",
+      "insertText": "location / {\n    root ${1:/var/www/app/dist};\n    try_files \\$uri \\$uri/ /index.html;\n}",
       "insertTextRules": 4,
-      "sortText": "03_accesslog"
+      "sortText": "04_tryfiles_spa"
     },
     {
-      "label": "error_log",
+      "label": "rewrite",
       "kind": 14,
-      "detail": "Error log",
+      "detail": "URL rewrite",
       "documentation": {
-        "value": "Set the path and level for the error log."
+        "value": "Rewrite URIs using regex."
       },
-      "insertText": "error_log ${1:/var/log/nginx/error.log} ${2:warn};",
+      "insertText": "rewrite ^/${1:old}/(.*) /${2:new}/\\$1 ${3:permanent};",
       "insertTextRules": 4,
-      "sortText": "03_errorlog"
+      "sortText": "04_rewrite"
+    },
+    {
+      "label": "return redirect",
+      "kind": 14,
+      "detail": "Return redirect",
+      "documentation": {
+        "value": "Return a redirect response."
+      },
+      "insertText": "return ${1:301} ${2:https://\\$host\\$request_uri};",
+      "insertTextRules": 4,
+      "sortText": "04_return"
+    },
+    {
+      "label": "if condition",
+      "kind": 15,
+      "detail": "If directive",
+      "documentation": {
+        "value": "Conditional processing (use sparingly - 'if is evil' in nginx)."
+      },
+      "insertText": "if (\\$${1:request_uri} ${2:~*} ${3:\\.php$}) {\n    ${4:return 403;}\n}",
+      "insertTextRules": 4,
+      "sortText": "04_if"
     },
     {
       "label": "gzip",
       "kind": 14,
       "detail": "Enable gzip",
       "documentation": {
-        "value": "Enable gzip compression for responses."
+        "value": "Enable gzip compression."
       },
-      "insertText": "gzip on;\ngzip_types text/plain text/css application/json application/javascript text/xml;",
+      "insertText": "gzip on;",
       "insertTextRules": 4,
-      "sortText": "03_gzip"
+      "sortText": "05_gzip"
     },
     {
-      "label": "client_max_body_size",
-      "kind": 14,
-      "detail": "Max body size",
-      "documentation": {
-        "value": "Set the maximum allowed size of the client request body."
-      },
-      "insertText": "client_max_body_size ${1:10M};",
-      "insertTextRules": 4,
-      "sortText": "03_bodysize"
-    },
-    {
-      "label": "http to https redirect",
+      "label": "gzip full config",
       "kind": 15,
-      "detail": "HTTP to HTTPS redirect",
+      "detail": "Full gzip configuration",
       "documentation": {
-        "value": "Redirect all HTTP traffic to HTTPS."
+        "value": "Complete gzip compression setup."
       },
-      "insertText": "server {\n    listen 80;\n    server_name ${1:example.com};\n    return 301 https://$host$request_uri;\n}",
+      "insertText": "gzip on;\ngzip_vary on;\ngzip_proxied any;\ngzip_comp_level ${1:6};\ngzip_min_length 256;\ngzip_types\n    text/plain\n    text/css\n    text/javascript\n    application/javascript\n    application/json\n    application/xml\n    application/xml+rss\n    image/svg+xml\n    font/woff2;",
       "insertTextRules": 4,
-      "sortText": "04_redirect"
-    },
-    {
-      "label": "websocket proxy",
-      "kind": 15,
-      "detail": "WebSocket proxy config",
-      "documentation": {
-        "value": "Configure nginx to proxy WebSocket connections."
-      },
-      "insertText": "location ${1:/ws} {\n    proxy_pass http://${2:localhost:3000};\n    proxy_http_version 1.1;\n    proxy_set_header Upgrade $http_upgrade;\n    proxy_set_header Connection \"upgrade\";\n}",
-      "insertTextRules": 4,
-      "sortText": "04_websocket"
+      "sortText": "05_gzip_full"
     },
     {
       "label": "rate limiting",
       "kind": 15,
-      "detail": "Rate limit zone",
+      "detail": "Rate limiting",
       "documentation": {
-        "value": "Define and apply a rate limiting zone."
+        "value": "Limit request rate per client IP."
       },
-      "insertText": "limit_req_zone $binary_remote_addr zone=${1:mylimit}:10m rate=${2:10r/s};",
+      "insertText": "# In http block:\nlimit_req_zone \\$binary_remote_addr zone=${1:api_limit}:10m rate=${2:10}r/s;\n\n# In location block:\nlimit_req zone=${1:api_limit} burst=${3:20} nodelay;\nlimit_req_status 429;",
       "insertTextRules": 4,
-      "sortText": "04_ratelimit"
+      "sortText": "05_ratelimit"
     },
     {
-      "label": "add_header",
-      "kind": 14,
-      "detail": "Add response header",
+      "label": "connection limiting",
+      "kind": 15,
+      "detail": "Connection limit",
       "documentation": {
-        "value": "Add a custom header to the response."
+        "value": "Limit concurrent connections per IP."
       },
-      "insertText": "add_header ${1:X-Frame-Options} ${2:SAMEORIGIN};",
+      "insertText": "# In http block:\nlimit_conn_zone \\$binary_remote_addr zone=${1:conn_limit}:10m;\n\n# In server/location:\nlimit_conn ${1:conn_limit} ${2:10};",
       "insertTextRules": 4,
-      "sortText": "03_addheader"
+      "sortText": "05_connlimit"
+    },
+    {
+      "label": "security headers",
+      "kind": 15,
+      "detail": "Security headers",
+      "documentation": {
+        "value": "Comprehensive security headers for production."
+      },
+      "insertText": "add_header X-Frame-Options \"SAMEORIGIN\" always;\nadd_header X-Content-Type-Options \"nosniff\" always;\nadd_header X-XSS-Protection \"1; mode=block\" always;\nadd_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\nadd_header Content-Security-Policy \"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'\" always;\nadd_header Permissions-Policy \"camera=(), microphone=(), geolocation=()\" always;\nadd_header Strict-Transport-Security \"max-age=63072000; includeSubDomains; preload\" always;",
+      "insertTextRules": 4,
+      "sortText": "06_security"
+    },
+    {
+      "label": "add_header HSTS",
+      "kind": 14,
+      "detail": "HSTS header",
+      "documentation": {
+        "value": "HTTP Strict Transport Security."
+      },
+      "insertText": "add_header Strict-Transport-Security \"max-age=63072000; includeSubDomains; preload\" always;",
+      "insertTextRules": 4,
+      "sortText": "06_hsts"
+    },
+    {
+      "label": "add_header CSP",
+      "kind": 14,
+      "detail": "Content Security Policy",
+      "documentation": {
+        "value": "Content-Security-Policy header."
+      },
+      "insertText": "add_header Content-Security-Policy \"${1:default-src 'self'; script-src 'self'}\" always;",
+      "insertTextRules": 4,
+      "sortText": "06_csp"
+    },
+    {
+      "label": "add_header CORS",
+      "kind": 15,
+      "detail": "CORS headers",
+      "documentation": {
+        "value": "Cross-Origin Resource Sharing headers."
+      },
+      "insertText": "add_header Access-Control-Allow-Origin \"${1:*}\";\nadd_header Access-Control-Allow-Methods \"GET, POST, PUT, DELETE, OPTIONS\";\nadd_header Access-Control-Allow-Headers \"Authorization, Content-Type, Accept\";\nadd_header Access-Control-Max-Age 86400;\n\nif (\\$request_method = OPTIONS) {\n    return 204;\n}",
+      "insertTextRules": 4,
+      "sortText": "06_cors"
+    },
+    {
+      "label": "access_log",
+      "kind": 14,
+      "detail": "Access log",
+      "documentation": {
+        "value": "Configure access logging."
+      },
+      "insertText": "access_log ${1:/var/log/nginx/access.log};",
+      "insertTextRules": 4,
+      "sortText": "07_access_log"
+    },
+    {
+      "label": "access_log JSON",
+      "kind": 15,
+      "detail": "JSON access log",
+      "documentation": {
+        "value": "JSON-formatted access log for log aggregation."
+      },
+      "insertText": "log_format json_combined escape=json\n  '{\"time\":\"\\$time_iso8601\",'\n  '\"remote_addr\":\"\\$remote_addr\",'\n  '\"request\":\"\\$request\",'\n  '\"status\":\"\\$status\",'\n  '\"body_bytes_sent\":\"\\$body_bytes_sent\",'\n  '\"request_time\":\"\\$request_time\",'\n  '\"upstream_response_time\":\"\\$upstream_response_time\",'\n  '\"http_user_agent\":\"\\$http_user_agent\"}';\n\naccess_log /var/log/nginx/access.json json_combined;",
+      "insertTextRules": 4,
+      "sortText": "07_access_json"
+    },
+    {
+      "label": "error_log",
+      "kind": 14,
+      "detail": "Error log",
+      "documentation": {
+        "value": "Configure error logging."
+      },
+      "insertText": "error_log ${1:/var/log/nginx/error.log} ${2:warn};",
+      "insertTextRules": 4,
+      "sortText": "07_error_log"
+    },
+    {
+      "label": "access_log off",
+      "kind": 14,
+      "detail": "Disable access log",
+      "documentation": {
+        "value": "Disable access logging for a location."
+      },
+      "insertText": "access_log off;",
+      "insertTextRules": 4,
+      "sortText": "07_access_off"
+    },
+    {
+      "label": "PHP-FPM location",
+      "kind": 15,
+      "detail": "PHP-FPM handler",
+      "documentation": {
+        "value": "Process PHP files through PHP-FPM."
+      },
+      "insertText": "location ~ \\.php$ {\n    include fastcgi_params;\n    fastcgi_pass unix:/run/php/php${1:8.2}-fpm.sock;\n    fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;\n    fastcgi_index index.php;\n    fastcgi_intercept_errors on;\n    fastcgi_buffer_size 16k;\n    fastcgi_buffers 4 16k;\n}",
+      "insertTextRules": 4,
+      "sortText": "08_phpfpm"
+    },
+    {
+      "label": "fastcgi_pass",
+      "kind": 14,
+      "detail": "FastCGI pass",
+      "documentation": {
+        "value": "Pass request to a FastCGI server."
+      },
+      "insertText": "fastcgi_pass unix:${1:/run/php/php8.2-fpm.sock};",
+      "insertTextRules": 4,
+      "sortText": "08_fastcgi"
+    },
+    {
+      "label": "client_max_body_size",
+      "kind": 14,
+      "detail": "Max upload size",
+      "documentation": {
+        "value": "Set maximum request body (upload) size."
+      },
+      "insertText": "client_max_body_size ${1:50}m;",
+      "insertTextRules": 4,
+      "sortText": "09_body_size"
+    },
+    {
+      "label": "client_body_timeout",
+      "kind": 14,
+      "detail": "Body read timeout",
+      "documentation": {
+        "value": "Timeout for reading the client request body."
+      },
+      "insertText": "client_body_timeout ${1:60}s;",
+      "insertTextRules": 4,
+      "sortText": "09_body_timeout"
+    },
+    {
+      "label": "keepalive_timeout",
+      "kind": 14,
+      "detail": "Keepalive timeout",
+      "documentation": {
+        "value": "Set the keep-alive connection timeout."
+      },
+      "insertText": "keepalive_timeout ${1:65}s;",
+      "insertTextRules": 4,
+      "sortText": "09_keepalive"
+    },
+    {
+      "label": "sendfile",
+      "kind": 14,
+      "detail": "Sendfile",
+      "documentation": {
+        "value": "Enable kernel-level file sending (zero-copy)."
+      },
+      "insertText": "sendfile on;\ntcp_nopush on;\ntcp_nodelay on;",
+      "insertTextRules": 4,
+      "sortText": "09_sendfile"
+    },
+    {
+      "label": "worker_processes",
+      "kind": 14,
+      "detail": "Worker processes",
+      "documentation": {
+        "value": "Number of worker processes — use auto for CPU count."
+      },
+      "insertText": "worker_processes ${1:auto};",
+      "insertTextRules": 4,
+      "sortText": "09_workers"
+    },
+    {
+      "label": "worker_connections",
+      "kind": 14,
+      "detail": "Worker connections",
+      "documentation": {
+        "value": "Maximum simultaneous connections per worker."
+      },
+      "insertText": "worker_connections ${1:1024};",
+      "insertTextRules": 4,
+      "sortText": "09_worker_conn"
     },
     {
       "label": "expires",
       "kind": 14,
       "detail": "Cache expiry",
       "documentation": {
-        "value": "Set the Expires header and Cache-Control max-age for static assets."
+        "value": "Set browser cache expiry for static assets."
       },
-      "insertText": "expires ${1:30d};",
+      "insertText": "expires ${1:30d};\nadd_header Cache-Control \"public, immutable\";",
       "insertTextRules": 4,
-      "sortText": "03_expires"
+      "sortText": "10_expires"
+    },
+    {
+      "label": "static files cache",
+      "kind": 15,
+      "detail": "Static file caching",
+      "documentation": {
+        "value": "Cache static files with aggressive settings."
+      },
+      "insertText": "location ~* \\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {\n    expires 1y;\n    add_header Cache-Control \"public, immutable\";\n    access_log off;\n    log_not_found off;\n}",
+      "insertTextRules": 4,
+      "sortText": "10_static_cache"
+    },
+    {
+      "label": "allow deny",
+      "kind": 15,
+      "detail": "IP access control",
+      "documentation": {
+        "value": "Allow or deny access based on IP."
+      },
+      "insertText": "allow ${1:192.168.1.0/24};\ndeny all;",
+      "insertTextRules": 4,
+      "sortText": "11_allow_deny"
+    },
+    {
+      "label": "basic auth",
+      "kind": 15,
+      "detail": "Basic authentication",
+      "documentation": {
+        "value": "HTTP Basic authentication."
+      },
+      "insertText": "auth_basic \"${1:Restricted Area}\";\nauth_basic_user_file ${2:/etc/nginx/.htpasswd};",
+      "insertTextRules": 4,
+      "sortText": "11_basic_auth"
+    },
+    {
+      "label": "include",
+      "kind": 14,
+      "detail": "Include config",
+      "documentation": {
+        "value": "Include another configuration file or files."
+      },
+      "insertText": "include ${1:/etc/nginx/conf.d/*.conf};",
+      "insertTextRules": 4,
+      "sortText": "12_include"
+    },
+    {
+      "label": "include mime.types",
+      "kind": 14,
+      "detail": "Include MIME types",
+      "documentation": {
+        "value": "Include the MIME types mapping file."
+      },
+      "insertText": "include mime.types;\ndefault_type application/octet-stream;",
+      "insertTextRules": 4,
+      "sortText": "12_include_mime"
+    },
+    {
+      "label": "set variable",
+      "kind": 14,
+      "detail": "Set variable",
+      "documentation": {
+        "value": "Set a custom variable."
+      },
+      "insertText": "set \\$${1:var} ${2:value};",
+      "insertTextRules": 4,
+      "sortText": "13_set"
+    },
+    {
+      "label": "Node.js reverse proxy",
+      "kind": 15,
+      "detail": "Node.js app config",
+      "documentation": {
+        "value": "Production reverse proxy for a Node.js application."
+      },
+      "insertText": "server {\n    listen 80;\n    server_name ${1:api.example.com};\n\n    location / {\n        proxy_pass http://127.0.0.1:${2:3000};\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade \\$http_upgrade;\n        proxy_set_header Connection 'upgrade';\n        proxy_set_header Host \\$host;\n        proxy_set_header X-Real-IP \\$remote_addr;\n        proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto \\$scheme;\n        proxy_cache_bypass \\$http_upgrade;\n    }\n}",
+      "insertTextRules": 4,
+      "sortText": "14_nodejs"
+    },
+    {
+      "label": "Laravel / PHP app",
+      "kind": 15,
+      "detail": "Laravel config",
+      "documentation": {
+        "value": "Nginx configuration for Laravel or PHP frameworks."
+      },
+      "insertText": "server {\n    listen 80;\n    server_name ${1:example.com};\n    root /var/www/${1:example.com}/public;\n\n    add_header X-Frame-Options \"SAMEORIGIN\";\n    add_header X-Content-Type-Options \"nosniff\";\n\n    index index.php;\n    charset utf-8;\n\n    location / {\n        try_files \\$uri \\$uri/ /index.php?\\$query_string;\n    }\n\n    location = /favicon.ico { access_log off; log_not_found off; }\n    location = /robots.txt  { access_log off; log_not_found off; }\n\n    error_page 404 /index.php;\n\n    location ~ \\.php$ {\n        fastcgi_pass unix:/run/php/php${2:8.2}-fpm.sock;\n        fastcgi_param SCRIPT_FILENAME \\$realpath_root\\$fastcgi_script_name;\n        include fastcgi_params;\n    }\n\n    location ~ /\\.(?!well-known).* {\n        deny all;\n    }\n}",
+      "insertTextRules": 4,
+      "sortText": "14_laravel"
+    },
+    {
+      "label": "WordPress config",
+      "kind": 15,
+      "detail": "WordPress config",
+      "documentation": {
+        "value": "Nginx configuration for WordPress."
+      },
+      "insertText": "server {\n    listen 80;\n    server_name ${1:example.com};\n    root /var/www/wordpress;\n\n    index index.php;\n\n    location / {\n        try_files \\$uri \\$uri/ /index.php?\\$args;\n    }\n\n    location ~ \\.php$ {\n        include fastcgi_params;\n        fastcgi_pass unix:/run/php/php${2:8.2}-fpm.sock;\n        fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;\n    }\n\n    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg)$ {\n        expires 30d;\n        log_not_found off;\n    }\n\n    location ~ /\\. {\n        deny all;\n    }\n\n    location = /xmlrpc.php {\n        deny all;\n    }\n}",
+      "insertTextRules": 4,
+      "sortText": "14_wordpress"
+    },
+    {
+      "label": "nginx.conf main",
+      "kind": 15,
+      "detail": "Main nginx.conf",
+      "documentation": {
+        "value": "Complete top-level nginx.conf template."
+      },
+      "insertText": "user ${1:www-data};\nworker_processes auto;\npid /run/nginx.pid;\nerror_log /var/log/nginx/error.log warn;\n\nevents {\n    worker_connections 1024;\n    multi_accept on;\n}\n\nhttp {\n    include       mime.types;\n    default_type  application/octet-stream;\n\n    log_format main '\\$remote_addr - \\$remote_user [\\$time_local] \"\\$request\" '\n                    '\\$status \\$body_bytes_sent \"\\$http_referer\" '\n                    '\"\\$http_user_agent\"';\n    access_log /var/log/nginx/access.log main;\n\n    sendfile        on;\n    tcp_nopush      on;\n    tcp_nodelay     on;\n    keepalive_timeout 65;\n    types_hash_max_size 2048;\n    client_max_body_size 50m;\n\n    gzip on;\n    gzip_vary on;\n    gzip_types text/plain text/css application/json application/javascript text/xml;\n\n    include /etc/nginx/conf.d/*.conf;\n    include /etc/nginx/sites-enabled/*;\n}",
+      "insertTextRules": 4,
+      "sortText": "14_main"
     }
   ]
 }

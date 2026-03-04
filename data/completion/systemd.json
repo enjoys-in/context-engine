@@ -6,9 +6,9 @@
       "kind": 15,
       "detail": "Unit section",
       "documentation": {
-        "value": "Generic information about the unit."
+        "value": "Generic unit metadata and dependencies."
       },
-      "insertText": "[Unit]\nDescription=${1:My Service}\nAfter=${2:network.target}",
+      "insertText": "[Unit]\nDescription=${1:My Service}\nDocumentation=${2:https://example.com}\nAfter=${3:network-online.target}\nWants=${4:network-online.target}",
       "insertTextRules": 4,
       "sortText": "00_unit"
     },
@@ -19,7 +19,7 @@
       "documentation": {
         "value": "Service-specific configuration."
       },
-      "insertText": "[Service]\nType=${1:simple}\nUser=${2:www-data}\nExecStart=${3:/usr/bin/myapp}\nRestart=${4:on-failure}\nRestartSec=${5:5}",
+      "insertText": "[Service]\nType=${1:simple}\nUser=${2:www-data}\nGroup=${3:www-data}\nWorkingDirectory=${4:/opt/app}\nExecStart=${5:/usr/bin/app}\nRestart=${6:on-failure}\nRestartSec=${7:5}",
       "insertTextRules": 4,
       "sortText": "00_service"
     },
@@ -28,7 +28,7 @@
       "kind": 15,
       "detail": "Install section",
       "documentation": {
-        "value": "Installation information for systemctl enable/disable."
+        "value": "Installation targets for enable/disable."
       },
       "insertText": "[Install]\nWantedBy=${1:multi-user.target}",
       "insertTextRules": 4,
@@ -39,132 +39,880 @@
       "kind": 15,
       "detail": "Timer section",
       "documentation": {
-        "value": "Timer unit configuration (cron alternative)."
+        "value": "Timer-based activation."
       },
-      "insertText": "[Timer]\nOnCalendar=${1:*-*-* 00:00:00}\nPersistent=true\n\n[Install]\nWantedBy=timers.target",
+      "insertText": "[Timer]\nOnCalendar=${1:*-*-* 00:00:00}\nPersistent=${2:true}\nUnit=${3:myservice.service}\n\n[Install]\nWantedBy=timers.target",
       "insertTextRules": 4,
       "sortText": "00_timer"
     },
     {
-      "label": "service template",
+      "label": "[Socket]",
       "kind": 15,
-      "detail": "Full service file",
+      "detail": "Socket section",
       "documentation": {
-        "value": "Complete systemd service unit file."
+        "value": "Socket-based activation."
       },
-      "insertText": "[Unit]\nDescription=${1:My Application}\nAfter=network.target\n\n[Service]\nType=simple\nUser=${2:www-data}\nGroup=${2:www-data}\nWorkingDirectory=${3:/opt/app}\nExecStart=${4:/opt/app/bin/server}\nRestart=on-failure\nRestartSec=5\nEnvironmentFile=${5:/opt/app/.env}\n\n[Install]\nWantedBy=multi-user.target",
+      "insertText": "[Socket]\nListenStream=${1:/run/myapp.sock}\nSocketUser=${2:www-data}\nSocketGroup=${3:www-data}\nSocketMode=${4:0660}\n\n[Install]\nWantedBy=sockets.target",
       "insertTextRules": 4,
-      "sortText": "01_template"
+      "sortText": "00_socket"
+    },
+    {
+      "label": "[Path]",
+      "kind": 15,
+      "detail": "Path section",
+      "documentation": {
+        "value": "Path-based activation."
+      },
+      "insertText": "[Path]\nPathExists=${1:/var/spool/myapp/trigger}\nUnit=${2:myapp-process.service}\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "00_path"
+    },
+    {
+      "label": "[Mount]",
+      "kind": 15,
+      "detail": "Mount section",
+      "documentation": {
+        "value": "Mount point configuration."
+      },
+      "insertText": "[Mount]\nWhat=${1:/dev/sdb1}\nWhere=${2:/mnt/data}\nType=${3:ext4}\nOptions=${4:defaults,noatime}\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "00_mount"
+    },
+    {
+      "label": "[Swap]",
+      "kind": 15,
+      "detail": "Swap section",
+      "documentation": {
+        "value": "Swap device configuration."
+      },
+      "insertText": "[Swap]\nWhat=${1:/swapfile}\n\n[Install]\nWantedBy=swap.target",
+      "insertTextRules": 4,
+      "sortText": "00_swap"
+    },
+    {
+      "label": "[Slice]",
+      "kind": 15,
+      "detail": "Slice section",
+      "documentation": {
+        "value": "Resource control slice."
+      },
+      "insertText": "[Slice]\nCPUQuota=${1:50%}\nMemoryMax=${2:2G}\nIOWeight=${3:100}",
+      "insertTextRules": 4,
+      "sortText": "00_slice"
+    },
+    {
+      "label": "service simple",
+      "kind": 15,
+      "detail": "Simple service unit",
+      "documentation": {
+        "value": "Complete simple (foreground) service unit file."
+      },
+      "insertText": "[Unit]\nDescription=${1:My Application}\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=simple\nUser=${2:appuser}\nGroup=${2:appuser}\nWorkingDirectory=${3:/opt/app}\nExecStart=${4:/opt/app/bin/server}\nRestart=on-failure\nRestartSec=5\nStartLimitBurst=3\nStartLimitIntervalSec=60\n\nEnvironment=NODE_ENV=production\n# EnvironmentFile=/opt/app/.env\n\nStandardOutput=journal\nStandardError=journal\nSyslogIdentifier=${1:my-app}\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_simple"
+    },
+    {
+      "label": "service exec",
+      "kind": 15,
+      "detail": "Exec service",
+      "documentation": {
+        "value": "Service Type=exec — ready after binary starts."
+      },
+      "insertText": "[Unit]\nDescription=${1:My Service}\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=exec\nUser=${2:app}\nGroup=${2:app}\nWorkingDirectory=${3:/opt/app}\nExecStart=${4:/opt/app/start.sh}\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_exec"
+    },
+    {
+      "label": "service forking",
+      "kind": 15,
+      "detail": "Forking daemon",
+      "documentation": {
+        "value": "For traditional daemons that fork to background."
+      },
+      "insertText": "[Unit]\nDescription=${1:Forking Daemon}\nAfter=network.target\n\n[Service]\nType=forking\nPIDFile=${2:/var/run/mydaemon.pid}\nExecStart=${3:/usr/sbin/mydaemon -d}\nExecReload=/bin/kill -HUP \\$MAINPID\nExecStop=/bin/kill -TERM \\$MAINPID\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_forking"
+    },
+    {
+      "label": "service notify",
+      "kind": 15,
+      "detail": "Notify service",
+      "documentation": {
+        "value": "Service that sends sd_notify() when ready."
+      },
+      "insertText": "[Unit]\nDescription=${1:Notify Service}\nAfter=network-online.target\n\n[Service]\nType=notify\nUser=${2:app}\nExecStart=${3:/opt/app/bin/server}\nWatchdogSec=${4:30}\nRestart=on-failure\nNotifyAccess=main\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_notify"
+    },
+    {
+      "label": "service oneshot",
+      "kind": 15,
+      "detail": "Oneshot service",
+      "documentation": {
+        "value": "Run-once service (scripts, setup tasks)."
+      },
+      "insertText": "[Unit]\nDescription=${1:Setup Task}\nAfter=${2:network-online.target}\n\n[Service]\nType=oneshot\nExecStart=${3:/opt/scripts/setup.sh}\nRemainAfterExit=${4:yes}\nStandardOutput=journal\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_oneshot"
+    },
+    {
+      "label": "Node.js service",
+      "kind": 15,
+      "detail": "Node.js app",
+      "documentation": {
+        "value": "Production Node.js service unit."
+      },
+      "insertText": "[Unit]\nDescription=${1:Node.js Application}\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=simple\nUser=${2:nodeapp}\nGroup=${2:nodeapp}\nWorkingDirectory=${3:/opt/nodeapp}\nExecStart=/usr/bin/node ${4:dist/server.js}\nRestart=always\nRestartSec=5\nStartLimitBurst=5\nStartLimitIntervalSec=60\n\nEnvironment=NODE_ENV=production\nEnvironment=PORT=${5:3000}\n# EnvironmentFile=/opt/nodeapp/.env\n\nStandardOutput=journal\nStandardError=journal\nSyslogIdentifier=${1:nodeapp}\n\n# Security\nNoNewPrivileges=true\nProtectSystem=strict\nProtectHome=true\nReadWritePaths=/opt/nodeapp/data\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_nodejs"
+    },
+    {
+      "label": "Python service",
+      "kind": 15,
+      "detail": "Python/Gunicorn",
+      "documentation": {
+        "value": "Python application service with gunicorn."
+      },
+      "insertText": "[Unit]\nDescription=${1:Python Application}\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=notify\nUser=${2:pyapp}\nGroup=${2:pyapp}\nWorkingDirectory=${3:/opt/pyapp}\nExecStart=${4:/opt/pyapp/venv/bin/gunicorn -w 4 -b 0.0.0.0:8000 app:application}\nExecReload=/bin/kill -HUP \\$MAINPID\nRestart=on-failure\nRestartSec=5\n\nEnvironment=PYTHONUNBUFFERED=1\nEnvironmentFile=/opt/pyapp/.env\n\nStandardOutput=journal\nStandardError=journal\nSyslogIdentifier=${1:pyapp}\n\nNoNewPrivileges=true\nProtectSystem=strict\nProtectHome=true\nReadWritePaths=/opt/pyapp/data\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_python"
+    },
+    {
+      "label": "Go service",
+      "kind": 15,
+      "detail": "Go binary",
+      "documentation": {
+        "value": "Go compiled binary service."
+      },
+      "insertText": "[Unit]\nDescription=${1:Go Service}\nAfter=network-online.target\n\n[Service]\nType=simple\nUser=${2:goapp}\nGroup=${2:goapp}\nExecStart=${3:/usr/local/bin/myapp}\nRestart=always\nRestartSec=5\n\nEnvironmentFile=${4:/etc/myapp/config.env}\n\nNoNewPrivileges=true\nProtectSystem=strict\nProtectHome=true\nPrivateTmp=true\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_go"
+    },
+    {
+      "label": "Docker container service",
+      "kind": 15,
+      "detail": "Docker container",
+      "documentation": {
+        "value": "Run a Docker container as a systemd service."
+      },
+      "insertText": "[Unit]\nDescription=${1:Docker Container}\nRequires=docker.service\nAfter=docker.service\n\n[Service]\nType=simple\nRestart=always\nRestartSec=5\nExecStartPre=-/usr/bin/docker stop ${2:mycontainer}\nExecStartPre=-/usr/bin/docker rm ${2:mycontainer}\nExecStart=/usr/bin/docker run --rm --name ${2:mycontainer} \\\n    -p ${3:8080}:${4:80} \\\n    ${5:nginx:latest}\nExecStop=/usr/bin/docker stop ${2:mycontainer}\n\n[Install]\nWantedBy=multi-user.target",
+      "insertTextRules": 4,
+      "sortText": "01_svc_docker"
+    },
+    {
+      "label": "timer daily",
+      "kind": 15,
+      "detail": "Daily timer",
+      "documentation": {
+        "value": "Timer that fires once daily."
+      },
+      "insertText": "[Unit]\nDescription=Daily ${1:backup} timer\n\n[Timer]\nOnCalendar=*-*-* ${2:02:00:00}\nPersistent=true\nRandomizedDelaySec=${3:300}\n\n[Install]\nWantedBy=timers.target",
+      "insertTextRules": 4,
+      "sortText": "02_timer_daily"
+    },
+    {
+      "label": "timer interval",
+      "kind": 15,
+      "detail": "Interval timer",
+      "documentation": {
+        "value": "Timer that fires at regular intervals."
+      },
+      "insertText": "[Unit]\nDescription=${1:Periodic task} timer\n\n[Timer]\nOnBootSec=${2:5min}\nOnUnitActiveSec=${3:15min}\nAccuracySec=${4:1min}\n\n[Install]\nWantedBy=timers.target",
+      "insertTextRules": 4,
+      "sortText": "02_timer_interval"
+    },
+    {
+      "label": "timer weekly",
+      "kind": 15,
+      "detail": "Weekly timer",
+      "documentation": {
+        "value": "Timer that fires once per week."
+      },
+      "insertText": "[Unit]\nDescription=Weekly ${1:maintenance} timer\n\n[Timer]\nOnCalendar=Mon *-*-* ${2:03:00:00}\nPersistent=true\n\n[Install]\nWantedBy=timers.target",
+      "insertTextRules": 4,
+      "sortText": "02_timer_weekly"
+    },
+    {
+      "label": "timer cron-like",
+      "kind": 15,
+      "detail": "Cron-like timer",
+      "documentation": {
+        "value": "Timer using cron-like OnCalendar expressions."
+      },
+      "insertText": "# OnCalendar format: DayOfWeek Year-Month-Day Hour:Minute:Second\n# Examples:\n#   *-*-* *:00:00       = every hour\n#   *-*-* *:*:00        = every minute\n#   Mon *-*-* 09:00:00  = every Monday 9am\n#   *-*-01 00:00:00     = 1st of each month\n#   quarterly            = Jan,Apr,Jul,Oct 1st\n\n[Timer]\nOnCalendar=${1:*-*-* *:00:00}\nPersistent=true",
+      "insertTextRules": 4,
+      "sortText": "02_timer_cron"
+    },
+    {
+      "label": "Description",
+      "kind": 14,
+      "detail": "Unit description",
+      "documentation": {
+        "value": "Human-readable description."
+      },
+      "insertText": "Description=${1:Service description}",
+      "insertTextRules": 4,
+      "sortText": "03_desc"
+    },
+    {
+      "label": "Documentation",
+      "kind": 14,
+      "detail": "Documentation URL",
+      "documentation": {
+        "value": "Link to documentation."
+      },
+      "insertText": "Documentation=${1:https://example.com/docs}",
+      "insertTextRules": 4,
+      "sortText": "03_doc"
+    },
+    {
+      "label": "After",
+      "kind": 14,
+      "detail": "Start after",
+      "documentation": {
+        "value": "Start after these units."
+      },
+      "insertText": "After=${1:network-online.target}",
+      "insertTextRules": 4,
+      "sortText": "03_after"
+    },
+    {
+      "label": "Before",
+      "kind": 14,
+      "detail": "Start before",
+      "documentation": {
+        "value": "Start before these units."
+      },
+      "insertText": "Before=${1:shutdown.target}",
+      "insertTextRules": 4,
+      "sortText": "03_before"
+    },
+    {
+      "label": "Requires",
+      "kind": 14,
+      "detail": "Hard dependency",
+      "documentation": {
+        "value": "Hard dependency — if the required unit fails, this unit fails too."
+      },
+      "insertText": "Requires=${1:postgresql.service}",
+      "insertTextRules": 4,
+      "sortText": "03_requires"
+    },
+    {
+      "label": "Wants",
+      "kind": 14,
+      "detail": "Soft dependency",
+      "documentation": {
+        "value": "Soft dependency — does not fail if wanted unit fails."
+      },
+      "insertText": "Wants=${1:network-online.target}",
+      "insertTextRules": 4,
+      "sortText": "03_wants"
+    },
+    {
+      "label": "BindsTo",
+      "kind": 14,
+      "detail": "Bind to unit",
+      "documentation": {
+        "value": "Stronger than Requires: also stops when the bound unit stops."
+      },
+      "insertText": "BindsTo=${1:docker.service}",
+      "insertTextRules": 4,
+      "sortText": "03_bindsto"
+    },
+    {
+      "label": "PartOf",
+      "kind": 14,
+      "detail": "Part of",
+      "documentation": {
+        "value": "Stop/restart with the referenced unit."
+      },
+      "insertText": "PartOf=${1:myapp.service}",
+      "insertTextRules": 4,
+      "sortText": "03_partof"
+    },
+    {
+      "label": "Conflicts",
+      "kind": 14,
+      "detail": "Conflicts with",
+      "documentation": {
+        "value": "Cannot run simultaneously."
+      },
+      "insertText": "Conflicts=${1:other.service}",
+      "insertTextRules": 4,
+      "sortText": "03_conflicts"
+    },
+    {
+      "label": "Condition checks",
+      "kind": 15,
+      "detail": "Conditional start",
+      "documentation": {
+        "value": "Only start if conditions are met."
+      },
+      "insertText": "ConditionPathExists=${1:/etc/myapp/config.yml}\n# ConditionFileNotEmpty=/etc/myapp/config.yml\n# ConditionDirectoryNotEmpty=/var/spool/myapp\n# ConditionPathIsDirectory=/opt/myapp\n# ConditionVirtualization=!container\n# ConditionACPower=true\n# ConditionMemory=>=4G",
+      "insertTextRules": 4,
+      "sortText": "03_condition"
+    },
+    {
+      "label": "Type",
+      "kind": 14,
+      "detail": "Service type",
+      "documentation": {
+        "value": "Service startup type."
+      },
+      "insertText": "Type=${1|simple,exec,forking,oneshot,notify,dbus,idle|}",
+      "insertTextRules": 4,
+      "sortText": "04_type"
     },
     {
       "label": "ExecStart",
       "kind": 14,
-      "detail": "Main process command",
+      "detail": "Start command",
       "documentation": {
         "value": "Command to start the service."
       },
       "insertText": "ExecStart=${1:/usr/bin/myapp}",
       "insertTextRules": 4,
-      "sortText": "02_execstart"
+      "sortText": "04_execstart"
     },
     {
       "label": "ExecStartPre",
       "kind": 14,
       "detail": "Pre-start command",
       "documentation": {
-        "value": "Command to run before the main process starts."
+        "value": "Commands to run before starting. Prefix with - to ignore errors."
       },
-      "insertText": "ExecStartPre=${1:/usr/bin/setup}",
+      "insertText": "ExecStartPre=${1:-/usr/bin/myapp-check}",
       "insertTextRules": 4,
-      "sortText": "02_execpre"
+      "sortText": "04_execstartpre"
+    },
+    {
+      "label": "ExecStartPost",
+      "kind": 14,
+      "detail": "Post-start command",
+      "documentation": {
+        "value": "Commands to run after starting."
+      },
+      "insertText": "ExecStartPost=${1:/usr/bin/myapp-notify}",
+      "insertTextRules": 4,
+      "sortText": "04_execstartpost"
+    },
+    {
+      "label": "ExecStop",
+      "kind": 14,
+      "detail": "Stop command",
+      "documentation": {
+        "value": "Command to stop the service."
+      },
+      "insertText": "ExecStop=${1:/bin/kill -TERM \\$MAINPID}",
+      "insertTextRules": 4,
+      "sortText": "04_execstop"
     },
     {
       "label": "ExecReload",
       "kind": 14,
       "detail": "Reload command",
       "documentation": {
-        "value": "Command to reload the service configuration."
+        "value": "Command to reload configuration."
       },
-      "insertText": "ExecReload=/bin/kill -HUP $MAINPID",
+      "insertText": "ExecReload=/bin/kill -HUP \\$MAINPID",
       "insertTextRules": 4,
-      "sortText": "02_execreload"
+      "sortText": "04_execreload"
+    },
+    {
+      "label": "Restart",
+      "kind": 14,
+      "detail": "Restart policy",
+      "documentation": {
+        "value": "Restart policy on failure."
+      },
+      "insertText": "Restart=${1|on-failure,always,on-abnormal,on-watchdog,on-abort,no|}",
+      "insertTextRules": 4,
+      "sortText": "04_restart"
+    },
+    {
+      "label": "RestartSec",
+      "kind": 14,
+      "detail": "Restart delay",
+      "documentation": {
+        "value": "Time to wait before restarting."
+      },
+      "insertText": "RestartSec=${1:5}",
+      "insertTextRules": 4,
+      "sortText": "04_restartsec"
+    },
+    {
+      "label": "StartLimitBurst",
+      "kind": 14,
+      "detail": "Restart limit",
+      "documentation": {
+        "value": "Maximum starts within interval."
+      },
+      "insertText": "StartLimitBurst=${1:5}\nStartLimitIntervalSec=${2:60}",
+      "insertTextRules": 4,
+      "sortText": "04_startlimit"
+    },
+    {
+      "label": "TimeoutStartSec",
+      "kind": 14,
+      "detail": "Start timeout",
+      "documentation": {
+        "value": "Timeout for service to start."
+      },
+      "insertText": "TimeoutStartSec=${1:90}",
+      "insertTextRules": 4,
+      "sortText": "04_timeout_start"
+    },
+    {
+      "label": "TimeoutStopSec",
+      "kind": 14,
+      "detail": "Stop timeout",
+      "documentation": {
+        "value": "Timeout for service to stop before SIGKILL."
+      },
+      "insertText": "TimeoutStopSec=${1:30}",
+      "insertTextRules": 4,
+      "sortText": "04_timeout_stop"
+    },
+    {
+      "label": "WatchdogSec",
+      "kind": 14,
+      "detail": "Watchdog timeout",
+      "documentation": {
+        "value": "Watchdog timeout — service must call sd_notify(WATCHDOG=1) within this interval."
+      },
+      "insertText": "WatchdogSec=${1:30}",
+      "insertTextRules": 4,
+      "sortText": "04_watchdog"
+    },
+    {
+      "label": "KillMode",
+      "kind": 14,
+      "detail": "Kill mode",
+      "documentation": {
+        "value": "How to kill the service process group."
+      },
+      "insertText": "KillMode=${1|control-group,mixed,process,none|}",
+      "insertTextRules": 4,
+      "sortText": "04_killmode"
+    },
+    {
+      "label": "KillSignal",
+      "kind": 14,
+      "detail": "Kill signal",
+      "documentation": {
+        "value": "Signal used to stop the service."
+      },
+      "insertText": "KillSignal=${1:SIGTERM}",
+      "insertTextRules": 4,
+      "sortText": "04_killsignal"
+    },
+    {
+      "label": "User/Group",
+      "kind": 14,
+      "detail": "User and Group",
+      "documentation": {
+        "value": "Run service as specific user."
+      },
+      "insertText": "User=${1:www-data}\nGroup=${1:www-data}",
+      "insertTextRules": 4,
+      "sortText": "04_user"
+    },
+    {
+      "label": "WorkingDirectory",
+      "kind": 14,
+      "detail": "Working directory",
+      "documentation": {
+        "value": "Set the working directory."
+      },
+      "insertText": "WorkingDirectory=${1:/opt/app}",
+      "insertTextRules": 4,
+      "sortText": "04_workdir"
     },
     {
       "label": "Environment",
       "kind": 14,
-      "detail": "Environment variable",
+      "detail": "Environment var",
       "documentation": {
-        "value": "Set an environment variable."
+        "value": "Set environment variable."
       },
       "insertText": "Environment=${1:KEY}=${2:value}",
       "insertTextRules": 4,
-      "sortText": "03_env"
+      "sortText": "04_env"
     },
     {
       "label": "EnvironmentFile",
       "kind": 14,
       "detail": "Environment file",
       "documentation": {
-        "value": "Load environment variables from a file."
+        "value": "Load environment from file. Prefix with - to ignore if missing."
       },
-      "insertText": "EnvironmentFile=${1:/etc/default/myapp}",
+      "insertText": "EnvironmentFile=${1:-/etc/default/myapp}",
       "insertTextRules": 4,
-      "sortText": "03_envfile"
+      "sortText": "04_envfile"
     },
     {
-      "label": "Restart=on-failure",
+      "label": "StandardOutput",
       "kind": 14,
-      "detail": "Restart on failure",
+      "detail": "Stdout target",
       "documentation": {
-        "value": "Restart the service when it exits with a non-zero code."
+        "value": "Where to send stdout."
       },
-      "insertText": "Restart=on-failure\nRestartSec=${1:5}",
+      "insertText": "StandardOutput=${1|journal,console,file:/var/log/myapp.log,append:/var/log/myapp.log,null|}",
       "insertTextRules": 4,
-      "sortText": "03_restart"
+      "sortText": "04_stdout"
     },
     {
-      "label": "Restart=always",
+      "label": "StandardError",
       "kind": 14,
-      "detail": "Always restart",
+      "detail": "Stderr target",
       "documentation": {
-        "value": "Always restart the service regardless of exit status."
+        "value": "Where to send stderr."
       },
-      "insertText": "Restart=always\nRestartSec=${1:5}",
+      "insertText": "StandardError=${1|journal,console,file:/var/log/myapp-error.log,inherit|}",
       "insertTextRules": 4,
-      "sortText": "03_restartalways"
+      "sortText": "04_stderr"
+    },
+    {
+      "label": "SyslogIdentifier",
+      "kind": 14,
+      "detail": "Syslog identifier",
+      "documentation": {
+        "value": "Identifier for journal entries."
+      },
+      "insertText": "SyslogIdentifier=${1:myapp}",
+      "insertTextRules": 4,
+      "sortText": "04_syslog"
+    },
+    {
+      "label": "PIDFile",
+      "kind": 14,
+      "detail": "PID file",
+      "documentation": {
+        "value": "Path to PID file (for Type=forking)."
+      },
+      "insertText": "PIDFile=${1:/var/run/myapp.pid}",
+      "insertTextRules": 4,
+      "sortText": "04_pidfile"
+    },
+    {
+      "label": "RemainAfterExit",
+      "kind": 14,
+      "detail": "Remain after exit",
+      "documentation": {
+        "value": "Consider service active after main process exits (for oneshot)."
+      },
+      "insertText": "RemainAfterExit=yes",
+      "insertTextRules": 4,
+      "sortText": "04_remain"
+    },
+    {
+      "label": "Nice / Priority",
+      "kind": 14,
+      "detail": "Nice value",
+      "documentation": {
+        "value": "Set scheduling priority."
+      },
+      "insertText": "Nice=${1:-5}\n# CPUSchedulingPolicy=fifo\n# CPUSchedulingPriority=50\n# IOSchedulingClass=realtime\n# IOSchedulingPriority=2",
+      "insertTextRules": 4,
+      "sortText": "04_nice"
     },
     {
       "label": "LimitNOFILE",
       "kind": 14,
       "detail": "File descriptor limit",
       "documentation": {
-        "value": "Set the maximum number of open file descriptors."
+        "value": "Maximum open file descriptors."
       },
-      "insertText": "LimitNOFILE=${1:65536}",
+      "insertText": "LimitNOFILE=${1:65535}",
       "insertTextRules": 4,
-      "sortText": "04_limit"
+      "sortText": "05_limitnofile"
+    },
+    {
+      "label": "LimitNPROC",
+      "kind": 14,
+      "detail": "Process limit",
+      "documentation": {
+        "value": "Maximum number of processes."
+      },
+      "insertText": "LimitNPROC=${1:4096}",
+      "insertTextRules": 4,
+      "sortText": "05_limitnproc"
+    },
+    {
+      "label": "LimitCORE",
+      "kind": 14,
+      "detail": "Core dump limit",
+      "documentation": {
+        "value": "Core dump file size limit."
+      },
+      "insertText": "LimitCORE=${1:infinity}",
+      "insertTextRules": 4,
+      "sortText": "05_limitcore"
+    },
+    {
+      "label": "LimitMEMLOCK",
+      "kind": 14,
+      "detail": "Lock memory limit",
+      "documentation": {
+        "value": "Maximum locked memory."
+      },
+      "insertText": "LimitMEMLOCK=${1:infinity}",
+      "insertTextRules": 4,
+      "sortText": "05_limitmemlock"
+    },
+    {
+      "label": "MemoryMax",
+      "kind": 14,
+      "detail": "Memory max",
+      "documentation": {
+        "value": "Hard memory limit via cgroup."
+      },
+      "insertText": "MemoryMax=${1:2G}",
+      "insertTextRules": 4,
+      "sortText": "05_memmax"
+    },
+    {
+      "label": "MemoryHigh",
+      "kind": 14,
+      "detail": "Memory high watermark",
+      "documentation": {
+        "value": "Soft memory limit (throttling, not killing)."
+      },
+      "insertText": "MemoryHigh=${1:1G}",
+      "insertTextRules": 4,
+      "sortText": "05_memhigh"
+    },
+    {
+      "label": "CPUQuota",
+      "kind": 14,
+      "detail": "CPU quota",
+      "documentation": {
+        "value": "CPU time limit as percentage."
+      },
+      "insertText": "CPUQuota=${1:200%}",
+      "insertTextRules": 4,
+      "sortText": "05_cpuquota"
+    },
+    {
+      "label": "TasksMax",
+      "kind": 14,
+      "detail": "Max tasks",
+      "documentation": {
+        "value": "Maximum number of tasks (threads/processes)."
+      },
+      "insertText": "TasksMax=${1:4096}",
+      "insertTextRules": 4,
+      "sortText": "05_tasksmax"
+    },
+    {
+      "label": "security hardening basic",
+      "kind": 15,
+      "detail": "Basic security",
+      "documentation": {
+        "value": "Basic security hardening directives."
+      },
+      "insertText": "NoNewPrivileges=true\nProtectSystem=strict\nProtectHome=true\nPrivateTmp=true\nPrivateDevices=true\nProtectKernelTunables=true\nProtectKernelModules=true\nProtectControlGroups=true",
+      "insertTextRules": 4,
+      "sortText": "06_sec_basic"
+    },
+    {
+      "label": "security hardening full",
+      "kind": 15,
+      "detail": "Full security",
+      "documentation": {
+        "value": "Comprehensive security sandbox."
+      },
+      "insertText": "# Filesystem\nNoNewPrivileges=true\nProtectSystem=strict\nProtectHome=true\nPrivateTmp=true\nPrivateDevices=true\nReadWritePaths=${1:/opt/app/data}\n\n# Kernel\nProtectKernelTunables=true\nProtectKernelModules=true\nProtectKernelLogs=true\nProtectControlGroups=true\nProtectHostname=true\nProtectClock=true\nProtectProc=invisible\nProcSubset=pid\n\n# Network\n# RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\n# IPAddressDeny=any\n# IPAddressAllow=localhost\n\n# Capabilities\nCapabilityBoundingSet=\nAmbientCapabilities=\n\n# Syscall filtering\nSystemCallFilter=@system-service\nSystemCallErrorNumber=EPERM\nSystemCallArchitectures=native\n\n# Misc\nLockPersonality=true\nRestrictRealtime=true\nRestrictSUIDSGID=true\nRestrictNamespaces=true\nMemoryDenyWriteExecute=true\nRemoveIPC=true",
+      "insertTextRules": 4,
+      "sortText": "06_sec_full"
+    },
+    {
+      "label": "CapabilityBoundingSet",
+      "kind": 14,
+      "detail": "Capabilities",
+      "documentation": {
+        "value": "Restrict Linux capabilities."
+      },
+      "insertText": "CapabilityBoundingSet=${1:CAP_NET_BIND_SERVICE}",
+      "insertTextRules": 4,
+      "sortText": "06_caps"
+    },
+    {
+      "label": "SystemCallFilter",
+      "kind": 14,
+      "detail": "Syscall filter",
+      "documentation": {
+        "value": "Restrict system calls."
+      },
+      "insertText": "SystemCallFilter=${1:@system-service}\nSystemCallErrorNumber=EPERM\nSystemCallArchitectures=native",
+      "insertTextRules": 4,
+      "sortText": "06_syscall"
+    },
+    {
+      "label": "ReadWritePaths",
+      "kind": 14,
+      "detail": "RW paths",
+      "documentation": {
+        "value": "Filesystem paths the service can write to (with ProtectSystem=strict)."
+      },
+      "insertText": "ReadWritePaths=${1:/opt/app/data /var/log/app}",
+      "insertTextRules": 4,
+      "sortText": "06_rwpaths"
+    },
+    {
+      "label": "WantedBy",
+      "kind": 14,
+      "detail": "Wanted by target",
+      "documentation": {
+        "value": "Target that pulls this unit."
+      },
+      "insertText": "WantedBy=${1|multi-user.target,graphical.target,timers.target,sockets.target|}",
+      "insertTextRules": 4,
+      "sortText": "07_wantedby"
+    },
+    {
+      "label": "RequiredBy",
+      "kind": 14,
+      "detail": "Required by",
+      "documentation": {
+        "value": "Hard requirement from target."
+      },
+      "insertText": "RequiredBy=${1:multi-user.target}",
+      "insertTextRules": 4,
+      "sortText": "07_requiredby"
+    },
+    {
+      "label": "Also",
+      "kind": 14,
+      "detail": "Also install",
+      "documentation": {
+        "value": "Additional units to enable/disable together."
+      },
+      "insertText": "Also=${1:myapp.socket}",
+      "insertTextRules": 4,
+      "sortText": "07_also"
     },
     {
       "label": "OnCalendar",
       "kind": 14,
-      "detail": "Calendar timer",
+      "detail": "Calendar schedule",
       "documentation": {
-        "value": "Calendar-based timer expression (cron-like)."
+        "value": "Calendar-based timer schedule."
       },
-      "insertText": "OnCalendar=${1:daily}",
+      "insertText": "OnCalendar=${1:*-*-* 00:00:00}",
       "insertTextRules": 4,
-      "sortText": "04_oncal"
+      "sortText": "08_oncalendar"
     },
     {
-      "label": "security hardening",
-      "kind": 15,
-      "detail": "Security options",
+      "label": "OnBootSec",
+      "kind": 14,
+      "detail": "After boot",
       "documentation": {
-        "value": "Common security hardening directives."
+        "value": "Time after boot to trigger."
       },
-      "insertText": "ProtectSystem=strict\nProtectHome=true\nNoNewPrivileges=true\nPrivateTmp=true\nReadWritePaths=${1:/var/lib/myapp}",
+      "insertText": "OnBootSec=${1:5min}",
       "insertTextRules": 4,
-      "sortText": "05_security"
+      "sortText": "08_onboot"
+    },
+    {
+      "label": "OnUnitActiveSec",
+      "kind": 14,
+      "detail": "After activation",
+      "documentation": {
+        "value": "Time after unit last activation to re-trigger."
+      },
+      "insertText": "OnUnitActiveSec=${1:15min}",
+      "insertTextRules": 4,
+      "sortText": "08_onunitactive"
+    },
+    {
+      "label": "Persistent",
+      "kind": 14,
+      "detail": "Persistent timer",
+      "documentation": {
+        "value": "Run missed triggers immediately on system boot."
+      },
+      "insertText": "Persistent=true",
+      "insertTextRules": 4,
+      "sortText": "08_persistent"
+    },
+    {
+      "label": "RandomizedDelaySec",
+      "kind": 14,
+      "detail": "Random delay",
+      "documentation": {
+        "value": "Add random delay to prevent thundering herd."
+      },
+      "insertText": "RandomizedDelaySec=${1:300}",
+      "insertTextRules": 4,
+      "sortText": "08_randomdelay"
+    },
+    {
+      "label": "AccuracySec",
+      "kind": 14,
+      "detail": "Timer accuracy",
+      "documentation": {
+        "value": "Timer accuracy (can coalesce with other timers)."
+      },
+      "insertText": "AccuracySec=${1:1min}",
+      "insertTextRules": 4,
+      "sortText": "08_accuracy"
+    },
+    {
+      "label": "ListenStream",
+      "kind": 14,
+      "detail": "TCP/Unix socket",
+      "documentation": {
+        "value": "TCP port or Unix socket path."
+      },
+      "insertText": "ListenStream=${1:8080}",
+      "insertTextRules": 4,
+      "sortText": "09_listenstream"
+    },
+    {
+      "label": "ListenDatagram",
+      "kind": 14,
+      "detail": "UDP socket",
+      "documentation": {
+        "value": "UDP port."
+      },
+      "insertText": "ListenDatagram=${1:514}",
+      "insertTextRules": 4,
+      "sortText": "09_listendgram"
+    },
+    {
+      "label": "Accept",
+      "kind": 14,
+      "detail": "Accept mode",
+      "documentation": {
+        "value": "Spawn instance per connection."
+      },
+      "insertText": "Accept=${1|yes,no|}",
+      "insertTextRules": 4,
+      "sortText": "09_accept"
+    },
+    {
+      "label": "specifiers",
+      "kind": 15,
+      "detail": "Unit specifiers",
+      "documentation": {
+        "value": "Special variables in unit files."
+      },
+      "insertText": "# %n  Full unit name (e.g., myapp.service)\n# %N  Unescaped unit name\n# %p  Prefix name (part before @)\n# %i  Instance name (part after @, before .suffix)\n# %I  Unescaped instance name\n# %f  Unescaped filename (/%I)\n# %t  Runtime directory (/run or $XDG_RUNTIME_DIR)\n# %S  State directory (/var/lib)\n# %C  Cache directory (/var/cache)\n# %L  Log directory (/var/log)\n# %h  User home directory\n# %s  User shell\n# %H  Machine hostname\n# %%  Literal %",
+      "insertTextRules": 4,
+      "sortText": "10_specifiers"
+    },
+    {
+      "label": "template instance",
+      "kind": 15,
+      "detail": "Template unit",
+      "documentation": {
+        "value": "Template unit file (name@.service) for multiple instances."
+      },
+      "insertText": "[Unit]\nDescription=${1:Service} for %i\nAfter=network-online.target\n\n[Service]\nType=simple\nUser=${2:app}\nExecStart=${3:/opt/app/bin/server} --port %i\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target\n\n# Usage: systemctl start myapp@8080.service",
+      "insertTextRules": 4,
+      "sortText": "10_template"
     }
   ]
 }
