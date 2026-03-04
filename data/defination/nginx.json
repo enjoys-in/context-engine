@@ -510,6 +510,169 @@
       "description": "Client IP in binary form (4 bytes for IPv4). Efficient key for limit_req_zone/limit_conn_zone.",
       "type": "variable",
       "module": "ngx_http_core_module"
+    },
+    "auth_request": {
+      "signature": "auth_request uri | off",
+      "description": "Implements client authorization based on the result of a subrequest. If subrequest returns 2xx, access is allowed; 401 or 403 denies access.",
+      "module": "ngx_http_auth_request_module"
+    },
+    "auth_request_set": {
+      "signature": "auth_request_set $variable value",
+      "description": "Set a variable from the authentication subrequest response.",
+      "module": "ngx_http_auth_request_module"
+    },
+    "real_ip_header": {
+      "signature": "real_ip_header field | proxy_protocol",
+      "description": "Defines the request header field used to extract the real client IP address.",
+      "module": "ngx_http_realip_module"
+    },
+    "set_real_ip_from": {
+      "signature": "set_real_ip_from address | CIDR",
+      "description": "Defines trusted addresses that send correct replacement IP addresses.",
+      "module": "ngx_http_realip_module"
+    },
+    "proxy_cache_key": {
+      "signature": "proxy_cache_key string",
+      "description": "Defines a key for caching. Default: $scheme$proxy_host$request_uri.",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_cache_bypass": {
+      "signature": "proxy_cache_bypass string ...",
+      "description": "Defines conditions under which the response will not be taken from cache. If any value is non-empty and non-zero, the response is not cached.",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_next_upstream": {
+      "signature": "proxy_next_upstream error | timeout | ...",
+      "description": "Specifies in which cases a request should be passed to the next server in the upstream.",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_buffer_size": {
+      "signature": "proxy_buffer_size size",
+      "description": "Sets the size of the buffer for reading the first part of the response from the proxied server. Default: 4k|8k.",
+      "module": "ngx_http_proxy_module"
+    },
+    "uwsgi_pass": {
+      "signature": "uwsgi_pass address",
+      "description": "Pass request to a uWSGI server. Address can be unix socket or TCP address.",
+      "module": "ngx_http_uwsgi_module"
+    },
+    "grpc_pass": {
+      "signature": "grpc_pass address",
+      "description": "Sets the gRPC server address. Address can use grpc:// or grpcs:// scheme.",
+      "module": "ngx_http_grpc_module"
+    },
+    "internal": {
+      "signature": "internal",
+      "description": "Specifies that a location can only be used for internal requests: redirects, error_page, auth_request subrequests.",
+      "module": "ngx_http_core_module"
+    },
+    "stub_status": {
+      "signature": "stub_status",
+      "description": "Provides access to basic status information: active connections, accepts, handled, requests, reading, writing, waiting.",
+      "module": "ngx_http_stub_status_module"
+    },
+    "ssl_session_tickets": {
+      "signature": "ssl_session_tickets on | off",
+      "description": "Enables or disables session resumption through TLS session tickets.",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_trusted_certificate": {
+      "signature": "ssl_trusted_certificate file",
+      "description": "Specifies a file with trusted CA certificates used to verify client certificates and OCSP responses.",
+      "module": "ngx_http_ssl_module"
+    },
+    "ssl_stapling_verify": {
+      "signature": "ssl_stapling_verify on | off",
+      "description": "Enables or disables verification of OCSP responses by the server.",
+      "module": "ngx_http_ssl_module"
+    },
+    "worker_rlimit_nofile": {
+      "signature": "worker_rlimit_nofile number",
+      "description": "Maximum number of open files (RLIMIT_NOFILE) for worker processes.",
+      "module": "ngx_core_module"
+    },
+    "multi_accept": {
+      "signature": "multi_accept on | off",
+      "description": "If enabled, worker process will accept all new connections at once. Default: off.",
+      "module": "ngx_core_module"
+    },
+    "sub_filter": {
+      "signature": "sub_filter string replacement",
+      "description": "Sets a string to replace in the response body. Matching is case-insensitive.",
+      "module": "ngx_http_sub_module"
+    },
+    "open_file_cache": {
+      "signature": "open_file_cache max=N [inactive=time] | off",
+      "description": "Cache open file descriptors, sizes, modification times, directory lookups, and file lookup errors.",
+      "module": "ngx_http_core_module"
+    },
+    "proxy_cookie_path": {
+      "signature": "proxy_cookie_path path replacement",
+      "description": "Sets text that should be changed in the path attribute of Set-Cookie headers from proxied server.",
+      "module": "ngx_http_proxy_module"
+    },
+    "proxy_cookie_domain": {
+      "signature": "proxy_cookie_domain domain replacement",
+      "description": "Sets text that should be changed in the domain attribute of Set-Cookie headers from proxied server.",
+      "module": "ngx_http_proxy_module"
+    },
+    "keepalive_requests": {
+      "signature": "keepalive_requests number",
+      "description": "Maximum number of requests per keep-alive connection. Default: 1000.",
+      "module": "ngx_http_core_module"
+    },
+    "mail": {
+      "signature": "mail { ... }",
+      "description": "Provides the configuration file context for mail proxy server directives (IMAP, POP3, SMTP).",
+      "module": "ngx_mail_core_module"
+    },
+    "$request_method": {
+      "description": "Request method (GET, POST, etc.)."
+    },
+    "$server_name": {
+      "description": "Name of the server that accepted a request."
+    },
+    "$server_port": {
+      "description": "Port of the server that accepted a request."
+    },
+    "$http_user_agent": {
+      "description": "Client User-Agent header value."
+    },
+    "$http_referer": {
+      "description": "Client Referer header value."
+    },
+    "$document_root": {
+      "description": "Root or alias directive value for the current request."
+    },
+    "$fastcgi_script_name": {
+      "description": "Request URI, or request URI with index appended if URI ends with /."
+    },
+    "$query_string": {
+      "description": "Same as $args; the query string parameters."
+    },
+    "$request_time": {
+      "description": "Request processing time in seconds with millisecond resolution."
+    },
+    "$upstream_response_time": {
+      "description": "Time spent on receiving the response from upstream server."
+    },
+    "$body_bytes_sent": {
+      "description": "Number of bytes sent to a client (not counting response header)."
+    },
+    "$status": {
+      "description": "Response status code."
+    },
+    "$time_local": {
+      "description": "Local time in Common Log Format."
+    },
+    "$time_iso8601": {
+      "description": "Local time in ISO 8601 format."
+    },
+    "$realpath_root": {
+      "description": "Absolute pathname for root/alias of current request with symlinks resolved."
+    },
+    "$is_args": {
+      "description": "\"?\" if request has query string, empty otherwise."
     }
   }
 }

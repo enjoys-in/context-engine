@@ -1,0 +1,1853 @@
+{
+  "language": "redis",
+  "definitions": {
+    "SET": {
+      "signature": "SET key value [EX seconds | PX ms | EXAT ts | PXAT ms-ts] [NX|XX] [KEEPTTL] [GET]",
+      "description": "Set the string value of a key with optional expiry, conditional set (NX/XX), and GET old value.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "GET": {
+      "signature": "GET key",
+      "description": "Get the string value of key. Returns nil if key does not exist or value is not a string.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "GETSET": {
+      "signature": "GETSET key value",
+      "description": "Atomically set key to value and return the old value. Deprecated in favor of SET with GET option.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "GETDEL": {
+      "signature": "GETDEL key",
+      "description": "Get the value of key and delete the key atomically. Redis 6.2+.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "GETEX": {
+      "signature": "GETEX key [EX seconds | PX ms | EXAT ts | PXAT ms-ts | PERSIST]",
+      "description": "Get value and optionally set or remove expiration. Redis 6.2+.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "MSET": {
+      "signature": "MSET key value [key value ...]",
+      "description": "Set multiple key-value pairs atomically. Always succeeds.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "MGET": {
+      "signature": "MGET key [key ...]",
+      "description": "Get values of all specified keys. Returns nil for non-existing keys.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "MSETNX": {
+      "signature": "MSETNX key value [key value ...]",
+      "description": "Set multiple keys only if none of them exist. Atomic — all or nothing.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "SETNX": {
+      "signature": "SETNX key value",
+      "description": "Set key to value if key does not exist. Returns 1 if set, 0 if key exists. Use SET NX instead.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "SETEX": {
+      "signature": "SETEX key seconds value",
+      "description": "Set key to value with expiration in seconds. Atomic SET + EXPIRE.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "PSETEX": {
+      "signature": "PSETEX key milliseconds value",
+      "description": "Set key to value with expiration in milliseconds.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "APPEND": {
+      "signature": "APPEND key value",
+      "description": "Append a value to the string at key. Creates key if it doesn't exist. Returns new string length.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "STRLEN": {
+      "signature": "STRLEN key",
+      "description": "Returns the length of the string stored at key. Returns 0 if key doesn't exist.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "GETRANGE": {
+      "signature": "GETRANGE key start end",
+      "description": "Returns a substring of the string at key. Negative indices supported.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "SETRANGE": {
+      "signature": "SETRANGE key offset value",
+      "description": "Overwrite part of the string at key starting at offset.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "INCR": {
+      "signature": "INCR key",
+      "description": "Atomically increment the integer value of key by 1. Creates key with 0 if not exists.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "INCRBY": {
+      "signature": "INCRBY key increment",
+      "description": "Atomically increment the integer value of key by the given amount.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "INCRBYFLOAT": {
+      "signature": "INCRBYFLOAT key increment",
+      "description": "Increment the float value of key by the given amount.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "DECR": {
+      "signature": "DECR key",
+      "description": "Atomically decrement the integer value of key by 1.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "DECRBY": {
+      "signature": "DECRBY key decrement",
+      "description": "Atomically decrement the integer value of key by the given amount.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "SUBSTR": {
+      "signature": "SUBSTR key start end",
+      "description": "Returns a substring. Deprecated alias for GETRANGE.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "LCS": {
+      "signature": "LCS key1 key2 [LEN] [IDX] [MINMATCHLEN len] [WITHMATCHLEN]",
+      "description": "Find the longest common substring between two string keys. Redis 7.0+.",
+      "type": "command",
+      "module": "Strings"
+    },
+    "HSET": {
+      "signature": "HSET key field value [field value ...]",
+      "description": "Set one or more field-value pairs in a hash. Creates hash if not exists.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HGET": {
+      "signature": "HGET key field",
+      "description": "Get the value of a field in a hash. Returns nil if field or key doesn't exist.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HMSET": {
+      "signature": "HMSET key field value [field value ...]",
+      "description": "Set multiple hash fields. Deprecated — use HSET with multiple field-value pairs.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HMGET": {
+      "signature": "HMGET key field [field ...]",
+      "description": "Get values of multiple hash fields. Returns nil for non-existing fields.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HGETALL": {
+      "signature": "HGETALL key",
+      "description": "Get all fields and values in a hash. Returns flat list of alternating field/value.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HDEL": {
+      "signature": "HDEL key field [field ...]",
+      "description": "Delete one or more hash fields. Returns the number of removed fields.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HEXISTS": {
+      "signature": "HEXISTS key field",
+      "description": "Check if a hash field exists. Returns 1 or 0.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HLEN": {
+      "signature": "HLEN key",
+      "description": "Returns the number of fields in a hash.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HKEYS": {
+      "signature": "HKEYS key",
+      "description": "Returns all field names in a hash.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HVALS": {
+      "signature": "HVALS key",
+      "description": "Returns all values in a hash.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HINCRBY": {
+      "signature": "HINCRBY key field increment",
+      "description": "Increment the integer value of a hash field.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HINCRBYFLOAT": {
+      "signature": "HINCRBYFLOAT key field increment",
+      "description": "Increment the float value of a hash field.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HSETNX": {
+      "signature": "HSETNX key field value",
+      "description": "Set hash field only if it does not exist.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HRANDFIELD": {
+      "signature": "HRANDFIELD key [count [WITHVALUES]]",
+      "description": "Return random field(s) from a hash. Redis 6.2+.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "HSCAN": {
+      "signature": "HSCAN key cursor [MATCH pattern] [COUNT count]",
+      "description": "Incrementally iterate hash fields and values.",
+      "type": "command",
+      "module": "Hashes"
+    },
+    "LPUSH": {
+      "signature": "LPUSH key element [element ...]",
+      "description": "Insert elements at the head of a list. Creates list if not exists.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "RPUSH": {
+      "signature": "RPUSH key element [element ...]",
+      "description": "Insert elements at the tail of a list.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LPOP": {
+      "signature": "LPOP key [count]",
+      "description": "Remove and return element(s) from the head of a list.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "RPOP": {
+      "signature": "RPOP key [count]",
+      "description": "Remove and return element(s) from the tail of a list.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LLEN": {
+      "signature": "LLEN key",
+      "description": "Returns the length of a list.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LRANGE": {
+      "signature": "LRANGE key start stop",
+      "description": "Get elements from a list by index range. 0 = first, -1 = last.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LINDEX": {
+      "signature": "LINDEX key index",
+      "description": "Get an element by its index. Negative indices count from the end.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LSET": {
+      "signature": "LSET key index element",
+      "description": "Set the element at index in a list.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LINSERT": {
+      "signature": "LINSERT key BEFORE|AFTER pivot element",
+      "description": "Insert element before or after the pivot value.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LREM": {
+      "signature": "LREM key count element",
+      "description": "Remove count occurrences of element. count>0: head to tail; count<0: tail to head; 0: all.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LTRIM": {
+      "signature": "LTRIM key start stop",
+      "description": "Trim list to the specified range.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "RPOPLPUSH": {
+      "signature": "RPOPLPUSH source destination",
+      "description": "Pop from tail of source and push to head of destination. Deprecated — use LMOVE.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LMOVE": {
+      "signature": "LMOVE source destination LEFT|RIGHT LEFT|RIGHT",
+      "description": "Atomically pop from one list and push to another. Redis 6.2+.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "BLPOP": {
+      "signature": "BLPOP key [key ...] timeout",
+      "description": "Blocking pop from head. Blocks until element available or timeout.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "BRPOP": {
+      "signature": "BRPOP key [key ...] timeout",
+      "description": "Blocking pop from tail.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "BLMOVE": {
+      "signature": "BLMOVE source destination LEFT|RIGHT LEFT|RIGHT timeout",
+      "description": "Blocking version of LMOVE. Redis 6.2+.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LPOS": {
+      "signature": "LPOS key element [RANK rank] [COUNT count] [MAXLEN len]",
+      "description": "Return position of element in list. Redis 6.0.6+.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LMPOP": {
+      "signature": "LMPOP numkeys key [key ...] LEFT|RIGHT [COUNT count]",
+      "description": "Pop from first non-empty list. Redis 7.0+.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "BLMPOP": {
+      "signature": "BLMPOP timeout numkeys key [key ...] LEFT|RIGHT [COUNT count]",
+      "description": "Blocking version of LMPOP. Redis 7.0+.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "LPUSHX": {
+      "signature": "LPUSHX key element [element ...]",
+      "description": "Push to head only if list exists.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "RPUSHX": {
+      "signature": "RPUSHX key element [element ...]",
+      "description": "Push to tail only if list exists.",
+      "type": "command",
+      "module": "Lists"
+    },
+    "SADD": {
+      "signature": "SADD key member [member ...]",
+      "description": "Add members to a set. Ignores existing members.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SREM": {
+      "signature": "SREM key member [member ...]",
+      "description": "Remove members from a set.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SMEMBERS": {
+      "signature": "SMEMBERS key",
+      "description": "Get all members of a set.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SISMEMBER": {
+      "signature": "SISMEMBER key member",
+      "description": "Check if member is in set. Returns 1 or 0.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SMISMEMBER": {
+      "signature": "SMISMEMBER key member [member ...]",
+      "description": "Check multiple members. Returns array of 1/0. Redis 6.2+.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SCARD": {
+      "signature": "SCARD key",
+      "description": "Get the cardinality (number of elements) of a set.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SPOP": {
+      "signature": "SPOP key [count]",
+      "description": "Remove and return random member(s).",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SRANDMEMBER": {
+      "signature": "SRANDMEMBER key [count]",
+      "description": "Get random member(s) without removing.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SUNION": {
+      "signature": "SUNION key [key ...]",
+      "description": "Return the union of multiple sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SUNIONSTORE": {
+      "signature": "SUNIONSTORE destination key [key ...]",
+      "description": "Store the union of sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SINTER": {
+      "signature": "SINTER key [key ...]",
+      "description": "Return the intersection of multiple sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SINTERSTORE": {
+      "signature": "SINTERSTORE destination key [key ...]",
+      "description": "Store the intersection of sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SINTERCARD": {
+      "signature": "SINTERCARD numkeys key [key ...] [LIMIT limit]",
+      "description": "Return cardinality of intersection without computing it. Redis 7.0+.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SDIFF": {
+      "signature": "SDIFF key [key ...]",
+      "description": "Return members in first set not in subsequent sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SDIFFSTORE": {
+      "signature": "SDIFFSTORE destination key [key ...]",
+      "description": "Store the difference of sets.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SMOVE": {
+      "signature": "SMOVE source destination member",
+      "description": "Atomically move member from one set to another.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "SSCAN": {
+      "signature": "SSCAN key cursor [MATCH pattern] [COUNT count]",
+      "description": "Incrementally iterate set members.",
+      "type": "command",
+      "module": "Sets"
+    },
+    "ZADD": {
+      "signature": "ZADD key [NX|XX] [GT|LT] [CH] score member [score member ...]",
+      "description": "Add members with scores to a sorted set. NX: only add new, XX: only update, GT/LT: conditional score update.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZREM": {
+      "signature": "ZREM key member [member ...]",
+      "description": "Remove members from a sorted set.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZSCORE": {
+      "signature": "ZSCORE key member",
+      "description": "Get the score of a member. Returns nil if not found.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZMSCORE": {
+      "signature": "ZMSCORE key member [member ...]",
+      "description": "Get scores of multiple members. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANK": {
+      "signature": "ZRANK key member [WITHSCORE]",
+      "description": "Get the rank of a member (0-based, ascending). Redis 7.2+ supports WITHSCORE.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZREVRANK": {
+      "signature": "ZREVRANK key member [WITHSCORE]",
+      "description": "Get the rank of a member (0-based, descending).",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZCARD": {
+      "signature": "ZCARD key",
+      "description": "Get the number of members in a sorted set.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZCOUNT": {
+      "signature": "ZCOUNT key min max",
+      "description": "Count members with scores in the given range. Use -inf/+inf for unbounded.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZLEXCOUNT": {
+      "signature": "ZLEXCOUNT key min max",
+      "description": "Count members in a lex range when all scores are equal.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANGE": {
+      "signature": "ZRANGE key min max [BYSCORE|BYLEX] [REV] [LIMIT offset count] [WITHSCORES]",
+      "description": "Unified range query. Replaces ZRANGEBYSCORE, ZRANGEBYLEX, ZREVRANGE since Redis 6.2.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANGEBYSCORE": {
+      "signature": "ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]",
+      "description": "Return members with scores in range. Deprecated — use ZRANGE BYSCORE.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANGEBYLEX": {
+      "signature": "ZRANGEBYLEX key min max [LIMIT offset count]",
+      "description": "Return members in a lex range. Deprecated — use ZRANGE BYLEX.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZREVRANGE": {
+      "signature": "ZREVRANGE key start stop [WITHSCORES]",
+      "description": "Return members in reverse rank order. Deprecated — use ZRANGE REV.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZREVRANGEBYSCORE": {
+      "signature": "ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]",
+      "description": "Return members with scores in range, descending. Deprecated.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZINCRBY": {
+      "signature": "ZINCRBY key increment member",
+      "description": "Increment the score of a member. Creates member if not exists.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZUNIONSTORE": {
+      "signature": "ZUNIONSTORE dest numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX]",
+      "description": "Store union of sorted sets with optional score weighting.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZUNION": {
+      "signature": "ZUNION numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]",
+      "description": "Return union without storing. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZINTERSTORE": {
+      "signature": "ZINTERSTORE dest numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX]",
+      "description": "Store intersection of sorted sets.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZINTER": {
+      "signature": "ZINTER numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]",
+      "description": "Return intersection without storing. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZDIFFSTORE": {
+      "signature": "ZDIFFSTORE dest numkeys key [key ...]",
+      "description": "Store difference of sorted sets. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZDIFF": {
+      "signature": "ZDIFF numkeys key [key ...] [WITHSCORES]",
+      "description": "Return difference without storing. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANDMEMBER": {
+      "signature": "ZRANDMEMBER key [count [WITHSCORES]]",
+      "description": "Return random member(s). Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZPOPMIN": {
+      "signature": "ZPOPMIN key [count]",
+      "description": "Remove and return member(s) with the lowest scores.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZPOPMAX": {
+      "signature": "ZPOPMAX key [count]",
+      "description": "Remove and return member(s) with the highest scores.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "BZPOPMIN": {
+      "signature": "BZPOPMIN key [key ...] timeout",
+      "description": "Blocking pop of member with lowest score.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "BZPOPMAX": {
+      "signature": "BZPOPMAX key [key ...] timeout",
+      "description": "Blocking pop of member with highest score.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZMPOP": {
+      "signature": "ZMPOP numkeys key [key ...] MIN|MAX [COUNT count]",
+      "description": "Pop from first non-empty sorted set. Redis 7.0+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "BZMPOP": {
+      "signature": "BZMPOP timeout numkeys key [key ...] MIN|MAX [COUNT count]",
+      "description": "Blocking version of ZMPOP. Redis 7.0+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZRANGESTORE": {
+      "signature": "ZRANGESTORE dst src min max [BYSCORE|BYLEX] [REV] [LIMIT offset count]",
+      "description": "Store specified range from sorted set. Redis 6.2+.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "ZSCAN": {
+      "signature": "ZSCAN key cursor [MATCH pattern] [COUNT count]",
+      "description": "Incrementally iterate sorted set members and scores.",
+      "type": "command",
+      "module": "Sorted Sets"
+    },
+    "DEL": {
+      "signature": "DEL key [key ...]",
+      "description": "Delete one or more keys synchronously. Returns count of deleted keys.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "UNLINK": {
+      "signature": "UNLINK key [key ...]",
+      "description": "Delete keys asynchronously in a background thread. Non-blocking.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "EXISTS": {
+      "signature": "EXISTS key [key ...]",
+      "description": "Check if key(s) exist. Returns count of existing keys.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "TYPE": {
+      "signature": "TYPE key",
+      "description": "Returns the type of value at key: string, list, set, zset, hash, stream.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "RENAME": {
+      "signature": "RENAME key newkey",
+      "description": "Rename a key. Overwrites newkey if it exists.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "RENAMENX": {
+      "signature": "RENAMENX key newkey",
+      "description": "Rename key only if newkey does not exist.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "KEYS": {
+      "signature": "KEYS pattern",
+      "description": "Find all keys matching a glob-style pattern. Use SCAN in production.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "SCAN": {
+      "signature": "SCAN cursor [MATCH pattern] [COUNT count] [TYPE type]",
+      "description": "Incrementally iterate the key space. Non-blocking alternative to KEYS.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "RANDOMKEY": {
+      "signature": "RANDOMKEY",
+      "description": "Return a random key from the current database.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "EXPIRE": {
+      "signature": "EXPIRE key seconds [NX|XX|GT|LT]",
+      "description": "Set TTL on key in seconds. Redis 7.0+ supports conditional options.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PEXPIRE": {
+      "signature": "PEXPIRE key milliseconds [NX|XX|GT|LT]",
+      "description": "Set TTL on key in milliseconds.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "EXPIREAT": {
+      "signature": "EXPIREAT key unix-time-seconds [NX|XX|GT|LT]",
+      "description": "Set key to expire at a Unix timestamp (seconds).",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PEXPIREAT": {
+      "signature": "PEXPIREAT key unix-time-milliseconds [NX|XX|GT|LT]",
+      "description": "Set key to expire at a Unix timestamp (milliseconds).",
+      "type": "command",
+      "module": "Generic"
+    },
+    "TTL": {
+      "signature": "TTL key",
+      "description": "Returns remaining time to live in seconds. -2 = key doesn't exist, -1 = no expiry.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PTTL": {
+      "signature": "PTTL key",
+      "description": "Returns remaining TTL in milliseconds.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PERSIST": {
+      "signature": "PERSIST key",
+      "description": "Remove the expiration from a key, making it persistent.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "EXPIRETIME": {
+      "signature": "EXPIRETIME key",
+      "description": "Returns the absolute Unix timestamp at which the key will expire. Redis 7.0+.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PEXPIRETIME": {
+      "signature": "PEXPIRETIME key",
+      "description": "Returns the absolute Unix timestamp (ms) at which the key will expire. Redis 7.0+.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "DUMP": {
+      "signature": "DUMP key",
+      "description": "Serialize the value stored at key in Redis-specific format.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "RESTORE": {
+      "signature": "RESTORE key ttl serialized-value [REPLACE] [ABSTTL] [IDLETIME s] [FREQ f]",
+      "description": "Deserialize and restore a key from DUMP output.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "OBJECT ENCODING": {
+      "signature": "OBJECT ENCODING key",
+      "description": "Returns the internal encoding of the value: embstr, int, raw, ziplist, listpack, quicklist, hashtable, skiplist, intset.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "OBJECT REFCOUNT": {
+      "signature": "OBJECT REFCOUNT key",
+      "description": "Returns the reference count of the value object.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "OBJECT IDLETIME": {
+      "signature": "OBJECT IDLETIME key",
+      "description": "Returns seconds since the key was last accessed.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "OBJECT FREQ": {
+      "signature": "OBJECT FREQ key",
+      "description": "Returns the logarithmic access frequency counter (requires allkeys-lfu policy).",
+      "type": "command",
+      "module": "Generic"
+    },
+    "SORT": {
+      "signature": "SORT key [BY pattern] [LIMIT offset count] [GET pattern ...] [ASC|DESC] [ALPHA] [STORE dest]",
+      "description": "Sort elements in a list, set, or sorted set. Can dereference external keys.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "SORT_RO": {
+      "signature": "SORT_RO key [BY pattern] [LIMIT offset count] [GET pattern ...] [ASC|DESC] [ALPHA]",
+      "description": "Read-only variant of SORT. Redis 7.0+.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "MOVE": {
+      "signature": "MOVE key db",
+      "description": "Move key to another database.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "COPY": {
+      "signature": "COPY source destination [DB db] [REPLACE]",
+      "description": "Copy a key to another key. Redis 6.2+.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "TOUCH": {
+      "signature": "TOUCH key [key ...]",
+      "description": "Alter the last access time of key(s).",
+      "type": "command",
+      "module": "Generic"
+    },
+    "WAIT": {
+      "signature": "WAIT numreplicas timeout",
+      "description": "Block until writes are acknowledged by N replicas or timeout.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "WAITAOF": {
+      "signature": "WAITAOF numlocal numreplicas timeout",
+      "description": "Block until writes are fsynced to AOF. Redis 7.2+.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "PFADD": {
+      "signature": "PFADD key element [element ...]",
+      "description": "Add elements to a HyperLogLog for approximate cardinality counting.",
+      "type": "command",
+      "module": "HyperLogLog"
+    },
+    "PFCOUNT": {
+      "signature": "PFCOUNT key [key ...]",
+      "description": "Return the approximate cardinality. With multiple keys, returns union cardinality.",
+      "type": "command",
+      "module": "HyperLogLog"
+    },
+    "PFMERGE": {
+      "signature": "PFMERGE destkey sourcekey [sourcekey ...]",
+      "description": "Merge multiple HyperLogLogs into one.",
+      "type": "command",
+      "module": "HyperLogLog"
+    },
+    "SETBIT": {
+      "signature": "SETBIT key offset value",
+      "description": "Set or clear the bit at offset (0 or 1). Returns the original bit.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "GETBIT": {
+      "signature": "GETBIT key offset",
+      "description": "Returns the bit value at offset.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "BITCOUNT": {
+      "signature": "BITCOUNT key [start end [BYTE|BIT]]",
+      "description": "Count set bits (1s) in a string, optionally in a range.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "BITOP": {
+      "signature": "BITOP AND|OR|XOR|NOT destkey key [key ...]",
+      "description": "Perform bitwise operations between string keys.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "BITPOS": {
+      "signature": "BITPOS key bit [start [end [BYTE|BIT]]]",
+      "description": "Return position of first set/clear bit.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "BITFIELD": {
+      "signature": "BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]",
+      "description": "Perform arbitrary bitfield integer operations on strings.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "BITFIELD_RO": {
+      "signature": "BITFIELD_RO key GET type offset [GET type offset ...]",
+      "description": "Read-only variant of BITFIELD. Redis 6.0+.",
+      "type": "command",
+      "module": "Bitmaps"
+    },
+    "XADD": {
+      "signature": "XADD key [NOMKSTREAM] [MAXLEN|MINID [=|~] threshold] *|id field value [field value ...]",
+      "description": "Append a new entry to a stream. Use * for auto-generated ID.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XLEN": {
+      "signature": "XLEN key",
+      "description": "Return the number of entries in a stream.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XRANGE": {
+      "signature": "XRANGE key start end [COUNT count]",
+      "description": "Return entries in a range. Use - and + for min/max IDs.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XREVRANGE": {
+      "signature": "XREVRANGE key end start [COUNT count]",
+      "description": "Return entries in reverse order.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XREAD": {
+      "signature": "XREAD [COUNT count] [BLOCK ms] STREAMS key [key ...] id [id ...]",
+      "description": "Read from one or more streams. Use $ for only new entries.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XGROUP CREATE": {
+      "signature": "XGROUP CREATE key group id|$ [MKSTREAM] [ENTRIESREAD n]",
+      "description": "Create a consumer group on a stream.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XGROUP DESTROY": {
+      "signature": "XGROUP DESTROY key group",
+      "description": "Destroy a consumer group.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XGROUP DELCONSUMER": {
+      "signature": "XGROUP DELCONSUMER key group consumer",
+      "description": "Remove a consumer from a group.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XGROUP SETID": {
+      "signature": "XGROUP SETID key group id|$ [ENTRIESREAD n]",
+      "description": "Set the last delivered ID of a consumer group.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XREADGROUP": {
+      "signature": "XREADGROUP GROUP group consumer [COUNT count] [BLOCK ms] [NOACK] STREAMS key [key ...] id [id ...]",
+      "description": "Read from a stream as a consumer group member. Use > for undelivered messages.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XACK": {
+      "signature": "XACK key group id [id ...]",
+      "description": "Acknowledge messages, removing them from the pending entries list.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XCLAIM": {
+      "signature": "XCLAIM key group consumer min-idle-time id [id ...] [IDLE ms] [TIME ms] [RETRYCOUNT n] [FORCE] [JUSTID]",
+      "description": "Transfer ownership of pending messages to another consumer.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XAUTOCLAIM": {
+      "signature": "XAUTOCLAIM key group consumer min-idle-time start [COUNT count] [JUSTID]",
+      "description": "Auto-transfer idle pending messages. Redis 6.2+.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XPENDING": {
+      "signature": "XPENDING key group [[IDLE min-idle-time] start end count [consumer]]",
+      "description": "Inspect the pending entries list (PEL) for a consumer group.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XINFO STREAM": {
+      "signature": "XINFO STREAM key [FULL [COUNT count]]",
+      "description": "Get information about a stream.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XINFO GROUPS": {
+      "signature": "XINFO GROUPS key",
+      "description": "List consumer groups for a stream.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XINFO CONSUMERS": {
+      "signature": "XINFO CONSUMERS key group",
+      "description": "List consumers in a consumer group.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XTRIM": {
+      "signature": "XTRIM key MAXLEN|MINID [=|~] threshold",
+      "description": "Trim stream to a maximum length or minimum ID.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XDEL": {
+      "signature": "XDEL key id [id ...]",
+      "description": "Delete specific entries from a stream by ID.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "XSETID": {
+      "signature": "XSETID key last-id [ENTRIESADDED n] [MAXDELETEDID id]",
+      "description": "Set the last entry ID of a stream.",
+      "type": "command",
+      "module": "Streams"
+    },
+    "SUBSCRIBE": {
+      "signature": "SUBSCRIBE channel [channel ...]",
+      "description": "Listen for messages on one or more channels.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "UNSUBSCRIBE": {
+      "signature": "UNSUBSCRIBE [channel ...]",
+      "description": "Stop listening from channels.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBLISH": {
+      "signature": "PUBLISH channel message",
+      "description": "Post a message to a channel. Returns the number of receivers.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PSUBSCRIBE": {
+      "signature": "PSUBSCRIBE pattern [pattern ...]",
+      "description": "Subscribe to channels matching glob-style patterns.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUNSUBSCRIBE": {
+      "signature": "PUNSUBSCRIBE [pattern ...]",
+      "description": "Stop listening from pattern channels.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBSUB CHANNELS": {
+      "signature": "PUBSUB CHANNELS [pattern]",
+      "description": "List active channels. Optionally filter by pattern.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBSUB NUMSUB": {
+      "signature": "PUBSUB NUMSUB [channel ...]",
+      "description": "Get subscriber counts for channels.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBSUB NUMPAT": {
+      "signature": "PUBSUB NUMPAT",
+      "description": "Get the count of unique pattern subscriptions.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "SSUBSCRIBE": {
+      "signature": "SSUBSCRIBE channel [channel ...]",
+      "description": "Subscribe to shard channels. Redis 7.0+.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "SUNSUBSCRIBE": {
+      "signature": "SUNSUBSCRIBE [channel ...]",
+      "description": "Unsubscribe from shard channels. Redis 7.0+.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "SPUBLISH": {
+      "signature": "SPUBLISH channel message",
+      "description": "Publish to a shard channel. Redis 7.0+.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBSUB SHARDCHANNELS": {
+      "signature": "PUBSUB SHARDCHANNELS [pattern]",
+      "description": "List active shard channels. Redis 7.0+.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "PUBSUB SHARDNUMSUB": {
+      "signature": "PUBSUB SHARDNUMSUB [channel ...]",
+      "description": "Get shard channel subscriber counts. Redis 7.0+.",
+      "type": "command",
+      "module": "Pub/Sub"
+    },
+    "MULTI": {
+      "signature": "MULTI",
+      "description": "Mark the start of a transaction block. Commands are queued until EXEC.",
+      "type": "command",
+      "module": "Transactions"
+    },
+    "EXEC": {
+      "signature": "EXEC",
+      "description": "Execute all queued commands in the transaction. Returns nil if WATCH detected a change.",
+      "type": "command",
+      "module": "Transactions"
+    },
+    "DISCARD": {
+      "signature": "DISCARD",
+      "description": "Discard all queued commands in the current transaction.",
+      "type": "command",
+      "module": "Transactions"
+    },
+    "WATCH": {
+      "signature": "WATCH key [key ...]",
+      "description": "Watch keys for changes. If any watched key is modified before EXEC, the transaction is aborted (optimistic locking).",
+      "type": "command",
+      "module": "Transactions"
+    },
+    "UNWATCH": {
+      "signature": "UNWATCH",
+      "description": "Forget all watched keys.",
+      "type": "command",
+      "module": "Transactions"
+    },
+    "EVAL": {
+      "signature": "EVAL script numkeys [key ...] [arg ...]",
+      "description": "Execute a Lua script server-side. Scripts are atomic.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "EVALSHA": {
+      "signature": "EVALSHA sha1 numkeys [key ...] [arg ...]",
+      "description": "Execute a cached Lua script by SHA1 hash.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "EVALRO": {
+      "signature": "EVALRO script numkeys [key ...] [arg ...]",
+      "description": "Execute Lua script in read-only mode. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "EVALSHA_RO": {
+      "signature": "EVALSHA_RO sha1 numkeys [key ...] [arg ...]",
+      "description": "Execute cached script in read-only mode. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "SCRIPT LOAD": {
+      "signature": "SCRIPT LOAD script",
+      "description": "Load a Lua script into the script cache. Returns SHA1 hash.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "SCRIPT EXISTS": {
+      "signature": "SCRIPT EXISTS sha1 [sha1 ...]",
+      "description": "Check if scripts exist in the script cache.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "SCRIPT FLUSH": {
+      "signature": "SCRIPT FLUSH [ASYNC|SYNC]",
+      "description": "Remove all scripts from the script cache.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "SCRIPT KILL": {
+      "signature": "SCRIPT KILL",
+      "description": "Kill the currently executing Lua script.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION LOAD": {
+      "signature": "FUNCTION LOAD [REPLACE] function-code",
+      "description": "Load a function library. Redis 7.0+. Functions persist across restarts.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FCALL": {
+      "signature": "FCALL function numkeys [key ...] [arg ...]",
+      "description": "Call a loaded Redis function. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FCALL_RO": {
+      "signature": "FCALL_RO function numkeys [key ...] [arg ...]",
+      "description": "Call a function in read-only mode. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION LIST": {
+      "signature": "FUNCTION LIST [LIBRARYNAME pattern] [WITHCODE]",
+      "description": "List loaded function libraries. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION DUMP": {
+      "signature": "FUNCTION DUMP",
+      "description": "Serialize all loaded functions. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION RESTORE": {
+      "signature": "FUNCTION RESTORE serialized-data [FLUSH|APPEND|REPLACE]",
+      "description": "Restore functions from FUNCTION DUMP. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION FLUSH": {
+      "signature": "FUNCTION FLUSH [ASYNC|SYNC]",
+      "description": "Delete all loaded functions. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION DELETE": {
+      "signature": "FUNCTION DELETE library-name",
+      "description": "Delete a function library. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "FUNCTION STATS": {
+      "signature": "FUNCTION STATS",
+      "description": "Get function execution statistics. Redis 7.0+.",
+      "type": "command",
+      "module": "Scripting"
+    },
+    "GEOADD": {
+      "signature": "GEOADD key [NX|XX] [CH] longitude latitude member [lon lat member ...]",
+      "description": "Add geospatial items to a sorted set.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEODIST": {
+      "signature": "GEODIST key member1 member2 [M|KM|FT|MI]",
+      "description": "Return distance between two geospatial members.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEOHASH": {
+      "signature": "GEOHASH key member [member ...]",
+      "description": "Return Geohash strings representing positions.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEOPOS": {
+      "signature": "GEOPOS key member [member ...]",
+      "description": "Return longitude/latitude of members.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEOSEARCH": {
+      "signature": "GEOSEARCH key FROMMEMBER member|FROMLONLAT lon lat BYRADIUS radius M|KM|FT|MI|BYBOX w h M|KM|FT|MI [ASC|DESC] [COUNT n [ANY]] [WITHCOORD] [WITHDIST] [WITHHASH]",
+      "description": "Search for geo members in radius or box. Redis 6.2+.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEOSEARCHSTORE": {
+      "signature": "GEOSEARCHSTORE dest src FROMMEMBER member|FROMLONLAT lon lat BYRADIUS ...|BYBOX ... [ASC|DESC] [COUNT n] [STOREDIST]",
+      "description": "Store GEOSEARCH results. Redis 6.2+.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEORADIUS": {
+      "signature": "GEORADIUS key longitude latitude radius M|KM|FT|MI [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT n] [ASC|DESC] [STORE key] [STOREDIST key]",
+      "description": "Query by radius from coordinates. Deprecated — use GEOSEARCH.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "GEORADIUSBYMEMBER": {
+      "signature": "GEORADIUSBYMEMBER key member radius M|KM|FT|MI ...",
+      "description": "Query by radius from a member. Deprecated — use GEOSEARCH.",
+      "type": "command",
+      "module": "Geo"
+    },
+    "INFO": {
+      "signature": "INFO [section ...]",
+      "description": "Get server info: server, clients, memory, persistence, stats, replication, cpu, commandstats, keyspace, etc.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CONFIG GET": {
+      "signature": "CONFIG GET parameter [parameter ...]",
+      "description": "Get configuration parameter values. Supports glob patterns.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CONFIG SET": {
+      "signature": "CONFIG SET parameter value [parameter value ...]",
+      "description": "Dynamically set configuration parameters without restart.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CONFIG RESETSTAT": {
+      "signature": "CONFIG RESETSTAT",
+      "description": "Reset the statistics returned by INFO.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CONFIG REWRITE": {
+      "signature": "CONFIG REWRITE",
+      "description": "Rewrite the redis.conf file with current in-memory configuration.",
+      "type": "command",
+      "module": "Server"
+    },
+    "DBSIZE": {
+      "signature": "DBSIZE",
+      "description": "Return the number of keys in the current database.",
+      "type": "command",
+      "module": "Server"
+    },
+    "FLUSHDB": {
+      "signature": "FLUSHDB [ASYNC|SYNC]",
+      "description": "Remove all keys from the current database.",
+      "type": "command",
+      "module": "Server"
+    },
+    "FLUSHALL": {
+      "signature": "FLUSHALL [ASYNC|SYNC]",
+      "description": "Remove all keys from all databases.",
+      "type": "command",
+      "module": "Server"
+    },
+    "BGSAVE": {
+      "signature": "BGSAVE [SCHEDULE]",
+      "description": "Trigger an asynchronous RDB snapshot.",
+      "type": "command",
+      "module": "Server"
+    },
+    "BGREWRITEAOF": {
+      "signature": "BGREWRITEAOF",
+      "description": "Trigger an asynchronous AOF rewrite.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SAVE": {
+      "signature": "SAVE",
+      "description": "Synchronously save the dataset to disk. BLOCKS the server.",
+      "type": "command",
+      "module": "Server"
+    },
+    "LASTSAVE": {
+      "signature": "LASTSAVE",
+      "description": "Return the Unix timestamp of the last successful RDB save.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SHUTDOWN": {
+      "signature": "SHUTDOWN [NOSAVE|SAVE] [NOW] [FORCE]",
+      "description": "Synchronously save (unless NOSAVE) and shut down the server.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SLOWLOG GET": {
+      "signature": "SLOWLOG GET [count]",
+      "description": "Get entries from the slow log.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SLOWLOG LEN": {
+      "signature": "SLOWLOG LEN",
+      "description": "Get the number of entries in the slow log.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SLOWLOG RESET": {
+      "signature": "SLOWLOG RESET",
+      "description": "Reset the slow log.",
+      "type": "command",
+      "module": "Server"
+    },
+    "TIME": {
+      "signature": "TIME",
+      "description": "Return the current server time as [unix-seconds, microseconds].",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT LIST": {
+      "signature": "CLIENT LIST [TYPE normal|master|replica|pubsub] [ID id ...]",
+      "description": "List connected clients with details.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT ID": {
+      "signature": "CLIENT ID",
+      "description": "Return the ID of the current connection.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT GETNAME": {
+      "signature": "CLIENT GETNAME",
+      "description": "Get the name of the current connection.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT SETNAME": {
+      "signature": "CLIENT SETNAME name",
+      "description": "Set the name of the current connection.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT KILL": {
+      "signature": "CLIENT KILL [ID id] [TYPE type] [USER username] [ADDR ip:port] [LADDR ip:port] [SKIPME yes|no]",
+      "description": "Kill client connections.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT PAUSE": {
+      "signature": "CLIENT PAUSE timeout [WRITE|ALL]",
+      "description": "Pause all clients for timeout milliseconds.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT UNPAUSE": {
+      "signature": "CLIENT UNPAUSE",
+      "description": "Resume client processing after CLIENT PAUSE.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT NO-EVICT": {
+      "signature": "CLIENT NO-EVICT ON|OFF",
+      "description": "Exempt current connection from client eviction. Redis 7.0+.",
+      "type": "command",
+      "module": "Server"
+    },
+    "CLIENT NO-TOUCH": {
+      "signature": "CLIENT NO-TOUCH ON|OFF",
+      "description": "Don't update key access time for current connection. Redis 7.2+.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MONITOR": {
+      "signature": "MONITOR",
+      "description": "Stream every command processed by the server in real-time. Performance impact.",
+      "type": "command",
+      "module": "Server"
+    },
+    "PING": {
+      "signature": "PING [message]",
+      "description": "Test server connectivity. Returns PONG or echoes message.",
+      "type": "command",
+      "module": "Server"
+    },
+    "ECHO": {
+      "signature": "ECHO message",
+      "description": "Echo the given message back.",
+      "type": "command",
+      "module": "Server"
+    },
+    "SELECT": {
+      "signature": "SELECT index",
+      "description": "Switch to a different database (0-15 by default).",
+      "type": "command",
+      "module": "Server"
+    },
+    "SWAPDB": {
+      "signature": "SWAPDB db1 db2",
+      "description": "Swap two Redis databases atomically.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MEMORY USAGE": {
+      "signature": "MEMORY USAGE key [SAMPLES count]",
+      "description": "Estimate memory consumption of a key in bytes.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MEMORY DOCTOR": {
+      "signature": "MEMORY DOCTOR",
+      "description": "Report memory problems.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MEMORY STATS": {
+      "signature": "MEMORY STATS",
+      "description": "Get detailed memory statistics.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MEMORY PURGE": {
+      "signature": "MEMORY PURGE",
+      "description": "Ask allocator to release memory.",
+      "type": "command",
+      "module": "Server"
+    },
+    "MEMORY MALLOC-STATS": {
+      "signature": "MEMORY MALLOC-STATS",
+      "description": "Show internal allocator statistics.",
+      "type": "command",
+      "module": "Server"
+    },
+    "LATENCY LATEST": {
+      "signature": "LATENCY LATEST",
+      "description": "Return the latest latency samples for all event types.",
+      "type": "command",
+      "module": "Server"
+    },
+    "LATENCY HISTORY": {
+      "signature": "LATENCY HISTORY event",
+      "description": "Return latency history for a specific event.",
+      "type": "command",
+      "module": "Server"
+    },
+    "LATENCY RESET": {
+      "signature": "LATENCY RESET [event ...]",
+      "description": "Reset latency data for events.",
+      "type": "command",
+      "module": "Server"
+    },
+    "LATENCY GRAPH": {
+      "signature": "LATENCY GRAPH event",
+      "description": "Render an ASCII art latency graph for an event.",
+      "type": "command",
+      "module": "Server"
+    },
+    "DEBUG OBJECT": {
+      "signature": "DEBUG OBJECT key",
+      "description": "Get debugging info about a key's internal representation.",
+      "type": "command",
+      "module": "Server"
+    },
+    "COMMAND COUNT": {
+      "signature": "COMMAND COUNT",
+      "description": "Get total number of commands supported by the server.",
+      "type": "command",
+      "module": "Server"
+    },
+    "COMMAND LIST": {
+      "signature": "COMMAND LIST [MODULE module] [ACLCAT cat] [PATTERN pattern]",
+      "description": "List all command names.",
+      "type": "command",
+      "module": "Server"
+    },
+    "COMMAND INFO": {
+      "signature": "COMMAND INFO [command ...]",
+      "description": "Get details about specific commands.",
+      "type": "command",
+      "module": "Server"
+    },
+    "COMMAND GETKEYS": {
+      "signature": "COMMAND GETKEYS command [arg ...]",
+      "description": "Extract keys from a full command.",
+      "type": "command",
+      "module": "Server"
+    },
+    "COMMAND DOCS": {
+      "signature": "COMMAND DOCS [command ...]",
+      "description": "Get documentation for commands. Redis 7.0+.",
+      "type": "command",
+      "module": "Server"
+    },
+    "ACL LIST": {
+      "signature": "ACL LIST",
+      "description": "List all users and their ACL rules.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL USERS": {
+      "signature": "ACL USERS",
+      "description": "List all configured usernames.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL GETUSER": {
+      "signature": "ACL GETUSER username",
+      "description": "Get the ACL rules for a specific user.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL SETUSER": {
+      "signature": "ACL SETUSER username [rule ...]",
+      "description": "Create or modify a user's ACL. Rules: on/off, >password, ~pattern, +command, -command, +@category, allkeys, allcommands.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL DELUSER": {
+      "signature": "ACL DELUSER username [username ...]",
+      "description": "Delete ACL users.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL WHOAMI": {
+      "signature": "ACL WHOAMI",
+      "description": "Return the username of the current connection.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL CAT": {
+      "signature": "ACL CAT [category]",
+      "description": "List command categories, or commands in a category.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL GENPASS": {
+      "signature": "ACL GENPASS [bits]",
+      "description": "Generate a cryptographically secure password.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL LOG": {
+      "signature": "ACL LOG [count|RESET]",
+      "description": "Show recent security events (failed auth, denied commands).",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL SAVE": {
+      "signature": "ACL SAVE",
+      "description": "Save the current ACL rules to the configured ACL file.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "ACL LOAD": {
+      "signature": "ACL LOAD",
+      "description": "Load ACL rules from the configured ACL file.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "AUTH": {
+      "signature": "AUTH [username] password",
+      "description": "Authenticate to the server. With Redis 6+ ACL, provide username.",
+      "type": "command",
+      "module": "ACL"
+    },
+    "CLUSTER INFO": {
+      "signature": "CLUSTER INFO",
+      "description": "Get cluster state: enabled, state, slots, nodes, messages.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER NODES": {
+      "signature": "CLUSTER NODES",
+      "description": "Get the cluster topology: node IDs, addresses, flags, slots.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER MYID": {
+      "signature": "CLUSTER MYID",
+      "description": "Return the node's cluster ID.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER SLOTS": {
+      "signature": "CLUSTER SLOTS",
+      "description": "Get mapping of hash slots to nodes. Deprecated — use CLUSTER SHARDS.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER SHARDS": {
+      "signature": "CLUSTER SHARDS",
+      "description": "Get detailed shard information. Redis 7.0+.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER MEET": {
+      "signature": "CLUSTER MEET ip port",
+      "description": "Add a node to the cluster.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER FORGET": {
+      "signature": "CLUSTER FORGET node-id",
+      "description": "Remove a node from the cluster's known nodes.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER REPLICATE": {
+      "signature": "CLUSTER REPLICATE node-id",
+      "description": "Make current node a replica of the specified master.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER FAILOVER": {
+      "signature": "CLUSTER FAILOVER [FORCE|TAKEOVER]",
+      "description": "Initiate manual failover. Run on a replica to promote it.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER RESET": {
+      "signature": "CLUSTER RESET [HARD|SOFT]",
+      "description": "Reset the cluster configuration of the node.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER ADDSLOTS": {
+      "signature": "CLUSTER ADDSLOTS slot [slot ...]",
+      "description": "Assign hash slots to this node.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER DELSLOTS": {
+      "signature": "CLUSTER DELSLOTS slot [slot ...]",
+      "description": "Remove hash slots from this node.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER SETSLOT": {
+      "signature": "CLUSTER SETSLOT slot IMPORTING|MIGRATING|NODE|STABLE [node-id]",
+      "description": "Bind, migrate, or stabilize a hash slot.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER COUNTKEYSINSLOT": {
+      "signature": "CLUSTER COUNTKEYSINSLOT slot",
+      "description": "Count keys in a specific hash slot.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER GETKEYSINSLOT": {
+      "signature": "CLUSTER GETKEYSINSLOT slot count",
+      "description": "Return keys assigned to a hash slot.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER KEYSLOT": {
+      "signature": "CLUSTER KEYSLOT key",
+      "description": "Return the hash slot number for a key.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER LINKS": {
+      "signature": "CLUSTER LINKS",
+      "description": "List cluster bus connections. Redis 7.0+.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER FLUSHSLOTS": {
+      "signature": "CLUSTER FLUSHSLOTS",
+      "description": "Delete all slot assignments from this node.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "CLUSTER SAVECONFIG": {
+      "signature": "CLUSTER SAVECONFIG",
+      "description": "Save the cluster configuration to nodes.conf.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "READONLY": {
+      "signature": "READONLY",
+      "description": "Enable read queries on a cluster replica. Allows reading from replicas.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "READWRITE": {
+      "signature": "READWRITE",
+      "description": "Disable READONLY mode. Replica rejects read queries.",
+      "type": "command",
+      "module": "Cluster"
+    },
+    "REPLICAOF": {
+      "signature": "REPLICAOF host port | REPLICAOF NO ONE",
+      "description": "Configure replication. REPLICAOF NO ONE promotes to master.",
+      "type": "command",
+      "module": "Replication"
+    },
+    "SLAVEOF": {
+      "signature": "SLAVEOF host port | SLAVEOF NO ONE",
+      "description": "Legacy alias for REPLICAOF.",
+      "type": "command",
+      "module": "Replication"
+    },
+    "FAILOVER": {
+      "signature": "FAILOVER [TO host port [FORCE]] [ABORT] [TIMEOUT ms]",
+      "description": "Coordinated failover to a replica. Redis 6.2+.",
+      "type": "command",
+      "module": "Replication"
+    },
+    "MODULE LOAD": {
+      "signature": "MODULE LOAD path [arg ...]",
+      "description": "Load a Redis module from a shared library.",
+      "type": "command",
+      "module": "Modules"
+    },
+    "MODULE LIST": {
+      "signature": "MODULE LIST",
+      "description": "List all loaded modules.",
+      "type": "command",
+      "module": "Modules"
+    },
+    "MODULE UNLOAD": {
+      "signature": "MODULE UNLOAD name",
+      "description": "Unload a loaded Redis module.",
+      "type": "command",
+      "module": "Modules"
+    },
+    "MODULE LOADEX": {
+      "signature": "MODULE LOADEX path [CONFIG name value ...] [ARGS arg ...]",
+      "description": "Load module with configuration. Redis 7.0+.",
+      "type": "command",
+      "module": "Modules"
+    },
+    "MIGRATE": {
+      "signature": "MIGRATE host port key|\"\" db timeout [COPY] [REPLACE] [AUTH password] [AUTH2 username password] [KEYS key ...]",
+      "description": "Atomically transfer a key to another Redis instance.",
+      "type": "command",
+      "module": "Generic"
+    },
+    "RESET": {
+      "signature": "RESET",
+      "description": "Reset the connection state to default.",
+      "type": "command",
+      "module": "Connection"
+    },
+    "QUIT": {
+      "signature": "QUIT",
+      "description": "Close the connection. Client should close after receiving OK.",
+      "type": "command",
+      "module": "Connection"
+    },
+    "HELLO": {
+      "signature": "HELLO [protover [AUTH username password] [SETNAME clientname]]",
+      "description": "Switch RESP protocol version (2 or 3). Redis 6.0+.",
+      "type": "command",
+      "module": "Connection"
+    },
+    "string": {
+      "signature": "Redis String",
+      "description": "The most basic Redis data type. A string value can be at most 512 MB. Used for caching, counters, sessions, and general key-value storage.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "list": {
+      "signature": "Redis List",
+      "description": "Ordered collection of strings. Implemented as linked list. Supports push/pop from both ends. Used for queues, stacks, and recent-items lists.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "set": {
+      "signature": "Redis Set",
+      "description": "Unordered collection of unique strings. Supports add, remove, membership test, and set operations (union, intersection, difference).",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "zset": {
+      "signature": "Redis Sorted Set",
+      "description": "Set of unique strings ordered by a floating-point score. Supports range queries by score or rank. Used for leaderboards, rate limiters, priority queues.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "hash": {
+      "signature": "Redis Hash",
+      "description": "Map of field-value pairs. Memory-efficient for representing objects. Each hash can store over 4 billion field-value pairs.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "stream": {
+      "signature": "Redis Stream",
+      "description": "Append-only log data structure. Supports consumer groups for reliable message processing. Used for event sourcing, message queues, activity feeds.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "hyperloglog": {
+      "signature": "Redis HyperLogLog",
+      "description": "Probabilistic data structure for approximate cardinality counting. Uses ~12 KB regardless of set size. 0.81% standard error.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "bitmap": {
+      "signature": "Redis Bitmap",
+      "description": "String type interpreted as an array of bits. Space-efficient for storing boolean information across a large key space.",
+      "type": "type",
+      "module": "Data Types"
+    },
+    "geospatial": {
+      "signature": "Redis Geospatial Index",
+      "description": "Sorted set with geohash-encoded coordinates. Supports radius/box queries, distance calculations. Built on sorted sets internally.",
+      "type": "type",
+      "module": "Data Types"
+    }
+  }
+}

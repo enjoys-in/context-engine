@@ -3,227 +3,1270 @@
   "hovers": {
     "SELECT": {
       "contents": [
-        { "value": "```sql\nSELECT [DISTINCT] column1, column2, ...\nFROM table_name\n[WHERE condition]\n[GROUP BY column]\n[HAVING condition]\n[ORDER BY column [ASC|DESC]]\n[LIMIT n [OFFSET m]]\n```\nRetrieves rows from one or more tables. The most fundamental SQL statement for querying data." }
+        {
+          "value": "```sql\nSELECT name, email\nFROM users\nWHERE active = true\nORDER BY name;\n```\n**SELECT** retrieves rows from tables. Use DISTINCT for unique rows, aliases with AS, and JOIN for multi-table queries."
+        }
       ]
     },
     "INSERT": {
       "contents": [
-        { "value": "```sql\nINSERT INTO table_name (column1, column2, ...)\nVALUES (value1, value2, ...)\n```\nInserts one or more new rows into a table. Use multiple value lists for bulk inserts, or `INSERT INTO ... SELECT` to insert from a query." }
+        {
+          "value": "```sql\nINSERT INTO users (name, email)\nVALUES ('Alice', 'alice@example.com');\n```\n**INSERT** adds new rows. Use multi-row VALUES for bulk inserts, INSERT...SELECT to copy between tables, and ON CONFLICT for upserts."
+        }
       ]
     },
     "UPDATE": {
       "contents": [
-        { "value": "```sql\nUPDATE table_name\nSET column1 = value1, column2 = value2, ...\n[WHERE condition]\n```\nModifies existing rows in a table. **Always use a WHERE clause** to avoid updating all rows unintentionally." }
+        {
+          "value": "```sql\nUPDATE products\nSET price = price * 1.10\nWHERE category = 'electronics';\n```\n**UPDATE** modifies existing rows. Always include a WHERE clause to avoid updating every row. Use RETURNING to get affected rows."
+        }
       ]
     },
     "DELETE": {
       "contents": [
-        { "value": "```sql\nDELETE FROM table_name\n[WHERE condition]\n```\nRemoves rows from a table matching the WHERE condition. Without WHERE, **all rows are deleted**. Use TRUNCATE for faster bulk deletion." }
+        {
+          "value": "```sql\nDELETE FROM sessions\nWHERE expires_at < NOW();\n```\n**DELETE** removes rows. Use TRUNCATE for fast full-table deletion. Always use WHERE to avoid deleting all rows."
+        }
       ]
     },
-    "CREATE TABLE": {
+    "MERGE": {
       "contents": [
-        { "value": "```sql\nCREATE TABLE [IF NOT EXISTS] table_name (\n  column1 data_type [constraints],\n  column2 data_type [constraints],\n  ...\n  [TABLE constraints]\n)\n```\nCreates a new table with specified columns, data types, and constraints (PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK, DEFAULT)." }
-      ]
-    },
-    "ALTER TABLE": {
-      "contents": [
-        { "value": "```sql\nALTER TABLE table_name\n  ADD [COLUMN] column_name data_type\n  | DROP [COLUMN] column_name\n  | MODIFY [COLUMN] column_name new_data_type\n  | RENAME TO new_table_name\n  | ADD CONSTRAINT constraint_name ...\n```\nModifies the structure of an existing table — add, remove, or change columns and constraints." }
-      ]
-    },
-    "DROP TABLE": {
-      "contents": [
-        { "value": "```sql\nDROP TABLE [IF EXISTS] table_name [CASCADE]\n```\nPermanently removes a table and all its data. **This action cannot be undone.** Use IF EXISTS to avoid errors. CASCADE drops dependent objects." }
-      ]
-    },
-    "WHERE": {
-      "contents": [
-        { "value": "```sql\nWHERE condition\n  [AND|OR condition ...]\n```\nFilters rows based on conditions. Supports comparison (`=`, `!=`, `<`, `>`, `<=`, `>=`), logical (`AND`, `OR`, `NOT`), pattern (`LIKE`, `IN`, `BETWEEN`), and NULL checks (`IS NULL`, `IS NOT NULL`)." }
-      ]
-    },
-    "JOIN": {
-      "contents": [
-        { "value": "```sql\n-- INNER JOIN: matching rows from both tables\nSELECT ... FROM t1 INNER JOIN t2 ON t1.col = t2.col\n\n-- LEFT JOIN: all from left + matching from right\nSELECT ... FROM t1 LEFT JOIN t2 ON t1.col = t2.col\n\n-- RIGHT JOIN: all from right + matching from left\nSELECT ... FROM t1 RIGHT JOIN t2 ON t1.col = t2.col\n\n-- FULL OUTER JOIN: all from both tables\nSELECT ... FROM t1 FULL OUTER JOIN t2 ON t1.col = t2.col\n\n-- CROSS JOIN: Cartesian product\nSELECT ... FROM t1 CROSS JOIN t2\n```\nCombines rows from two or more tables based on related columns." }
-      ]
-    },
-    "INNER JOIN": {
-      "contents": [
-        { "value": "```sql\nSELECT columns\nFROM table1\nINNER JOIN table2 ON table1.col = table2.col\n```\nReturns only the rows that have matching values in both tables." }
-      ]
-    },
-    "LEFT JOIN": {
-      "contents": [
-        { "value": "```sql\nSELECT columns\nFROM table1\nLEFT JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from the left table and matching rows from the right table. Non-matching right-side columns are NULL." }
-      ]
-    },
-    "RIGHT JOIN": {
-      "contents": [
-        { "value": "```sql\nSELECT columns\nFROM table1\nRIGHT JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from the right table and matching rows from the left table. Non-matching left-side columns are NULL." }
-      ]
-    },
-    "FULL OUTER JOIN": {
-      "contents": [
-        { "value": "```sql\nSELECT columns\nFROM table1\nFULL OUTER JOIN table2 ON table1.col = table2.col\n```\nReturns all rows from both tables with NULLs where there is no match. Not supported in MySQL (use UNION of LEFT and RIGHT JOIN)." }
-      ]
-    },
-    "GROUP BY": {
-      "contents": [
-        { "value": "```sql\nSELECT column, aggregate_function(column)\nFROM table\n[WHERE condition]\nGROUP BY column1, column2, ...\n[HAVING aggregate_condition]\n```\nGroups rows sharing common values into summary rows. Every non-aggregated column in SELECT must appear in GROUP BY." }
-      ]
-    },
-    "HAVING": {
-      "contents": [
-        { "value": "```sql\nSELECT column, COUNT(*)\nFROM table\nGROUP BY column\nHAVING COUNT(*) > 5\n```\nFilters grouped results based on aggregate conditions. Use HAVING instead of WHERE when filtering on aggregated values." }
-      ]
-    },
-    "ORDER BY": {
-      "contents": [
-        { "value": "```sql\nORDER BY column1 [ASC|DESC], column2 [ASC|DESC], ...\n```\nSorts the result set. ASC (ascending) is the default. Multiple columns create a secondary sort. NULL handling varies by database (NULLS FIRST/LAST in PostgreSQL)." }
-      ]
-    },
-    "UNION": {
-      "contents": [
-        { "value": "```sql\nSELECT columns FROM table1\nUNION [ALL]\nSELECT columns FROM table2\n```\nCombines results from multiple SELECT statements. UNION removes duplicates (slower). UNION ALL keeps all rows including duplicates (faster). Both queries must have the same column count and compatible types." }
-      ]
-    },
-    "WITH": {
-      "contents": [
-        { "value": "```sql\nWITH cte_name AS (\n  SELECT columns FROM table WHERE condition\n)\nSELECT * FROM cte_name\n\n-- Recursive CTE\nWITH RECURSIVE cte AS (\n  SELECT ... -- base case\n  UNION ALL\n  SELECT ... FROM cte WHERE ... -- recursive step\n)\nSELECT * FROM cte\n```\nCommon Table Expression (CTE): a temporary named result set. Improves readability and supports recursive queries for hierarchical data." }
-      ]
-    },
-    "CASE": {
-      "contents": [
-        { "value": "```sql\nCASE\n  WHEN condition1 THEN result1\n  WHEN condition2 THEN result2\n  ELSE default_result\nEND\n\n-- Simple form\nCASE expression\n  WHEN value1 THEN result1\n  WHEN value2 THEN result2\n  ELSE default_result\nEND\n```\nConditional expression — returns a value based on the first matching condition. Can be used in SELECT, WHERE, ORDER BY, and other clauses." }
-      ]
-    },
-    "EXISTS": {
-      "contents": [
-        { "value": "```sql\nSELECT columns\nFROM table1 t1\nWHERE EXISTS (\n  SELECT 1 FROM table2 t2\n  WHERE t2.foreign_key = t1.id\n)\n```\nReturns TRUE if the subquery returns at least one row. Often more efficient than `IN` for correlated subqueries with large datasets." }
-      ]
-    },
-    "LIKE": {
-      "contents": [
-        { "value": "```sql\nWHERE column LIKE pattern\n\n-- Wildcards:\n--   %  matches any sequence of characters\n--   _  matches exactly one character\n\n-- Examples:\nWHERE name LIKE 'John%'       -- starts with John\nWHERE name LIKE '%son'        -- ends with son\nWHERE name LIKE '%oh%'        -- contains oh\nWHERE code LIKE 'A_B'         -- A, any char, B\n```\nPattern matching operator for string comparisons. Use `ILIKE` (PostgreSQL) for case-insensitive matching." }
-      ]
-    },
-    "BETWEEN": {
-      "contents": [
-        { "value": "```sql\nWHERE column BETWEEN low_value AND high_value\n\n-- Equivalent to:\nWHERE column >= low_value AND column <= high_value\n\n-- Works with dates:\nWHERE created_at BETWEEN '2024-01-01' AND '2024-12-31'\n```\nInclusive range filter for numbers, dates, and strings." }
-      ]
-    },
-    "IN": {
-      "contents": [
-        { "value": "```sql\n-- With a value list\nWHERE column IN ('value1', 'value2', 'value3')\n\n-- With a subquery\nWHERE column IN (SELECT column FROM other_table)\n\n-- Negation\nWHERE column NOT IN ('value1', 'value2')\n```\nTests whether a value matches any value in a list or subquery result." }
-      ]
-    },
-    "LIMIT": {
-      "contents": [
-        { "value": "```sql\n-- Basic limit\nSELECT * FROM table LIMIT 10\n\n-- With offset (pagination)\nSELECT * FROM table LIMIT 10 OFFSET 20\n\n-- Standard SQL equivalent\nSELECT * FROM table\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY\n```\nRestricts the number of rows returned. Combined with OFFSET for pagination." }
-      ]
-    },
-    "COUNT": {
-      "contents": [
-        { "value": "```sql\nCOUNT(*)              -- count all rows (including NULLs)\nCOUNT(column)         -- count non-NULL values\nCOUNT(DISTINCT column) -- count unique non-NULL values\n```\nAggregate function that returns the number of matching rows." }
-      ]
-    },
-    "SUM": {
-      "contents": [
-        { "value": "```sql\nSUM(column)            -- sum of all non-NULL values\nSUM(DISTINCT column)   -- sum of unique values\n```\nAggregate function that returns the total sum of a numeric column. Returns NULL if no rows match." }
-      ]
-    },
-    "AVG": {
-      "contents": [
-        { "value": "```sql\nAVG(column)            -- average of all non-NULL values\nAVG(DISTINCT column)   -- average of unique values\n```\nAggregate function that returns the mean value. NULL values are ignored in the calculation." }
-      ]
-    },
-    "COALESCE": {
-      "contents": [
-        { "value": "```sql\nCOALESCE(value1, value2, ..., default_value)\n\n-- Example: use nickname, fall back to first_name, then 'Unknown'\nSELECT COALESCE(nickname, first_name, 'Unknown') AS display_name\nFROM users\n```\nReturns the first non-NULL value from the argument list. Essential for handling NULL values and providing defaults." }
-      ]
-    },
-    "CAST": {
-      "contents": [
-        { "value": "```sql\nCAST(expression AS target_type)\n\n-- Examples:\nCAST('2024-01-15' AS DATE)\nCAST(price AS DECIMAL(10,2))\nCAST(123 AS VARCHAR(10))\n```\nConverts a value from one data type to another. Standard SQL syntax supported across all major databases." }
-      ]
-    },
-    "ROW_NUMBER": {
-      "contents": [
-        { "value": "```sql\nROW_NUMBER() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Example: number rows per department\nSELECT name, dept,\n  ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) AS rn\nFROM employees\n```\nWindow function that assigns unique sequential integers to rows within each partition." }
-      ]
-    },
-    "RANK": {
-      "contents": [
-        { "value": "```sql\nRANK() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Result with ties: 1, 2, 2, 4 (gap after tie)\n```\nWindow function that assigns ranks with gaps. Tied values receive the same rank; the next rank is skipped." }
-      ]
-    },
-    "DENSE_RANK": {
-      "contents": [
-        { "value": "```sql\nDENSE_RANK() OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column [ASC|DESC]\n)\n\n-- Result with ties: 1, 2, 2, 3 (no gaps)\n```\nWindow function that assigns ranks without gaps. Tied values get the same rank, and the next rank follows immediately." }
-      ]
-    },
-    "LEAD": {
-      "contents": [
-        { "value": "```sql\nLEAD(column, offset, default) OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column\n)\n\n-- Example: compare with next row's value\nSELECT date, revenue,\n  LEAD(revenue, 1) OVER (ORDER BY date) AS next_day_revenue\nFROM daily_sales\n```\nWindow function that accesses a subsequent row's column value without a self-join. Offset defaults to 1." }
-      ]
-    },
-    "LAG": {
-      "contents": [
-        { "value": "```sql\nLAG(column, offset, default) OVER (\n  [PARTITION BY partition_column]\n  ORDER BY sort_column\n)\n\n-- Example: compare with previous row's value\nSELECT date, revenue,\n  LAG(revenue, 1) OVER (ORDER BY date) AS prev_day_revenue\nFROM daily_sales\n```\nWindow function that accesses a preceding row's column value. Useful for calculating differences between consecutive rows." }
-      ]
-    },
-    "PRIMARY KEY": {
-      "contents": [
-        { "value": "```sql\n-- Inline definition\nCREATE TABLE users (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  ...\n);\n\n-- Table-level (composite key)\nCREATE TABLE order_items (\n  order_id INT,\n  item_id INT,\n  PRIMARY KEY (order_id, item_id)\n);\n```\nUniquely identifies each row in a table. Combines NOT NULL and UNIQUE. Only one primary key per table." }
-      ]
-    },
-    "FOREIGN KEY": {
-      "contents": [
-        { "value": "```sql\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  user_id INT,\n  CONSTRAINT fk_user\n    FOREIGN KEY (user_id)\n    REFERENCES users(id)\n    ON DELETE CASCADE\n    ON UPDATE CASCADE\n);\n\n-- Actions: CASCADE, SET NULL, RESTRICT, NO ACTION, SET DEFAULT\n```\nEnforces referential integrity by ensuring values in a column match values in another table's primary key." }
-      ]
-    },
-    "INDEX": {
-      "contents": [
-        { "value": "```sql\n-- Create index\nCREATE INDEX idx_name ON table(column);\nCREATE UNIQUE INDEX idx_email ON users(email);\nCREATE INDEX idx_composite ON table(col1, col2);\n\n-- Drop index\nDROP INDEX idx_name ON table;\n```\nIndexes speed up data retrieval at the cost of additional storage and slower writes. Essential for columns used in WHERE, JOIN, and ORDER BY." }
-      ]
-    },
-    "BEGIN": {
-      "contents": [
-        { "value": "```sql\nBEGIN TRANSACTION;\n  -- SQL statements\n  INSERT INTO ...\n  UPDATE ...\nCOMMIT;\n\n-- On error:\nROLLBACK;\n\n-- With savepoints:\nBEGIN;\n  SAVEPOINT sp1;\n  -- statements\n  ROLLBACK TO sp1;\nCOMMIT;\n```\nStarts a transaction. All subsequent operations are grouped and applied atomically with COMMIT, or undone with ROLLBACK." }
-      ]
-    },
-    "EXPLAIN": {
-      "contents": [
-        { "value": "```sql\nEXPLAIN SELECT * FROM users WHERE email = 'test@example.com';\n\n-- With actual execution stats (PostgreSQL)\nEXPLAIN ANALYZE SELECT ...;\n\n-- MySQL extended\nEXPLAIN FORMAT=JSON SELECT ...;\n```\nDisplays the query execution plan chosen by the database optimizer. Shows index usage, join strategies, and estimated row counts. Essential for query performance tuning." }
-      ]
-    },
-    "CONCAT": {
-      "contents": [
-        { "value": "```sql\nCONCAT(string1, string2, ...)\n\n-- Examples:\nSELECT CONCAT(first_name, ' ', last_name) AS full_name\nFROM users;\n\n-- PostgreSQL also supports:\nSELECT first_name || ' ' || last_name\nFROM users;\n```\nConcatenates two or more strings. Returns NULL if any argument is NULL in standard SQL." }
-      ]
-    },
-    "SUBSTRING": {
-      "contents": [
-        { "value": "```sql\nSUBSTRING(string, start, length)\nSUBSTRING(string FROM start FOR length)\n\n-- Examples:\nSELECT SUBSTRING('Hello World', 1, 5);  -- 'Hello'\nSELECT SUBSTRING(email, 1, POSITION('@' IN email) - 1) AS username\nFROM users;\n```\nExtracts a portion of a string starting at a 1-based position for the given length." }
-      ]
-    },
-    "NOW": {
-      "contents": [
-        { "value": "```sql\n-- Current date and time\nSELECT NOW();               -- 2024-03-15 14:30:00\nSELECT CURRENT_TIMESTAMP;   -- equivalent\nSELECT CURRENT_DATE;        -- date only\nSELECT CURRENT_TIME;        -- time only\n```\nReturns the current date and time. Useful for timestamps, age calculations, and filtering by date." }
-      ]
-    },
-    "EXTRACT": {
-      "contents": [
-        { "value": "```sql\nEXTRACT(part FROM date_expression)\n\n-- Parts: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, DOW, DOY\nSELECT EXTRACT(YEAR FROM created_at) AS year,\n       EXTRACT(MONTH FROM created_at) AS month\nFROM orders;\n```\nExtracts a specific component from a date or timestamp value. Standard SQL syntax." }
+        {
+          "value": "```sql\nMERGE INTO inventory t\nUSING new_stock s ON t.sku = s.sku\nWHEN MATCHED THEN UPDATE SET t.qty = t.qty + s.qty\nWHEN NOT MATCHED THEN INSERT (sku, qty) VALUES (s.sku, s.qty);\n```\n**MERGE** (SQL:2003) performs insert, update, or delete in one statement based on a join condition."
+        }
       ]
     },
     "TRUNCATE": {
       "contents": [
-        { "value": "```sql\nTRUNCATE TABLE table_name;\n```\nRemoves all rows from a table very quickly. Unlike DELETE, it does not log individual row deletions, resets auto-increment counters, and **cannot be rolled back** in most databases." }
+        {
+          "value": "```sql\nTRUNCATE TABLE logs;\n```\n**TRUNCATE** removes all rows quickly. Unlike DELETE, it doesn't fire row-level triggers and cannot be rolled back in some databases."
+        }
+      ]
+    },
+    "CREATE TABLE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE orders (\n  id SERIAL PRIMARY KEY,\n  user_id INT REFERENCES users(id),\n  total NUMERIC(10,2) NOT NULL,\n  created_at TIMESTAMP DEFAULT NOW()\n);\n```\n**CREATE TABLE** defines a new table with columns, data types, and constraints."
+        }
+      ]
+    },
+    "ALTER TABLE": {
+      "contents": [
+        {
+          "value": "```sql\nALTER TABLE users\n  ADD COLUMN phone VARCHAR(20),\n  ALTER COLUMN name SET NOT NULL;\n```\n**ALTER TABLE** modifies a table's structure. You can add/drop columns, change types, add/remove constraints, and rename objects."
+        }
+      ]
+    },
+    "DROP TABLE": {
+      "contents": [
+        {
+          "value": "```sql\nDROP TABLE IF EXISTS temp_data CASCADE;\n```\n**DROP TABLE** permanently removes a table. Use IF EXISTS to avoid errors and CASCADE to also drop dependent objects."
+        }
+      ]
+    },
+    "CREATE INDEX": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE INDEX idx_users_email ON users (email);\nCREATE INDEX idx_active ON users (email) WHERE active = true;\n```\n**CREATE INDEX** speeds up lookups. Use UNIQUE for uniqueness, partial indexes with WHERE, and GIN/GiST for full-text or JSON."
+        }
+      ]
+    },
+    "CREATE VIEW": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE VIEW active_orders AS\nSELECT o.*, u.name AS customer\nFROM orders o\nJOIN users u ON o.user_id = u.id\nWHERE o.status = 'active';\n```\n**CREATE VIEW** defines a virtual table based on a query. Materialized views store results physically for better read performance."
+        }
+      ]
+    },
+    "INNER JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT u.name, o.total\nFROM users u\nINNER JOIN orders o ON u.id = o.user_id;\n```\n**INNER JOIN** returns only rows with matches in both tables. It's the most common join type — non-matching rows are excluded."
+        }
+      ]
+    },
+    "LEFT JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT u.name, o.total\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id;\n```\n**LEFT JOIN** returns all rows from the left table. If no match exists in the right table, NULL is returned for right-side columns."
+        }
+      ]
+    },
+    "RIGHT JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT o.id, u.name\nFROM orders o\nRIGHT JOIN users u ON o.user_id = u.id;\n```\n**RIGHT JOIN** returns all rows from the right table, with NULLs for unmatched left-side columns. Less common — often rewritten as LEFT JOIN."
+        }
+      ]
+    },
+    "FULL OUTER JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT a.id, b.id\nFROM table_a a\nFULL OUTER JOIN table_b b ON a.key = b.key;\n```\n**FULL OUTER JOIN** returns all rows from both tables. NULLs fill in where there is no match on either side."
+        }
+      ]
+    },
+    "CROSS JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT c.color, s.size\nFROM colors c\nCROSS JOIN sizes s;\n```\n**CROSS JOIN** produces the Cartesian product — every combination of rows. Useful for generating combinations or number/date series."
+        }
+      ]
+    },
+    "LATERAL JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT u.name, lat.recent_order\nFROM users u\nLEFT JOIN LATERAL (\n  SELECT total AS recent_order\n  FROM orders WHERE user_id = u.id\n  ORDER BY created_at DESC LIMIT 1\n) lat ON true;\n```\n**LATERAL JOIN** allows a subquery to reference columns from preceding FROM items. Powerful for top-N-per-group and correlated lookups."
+        }
+      ]
+    },
+    "ROW_NUMBER": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, salary,\n  ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) AS rn\nFROM employees;\n```\n**ROW_NUMBER()** assigns a unique sequential integer to rows within each partition. Great for pagination, deduplication, and top-N queries."
+        }
+      ]
+    },
+    "RANK": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, score,\n  RANK() OVER (ORDER BY score DESC) AS rank\nFROM students;\n```\n**RANK()** assigns positions with gaps for ties. E.g., two rows tied at rank 1 → next rank is 3. Use DENSE_RANK for no gaps."
+        }
+      ]
+    },
+    "DENSE_RANK": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, score,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS drank\nFROM students;\n```\n**DENSE_RANK()** assigns positions without gaps. Tied rows share a rank, and the next distinct value gets the next rank."
+        }
+      ]
+    },
+    "LAG": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT date, revenue,\n  revenue - LAG(revenue) OVER (ORDER BY date) AS change\nFROM daily_sales;\n```\n**LAG()** accesses a value from a previous row without a self-join. The optional offset defaults to 1, and a default value avoids NULLs at partition boundaries."
+        }
+      ]
+    },
+    "LEAD": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT date, revenue,\n  LEAD(revenue) OVER (ORDER BY date) AS next_day\nFROM daily_sales;\n```\n**LEAD()** accesses a value from a following row. Commonly used for calculating forward-looking differences or predictions."
+        }
+      ]
+    },
+    "WITH": {
+      "contents": [
+        {
+          "value": "```sql\nWITH regional_sales AS (\n  SELECT region, SUM(amount) AS total\n  FROM orders GROUP BY region\n)\nSELECT region, total\nFROM regional_sales\nWHERE total > 100000;\n```\n**WITH (CTE)** defines named temporary result sets. CTEs improve readability, allow reuse within a query, and are essential for recursive queries."
+        }
+      ]
+    },
+    "WITH RECURSIVE": {
+      "contents": [
+        {
+          "value": "```sql\nWITH RECURSIVE nums AS (\n  SELECT 1 AS n\n  UNION ALL\n  SELECT n + 1 FROM nums WHERE n < 100\n)\nSELECT * FROM nums;\n```\n**WITH RECURSIVE** enables recursive queries for trees, hierarchies, graph traversal, and sequence generation. Requires a base case and a recursive term connected by UNION ALL."
+        }
+      ]
+    },
+    "COUNT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT COUNT(*) AS total_users FROM users;\nSELECT COUNT(DISTINCT email) AS unique_emails FROM users;\n```\n**COUNT** tallies rows. COUNT(*) counts all rows including NULLs; COUNT(col) counts non-NULL values; COUNT(DISTINCT col) counts unique values."
+        }
+      ]
+    },
+    "SUM": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT department, SUM(salary) AS total_salary\nFROM employees\nGROUP BY department;\n```\n**SUM** calculates the total of numeric values. NULL values are ignored. Use with GROUP BY for category totals."
+        }
+      ]
+    },
+    "AVG": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT AVG(price) AS avg_price\nFROM products\nWHERE category = 'electronics';\n```\n**AVG** computes the arithmetic mean. NULL values are excluded from both the sum and the count."
+        }
+      ]
+    },
+    "STRING_AGG": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT department,\n  STRING_AGG(name, ', ' ORDER BY name) AS members\nFROM employees\nGROUP BY department;\n```\n**STRING_AGG** (PostgreSQL) concatenates values with a delimiter. Use ORDER BY within the aggregate for deterministic results. MySQL equivalent: GROUP_CONCAT."
+        }
+      ]
+    },
+    "CONCAT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CONCAT(first_name, ' ', last_name) AS full_name\nFROM employees;\n```\n**CONCAT** joins strings together. Unlike the `||` operator, CONCAT treats NULL as empty string in many databases."
+        }
+      ]
+    },
+    "SUBSTRING": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT SUBSTRING(email FROM 1 FOR POSITION('@' IN email) - 1) AS username\nFROM users;\n```\n**SUBSTRING** extracts a portion of a string. Uses FROM/FOR syntax (ANSI) or comma-separated arguments depending on the database."
+        }
+      ]
+    },
+    "REPLACE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT REPLACE(phone, '-', '') AS clean_phone\nFROM contacts;\n```\n**REPLACE** substitutes all occurrences of a substring. Useful for data cleaning and normalization."
+        }
+      ]
+    },
+    "TRIM": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TRIM(BOTH ' ' FROM name) AS clean_name\nFROM users;\n```\n**TRIM** removes leading and/or trailing characters. LEADING removes from start, TRAILING from end, BOTH from both sides."
+        }
+      ]
+    },
+    "NOW": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT NOW();\n-- 2024-10-15 14:30:45.123456+00\n\nSELECT * FROM orders WHERE created_at > NOW() - INTERVAL '7 days';\n```\n**NOW()** returns the current date and time with time zone. Equivalent to CURRENT_TIMESTAMP. In a transaction, the value stays constant."
+        }
+      ]
+    },
+    "DATE_TRUNC": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT DATE_TRUNC('month', created_at) AS month,\n  COUNT(*) AS orders\nFROM orders\nGROUP BY 1\nORDER BY 1;\n```\n**DATE_TRUNC** (PostgreSQL) truncates a timestamp to the specified precision (year, quarter, month, week, day, hour, minute, second). Essential for time-series grouping."
+        }
+      ]
+    },
+    "EXTRACT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT EXTRACT(YEAR FROM created_at) AS year,\n  EXTRACT(MONTH FROM created_at) AS month\nFROM orders;\n```\n**EXTRACT** retrieves a field (YEAR, MONTH, DAY, HOUR, etc.) from a date or timestamp. EPOCH extracts Unix timestamp."
+        }
+      ]
+    },
+    "INTERVAL": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT NOW() - INTERVAL '30 days' AS thirty_days_ago;\nSELECT NOW() + INTERVAL '2 hours 30 minutes';\n```\n**INTERVAL** represents a span of time. Supports years, months, days, hours, minutes, seconds. Used in date arithmetic."
+        }
+      ]
+    },
+    "JSON_BUILD_OBJECT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT JSON_BUILD_OBJECT(\n  'id', u.id,\n  'name', u.name,\n  'email', u.email\n) AS user_json\nFROM users u;\n```\n**JSON_BUILD_OBJECT** (PostgreSQL) constructs a JSON object from key-value pairs. Useful for building API responses directly in SQL."
+        }
+      ]
+    },
+    "jsonb operators": {
+      "contents": [
+        {
+          "value": "```sql\n-- Extract as JSON:  data -> 'key'\n-- Extract as text:  data ->> 'key'\n-- Path extract:     data #> '{a,b}'\n-- Contains:         data @> '{\"status\":\"active\"}'\n-- Key exists:       data ? 'email'\n-- Any key exists:   data ?| array['a','b']\n\nSELECT * FROM docs WHERE data @> '{\"type\":\"report\"}';\n```\n**JSONB operators** (PostgreSQL) provide fast JSON querying. Use GIN indexes for @>, ?, and ?| operators."
+        }
+      ]
+    },
+    "BEGIN": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\n  UPDATE accounts SET balance = balance - 100 WHERE id = 1;\n  UPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n**BEGIN** starts a transaction. All statements until COMMIT or ROLLBACK form an atomic unit. Use SAVEPOINT for partial rollbacks."
+        }
+      ]
+    },
+    "COMMIT": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\n  INSERT INTO logs (message) VALUES ('Operation completed');\nCOMMIT;\n```\n**COMMIT** makes all changes in the current transaction permanent. After commit, changes are visible to other sessions."
+        }
+      ]
+    },
+    "ROLLBACK": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\n  DELETE FROM users WHERE id = 42;\n  -- Oops, wrong user!\nROLLBACK;\n```\n**ROLLBACK** undoes all changes since the last BEGIN. You can also ROLLBACK TO SAVEPOINT to undo partial work."
+        }
+      ]
+    },
+    "CASE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name,\n  CASE\n    WHEN salary > 100000 THEN 'Senior'\n    WHEN salary > 50000 THEN 'Mid'\n    ELSE 'Junior'\n  END AS level\nFROM employees;\n```\n**CASE** is SQL's conditional expression. The searched form (CASE WHEN) evaluates conditions; the simple form (CASE expr WHEN) compares values. Always include ELSE for completeness."
+        }
+      ]
+    },
+    "COALESCE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT COALESCE(nickname, first_name, 'Anonymous') AS display_name\nFROM users;\n```\n**COALESCE** returns the first non-NULL argument. Essential for providing fallback values and handling optional data."
+        }
+      ]
+    },
+    "NULLIF": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT total / NULLIF(count, 0) AS average\nFROM stats;\n```\n**NULLIF** returns NULL if both arguments are equal; otherwise returns the first. Commonly used to avoid division by zero."
+        }
+      ]
+    },
+    "CAST": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CAST('2024-01-15' AS DATE);\nSELECT CAST(price AS INTEGER) FROM products;\n-- PostgreSQL shorthand:\nSELECT '2024-01-15'::DATE;\n```\n**CAST** converts a value to a specified type. PostgreSQL also supports the `::` operator. Use for type-safe comparisons and formatting."
+        }
+      ]
+    },
+    "CREATE INDEX strategy": {
+      "contents": [
+        {
+          "value": "```sql\n-- B-tree (default): equality and range queries\nCREATE INDEX idx_email ON users (email);\n\n-- Partial: index only relevant rows\nCREATE INDEX idx_active ON users (email) WHERE active;\n\n-- Covering: avoid table lookups\nCREATE INDEX idx_cover ON orders (user_id) INCLUDE (total);\n\n-- GIN: JSONB, arrays, full-text\nCREATE INDEX idx_data ON docs USING GIN (data);\n```\n**Index strategies**: B-tree for most queries, partial for filtered subsets, covering (INCLUDE) to avoid heap fetches, GIN for JSONB/arrays, GiST for geometric/range types."
+        }
+      ]
+    },
+    "EXPLAIN": {
+      "contents": [
+        {
+          "value": "```sql\nEXPLAIN ANALYZE\nSELECT u.name, COUNT(o.id)\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nGROUP BY u.name;\n```\n**EXPLAIN** shows the query plan. EXPLAIN ANALYZE actually executes the query and shows real timings. Look for Seq Scan on large tables (may need an index), Nested Loop vs Hash Join, and actual vs estimated row counts."
+        }
       ]
     },
     "GRANT": {
       "contents": [
-        { "value": "```sql\n-- Grant specific privileges\nGRANT SELECT, INSERT ON database.table TO 'user'@'host';\n\n-- Grant all privileges\nGRANT ALL PRIVILEGES ON database.* TO 'user'@'host';\n\n-- Allow user to grant to others\nGRANT SELECT ON table TO user WITH GRANT OPTION;\n```\nGrants access privileges on database objects to users or roles." }
+        {
+          "value": "```sql\nGRANT SELECT, INSERT ON TABLE orders TO app_user;\nGRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;\nGRANT USAGE ON SCHEMA app TO readonly_role;\n```\n**GRANT** assigns permissions. Grant minimum required privileges (principle of least privilege). Use roles to manage permissions at scale."
+        }
+      ]
+    },
+    "Pagination": {
+      "contents": [
+        {
+          "value": "```sql\n-- Offset pagination (simple but slow for large offsets)\nSELECT * FROM products ORDER BY id LIMIT 20 OFFSET 100;\n\n-- Keyset pagination (efficient for large datasets)\nSELECT * FROM products\nWHERE id > 120\nORDER BY id LIMIT 20;\n```\n**Pagination**: Offset-based is simple but scans skipped rows. Keyset (cursor) pagination is faster for deep pages — use an indexed column as the cursor."
+        }
+      ]
+    },
+    "Upsert": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL\nINSERT INTO users (id, name, email)\nVALUES (1, 'Alice', 'a@b.com')\nON CONFLICT (id)\nDO UPDATE SET name = EXCLUDED.name, email = EXCLUDED.email;\n\n-- MySQL\nINSERT INTO users (id, name)\nVALUES (1, 'Alice')\nON DUPLICATE KEY UPDATE name = VALUES(name);\n```\n**Upsert** inserts a row or updates it if a conflict exists. PostgreSQL uses ON CONFLICT, MySQL uses ON DUPLICATE KEY UPDATE, SQL Server uses MERGE."
+        }
+      ]
+    },
+    "CTE vs Subquery": {
+      "contents": [
+        {
+          "value": "```sql\n-- CTE (more readable, reusable)\nWITH recent_orders AS (\n  SELECT * FROM orders WHERE created_at > NOW() - INTERVAL '30 days'\n)\nSELECT u.name, COUNT(ro.id)\nFROM users u\nJOIN recent_orders ro ON u.id = ro.user_id\nGROUP BY u.name;\n\n-- Subquery (inline)\nSELECT u.name, (\n  SELECT COUNT(*) FROM orders o\n  WHERE o.user_id = u.id AND o.created_at > NOW() - INTERVAL '30 days'\n) AS order_count\nFROM users u;\n```\n**CTEs vs Subqueries**: CTEs improve readability and allow reuse. Subqueries can sometimes be optimized better by the planner. Use CTEs for complex multi-step queries; subqueries for simple inline lookups."
+        }
+      ]
+    },
+    "Window vs GROUP BY": {
+      "contents": [
+        {
+          "value": "```sql\n-- GROUP BY: one row per group\nSELECT dept, AVG(salary) FROM employees GROUP BY dept;\n\n-- Window: all rows with aggregate\nSELECT name, dept, salary,\n  AVG(salary) OVER (PARTITION BY dept) AS dept_avg\nFROM employees;\n```\n**Window functions** compute aggregates while keeping all rows, unlike GROUP BY which collapses them. Use windows when you need both detail and summary data."
+        }
+      ]
+    },
+    "COPY": {
+      "contents": [
+        {
+          "value": "```sql\n-- Export\nCOPY users TO '/tmp/users.csv' WITH (FORMAT csv, HEADER);\n\n-- Import\nCOPY users (name, email) FROM '/tmp/users.csv'\nWITH (FORMAT csv, HEADER true, DELIMITER ',');\n```\n**COPY** (PostgreSQL) transfers data between a table and a file at high speed. Use FORMAT csv for CSV files. For client-side files, use \\copy in psql."
+        }
+      ]
+    },
+    "CREATE FUNCTION": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE OR REPLACE FUNCTION get_status(p_id INT)\nRETURNS TEXT AS $$\nDECLARE\n  v_status TEXT;\nBEGIN\n  SELECT status INTO v_status FROM orders WHERE id = p_id;\n  RETURN COALESCE(v_status, 'unknown');\nEND;\n$$ LANGUAGE plpgsql;\n```\n**CREATE FUNCTION** defines reusable logic in the database. Use RETURNS TABLE for set-returning functions. PL/pgSQL supports variables, loops, and exception handling."
+        }
+      ]
+    },
+    "CREATE TRIGGER": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE OR REPLACE FUNCTION set_updated_at()\nRETURNS TRIGGER AS $$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER trg_updated\nBEFORE UPDATE ON users\nFOR EACH ROW EXECUTE FUNCTION set_updated_at();\n```\n**CREATE TRIGGER** fires a function automatically on INSERT, UPDATE, or DELETE. Use BEFORE triggers for validation/modification, AFTER triggers for auditing."
+        }
+      ]
+    },
+    "VACUUM": {
+      "contents": [
+        {
+          "value": "```sql\nVACUUM ANALYZE users;\nVACUUM FULL large_table;\n```\n**VACUUM** (PostgreSQL) reclaims dead tuple space and updates planner statistics. VACUUM runs concurrently; VACUUM FULL rewrites the entire table (requires exclusive lock). Autovacuum handles this automatically in most cases."
+        }
+      ]
+    },
+    "Materialized View": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE MATERIALIZED VIEW mv_monthly_stats AS\nSELECT DATE_TRUNC('month', created_at) AS month, COUNT(*)\nFROM orders GROUP BY 1;\n\n-- Refresh in background\nREFRESH MATERIALIZED VIEW CONCURRENTLY mv_monthly_stats;\n```\n**Materialized views** cache query results for repeated fast reads. Use CONCURRENTLY to avoid locking during refresh. Create a unique index to enable concurrent refresh."
+        }
+      ]
+    },
+    "LIKE": "## LIKE\n\n```sql\nexpression LIKE pattern [ESCAPE escape_char]\nexpression ILIKE pattern  -- case-insensitive (PostgreSQL)\n```\n\nPattern matching with wildcards:\n- `%` — matches any sequence of characters\n- `_` — matches any single character\n\n```sql\n-- Starts with 'John'\nSELECT * FROM users WHERE name LIKE 'John%';\n\n-- Contains 'admin'\nSELECT * FROM users WHERE email LIKE '%admin%';\n\n-- Exactly 3 characters\nSELECT * FROM codes WHERE code LIKE '___';\n\n-- Escape literal %\nSELECT * FROM data WHERE value LIKE '100\\%%' ESCAPE '\\\\';\n\n-- Case-insensitive (PostgreSQL)\nSELECT * FROM users WHERE name ILIKE '%john%';\n```\n\n**Performance tip:** Leading `%` prevents index usage. Consider `pg_trgm` extension for fast `LIKE '%pattern%'`.",
+    "BETWEEN": "## BETWEEN\n\n```sql\nexpression BETWEEN low AND high\nexpression NOT BETWEEN low AND high\n```\n\nInclusive range test. Equivalent to `expr >= low AND expr <= high`.\n\n```sql\n-- Numeric range\nSELECT * FROM products WHERE price BETWEEN 10 AND 50;\n\n-- Date range\nSELECT * FROM orders\nWHERE created_at BETWEEN '2024-01-01' AND '2024-12-31';\n\n-- NOT BETWEEN\nSELECT * FROM users WHERE age NOT BETWEEN 18 AND 65;\n```\n\n**Note:** BETWEEN is inclusive on both ends. For timestamps, be careful with end boundary.",
+    "IN": "## IN\n\n```sql\nexpression IN (value1, value2, ...)\nexpression IN (subquery)\nexpression NOT IN (values)\n```\n\nTest membership in a set.\n\n```sql\n-- Literal values\nSELECT * FROM users WHERE role IN ('admin', 'editor', 'mod');\n\n-- Subquery\nSELECT * FROM products WHERE category_id IN (\n    SELECT id FROM categories WHERE active = true\n);\n\n-- NOT IN\nSELECT * FROM orders WHERE status NOT IN ('cancelled', 'refunded');\n```\n\n**Warning:** `NOT IN` with NULLs returns unexpected results. Prefer `NOT EXISTS` when subquery may contain NULLs.",
+    "EXISTS": "## EXISTS\n\n```sql\nEXISTS (subquery)\nNOT EXISTS (subquery)\n```\n\nReturns TRUE if subquery produces any rows.\n\n```sql\n-- Find users with orders\nSELECT * FROM users u\nWHERE EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n\n-- Find users without orders\nSELECT * FROM users u\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n```\n\n**Performance:** EXISTS stops scanning as soon as one row is found. Often faster than `IN` for large datasets.",
+    "data_types": "## SQL Data Types\n\n| Type | Description | Example |\n|------|-------------|---------|\n| `INTEGER` / `INT` | 32-bit signed integer | `age INTEGER` |\n| `BIGINT` | 64-bit integer | `id BIGINT` |\n| `SMALLINT` | 16-bit integer | `quantity SMALLINT` |\n| `SERIAL` | Auto-increment integer | `id SERIAL PRIMARY KEY` |\n| `NUMERIC(p,s)` | Exact decimal | `price NUMERIC(10,2)` |\n| `REAL` / `FLOAT4` | 32-bit floating point | `score REAL` |\n| `DOUBLE PRECISION` | 64-bit floating point | `value DOUBLE PRECISION` |\n| `VARCHAR(n)` | Variable-length string | `name VARCHAR(100)` |\n| `TEXT` | Unlimited string | `bio TEXT` |\n| `CHAR(n)` | Fixed-length string | `code CHAR(3)` |\n| `BOOLEAN` | true/false | `active BOOLEAN` |\n| `DATE` | Date only | `birthday DATE` |\n| `TIME` | Time only | `start_time TIME` |\n| `TIMESTAMP` | Date + time | `created_at TIMESTAMP` |\n| `TIMESTAMPTZ` | With timezone | `event_at TIMESTAMPTZ` |\n| `INTERVAL` | Time duration | `duration INTERVAL` |\n| `UUID` | UUID v4 | `id UUID` |\n| `JSONB` | Binary JSON | `data JSONB` |\n| `BYTEA` | Binary data | `file BYTEA` |\n| `ARRAY` | Array of any type | `tags TEXT[]` |",
+    "constraints": "## Constraints\n\n```sql\nCREATE TABLE example (\n    id      SERIAL PRIMARY KEY,\n    email   VARCHAR(255) NOT NULL UNIQUE,\n    age     INTEGER CHECK (age >= 0 AND age < 200),\n    role    VARCHAR(20) DEFAULT 'user',\n    dept_id INTEGER REFERENCES departments(id) ON DELETE SET NULL,\n    \n    -- Table-level constraints\n    CONSTRAINT valid_email CHECK (email LIKE '%@%'),\n    CONSTRAINT unique_per_dept UNIQUE (email, dept_id)\n);\n```\n\n| Constraint | Description |\n|-----------|-------------|\n| `PRIMARY KEY` | Unique + NOT NULL, one per table |\n| `FOREIGN KEY` | References another table |\n| `UNIQUE` | All values must be distinct |\n| `NOT NULL` | Prevents NULL |\n| `CHECK` | Custom boolean condition |\n| `DEFAULT` | Value when not specified |\n| `EXCLUDE` | Exclusion constraint (PostgreSQL) |\n\n**ON DELETE actions:** `CASCADE`, `SET NULL`, `SET DEFAULT`, `RESTRICT`, `NO ACTION`",
+    "ABS": "## ABS\n\n```sql\nABS(number) → number\n```\n\nReturns absolute (non-negative) value.\n\n```sql\nSELECT ABS(-42);      -- 42\nSELECT ABS(price - cost) AS margin FROM products;\n```",
+    "CEIL": "## CEIL / CEILING\n\n```sql\nCEIL(number) → integer\n```\n\nRound up to nearest integer.\n\n```sql\nSELECT CEIL(4.2);   -- 5\nSELECT CEIL(-4.8);  -- -4\n```",
+    "FLOOR": "## FLOOR\n\n```sql\nFLOOR(number) → integer\n```\n\nRound down to nearest integer.\n\n```sql\nSELECT FLOOR(4.8);   -- 4\nSELECT FLOOR(-4.2);  -- -5\n```",
+    "ROUND": "## ROUND\n\n```sql\nROUND(number [, decimal_places]) → number\n```\n\nRound to specified decimal places (default 0).\n\n```sql\nSELECT ROUND(3.14159);     -- 3\nSELECT ROUND(3.14159, 2);  -- 3.14\nSELECT ROUND(1234, -2);    -- 1200\n```",
+    "POWER": "## POWER\n\n```sql\nPOWER(base, exponent) → number\n```\n\nRaise number to a power.\n\n```sql\nSELECT POWER(2, 10);  -- 1024\nSELECT POWER(27, 1.0/3);  -- 3 (cube root)\n```",
+    "SQRT": "## SQRT\n\n```sql\nSQRT(number) → number\n```\n\nSquare root.\n\n```sql\nSELECT SQRT(144);  -- 12\n```",
+    "MOD": "## MOD\n\n```sql\nMOD(dividend, divisor) → number\n-- or: dividend % divisor\n```\n\nRemainder of integer division.\n\n```sql\nSELECT MOD(10, 3);  -- 1\nSELECT 10 % 3;      -- 1 (operator form)\n```",
+    "UPPER": "## UPPER / LOWER\n\n```sql\nUPPER(string) → text\nLOWER(string) → text\n```\n\n```sql\nSELECT UPPER('hello');  -- 'HELLO'\nSELECT LOWER('HELLO');  -- 'hello'\n```",
+    "LENGTH": "## LENGTH\n\n```sql\nLENGTH(string) → integer\nCHAR_LENGTH(string) → integer  -- SQL standard\n```\n\nReturn string length.\n\n```sql\nSELECT LENGTH('hello');  -- 5\n```",
+    "POSITION": "## POSITION\n\n```sql\nPOSITION(substring IN string) → integer\n-- or: STRPOS(string, substring)\n```\n\nFind position of substring (1-based, 0 if not found).\n\n```sql\nSELECT POSITION('world' IN 'hello world');  -- 7\n```",
+    "LPAD": "## LPAD / RPAD\n\n```sql\nLPAD(string, length [, fill]) → text\nRPAD(string, length [, fill]) → text\n```\n\nPad string to specified length.\n\n```sql\nSELECT LPAD('42', 5, '0');   -- '00042'\nSELECT RPAD('hi', 5, '.');   -- 'hi...'\n```",
+    "SPLIT_PART": "## SPLIT_PART\n\n```sql\nSPLIT_PART(string, delimiter, position) → text\n```\n\nSplit string and return nth part.\n\n```sql\nSELECT SPLIT_PART('a.b.c', '.', 2);  -- 'b'\nSELECT SPLIT_PART('john@example.com', '@', 1);  -- 'john'\n```",
+    "Window functions": "## Window Functions\n\n```sql\nfunction() OVER (\n    [PARTITION BY column]\n    [ORDER BY column [ASC|DESC]]\n    [frame_clause]\n)\n```\n\n**Ranking:**\n```sql\nSELECT name, salary,\n    ROW_NUMBER() OVER (ORDER BY salary DESC) as row_num,\n    RANK()       OVER (ORDER BY salary DESC) as rank,\n    DENSE_RANK() OVER (ORDER BY salary DESC) as dense_rank,\n    NTILE(4)     OVER (ORDER BY salary DESC) as quartile\nFROM employees;\n```\n\n**Value access:**\n```sql\nSELECT date, value,\n    LAG(value, 1)  OVER (ORDER BY date) as prev_value,\n    LEAD(value, 1) OVER (ORDER BY date) as next_value,\n    FIRST_VALUE(value) OVER (ORDER BY date) as first,\n    LAST_VALUE(value)  OVER (ORDER BY date\n        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as last\nFROM metrics;\n```\n\n**Frame clause:**\n- `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (default)\n- `ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING`\n- `RANGE BETWEEN INTERVAL '7 days' PRECEDING AND CURRENT ROW`",
+    "MAX": "## MAX / MIN\n\n```sql\nMAX(expression) → same type\nMIN(expression) → same type\n```\n\nReturn maximum/minimum value.\n\n```sql\nSELECT MAX(salary), MIN(salary) FROM employees;\nSELECT department, MAX(salary) FROM employees GROUP BY department;\n```",
+    "ARRAY_AGG": "## ARRAY_AGG\n\n```sql\nARRAY_AGG(expression [ORDER BY ...]) → array\n```\n\nCollect values into an array.\n\n```sql\nSELECT department,\n    ARRAY_AGG(name ORDER BY name) as member_array\nFROM employees\nGROUP BY department;\n```",
+    "GENERATE_SERIES": "## generate_series\n\n```sql\ngenerate_series(start, stop [, step])\n```\n\nGenerate a series of values (PostgreSQL).\n\n```sql\n-- Numbers\nSELECT generate_series(1, 10);\nSELECT generate_series(0, 100, 10);  -- 0, 10, 20, ...\n\n-- Dates\nSELECT generate_series(\n    '2024-01-01'::date,\n    '2024-12-31'::date,\n    '1 month'::interval\n);\n\n-- Fill gaps in time series\nSELECT d::date, COALESCE(count, 0)\nFROM generate_series('2024-01-01', '2024-01-31', '1 day') d\nLEFT JOIN daily_counts ON daily_counts.day = d::date;\n```",
+    "BIGINT": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE events (\n    id BIGINT PRIMARY KEY,\n    timestamp_ms BIGINT NOT NULL\n);\n-- Range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807\n```\n**BIGINT** is an 8-byte integer type. Use for large IDs, timestamps in milliseconds, or any value exceeding the INTEGER range (~2.1 billion). Available in all major databases."
+        }
+      ]
+    },
+    "BIGSERIAL": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE logs (\n    id BIGSERIAL PRIMARY KEY,\n    message TEXT\n);\n-- Equivalent to: BIGINT NOT NULL DEFAULT nextval('logs_id_seq')\n```\n**BIGSERIAL** (PostgreSQL) is an auto-incrementing 8-byte integer. Creates a sequence automatically. Use when SERIAL range (2.1B) is insufficient. MySQL equivalent: `BIGINT AUTO_INCREMENT`."
+        }
+      ]
+    },
+    "BOOLEAN": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    active BOOLEAN DEFAULT true\n);\nSELECT * FROM users WHERE active = true;\n-- PostgreSQL: true/false, MySQL: TINYINT(1)/BOOL\n```\n**BOOLEAN** stores true/false values. PostgreSQL has native BOOLEAN; MySQL implements it as TINYINT(1). Accepts `TRUE`, `FALSE`, `1`, `0`."
+        }
+      ]
+    },
+    "BYTEA": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE files (\n    content BYTEA\n);\nINSERT INTO files VALUES (decode('48656C6C6F', 'hex'));\n```\n**BYTEA** (PostgreSQL) stores binary data (byte arrays). Equivalent to MySQL's BLOB. Supports hex and escape input formats. Use for small binary objects; consider large objects or file storage for bigger data."
+        }
+      ]
+    },
+    "CHAR": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE countries (\n    code CHAR(2) PRIMARY KEY  -- always 2 characters, padded\n);\n```\n**CHAR(n)** is a fixed-length character type, right-padded with spaces to length `n`. More efficient than VARCHAR for truly fixed-length data (country codes, currency codes). Max length varies by database."
+        }
+      ]
+    },
+    "CIDR": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE networks (\n    subnet CIDR NOT NULL\n);\nSELECT * FROM networks WHERE subnet >>= '192.168.1.5';\n```\n**CIDR** (PostgreSQL) stores IPv4/IPv6 network addresses with subnet mask. Supports network containment operators (`>>=`, `<<=`, `&&`). Use INET for host addresses, CIDR for network addresses."
+        }
+      ]
+    },
+    "DATE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE events (\n    event_date DATE DEFAULT CURRENT_DATE\n);\nSELECT * FROM events WHERE event_date BETWEEN '2024-01-01' AND '2024-12-31';\n```\n**DATE** stores calendar dates (year, month, day) without time. Format: `YYYY-MM-DD`. Range varies by database. Use TIMESTAMP when time is also needed."
+        }
+      ]
+    },
+    "DECIMAL": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE products (\n    price DECIMAL(10, 2)  -- up to 99999999.99\n);\n```\n**DECIMAL(precision, scale)** stores exact numeric values. `precision` = total digits, `scale` = digits after decimal. No floating-point rounding errors. Essential for financial/monetary data. Alias: NUMERIC."
+        }
+      ]
+    },
+    "ENUM": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL:\nCREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');\nCREATE TABLE people (current_mood mood);\n-- MySQL:\nCREATE TABLE shirts (size ENUM('S', 'M', 'L', 'XL'));\n```\n**ENUM** defines a column with a fixed set of allowed values. PostgreSQL creates a custom type; MySQL defines inline. Provides type safety and storage efficiency. Adding values requires ALTER TYPE/TABLE."
+        }
+      ]
+    },
+    "FLOAT": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE sensors (\n    reading FLOAT\n);\n-- Approximate numeric, 4 or 8 bytes\n-- Use DECIMAL for exact precision (financial data)\n```\n**FLOAT** stores approximate floating-point numbers (IEEE 754). Fast computation but subject to rounding errors. Use DECIMAL/NUMERIC for exact precision. FLOAT = single precision (4 bytes), DOUBLE = double precision (8 bytes)."
+        }
+      ]
+    },
+    "INET": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE connections (\n    ip_addr INET NOT NULL\n);\nSELECT * FROM connections WHERE ip_addr << '192.168.0.0/16';\n```\n**INET** (PostgreSQL) stores IPv4/IPv6 host addresses with optional subnet mask. Supports containment (`<<`, `>>`), comparison, and bitwise operators. More space-efficient than storing IPs as strings."
+        }
+      ]
+    },
+    "INTEGER": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    age INTEGER CHECK (age >= 0)\n);\n-- Range: -2,147,483,648 to 2,147,483,647 (4 bytes)\n```\n**INTEGER** (INT) is a 4-byte signed integer type. The most common numeric type. Range: ±2.1 billion. Aliases: INT, INT4. Use BIGINT for larger ranges, SMALLINT for smaller storage."
+        }
+      ]
+    },
+    "JSON": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE api_logs (\n    payload JSON NOT NULL\n);\n-- PostgreSQL:\nSELECT payload->>'name' FROM api_logs;\n-- MySQL:\nSELECT JSON_EXTRACT(payload, '$.name') FROM api_logs;\n```\n**JSON** stores JSON data with validation. PostgreSQL stores as text (reparsed on access); use JSONB for indexed binary storage. MySQL supports JSON with path extraction functions."
+        }
+      ]
+    },
+    "JSONB": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE documents (\n    data JSONB NOT NULL\n);\nCREATE INDEX idx_data ON documents USING gin(data);\nSELECT * FROM documents WHERE data @> '{\"type\": \"invoice\"}';\nSELECT data->>'name', data->'address'->>'city' FROM documents;\n```\n**JSONB** (PostgreSQL) stores JSON in decomposed binary format. Faster to query than JSON, supports GIN indexing, and containment operators (`@>`, `<@`, `?`, `?|`, `?&`). Slight overhead on insert due to parsing."
+        }
+      ]
+    },
+    "NUMERIC": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE transactions (\n    amount NUMERIC(15, 4) NOT NULL\n);\n```\n**NUMERIC(precision, scale)** stores exact decimal numbers. Identical to DECIMAL. No rounding errors. Preferred for financial calculations. Without precision, PostgreSQL allows arbitrary precision (slower)."
+        }
+      ]
+    },
+    "REAL": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE measurements (\n    value REAL  -- 4-byte floating point\n);\n```\n**REAL** is a 4-byte single-precision floating-point type (IEEE 754). Approximately 6 decimal digits of precision. Alias for FLOAT4 in PostgreSQL. Use DOUBLE PRECISION for more accuracy."
+        }
+      ]
+    },
+    "SERIAL": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    id SERIAL PRIMARY KEY,\n    name TEXT NOT NULL\n);\n-- Equivalent to: INTEGER NOT NULL DEFAULT nextval('users_id_seq')\n```\n**SERIAL** (PostgreSQL) is an auto-incrementing 4-byte integer. Automatically creates a sequence. MySQL equivalent: `INT AUTO_INCREMENT`. PostgreSQL 10+ recommends `GENERATED ALWAYS AS IDENTITY` instead."
+        }
+      ]
+    },
+    "SMALLINT": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE config (\n    priority SMALLINT DEFAULT 0\n);\n-- Range: -32,768 to 32,767 (2 bytes)\n```\n**SMALLINT** is a 2-byte integer type. Use for small-range values to save storage: ports, percentages, small counters. Range: -32,768 to 32,767."
+        }
+      ]
+    },
+    "TEXT": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE posts (\n    content TEXT NOT NULL\n);\n```\n**TEXT** stores variable-length strings with no specified maximum length. In PostgreSQL, functionally equivalent to VARCHAR without a limit. In MySQL, supports up to ~4GB (LONGTEXT). Use for large text fields where length is unpredictable."
+        }
+      ]
+    },
+    "TIMESTAMP": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE events (\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n```\n**TIMESTAMP** stores date and time (no timezone info). Format: `YYYY-MM-DD HH:MM:SS`. Use TIMESTAMPTZ for timezone-aware storage. Microsecond precision in PostgreSQL."
+        }
+      ]
+    },
+    "TIMESTAMPTZ": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE events (\n    created_at TIMESTAMPTZ DEFAULT NOW()\n);\n-- Stored as UTC, displayed in session timezone\nSET timezone = 'America/New_York';\nSELECT created_at FROM events;\n```\n**TIMESTAMPTZ** (PostgreSQL) is a timezone-aware timestamp. Stores internally as UTC; converts to/from the session's timezone on I/O. **Always prefer TIMESTAMPTZ over TIMESTAMP** for correct time handling across timezones."
+        }
+      ]
+    },
+    "UUID": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid()\n);\n-- Example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'\n```\n**UUID** stores 128-bit universally unique identifiers. 16 bytes storage. Use `gen_random_uuid()` (PostgreSQL 13+) or `uuid_generate_v4()` (uuid-ossp extension). Ideal for distributed systems where sequential IDs are impractical."
+        }
+      ]
+    },
+    "VARCHAR": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    email VARCHAR(255) NOT NULL UNIQUE,\n    name VARCHAR(100)\n);\n```\n**VARCHAR(n)** stores variable-length strings up to `n` characters. No padding (unlike CHAR). Most common string type. Without `n`, PostgreSQL treats it as unlimited length. MySQL max is 65,535 bytes per row."
+        }
+      ]
+    },
+    "ARRAY": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE posts (\n    tags TEXT[] DEFAULT '{}'\n);\nINSERT INTO posts (tags) VALUES (ARRAY['sql', 'database']);\nSELECT * FROM posts WHERE 'sql' = ANY(tags);\nSELECT tags[1] FROM posts;  -- 1-indexed\n```\n**ARRAY** (PostgreSQL) allows columns to hold arrays of any data type. Supports indexing (`[n]`), containment (`@>`, `<@`), overlap (`&&`), and `ANY`/`ALL` operators. Create GIN indexes for fast array searches."
+        }
+      ]
+    },
+    "CHAR_LENGTH": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CHAR_LENGTH('Hello');  -- 5\nSELECT CHAR_LENGTH('日本語');  -- 3 (characters, not bytes)\n```\n**CHAR_LENGTH** (CHARACTER_LENGTH) returns the number of characters in a string. Unlike `LENGTH`/`OCTET_LENGTH`, counts characters not bytes — important for multi-byte encodings."
+        }
+      ]
+    },
+    "INITCAP": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT INITCAP('hello world');  -- 'Hello World'\nSELECT INITCAP('hELLO');        -- 'Hello'\n```\n**INITCAP** (PostgreSQL) capitalizes the first letter of each word and lowercases the rest. Word boundaries are non-alphanumeric characters."
+        }
+      ]
+    },
+    "LEFT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT LEFT('Hello World', 5);   -- 'Hello'\nSELECT LEFT('abcdef', 3);        -- 'abc'\n```\n**LEFT** returns the leftmost `n` characters from a string. Equivalent to `SUBSTRING(str FROM 1 FOR n)`."
+        }
+      ]
+    },
+    "RIGHT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT RIGHT('Hello World', 5);  -- 'World'\nSELECT RIGHT('abcdef', 3);       -- 'def'\n```\n**RIGHT** returns the rightmost `n` characters from a string."
+        }
+      ]
+    },
+    "LOWER": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT LOWER('HELLO');  -- 'hello'\nSELECT * FROM users WHERE LOWER(email) = 'user@example.com';\n```\n**LOWER** converts a string to all lowercase characters. Locale-aware. Common for case-insensitive comparisons (though `ILIKE` or `CITEXT` may be preferred in PostgreSQL)."
+        }
+      ]
+    },
+    "REPEAT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT REPEAT('ab', 3);   -- 'ababab'\nSELECT REPEAT('-', 20);   -- '--------------------'\n```\n**REPEAT** returns a string repeated `n` times. Useful for formatting and padding."
+        }
+      ]
+    },
+    "REVERSE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT REVERSE('Hello');  -- 'olleH'\n```\n**REVERSE** returns a string with characters in reverse order."
+        }
+      ]
+    },
+    "RPAD": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT RPAD('Hello', 10, '.');  -- 'Hello.....'\nSELECT RPAD('Hi', 5);           -- 'Hi   '\n```\n**RPAD** pads a string on the right to a specified length using a fill character (default: space). Complements LPAD."
+        }
+      ]
+    },
+    "TRANSLATE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TRANSLATE('Hello', 'Helo', 'JXYZ');  -- 'JXYYz'\nSELECT TRANSLATE('12345', '135', 'ace');     -- 'a2c4e'\n```\n**TRANSLATE** replaces characters one-to-one. Each character in the second argument is replaced by the corresponding character in the third argument. Characters with no match are removed."
+        }
+      ]
+    },
+    "FORMAT": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL:\nSELECT FORMAT('Hello %s, you are %s', 'World', 'great');\n-- MySQL:\nSELECT FORMAT(1234567.891, 2);  -- '1,234,567.89'\n```\n**FORMAT** formats strings (PostgreSQL) or numbers (MySQL). PostgreSQL uses C-style `%s`/`%I`/`%L` placeholders. MySQL formats numbers with locale-aware grouping."
+        }
+      ]
+    },
+    "MD5": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT MD5('hello');  -- '5d41402abc4b2a76b9719d911017c592'\n```\n**MD5** returns the MD5 hash of a string as a 32-character hex string. **Not secure for passwords** — use `crypt()` from pgcrypto or application-level hashing. Useful for checksums and data deduplication."
+        }
+      ]
+    },
+    "CONVERT": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL:\nSELECT CONVERT('text', 'UTF8', 'LATIN1');\n-- MySQL:\nSELECT CONVERT('123', SIGNED);  -- type casting\nSELECT CONVERT('text' USING utf8mb4);\n```\n**CONVERT** converts between character encodings (PostgreSQL) or performs type casting (MySQL). Use CAST for standard cross-database type conversion."
+        }
+      ]
+    },
+    "EXP": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT EXP(1);    -- 2.718281828... (e)\nSELECT EXP(2);    -- 7.389056099...\n```\n**EXP** returns e raised to the specified power (natural exponential). Inverse of LN (natural logarithm)."
+        }
+      ]
+    },
+    "LN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT LN(2.718281828);  -- ~1.0\nSELECT LN(EXP(5));       -- 5.0\n```\n**LN** returns the natural logarithm (base e) of a number. Inverse of EXP. Returns NULL for non-positive inputs."
+        }
+      ]
+    },
+    "LOG": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT LOG(100);      -- 2.0 (base 10 in MySQL, PostgreSQL)\nSELECT LOG(2, 8);     -- 3.0 (base 2 of 8, PostgreSQL)\n```\n**LOG** returns the logarithm. With one argument: base-10 (MySQL/PostgreSQL). With two arguments (PostgreSQL): `LOG(base, value)`. Use LN for natural log."
+        }
+      ]
+    },
+    "SIGN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT SIGN(-5);   -- -1\nSELECT SIGN(0);    --  0\nSELECT SIGN(42);   --  1\n```\n**SIGN** returns -1 for negative, 0 for zero, or 1 for positive numbers. Useful for conditional logic based on value polarity."
+        }
+      ]
+    },
+    "RANDOM": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL:\nSELECT RANDOM();  -- 0.0 to 1.0\nSELECT FLOOR(RANDOM() * 100 + 1);  -- 1 to 100\n-- MySQL: RAND()\nSELECT * FROM users ORDER BY RANDOM() LIMIT 10;\n```\n**RANDOM** (PostgreSQL) / **RAND** (MySQL) returns a random floating-point value between 0 and 1. Combine with FLOOR for integer ranges. Use `ORDER BY RANDOM()` for random row selection (slow on large tables)."
+        }
+      ]
+    },
+    "TRUNC": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TRUNC(42.8);       -- 42\nSELECT TRUNC(42.876, 2);  -- 42.87\nSELECT TRUNC(-42.8);      -- -42\n```\n**TRUNC** truncates a number toward zero to the specified decimal places (default: 0). Unlike ROUND, always truncates without rounding. Also available for timestamps in PostgreSQL (`DATE_TRUNC`)."
+        }
+      ]
+    },
+    "MIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT MIN(price) FROM products;\nSELECT category, MIN(price) AS cheapest FROM products GROUP BY category;\n```\n**MIN** returns the minimum value in a set. Works with numbers, strings, dates, and timestamps. NULL values are ignored. Use with GROUP BY for per-group minimums."
+        }
+      ]
+    },
+    "AGE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT AGE(TIMESTAMP '2024-01-01', TIMESTAMP '2000-06-15');\n-- '23 years 6 mons 17 days'\nSELECT AGE(TIMESTAMP '2024-01-01');  -- age from current_date\n```\n**AGE** (PostgreSQL) calculates the interval between two timestamps, or between a timestamp and the current date. Returns an INTERVAL value with years, months, and days."
+        }
+      ]
+    },
+    "DATEDIFF": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT DATEDIFF('2024-12-31', '2024-01-01');  -- 365\n-- SQL Server:\nSELECT DATEDIFF(day, '2024-01-01', '2024-12-31');  -- 365\nSELECT DATEDIFF(month, '2024-01-01', '2024-07-01'); -- 6\n```\n**DATEDIFF** returns the difference between two dates. MySQL returns days; SQL Server accepts a datepart (day, month, year, etc.). PostgreSQL uses subtraction: `date1 - date2`."
+        }
+      ]
+    },
+    "DATE_PART": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT DATE_PART('year', TIMESTAMP '2024-06-15');   -- 2024\nSELECT DATE_PART('month', CURRENT_DATE);            -- current month\nSELECT DATE_PART('dow', TIMESTAMP '2024-06-15');    -- day of week (0=Sun)\n```\n**DATE_PART** (PostgreSQL) extracts a field from a date/timestamp. Similar to EXTRACT but returns float instead of numeric. Fields: year, month, day, hour, minute, second, dow, doy, epoch, etc."
+        }
+      ]
+    },
+    "MAKE_DATE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT MAKE_DATE(2024, 6, 15);  -- '2024-06-15'\nSELECT MAKE_DATE(year, 1, 1) FROM generate_series(2020, 2024) AS year;\n```\n**MAKE_DATE** (PostgreSQL) constructs a DATE from year, month, and day integers. Validates the input values. Useful for building dates dynamically in queries."
+        }
+      ]
+    },
+    "MAKE_INTERVAL": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT MAKE_INTERVAL(years => 1, months => 6);  -- '1 year 6 mons'\nSELECT NOW() + MAKE_INTERVAL(days => 30);\n```\n**MAKE_INTERVAL** (PostgreSQL) constructs an INTERVAL from named components (years, months, weeks, days, hours, mins, secs). More readable than `INTERVAL '...'` for dynamic interval construction."
+        }
+      ]
+    },
+    "TO_CHAR": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS');  -- '2024-06-15 14:30:00'\nSELECT TO_CHAR(1234.5, 'FM$9,999.00');            -- '$1,234.50'\nSELECT TO_CHAR(NOW(), 'Day, DD Month YYYY');      -- 'Saturday, 15 June 2024'\n```\n**TO_CHAR** (PostgreSQL) converts dates, timestamps, or numbers to formatted strings. Rich pattern system: YYYY (year), MM (month), DD (day), HH24 (24h hour), MI (minute), SS (second), FM (fill mode)."
+        }
+      ]
+    },
+    "TO_DATE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TO_DATE('15/06/2024', 'DD/MM/YYYY');  -- 2024-06-15\nSELECT TO_DATE('June 15, 2024', 'Month DD, YYYY');\n```\n**TO_DATE** (PostgreSQL) parses a string into a DATE using the specified format pattern. Use TO_TIMESTAMP for date+time strings."
+        }
+      ]
+    },
+    "TO_TIMESTAMP": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT TO_TIMESTAMP('2024-06-15 14:30:00', 'YYYY-MM-DD HH24:MI:SS');\nSELECT TO_TIMESTAMP(1718461800);  -- from Unix epoch\n```\n**TO_TIMESTAMP** converts a string (with format) or Unix epoch integer to a TIMESTAMPTZ value. Commonly used for importing date strings from external sources."
+        }
+      ]
+    },
+    "CURRENT_DATE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CURRENT_DATE;  -- '2024-06-15'\nCREATE TABLE logs (\n    log_date DATE DEFAULT CURRENT_DATE\n);\n```\n**CURRENT_DATE** returns today's date (no time). Standard SQL function (no parentheses). In PostgreSQL, uses the session timezone."
+        }
+      ]
+    },
+    "CURRENT_TIME": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CURRENT_TIME;  -- '14:30:00.123456+00'\n```\n**CURRENT_TIME** returns the current time with timezone. Standard SQL. Less commonly used than CURRENT_TIMESTAMP or NOW(). Use AT TIME ZONE for timezone conversion."
+        }
+      ]
+    },
+    "CURRENT_TIMESTAMP": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT CURRENT_TIMESTAMP;  -- '2024-06-15 14:30:00.123456+00'\nCREATE TABLE events (\n    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP\n);\n```\n**CURRENT_TIMESTAMP** returns the current date and time with timezone. Standard SQL equivalent of `NOW()`. Value is fixed at the start of the current transaction in PostgreSQL."
+        }
+      ]
+    },
+    "GEN_RANDOM_UUID": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT gen_random_uuid();  -- 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'\nCREATE TABLE items (\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid()\n);\n```\n**gen_random_uuid** (PostgreSQL 13+) generates a random v4 UUID. Built-in, no extension needed. For older versions, use `uuid_generate_v4()` from the uuid-ossp extension."
+        }
+      ]
+    },
+    "BOOL_AND": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT BOOL_AND(is_active) FROM users;  -- true only if ALL are true\nSELECT dept, BOOL_AND(completed) FROM tasks GROUP BY dept;\n```\n**BOOL_AND** (PostgreSQL) returns TRUE if all values are true (logical AND aggregate). Returns NULL if no rows. MySQL equivalent: `BIT_AND` or `MIN`."
+        }
+      ]
+    },
+    "BOOL_OR": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT BOOL_OR(is_admin) FROM users;  -- true if ANY is true\n```\n**BOOL_OR** (PostgreSQL) returns TRUE if any value is true (logical OR aggregate). NULL values are ignored."
+        }
+      ]
+    },
+    "GROUP_CONCAT": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT dept, GROUP_CONCAT(name SEPARATOR ', ') FROM employees GROUP BY dept;\nSELECT GROUP_CONCAT(DISTINCT tag ORDER BY tag) FROM post_tags;\n-- PostgreSQL equivalent: STRING_AGG(name, ', ')\n```\n**GROUP_CONCAT** (MySQL) concatenates values from multiple rows into a single string with a separator. Supports DISTINCT, ORDER BY, and custom SEPARATOR. PostgreSQL uses `STRING_AGG` instead."
+        }
+      ]
+    },
+    "CUME_DIST": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, score,\n    CUME_DIST() OVER (ORDER BY score) AS percentile\nFROM students;\n-- Returns: cumulative distribution (0 < value <= 1)\n```\n**CUME_DIST** calculates the cumulative distribution of a value: the fraction of rows with values less than or equal to the current row's value. Returns a value between 0 (exclusive) and 1 (inclusive)."
+        }
+      ]
+    },
+    "FIRST_VALUE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, dept, salary,\n    FIRST_VALUE(name) OVER (\n        PARTITION BY dept ORDER BY salary DESC\n    ) AS highest_paid\nFROM employees;\n```\n**FIRST_VALUE** returns the first value in the window frame. Commonly used to get the top-ranked item per group. Use with appropriate ORDER BY and frame clause."
+        }
+      ]
+    },
+    "LAST_VALUE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, dept, salary,\n    LAST_VALUE(name) OVER (\n        PARTITION BY dept ORDER BY salary\n        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n    ) AS highest_paid\nFROM employees;\n```\n**LAST_VALUE** returns the last value in the window frame. **Important**: the default frame is `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, so you usually need to specify `UNBOUNDED FOLLOWING` to see the actual last value."
+        }
+      ]
+    },
+    "NTH_VALUE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, salary,\n    NTH_VALUE(name, 2) OVER (\n        ORDER BY salary DESC\n        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n    ) AS second_highest\nFROM employees;\n```\n**NTH_VALUE** returns the value of the nth row in the window frame. Returns NULL if the nth row doesn't exist. Requires explicit frame specification for correct results."
+        }
+      ]
+    },
+    "NTILE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, score,\n    NTILE(4) OVER (ORDER BY score DESC) AS quartile\nFROM students;\n-- Divides rows into 4 roughly equal groups (1-4)\n```\n**NTILE** divides the ordered result set into `n` roughly equal groups (buckets) and assigns a bucket number (1 to n) to each row. Useful for percentile analysis and tiered grouping."
+        }
+      ]
+    },
+    "PERCENT_RANK": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, score,\n    PERCENT_RANK() OVER (ORDER BY score) AS pct_rank\nFROM students;\n-- Returns: (rank - 1) / (total rows - 1), range 0.0 to 1.0\n```\n**PERCENT_RANK** calculates the relative rank of a row as a percentage: `(rank - 1) / (total_rows - 1)`. First row is always 0.0. Useful for comparing relative standing."
+        }
+      ]
+    },
+    "PERCENTILE_CONT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median,\n    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY response_time) AS p95\nFROM employees;\n```\n**PERCENTILE_CONT** calculates a continuous (interpolated) percentile. `0.5` = median, `0.95` = 95th percentile. Uses linear interpolation between adjacent values. Ordered-set aggregate function."
+        }
+      ]
+    },
+    "PERCENTILE_DISC": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) AS median\nFROM employees;\n```\n**PERCENTILE_DISC** returns the first value whose cumulative distribution is >= the specified fraction. Unlike PERCENTILE_CONT, returns an actual value from the data set (no interpolation)."
+        }
+      ]
+    },
+    "JSON_AGG": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT JSON_AGG(name) FROM users;\n-- ['Alice', 'Bob', 'Charlie']\nSELECT dept, JSON_AGG(ROW_TO_JSON(e)) FROM employees e GROUP BY dept;\n```\n**JSON_AGG** (PostgreSQL) aggregates values into a JSON array. Preserves data types. Use with ROW_TO_JSON or JSONB_BUILD_OBJECT for structured JSON output. NULL values are included."
+        }
+      ]
+    },
+    "JSON_ARRAY": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL 8.0+:\nSELECT JSON_ARRAY(1, 'hello', true);  -- [1, \"hello\", true]\n-- PostgreSQL uses JSON_BUILD_ARRAY:\nSELECT JSON_BUILD_ARRAY(1, 'hello', true);\n```\n**JSON_ARRAY** (MySQL) constructs a JSON array from arguments. PostgreSQL equivalent: `JSON_BUILD_ARRAY`. Handles type conversion automatically."
+        }
+      ]
+    },
+    "JSON_ARRAY_LENGTH": {
+      "contents": [
+        {
+          "value": "```sql\n-- PostgreSQL:\nSELECT JSON_ARRAY_LENGTH('[1,2,3]'::json);  -- 3\n-- MySQL:\nSELECT JSON_LENGTH('[1,2,3]');  -- 3\n```\n**JSON_ARRAY_LENGTH** returns the number of elements in a JSON array. Returns NULL for non-array JSON values."
+        }
+      ]
+    },
+    "JSON_EACH": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT key, value\nFROM JSON_EACH('{\"a\":1,\"b\":2,\"c\":3}'::json);\n-- Returns: a|1, b|2, c|3\n-- Use JSON_EACH_TEXT for text values\n```\n**JSON_EACH** (PostgreSQL) expands a JSON object into key-value rows. Returns `key` (text) and `value` (json). Use `JSON_EACH_TEXT` for text values. Essential for iterating over dynamic JSON structures."
+        }
+      ]
+    },
+    "JSON_EXTRACT": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT JSON_EXTRACT(data, '$.name');     -- '\"Alice\"'\nSELECT data->>'$.name';                 -- 'Alice' (unquoted)\nSELECT JSON_EXTRACT(data, '$.items[0]');\n-- PostgreSQL uses -> and ->> operators instead\n```\n**JSON_EXTRACT** (MySQL) extracts a value from JSON using a JSONPath expression. `$` = root, `.key` = object member, `[n]` = array index. MySQL also supports `->` and `->>` shorthand."
+        }
+      ]
+    },
+    "JSON_OBJECT": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL 8.0+:\nSELECT JSON_OBJECT('name', 'Alice', 'age', 30);\n-- {\"name\": \"Alice\", \"age\": 30}\n-- PostgreSQL:\nSELECT JSONB_BUILD_OBJECT('name', 'Alice', 'age', 30);\n```\n**JSON_OBJECT** (MySQL) constructs a JSON object from key-value pairs. PostgreSQL uses `JSON_BUILD_OBJECT` / `JSONB_BUILD_OBJECT`."
+        }
+      ]
+    },
+    "JSON_REMOVE": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT JSON_REMOVE('{\"a\":1,\"b\":2}', '$.b');  -- '{\"a\":1}'\nSELECT JSON_REMOVE('[1,2,3]', '$[1]');        -- '[1,3]'\n-- PostgreSQL: use - operator\nSELECT '{\"a\":1,\"b\":2}'::jsonb - 'b';\n```\n**JSON_REMOVE** (MySQL) removes elements from JSON by path. PostgreSQL uses the `-` operator for JSONB."
+        }
+      ]
+    },
+    "JSON_SET": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT JSON_SET('{\"a\":1}', '$.b', 2);  -- '{\"a\":1,\"b\":2}'\nSELECT JSON_SET(data, '$.status', 'active') FROM records;\n-- PostgreSQL: use || operator\nSELECT '{\"a\":1}'::jsonb || '{\"b\":2}'::jsonb;\n```\n**JSON_SET** (MySQL) inserts or updates values in JSON by path. Creates missing keys. PostgreSQL uses `||` for merge or `JSONB_SET` for path-based updates."
+        }
+      ]
+    },
+    "JSON_TYPEOF": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT JSON_TYPEOF('123'::json);       -- 'number'\nSELECT JSON_TYPEOF('\"hello\"'::json);   -- 'string'\nSELECT JSON_TYPEOF('[1,2]'::json);     -- 'array'\nSELECT JSON_TYPEOF('{}'::json);        -- 'object'\n```\n**JSON_TYPEOF** (PostgreSQL) returns the type of a JSON value as text: 'object', 'array', 'string', 'number', 'boolean', or 'null'."
+        }
+      ]
+    },
+    "GREATEST": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT GREATEST(10, 20, 5);          -- 20\nSELECT GREATEST(price, min_price);   -- ensures minimum\nSELECT GREATEST('2024-01-01'::date, start_date);\n```\n**GREATEST** returns the largest value from a list of expressions. Works with numbers, strings, dates. NULL handling varies by database (PostgreSQL ignores NULLs, MySQL returns NULL if any argument is NULL)."
+        }
+      ]
+    },
+    "LEAST": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT LEAST(10, 20, 5);         -- 5\nSELECT LEAST(price, max_price);  -- cap at maximum\n```\n**LEAST** returns the smallest value from a list of expressions. Counterpart to GREATEST. Same NULL handling behavior."
+        }
+      ]
+    },
+    "IFNULL": {
+      "contents": [
+        {
+          "value": "```sql\n-- MySQL:\nSELECT IFNULL(nickname, 'Anonymous') FROM users;\n-- Equivalent PostgreSQL: COALESCE(nickname, 'Anonymous')\n```\n**IFNULL** (MySQL) returns the first argument if not NULL, otherwise the second. Two-argument version of COALESCE. Use COALESCE for cross-database compatibility."
+        }
+      ]
+    },
+    "IIF": {
+      "contents": [
+        {
+          "value": "```sql\n-- SQL Server:\nSELECT IIF(score >= 60, 'Pass', 'Fail') FROM students;\n-- Equivalent: CASE WHEN score >= 60 THEN 'Pass' ELSE 'Fail' END\n```\n**IIF** (SQL Server) is a shorthand for a simple CASE expression. Takes a boolean condition, true-value, and false-value. Use CASE for cross-database compatibility."
+        }
+      ]
+    },
+    "NVL": {
+      "contents": [
+        {
+          "value": "```sql\n-- Oracle:\nSELECT NVL(commission, 0) FROM employees;\n-- Equivalent PostgreSQL/MySQL: COALESCE(commission, 0)\n```\n**NVL** (Oracle) replaces NULL with a specified value. Use COALESCE for standard SQL compatibility."
+        }
+      ]
+    },
+    "REGEXP_REPLACE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT REGEXP_REPLACE('Hello 123 World', '[0-9]+', 'NUM');\n-- 'Hello NUM World'\nSELECT REGEXP_REPLACE('a  b  c', '\\s+', ' ', 'g');  -- 'a b c'\n```\n**REGEXP_REPLACE** replaces substrings matching a regular expression. PostgreSQL requires `'g'` flag for global replacement. Powerful for data cleaning and transformation."
+        }
+      ]
+    },
+    "UNNEST": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT UNNEST(ARRAY[1, 2, 3]);  -- returns 3 rows\nSELECT id, UNNEST(tags) AS tag FROM posts;  -- expand array column\nSELECT * FROM UNNEST(ARRAY['a','b'], ARRAY[1,2]) AS t(letter, number);\n```\n**UNNEST** (PostgreSQL) expands an array into a set of rows. Can unnest multiple arrays in parallel. Essential for working with array columns in joins and filters."
+        }
+      ]
+    },
+    "ALTER ROLE": {
+      "contents": [
+        {
+          "value": "```sql\nALTER ROLE myuser WITH PASSWORD 'new_password';\nALTER ROLE myuser WITH SUPERUSER;\nALTER ROLE myuser SET search_path = myschema, public;\nALTER ROLE myuser VALID UNTIL '2025-01-01';\n```\n**ALTER ROLE** (PostgreSQL) modifies role attributes: password, privileges (SUPERUSER, CREATEDB, CREATEROLE), connection limits, configuration parameters, and validity period."
+        }
+      ]
+    },
+    "ALTER SEQUENCE": {
+      "contents": [
+        {
+          "value": "```sql\nALTER SEQUENCE users_id_seq RESTART WITH 1000;\nALTER SEQUENCE orders_id_seq INCREMENT BY 10;\nALTER SEQUENCE orders_id_seq OWNED BY orders.id;\n```\n**ALTER SEQUENCE** modifies a sequence's properties: restart value, increment, min/max values, cache size, or ownership. Commonly used to reset auto-increment counters."
+        }
+      ]
+    },
+    "CHECK": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE products (\n    price DECIMAL(10,2) CHECK (price > 0),\n    quantity INTEGER CHECK (quantity >= 0),\n    CONSTRAINT valid_dates CHECK (end_date > start_date)\n);\n```\n**CHECK** constraint validates that column values satisfy a boolean expression. Enforced on INSERT and UPDATE. Can reference multiple columns when defined as a table constraint. Named constraints improve error messages."
+        }
+      ]
+    },
+    "DEFAULT": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    role VARCHAR(20) DEFAULT 'user',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    is_active BOOLEAN DEFAULT true,\n    id UUID DEFAULT gen_random_uuid()\n);\n```\n**DEFAULT** specifies the value used when no value is provided for a column on INSERT. Can be a constant, function call, or expression. Applied when the column is omitted or explicitly set to DEFAULT."
+        }
+      ]
+    },
+    "FOREIGN KEY": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE orders (\n    id SERIAL PRIMARY KEY,\n    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,\n    product_id INTEGER,\n    CONSTRAINT fk_product FOREIGN KEY (product_id)\n        REFERENCES products(id) ON DELETE SET NULL\n);\n-- Actions: CASCADE, SET NULL, SET DEFAULT, RESTRICT, NO ACTION\n```\n**FOREIGN KEY** enforces referential integrity between tables. The referenced column must have a UNIQUE or PRIMARY KEY constraint. ON DELETE/UPDATE actions control behavior when the parent row is modified."
+        }
+      ]
+    },
+    "NOT NULL": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    email VARCHAR(255) NOT NULL,\n    name TEXT NOT NULL\n);\nALTER TABLE users ALTER COLUMN phone SET NOT NULL;\n```\n**NOT NULL** constraint prevents a column from accepting NULL values. One of the most common constraints. Add/remove with ALTER TABLE. Use CHECK constraints for more complex validation."
+        }
+      ]
+    },
+    "PRIMARY KEY": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    id SERIAL PRIMARY KEY\n);\nCREATE TABLE order_items (\n    order_id INTEGER,\n    product_id INTEGER,\n    PRIMARY KEY (order_id, product_id)  -- composite\n);\n```\n**PRIMARY KEY** uniquely identifies each row. Combines NOT NULL + UNIQUE. Each table can have only one primary key. Composite primary keys span multiple columns. Automatically creates a unique index."
+        }
+      ]
+    },
+    "UNIQUE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TABLE users (\n    email VARCHAR(255) UNIQUE,\n    CONSTRAINT unique_name UNIQUE (first_name, last_name)\n);\nCREATE UNIQUE INDEX idx_email ON users(LOWER(email));\n```\n**UNIQUE** constraint ensures all values in a column (or column combination) are distinct. Unlike PRIMARY KEY, allows one NULL (PostgreSQL) or no NULLs (MySQL). Creates an index automatically."
+        }
+      ]
+    },
+    "CREATE DATABASE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE DATABASE myapp;\nCREATE DATABASE myapp\n    ENCODING 'UTF8'\n    LC_COLLATE 'en_US.UTF-8'\n    TEMPLATE template0;\n```\n**CREATE DATABASE** creates a new database. PostgreSQL supports encoding, collation, and template options. Requires CREATEDB privilege. Cannot be run inside a transaction block."
+        }
+      ]
+    },
+    "CREATE MATERIALIZED VIEW": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE MATERIALIZED VIEW monthly_stats AS\nSELECT DATE_TRUNC('month', created_at) AS month,\n       COUNT(*) AS total, SUM(amount) AS revenue\nFROM orders GROUP BY 1;\n\nCREATE UNIQUE INDEX ON monthly_stats (month);\nREFRESH MATERIALIZED VIEW CONCURRENTLY monthly_stats;\n```\n**CREATE MATERIALIZED VIEW** (PostgreSQL) stores query results physically on disk. Much faster reads than regular views but data can become stale. Use `REFRESH MATERIALIZED VIEW` to update. `CONCURRENTLY` allows reads during refresh (requires unique index)."
+        }
+      ]
+    },
+    "CREATE PROCEDURE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE PROCEDURE transfer_funds(\n    sender_id INT, receiver_id INT, amount DECIMAL\n)\nLANGUAGE plpgsql AS $$\nBEGIN\n    UPDATE accounts SET balance = balance - amount WHERE id = sender_id;\n    UPDATE accounts SET balance = balance + amount WHERE id = receiver_id;\n    COMMIT;\nEND; $$;\n\nCALL transfer_funds(1, 2, 100.00);\n```\n**CREATE PROCEDURE** (PostgreSQL 11+) defines a stored procedure. Unlike functions, procedures can manage transactions (COMMIT/ROLLBACK). Invoked with CALL. Use for multi-step transactional operations."
+        }
+      ]
+    },
+    "CREATE ROLE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE ROLE readonly WITH LOGIN PASSWORD 'secret';\nCREATE ROLE admin WITH SUPERUSER CREATEDB CREATEROLE LOGIN;\nGRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;\n```\n**CREATE ROLE** (PostgreSQL) creates a database role (user/group). Options: LOGIN, PASSWORD, SUPERUSER, CREATEDB, CREATEROLE, REPLICATION, CONNECTION LIMIT, VALID UNTIL. Roles without LOGIN act as groups."
+        }
+      ]
+    },
+    "CREATE SCHEMA": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE SCHEMA app;\nCREATE TABLE app.users (id SERIAL PRIMARY KEY);\nSET search_path = app, public;\n```\n**CREATE SCHEMA** creates a namespace within a database. Schemas organize tables, views, and functions. Use `search_path` to set default schema resolution order. Default schema is `public`."
+        }
+      ]
+    },
+    "CREATE SEQUENCE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE SEQUENCE order_num_seq\n    START WITH 1000\n    INCREMENT BY 1\n    NO CYCLE;\nSELECT nextval('order_num_seq');  -- 1000, 1001, ...\n```\n**CREATE SEQUENCE** creates a number generator. Used implicitly by SERIAL/BIGSERIAL. Functions: `nextval()` (advance and return), `currval()` (current), `setval()` (set). Sequences are not rolled back on transaction abort."
+        }
+      ]
+    },
+    "CREATE TYPE": {
+      "contents": [
+        {
+          "value": "```sql\nCREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');\nCREATE TYPE address AS (\n    street TEXT, city TEXT, zip VARCHAR(10)\n);\nCREATE TABLE people (\n    current_mood mood,\n    home address\n);\n```\n**CREATE TYPE** (PostgreSQL) creates a custom data type: ENUM (fixed set of values), composite (structured row), range, or base type. Enum types provide type safety; composite types enable structured columns."
+        }
+      ]
+    },
+    "DROP DATABASE": {
+      "contents": [
+        {
+          "value": "```sql\nDROP DATABASE myapp;\nDROP DATABASE IF EXISTS myapp;\n```\n**DROP DATABASE** permanently deletes a database and all its contents. Irreversible. Cannot drop a database with active connections. Use IF EXISTS to avoid errors."
+        }
+      ]
+    },
+    "DROP INDEX": {
+      "contents": [
+        {
+          "value": "```sql\nDROP INDEX idx_users_email;\nDROP INDEX IF EXISTS idx_users_email;\nDROP INDEX CONCURRENTLY idx_users_email;  -- PostgreSQL, no lock\n```\n**DROP INDEX** removes an index. `CONCURRENTLY` (PostgreSQL) avoids locking the table during removal. Removing unused indexes improves write performance."
+        }
+      ]
+    },
+    "DROP ROLE": {
+      "contents": [
+        {
+          "value": "```sql\nDROP ROLE myuser;\nDROP ROLE IF EXISTS myuser;\n-- Must revoke all privileges and reassign owned objects first\nREASSIGN OWNED BY myuser TO postgres;\nDROP OWNED BY myuser;\nDROP ROLE myuser;\n```\n**DROP ROLE** removes a database role. The role must not own any objects or have granted privileges. Use REASSIGN OWNED and DROP OWNED first to clean up."
+        }
+      ]
+    },
+    "DROP SCHEMA": {
+      "contents": [
+        {
+          "value": "```sql\nDROP SCHEMA app;\nDROP SCHEMA IF EXISTS app CASCADE;  -- drop all contained objects\n```\n**DROP SCHEMA** removes a schema. `CASCADE` drops all contained objects (tables, views, functions). Without CASCADE, fails if schema is not empty."
+        }
+      ]
+    },
+    "DROP VIEW": {
+      "contents": [
+        {
+          "value": "```sql\nDROP VIEW user_summary;\nDROP VIEW IF EXISTS user_summary CASCADE;\n```\n**DROP VIEW** removes a view. `CASCADE` drops dependent views. Does not affect underlying tables."
+        }
+      ]
+    },
+    "ALL": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT * FROM products WHERE price > ALL (\n    SELECT price FROM products WHERE category = 'budget'\n);\n-- price must be greater than EVERY value in the subquery\n```\n**ALL** compares a value against all values returned by a subquery. `> ALL` means greater than the maximum; `< ALL` means less than the minimum. Returns TRUE if the comparison holds for every value."
+        }
+      ]
+    },
+    "ANY": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT * FROM products WHERE price > ANY (\n    SELECT price FROM products WHERE category = 'premium'\n);\n-- PostgreSQL array: WHERE 'admin' = ANY(roles)\n```\n**ANY** (SOME) compares a value against any value returned by a subquery or array. Returns TRUE if the comparison holds for at least one value. In PostgreSQL, also works with arrays: `value = ANY(array_column)`."
+        }
+      ]
+    },
+    "EXCEPT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT email FROM all_users\nEXCEPT\nSELECT email FROM unsubscribed;\n-- Returns emails in all_users but NOT in unsubscribed\n```\n**EXCEPT** returns rows from the first query that are not in the second query (set difference). Removes duplicates by default. Use `EXCEPT ALL` to keep duplicates."
+        }
+      ]
+    },
+    "HAVING": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT department, AVG(salary) AS avg_salary\nFROM employees\nGROUP BY department\nHAVING AVG(salary) > 50000;\n-- WHERE filters rows BEFORE grouping\n-- HAVING filters groups AFTER aggregation\n```\n**HAVING** filters groups after GROUP BY aggregation. Unlike WHERE (which filters individual rows before grouping), HAVING operates on aggregate results. Can reference aggregate functions."
+        }
+      ]
+    },
+    "ILIKE": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT * FROM users WHERE name ILIKE '%john%';  -- case-insensitive\nSELECT * FROM users WHERE email ILIKE '%@gmail.com';\n```\n**ILIKE** (PostgreSQL) performs case-insensitive pattern matching with `%` (any chars) and `_` (single char) wildcards. MySQL's LIKE is case-insensitive by default with most collations."
+        }
+      ]
+    },
+    "INTERSECT": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT user_id FROM premium_users\nINTERSECT\nSELECT user_id FROM active_users;\n-- Returns user_ids that appear in BOTH queries\n```\n**INTERSECT** returns only rows that appear in both queries (set intersection). Removes duplicates by default. Use `INTERSECT ALL` to preserve duplicates."
+        }
+      ]
+    },
+    "NATURAL JOIN": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT * FROM orders NATURAL JOIN customers;\n-- Automatically joins on all columns with matching names\n-- Equivalent to: JOIN customers USING (customer_id) -- if that's the matching column\n```\n**NATURAL JOIN** automatically joins tables on all columns with the same name. Convenient but fragile — adding columns with matching names can break queries. Prefer explicit JOIN ON for clarity."
+        }
+      ]
+    },
+    "UNION": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name, email FROM customers\nUNION\nSELECT name, email FROM suppliers;\n-- Removes duplicates. Column count and types must match.\n```\n**UNION** combines results from two or more SELECT statements, removing duplicate rows. Queries must have the same number of columns with compatible types. More expensive than UNION ALL due to deduplication."
+        }
+      ]
+    },
+    "UNION ALL": {
+      "contents": [
+        {
+          "value": "```sql\nSELECT name FROM customers\nUNION ALL\nSELECT name FROM suppliers;\n-- Keeps all rows including duplicates (faster than UNION)\n```\n**UNION ALL** combines results from two SELECT statements without removing duplicates. Faster than UNION since no deduplication is needed. Use when duplicates are acceptable or impossible."
+        }
+      ]
+    },
+    "CLUSTER": {
+      "contents": [
+        {
+          "value": "```sql\nCLUSTER users USING idx_users_created;\nCLUSTER users;   -- re-cluster using previously set index\nCLUSTER;         -- re-cluster all previously clustered tables\n```\n**CLUSTER** (PostgreSQL) physically reorders table rows to match an index, improving sequential scan performance for that index. One-time operation — subsequent inserts are not ordered. Locks the table during operation."
+        }
+      ]
+    },
+    "COMMENT ON": {
+      "contents": [
+        {
+          "value": "```sql\nCOMMENT ON TABLE users IS 'Main user accounts table';\nCOMMENT ON COLUMN users.email IS 'Primary contact email, must be unique';\nCOMMENT ON FUNCTION calculate_tax IS 'Returns tax amount for given price';\n```\n**COMMENT ON** (PostgreSQL) adds a descriptive comment to a database object. Comments are stored in `pg_description` and visible in `\\d+` and information_schema. Use for documentation purposes."
+        }
+      ]
+    },
+    "DEALLOCATE": {
+      "contents": [
+        {
+          "value": "```sql\nPREPARE my_query (int) AS SELECT * FROM users WHERE id = $1;\nEXECUTE my_query(42);\nDEALLOCATE my_query;\nDEALLOCATE ALL;\n```\n**DEALLOCATE** removes a previously prepared statement, freeing its resources. Use `DEALLOCATE ALL` to remove all prepared statements in the current session."
+        }
+      ]
+    },
+    "EXECUTE": {
+      "contents": [
+        {
+          "value": "```sql\nPREPARE user_query (int) AS SELECT * FROM users WHERE id = $1;\nEXECUTE user_query(42);\n-- Dynamic SQL in PL/pgSQL:\nEXECUTE 'SELECT count(*) FROM ' || quote_ident(table_name) INTO row_count;\n```\n**EXECUTE** runs a previously prepared statement with parameter values. In PL/pgSQL, also executes dynamic SQL strings. Use `USING` clause in PL/pgSQL to pass parameters safely."
+        }
+      ]
+    },
+    "LOCK TABLE": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\nLOCK TABLE accounts IN EXCLUSIVE MODE;\n-- perform critical updates\nCOMMIT;\n-- Modes: ACCESS SHARE, ROW SHARE, ROW EXCLUSIVE,\n--   SHARE, SHARE ROW EXCLUSIVE, EXCLUSIVE, ACCESS EXCLUSIVE\n```\n**LOCK TABLE** (PostgreSQL) explicitly locks a table for the current transaction. Most operations acquire locks automatically. Explicit locking is needed for operations requiring consistency across multiple statements."
+        }
+      ]
+    },
+    "PREPARE": {
+      "contents": [
+        {
+          "value": "```sql\nPREPARE user_by_id (int) AS\n    SELECT * FROM users WHERE id = $1;\nEXECUTE user_by_id(42);\nDEALLOCATE user_by_id;\n```\n**PREPARE** creates a prepared statement with optional parameter placeholders ($1, $2, ...). Parsed and planned once, executed multiple times. Improves performance for repeated queries and prevents SQL injection."
+        }
+      ]
+    },
+    "REINDEX": {
+      "contents": [
+        {
+          "value": "```sql\nREINDEX INDEX idx_users_email;\nREINDEX TABLE users;\nREINDEX DATABASE myapp;\nREINDEX (VERBOSE) TABLE users;\n```\n**REINDEX** (PostgreSQL) rebuilds one or more indexes. Fixes index corruption and reclaims bloated index space. Locks the table (use `CONCURRENTLY` in PostgreSQL 12+ to avoid locking)."
+        }
+      ]
+    },
+    "RELEASE SAVEPOINT": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\nINSERT INTO orders VALUES (1, 100);\nSAVEPOINT sp1;\nINSERT INTO orders VALUES (2, 200);\nRELEASE SAVEPOINT sp1;  -- confirm, savepoint no longer needed\nCOMMIT;\n```\n**RELEASE SAVEPOINT** destroys a savepoint without rolling back. The savepoint's work becomes part of the parent transaction. Frees resources associated with the savepoint."
+        }
+      ]
+    },
+    "REVOKE": {
+      "contents": [
+        {
+          "value": "```sql\nREVOKE INSERT, UPDATE ON users FROM readonly_role;\nREVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM myuser;\nREVOKE CONNECT ON DATABASE myapp FROM public;\n```\n**REVOKE** removes previously granted privileges from a role. Inverse of GRANT. Can revoke on tables, schemas, databases, sequences, and functions. Use to enforce least-privilege access."
+        }
+      ]
+    },
+    "SAVEPOINT": {
+      "contents": [
+        {
+          "value": "```sql\nBEGIN;\nINSERT INTO users VALUES (1, 'Alice');\nSAVEPOINT sp1;\nINSERT INTO users VALUES (2, 'Bob');  -- this might fail\nROLLBACK TO SAVEPOINT sp1;            -- undo Bob only\nINSERT INTO users VALUES (3, 'Charlie');\nCOMMIT;  -- commits Alice and Charlie\n```\n**SAVEPOINT** creates a named point within a transaction to which you can later roll back. Allows partial rollback without aborting the entire transaction. Essential for error recovery in complex transactions."
+        }
       ]
     }
   }

@@ -2,472 +2,1144 @@
   "language": "sql",
   "definitions": {
     "SELECT": {
-      "signature": "SELECT [DISTINCT] column1, column2, ... FROM table [WHERE ...] [GROUP BY ...] [HAVING ...] [ORDER BY ...] [LIMIT n]",
-      "description": "Retrieves rows and columns from one or more tables. The most commonly used SQL statement for querying data. Supports filtering, grouping, sorting, and limiting results.",
-      "type": "keyword",
+      "signature": "SELECT [ALL | DISTINCT] columns FROM table [WHERE ...] [GROUP BY ...] [HAVING ...] [ORDER BY ...] [LIMIT ...]",
+      "description": "Retrieve data from one or more tables.",
+      "type": "statement",
       "module": "DML"
     },
     "INSERT": {
-      "signature": "INSERT INTO table (column1, column2, ...) VALUES (value1, value2, ...)",
-      "description": "Inserts one or more new rows into a table. Can insert explicit values, results from a SELECT query, or use DEFAULT values.",
-      "type": "keyword",
+      "signature": "INSERT INTO table (columns) VALUES (values) | SELECT ...",
+      "description": "Add new rows to a table.",
+      "type": "statement",
       "module": "DML"
     },
     "UPDATE": {
-      "signature": "UPDATE table SET column1 = value1, column2 = value2, ... [WHERE condition]",
-      "description": "Modifies existing rows in a table. Without a WHERE clause, all rows in the table are updated. Supports joins in some databases.",
-      "type": "keyword",
+      "signature": "UPDATE table SET column = value [FROM ...] [WHERE ...] [RETURNING ...]",
+      "description": "Modify existing rows in a table.",
+      "type": "statement",
       "module": "DML"
     },
     "DELETE": {
-      "signature": "DELETE FROM table [WHERE condition]",
-      "description": "Removes rows from a table that match the WHERE condition. Without WHERE, all rows are deleted. Unlike TRUNCATE, DELETE is logged and can be rolled back.",
-      "type": "keyword",
+      "signature": "DELETE FROM table [USING ...] [WHERE ...] [RETURNING ...]",
+      "description": "Remove rows from a table.",
+      "type": "statement",
+      "module": "DML"
+    },
+    "MERGE": {
+      "signature": "MERGE INTO target USING source ON condition WHEN MATCHED THEN ... WHEN NOT MATCHED THEN ...",
+      "description": "Conditionally insert, update, or delete rows (SQL:2003 standard).",
+      "type": "statement",
+      "module": "DML"
+    },
+    "TRUNCATE": {
+      "signature": "TRUNCATE [TABLE] table [CASCADE | RESTRICT]",
+      "description": "Remove all rows from a table quickly without logging individual deletions.",
+      "type": "statement",
       "module": "DML"
     },
     "CREATE TABLE": {
-      "signature": "CREATE TABLE [IF NOT EXISTS] table_name (column_name data_type [constraints], ...)",
-      "description": "Creates a new table with the specified columns, data types, and optional constraints such as PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK, and DEFAULT.",
-      "type": "keyword",
+      "signature": "CREATE [TEMPORARY] TABLE [IF NOT EXISTS] name (column_defs, constraints) [PARTITION BY ...]",
+      "description": "Create a new table.",
+      "type": "statement",
       "module": "DDL"
     },
     "ALTER TABLE": {
-      "signature": "ALTER TABLE table_name ADD|DROP|MODIFY|RENAME COLUMN ...",
-      "description": "Modifies the structure of an existing table. Can add, remove, or modify columns and constraints, or rename the table.",
-      "type": "keyword",
+      "signature": "ALTER TABLE name ADD|DROP|ALTER|RENAME ...",
+      "description": "Modify the structure of an existing table.",
+      "type": "statement",
       "module": "DDL"
     },
     "DROP TABLE": {
-      "signature": "DROP TABLE [IF EXISTS] table_name [CASCADE]",
-      "description": "Permanently removes a table and all its data from the database. Use IF EXISTS to avoid errors when the table doesn't exist. CASCADE drops dependent objects.",
-      "type": "keyword",
+      "signature": "DROP TABLE [IF EXISTS] name [CASCADE | RESTRICT]",
+      "description": "Remove a table and its data.",
+      "type": "statement",
       "module": "DDL"
     },
     "CREATE INDEX": {
-      "signature": "CREATE [UNIQUE] INDEX index_name ON table (column1 [ASC|DESC], ...)",
-      "description": "Creates an index on one or more table columns to speed up data retrieval. UNIQUE indexes also enforce uniqueness constraints.",
-      "type": "keyword",
+      "signature": "CREATE [UNIQUE] INDEX [CONCURRENTLY] name ON table [USING method] (columns) [INCLUDE (...)] [WHERE ...]",
+      "description": "Create an index to speed up queries.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "DROP INDEX": {
+      "signature": "DROP INDEX [CONCURRENTLY] [IF EXISTS] name",
+      "description": "Remove an index.",
+      "type": "statement",
       "module": "DDL"
     },
     "CREATE VIEW": {
-      "signature": "CREATE [OR REPLACE] VIEW view_name AS SELECT ...",
-      "description": "Creates a virtual table based on a SELECT statement. Views simplify complex queries, provide abstraction, and can be used for security by limiting column access.",
-      "type": "keyword",
+      "signature": "CREATE [OR REPLACE] VIEW name AS SELECT ... [WITH CHECK OPTION]",
+      "description": "Create a named view based on a query.",
+      "type": "statement",
       "module": "DDL"
     },
-    "TRUNCATE": {
-      "signature": "TRUNCATE TABLE table_name",
-      "description": "Removes all rows from a table efficiently. Faster than DELETE as it doesn't log individual row deletions. Resets auto-increment counters in most databases.",
-      "type": "keyword",
+    "DROP VIEW": {
+      "signature": "DROP VIEW [IF EXISTS] name [CASCADE]",
+      "description": "Remove a view.",
+      "type": "statement",
       "module": "DDL"
     },
-    "WHERE": {
-      "signature": "WHERE condition [AND|OR condition ...]",
-      "description": "Filters rows based on specified conditions. Used with SELECT, UPDATE, and DELETE. Supports comparison operators, logical operators, BETWEEN, IN, LIKE, IS NULL, and subqueries.",
-      "type": "keyword",
-      "module": "DML"
+    "CREATE MATERIALIZED VIEW": {
+      "signature": "CREATE MATERIALIZED VIEW name AS SELECT ... [WITH [NO] DATA]",
+      "description": "Create a view that stores its result set physically.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE SCHEMA": {
+      "signature": "CREATE SCHEMA [IF NOT EXISTS] name [AUTHORIZATION role]",
+      "description": "Create a new schema (namespace for database objects).",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "DROP SCHEMA": {
+      "signature": "DROP SCHEMA [IF EXISTS] name [CASCADE | RESTRICT]",
+      "description": "Remove a schema.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE SEQUENCE": {
+      "signature": "CREATE SEQUENCE name [START WITH n] [INCREMENT BY n] [MINVALUE n | NO MINVALUE] ...",
+      "description": "Create an auto-incrementing number generator.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "ALTER SEQUENCE": {
+      "signature": "ALTER SEQUENCE name RESTART [WITH value] | INCREMENT BY ...",
+      "description": "Modify a sequence.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE FUNCTION": {
+      "signature": "CREATE [OR REPLACE] FUNCTION name(params) RETURNS type AS $$ body $$ LANGUAGE lang",
+      "description": "Create a user-defined function.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE PROCEDURE": {
+      "signature": "CREATE [OR REPLACE] PROCEDURE name(params) LANGUAGE lang AS $$ body $$",
+      "description": "Create a stored procedure.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE TRIGGER": {
+      "signature": "CREATE TRIGGER name {BEFORE|AFTER|INSTEAD OF} event ON table FOR EACH {ROW|STATEMENT} EXECUTE FUNCTION func()",
+      "description": "Create a trigger that fires on table events.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "CREATE TYPE": {
+      "signature": "CREATE TYPE name AS (fields) | AS ENUM (values)",
+      "description": "Create a custom composite or enum type.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "COMMENT ON": {
+      "signature": "COMMENT ON {TABLE|COLUMN|INDEX|...} name IS 'text'",
+      "description": "Add a descriptive comment to a database object.",
+      "type": "statement",
+      "module": "DDL"
     },
     "INNER JOIN": {
-      "signature": "table1 INNER JOIN table2 ON table1.column = table2.column",
-      "description": "Returns only rows where there is a match in both tables. The most common type of join. Equivalent to just writing JOIN.",
-      "type": "keyword",
-      "module": "DML"
+      "signature": "table1 INNER JOIN table2 ON condition",
+      "description": "Return rows that have matching values in both tables.",
+      "type": "clause",
+      "module": "JOIN"
     },
     "LEFT JOIN": {
-      "signature": "table1 LEFT [OUTER] JOIN table2 ON table1.column = table2.column",
-      "description": "Returns all rows from the left table and matching rows from the right table. If no match exists, NULL values are returned for right table columns.",
-      "type": "keyword",
-      "module": "DML"
+      "signature": "table1 LEFT [OUTER] JOIN table2 ON condition",
+      "description": "Return all rows from left table plus matching rows from right.",
+      "type": "clause",
+      "module": "JOIN"
     },
     "RIGHT JOIN": {
-      "signature": "table1 RIGHT [OUTER] JOIN table2 ON table1.column = table2.column",
-      "description": "Returns all rows from the right table and matching rows from the left table. If no match exists, NULL values are returned for left table columns.",
-      "type": "keyword",
-      "module": "DML"
+      "signature": "table1 RIGHT [OUTER] JOIN table2 ON condition",
+      "description": "Return all rows from right table plus matching rows from left.",
+      "type": "clause",
+      "module": "JOIN"
     },
     "FULL OUTER JOIN": {
-      "signature": "table1 FULL OUTER JOIN table2 ON table1.column = table2.column",
-      "description": "Returns all rows from both tables, with NULLs where there is no match. Combines the results of LEFT JOIN and RIGHT JOIN.",
-      "type": "keyword",
-      "module": "DML"
+      "signature": "table1 FULL OUTER JOIN table2 ON condition",
+      "description": "Return all rows when there is a match in either table.",
+      "type": "clause",
+      "module": "JOIN"
     },
     "CROSS JOIN": {
       "signature": "table1 CROSS JOIN table2",
-      "description": "Produces a Cartesian product — every row from the first table is combined with every row from the second table. No ON clause is used.",
-      "type": "keyword",
-      "module": "DML"
+      "description": "Return the Cartesian product of both tables.",
+      "type": "clause",
+      "module": "JOIN"
     },
-    "GROUP BY": {
-      "signature": "GROUP BY column1, column2, ...",
-      "description": "Groups rows that share values in specified columns into summary rows. Typically used with aggregate functions (COUNT, SUM, AVG, MIN, MAX).",
-      "type": "keyword",
-      "module": "DML"
+    "NATURAL JOIN": {
+      "signature": "table1 NATURAL JOIN table2",
+      "description": "Join on all columns with matching names in both tables.",
+      "type": "clause",
+      "module": "JOIN"
     },
-    "HAVING": {
-      "signature": "HAVING aggregate_condition",
-      "description": "Filters groups created by GROUP BY based on aggregate conditions. Similar to WHERE but operates on grouped results rather than individual rows.",
-      "type": "keyword",
-      "module": "DML"
+    "LATERAL JOIN": {
+      "signature": "FROM table1, LATERAL (subquery) alias",
+      "description": "A subquery that can reference columns from preceding FROM items (PostgreSQL).",
+      "type": "clause",
+      "module": "JOIN"
     },
-    "ORDER BY": {
-      "signature": "ORDER BY column1 [ASC|DESC], column2 [ASC|DESC], ...",
-      "description": "Sorts the result set by one or more columns. ASC (ascending) is the default. DESC sorts in descending order. NULLS FIRST/LAST controls NULL positioning.",
-      "type": "keyword",
-      "module": "DML"
+    "COUNT": {
+      "signature": "COUNT(*) | COUNT([DISTINCT] expression)",
+      "description": "Count the number of rows or non-null values.",
+      "type": "function",
+      "module": "Aggregate"
     },
-    "UNION": {
-      "signature": "SELECT ... UNION [ALL] SELECT ...",
-      "description": "Combines result sets from multiple SELECT statements. UNION removes duplicates; UNION ALL keeps them. All SELECTs must have the same number of columns with compatible types.",
-      "type": "keyword",
-      "module": "DML"
+    "SUM": {
+      "signature": "SUM([DISTINCT] expression)",
+      "description": "Calculate the sum of values.",
+      "type": "function",
+      "module": "Aggregate"
     },
-    "WITH": {
-      "signature": "WITH cte_name AS (SELECT ...) SELECT ... FROM cte_name",
-      "description": "Defines a Common Table Expression (CTE) — a temporary named result set. Improves readability for complex queries. Supports recursion with WITH RECURSIVE.",
-      "type": "keyword",
-      "module": "DML"
+    "AVG": {
+      "signature": "AVG([DISTINCT] expression)",
+      "description": "Calculate the arithmetic mean.",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "MIN": {
+      "signature": "MIN(expression)",
+      "description": "Find the minimum value.",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "MAX": {
+      "signature": "MAX(expression)",
+      "description": "Find the maximum value.",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "STRING_AGG": {
+      "signature": "STRING_AGG(expression, delimiter [ORDER BY ...])",
+      "description": "Concatenate strings with a delimiter (PostgreSQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "GROUP_CONCAT": {
+      "signature": "GROUP_CONCAT(expression [ORDER BY ...] [SEPARATOR str])",
+      "description": "Concatenate strings within a group (MySQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "ARRAY_AGG": {
+      "signature": "ARRAY_AGG(expression [ORDER BY ...])",
+      "description": "Collect values into an array (PostgreSQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "JSON_AGG": {
+      "signature": "JSON_AGG(expression)",
+      "description": "Aggregate values as a JSON array (PostgreSQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "BOOL_AND": {
+      "signature": "BOOL_AND(expression)",
+      "description": "TRUE if all input values are true (PostgreSQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "BOOL_OR": {
+      "signature": "BOOL_OR(expression)",
+      "description": "TRUE if at least one input value is true (PostgreSQL).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "ROW_NUMBER": {
+      "signature": "ROW_NUMBER() OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Assign a unique sequential integer to each row within a partition.",
+      "type": "function",
+      "module": "Window"
+    },
+    "RANK": {
+      "signature": "RANK() OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Rank rows with gaps for ties.",
+      "type": "function",
+      "module": "Window"
+    },
+    "DENSE_RANK": {
+      "signature": "DENSE_RANK() OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Rank rows without gaps for ties.",
+      "type": "function",
+      "module": "Window"
+    },
+    "NTILE": {
+      "signature": "NTILE(n) OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Distribute rows into N roughly equal groups.",
+      "type": "function",
+      "module": "Window"
+    },
+    "LAG": {
+      "signature": "LAG(column [, offset [, default]]) OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Access value from a preceding row.",
+      "type": "function",
+      "module": "Window"
+    },
+    "LEAD": {
+      "signature": "LEAD(column [, offset [, default]]) OVER ([PARTITION BY ...] ORDER BY ...)",
+      "description": "Access value from a following row.",
+      "type": "function",
+      "module": "Window"
+    },
+    "FIRST_VALUE": {
+      "signature": "FIRST_VALUE(column) OVER (window_spec)",
+      "description": "Get the first value in the window frame.",
+      "type": "function",
+      "module": "Window"
+    },
+    "LAST_VALUE": {
+      "signature": "LAST_VALUE(column) OVER (window_spec ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
+      "description": "Get the last value in the window frame.",
+      "type": "function",
+      "module": "Window"
+    },
+    "NTH_VALUE": {
+      "signature": "NTH_VALUE(column, n) OVER (window_spec)",
+      "description": "Get the Nth value in the window frame.",
+      "type": "function",
+      "module": "Window"
+    },
+    "PERCENT_RANK": {
+      "signature": "PERCENT_RANK() OVER (ORDER BY ...)",
+      "description": "Relative rank as a fraction between 0 and 1.",
+      "type": "function",
+      "module": "Window"
+    },
+    "CUME_DIST": {
+      "signature": "CUME_DIST() OVER (ORDER BY ...)",
+      "description": "Cumulative distribution of a value within a group.",
+      "type": "function",
+      "module": "Window"
+    },
+    "CONCAT": {
+      "signature": "CONCAT(str1, str2, ...)",
+      "description": "Concatenate two or more strings.",
+      "type": "function",
+      "module": "String"
+    },
+    "SUBSTRING": {
+      "signature": "SUBSTRING(string FROM start [FOR length])",
+      "description": "Extract a substring.",
+      "type": "function",
+      "module": "String"
+    },
+    "LENGTH": {
+      "signature": "LENGTH(string)",
+      "description": "Return the number of characters (or bytes) in a string.",
+      "type": "function",
+      "module": "String"
+    },
+    "CHAR_LENGTH": {
+      "signature": "CHAR_LENGTH(string)",
+      "description": "Return the number of characters in a string.",
+      "type": "function",
+      "module": "String"
+    },
+    "UPPER": {
+      "signature": "UPPER(string)",
+      "description": "Convert string to uppercase.",
+      "type": "function",
+      "module": "String"
+    },
+    "LOWER": {
+      "signature": "LOWER(string)",
+      "description": "Convert string to lowercase.",
+      "type": "function",
+      "module": "String"
+    },
+    "TRIM": {
+      "signature": "TRIM([LEADING|TRAILING|BOTH] [chars] FROM string)",
+      "description": "Remove leading/trailing characters.",
+      "type": "function",
+      "module": "String"
+    },
+    "REPLACE": {
+      "signature": "REPLACE(string, from, to)",
+      "description": "Replace all occurrences of a substring.",
+      "type": "function",
+      "module": "String"
+    },
+    "POSITION": {
+      "signature": "POSITION(substring IN string)",
+      "description": "Return position of substring (1-based).",
+      "type": "function",
+      "module": "String"
+    },
+    "LEFT": {
+      "signature": "LEFT(string, n)",
+      "description": "Return the leftmost n characters.",
+      "type": "function",
+      "module": "String"
+    },
+    "RIGHT": {
+      "signature": "RIGHT(string, n)",
+      "description": "Return the rightmost n characters.",
+      "type": "function",
+      "module": "String"
+    },
+    "LPAD": {
+      "signature": "LPAD(string, length, fill)",
+      "description": "Left-pad a string to a given length.",
+      "type": "function",
+      "module": "String"
+    },
+    "RPAD": {
+      "signature": "RPAD(string, length, fill)",
+      "description": "Right-pad a string to a given length.",
+      "type": "function",
+      "module": "String"
+    },
+    "REVERSE": {
+      "signature": "REVERSE(string)",
+      "description": "Reverse a string.",
+      "type": "function",
+      "module": "String"
+    },
+    "REPEAT": {
+      "signature": "REPEAT(string, n)",
+      "description": "Repeat a string n times.",
+      "type": "function",
+      "module": "String"
+    },
+    "SPLIT_PART": {
+      "signature": "SPLIT_PART(string, delimiter, field)",
+      "description": "Split string on delimiter and return field (PostgreSQL).",
+      "type": "function",
+      "module": "String"
+    },
+    "REGEXP_REPLACE": {
+      "signature": "REGEXP_REPLACE(string, pattern, replacement [, flags])",
+      "description": "Replace substrings matching a regular expression.",
+      "type": "function",
+      "module": "String"
+    },
+    "TRANSLATE": {
+      "signature": "TRANSLATE(string, from_chars, to_chars)",
+      "description": "Replace characters one-to-one.",
+      "type": "function",
+      "module": "String"
+    },
+    "INITCAP": {
+      "signature": "INITCAP(string)",
+      "description": "Capitalize the first letter of each word (PostgreSQL).",
+      "type": "function",
+      "module": "String"
+    },
+    "FORMAT": {
+      "signature": "FORMAT(format_string, args ...)",
+      "description": "Format a string using printf-style placeholders (PostgreSQL).",
+      "type": "function",
+      "module": "String"
+    },
+    "NOW": {
+      "signature": "NOW()",
+      "description": "Return the current date and time.",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "CURRENT_TIMESTAMP": {
+      "signature": "CURRENT_TIMESTAMP",
+      "description": "Return the current date and time (ANSI standard).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "CURRENT_DATE": {
+      "signature": "CURRENT_DATE",
+      "description": "Return the current date.",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "CURRENT_TIME": {
+      "signature": "CURRENT_TIME",
+      "description": "Return the current time.",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "DATE_TRUNC": {
+      "signature": "DATE_TRUNC(precision, timestamp)",
+      "description": "Truncate a timestamp to the specified precision (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "EXTRACT": {
+      "signature": "EXTRACT(field FROM source)",
+      "description": "Extract a date/time field (year, month, day, etc.).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "DATE_PART": {
+      "signature": "DATE_PART(field, source)",
+      "description": "Get a subfield from a date or time value (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "AGE": {
+      "signature": "AGE(timestamp1 [, timestamp2])",
+      "description": "Calculate the interval between two timestamps (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "TO_CHAR": {
+      "signature": "TO_CHAR(value, format)",
+      "description": "Format a date, time, or number as text (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "TO_DATE": {
+      "signature": "TO_DATE(text, format)",
+      "description": "Parse a string into a date.",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "TO_TIMESTAMP": {
+      "signature": "TO_TIMESTAMP(text, format)",
+      "description": "Parse a string into a timestamp.",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "MAKE_DATE": {
+      "signature": "MAKE_DATE(year, month, day)",
+      "description": "Construct a date from integer parts (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "MAKE_INTERVAL": {
+      "signature": "MAKE_INTERVAL(years => n, months => n, days => n, ...)",
+      "description": "Construct an interval from parts (PostgreSQL).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "DATEDIFF": {
+      "signature": "DATEDIFF(datepart, startdate, enddate)",
+      "description": "Return the count of datepart boundaries crossed between two dates (MySQL/SQL Server).",
+      "type": "function",
+      "module": "Date/Time"
+    },
+    "ABS": {
+      "signature": "ABS(n)",
+      "description": "Return the absolute value.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "CEIL": {
+      "signature": "CEIL(n) / CEILING(n)",
+      "description": "Round up to the nearest integer.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "FLOOR": {
+      "signature": "FLOOR(n)",
+      "description": "Round down to the nearest integer.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "ROUND": {
+      "signature": "ROUND(n [, decimals])",
+      "description": "Round to a specified number of decimal places.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "TRUNC": {
+      "signature": "TRUNC(n [, decimals])",
+      "description": "Truncate to a specified number of decimal places.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "MOD": {
+      "signature": "MOD(dividend, divisor)",
+      "description": "Return the remainder of division.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "POWER": {
+      "signature": "POWER(base, exponent)",
+      "description": "Raise a number to a power.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "SQRT": {
+      "signature": "SQRT(n)",
+      "description": "Return the square root.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "LOG": {
+      "signature": "LOG(base, n)",
+      "description": "Return the logarithm of a number.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "LN": {
+      "signature": "LN(n)",
+      "description": "Return the natural logarithm (base e).",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "EXP": {
+      "signature": "EXP(n)",
+      "description": "Return e raised to a power.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "SIGN": {
+      "signature": "SIGN(n)",
+      "description": "Return -1, 0, or 1 indicating the sign.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "GREATEST": {
+      "signature": "GREATEST(value1, value2, ...)",
+      "description": "Return the largest of the given values.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "LEAST": {
+      "signature": "LEAST(value1, value2, ...)",
+      "description": "Return the smallest of the given values.",
+      "type": "function",
+      "module": "Numeric"
+    },
+    "RANDOM": {
+      "signature": "RANDOM()",
+      "description": "Return a random value between 0 and 1 (PostgreSQL).",
+      "type": "function",
+      "module": "Numeric"
     },
     "CASE": {
       "signature": "CASE WHEN condition THEN result [WHEN ...] [ELSE default] END",
-      "description": "Conditional expression that returns a value based on the first matching WHEN condition. Similar to IF-THEN-ELSE logic in procedural languages.",
-      "type": "keyword",
+      "description": "Evaluate conditions and return the first matching result.",
+      "type": "expression",
+      "module": "Conditional"
+    },
+    "COALESCE": {
+      "signature": "COALESCE(value1, value2, ...)",
+      "description": "Return the first non-null value.",
+      "type": "function",
+      "module": "Conditional"
+    },
+    "NULLIF": {
+      "signature": "NULLIF(value1, value2)",
+      "description": "Return NULL if value1 equals value2.",
+      "type": "function",
+      "module": "Conditional"
+    },
+    "IFNULL": {
+      "signature": "IFNULL(expression, alternative)",
+      "description": "Return alternative if expression is NULL (MySQL).",
+      "type": "function",
+      "module": "Conditional"
+    },
+    "NVL": {
+      "signature": "NVL(expression, alternative)",
+      "description": "Return alternative if expression is NULL (Oracle).",
+      "type": "function",
+      "module": "Conditional"
+    },
+    "IIF": {
+      "signature": "IIF(condition, true_value, false_value)",
+      "description": "Inline conditional expression (SQL Server).",
+      "type": "function",
+      "module": "Conditional"
+    },
+    "CAST": {
+      "signature": "CAST(expression AS data_type)",
+      "description": "Convert a value to a specified data type.",
+      "type": "function",
+      "module": "Type"
+    },
+    "CONVERT": {
+      "signature": "CONVERT(expression, type) / CONVERT(type, expression)",
+      "description": "Convert a value to a specified type (MySQL / SQL Server).",
+      "type": "function",
+      "module": "Type"
+    },
+    "JSON_EXTRACT": {
+      "signature": "JSON_EXTRACT(json, path)",
+      "description": "Extract a value from a JSON document (MySQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_OBJECT": {
+      "signature": "JSON_OBJECT(key, value, ...)",
+      "description": "Create a JSON object.",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_ARRAY": {
+      "signature": "JSON_ARRAY(values ...)",
+      "description": "Create a JSON array.",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_SET": {
+      "signature": "JSON_SET(json, path, value, ...)",
+      "description": "Set values in a JSON document (MySQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_REMOVE": {
+      "signature": "JSON_REMOVE(json, path, ...)",
+      "description": "Remove keys from a JSON document (MySQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_BUILD_OBJECT": {
+      "signature": "JSON_BUILD_OBJECT(key1, value1, ...)",
+      "description": "Build a JSON object from key-value pairs (PostgreSQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_EACH": {
+      "signature": "JSON_EACH(json)",
+      "description": "Expand the outermost JSON object into key-value pairs (PostgreSQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_TYPEOF": {
+      "signature": "JSON_TYPEOF(json)",
+      "description": "Return the type of a JSON value as text (PostgreSQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "JSON_ARRAY_LENGTH": {
+      "signature": "JSON_ARRAY_LENGTH(json_array)",
+      "description": "Return the number of elements in a JSON array (PostgreSQL).",
+      "type": "function",
+      "module": "JSON"
+    },
+    "BEGIN": {
+      "signature": "BEGIN [WORK | TRANSACTION] [ISOLATION LEVEL ...]",
+      "description": "Start a new transaction.",
+      "type": "statement",
+      "module": "Transaction"
+    },
+    "COMMIT": {
+      "signature": "COMMIT [WORK | TRANSACTION]",
+      "description": "Save all changes made during the current transaction.",
+      "type": "statement",
+      "module": "Transaction"
+    },
+    "ROLLBACK": {
+      "signature": "ROLLBACK [WORK | TRANSACTION] [TO SAVEPOINT name]",
+      "description": "Undo all changes made during the current transaction.",
+      "type": "statement",
+      "module": "Transaction"
+    },
+    "SAVEPOINT": {
+      "signature": "SAVEPOINT name",
+      "description": "Create a named point within a transaction to partially roll back to.",
+      "type": "statement",
+      "module": "Transaction"
+    },
+    "RELEASE SAVEPOINT": {
+      "signature": "RELEASE SAVEPOINT name",
+      "description": "Release a previously defined savepoint.",
+      "type": "statement",
+      "module": "Transaction"
+    },
+    "GRANT": {
+      "signature": "GRANT privileges ON object TO role [WITH GRANT OPTION]",
+      "description": "Grant permissions on database objects.",
+      "type": "statement",
+      "module": "DCL"
+    },
+    "REVOKE": {
+      "signature": "REVOKE privileges ON object FROM role [CASCADE | RESTRICT]",
+      "description": "Remove permissions from a role.",
+      "type": "statement",
+      "module": "DCL"
+    },
+    "UNION": {
+      "signature": "query1 UNION [ALL] query2",
+      "description": "Combine result sets of two queries, removing duplicates.",
+      "type": "operator",
+      "module": "Set"
+    },
+    "UNION ALL": {
+      "signature": "query1 UNION ALL query2",
+      "description": "Combine result sets of two queries, keeping all rows.",
+      "type": "operator",
+      "module": "Set"
+    },
+    "INTERSECT": {
+      "signature": "query1 INTERSECT query2",
+      "description": "Return rows present in both result sets.",
+      "type": "operator",
+      "module": "Set"
+    },
+    "EXCEPT": {
+      "signature": "query1 EXCEPT query2",
+      "description": "Return rows in the first result set but not in the second.",
+      "type": "operator",
+      "module": "Set"
+    },
+    "WITH": {
+      "signature": "WITH cte_name AS (query) SELECT ...",
+      "description": "Define a Common Table Expression (CTE).",
+      "type": "clause",
+      "module": "CTE"
+    },
+    "WITH RECURSIVE": {
+      "signature": "WITH RECURSIVE cte_name AS (base UNION ALL recursive) SELECT ...",
+      "description": "Define a recursive Common Table Expression for hierarchical queries.",
+      "type": "clause",
+      "module": "CTE"
+    },
+    "EXPLAIN": {
+      "signature": "EXPLAIN [ANALYZE] [VERBOSE] query",
+      "description": "Display the execution plan for a query.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "VACUUM": {
+      "signature": "VACUUM [FULL] [ANALYZE] [table]",
+      "description": "Reclaim storage and optionally update planner statistics (PostgreSQL).",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "CLUSTER": {
+      "signature": "CLUSTER table USING index",
+      "description": "Physically reorder table rows according to an index (PostgreSQL).",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "REINDEX": {
+      "signature": "REINDEX {TABLE|INDEX|DATABASE} name",
+      "description": "Rebuild one or more indexes.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "COPY": {
+      "signature": "COPY table [(columns)] {FROM|TO} 'file' [WITH options]",
+      "description": "Bulk-load or export data between a table and a file (PostgreSQL).",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "PREPARE": {
+      "signature": "PREPARE name [(type, ...)] AS query",
+      "description": "Create a prepared (parameterized) statement.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "EXECUTE": {
+      "signature": "EXECUTE name [(params)]",
+      "description": "Execute a prepared statement.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "DEALLOCATE": {
+      "signature": "DEALLOCATE [PREPARE] name",
+      "description": "Remove a prepared statement.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "LOCK TABLE": {
+      "signature": "LOCK TABLE name IN mode MODE",
+      "description": "Acquire a table-level lock.",
+      "type": "statement",
+      "module": "Utility"
+    },
+    "PRIMARY KEY": {
+      "signature": "column type PRIMARY KEY | CONSTRAINT name PRIMARY KEY (columns)",
+      "description": "A column or set of columns that uniquely identifies each row.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "FOREIGN KEY": {
+      "signature": "FOREIGN KEY (column) REFERENCES parent(column) [ON DELETE action] [ON UPDATE action]",
+      "description": "A column that references a primary key in another table.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "UNIQUE": {
+      "signature": "column type UNIQUE | CONSTRAINT name UNIQUE (columns)",
+      "description": "Ensure all values in a column (or combination) are distinct.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "CHECK": {
+      "signature": "CHECK (condition) | CONSTRAINT name CHECK (condition)",
+      "description": "Ensure column values satisfy a boolean expression.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "NOT NULL": {
+      "signature": "column type NOT NULL",
+      "description": "Ensure a column cannot contain NULL values.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "DEFAULT": {
+      "signature": "column type DEFAULT value",
+      "description": "Specify a default value for a column when none is provided.",
+      "type": "constraint",
+      "module": "Constraint"
+    },
+    "INTEGER": {
+      "signature": "INTEGER / INT",
+      "description": "A signed 4-byte integer (-2147483648 to 2147483647).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "BIGINT": {
+      "signature": "BIGINT",
+      "description": "A signed 8-byte integer.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "SMALLINT": {
+      "signature": "SMALLINT",
+      "description": "A signed 2-byte integer.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "SERIAL": {
+      "signature": "SERIAL",
+      "description": "Auto-incrementing 4-byte integer (PostgreSQL shorthand for INTEGER + sequence).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "BIGSERIAL": {
+      "signature": "BIGSERIAL",
+      "description": "Auto-incrementing 8-byte integer (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "VARCHAR": {
+      "signature": "VARCHAR(n)",
+      "description": "Variable-length character string with a maximum length.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "TEXT": {
+      "signature": "TEXT",
+      "description": "Variable-length character string with unlimited length.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "CHAR": {
+      "signature": "CHAR(n)",
+      "description": "Fixed-length character string, padded with spaces.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "BOOLEAN": {
+      "signature": "BOOLEAN",
+      "description": "True/false value.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "DATE": {
+      "signature": "DATE",
+      "description": "Calendar date (year, month, day).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "TIMESTAMP": {
+      "signature": "TIMESTAMP [(precision)] [WITHOUT TIME ZONE]",
+      "description": "Date and time without time zone.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "TIMESTAMPTZ": {
+      "signature": "TIMESTAMP WITH TIME ZONE",
+      "description": "Date and time with time zone (PostgreSQL alias TIMESTAMPTZ).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "NUMERIC": {
+      "signature": "NUMERIC(precision, scale)",
+      "description": "Exact numeric with user-specified precision.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "DECIMAL": {
+      "signature": "DECIMAL(precision, scale)",
+      "description": "Exact numeric type, synonym for NUMERIC.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "FLOAT": {
+      "signature": "FLOAT [(precision)]",
+      "description": "Approximate numeric, IEEE 754 double precision.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "REAL": {
+      "signature": "REAL",
+      "description": "Single-precision floating-point number.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "UUID": {
+      "signature": "UUID",
+      "description": "128-bit universally unique identifier.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "JSON": {
+      "signature": "JSON",
+      "description": "Textual JSON data (validated on input).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "JSONB": {
+      "signature": "JSONB",
+      "description": "Binary JSON data with indexing support (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "ARRAY": {
+      "signature": "type[] | ARRAY[values]",
+      "description": "A multi-dimensional array of values (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "BYTEA": {
+      "signature": "BYTEA",
+      "description": "Binary data ('byte array') (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "INTERVAL": {
+      "signature": "INTERVAL [fields]",
+      "description": "A span of time.",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "INET": {
+      "signature": "INET",
+      "description": "IPv4 or IPv6 host address (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "CIDR": {
+      "signature": "CIDR",
+      "description": "IPv4 or IPv6 network address (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "ENUM": {
+      "signature": "CREATE TYPE name AS ENUM ('v1', 'v2', ...)",
+      "description": "An enumerated set of string values (PostgreSQL).",
+      "type": "type",
+      "module": "Data Type"
+    },
+    "LIKE": {
+      "signature": "expression LIKE pattern [ESCAPE escape_char]",
+      "description": "Pattern matching. % matches any sequence; _ matches any single character.",
+      "type": "predicate",
       "module": "DML"
     },
-    "EXISTS": {
-      "signature": "EXISTS (subquery)",
-      "description": "Returns TRUE if the subquery returns one or more rows. Commonly used in WHERE clauses for correlated subqueries. More efficient than IN for large datasets.",
-      "type": "keyword",
-      "module": "DML"
-    },
-    "IN": {
-      "signature": "expression IN (value1, value2, ...) | expression IN (subquery)",
-      "description": "Tests whether a value matches any value in a list or subquery result set. Equivalent to multiple OR conditions.",
-      "type": "keyword",
+    "ILIKE": {
+      "signature": "expression ILIKE pattern",
+      "description": "Case-insensitive LIKE (PostgreSQL).",
+      "type": "predicate",
       "module": "DML"
     },
     "BETWEEN": {
       "signature": "expression BETWEEN low AND high",
-      "description": "Filters values within an inclusive range. Equivalent to (expression >= low AND expression <= high). Works with numbers, dates, and strings.",
-      "type": "keyword",
+      "description": "Range test (inclusive). Equivalent to: expr >= low AND expr <= high.",
+      "type": "predicate",
       "module": "DML"
     },
-    "LIKE": {
-      "signature": "expression LIKE pattern [ESCAPE escape_char]",
-      "description": "Pattern matching operator. '%' matches any sequence of characters, '_' matches a single character. Use ESCAPE for literal '%' or '_'.",
-      "type": "keyword",
+    "IN": {
+      "signature": "expression IN (values | subquery)",
+      "description": "Set membership test.",
+      "type": "predicate",
       "module": "DML"
     },
-    "LIMIT": {
-      "signature": "LIMIT count [OFFSET start]",
-      "description": "Restricts the number of rows returned. OFFSET specifies how many rows to skip. Used for pagination. Not part of the SQL standard (use FETCH FIRST in standard SQL).",
-      "type": "keyword",
+    "EXISTS": {
+      "signature": "EXISTS (subquery)",
+      "description": "Returns TRUE if subquery returns at least one row.",
+      "type": "predicate",
       "module": "DML"
     },
-    "DISTINCT": {
-      "signature": "SELECT DISTINCT column1, column2, ...",
-      "description": "Eliminates duplicate rows from the result set based on the selected columns. Can also be used inside aggregate functions like COUNT(DISTINCT column).",
-      "type": "keyword",
+    "ANY": {
+      "signature": "expression operator ANY (subquery | array)",
+      "description": "Returns TRUE if comparison is true for any subquery row or array element.",
+      "type": "predicate",
       "module": "DML"
     },
-    "AS": {
-      "signature": "expression AS alias_name",
-      "description": "Creates an alias for a column, expression, or table. The alias exists only for the duration of the query. Improves readability.",
-      "type": "keyword",
+    "ALL": {
+      "signature": "expression operator ALL (subquery)",
+      "description": "Returns TRUE if comparison is true for all subquery rows.",
+      "type": "predicate",
       "module": "DML"
     },
-    "INT": {
-      "signature": "INT | INTEGER",
-      "description": "A standard integer data type. Stores whole numbers. Typically 4 bytes with a range of -2,147,483,648 to 2,147,483,647. Variants include TINYINT, SMALLINT, MEDIUMINT, and BIGINT.",
-      "type": "datatype",
-      "module": "Data Types"
+    "HAVING": {
+      "signature": "HAVING condition",
+      "description": "Filter grouped rows after GROUP BY. Used with aggregate functions.",
+      "type": "clause",
+      "module": "DML"
     },
-    "BIGINT": {
-      "signature": "BIGINT",
-      "description": "A large integer data type. Stores whole numbers up to 8 bytes. Range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "VARCHAR": {
-      "signature": "VARCHAR(n)",
-      "description": "Variable-length character string with a maximum length of n characters. Only uses storage for the actual string length plus a small overhead. Most common string type.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "TEXT": {
-      "signature": "TEXT",
-      "description": "Variable-length character string for storing large text data. Maximum length varies by database (e.g., up to 65,535 bytes in MySQL). Not suitable for indexing in full.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "CHAR": {
-      "signature": "CHAR(n)",
-      "description": "Fixed-length character string. Always uses n bytes of storage, padding with spaces if needed. Suitable for fixed-length data like country codes or status flags.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "BOOLEAN": {
-      "signature": "BOOLEAN | BOOL",
-      "description": "Stores TRUE or FALSE values. Implementation varies: MySQL uses TINYINT(1), PostgreSQL has a native BOOLEAN type. Accepts TRUE/FALSE, 1/0, or YES/NO.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "DATE": {
-      "signature": "DATE",
-      "description": "Stores a calendar date (year, month, day) without time. Format: 'YYYY-MM-DD'. Range varies by database.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "TIMESTAMP": {
-      "signature": "TIMESTAMP",
-      "description": "Stores date and time with timezone awareness (in some databases). Commonly used for recording creation and modification times. Range is limited compared to DATETIME.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "DATETIME": {
-      "signature": "DATETIME",
-      "description": "Stores date and time without timezone information. Format: 'YYYY-MM-DD HH:MM:SS'. Suitable for recording events that are timezone-independent.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "FLOAT": {
-      "signature": "FLOAT[(precision)]",
-      "description": "Approximate numeric data type for floating-point numbers. Subject to rounding errors. Use DECIMAL for exact numeric values like currency.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "DECIMAL": {
-      "signature": "DECIMAL(precision, scale) | NUMERIC(precision, scale)",
-      "description": "Exact numeric data type with specified precision (total digits) and scale (digits after decimal point). Ideal for financial and monetary values.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "BLOB": {
-      "signature": "BLOB",
-      "description": "Binary Large Object. Stores binary data such as images, files, or serialized objects. Maximum size varies by database. Variants include TINYBLOB, MEDIUMBLOB, LONGBLOB.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "JSON": {
-      "signature": "JSON",
-      "description": "Stores JSON (JavaScript Object Notation) data. Supports validation and querying JSON contents. Available in MySQL 5.7+, PostgreSQL 9.2+ (also JSONB for binary storage).",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "UUID": {
-      "signature": "UUID",
-      "description": "Stores a Universally Unique Identifier (128-bit value). Common in distributed systems. Native support in PostgreSQL; use CHAR(36) or BINARY(16) in MySQL.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "ENUM": {
-      "signature": "ENUM('value1', 'value2', ...)",
-      "description": "A string object with a value chosen from a list of permitted values. MySQL-specific. PostgreSQL supports creating custom enum types via CREATE TYPE.",
-      "type": "datatype",
-      "module": "Data Types"
-    },
-    "COUNT": {
-      "signature": "COUNT(*) | COUNT([DISTINCT] expression)",
-      "description": "Aggregate function that returns the number of rows. COUNT(*) counts all rows including NULLs. COUNT(column) counts non-NULL values. COUNT(DISTINCT column) counts unique values.",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "SUM": {
-      "signature": "SUM([DISTINCT] expression)",
-      "description": "Aggregate function that returns the total sum of a numeric column, ignoring NULL values. Returns NULL if no rows match.",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "AVG": {
-      "signature": "AVG([DISTINCT] expression)",
-      "description": "Aggregate function that returns the average value of a numeric column, ignoring NULL values.",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "MIN": {
-      "signature": "MIN(expression)",
-      "description": "Aggregate function that returns the smallest value in a column. Works with numeric, string, and date types.",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "MAX": {
-      "signature": "MAX(expression)",
-      "description": "Aggregate function that returns the largest value in a column. Works with numeric, string, and date types.",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "GROUP_CONCAT": {
-      "signature": "GROUP_CONCAT([DISTINCT] expression [ORDER BY ...] [SEPARATOR str])",
-      "description": "Concatenates values from multiple rows into a single string. MySQL-specific. PostgreSQL equivalent: STRING_AGG(expression, separator).",
-      "type": "function",
-      "module": "Aggregate Functions"
-    },
-    "CONCAT": {
-      "signature": "CONCAT(string1, string2, ...)",
-      "description": "Concatenates two or more strings. Returns NULL if any argument is NULL (use CONCAT_WS for NULL-safe concatenation). In PostgreSQL, the || operator is also used.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "SUBSTRING": {
-      "signature": "SUBSTRING(string, start, length) | SUBSTR(string, start, length)",
-      "description": "Extracts a portion of a string starting at the specified position for the given length. Position is 1-based.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "TRIM": {
-      "signature": "TRIM([LEADING|TRAILING|BOTH] [chars FROM] string)",
-      "description": "Removes leading and/or trailing characters (default: whitespace) from a string.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "UPPER": {
-      "signature": "UPPER(string) | UCASE(string)",
-      "description": "Converts all characters in a string to uppercase.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "LOWER": {
-      "signature": "LOWER(string) | LCASE(string)",
-      "description": "Converts all characters in a string to lowercase.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "LENGTH": {
-      "signature": "LENGTH(string) | LEN(string)",
-      "description": "Returns the number of characters (or bytes, depending on database) in a string. In MySQL, LENGTH returns bytes; use CHAR_LENGTH for characters.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "REPLACE": {
-      "signature": "REPLACE(string, old_substring, new_substring)",
-      "description": "Replaces all occurrences of a substring within a string with another substring.",
-      "type": "function",
-      "module": "String Functions"
-    },
-    "COALESCE": {
-      "signature": "COALESCE(value1, value2, ...)",
-      "description": "Returns the first non-NULL value from the argument list. Commonly used to provide default values for potentially NULL columns.",
-      "type": "function",
-      "module": "Conditional Functions"
-    },
-    "CAST": {
-      "signature": "CAST(expression AS data_type)",
-      "description": "Converts a value from one data type to another. Standard SQL type conversion function supported by all major databases.",
-      "type": "function",
-      "module": "Conversion Functions"
-    },
-    "NOW": {
-      "signature": "NOW()",
-      "description": "Returns the current date and time as a DATETIME or TIMESTAMP value. In PostgreSQL, equivalent to CURRENT_TIMESTAMP.",
-      "type": "function",
-      "module": "Date Functions"
-    },
-    "CURRENT_TIMESTAMP": {
-      "signature": "CURRENT_TIMESTAMP",
-      "description": "Returns the current date and time. A SQL standard keyword that works across all databases. Does not require parentheses.",
-      "type": "function",
-      "module": "Date Functions"
-    },
-    "DATE_ADD": {
-      "signature": "DATE_ADD(date, INTERVAL value unit)",
-      "description": "Adds a time interval to a date. Units include DAY, MONTH, YEAR, HOUR, MINUTE, SECOND. MySQL-specific; PostgreSQL uses date + INTERVAL syntax.",
-      "type": "function",
-      "module": "Date Functions"
-    },
-    "DATEDIFF": {
-      "signature": "DATEDIFF(date1, date2)",
-      "description": "Returns the difference in days between two dates (date1 - date2). In SQL Server, supports different date parts.",
-      "type": "function",
-      "module": "Date Functions"
-    },
-    "EXTRACT": {
-      "signature": "EXTRACT(part FROM date)",
-      "description": "Extracts a specified part (YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, etc.) from a date or timestamp value. Standard SQL syntax.",
-      "type": "function",
-      "module": "Date Functions"
-    },
-    "ROW_NUMBER": {
-      "signature": "ROW_NUMBER() OVER ([PARTITION BY column] ORDER BY column [ASC|DESC])",
-      "description": "Window function that assigns a unique sequential integer to each row within its partition. Numbering starts at 1 and increments for each row based on ORDER BY.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "RANK": {
-      "signature": "RANK() OVER ([PARTITION BY column] ORDER BY column [ASC|DESC])",
-      "description": "Window function that assigns a rank to each row. Rows with equal values get the same rank, and the next rank is skipped (gaps). E.g., 1, 2, 2, 4.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "DENSE_RANK": {
-      "signature": "DENSE_RANK() OVER ([PARTITION BY column] ORDER BY column [ASC|DESC])",
-      "description": "Window function that assigns a rank to each row without gaps. Rows with equal values get the same rank, and the next rank follows immediately. E.g., 1, 2, 2, 3.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "LEAD": {
-      "signature": "LEAD(expression [, offset [, default]]) OVER ([PARTITION BY column] ORDER BY column)",
-      "description": "Window function that returns the value of an expression from a subsequent row. Offset defaults to 1. Default value replaces NULL when there is no subsequent row.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "LAG": {
-      "signature": "LAG(expression [, offset [, default]]) OVER ([PARTITION BY column] ORDER BY column)",
-      "description": "Window function that returns the value of an expression from a preceding row. Offset defaults to 1. Useful for comparing a row with its predecessor.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "NTILE": {
-      "signature": "NTILE(num_buckets) OVER ([PARTITION BY column] ORDER BY column)",
-      "description": "Window function that distributes rows into a specified number of approximately equal groups. Each row is assigned a bucket number from 1 to num_buckets.",
-      "type": "function",
-      "module": "Window Functions"
-    },
-    "PRIMARY KEY": {
-      "signature": "column_name data_type PRIMARY KEY | CONSTRAINT pk_name PRIMARY KEY (column1, ...)",
-      "description": "A constraint that uniquely identifies each row in a table. Combines NOT NULL and UNIQUE. Each table can have only one primary key, which can span multiple columns (composite key).",
-      "type": "constraint",
-      "module": "Constraints"
-    },
-    "FOREIGN KEY": {
-      "signature": "FOREIGN KEY (column) REFERENCES parent_table(parent_column) [ON DELETE action] [ON UPDATE action]",
-      "description": "A constraint that enforces referential integrity between tables. ON DELETE/UPDATE actions: CASCADE, SET NULL, RESTRICT, NO ACTION, SET DEFAULT.",
-      "type": "constraint",
-      "module": "Constraints"
-    },
-    "BEGIN": {
-      "signature": "BEGIN [TRANSACTION | WORK]",
-      "description": "Starts a new transaction. All subsequent statements are part of the transaction until COMMIT or ROLLBACK is issued.",
-      "type": "keyword",
-      "module": "TCL"
-    },
-    "COMMIT": {
-      "signature": "COMMIT [WORK]",
-      "description": "Saves all changes made during the current transaction permanently to the database. Releases any locks held by the transaction.",
-      "type": "keyword",
-      "module": "TCL"
-    },
-    "ROLLBACK": {
-      "signature": "ROLLBACK [WORK] [TO SAVEPOINT savepoint_name]",
-      "description": "Undoes all changes made during the current transaction, or rolls back to a specific savepoint. Releases locks held by the transaction.",
-      "type": "keyword",
-      "module": "TCL"
-    },
-    "GRANT": {
-      "signature": "GRANT privilege_type ON object TO user [WITH GRANT OPTION]",
-      "description": "Grants specific privileges (SELECT, INSERT, UPDATE, DELETE, ALL) on database objects to users or roles. WITH GRANT OPTION allows the user to grant the same privilege to others.",
-      "type": "keyword",
+    "CREATE ROLE": {
+      "signature": "CREATE ROLE name [WITH option ...]",
+      "description": "Create a new database role.",
+      "type": "statement",
       "module": "DCL"
     },
-    "REVOKE": {
-      "signature": "REVOKE privilege_type ON object FROM user",
-      "description": "Removes previously granted privileges from a user or role.",
-      "type": "keyword",
+    "ALTER ROLE": {
+      "signature": "ALTER ROLE name [WITH option ...] | SET param",
+      "description": "Modify role attributes or configuration.",
+      "type": "statement",
       "module": "DCL"
     },
-    "EXPLAIN": {
-      "signature": "EXPLAIN [ANALYZE] query",
-      "description": "Displays the query execution plan used by the database optimizer. EXPLAIN ANALYZE actually executes the query and shows real timing data. Essential for performance tuning.",
-      "type": "keyword",
-      "module": "Utility"
+    "DROP ROLE": {
+      "signature": "DROP ROLE [IF EXISTS] name",
+      "description": "Remove a database role.",
+      "type": "statement",
+      "module": "DCL"
+    },
+    "CREATE DATABASE": {
+      "signature": "CREATE DATABASE name [OWNER = role] [ENCODING = enc]",
+      "description": "Create a new database.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "DROP DATABASE": {
+      "signature": "DROP DATABASE [IF EXISTS] name",
+      "description": "Delete a database.",
+      "type": "statement",
+      "module": "DDL"
+    },
+    "GENERATE_SERIES": {
+      "signature": "generate_series(start, stop [, step])",
+      "description": "Generate a series of values from start to stop with optional step.",
+      "type": "function",
+      "module": "Set-returning"
+    },
+    "UNNEST": {
+      "signature": "unnest(anyarray)",
+      "description": "Expand an array to a set of rows.",
+      "type": "function",
+      "module": "Array"
+    },
+    "GEN_RANDOM_UUID": {
+      "signature": "gen_random_uuid() → uuid",
+      "description": "Generate a random UUID v4 (PostgreSQL 13+).",
+      "type": "function",
+      "module": "Crypto"
+    },
+    "MD5": {
+      "signature": "md5(string) → text",
+      "description": "Calculate MD5 hash of string, returning hex.",
+      "type": "function",
+      "module": "Crypto"
+    },
+    "PERCENTILE_CONT": {
+      "signature": "percentile_cont(fraction) WITHIN GROUP (ORDER BY column)",
+      "description": "Calculate continuous percentile (interpolated).",
+      "type": "function",
+      "module": "Aggregate"
+    },
+    "PERCENTILE_DISC": {
+      "signature": "percentile_disc(fraction) WITHIN GROUP (ORDER BY column)",
+      "description": "Calculate discrete percentile (actual value from set).",
+      "type": "function",
+      "module": "Aggregate"
     }
   }
 }

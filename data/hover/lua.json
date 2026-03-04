@@ -3,262 +3,968 @@
   "hovers": {
     "print": {
       "contents": [
-        { "value": "```lua\nprint(···)\n```\nReceives any number of arguments and prints their values to stdout, using `tostring` to convert each argument. A tab character separates each value, and a newline is written after the last value. Not intended for formatted output — use `string.format` and `io.write` for that." }
+        {
+          "value": "```lua\nprint(···)\n```\nReceives any number of arguments and prints their values to stdout, using `tostring` to convert each argument. A tab character separates each value, and a newline is written after the last value."
+        }
       ]
     },
     "type": {
       "contents": [
-        { "value": "```lua\ntype(v) -> string\n```\nReturns the type of its only argument, coded as a string. The possible results are `\"nil\"`, `\"number\"`, `\"string\"`, `\"boolean\"`, `\"table\"`, `\"function\"`, `\"thread\"`, and `\"userdata\"`." }
+        {
+          "value": "```lua\ntype(v) -> string\n```\nReturns the type of its only argument, coded as a string: `\"nil\"`, `\"number\"`, `\"string\"`, `\"boolean\"`, `\"table\"`, `\"function\"`, `\"thread\"`, or `\"userdata\"`."
+        }
       ]
     },
     "tostring": {
       "contents": [
-        { "value": "```lua\ntostring(v) -> string\n```\nReceives a value of any type and converts it to a string in a human-readable format. If the metatable of `v` has a `__tostring` metamethod, `tostring` calls it with `v` as the argument and uses the result as the return value." }
+        {
+          "value": "```lua\ntostring(v) -> string\n```\nConverts any value to a string. If the metatable of `v` has a `__tostring` metamethod, calls it with `v` as the argument."
+        }
       ]
     },
     "tonumber": {
       "contents": [
-        { "value": "```lua\ntonumber(e [, base]) -> number | nil\n```\nWhen called with no base, tries to convert its argument to a number. If the argument is already a number or a string convertible to a number, returns the number; otherwise returns `nil`. When called with `base`, the argument must be a string to be interpreted in that base (2–36)." }
+        {
+          "value": "```lua\ntonumber(e [, base]) -> number | nil\n```\nConverts its argument to a number. An optional `base` (2–36) interprets the string in that base. Returns `nil` if conversion fails."
+        }
       ]
     },
     "pairs": {
       "contents": [
-        { "value": "```lua\npairs(t) -> function, table, nil\n```\nIf `t` has a metamethod `__pairs`, calls it with `t` as argument and returns the first three results. Otherwise, returns the `next` function, the table `t`, and `nil`, so that `for k, v in pairs(t) do ... end` iterates over all key–value pairs of `t`." }
+        {
+          "value": "```lua\npairs(t) -> function, table, nil\n```\nReturns the `next` function, the table `t`, and `nil`, enabling `for k, v in pairs(t) do ... end` to iterate over all key–value pairs."
+        }
       ]
     },
     "ipairs": {
       "contents": [
-        { "value": "```lua\nipairs(t) -> function, table, 0\n```\nReturns three values: an iterator function, the table `t`, and `0`. The iterator traverses integer keys `1, 2, ...` until a `nil` value is found. Suitable for arrays/sequences." }
-      ]
-    },
-    "require": {
-      "contents": [
-        { "value": "```lua\nrequire(modname) -> any\n```\nLoads the given module. First checks `package.loaded[modname]`. If not loaded, searches for a loader using `package.searchers` (Lua 5.2+) or `package.loaders` (Lua 5.1). The module value is cached in `package.loaded`." }
-      ]
-    },
-    "pcall": {
-      "contents": [
-        { "value": "```lua\npcall(f [, arg1, ···]) -> boolean, ...\n```\nCalls function `f` with the given arguments in *protected mode*. If there are no errors during the call, returns `true` plus all results from the call. In case of any error, returns `false` plus the error object. Does not produce a traceback." }
-      ]
-    },
-    "xpcall": {
-      "contents": [
-        { "value": "```lua\nxpcall(f, msgh [, arg1, ···]) -> boolean, ...\n```\nSimilar to `pcall`, but sets the message handler `msgh` to be called in case of errors. Any error inside `f` is not propagated; instead `xpcall` catches the error, calls `msgh` with the original error object, and returns the handler's results.\n\n**Note:** Extra arguments to `f` are supported in Lua 5.2+ and LuaJIT 2.1." }
-      ]
-    },
-    "error": {
-      "contents": [
-        { "value": "```lua\nerror(message [, level])\n```\nRaises an error. The `message` can be any value (string, table, etc.). `level` specifies how to get the error position: 1 (default) = where `error` was called, 2 = where the function that called `error` was called, 0 = no position information." }
-      ]
-    },
-    "assert": {
-      "contents": [
-        { "value": "```lua\nassert(v [, message]) -> v, message\n```\nCalls `error` if the value of `v` is false (i.e., `nil` or `false`); otherwise returns all its arguments. In case of error, `message` is the error object (default is `\"assertion failed!\"`)." }
-      ]
-    },
-    "select": {
-      "contents": [
-        { "value": "```lua\nselect(index, ···) -> ...\n```\nIf `index` is a number, returns all arguments after argument number `index`; a negative number indexes from the end. If `index` is the string `\"#\"`, returns the total number of extra arguments it received." }
-      ]
-    },
-    "setmetatable": {
-      "contents": [
-        { "value": "```lua\nsetmetatable(table, metatable) -> table\n```\nSets the metatable for the given table. If `metatable` is `nil`, removes the metatable. If the original metatable has a `__metatable` field, raises an error. Returns `table`." }
-      ]
-    },
-    "getmetatable": {
-      "contents": [
-        { "value": "```lua\ngetmetatable(object) -> table | nil | any\n```\nIf `object` does not have a metatable, returns `nil`. Otherwise, if the object's metatable has a `__metatable` field, returns that value. Otherwise, returns the metatable of the given object." }
-      ]
-    },
-    "rawget": {
-      "contents": [
-        { "value": "```lua\nrawget(table, index) -> any\n```\nGets the real value of `table[index]`, without invoking the `__index` metamethod." }
-      ]
-    },
-    "rawset": {
-      "contents": [
-        { "value": "```lua\nrawset(table, index, value) -> table\n```\nSets the real value of `table[index]` to `value`, without invoking the `__newindex` metamethod. `table` must be a table, `index` any value different from `nil` and NaN." }
+        {
+          "value": "```lua\nipairs(t) -> function, table, 0\n```\nReturns an iterator for integer keys `1, 2, …` until a `nil` value is found. Suitable for arrays/sequences."
+        }
       ]
     },
     "next": {
       "contents": [
-        { "value": "```lua\nnext(table [, index]) -> key, value | nil\n```\nAllows a program to traverse all fields of a table. Its first argument is a table and its second is an index. A call to `next` returns the next index of the table and its associated value. When called with `nil` as the second argument, returns an initial index. Returns `nil` when there are no more elements." }
+        {
+          "value": "```lua\nnext(table [, index]) -> key, value | nil\n```\nReturns the next index and value of the table. With `nil` as the second argument, returns the first pair. Returns `nil` when exhausted."
+        }
+      ]
+    },
+    "select": {
+      "contents": [
+        {
+          "value": "```lua\nselect(index, ···) -> ...\n```\nIf `index` is a number, returns all arguments after argument number `index`. If `index` is `\"#\"`, returns the total number of extra arguments."
+        }
+      ]
+    },
+    "rawget": {
+      "contents": [
+        {
+          "value": "```lua\nrawget(table, index) -> any\n```\nGets the real value of `table[index]` without invoking the `__index` metamethod."
+        }
+      ]
+    },
+    "rawset": {
+      "contents": [
+        {
+          "value": "```lua\nrawset(table, index, value) -> table\n```\nSets `table[index] = value` without invoking the `__newindex` metamethod."
+        }
+      ]
+    },
+    "rawequal": {
+      "contents": [
+        {
+          "value": "```lua\nrawequal(v1, v2) -> boolean\n```\nChecks equality without invoking the `__eq` metamethod."
+        }
+      ]
+    },
+    "rawlen": {
+      "contents": [
+        {
+          "value": "```lua\nrawlen(v) -> integer\n```\nReturns the length of a table or string without invoking `__len`. Available in Lua 5.2+."
+        }
+      ]
+    },
+    "setmetatable": {
+      "contents": [
+        {
+          "value": "```lua\nsetmetatable(table, metatable) -> table\n```\nSets the metatable for the given table. If `metatable` is `nil`, removes it. Raises an error if the original metatable has `__metatable`."
+        }
+      ]
+    },
+    "getmetatable": {
+      "contents": [
+        {
+          "value": "```lua\ngetmetatable(object) -> table | nil | any\n```\nReturns the metatable of the object. If the metatable has `__metatable`, returns that value instead."
+        }
+      ]
+    },
+    "require": {
+      "contents": [
+        {
+          "value": "```lua\nrequire(modname) -> any\n```\nLoads the given module. Checks `package.loaded` first, then searches using `package.searchers`. Caches the result in `package.loaded`."
+        }
+      ]
+    },
+    "dofile": {
+      "contents": [
+        {
+          "value": "```lua\ndofile([filename]) -> ...\n```\nOpens the named file and executes its contents as a Lua chunk. Returns any values returned by the chunk."
+        }
+      ]
+    },
+    "loadfile": {
+      "contents": [
+        {
+          "value": "```lua\nloadfile([filename [, mode [, env]]]) -> function | nil, string\n```\nLoads a file as a Lua chunk without executing. Returns the compiled function or `nil` plus an error message."
+        }
       ]
     },
     "load": {
       "contents": [
-        { "value": "```lua\nload(chunk [, chunkname [, mode [, env]]]) -> function | nil, string\n```\nLoads a chunk. If `chunk` is a string, loads that string. If it is a function, `load` calls it repeatedly to get the chunk pieces. Returns the compiled chunk as a function; otherwise returns `nil` plus the error message.\n\n**Lua 5.1:** Use `loadstring` for strings. Lua 5.2+ unified into `load`." }
+        {
+          "value": "```lua\nload(chunk [, chunkname [, mode [, env]]]) -> function | nil, string\n```\nLoads a chunk from a string or function. Returns the compiled function or `nil` plus an error message."
+        }
+      ]
+    },
+    "pcall": {
+      "contents": [
+        {
+          "value": "```lua\npcall(f [, arg1, ···]) -> boolean, ...\n```\nCalls function `f` in *protected mode*. Returns `true` plus results on success, `false` plus the error object on failure."
+        }
+      ]
+    },
+    "xpcall": {
+      "contents": [
+        {
+          "value": "```lua\nxpcall(f, msgh [, arg1, ···]) -> boolean, ...\n```\nLike `pcall` but sets `msgh` as the error message handler. Extra arguments to `f` supported in Lua 5.2+."
+        }
+      ]
+    },
+    "error": {
+      "contents": [
+        {
+          "value": "```lua\nerror(message [, level])\n```\nRaises an error. `level` controls position info: 1 (default) = where `error` was called, 2 = caller of that function, 0 = no position."
+        }
+      ]
+    },
+    "assert": {
+      "contents": [
+        {
+          "value": "```lua\nassert(v [, message]) -> v, message\n```\nRaises an error if `v` is false or nil; otherwise returns all arguments. Default message is `\"assertion failed!\"`."
+        }
       ]
     },
     "collectgarbage": {
       "contents": [
-        { "value": "```lua\ncollectgarbage([opt [, arg]]) -> varies\n```\nGeneric interface to the garbage collector. Options: `\"collect\"` (full GC cycle), `\"stop\"`, `\"restart\"`, `\"count\"` (returns KB used), `\"step\"`, `\"isrunning\"`, `\"incremental\"` (Lua 5.4), `\"generational\"` (Lua 5.4)." }
+        {
+          "value": "```lua\ncollectgarbage([opt [, arg]]) -> varies\n```\nGeneric interface to the garbage collector. Options: `\"collect\"`, `\"stop\"`, `\"restart\"`, `\"count\"`, `\"step\"`, `\"isrunning\"`, `\"incremental\"` (5.4), `\"generational\"` (5.4)."
+        }
+      ]
+    },
+    "unpack": {
+      "contents": [
+        {
+          "value": "```lua\nunpack(list [, i [, j]]) -> ...\n```\nReturns elements from `list`. In Lua 5.2+ use `table.unpack`. Default `i` is 1, `j` is `#list`."
+        }
+      ]
+    },
+    "warn": {
+      "contents": [
+        {
+          "value": "```lua\nwarn(msg1 [, msg2, ···])\n```\nEmits a warning. If the first segment starts with `\"@\"`, it controls the warning system (`\"@on\"`, `\"@off\"`). Lua 5.4+."
+        }
+      ]
+    },
+    "string": {
+      "contents": [
+        {
+          "value": "```lua\nstring library\n```\nProvides generic string manipulation functions. Strings are indexed from 1, immutable, and can contain embedded zeros. Pattern matching uses its own syntax (not regex)."
+        }
+      ]
+    },
+    "table": {
+      "contents": [
+        {
+          "value": "```lua\ntable library\n```\nProvides generic functions for table/array manipulation: insert, remove, sort, concat, move, pack, unpack."
+        }
+      ]
+    },
+    "math": {
+      "contents": [
+        {
+          "value": "```lua\nmath library\n```\nProvides standard mathematical functions and constants: trigonometric, exponential, logarithmic, floor, ceil, random, pi, huge, etc."
+        }
+      ]
+    },
+    "io": {
+      "contents": [
+        {
+          "value": "```lua\nio library\n```\nProvides file I/O. Two styles: implicit (io.read/write on default files) and explicit (file handles from io.open)."
+        }
+      ]
+    },
+    "os": {
+      "contents": [
+        {
+          "value": "```lua\nos library\n```\nProvides OS-level functions: clock, time, date, execute, getenv, remove, rename, exit, tmpname."
+        }
+      ]
+    },
+    "coroutine": {
+      "contents": [
+        {
+          "value": "```lua\ncoroutine library\n```\nProvides cooperative multithreading via coroutines: create, resume, yield, wrap, status, close."
+        }
+      ]
+    },
+    "debug": {
+      "contents": [
+        {
+          "value": "```lua\ndebug library\n```\nProvides a debug interface: getinfo, traceback, sethook, getlocal/setlocal, getupvalue/setupvalue. Use with care in production."
+        }
+      ]
+    },
+    "package": {
+      "contents": [
+        {
+          "value": "```lua\npackage library\n```\nProvides module loading facilities: path, cpath, loaded, preload, searchers, searchpath, config."
+        }
+      ]
+    },
+    "utf8": {
+      "contents": [
+        {
+          "value": "```lua\nutf8 library\n```\nProvides basic UTF-8 support: char, codepoint, codes, len, offset, charpattern. Available in Lua 5.3+."
+        }
       ]
     },
     "string.format": {
       "contents": [
-        { "value": "```lua\nstring.format(formatstring, ···) -> string\n```\nReturns a formatted version of its variable number of arguments following the format description. Similar to C `sprintf`. Directives: `%d`, `%i`, `%u`, `%f`, `%e`, `%g`, `%x`, `%X`, `%o`, `%s`, `%q` (quoted), `%c` (char), `%%` (literal %)." }
+        {
+          "value": "```lua\nstring.format(formatstring, ···) -> string\n```\nReturns a formatted string following the format description, similar to C `sprintf`. Supports `%d`, `%i`, `%u`, `%f`, `%e`, `%g`, `%x`, `%X`, `%o`, `%s`, `%q`, `%c`, `%%`."
+        }
       ]
     },
     "string.find": {
       "contents": [
-        { "value": "```lua\nstring.find(s, pattern [, init [, plain]]) -> number, number, ... | nil\n```\nLooks for the first match of `pattern` in the string `s`. If found, returns the start and end indices of the match and any captures. Returns `nil` if no match. If `plain` is true, pattern matching facilities are turned off and the function does a plain \"find substring\" operation." }
+        {
+          "value": "```lua\nstring.find(s, pattern [, init [, plain]]) -> number, number, ... | nil\n```\nFinds the first match of `pattern` in `s`. Returns start/end indices and captures. If `plain` is true, does a plain substring search."
+        }
       ]
     },
     "string.match": {
       "contents": [
-        { "value": "```lua\nstring.match(s, pattern [, init]) -> string | ... | nil\n```\nLooks for the first match of `pattern` in `s`. If found, returns the captures from the pattern; otherwise returns `nil`. If `pattern` specifies no captures, the whole match is returned." }
+        {
+          "value": "```lua\nstring.match(s, pattern [, init]) -> string | ... | nil\n```\nReturns captures from the first match of `pattern` in `s`, or the whole match if no captures."
+        }
       ]
     },
     "string.gmatch": {
       "contents": [
-        { "value": "```lua\nstring.gmatch(s, pattern [, init]) -> iterator function\n```\nReturns an iterator function that, each time it is called, returns the next captures from `pattern` over the string `s`. If `pattern` specifies no captures, the whole match is produced in each call.\n\n**Lua 5.4:** Added optional `init` parameter." }
+        {
+          "value": "```lua\nstring.gmatch(s, pattern [, init]) -> iterator function\n```\nReturns an iterator producing successive capture groups from `pattern` over `s`. Lua 5.4 added optional `init`."
+        }
       ]
     },
     "string.gsub": {
       "contents": [
-        { "value": "```lua\nstring.gsub(s, pattern, repl [, n]) -> string, number\n```\nReturns a copy of `s` in which all (or the first `n`, if given) occurrences of the pattern have been replaced by `repl`. `repl` can be a string, a table, or a function. Also returns, as its second value, the total number of matches that occurred." }
+        {
+          "value": "```lua\nstring.gsub(s, pattern, repl [, n]) -> string, number\n```\nReturns a copy of `s` with all (or first `n`) occurrences of `pattern` replaced. `repl` can be string, table, or function."
+        }
       ]
     },
     "string.sub": {
       "contents": [
-        { "value": "```lua\nstring.sub(s, i [, j]) -> string\n```\nReturns the substring of `s` that starts at `i` and continues until `j` (both inclusive). `i` and `j` can be negative (counting from the end). Default `j` is `-1` (end of string)." }
+        {
+          "value": "```lua\nstring.sub(s, i [, j]) -> string\n```\nReturns the substring from `i` to `j` (inclusive). Negative indices count from end. Default `j` is `-1`."
+        }
+      ]
+    },
+    "string.rep": {
+      "contents": [
+        {
+          "value": "```lua\nstring.rep(s, n [, sep]) -> string\n```\nReturns `n` copies of `s` separated by `sep` (default empty). `sep` parameter available since Lua 5.2."
+        }
+      ]
+    },
+    "string.reverse": {
+      "contents": [
+        {
+          "value": "```lua\nstring.reverse(s) -> string\n```\nReturns the string `s` reversed."
+        }
+      ]
+    },
+    "string.upper": {
+      "contents": [
+        {
+          "value": "```lua\nstring.upper(s) -> string\n```\nReturns a copy with all lowercase letters changed to uppercase (locale-dependent)."
+        }
+      ]
+    },
+    "string.lower": {
+      "contents": [
+        {
+          "value": "```lua\nstring.lower(s) -> string\n```\nReturns a copy with all uppercase letters changed to lowercase (locale-dependent)."
+        }
+      ]
+    },
+    "string.len": {
+      "contents": [
+        {
+          "value": "```lua\nstring.len(s) -> integer\n```\nReturns the length of `s`. Embedded zeros are counted: `\"a\\0b\"` has length 3."
+        }
+      ]
+    },
+    "string.byte": {
+      "contents": [
+        {
+          "value": "```lua\nstring.byte(s [, i [, j]]) -> integer, ...\n```\nReturns the internal numeric codes of characters `s[i]` through `s[j]`. Defaults: `i=1`, `j=i`."
+        }
+      ]
+    },
+    "string.char": {
+      "contents": [
+        {
+          "value": "```lua\nstring.char(···) -> string\n```\nReturns a string where each character has the numeric code of the corresponding argument."
+        }
+      ]
+    },
+    "string.dump": {
+      "contents": [
+        {
+          "value": "```lua\nstring.dump(function [, strip]) -> string\n```\nReturns a binary representation of the function. If `strip` is true (5.3+), excludes debug information."
+        }
+      ]
+    },
+    "string.pack": {
+      "contents": [
+        {
+          "value": "```lua\nstring.pack(fmt, v1, v2, ···) -> string\n```\nPacks values into a binary string according to format `fmt`. Lua 5.3+."
+        }
+      ]
+    },
+    "string.unpack": {
+      "contents": [
+        {
+          "value": "```lua\nstring.unpack(fmt, s [, pos]) -> ..., integer\n```\nUnpacks values from binary string `s` according to `fmt`. Returns values plus the position after the last read byte. Lua 5.3+."
+        }
       ]
     },
     "table.insert": {
       "contents": [
-        { "value": "```lua\ntable.insert(list, [pos,] value)\n```\nInserts element `value` at position `pos` in `list`, shifting up the elements `list[pos], ..., list[#list]`. The default value for `pos` is `#list+1`, so that a call `table.insert(t, x)` appends `x` at the end of list `t`." }
+        {
+          "value": "```lua\ntable.insert(list, [pos,] value)\n```\nInserts `value` at position `pos` (default `#list+1`), shifting subsequent elements up."
+        }
       ]
     },
     "table.remove": {
       "contents": [
-        { "value": "```lua\ntable.remove(list [, pos]) -> any\n```\nRemoves from `list` the element at position `pos`, returning the value of the removed element. When `pos` is between 1 and `#list`, shifts down elements `list[pos+1], ..., list[#list]`. The default value for `pos` is `#list` (removes last element)." }
+        {
+          "value": "```lua\ntable.remove(list [, pos]) -> any\n```\nRemoves and returns the element at `pos` (default `#list`), shifting subsequent elements down."
+        }
       ]
     },
     "table.sort": {
       "contents": [
-        { "value": "```lua\ntable.sort(list [, comp])\n```\nSorts list elements in a given order, *in-place*, from `list[1]` to `list[#list]`. If `comp` is given, it must be a function that receives two list elements and returns `true` when the first element must come before the second in the final order. The sort is not stable in Lua 5.1–5.3; Lua 5.4 does not guarantee stability either." }
+        {
+          "value": "```lua\ntable.sort(list [, comp])\n```\nSorts elements in-place. If `comp` is given, it receives two elements and returns `true` when the first should come before the second."
+        }
       ]
     },
     "table.concat": {
       "contents": [
-        { "value": "```lua\ntable.concat(list [, sep [, i [, j]]]) -> string\n```\nGiven a list where all elements are strings or numbers, returns the string `list[i]..sep..list[i+1] ··· sep..list[j]`. The default for `sep` is `\"\"`, for `i` is `1`, and for `j` is `#list`." }
+        {
+          "value": "```lua\ntable.concat(list [, sep [, i [, j]]]) -> string\n```\nConcatenates list[i]..sep..list[j]. Default `sep` is `\"\"`, `i` is `1`, `j` is `#list`."
+        }
       ]
     },
-    "math.random": {
+    "table.move": {
       "contents": [
-        { "value": "```lua\nmath.random([m [, n]]) -> number\n```\nWhen called without arguments, returns a pseudo-random float with uniform distribution in the range [0,1). When called with an integer `m`, returns a pseudo-random integer in [1, m]. When called with `m` and `n`, returns a pseudo-random integer in [m, n].\n\n**Lua 5.4:** Uses the xoshiro256** algorithm with better statistical properties than earlier versions' `rand()`." }
+        {
+          "value": "```lua\ntable.move(a1, f, e, t [, a2]) -> a2\n```\nCopies elements `a1[f]..a1[e]` to `a2[t]..`. Default `a2` is `a1`. Lua 5.3+."
+        }
       ]
     },
-    "math.floor": {
+    "table.pack": {
       "contents": [
-        { "value": "```lua\nmath.floor(x) -> integer\n```\nReturns the largest integral value less than or equal to `x`. In Lua 5.3+, returns an integer; in earlier versions returns a float." }
+        {
+          "value": "```lua\ntable.pack(···) -> table\n```\nReturns a new table with all arguments stored in keys 1, 2, … and field `n` = total count. Lua 5.2+."
+        }
+      ]
+    },
+    "table.unpack": {
+      "contents": [
+        {
+          "value": "```lua\ntable.unpack(list [, i [, j]]) -> ...\n```\nReturns `list[i], …, list[j]`. Default `i=1`, `j=#list`. In Lua 5.1 this is the global `unpack`."
+        }
+      ]
+    },
+    "math.abs": {
+      "contents": [
+        {
+          "value": "```lua\nmath.abs(x) -> number\n```\nReturns the absolute value of `x`. (integer/float)"
+        }
       ]
     },
     "math.ceil": {
       "contents": [
-        { "value": "```lua\nmath.ceil(x) -> integer\n```\nReturns the smallest integral value greater than or equal to `x`. In Lua 5.3+, returns an integer; in earlier versions returns a float." }
+        {
+          "value": "```lua\nmath.ceil(x) -> integer\n```\nReturns the smallest integral value ≥ `x`. In Lua 5.3+ returns an integer."
+        }
+      ]
+    },
+    "math.floor": {
+      "contents": [
+        {
+          "value": "```lua\nmath.floor(x) -> integer\n```\nReturns the largest integral value ≤ `x`. In Lua 5.3+ returns an integer."
+        }
+      ]
+    },
+    "math.sqrt": {
+      "contents": [
+        {
+          "value": "```lua\nmath.sqrt(x) -> number\n```\nReturns the square root of `x`. Equivalent to `x^0.5`."
+        }
+      ]
+    },
+    "math.sin": {
+      "contents": [
+        {
+          "value": "```lua\nmath.sin(x) -> number\n```\nReturns the sine of `x` (in radians)."
+        }
+      ]
+    },
+    "math.cos": {
+      "contents": [
+        {
+          "value": "```lua\nmath.cos(x) -> number\n```\nReturns the cosine of `x` (in radians)."
+        }
+      ]
+    },
+    "math.tan": {
+      "contents": [
+        {
+          "value": "```lua\nmath.tan(x) -> number\n```\nReturns the tangent of `x` (in radians)."
+        }
+      ]
+    },
+    "math.random": {
+      "contents": [
+        {
+          "value": "```lua\nmath.random([m [, n]]) -> number\n```\nWithout arguments: pseudo-random float in [0,1). With `m`: integer in [1,m]. With `m,n`: integer in [m,n]. Lua 5.4 uses xoshiro256**."
+        }
+      ]
+    },
+    "math.max": {
+      "contents": [
+        {
+          "value": "```lua\nmath.max(x, ···) -> number\n```\nReturns the maximum value among its arguments."
+        }
+      ]
+    },
+    "math.min": {
+      "contents": [
+        {
+          "value": "```lua\nmath.min(x, ···) -> number\n```\nReturns the minimum value among its arguments."
+        }
+      ]
+    },
+    "math.log": {
+      "contents": [
+        {
+          "value": "```lua\nmath.log(x [, base]) -> number\n```\nReturns the logarithm of `x` in the given `base` (default `e`). `base` parameter available in Lua 5.2+."
+        }
+      ]
+    },
+    "math.exp": {
+      "contents": [
+        {
+          "value": "```lua\nmath.exp(x) -> number\n```\nReturns `e^x`."
+        }
+      ]
+    },
+    "math.pi": {
+      "contents": [
+        {
+          "value": "```lua\nmath.pi\n```\nThe value of π (3.14159265358979323846…)."
+        }
+      ]
+    },
+    "math.huge": {
+      "contents": [
+        {
+          "value": "```lua\nmath.huge\n```\nThe float value `HUGE_VAL` (positive infinity)."
+        }
       ]
     },
     "io.open": {
       "contents": [
-        { "value": "```lua\nio.open(filename [, mode]) -> file | nil, string\n```\nOpens a file, in the mode specified by the string `mode`. Returns a new file handle, or, in case of errors, `nil` plus an error message. Modes: `\"r\"` (read, default), `\"w\"` (write), `\"a\"` (append), `\"r+\"` (update/read), `\"w+\"` (update/write), `\"a+\"` (update/append). Append `\"b\"` for binary mode." }
+        {
+          "value": "```lua\nio.open(filename [, mode]) -> file | nil, string\n```\nOpens a file in the specified mode. Modes: `'r'` (read), `'w'` (write), `'a'` (append), `'r+'`, `'w+'`, `'a+'`. Append `'b'` for binary."
+        }
       ]
     },
     "io.read": {
       "contents": [
-        { "value": "```lua\nio.read(···) -> string | number | nil\n```\nEquivalent to `io.input():read(···)`. Reads from the default input file. Formats: `\"*a\"`/`\"a\"` (whole file), `\"*l\"`/`\"l\"` (next line stripping newline, default), `\"*L\"`/`\"L\"` (next line keeping newline), `\"*n\"`/`\"n\"` (a number), or a number `n` (reads `n` bytes).\n\n**Lua 5.3+:** The `*` prefix is optional." }
+        {
+          "value": "```lua\nio.read(···) -> string | number | nil\n```\nReads from the default input. Formats: `'*a'`/`'a'` (whole file), `'*l'`/`'l'` (line, default), `'*n'`/`'n'` (number), `'*L'`/`'L'` (line with newline)."
+        }
       ]
     },
-    "os.time": {
+    "io.write": {
       "contents": [
-        { "value": "```lua\nos.time([table]) -> integer\n```\nReturns the current time when called without arguments, or a time representing the local date and time specified by the given table. The table must have fields `year`, `month`, and `day`, and may optionally have `hour` (default 12), `min` (default 0), `sec` (default 0), and `isdst`." }
+        {
+          "value": "```lua\nio.write(···) -> file | nil, string\n```\nWrites each argument to the default output file."
+        }
       ]
     },
-    "os.date": {
+    "io.lines": {
       "contents": [
-        { "value": "```lua\nos.date([format [, time]]) -> string | table\n```\nReturns a string or a table containing date and time, formatted according to the given string `format`. If the format string starts with `!`, the date is formatted in Coordinated Universal Time (UTC). If `format` is `\"*t\"`, returns a table with fields: `year`, `month`, `day`, `hour`, `min`, `sec`, `wday`, `yday`, `isdst`." }
+        {
+          "value": "```lua\nio.lines([filename, ···]) -> iterator\n```\nReturns an iterator that reads lines from the given file (or default input). Closes file when done."
+        }
+      ]
+    },
+    "io.close": {
+      "contents": [
+        {
+          "value": "```lua\nio.close([file])\n```\nCloses the given file handle (or the default output file)."
+        }
       ]
     },
     "os.clock": {
       "contents": [
-        { "value": "```lua\nos.clock() -> number\n```\nReturns an approximation of the amount in seconds of CPU time used by the program, as returned by the underlying ISO C function `clock`." }
+        {
+          "value": "```lua\nos.clock() -> number\n```\nReturns an approximation of the CPU time used by the program, in seconds."
+        }
+      ]
+    },
+    "os.time": {
+      "contents": [
+        {
+          "value": "```lua\nos.time([table]) -> integer\n```\nReturns the current time as a number (usually epoch seconds), or the time represented by the date table."
+        }
+      ]
+    },
+    "os.date": {
+      "contents": [
+        {
+          "value": "```lua\nos.date([format [, time]]) -> string | table\n```\nFormats a date/time. Use `\"*t\"` to get a table with year, month, day, hour, min, sec, wday, yday, isdst."
+        }
       ]
     },
     "os.execute": {
       "contents": [
-        { "value": "```lua\nos.execute([command]) -> boolean|nil, string, integer\n```\nPasses `command` to be executed by an operating system shell. Its first result is `true` if the command terminated successfully, or `nil` otherwise. After this first result the function returns a string plus a number: `\"exit\"` plus exit status, or `\"signal\"` plus signal number.\n\n**Lua 5.1:** Returns only the status code (a number)." }
+        {
+          "value": "```lua\nos.execute([command]) -> boolean | nil, string, integer\n```\nPasses `command` to the OS shell. In Lua 5.2+, returns `true`/`nil`, exit type, and exit code."
+        }
+      ]
+    },
+    "os.getenv": {
+      "contents": [
+        {
+          "value": "```lua\nos.getenv(varname) -> string | nil\n```\nReturns the value of the environment variable `varname`, or `nil` if not set."
+        }
+      ]
+    },
+    "os.exit": {
+      "contents": [
+        {
+          "value": "```lua\nos.exit([code [, close]])\n```\nTerminates the program. `code` defaults to `true` (success). If `close` is true, closes the Lua state first (5.2+)."
+        }
       ]
     },
     "coroutine.create": {
       "contents": [
-        { "value": "```lua\ncoroutine.create(f) -> thread\n```\nCreates a new coroutine, with body `f`. `f` must be a function. Returns the new coroutine (an object with type `\"thread\"`)." }
+        {
+          "value": "```lua\ncoroutine.create(f) -> thread\n```\nCreates a new coroutine with body `f` (a function). Returns a thread value."
+        }
       ]
     },
     "coroutine.resume": {
       "contents": [
-        { "value": "```lua\ncoroutine.resume(co [, val1, ···]) -> boolean, ...\n```\nStarts or continues the execution of coroutine `co`. The first time you resume a coroutine, it starts running its body. Values `val1, ...` are passed as the arguments to the body function (on first resume) or as the results of `yield` (on subsequent resumes). If the coroutine runs without any errors, `resume` returns `true` plus any values passed to `yield` or returned by the body function." }
+        {
+          "value": "```lua\ncoroutine.resume(co [, val1, ···]) -> boolean, ...\n```\nStarts or continues coroutine `co`. Returns `true` plus yielded/returned values, or `false` plus the error."
+        }
       ]
     },
     "coroutine.yield": {
       "contents": [
-        { "value": "```lua\ncoroutine.yield(···) -> ...\n```\nSuspends the execution of the calling coroutine. Any arguments to `yield` are passed as extra results to `resume`. When the coroutine is resumed again, `yield` returns any extra arguments passed to `resume`." }
+        {
+          "value": "```lua\ncoroutine.yield(···)\n```\nSuspends the running coroutine. Arguments become the extra results of `resume`."
+        }
       ]
     },
     "coroutine.wrap": {
       "contents": [
-        { "value": "```lua\ncoroutine.wrap(f) -> function\n```\nCreates a new coroutine with body `f` and returns a function that resumes the coroutine each time it is called. Any arguments to the returned function go as extra arguments to `resume`. Returns the same values returned by `resume`, except the first boolean. In case of error, propagates the error." }
+        {
+          "value": "```lua\ncoroutine.wrap(f) -> function\n```\nCreates a coroutine and returns a function that resumes it. Unlike `resume`, raises errors directly."
+        }
       ]
     },
     "coroutine.status": {
       "contents": [
-        { "value": "```lua\ncoroutine.status(co) -> string\n```\nReturns the status of coroutine `co`, as a string: `\"running\"` if the coroutine is running (i.e., it called `status`); `\"suspended\"` if the coroutine is suspended in a call to `yield`, or if it has not started running yet; `\"normal\"` if the coroutine is active but not running (it resumed another coroutine); `\"dead\"` if the coroutine has finished its body function or if it has stopped with an error." }
+        {
+          "value": "```lua\ncoroutine.status(co) -> string\n```\nReturns the status: `\"running\"`, `\"suspended\"`, `\"normal\"`, or `\"dead\"`."
+        }
       ]
     },
-    "function": {
+    "and": {
       "contents": [
-        { "value": "```lua\nfunction name(params)\n    body\nend\n```\nDefines a function. Functions are first-class values in Lua. The `function` keyword creates a closure — a function value with access to local variables from the enclosing scope (upvalues). Functions can return multiple values. Use `local function` for local scope." }
+        {
+          "value": "```lua\na and b\n```\n**Logical AND.** Returns `a` if it is false or nil; otherwise returns `b`. Short-circuit: `b` is not evaluated if `a` is falsy."
+        }
+      ]
+    },
+    "or": {
+      "contents": [
+        {
+          "value": "```lua\na or b\n```\n**Logical OR.** Returns `a` if it is truthy; otherwise returns `b`. Short-circuit: `b` is not evaluated if `a` is truthy.\n\nCommon idiom: `x = x or default`."
+        }
+      ]
+    },
+    "not": {
+      "contents": [
+        {
+          "value": "```lua\nnot a\n```\n**Logical NOT.** Returns `true` if `a` is false or nil; otherwise returns `false`."
+        }
       ]
     },
     "local": {
       "contents": [
-        { "value": "```lua\nlocal name [= expr]\nlocal function name(params) body end\n```\nDeclares a local variable or local function, restricting its scope to the current block. Local variables are faster to access than globals. In Lua 5.4, local variables can have attributes: `<const>` (compile-time constant) and `<close>` (to-be-closed)." }
-      ]
-    },
-    "if": {
-      "contents": [
-        { "value": "```lua\nif expr then block\n{elseif expr then block}\n[else block]\nend\n```\nConditional statement. Evaluates `expr`; if it is anything other than `false` or `nil`, executes the corresponding `then` block. Optional `elseif` and `else` branches. Note: in Lua, only `false` and `nil` are falsy — `0` and `\"\"` are truthy." }
-      ]
-    },
-    "for": {
-      "contents": [
-        { "value": "```lua\n-- Numeric for:\nfor var = start, stop [, step] do block end\n\n-- Generic for:\nfor var_1, ···, var_n in explist do block end\n```\nThe numeric `for` loop iterates from `start` to `stop` by `step` (default 1). The generic `for` loop iterates via an iterator function (commonly `pairs`, `ipairs`, or custom iterators). Loop variables are local to the loop body." }
-      ]
-    },
-    "while": {
-      "contents": [
-        { "value": "```lua\nwhile expr do\n    block\nend\n```\nRepeats `block` while `expr` is true (not `false` or `nil`). The condition is tested before each iteration. Use `break` to exit early." }
-      ]
-    },
-    "repeat": {
-      "contents": [
-        { "value": "```lua\nrepeat\n    block\nuntil expr\n```\nRepeats `block` until `expr` is true. The condition is tested after each iteration, so the body always executes at least once. Local variables declared inside `block` are visible in the `until` condition." }
-      ]
-    },
-    "return": {
-      "contents": [
-        { "value": "```lua\nreturn [explist]\n```\nReturns values from a function or chunk. Lua allows multiple return values: `return a, b, c`. Must be the last statement in a block. If you need to return in the middle of a block, use an explicit `do return end`." }
+        {
+          "value": "```lua\nlocal name = value\nlocal function name() ... end\n```\nDeclares a local variable or function, scoped to the enclosing block. Always prefer `local` over global."
+        }
       ]
     },
     "nil": {
       "contents": [
-        { "value": "`nil`\n\nThe type `nil` has one single value, `nil`, whose main property is to be different from any other value. It represents the absence of a useful value. A global variable has a `nil` value by default (before assignment), and you can assign `nil` to a variable to delete it." }
+        {
+          "value": "```lua\nnil\n```\nThe type `nil` has one value: `nil`. Represents the absence of a useful value. Together with `false`, it is the only falsy value."
+        }
       ]
     },
-    "debug.traceback": {
+    "true": {
       "contents": [
-        { "value": "```lua\ndebug.traceback([thread,] [message [, level]]) -> string\n```\nReturns a string with a traceback of the call stack. The optional `message` is prepended to the traceback. `level` specifies at which level to start (default 1, the function calling `traceback`). Commonly used as the message handler in `xpcall`." }
+        {
+          "value": "```lua\ntrue\n```\nBoolean true value."
+        }
+      ]
+    },
+    "false": {
+      "contents": [
+        {
+          "value": "```lua\nfalse\n```\nBoolean false value. Together with `nil`, the only falsy value in Lua."
+        }
+      ]
+    },
+    "return": {
+      "contents": [
+        {
+          "value": "```lua\nreturn expr1, expr2, ...\n```\nReturns values from a function. Must be the last statement in its block. Multiple return values are a core Lua feature."
+        }
+      ]
+    },
+    "break": {
+      "contents": [
+        {
+          "value": "```lua\nbreak\n```\nTerminates the execution of the innermost `while`, `repeat`, or `for` loop."
+        }
+      ]
+    },
+    "goto": {
+      "contents": [
+        {
+          "value": "```lua\ngoto label\n::label::\n```\nJumps to the specified label. Available in Lua 5.2+. Cannot jump into a block or out of a function."
+        }
+      ]
+    },
+    "for": {
+      "contents": [
+        {
+          "value": "```lua\nfor i = start, stop [, step] do ... end\nfor k, v in iterator do ... end\n```\nNumeric `for` iterates with a counter. Generic `for` iterates using an iterator function (e.g., `pairs`, `ipairs`)."
+        }
+      ]
+    },
+    "while": {
+      "contents": [
+        {
+          "value": "```lua\nwhile condition do\n    ...\nend\n```\nRepeats the block while `condition` is truthy. Condition is tested before each iteration."
+        }
+      ]
+    },
+    "repeat": {
+      "contents": [
+        {
+          "value": "```lua\nrepeat\n    ...\nuntil condition\n```\nRepeats the block until `condition` is true. Executes at least once. Variables declared inside are visible in the `until` expression."
+        }
+      ]
+    },
+    "if": {
+      "contents": [
+        {
+          "value": "```lua\nif cond then\n    ...\nelseif cond2 then\n    ...\nelse\n    ...\nend\n```\nConditional execution. Only `nil` and `false` are considered false; everything else (including `0` and `\"\"`) is true."
+        }
+      ]
+    },
+    "function": {
+      "contents": [
+        {
+          "value": "```lua\nfunction name(params) ... end\nlocal function name(params) ... end\nlocal f = function(params) ... end\n```\nDeclares a function. Functions are first-class values in Lua. Methods use colon syntax: `function obj:method() ... end`."
+        }
+      ]
+    },
+    "do": {
+      "contents": [
+        {
+          "value": "```lua\ndo\n    -- new scope\nend\n```\nCreates a new block scope. Variables declared with `local` inside are not visible outside."
+        }
+      ]
+    },
+    "end": {
+      "contents": [
+        {
+          "value": "```lua\nend\n```\nCloses a block started by `function`, `if`, `for`, `while`, `repeat`, or `do`."
+        }
+      ]
+    },
+    "then": {
+      "contents": [
+        {
+          "value": "```lua\nif condition then ...\n```\nRequired after the condition in an `if` or `elseif` clause."
+        }
+      ]
+    },
+    "else": {
+      "contents": [
+        {
+          "value": "```lua\nif cond then ... else ... end\n```\nAlternative branch when the `if` condition is false."
+        }
+      ]
+    },
+    "elseif": {
+      "contents": [
+        {
+          "value": "```lua\nif cond1 then ...\nelseif cond2 then ...\nend\n```\nAdditional conditional branch. Avoids nesting multiple `if` statements."
+        }
+      ]
+    },
+    "until": {
+      "contents": [
+        {
+          "value": "```lua\nrepeat ... until condition\n```\nEnds a `repeat` loop. The condition is tested after each iteration."
+        }
+      ]
+    },
+    "in": {
+      "contents": [
+        {
+          "value": "```lua\nfor k, v in pairs(t) do ... end\n```\nUsed in generic `for` loops to separate the iteration variables from the iterator expression."
+        }
+      ]
+    },
+    "_G": {
+      "contents": [
+        {
+          "value": "```lua\n_G\n```\nA global variable (not a keyword) that holds a reference to the global environment table. In Lua 5.1, the environment of the running function. In Lua 5.2+, just a regular global holding the global table."
+        }
+      ]
+    },
+    "_ENV": {
+      "contents": [
+        {
+          "value": "```lua\n_ENV\n```\nThe environment table for the current chunk (Lua 5.2+). All free names (globals) are syntactic sugar for `_ENV.name`. Changing `_ENV` changes what global variables the chunk sees."
+        }
+      ]
+    },
+    "_VERSION": {
+      "contents": [
+        {
+          "value": "```lua\n_VERSION\n```\nA global string containing the running Lua version, e.g. `\"Lua 5.4\"`."
+        }
+      ]
+    },
+    "self": {
+      "contents": [
+        {
+          "value": "```lua\nself\n```\nImplicit first parameter in methods defined with colon syntax (`function obj:method() ... end`). Refers to the receiver object."
+        }
+      ]
+    },
+    "..": {
+      "contents": [
+        {
+          "value": "```lua\na .. b\n```\n**String concatenation operator.** Joins two strings (or numbers converted to strings). Creates a new string.\n\nFor concatenating many strings, prefer `table.concat` for performance."
+        }
+      ]
+    },
+    "#": {
+      "contents": [
+        {
+          "value": "```lua\n#t\n#s\n```\n**Length operator.** For strings, returns the byte count. For tables, returns a border (an index where `t[n] ~= nil` and `t[n+1] == nil`). For sequences, this is the last index."
+        }
+      ]
+    },
+    "//": {
+      "contents": [
+        {
+          "value": "```lua\na // b\n```\n**Floor division** (Lua 5.3+). Returns `math.floor(a/b)`. Works with both integers and floats. Integer operands yield an integer result."
+        }
+      ]
+    },
+    "~": {
+      "contents": [
+        {
+          "value": "```lua\na ~ b   -- bitwise XOR\n~a      -- bitwise NOT\n```\n**Bitwise XOR / NOT** (Lua 5.3+). Binary `~` is XOR, unary `~` is NOT. Note: `~=` is the *inequality* operator, not bitwise."
+        }
+      ]
+    },
+    "&": {
+      "contents": [
+        {
+          "value": "```lua\na & b\n```\n**Bitwise AND** (Lua 5.3+). Performs a bitwise AND on integer operands."
+        }
+      ]
+    },
+    "|": {
+      "contents": [
+        {
+          "value": "```lua\na | b\n```\n**Bitwise OR** (Lua 5.3+). Performs a bitwise OR on integer operands."
+        }
+      ]
+    },
+    "<<": {
+      "contents": [
+        {
+          "value": "```lua\na << n\n```\n**Left shift** (Lua 5.3+). Shifts `a` left by `n` bits, filling with zeros."
+        }
+      ]
+    },
+    ">>": {
+      "contents": [
+        {
+          "value": "```lua\na >> n\n```\n**Right shift** (Lua 5.3+). Shifts `a` right by `n` bits, filling with zeros (logical shift)."
+        }
+      ]
+    },
+    "__index": {
+      "contents": [
+        {
+          "value": "```lua\n__index = table_or_function\n```\n**Metamethod** invoked when accessing a key not present in the table. If `__index` is a table, the lookup continues there (prototype chain). If a function, called as `__index(table, key)`.\n\nThis is the foundation of Lua's OOP system."
+        }
+      ]
+    },
+    "__newindex": {
+      "contents": [
+        {
+          "value": "```lua\n__newindex = function(table, key, value)\n```\n**Metamethod** invoked when assigning to a key not present in the table. Can be used to create read-only tables, logging proxies, or custom assignment behavior."
+        }
+      ]
+    },
+    "__tostring": {
+      "contents": [
+        {
+          "value": "```lua\n__tostring = function(self) -> string\n```\n**Metamethod** called by `tostring()`. Should return a human-readable string representation of the object."
+        }
+      ]
+    },
+    "__call": {
+      "contents": [
+        {
+          "value": "```lua\n__call = function(self, ...)\n```\n**Metamethod** invoked when a table is called as a function: `obj(args)`. Commonly used for constructor shorthand or callable objects."
+        }
+      ]
+    },
+    "__gc": {
+      "contents": [
+        {
+          "value": "```lua\n__gc = function(self)\n```\n**Metamethod (finalizer)** called when the object is garbage collected. Available for tables in Lua 5.2+ and for userdata in all versions."
+        }
+      ]
+    },
+    "debug.getinfo": "```lua\ndebug.getinfo([thread,] f [, what])\n```\n\n**debug.getinfo** — Returns a table with information about a function.\n\n`f` can be a function or stack level (1 = calling function). `what` selects fields:\n- `'n'` — name, namewhat\n- `'S'` — source, short_src, what, linedefined, lastlinedefined\n- `'l'` — currentline\n- `'u'` — nups, nparams, isvararg\n- `'t'` — istailcall\n- `'L'` — activelines table\n\n```lua\nlocal info = debug.getinfo(1, 'Sln')\nprint(info.source, info.currentline, info.name)\n```",
+    "debug.traceback": "```lua\ndebug.traceback([thread,] [message [, level]])\n```\n\n**debug.traceback** — Returns a string with a traceback of the call stack.\n\nUseful in error handlers (xpcall).\n\n```lua\nlocal ok, err = xpcall(riskyFunc, debug.traceback)\nif not ok then print(err) end\n```",
+    "debug.sethook": "```lua\ndebug.sethook([thread,] hook, mask [, count])\n```\n\n**debug.sethook** — Sets a hook function. `mask` characters:\n- `'c'` — call hook\n- `'r'` — return hook\n- `'l'` — line hook\n\n`count` fires hook every N instructions.\n\n```lua\ndebug.sethook(function(event, line)\n  print(event, line)\nend, 'l') -- fires on every line\n\ndebug.sethook() -- remove hook\n```",
+    "debug.gethook": "```lua\ndebug.gethook([thread])\n```\n\n**debug.gethook** — Returns the current hook function, mask string, and count.\n\n```lua\nlocal hook, mask, count = debug.gethook()\nprint(mask) -- e.g. 'l'\n```",
+    "debug.getlocal": "```lua\ndebug.getlocal([thread,] f, local)\n```\n\n**debug.getlocal** — Returns name and value of local variable.\n\n`f` is stack level, `local` is variable index (1-based).\n\n```lua\nlocal x, y = 10, 20\nprint(debug.getlocal(1, 1)) -- 'x', 10\nprint(debug.getlocal(1, 2)) -- 'y', 20\n```",
+    "debug.setlocal": "```lua\ndebug.setlocal([thread,] level, local, value)\n```\n\n**debug.setlocal** — Sets the value of a local variable at the given stack level.\n\nReturns the variable name, or nil if index is out of range.\n\n```lua\nlocal x = 10\ndebug.setlocal(1, 1, 42)\nprint(x) -- 42\n```",
+    "debug.getupvalue": "```lua\ndebug.getupvalue(f, up)\n```\n\n**debug.getupvalue** — Returns name and value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\nprint(debug.getupvalue(f, 1)) -- 'x', 10\n```",
+    "debug.setupvalue": "```lua\ndebug.setupvalue(f, up, value)\n```\n\n**debug.setupvalue** — Sets the value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\ndebug.setupvalue(f, 1, 42)\nprint(f()) -- 42\n```",
+    "debug.getmetatable": "```lua\ndebug.getmetatable(value)\n```\n\n**debug.getmetatable** — Returns the metatable of the given value, bypassing `__metatable` metamethod.\n\nUnlike `getmetatable()`, this always returns the real metatable.\n\n```lua\nlocal mt = {__metatable = 'hidden'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'hidden'\nprint(debug.getmetatable(t)) -- the actual mt table\n```",
+    "debug.setmetatable": "```lua\ndebug.setmetatable(value, table)\n```\n\n**debug.setmetatable** — Sets the metatable on any value (not just tables).\n\nCan set metatables on strings, numbers, etc.\n\n```lua\ndebug.setmetatable(0, {__tostring = function(n) return 'num:'..n end})\nprint(tostring(42)) -- num:42\n```",
+    "debug.getuservalue": "```lua\ndebug.getuservalue(u, n)\n```\n\n**debug.getuservalue** — Returns the n-th user value associated with userdata `u`.\n\nIn Lua 5.4, userdata can have multiple user values. Returns value and boolean.\n\n```lua\nlocal val, exists = debug.getuservalue(ud, 1)\n```",
+    "debug.setuservalue": "```lua\ndebug.setuservalue(u, value, n)\n```\n\n**debug.setuservalue** — Sets the n-th user value of userdata `u` to `value`.\n\n```lua\ndebug.setuservalue(ud, mytable, 1)\n```",
+    "debug.getregistry": "```lua\ndebug.getregistry()\n```\n\n**debug.getregistry** — Returns the Lua registry table, used internally to store references.\n\n```lua\nlocal reg = debug.getregistry()\nfor k, v in pairs(reg) do print(k, v) end\n```",
+    "debug.upvalueid": "```lua\ndebug.upvalueid(f, n)\n```\n\n**debug.upvalueid** — Returns a unique identifier (light userdata) for upvalue `n` of function `f`. (5.2+)\n\nUseful to check if two closures share the same upvalue.\n\n```lua\nlocal x = 1\nlocal f = function() return x end\nlocal g = function() return x end\nprint(debug.upvalueid(f,1) == debug.upvalueid(g,1)) -- true\n```",
+    "debug.upvaluejoin": "```lua\ndebug.upvaluejoin(f1, n1, f2, n2)\n```\n\n**debug.upvaluejoin** — Makes upvalue `n1` of `f1` refer to the same variable as upvalue `n2` of `f2`. (5.2+)\n\n```lua\nlocal a, b = 1, 2\nlocal f = function() return a end\nlocal g = function() return b end\ndebug.upvaluejoin(f, 1, g, 1)\nprint(f()) -- 2 (now shares b)\n```",
+    "package.path": "```lua\npackage.path\n```\n\n**package.path** — The search path used by `require` to find Lua modules.\n\nUses `?` as placeholder for module name. Paths separated by `;`.\n\n```lua\nprint(package.path)\n-- ./?.lua;/usr/local/share/lua/5.4/?.lua;...\n\n-- Add custom path\npackage.path = './libs/?.lua;' .. package.path\n```\n\n**Tip:** Set via `LUA_PATH` environment variable.",
+    "package.cpath": "```lua\npackage.cpath\n```\n\n**package.cpath** — The search path for C modules (shared libraries).\n\n```lua\nprint(package.cpath)\n-- ./?.so;/usr/local/lib/lua/5.4/?.so;...\n\npackage.cpath = './libs/?.so;' .. package.cpath\n```\n\n**Tip:** Set via `LUA_CPATH` environment variable.",
+    "package.loaded": "```lua\npackage.loaded\n```\n\n**package.loaded** — Table controlling which modules are loaded. `require` checks here first.\n\n```lua\n-- Check if loaded\nif package.loaded['socket'] then print('yes') end\n\n-- Force re-require\npackage.loaded['mymod'] = nil\nlocal mod = require('mymod') -- reloads\n```",
+    "package.preload": "```lua\npackage.preload\n```\n\n**package.preload** — Table of module loaders. Checked before file search.\n\n```lua\npackage.preload['mylib'] = function(modname)\n  return {\n    greet = function() print('Hello from ' .. modname) end\n  }\nend\n\nlocal mylib = require('mylib')\nmylib.greet()\n```",
+    "package.searchers": "```lua\npackage.searchers\n```\n\n**package.searchers** — Ordered table of searcher functions used by `require`.\n\nDefault searchers:\n1. `package.preload` table\n2. Lua file searcher (uses `package.path`)\n3. C library searcher (uses `package.cpath`)\n4. All-in-one C loader\n\n```lua\n-- Add custom searcher at position 2\ntable.insert(package.searchers, 2, function(name)\n  -- return loader function or error string\nend)\n```",
+    "package.searchpath": "```lua\npackage.searchpath(name, path [, sep [, rep]])\n```\n\n**package.searchpath** — Searches for a file in the given path.\n\nReplaces `.` in `name` with `sep` (default `.`), then `?` in `path` with result.\n\n```lua\nlocal file, err = package.searchpath('socket.core', package.cpath)\nprint(file) -- /usr/local/lib/lua/5.4/socket/core.so\n\nif not file then print(err) end -- lists all tried paths\n```",
+    "package.config": "```lua\npackage.config\n```\n\n**package.config** — A string with compile-time configuration:\n- Line 1: directory separator (`/` or `\\`)\n- Line 2: path separator (`;`)\n- Line 3: substitution marker (`?`)\n- Line 4: Windows \"dir\" marker\n- Line 5: ignore mark for searchers\n\n```lua\nlocal sep = package.config:sub(1,1)\nprint(sep) -- '/' on Unix, '\\\\' on Windows\n```",
+    "utf8.char": "```lua\nutf8.char(···)\n```\n\n**utf8.char** — Returns a UTF-8 string from one or more codepoints.\n\nSimilar to `string.char` but for Unicode.\n\n```lua\nprint(utf8.char(72, 233, 108, 108, 244)) -- Héllô\nprint(utf8.char(0x1F600)) -- 😀\n```",
+    "utf8.codepoint": "```lua\nutf8.codepoint(s [, i [, j]])\n```\n\n**utf8.codepoint** — Returns codepoints of all characters in `s[i..j]`.\n\nDefault: `i=1, j=i`.\n\n```lua\nlocal s = 'café'\nprint(utf8.codepoint(s, 4)) -- 233 (é)\nprint(utf8.codepoint(s, 1, -1)) -- 99 97 102 233\n```",
+    "utf8.codes": "```lua\nutf8.codes(s)\n```\n\n**utf8.codes** — Iterator for UTF-8 codepoints.\n\nReturns position (byte) and codepoint for each character.\n\n```lua\nfor pos, code in utf8.codes('héllo') do\n  print(pos, code, utf8.char(code))\nend\n-- 1  104  h\n-- 2  233  é\n-- 4  108  l\n-- 5  108  l\n-- 6  111  o\n```",
+    "utf8.len": "```lua\nutf8.len(s [, i [, j]])\n```\n\n**utf8.len** — Returns the number of UTF-8 characters in `s[i..j]`.\n\nReturns nil + position if invalid UTF-8 found.\n\n```lua\nlocal s = 'café'\nprint(#s) -- 5 (bytes)\nprint(utf8.len(s)) -- 4 (characters)\n\nlocal n, err = utf8.len('\\xFF')\nif not n then print('invalid at byte', err) end\n```",
+    "utf8.offset": "```lua\nutf8.offset(s, n [, i])\n```\n\n**utf8.offset** — Returns byte position of the n-th character.\n\n- Positive `n`: count forward from position `i` (default 1)\n- Negative `n`: count backward\n- `n=0`: start of character at byte `i`\n\n```lua\nlocal s = 'héllo'\nprint(utf8.offset(s, 3)) -- 4 (3rd char 'l' starts at byte 4)\nprint(string.sub(s, utf8.offset(s, 2))) -- éllo\n```",
+    "utf8.charpattern": "```lua\nutf8.charpattern\n```\n\n**utf8.charpattern** — Pattern (string) matching exactly one UTF-8 character.\n\nValue: `[\\0-\\x7F\\xC2-\\xFD][\\x80-\\xBF]*`\n\n```lua\n-- Iterate over UTF-8 characters\nfor c in string.gmatch('héllo', utf8.charpattern) do\n  print(c)\nend\n-- h é l l o\n\n-- Count characters\nlocal count = select(2, string.gsub('café', utf8.charpattern, ''))\n```",
+    "math.asin": "```lua\nmath.asin(x)\n```\n\n**math.asin** — Returns the arc sine of `x` (in radians). Result in [-π/2, π/2].\n\n```lua\nprint(math.asin(1)) -- 1.5707... (π/2)\nprint(math.asin(0)) -- 0.0\n```",
+    "math.acos": "```lua\nmath.acos(x)\n```\n\n**math.acos** — Returns the arc cosine of `x` (in radians). Result in [0, π].\n\n```lua\nprint(math.acos(1)) -- 0.0\nprint(math.acos(0)) -- 1.5707... (π/2)\n```",
+    "math.atan": "```lua\nmath.atan(y [, x])\n```\n\n**math.atan** — Returns the arc tangent of `y/x` (in radians). Uses signs to determine quadrant.\n\nIn Lua 5.3+, replaces both `math.atan` and `math.atan2`.\n\n```lua\nprint(math.atan(1)) -- 0.7853... (π/4)\nprint(math.atan(1, 0)) -- 1.5707... (π/2)\n```",
+    "math.fmod": "```lua\nmath.fmod(x, y)\n```\n\n**math.fmod** — Returns the remainder of `x/y` that rounds towards zero.\n\nDiffers from `%` operator for negative numbers.\n\n```lua\nprint(math.fmod(7, 3)) -- 1.0\nprint(math.fmod(-7, 3)) -- -1.0 (% would give 2)\n```",
+    "math.randomseed": "```lua\nmath.randomseed([x [, y]])\n```\n\n**math.randomseed** — Sets the seed for the pseudo-random generator.\n\nIn Lua 5.4, calling with no args uses a system-dependent seed.\n\n```lua\nmath.randomseed(os.time()) -- Lua 5.1-5.3\nmath.randomseed() -- Lua 5.4 (auto-seed)\nprint(math.random(1, 100))\n```",
+    "math.tointeger": "```lua\nmath.tointeger(x)\n```\n\n**math.tointeger** — Converts float `x` to integer if it has an exact integer value. Returns nil otherwise. (5.3+)\n\n```lua\nprint(math.tointeger(5.0)) -- 5\nprint(math.tointeger(5.5)) -- nil\nprint(math.tointeger(2^53)) -- 9007199254740992\n```",
+    "math.type": "```lua\nmath.type(x)\n```\n\n**math.type** — Returns `\"integer\"`, `\"float\"`, or false if not a number. (5.3+)\n\n```lua\nprint(math.type(1)) -- 'integer'\nprint(math.type(1.0)) -- 'float'\nprint(math.type('x')) -- false\n```",
+    "math.maxinteger": "```lua\nmath.maxinteger\n```\n\n**math.maxinteger** — Maximum value for an integer. (5.3+)\n\n```lua\nprint(math.maxinteger) -- 9223372036854775807 (2^63 - 1)\n```",
+    "math.mininteger": "```lua\nmath.mininteger\n```\n\n**math.mininteger** — Minimum value for an integer. (5.3+)\n\n```lua\nprint(math.mininteger) -- -9223372036854775808 (-2^63)\n```",
+    "io.input": "```lua\nio.input([file])\n```\n\n**io.input** — Sets `file` as the default input, or returns current default input.\n\n```lua\nio.input('data.txt')\nlocal line = io.read('l')\nio.input():close()\nio.input(io.stdin) -- restore\n```",
+    "io.output": "```lua\nio.output([file])\n```\n\n**io.output** — Sets `file` as the default output, or returns current default output.\n\n```lua\nio.output('out.txt')\nio.write('hello\\n')\nio.output():close()\nio.output(io.stdout) -- restore\n```",
+    "io.flush": "```lua\nio.flush()\n```\n\n**io.flush** — Flushes the default output file buffer.\n\n```lua\nio.write('progress: 50%')\nio.flush() -- ensure it's written immediately\n```",
+    "io.tmpfile": "```lua\nio.tmpfile()\n```\n\n**io.tmpfile** — Returns a handle for a temporary file (opened in update mode). Automatically removed on program exit.\n\n```lua\nlocal tmp = io.tmpfile()\ntmp:write('temp data')\ntmp:seek('set')\nprint(tmp:read('*a')) -- temp data\ntmp:close()\n```",
+    "io.type": "```lua\nio.type(obj)\n```\n\n**io.type** — Returns `\"file\"` for open handles, `\"closed file\"` for closed handles, or nil otherwise.\n\n```lua\nlocal f = io.open('test.txt', 'r')\nprint(io.type(f)) -- 'file'\nf:close()\nprint(io.type(f)) -- 'closed file'\nprint(io.type(42)) -- nil\n```",
+    "io.popen": "```lua\nio.popen(prog [, mode])\n```\n\n**io.popen** — Starts `prog` in a separated process and returns a file handle.\n\n`mode`: `'r'` (read stdout, default) or `'w'` (write to stdin).\n\n```lua\nlocal f = io.popen('ls -la', 'r')\nlocal output = f:read('*a')\nf:close()\nprint(output)\n```\n\n**Warning:** Not available on all platforms. Check return of `io.popen`.",
+    "io.stdin": "```lua\nio.stdin\n```\n\n**io.stdin** — Standard input file handle.\n\n```lua\nio.write('Enter name: ')\nlocal name = io.stdin:read('l')\n```",
+    "io.stdout": "```lua\nio.stdout\n```\n\n**io.stdout** — Standard output file handle.\n\n```lua\nio.stdout:write('hello\\n')\nio.stdout:flush()\n```",
+    "io.stderr": "```lua\nio.stderr\n```\n\n**io.stderr** — Standard error file handle.\n\n```lua\nio.stderr:write('Error: something went wrong\\n')\n```",
+    "os.difftime": "```lua\nos.difftime(t2, t1)\n```\n\n**os.difftime** — Returns the difference in seconds between times `t2` and `t1`.\n\n```lua\nlocal start = os.time()\n-- ... work ...\nlocal elapsed = os.difftime(os.time(), start)\nprint(elapsed .. ' seconds')\n```",
+    "os.remove": "```lua\nos.remove(filename)\n```\n\n**os.remove** — Deletes the file or empty directory.\n\nReturns true on success, or nil + error message.\n\n```lua\nlocal ok, err = os.remove('temp.txt')\nif not ok then print('Failed:', err) end\n```",
+    "os.rename": "```lua\nos.rename(oldname, newname)\n```\n\n**os.rename** — Renames/moves a file or directory.\n\n```lua\nlocal ok, err = os.rename('old.txt', 'new.txt')\nif not ok then print('Failed:', err) end\n```",
+    "os.tmpname": "```lua\nos.tmpname()\n```\n\n**os.tmpname** — Returns a string with a temporary file name.\n\n**Warning:** The file is not created; use `io.open` to create it. On some systems this may be insecure.\n\n```lua\nlocal tmp = os.tmpname()\nlocal f = io.open(tmp, 'w')\nf:write('data')\nf:close()\nos.remove(tmp)\n```",
+    "os.setlocale": "```lua\nos.setlocale(locale [, category])\n```\n\n**os.setlocale** — Sets the program locale. Pass nil to query current.\n\nCategories: `'all'`, `'collate'`, `'ctype'`, `'monetary'`, `'numeric'`, `'time'`.\n\n```lua\nos.setlocale('C') -- standard locale\nos.setlocale('') -- system default\nprint(os.setlocale(nil)) -- query current\n```",
+    "coroutine.isyieldable": "```lua\ncoroutine.isyieldable()\n```\n\n**coroutine.isyieldable** — Returns true if the running coroutine can yield.\n\nFalse for the main thread and C functions.\n\n```lua\nprint(coroutine.isyieldable()) -- false (main thread)\n\nlocal co = coroutine.create(function()\n  print(coroutine.isyieldable()) -- true\nend)\ncoroutine.resume(co)\n```",
+    "coroutine.running": "```lua\ncoroutine.running()\n```\n\n**coroutine.running** — Returns the running coroutine and a boolean (true if main thread).\n\n```lua\nlocal co, is_main = coroutine.running()\nprint(is_main) -- true in main thread\n\nlocal co2 = coroutine.create(function()\n  local me, main = coroutine.running()\n  print(main) -- false\nend)\ncoroutine.resume(co2)\n```",
+    "coroutine.close": "```lua\ncoroutine.close(co)\n```\n\n**coroutine.close** — Closes coroutine `co`, running any pending to-be-closed variables. (5.4+)\n\nCan only close suspended or dead coroutines.\n\n```lua\nlocal co = coroutine.create(function()\n  local f <close> = io.open('temp.txt', 'w')\n  coroutine.yield()\n  f:write('done')\nend)\ncoroutine.resume(co)\ncoroutine.close(co) -- f gets closed via __close\n```",
+    "__add": "```lua\n__add(a, b)\n```\n\n**__add** — Addition metamethod. Called for `a + b` when `a` or `b` has this metamethod.\n\n```lua\nlocal Vec = {}\nVec.__index = Vec\nVec.__add = function(a, b)\n  return setmetatable({x=a.x+b.x, y=a.y+b.y}, Vec)\nend\n\nlocal v = setmetatable({x=1,y=2}, Vec) + setmetatable({x=3,y=4}, Vec)\nprint(v.x, v.y) -- 4  6\n```",
+    "__sub": "```lua\n__sub(a, b)\n```\n\n**__sub** — Subtraction metamethod. Called for `a - b`.\n\n```lua\nmt.__sub = function(a, b)\n  return setmetatable({x=a.x-b.x, y=a.y-b.y}, mt)\nend\n```",
+    "__mul": "```lua\n__mul(a, b)\n```\n\n**__mul** — Multiplication metamethod. Called for `a * b`.\n\nOne operand can be a scalar.\n\n```lua\nmt.__mul = function(a, b)\n  if type(a) == 'number' then return setmetatable({x=a*b.x, y=a*b.y}, mt) end\n  if type(b) == 'number' then return setmetatable({x=a.x*b, y=a.y*b}, mt) end\n  return a.x*b.x + a.y*b.y -- dot product\nend\n```",
+    "__div": "```lua\n__div(a, b)\n```\n\n**__div** — Division metamethod. Called for `a / b`.\n\n```lua\nmt.__div = function(a, b)\n  if type(b) == 'number' then\n    return setmetatable({x=a.x/b, y=a.y/b}, mt)\n  end\nend\n```",
+    "__mod": "```lua\n__mod(a, b)\n```\n\n**__mod** — Modulo metamethod. Called for `a % b`.\n\n```lua\nmt.__mod = function(a, b)\n  return setmetatable({x=a.x%b, y=a.y%b}, mt)\nend\n```",
+    "__pow": "```lua\n__pow(a, b)\n```\n\n**__pow** — Exponentiation metamethod. Called for `a ^ b`.\n\n```lua\nmt.__pow = function(a, n)\n  return setmetatable({x=a.x^n, y=a.y^n}, mt)\nend\n```",
+    "__unm": "```lua\n__unm(a)\n```\n\n**__unm** — Unary minus metamethod. Called for `-a`.\n\n```lua\nmt.__unm = function(a)\n  return setmetatable({x=-a.x, y=-a.y}, mt)\nend\n\nlocal v = setmetatable({x=1,y=2}, mt)\nlocal neg = -v -- {x=-1, y=-2}\n```",
+    "__eq": "```lua\n__eq(a, b)\n```\n\n**__eq** — Equality metamethod. Called for `a == b` when both share the same metamethod.\n\n```lua\nmt.__eq = function(a, b)\n  return a.x == b.x and a.y == b.y\nend\n```\n\n**Note:** Only called when both operands have the same `__eq` metamethod.",
+    "__lt": "```lua\n__lt(a, b)\n```\n\n**__lt** — Less-than metamethod. Called for `a < b`.\n\n```lua\nmt.__lt = function(a, b)\n  return (a.x^2 + a.y^2) < (b.x^2 + b.y^2)\nend\n```",
+    "__le": "```lua\n__le(a, b)\n```\n\n**__le** — Less-than-or-equal metamethod. Called for `a <= b`.\n\nIn Lua 5.4, if absent, Lua tries `not (b < a)`.\n\n```lua\nmt.__le = function(a, b)\n  return (a.x^2 + a.y^2) <= (b.x^2 + b.y^2)\nend\n```",
+    "__concat": "```lua\n__concat(a, b)\n```\n\n**__concat** — Concatenation metamethod. Called for `a .. b`.\n\n```lua\nmt.__concat = function(a, b)\n  if type(a) == 'string' then return a .. tostring(b) end\n  if type(b) == 'string' then return tostring(a) .. b end\n  return tostring(a) .. tostring(b)\nend\n```",
+    "__len": "```lua\n__len(a)\n```\n\n**__len** — Length metamethod. Called for `#a`.\n\n```lua\nmt.__len = function(a)\n  return math.sqrt(a.x^2 + a.y^2) -- vector magnitude\nend\n\nlocal v = setmetatable({x=3, y=4}, mt)\nprint(#v) -- 5.0\n```",
+    "__close": "```lua\n__close(obj, err)\n```\n\n**__close** — To-be-closed metamethod (Lua 5.4). Called when a `<close>` variable goes out of scope.\n\n`err` is the error object if exiting due to an error, or nil.\n\n```lua\nlocal mt = {__close = function(self, err)\n  print('closing', err)\n  self.handle:close()\nend}\n\nlocal obj <close> = setmetatable({handle=io.open('f.txt')}, mt)\n-- handle closed automatically when obj goes out of scope\n```",
+    "__metatable": "```lua\n__metatable = value\n```\n\n**__metatable** — Protects the metatable. When set, `getmetatable()` returns this value instead of the real metatable, and `setmetatable()` raises an error.\n\n```lua\nlocal mt = {__metatable = 'read-only'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'read-only'\nsetmetatable(t, {}) -- error: cannot change protected metatable\n```\n\n**Tip:** Use `debug.getmetatable()` to bypass this protection.",
+    "__mode": "```lua\n__mode = 'k' | 'v' | 'kv'\n```\n\n**__mode** — Weak table mode. Keys/values with this metamethod won't prevent garbage collection.\n\n- `'k'` — weak keys\n- `'v'` — weak values  \n- `'kv'` — both weak\n\n```lua\nlocal cache = setmetatable({}, {__mode = 'v'})\ncache[1] = {data = 'will be collected'}\ncollectgarbage()\nprint(cache[1]) -- nil (collected)\n```",
+    "string.packsize": "```lua\nstring.packsize(fmt)\n```\n\n**string.packsize** — Returns the size of a string resulting from `string.pack` with the given format. (5.3+)\n\nOnly works with fixed-size formats (not `s` or `z`).\n\n```lua\nprint(string.packsize('i4')) -- 4\nprint(string.packsize('i4i4')) -- 8\nprint(string.packsize('Bd')) -- 9 (1 byte + 8 double)\n```",
+    "loadstring": {
+      "contents": [
+        {
+          "value": "```lua\nloadstring(string [, chunkname]) -> function | nil, string\n```\nLoads a string as a Lua chunk and returns it as a function. Returns `nil` plus an error message on failure. **Deprecated in Lua 5.2+** — use `load()` instead, which accepts both strings and functions.\n\n```lua\nlocal fn = loadstring(\"return 2 + 2\")\nprint(fn())  -- 4\n```"
+        }
+      ]
+    },
+    "module": {
+      "contents": [
+        {
+          "value": "```lua\nmodule(name [, ...])\n```\nCreates a module environment table and registers it in `package.loaded`. **Deprecated in Lua 5.2+** — use the return-a-table pattern instead:\n\n```lua\n-- Deprecated (Lua 5.1):\nmodule(\"mymodule\", package.seeall)\n\n-- Modern pattern:\nlocal M = {}\nfunction M.hello() print(\"hello\") end\nreturn M\n```"
+        }
       ]
     }
   }

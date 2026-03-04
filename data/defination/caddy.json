@@ -1,0 +1,428 @@
+{
+  "language": "caddy",
+  "definitions": {
+    "reverse_proxy": {
+      "signature": "reverse_proxy [match] <upstreams...>",
+      "description": "Proxies requests to one or more backends with optional load balancing, health checking, header manipulation, and transport configuration. Supports HTTP/1.1, HTTP/2, and h2c upstreams.",
+      "type": "directive",
+      "module": "http.handlers.reverse_proxy"
+    },
+    "file_server": {
+      "signature": "file_server [browse] [match]",
+      "description": "Serves static files from the site root. Optionally enables directory browsing. Can hide files and set index files.",
+      "type": "directive",
+      "module": "http.handlers.file_server"
+    },
+    "respond": {
+      "signature": "respond [match] <status|body> [status]",
+      "description": "Returns a static response to the client. Can set status codes, response bodies, and headers. Useful for health check endpoints and simple responses.",
+      "type": "directive",
+      "module": "http.handlers.static_response"
+    },
+    "rewrite": {
+      "signature": "rewrite [match] <to>",
+      "description": "Internally rewrites the request URI. The client is unaware of the rewrite. Does not cause a redirect. Useful for clean URLs and SPA routing.",
+      "type": "directive",
+      "module": "http.handlers.rewrite"
+    },
+    "redir": {
+      "signature": "redir [match] <to> [code]",
+      "description": "Sends an HTTP redirect to the client. Supports permanent (301), temporary (302), and other redirect codes. Accepts placeholders in the target URL.",
+      "type": "directive",
+      "module": "http.handlers.static_response"
+    },
+    "root": {
+      "signature": "root [match] <path>",
+      "description": "Sets the root directory for file-related operations (file_server, try_files, etc.). Can use placeholders. Typically used with a wildcard matcher.",
+      "type": "directive",
+      "module": "http.handlers.vars"
+    },
+    "try_files": {
+      "signature": "try_files <files...>",
+      "description": "Rewrites the request URI to the first file that exists on disk. Essential for SPAs and PHP applications. Checks files in order and rewrites to the last entry as default.",
+      "type": "directive",
+      "module": "http.handlers.rewrite"
+    },
+    "encode": {
+      "signature": "encode [match] <encodings...>",
+      "description": "Encodes/compresses responses using the specified encodings. Supports gzip and zstd. Respects Accept-Encoding from clients. Can configure minimum response size.",
+      "type": "directive",
+      "module": "http.handlers.encode"
+    },
+    "header": {
+      "signature": "header [match] [[+|-|?]<field> [value|regexp] [replacement]]",
+      "description": "Manipulates HTTP response headers. Can set (+), delete (-), or add (?) headers. Supports deferred mode for headers set after handler execution. Supports regex replacement.",
+      "type": "directive",
+      "module": "http.handlers.headers"
+    },
+    "basicauth": {
+      "signature": "basicauth [match] [realm] { <user> <hashed_password> }",
+      "description": "Enables HTTP Basic Authentication for request matching. Passwords must be hashed (bcrypt). Use 'caddy hash-password' to generate hashes. Supports realm configuration.",
+      "type": "directive",
+      "module": "http.handlers.authentication"
+    },
+    "log": {
+      "signature": "log { output ... ; format ... }",
+      "description": "Enables and configures structured access logging. Supports file output with rolling, JSON and console formats, log sampling, and filtering. Logs include request and response details.",
+      "type": "directive",
+      "module": "http.handlers.log"
+    },
+    "tls": {
+      "signature": "tls [email|internal] { ... }",
+      "description": "Configures TLS for the site. Manages automatic HTTPS via ACME, supports custom certificates, DNS challenges for wildcards, client authentication, protocol versions, and cipher suites.",
+      "type": "directive",
+      "module": "tls"
+    },
+    "handle": {
+      "signature": "handle [match] { ... }",
+      "description": "Groups directives into a mutually exclusive handler block. Only the first matching handle block executes. Similar to location blocks in nginx. Handles are evaluated in order.",
+      "type": "directive",
+      "module": "http.handlers.subroute"
+    },
+    "handle_path": {
+      "signature": "handle_path <path_prefix> { ... }",
+      "description": "Like handle, but strips the matched path prefix before executing the contained directives. Useful when proxying to backends that don't expect the prefix.",
+      "type": "directive",
+      "module": "http.handlers.subroute"
+    },
+    "route": {
+      "signature": "route [match] { ... }",
+      "description": "Executes contained directives in the exact literal order. Caddy normally reorders directives for safety, but route preserves the order. Use when ordering matters.",
+      "type": "directive",
+      "module": "http.handlers.subroute"
+    },
+    "import": {
+      "signature": "import <pattern|snippet_name> [args...]",
+      "description": "Includes a snippet defined elsewhere or imports an external file. Supports glob patterns for importing multiple files. Arguments can be passed to parameterized snippets.",
+      "type": "directive",
+      "module": "caddyfile"
+    },
+    "templates": {
+      "signature": "templates [match]",
+      "description": "Enables server-side template evaluation for responses. Supports Go template actions with access to request data, environment variables, and more. Templates are evaluated in the response body.",
+      "type": "directive",
+      "module": "http.handlers.templates"
+    },
+    "php_fastcgi": {
+      "signature": "php_fastcgi [match] <gateways...>",
+      "description": "Shortcut for a common PHP-FPM configuration. Combines reverse_proxy with FastCGI transport, try_files, and URI rewriting for PHP applications. Supports multiple FPM backends.",
+      "type": "directive",
+      "module": "http.handlers.reverse_proxy"
+    },
+    "handle_errors": {
+      "signature": "handle_errors { ... }",
+      "description": "Defines handlers for HTTP error responses. Allows custom error pages per status code. Has access to {err.status_code} and {err.status_text} placeholders.",
+      "type": "directive",
+      "module": "http.handlers.error"
+    },
+    "abort": {
+      "signature": "abort [match]",
+      "description": "Immediately closes the client connection without sending any response. Useful for blocking scanners and unwanted clients.",
+      "type": "directive",
+      "module": "http.handlers.static_response"
+    },
+    "error": {
+      "signature": "error [match] <message> <status>",
+      "description": "Triggers an HTTP error with the specified message and status code. Can be caught by handle_errors. Useful for access control and custom error flows.",
+      "type": "directive",
+      "module": "http.handlers.error"
+    },
+    "uri": {
+      "signature": "uri [match] <strip_prefix|strip_suffix|replace|path_regexp> <args...>",
+      "description": "Manipulates the request URI. Can strip prefixes/suffixes, do string replacement, or apply regex-based path rewriting. Changes are internal only.",
+      "type": "directive",
+      "module": "http.handlers.rewrite"
+    },
+    "vars": {
+      "signature": "vars [match] { <key> <value> }",
+      "description": "Sets custom variables in the request context. Variables can be referenced later using {vars.key} placeholders.",
+      "type": "directive",
+      "module": "http.handlers.vars"
+    },
+    "map": {
+      "signature": "map [match] <source> <destinations...> { ... }",
+      "description": "Maps an input value to one or more output variables based on matching rules. Supports exact matches, regex, and a default fallback. Evaluates lazily.",
+      "type": "directive",
+      "module": "http.handlers.map"
+    },
+    "bind": {
+      "signature": "bind <hosts...>",
+      "description": "Specifies the network interface addresses to bind the listener to. Useful for multi-homed servers. Accepts IP addresses or hostnames.",
+      "type": "directive",
+      "module": "caddy.listeners"
+    },
+    "metrics": {
+      "signature": "metrics [match] [path]",
+      "description": "Enables Prometheus-compatible metrics endpoint. Exports request counts, durations, and other server metrics. Default path is /metrics.",
+      "type": "directive",
+      "module": "http.handlers.metrics"
+    },
+    "tracing": {
+      "signature": "tracing { span <name> }",
+      "description": "Enables distributed tracing using OpenTelemetry. Adds trace context to requests and exports spans to a configured collector.",
+      "type": "directive",
+      "module": "http.handlers.tracing"
+    },
+    "acme_server": {
+      "signature": "acme_server [match]",
+      "description": "Runs a built-in ACME server (Certificate Authority). Can issue certificates to internal clients. Useful for development and internal PKI.",
+      "type": "directive",
+      "module": "http.handlers.acme_server"
+    },
+    "path": {
+      "signature": "path <patterns...>",
+      "description": "Matches requests whose URI path matches the given patterns. Supports wildcards (*). Used in named matchers: @name path /api/*",
+      "type": "matcher",
+      "module": "http.matchers.path"
+    },
+    "host": {
+      "signature": "host <hosts...>",
+      "description": "Matches requests by the Host header. Useful for routing in wildcard or multi-site configurations.",
+      "type": "matcher",
+      "module": "http.matchers.host"
+    },
+    "method": {
+      "signature": "method <methods...>",
+      "description": "Matches requests by HTTP method (GET, POST, PUT, DELETE, etc.). Can specify multiple methods.",
+      "type": "matcher",
+      "module": "http.matchers.method"
+    },
+    "header_matcher": {
+      "signature": "header <field> <value>",
+      "description": "Matches requests that have a header matching the given field and value. Value supports wildcards. Commonly used to detect WebSocket upgrades.",
+      "type": "matcher",
+      "module": "http.matchers.header"
+    },
+    "query": {
+      "signature": "query <key>=<value>",
+      "description": "Matches requests by query string parameters. Multiple key=value pairs can be specified.",
+      "type": "matcher",
+      "module": "http.matchers.query"
+    },
+    "remote_ip": {
+      "signature": "remote_ip <ranges...>",
+      "description": "Matches requests by client IP address. Supports CIDR notation. Useful for IP-based access control.",
+      "type": "matcher",
+      "module": "http.matchers.remote_ip"
+    },
+    "protocol": {
+      "signature": "protocol <http|https>",
+      "description": "Matches requests by protocol scheme (HTTP or HTTPS).",
+      "type": "matcher",
+      "module": "http.matchers.protocol"
+    },
+    "expression": {
+      "signature": "expression <cel_expr>",
+      "description": "Matches requests using a Common Expression Language (CEL) expression. Provides full access to request properties for complex matching logic.",
+      "type": "matcher",
+      "module": "http.matchers.expression"
+    },
+    "file": {
+      "signature": "file { try_files <files...> }",
+      "description": "Matches requests based on file existence on disk. Used to route to static files vs dynamic handlers. Checks for file paths in order.",
+      "type": "matcher",
+      "module": "http.matchers.file"
+    },
+    "not": {
+      "signature": "not <matcher>",
+      "description": "Negates another matcher. Matches if the inner matcher does NOT match. Useful for exclusionary routing.",
+      "type": "matcher",
+      "module": "http.matchers.not"
+    },
+    "email_option": {
+      "signature": "email <address>",
+      "description": "Global option. Sets the email address for ACME certificate registration. Used by Let's Encrypt and other ACME CAs for certificate expiry notifications.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "acme_ca_option": {
+      "signature": "acme_ca <url>",
+      "description": "Global option. Sets the ACME Certificate Authority URL. Defaults to Let's Encrypt production. Set to staging URL for testing.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "acme_dns_option": {
+      "signature": "acme_dns <provider> [args...]",
+      "description": "Global option. Global DNS challenge configuration for ACME. Applies to all sites. Use when server is not publicly accessible or for wildcard certs.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "admin_option": {
+      "signature": "admin <address|off>",
+      "description": "Global option. Configures the admin API endpoint. Can be disabled with 'off'. Default is localhost:2019. Controls runtime configuration changes.",
+      "type": "global_option",
+      "module": "caddy.admin"
+    },
+    "auto_https_option": {
+      "signature": "auto_https <off|disable_redirects|disable_certs|ignore_loaded_certs>",
+      "description": "Global option. Controls Caddy's automatic HTTPS behavior. Can disable automatic redirects, certificate management, or both.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "grace_period_option": {
+      "signature": "grace_period <duration>",
+      "description": "Global option. Sets the maximum time to wait for active connections to close during a graceful shutdown.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "servers_option": {
+      "signature": "servers { ... }",
+      "description": "Global option. Configures listener server settings like protocol options, timeouts, max header size, and listener wrappers.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "ocsp_stapling_option": {
+      "signature": "ocsp_stapling off",
+      "description": "Global option. Disables OCSP stapling globally. Caddy staples OCSP responses by default.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "storage_option": {
+      "signature": "storage <module> { ... }",
+      "description": "Global option. Configures the storage backend for TLS certificates and other data. Default is file_system. Supports consul, dynamodb, redis, etc.",
+      "type": "global_option",
+      "module": "caddy.storage"
+    },
+    "order_option": {
+      "signature": "order <directive> <before|after|first|last> [other_directive]",
+      "description": "Global option. Changes the default evaluation order of HTTP directives. Use when custom or third-party directives need specific ordering.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "local_certs_option": {
+      "signature": "local_certs",
+      "description": "Global option. Uses locally-trusted certificates instead of publicly-trusted ones. Ideal for development environments. Generates and trusts a local CA.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "skip_install_trust_option": {
+      "signature": "skip_install_trust",
+      "description": "Global option. Prevents Caddy from installing its root CA certificate into the system trust store. Useful in containers or restricted environments.",
+      "type": "global_option",
+      "module": "caddy"
+    },
+    "{http.request.*}": {
+      "signature": "{http.request.*}",
+      "description": "Request placeholders provide access to all aspects of the incoming HTTP request: URI, host, method, headers, remote address, TLS info, and more.",
+      "type": "placeholder",
+      "module": "http"
+    },
+    "{http.response.*}": {
+      "signature": "{http.response.*}",
+      "description": "Response placeholders provide access to the HTTP response being written, including status code and headers.",
+      "type": "placeholder",
+      "module": "http"
+    },
+    "{env.*}": {
+      "signature": "{env.VAR_NAME}",
+      "description": "Environment variable placeholders. Access any environment variable by name. Commonly used for secrets in TLS DNS challenges and other sensitive configuration.",
+      "type": "placeholder",
+      "module": "caddy"
+    },
+    "{err.*}": {
+      "signature": "{err.status_code} / {err.status_text}",
+      "description": "Error placeholders available within handle_errors blocks. Provide the HTTP error status code and status text.",
+      "type": "placeholder",
+      "module": "http.handlers.error"
+    },
+    "site_address": {
+      "signature": "<scheme>://<host>:<port>",
+      "description": "A site address defines which requests a site block handles. Components are optional. Can be a domain (auto-HTTPS), port (:8080), IP, or full URL. Wildcard subdomains use *.domain.",
+      "type": "concept",
+      "module": "caddyfile"
+    },
+    "directive_ordering": {
+      "signature": "Directive evaluation order",
+      "description": "Caddy reorders directives for safety and correctness. The standard order is: map, root, header, redir, rewrite, uri, try_files, basicauth, handle, handle_path, route, respond, reverse_proxy, php_fastcgi, file_server, encode, templates, log. Use the 'order' global option or 'route' to override.",
+      "type": "concept",
+      "module": "caddyfile"
+    },
+    "snippets": {
+      "signature": "(snippet_name) { ... }",
+      "description": "Reusable configuration blocks defined at the top level using parenthesized names. Inserted with the 'import' directive. Support positional arguments via {args[0]}, {args[1]}, etc.",
+      "type": "concept",
+      "module": "caddyfile"
+    },
+    "named_matchers": {
+      "signature": "@name <matcher> <args...>",
+      "description": "Named matchers define reusable request matching rules. Referenced with @name in directives. Can combine multiple matchers in a block for AND logic. Support path, host, method, header, query, remote_ip, protocol, expression, file, and not.",
+      "type": "concept",
+      "module": "http.matchers"
+    },
+    "environment_variables": {
+      "signature": "{env.VAR_NAME} or {$VAR_NAME}",
+      "description": "Environment variables can be referenced in the Caddyfile using {env.VAR_NAME} or {$VAR_NAME} (with optional default: {$VAR:default}). Evaluated at config load time for {$} syntax, or at request time for {env.} syntax.",
+      "type": "concept",
+      "module": "caddy"
+    },
+    "forward_auth": {
+      "type": "directive",
+      "module": "http.handlers.forward_auth",
+      "signature": "forward_auth [match] <upstreams...> { ... }",
+      "description": "Delegates authentication to an external service. Sends a subrequest and copies configured response headers on success. If the auth service returns non-2xx, its response is returned to the client."
+    },
+    "request_header": {
+      "type": "directive",
+      "module": "http.handlers.request_header",
+      "signature": "request_header [match] [[+|-]field [value|regexp replacement]]",
+      "description": "Manipulates HTTP request headers. Can set (+), delete (-), or replace header values. Supports regex replacement."
+    },
+    "request_body": {
+      "type": "directive",
+      "module": "http.handlers.request_body",
+      "signature": "request_body [match] { max_size <size> }",
+      "description": "Configures request body handling. Can set maximum body size to prevent abuse."
+    },
+    "push": {
+      "type": "directive",
+      "module": "http.handlers.push",
+      "signature": "push <resource...>",
+      "description": "Configures HTTP/2 server push of resources."
+    },
+    "copy_response": {
+      "type": "directive",
+      "module": "http.handlers.copy_response",
+      "signature": "copy_response [status]",
+      "description": "Copies status code and body from a handled request. Commonly used in handle_errors or intercept blocks."
+    },
+    "copy_response_headers": {
+      "type": "directive",
+      "module": "http.handlers.copy_response_headers",
+      "signature": "copy_response_headers { include|exclude <fields...> }",
+      "description": "Copies response headers from a handled request, with optional include/exclude filter."
+    },
+    "intercept": {
+      "type": "directive",
+      "module": "http.handlers.intercept",
+      "signature": "intercept { ... }",
+      "description": "Intercepts responses from upstream handlers to modify or replace them. Supports matchers on response status codes and headers."
+    },
+    "on_demand_tls": {
+      "type": "global_option",
+      "signature": "on_demand_tls { ask <url> [interval <duration>] [burst <n>] }",
+      "description": "Configures on-demand TLS certificate issuance. The 'ask' endpoint is consulted to verify if a certificate should be obtained for a given domain."
+    },
+    "log_level_option": {
+      "type": "global_option",
+      "signature": "log { level <level> }",
+      "description": "Set the default log level globally. Options: DEBUG, INFO, WARN, ERROR, PANIC, FATAL."
+    },
+    "pki_option": {
+      "type": "global_option",
+      "signature": "pki { ca [name] { ... } }",
+      "description": "Configure the built-in PKI for internal certificate management."
+    },
+    "{http.request.tls.*}": {
+      "type": "placeholder",
+      "description": "TLS request placeholders: {http.request.tls.version}, {http.request.tls.cipher_suite}, {http.request.tls.server_name}."
+    },
+    "{http.request.cookie.*}": {
+      "type": "placeholder",
+      "description": "Access cookie values via {http.request.cookie.<name>}."
+    },
+    "{http.reverse_proxy.*}": {
+      "type": "placeholder",
+      "description": "Reverse proxy placeholders: upstream.hostport, upstream.host, upstream.port, upstream.latency, header.*."
+    }
+  }
+}

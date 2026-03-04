@@ -1,0 +1,66 @@
+{
+  "name": "lua",
+  "description": "Lua — lightweight, embeddable scripting language",
+  "category": "language",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [
+    { "name": "-e", "description": "Execute a Lua statement", "type": "string" },
+    { "name": "-l", "description": "Require library before executing script", "type": "string" },
+    { "name": "-i", "description": "Enter interactive mode after executing script" },
+    { "name": "-v", "description": "Show version information" },
+    { "name": "-E", "description": "Ignore environment variables" },
+    { "name": "-W", "description": "Turn warnings on" },
+    { "name": "--", "description": "Stop handling options" }
+  ],
+  "examples": [
+    "lua",
+    "lua script.lua",
+    "lua -e \"print('hello')\"",
+    "lua -i script.lua",
+    "lua -l mylib script.lua",
+    "lua -v",
+    "lua -e \"for i=1,10 do print(i) end\"",
+    "lua -e \"dofile('script.lua')\"",
+    "lua -W script.lua",
+    "lua -E script.lua"
+  ],
+  "relatedCommands": ["luac", "luajit", "python", "node", "ruby"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Lua interpreter version",
+        "command": "lua -v 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "lua"
+      },
+      {
+        "name": "lua_path",
+        "description": "Lua module search path",
+        "command": "lua -e \"print(package.path)\" 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "lua"
+      },
+      {
+        "name": "lua_cpath",
+        "description": "Lua C module search path",
+        "command": "lua -e \"print(package.cpath)\" 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "lua"
+      },
+      {
+        "name": "luarocks_list",
+        "description": "Installed LuaRocks packages",
+        "command": "luarocks list --porcelain 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "luarocks"
+      }
+    ]
+  }
+}

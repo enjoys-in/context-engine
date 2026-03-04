@@ -1,0 +1,458 @@
+{
+  "language": "caddy",
+  "hovers": {
+    "reverse_proxy": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    reverse_proxy localhost:3000 {\n        header_up Host {upstream_hostport}\n        header_up X-Real-IP {remote_host}\n        lb_policy round_robin\n        health_uri /health\n        health_interval 10s\n    }\n}\n```\n**reverse_proxy** forwards requests to one or more backend servers. Supports load balancing (round_robin, least_conn, ip_hash, etc.), active/passive health checks, header manipulation, retries, and circuit breakers."
+        }
+      ]
+    },
+    "file_server": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    root * /var/www/html\n    encode gzip zstd\n    file_server browse {\n        hide .git .env\n    }\n}\n```\n**file_server** serves static files from the site root directory. Use `browse` to enable directory listing. Use `hide` to prevent serving sensitive files. Automatically handles content types and caching headers."
+        }
+      ]
+    },
+    "respond": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    respond /health \"OK\" 200\n    respond /robots.txt \"User-agent: *\\nDisallow: /\" 200\n}\n```\n**respond** returns a static HTTP response. Commonly used for health checks, simple responses, and blocking paths. Accepts status codes and response bodies. Can set custom headers."
+        }
+      ]
+    },
+    "rewrite": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    rewrite /docs /documentation\n    rewrite /blog/* /posts{uri}\n}\n```\n**rewrite** internally changes the request URI without the client knowing. Unlike `redir`, no HTTP redirect is sent. The client sees the original URL. Essential for clean URL routing."
+        }
+      ]
+    },
+    "redir": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    redir /old-blog /new-blog permanent\n    redir /go/{path} https://other.com/{path} temporary\n}\n```\n**redir** sends an HTTP redirect response. `permanent` = 301, `temporary` = 302. Supports placeholders like `{host}`, `{uri}`, `{path}` for dynamic redirects."
+        }
+      ]
+    },
+    "root": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    root * /var/www/html\n    file_server\n}\n```\n**root** sets the root directory for all file-related handlers (file_server, try_files, etc.). The `*` matcher means it applies to all requests. Path can use placeholders."
+        }
+      ]
+    },
+    "try_files": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    root * /var/www/spa\n    try_files {path} {path}/ /index.html\n    file_server\n}\n```\n**try_files** rewrites the URI to the first matching file on disk. Critical for SPAs (React, Vue, Angular) where client-side routing needs all paths to serve index.html. Also used in PHP setups to fall back to index.php."
+        }
+      ]
+    },
+    "encode": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    encode gzip zstd {\n        minimum_length 256\n    }\n    file_server\n}\n```\n**encode** enables response compression. Supports `gzip` and `zstd`. Automatically negotiates encoding via Accept-Encoding. Reduces bandwidth usage significantly for text-based content."
+        }
+      ]
+    },
+    "header": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    header {\n        X-Frame-Options DENY\n        X-Content-Type-Options nosniff\n        Referrer-Policy strict-origin-when-cross-origin\n        -Server\n        Strict-Transport-Security \"max-age=31536000; includeSubDomains\"\n    }\n}\n```\n**header** manipulates response headers. `+Field` adds, `-Field` removes, `?Field` sets only if not already present. The `defer` subdirective applies changes after other handlers write their headers."
+        }
+      ]
+    },
+    "basicauth": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    basicauth /admin/* {\n        admin $2a$14$Zkx19XLiW6VYouLHR5NmfOFU0z2GTNmpkT/5qqR7hx4IjWJPDhjvG\n    }\n}\n```\n**basicauth** protects routes with HTTP Basic Authentication. Passwords must be bcrypt-hashed — generate them with `caddy hash-password`. Never store plaintext passwords in the Caddyfile."
+        }
+      ]
+    },
+    "log": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    log {\n        output file /var/log/caddy/example.log {\n            roll_size 100mb\n            roll_keep 5\n            roll_keep_for 720h\n        }\n        format json\n        level INFO\n    }\n}\n```\n**log** enables structured access logging. Supports file output with log rotation, JSON and console formats, log level filtering, and sampling. Each site can have its own log configuration."
+        }
+      ]
+    },
+    "tls": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    tls admin@example.com {\n        protocols tls1.2 tls1.3\n    }\n}\n\n*.example.com {\n    tls {\n        dns cloudflare {env.CF_API_TOKEN}\n    }\n}\n```\n**tls** configures HTTPS settings. Caddy automatically obtains and renews certificates via ACME (Let's Encrypt). Use `tls internal` for self-signed, or configure DNS challenges for wildcards. Supports client certificate authentication."
+        }
+      ]
+    },
+    "handle": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    handle /api/* {\n        reverse_proxy localhost:8080\n    }\n    handle /static/* {\n        file_server\n    }\n    handle {\n        reverse_proxy localhost:3000\n    }\n}\n```\n**handle** creates mutually exclusive handler groups — only the first matching block executes. Similar to nginx's `location` blocks. The last `handle` without a matcher acts as the default/fallback."
+        }
+      ]
+    },
+    "handle_path": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    handle_path /api/* {\n        reverse_proxy localhost:8080\n    }\n}\n```\n**handle_path** is like `handle` but strips the matched path prefix before executing. A request to `/api/users` becomes `/users` for the backend. Essential when backends don't expect the proxy prefix."
+        }
+      ]
+    },
+    "route": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    route {\n        basicauth /admin/* {\n            admin $2a$14$hash...\n        }\n        reverse_proxy /admin/* localhost:8080\n    }\n}\n```\n**route** preserves the literal order of directives inside it. Normally Caddy reorders directives for safety, but inside `route`, order is exactly as written. Use when directive ordering matters."
+        }
+      ]
+    },
+    "import": {
+      "contents": [
+        {
+          "value": "```caddyfile\n(security_headers) {\n    header {\n        X-Frame-Options DENY\n        X-Content-Type-Options nosniff\n        -Server\n    }\n}\n\nexample.com {\n    import security_headers\n    reverse_proxy localhost:3000\n}\n```\n**import** includes a named snippet or external file. Snippets are defined with `(name) { ... }` at the top level. Supports glob imports like `import /etc/caddy/sites/*`. Snippets accept arguments via `{args[0]}`, `{args[1]}`, etc."
+        }
+      ]
+    },
+    "templates": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    root * /var/www/html\n    templates\n    file_server\n}\n```\n**templates** evaluates Go template actions in the response body. Templates have access to request data, environment variables, file includes, markdown rendering, and more. Files are processed as templates before being served."
+        }
+      ]
+    },
+    "php_fastcgi": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    root * /var/www/wordpress\n    php_fastcgi unix//run/php/php8.2-fpm.sock {\n        split .php\n    }\n    file_server\n}\n```\n**php_fastcgi** is a shortcut for a full PHP-FPM reverse proxy configuration. Automatically sets up try_files, URI rewriting, and FastCGI transport. Supports Unix sockets and TCP addresses."
+        }
+      ]
+    },
+    "handle_errors": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    handle_errors {\n        @404 expression {err.status_code} == 404\n        handle @404 {\n            rewrite * /404.html\n            file_server\n        }\n        respond \"{err.status_code} {err.status_text}\"\n    }\n}\n```\n**handle_errors** defines custom error page handling. Uses `{err.status_code}` and `{err.status_text}` placeholders. Can serve custom HTML pages, return JSON errors for APIs, or redirect on errors."
+        }
+      ]
+    },
+    "abort": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    @blocked remote_ip 10.0.0.0/8\n    abort @blocked\n}\n```\n**abort** immediately closes the connection without sending any response. Useful for blocking scanners, bots, or unwanted IP ranges. The client sees a connection reset."
+        }
+      ]
+    },
+    "error": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    @admin path /admin/*\n    error @admin \"Forbidden\" 403\n}\n```\n**error** triggers an HTTP error with a custom message and status code. Can be caught by `handle_errors` for custom error pages. Useful for access control and conditional error responses."
+        }
+      ]
+    },
+    "uri": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    uri strip_prefix /api\n    uri strip_suffix .html\n    uri replace /old-path /new-path\n    uri path_regexp /user/(\\d+) /profile?id=$1\n}\n```\n**uri** manipulates the request URI internally. `strip_prefix` and `strip_suffix` remove path components. `replace` does string substitution. `path_regexp` applies regex-based rewriting."
+        }
+      ]
+    },
+    "map": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    map {host} {backend} {\n        app1.example.com localhost:3001\n        app2.example.com localhost:3002\n        default localhost:3000\n    }\n    reverse_proxy {backend}\n}\n```\n**map** creates a lookup table that maps input values to output variables. Supports exact matching, regex patterns, and a `default` fallback. Variables are evaluated lazily and can be used in any subsequent directive."
+        }
+      ]
+    },
+    "metrics": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    metrics /metrics\n}\n```\n**metrics** exposes Prometheus-compatible metrics. Includes request count, duration, response size, and more. Scrape the endpoint with Prometheus or compatible monitoring tools."
+        }
+      ]
+    },
+    "tracing": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    tracing {\n        span my-app\n    }\n    reverse_proxy localhost:3000\n}\n```\n**tracing** enables OpenTelemetry distributed tracing. Adds trace context headers to requests, creating spans for each request. Configure an OTLP exporter via environment variables (OTEL_EXPORTER_OTLP_ENDPOINT)."
+        }
+      ]
+    },
+    "bind": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    bind 127.0.0.1\n}\n\n:8080 {\n    bind 0.0.0.0\n}\n```\n**bind** restricts the listener to specific network interface addresses. Useful for binding to localhost only, or to specific interfaces on multi-homed servers."
+        }
+      ]
+    },
+    "acme_server": {
+      "contents": [
+        {
+          "value": "```caddyfile\npki.internal {\n    acme_server\n}\n```\n**acme_server** runs a built-in ACME Certificate Authority. Internal clients can request certificates from Caddy. Useful for internal PKI, development environments, and zero-trust architectures."
+        }
+      ]
+    },
+    "vars": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    vars /api/* {\n        backend_type api\n    }\n    vars {\n        backend_type web\n    }\n}\n```\n**vars** sets custom variables in the request context. Variables are accessible via `{vars.key}` placeholders in subsequent directives. Useful for conditional logic and configuration reuse."
+        }
+      ]
+    },
+    "forward_auth": "## forward_auth\n\n```caddyfile\nforward_auth [match] <upstreams...> {\n    uri             <path>\n    copy_headers    <header_names...>\n    header_up       <header> <value>\n    header_down     <header> <value>\n}\n```\n\nDelegates authentication to an external service. Sends a subrequest to the specified upstream and:\n- On **2xx response**: copies configured headers to the original request and continues\n- On **non-2xx**: returns the auth service's response to the client\n\n**Example — Authelia/Authentik:**\n```caddyfile\nforward_auth localhost:9091 {\n    uri /api/verify?rd=https://auth.example.com\n    copy_headers Remote-User Remote-Groups Remote-Email\n}\n```\n\n**Example — simple token check:**\n```caddyfile\nforward_auth localhost:5000 {\n    uri /auth/check\n    copy_headers X-User-Id X-User-Role\n    header_up X-Original-URI {uri}\n}\n```",
+    "request_header": "## request_header\n\n```caddyfile\nrequest_header [match] [[+|-]field [value|regexp replacement]]\n```\n\nManipulate incoming request headers before they reach handlers.\n\n```caddyfile\n# Set (overwrite) a header\nrequest_header X-Real-IP {remote_host}\n\n# Add (+) a header value\nrequest_header +X-Forwarded-For {remote_host}\n\n# Delete (-) a header\nrequest_header -Proxy\nrequest_header -X-Powered-By\n\n# Regex replace\nrequest_header Authorization \"Bearer (.*)\" \"Token $1\"\n```",
+    "request_body": "## request_body\n\n```caddyfile\nrequest_body [match] {\n    max_size <size>\n}\n```\n\nConfigures request body handling. Useful for limiting upload sizes.\n\n```caddyfile\n# Limit upload size to 100MB\nrequest_body {\n    max_size 100MB\n}\n\n# Limit only for specific paths\n@uploads path /upload/*\nrequest_body @uploads {\n    max_size 50MB\n}\n```",
+    "global_options": "## Global Options Block\n\n```caddyfile\n{\n    # TLS & ACME\n    email     admin@example.com\n    acme_ca   https://acme-v02.api.letsencrypt.org/directory\n    acme_dns  cloudflare {env.CF_API_TOKEN}\n    local_certs\n    auto_https off|disable_redirects|ignore_loaded_certs\n    on_demand_tls { ask http://localhost/check }\n\n    # Server\n    admin      off|localhost:2019\n    grace_period 10s\n    servers { protocols h1 h2 h3 }\n\n    # Logging\n    log { level INFO }\n\n    # Certificate management\n    pki { ca local { ... } }\n    skip_install_trust\n    ocsp_stapling off\n\n    # Ordering\n    order reverse_proxy before respond\n\n    # Storage\n    storage file_system /data/caddy\n}\n```\n\n**Note:** The global options block must be the **first** item in the Caddyfile and has no key (just `{ }`).",
+    "matchers": "## Named Matchers\n\nMatchers filter which requests a directive applies to.\n\n```caddyfile\n# Define named matcher\n@api {\n    path /api/*\n    method POST PUT DELETE\n}\n\n# Use with directive\nreverse_proxy @api localhost:8080\n\n# Inline (single matcher)\nreverse_proxy /api/* localhost:8080\n```\n\n**Available matchers:**\n| Matcher | Description |\n|---------|-------------|\n| `path` | URI path pattern |\n| `path_regexp` | Regex path matching |\n| `method` | HTTP method |\n| `header` | Request header presence/value |\n| `host` | Hostname |\n| `remote_ip` | Client IP |\n| `protocol` | HTTP/HTTPS |\n| `query` | Query string parameters |\n| `file` | File existence |\n| `expression` | CEL expression |\n| `not` | Negate a matcher |\n\n**Combining matchers** (AND logic within one matcher, OR with multiple `@name`):\n```caddyfile\n@secure {\n    protocol https\n    path /admin/*\n}\n```",
+    "placeholders": "## Placeholders\n\nCaddy provides request/response placeholders for dynamic configuration.\n\n**Common placeholders:**\n| Placeholder | Description |\n|-------------|-------------|\n| `{host}` | Request hostname |\n| `{method}` | HTTP method |\n| `{path}` | URI path |\n| `{query}` | Query string |\n| `{uri}` | Full URI (path + query) |\n| `{remote_host}` | Client IP address |\n| `{upstream_hostport}` | Selected upstream address |\n| `{http.request.header.*}` | Request header value |\n| `{http.response.header.*}` | Response header value |\n| `{http.request.cookie.*}` | Cookie value |\n| `{http.request.tls.version}` | TLS version |\n| `{http.reverse_proxy.upstream.latency}` | Upstream response time |\n| `{env.*}` | Environment variable |\n| `{err.status_code}` | Error status code |\n| `{err.status_text}` | Error status text |\n\n**Shorthand ↔ Full form:**\n- `{host}` = `{http.request.host}`\n- `{path}` = `{http.request.uri.path}`\n- `{method}` = `{http.request.method}`",
+    "intercept": "## intercept\n\n```caddyfile\nintercept {\n    @<name> status <codes...>\n    handle_response [@name] {\n        # replacement response\n    }\n}\n```\n\nIntercept and modify responses from upstream handlers.\n\n```caddyfile\nreverse_proxy localhost:8080 {\n    @error status 500 502 503\n    handle_response @error {\n        respond \"Service temporarily unavailable\" 503\n    }\n}\n```",
+    "on_demand_tls": "## On-Demand TLS\n\nObtain certificates at TLS handshake time instead of in advance.\n\n**In global options:**\n```caddyfile\n{\n    on_demand_tls {\n        ask      http://localhost:5555/check  # verification endpoint\n        interval 2m   # min time between certificate operations\n        burst    5    # max simultaneous certificate operations\n    }\n}\n```\n\n**In site block:**\n```caddyfile\nhttps:// {\n    tls {\n        on_demand\n    }\n    reverse_proxy localhost:8080\n}\n```\n\n**How it works:**\n1. Client connects with SNI hostname\n2. Caddy asks the `ask` endpoint if allowed\n3. If endpoint returns 200, certificate is obtained\n4. Any other status: TLS handshake fails\n\n**Use case:** Multi-tenant SaaS where domains are dynamic.",
+    "snippets": "## Snippets\n\n```caddyfile\n(snippet_name) {\n    # reusable config\n}\n```\n\nDefine reusable blocks of configuration.\n\n```caddyfile\n# Define snippet\n(security_headers) {\n    header {\n        X-Content-Type-Options nosniff\n        X-Frame-Options DENY\n        Referrer-Policy strict-origin-when-cross-origin\n        -Server\n    }\n}\n\n(reverse_proxy_defaults) {\n    header_up X-Real-IP {remote_host}\n    header_up X-Forwarded-Proto {scheme}\n}\n\n# Use snippets\nexample.com {\n    import security_headers\n    reverse_proxy localhost:3000 {\n        import reverse_proxy_defaults\n    }\n}\n```\n\n**Import from file:**\n```caddyfile\nimport /etc/caddy/snippets/*.caddy\n```",
+    "environment_variables": "## Environment Variables\n\nUse environment variables anywhere in the Caddyfile.\n\n```caddyfile\n{$DOMAIN:localhost} {\n    reverse_proxy {$BACKEND:localhost:3000}\n    tls {$TLS_EMAIL}\n}\n```\n\n**Syntax:**\n- `{$VAR}` — fails if not set\n- `{$VAR:default}` — uses default if not set\n- `{env.VAR}` — placeholder form (empty string if not set)\n\n**Common pattern:**\n```caddyfile\n{\n    email {$ACME_EMAIL}\n    acme_dns cloudflare {$CF_API_TOKEN}\n}\n\n{$DOMAIN} {\n    reverse_proxy {$UPSTREAM_HOST}:{$UPSTREAM_PORT:8080}\n}\n```",
+    "site_address": "## Site Addresses\n\nCaddy automatically manages HTTPS for sites.\n\n```caddyfile\n# Automatic HTTPS\nexample.com\n\n# With explicit port\nexample.com:8443\n\n# Multiple addresses\nexample.com, www.example.com\n\n# HTTP only\nhttp://example.com\n\n# All interfaces on port\n:8080\n\n# Wildcard (needs DNS challenge)\n*.example.com\n\n# Localhost (uses internal CA)\nlocalhost\n\n# Network address\n192.168.1.1:443\n```\n\n**Automatic HTTPS behavior:**\n- Public domains → Let's Encrypt / ZeroSSL\n- `localhost` / IP → Internal Caddy CA\n- `http://` prefix → no HTTPS\n- `*.domain` → requires DNS challenge (`acme_dns`)\n- Port `:80` → no HTTPS",
+    "directive_ordering": "## Directive Ordering\n\nCaddy processes directives in a **predefined order**, not file order.\n\n**Default order (simplified):**\n1. `tracing`\n2. `map`, `vars`\n3. `root`\n4. `header`, `request_header`\n5. `redir`\n6. `rewrite`, `uri`\n7. `basicauth`, `forward_auth`\n8. `request_body`\n9. `encode`\n10. `templates`\n11. `reverse_proxy`\n12. `respond`\n13. `abort`\n14. `file_server`\n\n**Override with `route`** (uses file order):\n```caddyfile\nroute {\n    rewrite /old /new\n    reverse_proxy localhost:3000\n}\n```\n\n**Override globally:**\n```caddyfile\n{\n    order forward_auth before basicauth\n    order request_header before reverse_proxy\n}\n```",
+    "acme_ca_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    acme_ca https://acme-v02.api.letsencrypt.org/directory\n    # Staging: https://acme-staging-v02.api.letsencrypt.org/directory\n}\n```\n**acme_ca** global option sets the ACME Certificate Authority URL. Default is Let's Encrypt production. Use the staging URL during testing to avoid rate limits."
+        }
+      ]
+    },
+    "acme_dns_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    acme_dns cloudflare {env.CF_API_TOKEN}\n}\n```\n**acme_dns** global option configures DNS challenge provider for ACME certificate issuance. Required for wildcard certificates and when HTTP/TLS-ALPN challenges aren't possible. Provider must be compiled into Caddy."
+        }
+      ]
+    },
+    "admin_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    admin off                     # disable admin API\n    admin localhost:2019          # default\n    admin unix//run/caddy.sock    # Unix socket\n}\n```\n**admin** global option configures the admin API endpoint. Default: `localhost:2019`. Use `off` to disable. The admin API allows runtime config changes, certificate management, and metrics via REST."
+        }
+      ]
+    },
+    "auto_https_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    auto_https off                # disable all auto HTTPS\n    auto_https disable_redirects  # HTTPS but no HTTP→HTTPS redirect\n    auto_https disable_certs      # redirects but no certs\n    auto_https ignore_loaded_certs\n}\n```\n**auto_https** global option controls automatic HTTPS behavior. By default, Caddy obtains certificates and redirects HTTP to HTTPS. Use this to customize or disable parts of that automation."
+        }
+      ]
+    },
+    "email_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    email admin@example.com\n}\n```\n**email** global option sets the email address used for ACME account registration with the CA (e.g., Let's Encrypt). Used for certificate expiry notifications and account recovery."
+        }
+      ]
+    },
+    "grace_period_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    grace_period 30s\n}\n```\n**grace_period** global option sets how long Caddy waits for active connections to finish during shutdown. Connections are given this much time to complete before being forcibly closed. Default: varies by Caddy version."
+        }
+      ]
+    },
+    "local_certs_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    local_certs\n}\n```\n**local_certs** global option tells Caddy to use locally-trusted certificates (via its internal CA) instead of publicly-trusted ones from ACME. Useful for development and internal services. Certificates are signed by Caddy's root CA."
+        }
+      ]
+    },
+    "log_level_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    log default {\n        level DEBUG   # DEBUG, INFO, WARN, ERROR, PANIC, FATAL\n    }\n}\n```\n**log** global option configures Caddy's default logger. Set the level to control verbosity. `DEBUG` shows all requests; `ERROR` only shows problems. Supports output to file, stderr, or structured JSON."
+        }
+      ]
+    },
+    "order_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    order rate_limit before basicauth\n    order my_plugin after encode\n}\n```\n**order** global option overrides the default execution order of HTTP handler directives. Each directive has a standard position; use `order` to insert custom or third-party directives at specific positions in the middleware chain."
+        }
+      ]
+    },
+    "pki_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    pki {\n        ca local {\n            name \"My CA\"\n            root_cn \"My Root\"\n        }\n    }\n}\n```\n**pki** global option configures Caddy's built-in PKI (certificate authority). Customize the internal CA used for local certificates. CA root and intermediate certs are automatically installed in the system trust store."
+        }
+      ]
+    },
+    "servers_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    servers {\n        protocols h1 h2 h3\n        timeouts {\n            read_body 30s\n            write 60s\n            idle 120s\n        }\n        max_header_size 16384\n    }\n}\n```\n**servers** global option configures server-level settings: supported protocols (H1/H2/H3), timeouts, header limits, and listener wrappers. Applies to all sites unless overridden per-server."
+        }
+      ]
+    },
+    "skip_install_trust_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    skip_install_trust\n}\n```\n**skip_install_trust** global option prevents Caddy from installing its root CA certificate into the system trust store. Use in environments where you don't want Caddy modifying the system trust (CI, containers, restricted permissions)."
+        }
+      ]
+    },
+    "storage_option": {
+      "contents": [
+        {
+          "value": "```caddyfile\n{\n    storage file_system /var/lib/caddy\n    storage consul {\n        address 127.0.0.1:8500\n        prefix caddy\n    }\n}\n```\n**storage** global option configures where Caddy stores TLS certificates, OCSP staples, and other assets. Default: filesystem (`~/.local/share/caddy`). Can use distributed backends (Consul, Redis, S3) for clustering."
+        }
+      ]
+    },
+    "header_matcher": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@websocket header Connection *Upgrade*\n@websocket header Upgrade websocket\n\n@api header Content-Type application/json\n@no_auth not header Authorization *\n\nreverse_proxy @websocket localhost:8080\n```\n**header** matcher matches requests based on header values. Supports exact match, prefix (`prefix*`), suffix (`*suffix`), and wildcard (`*substring*`). Prefix with `!` to negate."
+        }
+      ]
+    },
+    "host": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@example host example.com www.example.com\nhandle @example {\n    reverse_proxy localhost:8080\n}\n```\n**host** matcher matches requests by the `Host` header. Useful inside multi-site blocks or when using `handle` to route by domain. Multiple hostnames can be listed."
+        }
+      ]
+    },
+    "method": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@post method POST\n@readonly method GET HEAD OPTIONS\n\nhandle @post {\n    reverse_proxy localhost:8080\n}\n```\n**method** matcher matches requests by HTTP method (GET, POST, PUT, DELETE, etc.). Multiple methods can be listed."
+        }
+      ]
+    },
+    "path": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@api path /api/*\n@static path *.css *.js *.png *.jpg\n@exact path /health\n\nhandle @api {\n    reverse_proxy localhost:3000\n}\nhandle @static {\n    file_server\n}\n```\n**path** matcher matches the request URI path. Supports wildcards (`*`), exact paths, and file extension patterns. One of the most commonly used matchers."
+        }
+      ]
+    },
+    "query": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@debug query debug=true\n@format query format=json\n\nhandle @debug {\n    reverse_proxy localhost:9229\n}\n```\n**query** matcher matches requests based on query string parameters. Format: `key=value`. Can match multiple params."
+        }
+      ]
+    },
+    "remote_ip": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@internal remote_ip 192.168.0.0/16 10.0.0.0/8\n@blocked remote_ip 1.2.3.4\n\nhandle @internal {\n    reverse_proxy localhost:8080\n}\nrespond @blocked 403\n```\n**remote_ip** matcher matches the client's IP address. Supports CIDR notation for ranges. Useful for IP-based access control and routing."
+        }
+      ]
+    },
+    "expression": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@complex expression `{header.Content-Type}.contains(\"json\") && {path}.startsWith(\"/api\")`\n@weekend expression `{time.now.Weekday} >= 6`\n@mobile expression `{header.User-Agent}.contains(\"Mobile\")`\n\nhandle @complex {\n    reverse_proxy localhost:8080\n}\n```\n**expression** matcher uses CEL (Common Expression Language) for complex matching logic. Access request fields via `{placeholders}`. Supports string methods, logical operators, and Caddy-specific functions."
+        }
+      ]
+    },
+    "file": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@exists file {\n    root /var/www\n    try_files {path} {path}/index.html\n}\nhandle @exists {\n    file_server\n}\n```\n**file** matcher checks if a file exists on disk. Used for SPA fallback patterns (try files, then fall back to index.html). Supports `try_files` to check multiple paths in order."
+        }
+      ]
+    },
+    "not": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@not_api not path /api/*\n@not_static not file\n\n@complex {\n    not {\n        path /health\n        remote_ip 10.0.0.0/8\n    }\n}\n```\n**not** matcher negates other matchers. Can wrap any matcher type. Useful for \"everything except\" patterns and complex exclusion rules."
+        }
+      ]
+    },
+    "named_matchers": {
+      "contents": [
+        {
+          "value": "```caddyfile\n# Define named matchers with @name\n@api {\n    path /api/*\n    method POST PUT DELETE\n}\n@static {\n    path *.css *.js *.png\n    not path /api/*\n}\n# Use with directives:\nreverse_proxy @api localhost:3000\nfile_server @static\nheader @api Cache-Control no-store\n```\n**Named matchers** (defined with `@name`) create reusable request matching rules. Combine multiple matchers (path, method, header, etc.) with AND logic. Use `@name` with any directive to conditionally apply it. Multiple matchers in a block must ALL match."
+        }
+      ]
+    },
+    "protocol": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@https protocol https\n@grpc protocol grpc\n\nhandle @grpc {\n    reverse_proxy h2c://localhost:50051\n}\n```\n**protocol** matcher matches the request protocol: `http`, `https`, `grpc`, `h2c`, etc. Useful for protocol-specific handling."
+        }
+      ]
+    },
+    "copy_response": {
+      "contents": [
+        {
+          "value": "```caddyfile\nreverse_proxy localhost:8080 {\n    @error status 500 502 503\n    handle_response @error {\n        copy_response\n        copy_response_headers\n    }\n}\n```\n**copy_response** copies the response from a `handle_response` block (used with `reverse_proxy`). Forwards the upstream response status and body to the client. Used for intercepting/modifying error responses."
+        }
+      ]
+    },
+    "copy_response_headers": {
+      "contents": [
+        {
+          "value": "```caddyfile\nreverse_proxy localhost:8080 {\n    @error status 500 502 503\n    handle_response @error {\n        copy_response_headers {\n            include X-Request-Id\n            exclude Set-Cookie\n        }\n        respond \"Service unavailable\" 503\n    }\n}\n```\n**copy_response_headers** selectively copies response headers from the upstream in a `handle_response` block. Use `include` or `exclude` to filter headers."
+        }
+      ]
+    },
+    "push": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    push /resources {\n        headers {\n            Link \"</style.css>; rel=preload; as=style, </app.js>; rel=preload; as=script\"\n        }\n    }\n    file_server\n}\n```\n**push** enables HTTP/2 Server Push for specified resources. The server proactively sends linked resources before the browser requests them. Reduces latency for critical assets. Requires HTTP/2."
+        }
+      ]
+    },
+    "{env.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nexample.com {\n    reverse_proxy {env.BACKEND_HOST}:{env.BACKEND_PORT}\n    tls {env.TLS_EMAIL}\n    basicauth {\n        admin {env.ADMIN_HASH}\n    }\n}\n```\n**{env.*}** placeholder accesses environment variables. Use for secrets, configuration that varies between environments, and anything that shouldn't be hardcoded. Evaluated at config load time."
+        }
+      ]
+    },
+    "{err.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nhandle_errors {\n    respond \"{err.status_code}: {err.status_text}\" {err.status_code}\n    # Available: {err.status_code}, {err.status_text}, {err.message}, {err.trace}, {err.id}\n}\n```\n**{err.*}** placeholders are available inside `handle_errors` blocks. Access error details: `status_code` (HTTP code), `status_text` (status phrase), `message` (error message), `trace` (stack trace), `id` (error ID)."
+        }
+      ]
+    },
+    "{http.request.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nlog {\n    output file access.log\n    format json\n}\nheader X-Request-Method {http.request.method}\nheader X-Request-Host {http.request.host}\n# Also: {http.request.uri}, {http.request.uri.path},\n#   {http.request.uri.query}, {http.request.remote}, etc.\n```\n**{http.request.*}** placeholders access request properties: `method`, `host`, `uri`, `uri.path`, `uri.query`, `remote` (client IP), `proto` (HTTP version), `port`, `scheme`. Available in all site configurations."
+        }
+      ]
+    },
+    "{http.request.cookie.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\n@has_session header Cookie *session_id*\nhandle @has_session {\n    reverse_proxy localhost:8080 {\n        header_up X-Session {http.request.cookie.session_id}\n    }\n}\n```\n**{http.request.cookie.*}** extracts individual cookie values from the request. Replace `*` with the cookie name. Useful for cookie-based routing, session forwarding, and authentication checks."
+        }
+      ]
+    },
+    "{http.request.tls.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nheader X-TLS-Version {http.request.tls.version}\nheader X-TLS-Cipher {http.request.tls.cipher_suite}\n# Also: {http.request.tls.server_name} (SNI)\n#   {http.request.tls.client.fingerprint}\n#   {http.request.tls.client.subject}\n```\n**{http.request.tls.*}** placeholders access TLS connection info: `version` (TLS version), `cipher_suite`, `server_name` (SNI), `resumed` (session resumed), and client certificate fields for mTLS."
+        }
+      ]
+    },
+    "{http.response.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nreverse_proxy localhost:8080 {\n    handle_response {\n        header X-Upstream-Status {http.response.status}\n        # {http.response.header.*} accesses response headers\n    }\n}\n```\n**{http.response.*}** placeholders access response properties: `status` (status code) and `header.*` (response headers). Primarily used in `handle_response` blocks and logging templates."
+        }
+      ]
+    },
+    "{http.reverse_proxy.*}": {
+      "contents": [
+        {
+          "value": "```caddyfile\nreverse_proxy localhost:8080 localhost:8081 {\n    header_up X-Upstream {http.reverse_proxy.upstream.address}\n    handle_response {\n        header X-Upstream-Duration {http.reverse_proxy.upstream.duration}\n        header X-Upstream-Status {http.reverse_proxy.upstream.status}\n    }\n}\n```\n**{http.reverse_proxy.*}** placeholders provide reverse proxy details: `upstream.address` (selected backend), `upstream.duration` (response time), `upstream.status` (upstream status code), `upstream.max_requests`. Available in proxy handler and response handling."
+        }
+      ]
+    },
+    "ocsp_stapling_option": {
+      "contents": [
+        {
+          "value": "\n**ocsp_stapling** global option controls OCSP stapling behavior. By default, Caddy automatically staples OCSP responses to TLS handshakes for improved client performance and privacy. Set to `off` to disable."
+        }
+      ]
+    }
+  }
+}

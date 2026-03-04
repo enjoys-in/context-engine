@@ -1,0 +1,1589 @@
+{
+  "language": "caddy",
+  "completions": [
+    {
+      "label": "site block",
+      "kind": 15,
+      "detail": "Basic site block",
+      "documentation": {
+        "value": "A Caddyfile site block with an address.\n\n```caddyfile\nexample.com {\n    # directives\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_site_block"
+    },
+    {
+      "label": "site block with port",
+      "kind": 15,
+      "detail": "Site block with custom port",
+      "documentation": {
+        "value": "A site block listening on a specific port.\n\n```caddyfile\n:8080 {\n    respond \"Hello\"\n}\n```"
+      },
+      "insertText": ":${1:8080} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_site_block_with_port"
+    },
+    {
+      "label": "wildcard site",
+      "kind": 15,
+      "detail": "Wildcard site block",
+      "documentation": {
+        "value": "Match all subdomains with a wildcard.\n\n```caddyfile\n*.example.com {\n    tls {\n        dns cloudflare {env.CF_API_TOKEN}\n    }\n}\n```"
+      },
+      "insertText": "*.${1:example.com} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_wildcard_site"
+    },
+    {
+      "label": "site with multiple addresses",
+      "kind": 15,
+      "detail": "Multi-address site block",
+      "documentation": {
+        "value": "Serve multiple domains from one block.\n\n```caddyfile\nexample.com www.example.com {\n    respond \"Hello\"\n}\n```"
+      },
+      "insertText": "${1:example.com} ${2:www.example.com} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_site_with_multiple_addresses"
+    },
+    {
+      "label": "https site",
+      "kind": 15,
+      "detail": "HTTPS site block",
+      "documentation": {
+        "value": "Explicit HTTPS site block.\n\n```caddyfile\nhttps://example.com {\n    respond \"Secure!\"\n}\n```"
+      },
+      "insertText": "https://${1:example.com} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_https_site"
+    },
+    {
+      "label": "http site",
+      "kind": 15,
+      "detail": "HTTP-only site block",
+      "documentation": {
+        "value": "Serve over plain HTTP (no automatic HTTPS).\n\n```caddyfile\nhttp://example.com {\n    respond \"Not encrypted\"\n}\n```"
+      },
+      "insertText": "http://${1:example.com} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_http_site"
+    },
+    {
+      "label": "global options",
+      "kind": 15,
+      "detail": "Global options block",
+      "documentation": {
+        "value": "Global options appear at the top of the Caddyfile before any site blocks.\n\n```caddyfile\n{\n    email admin@example.com\n    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory\n}\n```"
+      },
+      "insertText": "{\n\t${1:email ${2:admin@example.com}}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_global_options"
+    },
+    {
+      "label": "reverse_proxy",
+      "kind": 14,
+      "detail": "Reverse proxy directive",
+      "documentation": {
+        "value": "Proxy requests to one or more backend servers.\n\n```caddyfile\nreverse_proxy localhost:3000\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:3000}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy"
+    },
+    {
+      "label": "reverse_proxy with headers",
+      "kind": 15,
+      "detail": "Reverse proxy with header manipulation",
+      "documentation": {
+        "value": "Proxy with custom header modifications.\n\n```caddyfile\nreverse_proxy localhost:3000 {\n    header_up Host {upstream_hostport}\n    header_up X-Real-IP {remote_host}\n}\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:3000} {\n\theader_up ${2:Host} ${3:{upstream_hostport\\}}\n\theader_up ${4:X-Real-IP} ${5:{remote_host\\}}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy_with_headers"
+    },
+    {
+      "label": "reverse_proxy with load balancing",
+      "kind": 15,
+      "detail": "Reverse proxy with load balancing",
+      "documentation": {
+        "value": "Load balance across multiple backends.\n\n```caddyfile\nreverse_proxy localhost:3001 localhost:3002 localhost:3003 {\n    lb_policy round_robin\n}\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:3001} ${2:localhost:3002} {\n\tlb_policy ${3|round_robin,least_conn,first,random,ip_hash,uri_hash,cookie,header|}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy_with_load_balancing"
+    },
+    {
+      "label": "reverse_proxy with health checks",
+      "kind": 15,
+      "detail": "Reverse proxy with health checks",
+      "documentation": {
+        "value": "Configure active health checking for backends.\n\n```caddyfile\nreverse_proxy localhost:3001 localhost:3002 {\n    health_uri /health\n    health_interval 10s\n    health_timeout 5s\n}\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:3001} ${2:localhost:3002} {\n\thealth_uri ${3:/health}\n\thealth_interval ${4:10s}\n\thealth_timeout ${5:5s}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy_with_health_checks"
+    },
+    {
+      "label": "reverse_proxy with transport",
+      "kind": 15,
+      "detail": "Reverse proxy with custom transport",
+      "documentation": {
+        "value": "Configure the upstream transport (e.g., for HTTPS backends).\n\n```caddyfile\nreverse_proxy localhost:8443 {\n    transport http {\n        tls_insecure_skip_verify\n    }\n}\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:8443} {\n\ttransport http {\n\t\t${2:tls_insecure_skip_verify}\n\t}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy_with_transport"
+    },
+    {
+      "label": "reverse_proxy with circuit breaker",
+      "kind": 15,
+      "detail": "Reverse proxy with circuit breaker",
+      "documentation": {
+        "value": "Add circuit breaker to upstream.\n\n```caddyfile\nreverse_proxy localhost:3000 {\n    cb_type count\n    cb_threshold 5\n    cb_timeout 30s\n}\n```"
+      },
+      "insertText": "reverse_proxy ${1:localhost:3000} {\n\tcb_type ${2|count,latency|}\n\tcb_threshold ${3:5}\n\tcb_timeout ${4:30s}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_reverse_proxy_with_circuit_breaker"
+    },
+    {
+      "label": "file_server",
+      "kind": 14,
+      "detail": "Static file server directive",
+      "documentation": {
+        "value": "Serve static files from the site root.\n\n```caddyfile\nfile_server\n```"
+      },
+      "insertText": "file_server",
+      "insertTextRules": 4,
+      "sortText": "00_file_server"
+    },
+    {
+      "label": "file_server browse",
+      "kind": 15,
+      "detail": "File server with directory browsing",
+      "documentation": {
+        "value": "Enable directory listing.\n\n```caddyfile\nfile_server browse\n```"
+      },
+      "insertText": "file_server browse",
+      "insertTextRules": 4,
+      "sortText": "00_file_server_browse"
+    },
+    {
+      "label": "file_server with root",
+      "kind": 15,
+      "detail": "File server with root path",
+      "documentation": {
+        "value": "Serve files from a specific directory.\n\n```caddyfile\nroot * /var/www/html\nfile_server\n```"
+      },
+      "insertText": "root * ${1:/var/www/html}\nfile_server",
+      "insertTextRules": 4,
+      "sortText": "00_file_server_with_root"
+    },
+    {
+      "label": "file_server with hide",
+      "kind": 15,
+      "detail": "File server hiding files",
+      "documentation": {
+        "value": "Hide certain files from being served.\n\n```caddyfile\nfile_server {\n    hide .git .env\n}\n```"
+      },
+      "insertText": "file_server {\n\thide ${1:.git} ${2:.env}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_file_server_with_hide"
+    },
+    {
+      "label": "respond",
+      "kind": 14,
+      "detail": "Static response directive",
+      "documentation": {
+        "value": "Return a static response to the client.\n\n```caddyfile\nrespond \"Hello, World!\" 200\n```"
+      },
+      "insertText": "respond \"${1:Hello, World!}\" ${2:200}",
+      "insertTextRules": 4,
+      "sortText": "00_respond"
+    },
+    {
+      "label": "respond with headers",
+      "kind": 15,
+      "detail": "Respond with custom headers",
+      "documentation": {
+        "value": "Static response with headers.\n\n```caddyfile\nrespond \"OK\" 200 {\n    header Content-Type text/plain\n}\n```"
+      },
+      "insertText": "respond \"${1:OK}\" ${2:200} {\n\theader ${3:Content-Type} ${4:text/plain}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_respond_with_headers"
+    },
+    {
+      "label": "rewrite",
+      "kind": 14,
+      "detail": "URI rewrite directive",
+      "documentation": {
+        "value": "Internally rewrite the request URI.\n\n```caddyfile\nrewrite * /index.html\n```"
+      },
+      "insertText": "rewrite ${1:*} ${2:/index.html}",
+      "insertTextRules": 4,
+      "sortText": "00_rewrite"
+    },
+    {
+      "label": "rewrite strip_prefix",
+      "kind": 15,
+      "detail": "Rewrite stripping prefix",
+      "documentation": {
+        "value": "Strip a path prefix from the URI.\n\n```caddyfile\nuri strip_prefix /api\n```"
+      },
+      "insertText": "uri strip_prefix ${1:/api}",
+      "insertTextRules": 4,
+      "sortText": "00_rewrite_strip_prefix"
+    },
+    {
+      "label": "rewrite strip_suffix",
+      "kind": 15,
+      "detail": "Rewrite stripping suffix",
+      "documentation": {
+        "value": "Strip a path suffix from the URI.\n\n```caddyfile\nuri strip_suffix .html\n```"
+      },
+      "insertText": "uri strip_suffix ${1:.html}",
+      "insertTextRules": 4,
+      "sortText": "00_rewrite_strip_suffix"
+    },
+    {
+      "label": "redir",
+      "kind": 14,
+      "detail": "Redirect directive",
+      "documentation": {
+        "value": "Send an HTTP redirect to the client.\n\n```caddyfile\nredir /old /new permanent\n```"
+      },
+      "insertText": "redir ${1:/old} ${2:/new} ${3:permanent}",
+      "insertTextRules": 4,
+      "sortText": "00_redir"
+    },
+    {
+      "label": "redir permanent",
+      "kind": 15,
+      "detail": "Permanent redirect (301)",
+      "documentation": {
+        "value": "Permanent 301 redirect.\n\n```caddyfile\nredir /old-page /new-page permanent\n```"
+      },
+      "insertText": "redir ${1:/old-page} ${2:/new-page} permanent",
+      "insertTextRules": 4,
+      "sortText": "00_redir_permanent"
+    },
+    {
+      "label": "redir temporary",
+      "kind": 15,
+      "detail": "Temporary redirect (302)",
+      "documentation": {
+        "value": "Temporary 302 redirect.\n\n```caddyfile\nredir /old-page /new-page temporary\n```"
+      },
+      "insertText": "redir ${1:/old-page} ${2:/new-page} temporary",
+      "insertTextRules": 4,
+      "sortText": "00_redir_temporary"
+    },
+    {
+      "label": "redir with placeholder",
+      "kind": 15,
+      "detail": "Redirect with placeholder",
+      "documentation": {
+        "value": "Redirect using request placeholders.\n\n```caddyfile\nredir https://www.{host}{uri} permanent\n```"
+      },
+      "insertText": "redir https://${1:www.{host\\}{uri\\}} ${2:permanent}",
+      "insertTextRules": 4,
+      "sortText": "00_redir_with_placeholder"
+    },
+    {
+      "label": "root",
+      "kind": 14,
+      "detail": "Set site root directory",
+      "documentation": {
+        "value": "Set the root directory for file operations.\n\n```caddyfile\nroot * /var/www/html\n```"
+      },
+      "insertText": "root * ${1:/var/www/html}",
+      "insertTextRules": 4,
+      "sortText": "00_root"
+    },
+    {
+      "label": "try_files",
+      "kind": 14,
+      "detail": "Try files directive",
+      "documentation": {
+        "value": "Rewrite to the first file that exists.\n\n```caddyfile\ntry_files {path} /index.html\n```"
+      },
+      "insertText": "try_files ${1:{path\\}} ${2:/index.html}",
+      "insertTextRules": 4,
+      "sortText": "00_try_files"
+    },
+    {
+      "label": "try_files SPA",
+      "kind": 15,
+      "detail": "SPA fallback with try_files",
+      "documentation": {
+        "value": "Single Page Application fallback.\n\n```caddyfile\ntry_files {path} {path}/ /index.html\n```"
+      },
+      "insertText": "try_files {path} {path}/ /index.html",
+      "insertTextRules": 4,
+      "sortText": "00_try_files_SPA"
+    },
+    {
+      "label": "try_files PHP",
+      "kind": 15,
+      "detail": "PHP try_files pattern",
+      "documentation": {
+        "value": "Standard PHP try_files with index.php fallback.\n\n```caddyfile\ntry_files {path} {path}/ /index.php?{query}\n```"
+      },
+      "insertText": "try_files {path} {path}/ /index.php?{query}",
+      "insertTextRules": 4,
+      "sortText": "00_try_files_PHP"
+    },
+    {
+      "label": "encode",
+      "kind": 14,
+      "detail": "Compression/encoding directive",
+      "documentation": {
+        "value": "Enable response compression.\n\n```caddyfile\nencode gzip zstd\n```"
+      },
+      "insertText": "encode ${1:gzip} ${2:zstd}",
+      "insertTextRules": 4,
+      "sortText": "00_encode"
+    },
+    {
+      "label": "encode gzip",
+      "kind": 15,
+      "detail": "Enable gzip compression",
+      "documentation": {
+        "value": "Enable gzip compression.\n\n```caddyfile\nencode gzip\n```"
+      },
+      "insertText": "encode gzip",
+      "insertTextRules": 4,
+      "sortText": "00_encode_gzip"
+    },
+    {
+      "label": "encode zstd",
+      "kind": 15,
+      "detail": "Enable zstd compression",
+      "documentation": {
+        "value": "Enable Zstandard compression.\n\n```caddyfile\nencode zstd\n```"
+      },
+      "insertText": "encode zstd",
+      "insertTextRules": 4,
+      "sortText": "00_encode_zstd"
+    },
+    {
+      "label": "header",
+      "kind": 14,
+      "detail": "HTTP header directive",
+      "documentation": {
+        "value": "Set, add, or remove response headers.\n\n```caddyfile\nheader X-Frame-Options DENY\n```"
+      },
+      "insertText": "header ${1:X-Frame-Options} ${2:DENY}",
+      "insertTextRules": 4,
+      "sortText": "00_header"
+    },
+    {
+      "label": "header set",
+      "kind": 15,
+      "detail": "Set a response header",
+      "documentation": {
+        "value": "Set a header value.\n\n```caddyfile\nheader X-Content-Type-Options nosniff\n```"
+      },
+      "insertText": "header ${1:X-Content-Type-Options} ${2:nosniff}",
+      "insertTextRules": 4,
+      "sortText": "00_header_set"
+    },
+    {
+      "label": "header add",
+      "kind": 15,
+      "detail": "Add a response header",
+      "documentation": {
+        "value": "Add a header (allows multiple values).\n\n```caddyfile\nheader +Link \"</style.css>; rel=preload\"\n```"
+      },
+      "insertText": "header +${1:Link} \"${2:</style.css>; rel=preload}\"",
+      "insertTextRules": 4,
+      "sortText": "00_header_add"
+    },
+    {
+      "label": "header delete",
+      "kind": 15,
+      "detail": "Delete a response header",
+      "documentation": {
+        "value": "Remove a response header.\n\n```caddyfile\nheader -Server\n```"
+      },
+      "insertText": "header -${1:Server}",
+      "insertTextRules": 4,
+      "sortText": "00_header_delete"
+    },
+    {
+      "label": "header defer",
+      "kind": 15,
+      "detail": "Deferred header manipulation",
+      "documentation": {
+        "value": "Apply header changes after the response is written by other handlers.\n\n```caddyfile\nheader {\n    defer\n    -Server\n    +X-Powered-By \"Caddy\"\n}\n```"
+      },
+      "insertText": "header {\n\tdefer\n\t${1:-Server}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_header_defer"
+    },
+    {
+      "label": "basicauth",
+      "kind": 14,
+      "detail": "Basic authentication directive",
+      "documentation": {
+        "value": "Protect a site with HTTP Basic Auth.\n\n```caddyfile\nbasicauth /admin/* {\n    admin $2a$14$hash...\n}\n```"
+      },
+      "insertText": "basicauth ${1:/admin/*} {\n\t${2:username} ${3:\\$2a\\$14\\$hash}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_basicauth"
+    },
+    {
+      "label": "log",
+      "kind": 14,
+      "detail": "Access log directive",
+      "documentation": {
+        "value": "Enable and configure request logging.\n\n```caddyfile\nlog {\n    output file /var/log/caddy/access.log\n}\n```"
+      },
+      "insertText": "log {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_log"
+    },
+    {
+      "label": "log with output",
+      "kind": 15,
+      "detail": "Log with file output",
+      "documentation": {
+        "value": "Write logs to a file.\n\n```caddyfile\nlog {\n    output file /var/log/caddy/access.log {\n        roll_size 100mb\n        roll_keep 5\n    }\n}\n```"
+      },
+      "insertText": "log {\n\toutput file ${1:/var/log/caddy/access.log} {\n\t\troll_size ${2:100mb}\n\t\troll_keep ${3:5}\n\t}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_log_with_output"
+    },
+    {
+      "label": "log with format",
+      "kind": 15,
+      "detail": "Log with custom format",
+      "documentation": {
+        "value": "Use a custom log format.\n\n```caddyfile\nlog {\n    format json\n}\n```"
+      },
+      "insertText": "log {\n\tformat ${1|json,console,transform|}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_log_with_format"
+    },
+    {
+      "label": "log with sampling",
+      "kind": 15,
+      "detail": "Log with sampling",
+      "documentation": {
+        "value": "Sample logs to reduce volume.\n\n```caddyfile\nlog {\n    sampling {\n        interval 100\n        first 10\n        thereafter 20\n    }\n}\n```"
+      },
+      "insertText": "log {\n\tsampling {\n\t\tinterval ${1:100}\n\t\tfirst ${2:10}\n\t\tthereafter ${3:20}\n\t}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_log_with_sampling"
+    },
+    {
+      "label": "tls",
+      "kind": 14,
+      "detail": "TLS directive",
+      "documentation": {
+        "value": "Configure TLS/HTTPS settings.\n\n```caddyfile\ntls admin@example.com\n```"
+      },
+      "insertText": "tls ${1:admin@example.com}",
+      "insertTextRules": 4,
+      "sortText": "00_tls"
+    },
+    {
+      "label": "tls self-signed",
+      "kind": 15,
+      "detail": "Self-signed TLS certificate",
+      "documentation": {
+        "value": "Use Caddy's internal self-signed certificate.\n\n```caddyfile\ntls internal\n```"
+      },
+      "insertText": "tls internal",
+      "insertTextRules": 4,
+      "sortText": "00_tls_self-signed"
+    },
+    {
+      "label": "tls internal",
+      "kind": 15,
+      "detail": "Internal TLS (self-signed)",
+      "documentation": {
+        "value": "Use Caddy's internal issuer.\n\n```caddyfile\ntls internal {\n    on_demand\n}\n```"
+      },
+      "insertText": "tls internal {\n\t${1:on_demand}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tls_internal"
+    },
+    {
+      "label": "tls dns challenge",
+      "kind": 15,
+      "detail": "TLS with DNS challenge",
+      "documentation": {
+        "value": "Use DNS challenge for wildcard or non-public certs.\n\n```caddyfile\ntls {\n    dns cloudflare {env.CF_API_TOKEN}\n}\n```"
+      },
+      "insertText": "tls {\n\tdns ${1:cloudflare} ${2:{env.CF_API_TOKEN\\}}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tls_dns_challenge"
+    },
+    {
+      "label": "tls with protocols",
+      "kind": 15,
+      "detail": "TLS with protocol versions",
+      "documentation": {
+        "value": "Restrict TLS protocol versions.\n\n```caddyfile\ntls {\n    protocols tls1.2 tls1.3\n}\n```"
+      },
+      "insertText": "tls {\n\tprotocols ${1:tls1.2} ${2:tls1.3}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tls_with_protocols"
+    },
+    {
+      "label": "tls with ciphers",
+      "kind": 15,
+      "detail": "TLS with custom ciphers",
+      "documentation": {
+        "value": "Specify allowed cipher suites.\n\n```caddyfile\ntls {\n    ciphers TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256\n}\n```"
+      },
+      "insertText": "tls {\n\tciphers ${1:TLS_AES_256_GCM_SHA384} ${2:TLS_CHACHA20_POLY1305_SHA256}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tls_with_ciphers"
+    },
+    {
+      "label": "tls client auth",
+      "kind": 15,
+      "detail": "TLS with client authentication",
+      "documentation": {
+        "value": "Require client certificates.\n\n```caddyfile\ntls {\n    client_auth {\n        mode require_and_verify\n        trusted_ca_cert_file /etc/caddy/ca.pem\n    }\n}\n```"
+      },
+      "insertText": "tls {\n\tclient_auth {\n\t\tmode ${1|require_and_verify,require,request,verify_if_given|}\n\t\ttrusted_ca_cert_file ${2:/etc/caddy/ca.pem}\n\t}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tls_client_auth"
+    },
+    {
+      "label": "handle",
+      "kind": 14,
+      "detail": "Handle directive",
+      "documentation": {
+        "value": "Mutually exclusive handler groups. First matching block wins.\n\n```caddyfile\nhandle /api/* {\n    reverse_proxy localhost:8080\n}\n```"
+      },
+      "insertText": "handle ${1:/api/*} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_handle"
+    },
+    {
+      "label": "handle_path",
+      "kind": 14,
+      "detail": "Handle path directive (strip prefix)",
+      "documentation": {
+        "value": "Like handle, but strips the matched path prefix before handling.\n\n```caddyfile\nhandle_path /api/* {\n    reverse_proxy localhost:8080\n}\n```"
+      },
+      "insertText": "handle_path ${1:/api/*} {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_handle_path"
+    },
+    {
+      "label": "route",
+      "kind": 14,
+      "detail": "Route directive",
+      "documentation": {
+        "value": "Execute directives in the exact order listed (no automatic reordering).\n\n```caddyfile\nroute {\n    rewrite /old /new\n    reverse_proxy localhost:3000\n}\n```"
+      },
+      "insertText": "route {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_route"
+    },
+    {
+      "label": "import",
+      "kind": 14,
+      "detail": "Import directive",
+      "documentation": {
+        "value": "Include a snippet or file.\n\n```caddyfile\nimport common_headers\n```"
+      },
+      "insertText": "import ${1:snippet_name}",
+      "insertTextRules": 4,
+      "sortText": "00_import"
+    },
+    {
+      "label": "import file",
+      "kind": 15,
+      "detail": "Import an external file",
+      "documentation": {
+        "value": "Include an external Caddyfile or snippet.\n\n```caddyfile\nimport /etc/caddy/sites/*.caddy\n```"
+      },
+      "insertText": "import ${1:/etc/caddy/sites/*.caddy}",
+      "insertTextRules": 4,
+      "sortText": "00_import_file"
+    },
+    {
+      "label": "snippet definition",
+      "kind": 15,
+      "detail": "Define a reusable snippet",
+      "documentation": {
+        "value": "Define a snippet that can be imported.\n\n```caddyfile\n(common_headers) {\n    header X-Frame-Options DENY\n    header X-Content-Type-Options nosniff\n}\n```"
+      },
+      "insertText": "(${1:snippet_name}) {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_snippet_definition"
+    },
+    {
+      "label": "templates",
+      "kind": 14,
+      "detail": "Templates directive",
+      "documentation": {
+        "value": "Enable server-side template evaluation.\n\n```caddyfile\ntemplates\n```"
+      },
+      "insertText": "templates",
+      "insertTextRules": 4,
+      "sortText": "00_templates"
+    },
+    {
+      "label": "php_fastcgi",
+      "kind": 14,
+      "detail": "PHP FastCGI directive",
+      "documentation": {
+        "value": "Shortcut for PHP-FPM reverse proxying.\n\n```caddyfile\nphp_fastcgi localhost:9000\n```"
+      },
+      "insertText": "php_fastcgi ${1:localhost:9000}",
+      "insertTextRules": 4,
+      "sortText": "00_php_fastcgi"
+    },
+    {
+      "label": "php_fastcgi with root",
+      "kind": 15,
+      "detail": "PHP FastCGI with root",
+      "documentation": {
+        "value": "PHP FastCGI with a custom document root.\n\n```caddyfile\nroot * /var/www/html\nphp_fastcgi localhost:9000\n```"
+      },
+      "insertText": "root * ${1:/var/www/html}\nphp_fastcgi ${2:localhost:9000}",
+      "insertTextRules": 4,
+      "sortText": "00_php_fastcgi_with_root"
+    },
+    {
+      "label": "php_fastcgi with split",
+      "kind": 15,
+      "detail": "PHP FastCGI with split path",
+      "documentation": {
+        "value": "PHP FastCGI with custom split path info.\n\n```caddyfile\nphp_fastcgi localhost:9000 {\n    split .php\n}\n```"
+      },
+      "insertText": "php_fastcgi ${1:localhost:9000} {\n\tsplit ${2:.php}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_php_fastcgi_with_split"
+    },
+    {
+      "label": "handle_errors",
+      "kind": 14,
+      "detail": "Handle errors directive",
+      "documentation": {
+        "value": "Define custom error pages.\n\n```caddyfile\nhandle_errors {\n    respond \"{err.status_code} {err.status_text}\"\n}\n```"
+      },
+      "insertText": "handle_errors {\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_handle_errors"
+    },
+    {
+      "label": "handle_errors with respond",
+      "kind": 15,
+      "detail": "Error handler with custom response",
+      "documentation": {
+        "value": "Custom error page with status code.\n\n```caddyfile\nhandle_errors {\n    @404 expression {err.status_code} == 404\n    handle @404 {\n        rewrite * /404.html\n        file_server\n    }\n}\n```"
+      },
+      "insertText": "handle_errors {\n\t@${1:404} expression {err.status_code} == ${2:404}\n\thandle @${1:404} {\n\t\trewrite * ${3:/404.html}\n\t\tfile_server\n\t}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_handle_errors_with_respond"
+    },
+    {
+      "label": "abort",
+      "kind": 14,
+      "detail": "Abort directive",
+      "documentation": {
+        "value": "Immediately abort the connection with no response.\n\n```caddyfile\nabort\n```"
+      },
+      "insertText": "abort",
+      "insertTextRules": 4,
+      "sortText": "00_abort"
+    },
+    {
+      "label": "error",
+      "kind": 14,
+      "detail": "Error directive",
+      "documentation": {
+        "value": "Trigger an HTTP error.\n\n```caddyfile\nerror /secret/* \"Access denied\" 403\n```"
+      },
+      "insertText": "error ${1:\"${2:Not Found}\"} ${3:404}",
+      "insertTextRules": 4,
+      "sortText": "00_error"
+    },
+    {
+      "label": "uri",
+      "kind": 14,
+      "detail": "URI manipulation directive",
+      "documentation": {
+        "value": "Manipulate the request URI.\n\n```caddyfile\nuri strip_prefix /api\n```"
+      },
+      "insertText": "uri ${1|strip_prefix,strip_suffix,replace,path_regexp|} ${2}",
+      "insertTextRules": 4,
+      "sortText": "00_uri"
+    },
+    {
+      "label": "uri strip_prefix",
+      "kind": 15,
+      "detail": "URI strip prefix",
+      "documentation": {
+        "value": "Strip a path prefix.\n\n```caddyfile\nuri strip_prefix /api\n```"
+      },
+      "insertText": "uri strip_prefix ${1:/api}",
+      "insertTextRules": 4,
+      "sortText": "00_uri_strip_prefix"
+    },
+    {
+      "label": "uri strip_suffix",
+      "kind": 15,
+      "detail": "URI strip suffix",
+      "documentation": {
+        "value": "Strip a path suffix.\n\n```caddyfile\nuri strip_suffix .html\n```"
+      },
+      "insertText": "uri strip_suffix ${1:.html}",
+      "insertTextRules": 4,
+      "sortText": "00_uri_strip_suffix"
+    },
+    {
+      "label": "uri replace",
+      "kind": 15,
+      "detail": "URI replace",
+      "documentation": {
+        "value": "Replace part of the URI.\n\n```caddyfile\nuri replace /old /new\n```"
+      },
+      "insertText": "uri replace ${1:/old} ${2:/new}",
+      "insertTextRules": 4,
+      "sortText": "00_uri_replace"
+    },
+    {
+      "label": "uri path_regexp",
+      "kind": 15,
+      "detail": "URI path regexp replacement",
+      "documentation": {
+        "value": "Regex-based URI path rewriting.\n\n```caddyfile\nuri path_regexp /user/(\\d+) /profile?id=$1\n```"
+      },
+      "insertText": "uri path_regexp ${1:pattern} ${2:replacement}",
+      "insertTextRules": 4,
+      "sortText": "00_uri_path_regexp"
+    },
+    {
+      "label": "vars",
+      "kind": 14,
+      "detail": "Set variables directive",
+      "documentation": {
+        "value": "Map variables for later use in the request context.\n\n```caddyfile\nvars {\n    my_var \"some value\"\n}\n```"
+      },
+      "insertText": "vars {\n\t${1:key} ${2:value}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_vars"
+    },
+    {
+      "label": "map",
+      "kind": 14,
+      "detail": "Map directive",
+      "documentation": {
+        "value": "Map an input value to one or more output variables.\n\n```caddyfile\nmap {host} {my_var} {\n    example.com \"value1\"\n    default     \"fallback\"\n}\n```"
+      },
+      "insertText": "map ${1:{host\\}} ${2:{my_var\\}} {\n\t${3:input} ${4:output}\n\tdefault ${5:fallback}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_map"
+    },
+    {
+      "label": "bind",
+      "kind": 14,
+      "detail": "Bind directive",
+      "documentation": {
+        "value": "Bind the listener to a specific interface address.\n\n```caddyfile\nbind 127.0.0.1\n```"
+      },
+      "insertText": "bind ${1:127.0.0.1}",
+      "insertTextRules": 4,
+      "sortText": "00_bind"
+    },
+    {
+      "label": "metrics",
+      "kind": 14,
+      "detail": "Metrics directive",
+      "documentation": {
+        "value": "Enable Prometheus metrics endpoint.\n\n```caddyfile\nmetrics /metrics\n```"
+      },
+      "insertText": "metrics ${1:/metrics}",
+      "insertTextRules": 4,
+      "sortText": "00_metrics"
+    },
+    {
+      "label": "tracing",
+      "kind": 14,
+      "detail": "Tracing directive",
+      "documentation": {
+        "value": "Enable distributed tracing (OpenTelemetry).\n\n```caddyfile\ntracing {\n    span my-span\n}\n```"
+      },
+      "insertText": "tracing {\n\tspan ${1:my-span}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_tracing"
+    },
+    {
+      "label": "acme_server",
+      "kind": 14,
+      "detail": "ACME server directive",
+      "documentation": {
+        "value": "Serve ACME certificates (built-in CA).\n\n```caddyfile\nacme_server\n```"
+      },
+      "insertText": "acme_server",
+      "insertTextRules": 4,
+      "sortText": "00_acme_server"
+    },
+    {
+      "label": "@path matcher",
+      "kind": 15,
+      "detail": "Named path matcher",
+      "documentation": {
+        "value": "Match requests by URI path.\n\n```caddyfile\n@api path /api/*\n```"
+      },
+      "insertText": "@${1:name} path ${2:/api/*}",
+      "insertTextRules": 4,
+      "sortText": "00_@path_matcher"
+    },
+    {
+      "label": "@host matcher",
+      "kind": 15,
+      "detail": "Named host matcher",
+      "documentation": {
+        "value": "Match requests by hostname.\n\n```caddyfile\n@example host example.com\n```"
+      },
+      "insertText": "@${1:name} host ${2:example.com}",
+      "insertTextRules": 4,
+      "sortText": "00_@host_matcher"
+    },
+    {
+      "label": "@method matcher",
+      "kind": 15,
+      "detail": "Named method matcher",
+      "documentation": {
+        "value": "Match requests by HTTP method.\n\n```caddyfile\n@post method POST\n```"
+      },
+      "insertText": "@${1:name} method ${2|GET,POST,PUT,DELETE,PATCH,OPTIONS,HEAD|}",
+      "insertTextRules": 4,
+      "sortText": "00_@method_matcher"
+    },
+    {
+      "label": "@header matcher",
+      "kind": 15,
+      "detail": "Named header matcher",
+      "documentation": {
+        "value": "Match requests by header value.\n\n```caddyfile\n@websocket header Connection *Upgrade*\n```"
+      },
+      "insertText": "@${1:name} header ${2:Connection} ${3:*Upgrade*}",
+      "insertTextRules": 4,
+      "sortText": "00_@header_matcher"
+    },
+    {
+      "label": "@query matcher",
+      "kind": 15,
+      "detail": "Named query matcher",
+      "documentation": {
+        "value": "Match requests by query string parameter.\n\n```caddyfile\n@debug query debug=true\n```"
+      },
+      "insertText": "@${1:name} query ${2:key}=${3:value}",
+      "insertTextRules": 4,
+      "sortText": "00_@query_matcher"
+    },
+    {
+      "label": "@remote_ip matcher",
+      "kind": 15,
+      "detail": "Named remote IP matcher",
+      "documentation": {
+        "value": "Match requests by client IP address.\n\n```caddyfile\n@local remote_ip 192.168.0.0/16\n```"
+      },
+      "insertText": "@${1:name} remote_ip ${2:192.168.0.0/16}",
+      "insertTextRules": 4,
+      "sortText": "00_@remote_ip_matcher"
+    },
+    {
+      "label": "@protocol matcher",
+      "kind": 15,
+      "detail": "Named protocol matcher",
+      "documentation": {
+        "value": "Match requests by protocol (http or https).\n\n```caddyfile\n@secure protocol https\n```"
+      },
+      "insertText": "@${1:name} protocol ${2|http,https|}",
+      "insertTextRules": 4,
+      "sortText": "00_@protocol_matcher"
+    },
+    {
+      "label": "@expression matcher",
+      "kind": 15,
+      "detail": "Named expression matcher",
+      "documentation": {
+        "value": "Match using a CEL expression.\n\n```caddyfile\n@mobile expression {http.request.header.User-Agent}.contains(\"Mobile\")\n```"
+      },
+      "insertText": "@${1:name} expression ${2:{http.request.header.User-Agent\\}.contains(\"${3:Mobile}\")}",
+      "insertTextRules": 4,
+      "sortText": "00_@expression_matcher"
+    },
+    {
+      "label": "@file matcher",
+      "kind": 15,
+      "detail": "Named file matcher",
+      "documentation": {
+        "value": "Match based on file existence.\n\n```caddyfile\n@static file {\n    try_files {path} {path}/index.html\n}\n```"
+      },
+      "insertText": "@${1:name} file {\n\ttry_files ${2:{path\\}} ${3:{path\\}/index.html}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_@file_matcher"
+    },
+    {
+      "label": "@not matcher",
+      "kind": 15,
+      "detail": "Named not (negation) matcher",
+      "documentation": {
+        "value": "Negate another matcher.\n\n```caddyfile\n@notAPI not path /api/*\n```"
+      },
+      "insertText": "@${1:name} not ${2:path} ${3:/api/*}",
+      "insertTextRules": 4,
+      "sortText": "00_@not_matcher"
+    },
+    {
+      "label": "@api pattern",
+      "kind": 15,
+      "detail": "API route matcher",
+      "documentation": {
+        "value": "Named matcher for API routes.\n\n```caddyfile\n@api {\n    path /api/*\n}\n```"
+      },
+      "insertText": "@api {\n\tpath /api/*\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_@api_pattern"
+    },
+    {
+      "label": "@static pattern",
+      "kind": 15,
+      "detail": "Static file matcher",
+      "documentation": {
+        "value": "Named matcher for static assets.\n\n```caddyfile\n@static {\n    path *.css *.js *.png *.jpg *.gif *.svg *.ico *.woff *.woff2\n}\n```"
+      },
+      "insertText": "@static {\n\tpath *.css *.js *.png *.jpg *.gif *.svg *.ico *.woff *.woff2\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_@static_pattern"
+    },
+    {
+      "label": "@websocket pattern",
+      "kind": 15,
+      "detail": "WebSocket matcher",
+      "documentation": {
+        "value": "Named matcher for WebSocket upgrades.\n\n```caddyfile\n@websocket {\n    header Connection *Upgrade*\n    header Upgrade websocket\n}\n```"
+      },
+      "insertText": "@websocket {\n\theader Connection *Upgrade*\n\theader Upgrade websocket\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_@websocket_pattern"
+    },
+    {
+      "label": "email",
+      "kind": 15,
+      "detail": "ACME email global option",
+      "documentation": {
+        "value": "Email for ACME certificate registration.\n\n```caddyfile\n{\n    email admin@example.com\n}\n```"
+      },
+      "insertText": "email ${1:admin@example.com}",
+      "insertTextRules": 4,
+      "sortText": "00_email"
+    },
+    {
+      "label": "acme_ca",
+      "kind": 15,
+      "detail": "ACME CA URL global option",
+      "documentation": {
+        "value": "Custom ACME Certificate Authority endpoint.\n\n```caddyfile\n{\n    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory\n}\n```"
+      },
+      "insertText": "acme_ca ${1:https://acme-staging-v02.api.letsencrypt.org/directory}",
+      "insertTextRules": 4,
+      "sortText": "00_acme_ca"
+    },
+    {
+      "label": "acme_dns",
+      "kind": 15,
+      "detail": "ACME DNS provider global option",
+      "documentation": {
+        "value": "Configure DNS challenge provider globally.\n\n```caddyfile\n{\n    acme_dns cloudflare {env.CF_API_TOKEN}\n}\n```"
+      },
+      "insertText": "acme_dns ${1:cloudflare} ${2:{env.CF_API_TOKEN\\}}",
+      "insertTextRules": 4,
+      "sortText": "00_acme_dns"
+    },
+    {
+      "label": "admin",
+      "kind": 15,
+      "detail": "Admin API global option",
+      "documentation": {
+        "value": "Configure the admin API endpoint.\n\n```caddyfile\n{\n    admin off\n}\n```"
+      },
+      "insertText": "admin ${1|off,localhost:2019|}",
+      "insertTextRules": 4,
+      "sortText": "00_admin"
+    },
+    {
+      "label": "auto_https",
+      "kind": 15,
+      "detail": "Auto HTTPS global option",
+      "documentation": {
+        "value": "Control automatic HTTPS behavior.\n\n```caddyfile\n{\n    auto_https off\n}\n```"
+      },
+      "insertText": "auto_https ${1|off,disable_redirects,disable_certs,ignore_loaded_certs|}",
+      "insertTextRules": 4,
+      "sortText": "00_auto_https"
+    },
+    {
+      "label": "grace_period",
+      "kind": 15,
+      "detail": "Grace period global option",
+      "documentation": {
+        "value": "Set the shutdown grace period.\n\n```caddyfile\n{\n    grace_period 30s\n}\n```"
+      },
+      "insertText": "grace_period ${1:30s}",
+      "insertTextRules": 4,
+      "sortText": "00_grace_period"
+    },
+    {
+      "label": "servers",
+      "kind": 15,
+      "detail": "Servers global option block",
+      "documentation": {
+        "value": "Configure listener servers.\n\n```caddyfile\n{\n    servers {\n        protocol {\n            experimental_http3\n        }\n    }\n}\n```"
+      },
+      "insertText": "servers {\n\t${1:protocol {\n\t\texperimental_http3\n\t\\}}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_servers"
+    },
+    {
+      "label": "log global",
+      "kind": 15,
+      "detail": "Global log option",
+      "documentation": {
+        "value": "Configure global (non-site) logging.\n\n```caddyfile\n{\n    log {\n        level INFO\n        output stderr\n    }\n}\n```"
+      },
+      "insertText": "log {\n\tlevel ${1|DEBUG,INFO,WARN,ERROR|}\n\toutput ${2|stderr,stdout,file|}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_log_global"
+    },
+    {
+      "label": "ocsp_stapling",
+      "kind": 15,
+      "detail": "OCSP stapling global option",
+      "documentation": {
+        "value": "Control OCSP stapling behavior.\n\n```caddyfile\n{\n    ocsp_stapling off\n}\n```"
+      },
+      "insertText": "ocsp_stapling ${1:off}",
+      "insertTextRules": 4,
+      "sortText": "00_ocsp_stapling"
+    },
+    {
+      "label": "storage",
+      "kind": 15,
+      "detail": "Storage global option",
+      "documentation": {
+        "value": "Configure TLS certificate storage backend.\n\n```caddyfile\n{\n    storage file_system {\n        root /data/caddy\n    }\n}\n```"
+      },
+      "insertText": "storage ${1:file_system} {\n\troot ${2:/data/caddy}\n\t$0\n}",
+      "insertTextRules": 4,
+      "sortText": "00_storage"
+    },
+    {
+      "label": "order",
+      "kind": 15,
+      "detail": "Directive order global option",
+      "documentation": {
+        "value": "Change the evaluation order of directives.\n\n```caddyfile\n{\n    order my_directive before respond\n}\n```"
+      },
+      "insertText": "order ${1:directive} ${2|before,after,first,last|} ${3:other_directive}",
+      "insertTextRules": 4,
+      "sortText": "00_order"
+    },
+    {
+      "label": "local_certs",
+      "kind": 15,
+      "detail": "Local certs global option",
+      "documentation": {
+        "value": "Use locally-trusted certificates.\n\n```caddyfile\n{\n    local_certs\n}\n```"
+      },
+      "insertText": "local_certs",
+      "insertTextRules": 4,
+      "sortText": "00_local_certs"
+    },
+    {
+      "label": "skip_install_trust",
+      "kind": 15,
+      "detail": "Skip install trust global option",
+      "documentation": {
+        "value": "Skip installing root CA in the system trust store.\n\n```caddyfile\n{\n    skip_install_trust\n}\n```"
+      },
+      "insertText": "skip_install_trust",
+      "insertTextRules": 4,
+      "sortText": "00_skip_install_trust"
+    },
+    {
+      "label": "template: static file server",
+      "kind": 15,
+      "detail": "Complete static file server Caddyfile",
+      "documentation": {
+        "value": "A full static file server configuration.\n\n```caddyfile\nexample.com {\n    root * /var/www/html\n    encode gzip zstd\n    file_server\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\troot * ${2:/var/www/html}\n\tencode gzip zstd\n\tfile_server\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_static_file_server"
+    },
+    {
+      "label": "template: SPA reverse proxy",
+      "kind": 15,
+      "detail": "Complete SPA (React/Vue/Angular) Caddyfile",
+      "documentation": {
+        "value": "Full SPA with reverse proxy for API.\n\n```caddyfile\nexample.com {\n    handle /api/* {\n        reverse_proxy localhost:3000\n    }\n    handle {\n        root * /var/www/spa\n        try_files {path} /index.html\n        file_server\n    }\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\thandle /api/* {\n\t\treverse_proxy ${2:localhost:3000}\n\t}\n\thandle {\n\t\troot * ${3:/var/www/spa}\n\t\ttry_files {path} /index.html\n\t\tfile_server\n\t}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_SPA_reverse_proxy"
+    },
+    {
+      "label": "template: WordPress/PHP",
+      "kind": 15,
+      "detail": "Complete WordPress/PHP Caddyfile",
+      "documentation": {
+        "value": "Full WordPress site with PHP-FPM.\n\n```caddyfile\nexample.com {\n    root * /var/www/wordpress\n    encode gzip\n    php_fastcgi unix//run/php/php-fpm.sock\n    file_server\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\troot * ${2:/var/www/wordpress}\n\tencode gzip\n\tphp_fastcgi ${3:unix//run/php/php-fpm.sock}\n\tfile_server\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_WordPress/PHP"
+    },
+    {
+      "label": "template: API gateway",
+      "kind": 15,
+      "detail": "Complete API gateway Caddyfile",
+      "documentation": {
+        "value": "Route multiple API services.\n\n```caddyfile\napi.example.com {\n    handle /users/* {\n        reverse_proxy localhost:3001\n    }\n    handle /orders/* {\n        reverse_proxy localhost:3002\n    }\n    handle /auth/* {\n        reverse_proxy localhost:3003\n    }\n}\n```"
+      },
+      "insertText": "${1:api.example.com} {\n\thandle /users/* {\n\t\treverse_proxy ${2:localhost:3001}\n\t}\n\thandle /orders/* {\n\t\treverse_proxy ${3:localhost:3002}\n\t}\n\thandle /auth/* {\n\t\treverse_proxy ${4:localhost:3003}\n\t}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_API_gateway"
+    },
+    {
+      "label": "template: load balancer",
+      "kind": 15,
+      "detail": "Complete load balancer Caddyfile",
+      "documentation": {
+        "value": "Load balance across multiple backends.\n\n```caddyfile\nexample.com {\n    reverse_proxy localhost:3001 localhost:3002 localhost:3003 {\n        lb_policy round_robin\n        health_uri /health\n        health_interval 10s\n    }\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\treverse_proxy ${2:localhost:3001} ${3:localhost:3002} ${4:localhost:3003} {\n\t\tlb_policy ${5:round_robin}\n\t\thealth_uri ${6:/health}\n\t\thealth_interval ${7:10s}\n\t}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_load_balancer"
+    },
+    {
+      "label": "template: wildcard cert",
+      "kind": 15,
+      "detail": "Wildcard certificate Caddyfile",
+      "documentation": {
+        "value": "Wildcard certificate with DNS challenge.\n\n```caddyfile\n*.example.com {\n    tls {\n        dns cloudflare {env.CF_API_TOKEN}\n    }\n    @app1 host app1.example.com\n    handle @app1 {\n        reverse_proxy localhost:3001\n    }\n}\n```"
+      },
+      "insertText": "*.${1:example.com} {\n\ttls {\n\t\tdns ${2:cloudflare} ${3:{env.CF_API_TOKEN\\}}\n\t}\n\t@${4:app1} host ${4:app1}.${1:example.com}\n\thandle @${4:app1} {\n\t\treverse_proxy ${5:localhost:3001}\n\t}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_wildcard_cert"
+    },
+    {
+      "label": "template: redirect HTTP to HTTPS",
+      "kind": 15,
+      "detail": "HTTP to HTTPS redirect Caddyfile",
+      "documentation": {
+        "value": "Force all traffic to HTTPS (Caddy does this automatically, but explicit version).\n\n```caddyfile\nhttp://example.com {\n    redir https://{host}{uri} permanent\n}\n```"
+      },
+      "insertText": "http://${1:example.com} {\n\tredir https://{host}{uri} permanent\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_redirect_HTTP_to_HTTPS"
+    },
+    {
+      "label": "template: multiple sites",
+      "kind": 15,
+      "detail": "Multiple sites Caddyfile",
+      "documentation": {
+        "value": "Serve multiple sites from one Caddyfile.\n\n```caddyfile\nsite1.example.com {\n    root * /var/www/site1\n    file_server\n}\n\nsite2.example.com {\n    reverse_proxy localhost:3000\n}\n```"
+      },
+      "insertText": "${1:site1.example.com} {\n\troot * ${2:/var/www/site1}\n\tfile_server\n}\n\n${3:site2.example.com} {\n\treverse_proxy ${4:localhost:3000}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_multiple_sites"
+    },
+    {
+      "label": "template: gRPC proxy",
+      "kind": 15,
+      "detail": "gRPC reverse proxy Caddyfile",
+      "documentation": {
+        "value": "Proxy gRPC traffic.\n\n```caddyfile\ngrpc.example.com {\n    reverse_proxy h2c://localhost:50051\n}\n```"
+      },
+      "insertText": "${1:grpc.example.com} {\n\treverse_proxy h2c://${2:localhost:50051}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_gRPC_proxy"
+    },
+    {
+      "label": "template: WebSocket proxy",
+      "kind": 15,
+      "detail": "WebSocket reverse proxy Caddyfile",
+      "documentation": {
+        "value": "Proxy WebSocket connections.\n\n```caddyfile\nexample.com {\n    @websocket {\n        header Connection *Upgrade*\n        header Upgrade websocket\n    }\n    reverse_proxy @websocket localhost:8080\n    reverse_proxy localhost:3000\n}\n```"
+      },
+      "insertText": "${1:example.com} {\n\t@websocket {\n\t\theader Connection *Upgrade*\n\t\theader Upgrade websocket\n\t}\n\treverse_proxy @websocket ${2:localhost:8080}\n\treverse_proxy ${3:localhost:3000}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_template:_WebSocket_proxy"
+    },
+    {
+      "label": "{http.request.uri}",
+      "kind": 4,
+      "detail": "Request URI placeholder",
+      "documentation": {
+        "value": "The full request URI path and query string.\n\n```caddyfile\nrewrite * {http.request.uri}\n```"
+      },
+      "insertText": "{http.request.uri}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.request.uri}"
+    },
+    {
+      "label": "{http.request.host}",
+      "kind": 4,
+      "detail": "Request host placeholder",
+      "documentation": {
+        "value": "The hostname from the request.\n\n```caddyfile\nheader X-Forwarded-Host {http.request.host}\n```"
+      },
+      "insertText": "{http.request.host}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.request.host}"
+    },
+    {
+      "label": "{http.request.method}",
+      "kind": 4,
+      "detail": "Request method placeholder",
+      "documentation": {
+        "value": "The HTTP method (GET, POST, etc.).\n\n```caddyfile\n@post expression {http.request.method} == \"POST\"\n```"
+      },
+      "insertText": "{http.request.method}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.request.method}"
+    },
+    {
+      "label": "{http.request.header.*}",
+      "kind": 4,
+      "detail": "Request header placeholder",
+      "documentation": {
+        "value": "Access any request header by name.\n\n```caddyfile\nheader_up X-Original-Host {http.request.header.Host}\n```"
+      },
+      "insertText": "{http.request.header.${1:Host}}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.request.header.*}"
+    },
+    {
+      "label": "{http.request.remote.host}",
+      "kind": 4,
+      "detail": "Remote host placeholder",
+      "documentation": {
+        "value": "The client's IP address.\n\n```caddyfile\nlog {\n    format filter {\n        fields {\n            request>remote_ip {http.request.remote.host}\n        }\n    }\n}\n```"
+      },
+      "insertText": "{http.request.remote.host}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.request.remote.host}"
+    },
+    {
+      "label": "{http.response.header.*}",
+      "kind": 4,
+      "detail": "Response header placeholder",
+      "documentation": {
+        "value": "Access any response header by name.\n\n```caddyfile\nheader X-Response-Time {http.response.header.X-Response-Time}\n```"
+      },
+      "insertText": "{http.response.header.${1:Content-Type}}",
+      "insertTextRules": 4,
+      "sortText": "01_{http.response.header.*}"
+    },
+    {
+      "label": "{host}",
+      "kind": 4,
+      "detail": "Shorthand host placeholder",
+      "documentation": {
+        "value": "Shorthand for `{http.request.host}`.\n\n```caddyfile\nredir https://{host}{uri}\n```"
+      },
+      "insertText": "{host}",
+      "insertTextRules": 4,
+      "sortText": "01_{host}"
+    },
+    {
+      "label": "{uri}",
+      "kind": 4,
+      "detail": "Shorthand URI placeholder",
+      "documentation": {
+        "value": "Shorthand for `{http.request.uri}`.\n\n```caddyfile\ntry_files {path} {uri} /index.html\n```"
+      },
+      "insertText": "{uri}",
+      "insertTextRules": 4,
+      "sortText": "01_{uri}"
+    },
+    {
+      "label": "{path}",
+      "kind": 4,
+      "detail": "Shorthand path placeholder",
+      "documentation": {
+        "value": "The URI path (without query string).\n\n```caddyfile\ntry_files {path} /index.html\n```"
+      },
+      "insertText": "{path}",
+      "insertTextRules": 4,
+      "sortText": "01_{path}"
+    },
+    {
+      "label": "{query}",
+      "kind": 4,
+      "detail": "Shorthand query placeholder",
+      "documentation": {
+        "value": "The raw query string.\n\n```caddyfile\nrewrite * /index.php?{query}\n```"
+      },
+      "insertText": "{query}",
+      "insertTextRules": 4,
+      "sortText": "01_{query}"
+    },
+    {
+      "label": "{method}",
+      "kind": 4,
+      "detail": "Shorthand method placeholder",
+      "documentation": {
+        "value": "Shorthand for `{http.request.method}`.\n\n```caddyfile\n@post expression {method} == \"POST\"\n```"
+      },
+      "insertText": "{method}",
+      "insertTextRules": 4,
+      "sortText": "01_{method}"
+    },
+    {
+      "label": "{remote_host}",
+      "kind": 4,
+      "detail": "Shorthand remote host placeholder",
+      "documentation": {
+        "value": "Shorthand for `{http.request.remote.host}`.\n\n```caddyfile\nheader_up X-Real-IP {remote_host}\n```"
+      },
+      "insertText": "{remote_host}",
+      "insertTextRules": 4,
+      "sortText": "01_{remote_host}"
+    },
+    {
+      "label": "{err.status_code}",
+      "kind": 4,
+      "detail": "Error status code placeholder",
+      "documentation": {
+        "value": "The HTTP status code within an error handler.\n\n```caddyfile\nhandle_errors {\n    respond \"{err.status_code}\"\n}\n```"
+      },
+      "insertText": "{err.status_code}",
+      "insertTextRules": 4,
+      "sortText": "01_{err.status_code}"
+    },
+    {
+      "label": "{err.status_text}",
+      "kind": 4,
+      "detail": "Error status text placeholder",
+      "documentation": {
+        "value": "The HTTP status text within an error handler.\n\n```caddyfile\nhandle_errors {\n    respond \"{err.status_code} {err.status_text}\"\n}\n```"
+      },
+      "insertText": "{err.status_text}",
+      "insertTextRules": 4,
+      "sortText": "01_{err.status_text}"
+    },
+    {
+      "label": "{upstream_hostport}",
+      "kind": 4,
+      "detail": "Upstream host:port placeholder",
+      "documentation": {
+        "value": "The host and port of the selected upstream.\n\n```caddyfile\nreverse_proxy localhost:3000 {\n    header_up Host {upstream_hostport}\n}\n```"
+      },
+      "insertText": "{upstream_hostport}",
+      "insertTextRules": 4,
+      "sortText": "01_{upstream_hostport}"
+    },
+    {
+      "label": "{env.*}",
+      "kind": 4,
+      "detail": "Environment variable placeholder",
+      "documentation": {
+        "value": "Access environment variables.\n\n```caddyfile\ntls {\n    dns cloudflare {env.CF_API_TOKEN}\n}\n```"
+      },
+      "insertText": "{env.${1:VAR_NAME}}",
+      "insertTextRules": 4,
+      "sortText": "01_{env.*}"
+    },
+    {
+      "label": "forward_auth",
+      "kind": 14,
+      "detail": "Forward authentication directive",
+      "documentation": {
+        "value": "Delegates authentication to an external service via subrequest.\n\n```caddyfile\nforward_auth localhost:9000 {\n    uri /auth\n    copy_headers X-User X-Email\n}\n```"
+      },
+      "insertText": "forward_auth ${1:localhost:9000} {\n\turi ${2:/auth}\n\tcopy_headers ${3:X-User}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_forward_auth"
+    },
+    {
+      "label": "forward_auth with headers",
+      "kind": 15,
+      "detail": "Forward auth with header copying",
+      "documentation": {
+        "value": "Forward auth passing original request info and copying response headers.\n\n```caddyfile\nforward_auth localhost:9000 {\n    uri /auth\n    copy_headers Remote-User Remote-Email Remote-Groups\n    header_up X-Original-URI {uri}\n    header_up X-Original-Method {method}\n}\n```"
+      },
+      "insertText": "forward_auth ${1:localhost:9000} {\n\turi ${2:/auth}\n\tcopy_headers ${3:Remote-User Remote-Email}\n\theader_up X-Original-URI {uri}\n\theader_up X-Original-Method {method}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_forward_auth_headers"
+    },
+    {
+      "label": "request_header",
+      "kind": 14,
+      "detail": "Modify request headers",
+      "documentation": {
+        "value": "Manipulate request headers before proxying.\n\n```caddyfile\nrequest_header X-Real-IP {remote_host}\nrequest_header -Server\n```"
+      },
+      "insertText": "request_header ${1|+,-|}${2:Header-Name} ${3:value}",
+      "insertTextRules": 4,
+      "sortText": "00_request_header"
+    },
+    {
+      "label": "request_body",
+      "kind": 14,
+      "detail": "Request body size limit",
+      "documentation": {
+        "value": "Set limits on request body.\n\n```caddyfile\nrequest_body {\n    max_size 10MB\n}\n```"
+      },
+      "insertText": "request_body {\n\tmax_size ${1:10MB}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_request_body"
+    },
+    {
+      "label": "push",
+      "kind": 14,
+      "detail": "HTTP/2 server push",
+      "documentation": {
+        "value": "Configure HTTP/2 server push.\n\n```caddyfile\npush /style.css /script.js\n```"
+      },
+      "insertText": "push ${1:/resource}",
+      "insertTextRules": 4,
+      "sortText": "02_push"
+    },
+    {
+      "label": "copy_response",
+      "kind": 14,
+      "detail": "Copy response from backend",
+      "documentation": {
+        "value": "Copy the entire response from a handled request (used in handle_errors or intercept).\n\n```caddyfile\ncopy_response\n# or with specific status:\ncopy_response 404\n```"
+      },
+      "insertText": "copy_response${1: 404}",
+      "insertTextRules": 4,
+      "sortText": "02_copy_response"
+    },
+    {
+      "label": "copy_response_headers",
+      "kind": 14,
+      "detail": "Copy response headers from backend",
+      "documentation": {
+        "value": "Copy response headers from a handled request.\n\n```caddyfile\ncopy_response_headers {\n    include Content-Type\n}\n```"
+      },
+      "insertText": "copy_response_headers {\n\tinclude ${1:Content-Type}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_copy_response_headers"
+    },
+    {
+      "label": "intercept",
+      "kind": 14,
+      "detail": "Intercept responses",
+      "documentation": {
+        "value": "Intercept responses from upstream to modify or handle them.\n\n```caddyfile\nintercept {\n    @error status 4xx 5xx\n    handle_response @error {\n        respond \"Error: {err.status_code}\"\n    }\n}\n```"
+      },
+      "insertText": "intercept {\n\t@${1:error} status ${2:4xx 5xx}\n\thandle_response @${1:error} {\n\t\t${3:respond \"Error\"}\n\t}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_intercept"
+    },
+    {
+      "label": "method",
+      "kind": 14,
+      "detail": "Override request method",
+      "documentation": {
+        "value": "Override the HTTP method of the request.\n\n```caddyfile\nmethod GET\n```"
+      },
+      "insertText": "method ${1:GET}",
+      "insertTextRules": 4,
+      "sortText": "02_method"
+    },
+    {
+      "label": "tls on_demand",
+      "kind": 15,
+      "detail": "TLS with on-demand certificates",
+      "documentation": {
+        "value": "Enable on-demand TLS — certificates obtained at handshake time.\n\n```caddyfile\ntls {\n    on_demand\n}\n\n# In global options, set the ask endpoint:\n{\n    on_demand_tls {\n        ask http://localhost:5555/check\n    }\n}\n```"
+      },
+      "insertText": "tls {\n\ton_demand\n}",
+      "insertTextRules": 4,
+      "sortText": "01_tls_ondemand"
+    },
+    {
+      "label": "on_demand_tls",
+      "kind": 15,
+      "detail": "On-demand TLS global config",
+      "documentation": {
+        "value": "Configure on-demand TLS in global options.\n\n```caddyfile\n{\n    on_demand_tls {\n        ask http://localhost:5555/check\n        interval 2m\n        burst 5\n    }\n}\n```"
+      },
+      "insertText": "on_demand_tls {\n\task ${1:http://localhost:5555/check}\n\tinterval ${2:2m}\n\tburst ${3:5}\n}",
+      "insertTextRules": 4,
+      "sortText": "03_on_demand_tls"
+    },
+    {
+      "label": "template: security headers",
+      "kind": 15,
+      "detail": "Common security headers",
+      "documentation": {
+        "value": "Add common security headers.\n\n```caddyfile\nheader {\n    X-Content-Type-Options nosniff\n    X-Frame-Options DENY\n    Referrer-Policy strict-origin-when-cross-origin\n    X-XSS-Protection \"1; mode=block\"\n    -Server\n}\n```"
+      },
+      "insertText": "header {\n\tX-Content-Type-Options nosniff\n\tX-Frame-Options ${1|DENY,SAMEORIGIN|}\n\tReferrer-Policy ${2:strict-origin-when-cross-origin}\n\tX-XSS-Protection \"1; mode=block\"\n\t-Server\n}",
+      "insertTextRules": 4,
+      "sortText": "08_security_headers"
+    },
+    {
+      "label": "template: CORS",
+      "kind": 15,
+      "detail": "CORS headers",
+      "documentation": {
+        "value": "Configure CORS headers.\n\n```caddyfile\n@cors {\n    method OPTIONS\n}\nhandle @cors {\n    header Access-Control-Allow-Origin \"{http.request.header.Origin}\"\n    header Access-Control-Allow-Methods \"GET, POST, PUT, DELETE, OPTIONS\"\n    header Access-Control-Allow-Headers \"Content-Type, Authorization\"\n    header Access-Control-Max-Age \"3600\"\n    respond 204\n}\nheader Access-Control-Allow-Origin \"{http.request.header.Origin}\"\n```"
+      },
+      "insertText": "@cors {\n\tmethod OPTIONS\n}\nhandle @cors {\n\theader Access-Control-Allow-Origin \"${1:*}\"\n\theader Access-Control-Allow-Methods \"${2:GET, POST, PUT, DELETE, OPTIONS}\"\n\theader Access-Control-Allow-Headers \"${3:Content-Type, Authorization}\"\n\theader Access-Control-Max-Age \"${4:3600}\"\n\trespond 204\n}\nheader Access-Control-Allow-Origin \"${1:*}\"",
+      "insertTextRules": 4,
+      "sortText": "08_cors"
+    },
+    {
+      "label": "log to file",
+      "kind": 15,
+      "detail": "Log to file",
+      "documentation": {
+        "value": "Configure logging to a file.\n\n```caddyfile\nlog {\n    output file /var/log/caddy/access.log {\n        roll_size 100mb\n        roll_keep 10\n    }\n    format json\n}\n```"
+      },
+      "insertText": "log {\n\toutput file ${1:/var/log/caddy/access.log} {\n\t\troll_size ${2:100mb}\n\t\troll_keep ${3:10}\n\t}\n\tformat ${4|json,console,filter|}\n}",
+      "insertTextRules": 4,
+      "sortText": "01_log_file"
+    },
+    {
+      "label": "{http.request.tls.*}",
+      "kind": 9,
+      "detail": "TLS request placeholder",
+      "documentation": {
+        "value": "TLS-related request placeholders.\n\n- `{http.request.tls.version}` — TLS version (e.g., 1.3)\n- `{http.request.tls.cipher_suite}` — cipher suite\n- `{http.request.tls.server_name}` — SNI server name"
+      },
+      "insertText": "{http.request.tls.${1|version,cipher_suite,server_name|}}",
+      "insertTextRules": 4,
+      "sortText": "05_tls_placeholder"
+    },
+    {
+      "label": "{http.request.cookie.*}",
+      "kind": 9,
+      "detail": "Cookie placeholder",
+      "documentation": {
+        "value": "Access a specific cookie value.\n\n```\n{http.request.cookie.session_id}\n```"
+      },
+      "insertText": "{http.request.cookie.${1:name}}",
+      "insertTextRules": 4,
+      "sortText": "05_cookie"
+    },
+    {
+      "label": "{http.reverse_proxy.*}",
+      "kind": 9,
+      "detail": "Reverse proxy placeholders",
+      "documentation": {
+        "value": "Placeholders from reverse_proxy.\n\n- `{http.reverse_proxy.upstream.hostport}` — selected upstream address\n- `{http.reverse_proxy.upstream.host}` — upstream host\n- `{http.reverse_proxy.upstream.port}` — upstream port\n- `{http.reverse_proxy.upstream.latency}` — response time\n- `{http.reverse_proxy.header.*}` — upstream response headers"
+      },
+      "insertText": "{http.reverse_proxy.upstream.${1|hostport,host,port,latency|}}",
+      "insertTextRules": 4,
+      "sortText": "05_rp_placeholder"
+    }
+  ]
+}

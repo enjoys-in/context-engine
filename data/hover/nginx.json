@@ -126,6 +126,766 @@
           "value": "```nginx\n# Enable status page (restrict access!):\nlocation /nginx_status {\n    stub_status on;\n    allow 127.0.0.1;\n    allow 10.0.0.0/8;\n    deny all;\n}\n\n# Output:\n# Active connections: 291\n# server accepts handled requests\n#  16630948 16630948 31070465\n# Reading: 6 Writing: 179 Waiting: 106\n```\n**stub_status** provides basic metrics. Active connections = reading + writing + waiting. Use for monitoring with Prometheus (via nginx-exporter) or Datadog."
         }
       ]
+    },
+    "root_vs_alias": "## root vs alias\n\nOne of the most common nginx confusion points.\n\n**root** — Appends the URI to the path:\n```nginx\nlocation /images/ {\n    root /var/www;  # serves /var/www/images/logo.png\n}\n```\n\n**alias** — Replaces the location path:\n```nginx\nlocation /images/ {\n    alias /var/www/pics/;  # serves /var/www/pics/logo.png\n}\n```\n\n**Key differences:**\n- `root`: final path = root + URI\n- `alias`: final path = alias + (URI - location)\n- `alias` with regex location must capture and use `$1`\n- `alias` must end with `/` when location ends with `/`\n\n```nginx\n# Regex with alias\nlocation ~ ^/download/(.*)$ {\n    alias /var/files/$1;  # must use captures\n}\n```",
+    "server_name": "## server_name\n\n```nginx\nserver_name name ...;\n```\n\nDefines virtual server names. Nginx uses this to select which server block handles a request.\n\n**Matching priority (first match wins):**\n1. Exact name: `server_name example.com;`\n2. Leading wildcard: `server_name *.example.com;`\n3. Trailing wildcard: `server_name www.example.*;`\n4. Regular expression: `server_name ~^(?<sub>.+)\\.example\\.com$;`\n5. `default_server` flag on `listen`\n\n```nginx\n# Multiple names\nserver_name example.com www.example.com;\n\n# Wildcard\nserver_name *.example.com;\n\n# Regex with named capture\nserver_name ~^(?<subdomain>.+)\\.example\\.com$;\n\n# Catch-all\nserver_name _;\n```\n\n**Tip:** Use `_` as a convention for the default catch-all server.",
+    "if_directive": "## if directive\n\n```nginx\nif (condition) { ... }\n```\n\n**Warning: \"If is Evil\" in Nginx.** The `if` directive in location context can cause unexpected behaviors.\n\n**Safe uses (inside server context):**\n```nginx\n# Redirect based on host\nif ($host = 'old.example.com') {\n    return 301 https://new.example.com$request_uri;\n}\n\n# Block by method\nif ($request_method !~ ^(GET|POST)$) {\n    return 405;\n}\n```\n\n**Dangerous (inside location):**\n```nginx\n# DON'T: if + proxy_pass is unpredictable\nlocation / {\n    if ($arg_cache = \"no\") {\n        proxy_pass http://nocache;  # UNRELIABLE\n    }\n}\n```\n\n**Safe alternatives:**\n- Use `map` for variable mapping\n- Use `try_files` for file existence checks\n- Use multiple `location` blocks instead\n- Use `return` and `rewrite` (only safe directives inside `if`)\n\n**Only these directives are safe inside `if` in a location:**\n`return`, `rewrite`, `set`",
+    "proxy_cache": "## proxy_cache\n\n```nginx\nproxy_cache zone;\nproxy_cache_path path levels= keys_zone= ...;\n```\n\nConfigure response caching from proxied servers.\n\n**Setup:**\n```nginx\nhttp {\n    # Define cache zone (10m metadata, 1g max size)\n    proxy_cache_path /var/cache/nginx levels=1:2\n        keys_zone=my_cache:10m max_size=1g\n        inactive=60m use_temp_path=off;\n\n    server {\n        location / {\n            proxy_cache my_cache;\n            proxy_cache_valid 200 302 10m;\n            proxy_cache_valid 404 1m;\n            proxy_cache_key $scheme$request_method$host$request_uri;\n            proxy_cache_bypass $http_cache_control;\n\n            # Add cache status header\n            add_header X-Cache-Status $upstream_cache_status;\n\n            proxy_pass http://backend;\n        }\n    }\n}\n```\n\n**Cache status values** (`$upstream_cache_status`):\n- `MISS` — not in cache, fetched from upstream\n- `HIT` — served from cache\n- `EXPIRED` — cache entry expired, refreshed from upstream\n- `BYPASS` — cache bypassed due to `proxy_cache_bypass`\n- `STALE` — serving stale entry (upstream error + `proxy_cache_use_stale`)\n\n**Tip:** Use `proxy_cache_use_stale` for resilience:\n```nginx\nproxy_cache_use_stale error timeout http_500 http_502 http_503 http_504;\n```",
+    "error_page": "## error_page\n\n```nginx\nerror_page code ... [=[response]] uri;\n```\n\nDefine custom error pages or internal redirects for specific HTTP status codes.\n\n```nginx\n# Simple custom error pages\nerror_page 404 /404.html;\nerror_page 500 502 503 504 /50x.html;\n\n# Change response code\nerror_page 404 =200 /index.html;  # SPA fallback\n\n# Internal redirect to named location\nerror_page 404 @fallback;\nlocation @fallback {\n    proxy_pass http://backend;\n}\n\n# Use internal redirect\nlocation /404.html {\n    internal;  # prevent direct access\n    root /var/www/errors;\n}\n```\n\n**Tip:** Combine with `try_files` for cleaner flow:\n```nginx\ntry_files $uri $uri/ =404;\nerror_page 404 /custom_404.html;\n```",
+    "auth_basic": "## auth_basic\n\n```nginx\nauth_basic string | off;\nauth_basic_user_file file;\n```\n\nHTTP Basic Authentication using username/password file.\n\n```nginx\nlocation /admin {\n    auth_basic \"Admin Area\";\n    auth_basic_user_file /etc/nginx/.htpasswd;\n}\n\n# Disable auth for sub-location\nlocation /admin/public {\n    auth_basic off;\n}\n```\n\n**Create password file:**\n```bash\n# Using htpasswd (Apache utils)\nsudo htpasswd -c /etc/nginx/.htpasswd user1\n\n# Or with openssl\necho \"user1:$(openssl passwd -apr1 'password')\" >> /etc/nginx/.htpasswd\n```\n\n**Tip:** For modern apps, prefer `auth_request` with an external auth service over basic auth.",
+    "allow_deny": "## allow / deny\n\n```nginx\nallow address | CIDR | unix: | all;\ndeny address | CIDR | unix: | all;\n```\n\nIP-based access control. Rules are checked in order — first match wins.\n\n```nginx\n# Restrict to internal IPs\nlocation /admin {\n    allow 192.168.1.0/24;\n    allow 10.0.0.0/8;\n    deny all;\n}\n\n# Block specific IPs\nlocation / {\n    deny 1.2.3.4;\n    deny 5.6.7.0/24;\n    allow all;\n}\n\n# Combine with auth\nlocation /internal {\n    satisfy any;  # allow OR auth (default: all = AND)\n    allow 192.168.0.0/16;\n    deny all;\n    auth_basic \"Restricted\";\n    auth_basic_user_file /etc/nginx/.htpasswd;\n}\n```\n\n**Tip:** Use `satisfy any` when you want either IP match or authentication (not both).",
+    "expires": "## expires\n\n```nginx\nexpires [modified] time;\nexpires epoch | max | off;\n```\n\nControl browser caching via `Expires` and `Cache-Control` headers.\n\n```nginx\n# Static assets — long cache\nlocation ~* \\.(jpg|jpeg|png|gif|ico|css|js|woff2)$ {\n    expires 1y;\n    add_header Cache-Control \"public, immutable\";\n}\n\n# HTML — short cache\nlocation ~* \\.html$ {\n    expires 1h;\n}\n\n# API — no cache\nlocation /api {\n    expires -1;  # Cache-Control: no-cache\n    # or\n    expires off;  # don't modify headers\n}\n\n# Special values\nexpires epoch;  # Cache-Control: no-cache (Expires: Jan 1 1970)\nexpires max;    # Expires: Dec 31 2037\n```",
+    "auth_request": "## auth_request\n\n```nginx\nauth_request uri | off;\nauth_request_set $variable value;\n```\n\nSubrequest-based authentication — delegates auth to an external service.\n\n```nginx\nserver {\n    location /protected/ {\n        auth_request /auth;\n        auth_request_set $auth_user $upstream_http_x_user;\n        proxy_set_header X-User $auth_user;\n        proxy_pass http://backend;\n    }\n\n    location = /auth {\n        internal;  # only accessible via internal subrequest\n        proxy_pass http://auth-service/verify;\n        proxy_pass_request_body off;\n        proxy_set_header Content-Length \"\";\n        proxy_set_header X-Original-URI $request_uri;\n        proxy_set_header X-Original-Method $request_method;\n    }\n\n    # Handle auth failures\n    error_page 401 = @login_redirect;\n    location @login_redirect {\n        return 302 /login?next=$request_uri;\n    }\n}\n```\n\n**How it works:**\n1. Nginx sends subrequest to `/auth` before processing\n2. If auth returns **2xx** → request proceeds\n3. If auth returns **401/403** → access denied\n4. Use `auth_request_set` to pass data from auth response",
+    "real_ip": "## real_ip_header / set_real_ip_from\n\nExtract real client IP when nginx is behind a proxy, CDN, or load balancer.\n\n```nginx\n# Behind Cloudflare\nset_real_ip_from 173.245.48.0/20;\nset_real_ip_from 103.21.244.0/22;\nset_real_ip_from 103.22.200.0/22;\n# ... (full Cloudflare IP list)\nreal_ip_header CF-Connecting-IP;\n\n# Behind AWS ALB/ELB\nset_real_ip_from 10.0.0.0/8;\nreal_ip_header X-Forwarded-For;\nreal_ip_recursive on;  # skip known proxy IPs in chain\n\n# Behind generic reverse proxy\nset_real_ip_from 192.168.0.0/16;\nset_real_ip_from 172.16.0.0/12;\nreal_ip_header X-Real-IP;\n```\n\n**Important:** `real_ip_recursive on` makes nginx traverse `X-Forwarded-For` from right to left, skipping trusted addresses, to find the real client IP.\n\n**Requires:** `ngx_http_realip_module` (included in most packages).",
+    "stream": "## stream (TCP/UDP proxy)\n\n```nginx\nstream { ... }\n```\n\nTCP/UDP load balancing and proxying (non-HTTP protocols).\n\n```nginx\nstream {\n    # MySQL load balancing\n    upstream mysql_backend {\n        server 10.0.0.1:3306 weight=5;\n        server 10.0.0.2:3306;\n    }\n    server {\n        listen 3306;\n        proxy_pass mysql_backend;\n        proxy_connect_timeout 1s;\n    }\n\n    # Redis proxy with SSL termination  \n    server {\n        listen 6380 ssl;\n        ssl_certificate /etc/ssl/cert.pem;\n        ssl_certificate_key /etc/ssl/key.pem;\n        proxy_pass 127.0.0.1:6379;\n    }\n\n    # UDP DNS proxy\n    server {\n        listen 53 udp;\n        proxy_pass dns_upstream;\n    }\n    upstream dns_upstream {\n        server 8.8.8.8:53;\n        server 8.8.4.4:53;\n    }\n}\n```\n\n**Note:** `stream` block is at the same level as `http` block, not inside it.",
+    "$args": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_pass http://backend?$args;\n# same as $query_string\nif ($args ~* \"debug=true\") {\n    # conditional logic\n}\n```\n**$args** contains the full query string from the request URL (everything after `?`). Alias for `$query_string`. Not decoded."
+        }
+      ]
+    },
+    "$binary_remote_addr": {
+      "contents": [
+        {
+          "value": "```nginx\nlimit_conn_zone $binary_remote_addr zone=addr:10m;\nlimit_req_zone $binary_remote_addr zone=req:10m rate=10r/s;\n```\n**$binary_remote_addr** is the client IP in binary form (4 bytes for IPv4, 16 for IPv6). More memory-efficient than `$remote_addr` for shared memory zones like `limit_conn_zone` and `limit_req_zone`."
+        }
+      ]
+    },
+    "$body_bytes_sent": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format main '$remote_addr - $body_bytes_sent bytes';\n```\n**$body_bytes_sent** holds the number of bytes sent to the client (body only, excluding headers). Useful in log formats to track response sizes and bandwidth usage."
+        }
+      ]
+    },
+    "$document_root": {
+      "contents": [
+        {
+          "value": "```nginx\nfastcgi_param DOCUMENT_ROOT $document_root;\nfastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n```\n**$document_root** returns the value of `root` or `alias` for the current request. Commonly used with FastCGI to pass the document root to backend applications."
+        }
+      ]
+    },
+    "$fastcgi_script_name": {
+      "contents": [
+        {
+          "value": "```nginx\nfastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\nfastcgi_param SCRIPT_NAME $fastcgi_script_name;\n```\n**$fastcgi_script_name** contains the request URI or, if a URI ends with `/`, the URI plus `index` filename set by `fastcgi_index`. Used to build `SCRIPT_FILENAME` for PHP-FPM."
+        }
+      ]
+    },
+    "$host": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_set_header Host $host;\nif ($host = 'old.example.com') {\n    return 301 https://new.example.com$request_uri;\n}\n```\n**$host** is the hostname from the request line, or the `Host` header, or the server name matching the request (in that priority). Lowercase and without port. The most common way to reference the requested hostname."
+        }
+      ]
+    },
+    "$http_referer": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($http_referer ~* \"spam\\.com\") {\n    return 403;\n}\nlog_format combined '... \"$http_referer\" ...';\n```\n**$http_referer** contains the value of the `Referer` request header. Used for hotlink protection, logging, and conditional access control."
+        }
+      ]
+    },
+    "$http_upgrade": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_set_header Upgrade $http_upgrade;\nproxy_set_header Connection \"upgrade\";\n# WebSocket proxying\nmap $http_upgrade $connection_upgrade {\n    default upgrade;\n    ''      close;\n}\n```\n**$http_upgrade** holds the `Upgrade` request header value. Essential for WebSocket proxying — Nginx uses it to detect upgrade requests and forward them to backend servers."
+        }
+      ]
+    },
+    "$http_user_agent": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($http_user_agent ~* \"(bot|crawl|spider)\") {\n    return 403;\n}\nlog_format main '... \"$http_user_agent\"';\n```\n**$http_user_agent** contains the `User-Agent` request header. Used for bot detection, browser-specific rules, and access logging."
+        }
+      ]
+    },
+    "$is_args": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_pass http://backend$uri$is_args$args;\n# $is_args is \"?\" if query string exists, empty otherwise\n```\n**$is_args** evaluates to `?` if the request has a query string, or empty string if not. Useful when building proxy URLs to conditionally include the `?` separator."
+        }
+      ]
+    },
+    "$proxy_add_x_forwarded_for": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n```\n**$proxy_add_x_forwarded_for** is the `X-Forwarded-For` header from the client request with the `$remote_addr` appended. If no incoming header exists, it equals `$remote_addr`. Standard way to chain client IPs through proxies."
+        }
+      ]
+    },
+    "$query_string": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($query_string ~* \"utm_\") {\n    # handle tracking params\n}\nproxy_pass http://backend?$query_string;\n```\n**$query_string** is the full query string of the request (same as `$args`). Contains everything after `?` in the URL, not URL-decoded."
+        }
+      ]
+    },
+    "$realpath_root": {
+      "contents": [
+        {
+          "value": "```nginx\nfastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;\n```\n**$realpath_root** resolves `root` or `alias` to its real filesystem path, following all symlinks. Preferred over `$document_root` when using symlinked deployments (e.g., Capistrano, zero-downtime deploys)."
+        }
+      ]
+    },
+    "$remote_addr": {
+      "contents": [
+        {
+          "value": "```nginx\nallow 192.168.1.0/24;\ndeny all;\nlog_format main '$remote_addr - $remote_user [$time_local]...';\nproxy_set_header X-Real-IP $remote_addr;\n```\n**$remote_addr** is the client's IP address. When behind a load balancer, this shows the LB's IP — use `real_ip_header` and `set_real_ip_from` to extract the real client IP."
+        }
+      ]
+    },
+    "$request_method": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($request_method = POST) {\n    return 405;\n}\nlimit_except GET POST {\n    deny all;\n}\n```\n**$request_method** contains the HTTP method (GET, POST, PUT, DELETE, etc.). Used in conditionals and access control."
+        }
+      ]
+    },
+    "$request_time": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format timed '$remote_addr ... $request_time $upstream_response_time';\n```\n**$request_time** is the request processing time in seconds with millisecond resolution. Measured from when the first bytes were read from the client until the response was sent. Key metric for performance monitoring."
+        }
+      ]
+    },
+    "$request_uri": {
+      "contents": [
+        {
+          "value": "```nginx\nreturn 301 https://$host$request_uri;\nproxy_pass http://backend$request_uri;\n```\n**$request_uri** is the full original request URI including the query string, as sent by the client. Not modified by internal rewrites. Use `$uri` for the normalized/rewritten URI."
+        }
+      ]
+    },
+    "$scheme": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($scheme = http) {\n    return 301 https://$host$request_uri;\n}\nproxy_set_header X-Forwarded-Proto $scheme;\n```\n**$scheme** is the request scheme — `http` or `https`. Commonly used for HTTPS redirect and to pass protocol info to backends via `X-Forwarded-Proto`."
+        }
+      ]
+    },
+    "$server_name": {
+      "contents": [
+        {
+          "value": "```nginx\nadd_header X-Served-By $server_name;\nlog_format vhost '$server_name $remote_addr ...';\n```\n**$server_name** is the name of the server block that handled the request, from the `server_name` directive. Useful in logging and response headers for debugging multi-vhost setups."
+        }
+      ]
+    },
+    "$server_port": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_set_header X-Forwarded-Port $server_port;\nif ($server_port = 8080) { ... }\n```\n**$server_port** is the port of the server that accepted the request. Useful for port-based routing logic and forwarding port info to backend applications."
+        }
+      ]
+    },
+    "$status": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format main '... $status $body_bytes_sent ...';\nif ($status = 404) {\n    access_log /var/log/nginx/404.log;\n}\n```\n**$status** is the HTTP response status code. Available in log format and post-processing. Note: not available in all contexts during request processing."
+        }
+      ]
+    },
+    "$time_iso8601": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format json '{\"time\":\"$time_iso8601\",\"status\":$status}';\n# Output: 2024-01-15T10:30:00+00:00\n```\n**$time_iso8601** is the local time in ISO 8601 format. Ideal for structured/JSON logging and log aggregation systems that expect standard timestamps."
+        }
+      ]
+    },
+    "$time_local": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format main '$remote_addr [$time_local] \"$request\" $status';\n# Output: 15/Jan/2024:10:30:00 +0000\n```\n**$time_local** is the local time in Common Log Format. The default time variable used in traditional access logs."
+        }
+      ]
+    },
+    "$upstream_cache_status": {
+      "contents": [
+        {
+          "value": "```nginx\nadd_header X-Cache-Status $upstream_cache_status;\nlog_format cache '... $upstream_cache_status ...';\n# Values: MISS, HIT, EXPIRED, STALE, UPDATING, REVALIDATED, BYPASS\n```\n**$upstream_cache_status** indicates the cache status of the response. Returned values: `HIT` (served from cache), `MISS` (fetched from upstream), `EXPIRED`, `STALE`, `BYPASS`, `REVALIDATED`, `UPDATING`."
+        }
+      ]
+    },
+    "$upstream_response_time": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format timed '... upstream=$upstream_response_time total=$request_time';\n```\n**$upstream_response_time** is the time spent receiving the response from the upstream server, in seconds with millisecond precision. Multiple values separated by commas if multiple upstreams were tried. Key for identifying slow backends."
+        }
+      ]
+    },
+    "$uri": {
+      "contents": [
+        {
+          "value": "```nginx\ntry_files $uri $uri/ /index.html;\nrewrite ^/old(.*)$ /new$1 last;  # $uri reflects rewritten path\n```\n**$uri** is the current normalized request URI (decoded, without query string). Changes during internal rewrites and `try_files` processing. Use `$request_uri` for the original unmodified URI."
+        }
+      ]
+    },
+    "http": {
+      "contents": [
+        {
+          "value": "```nginx\nhttp {\n    include       mime.types;\n    default_type  application/octet-stream;\n    sendfile      on;\n    keepalive_timeout 65;\n\n    server { ... }\n}\n```\n**http** is the top-level configuration block for all HTTP/HTTPS traffic. Contains `server` blocks, `upstream` definitions, and global HTTP settings like logging, gzip, and connection timeouts."
+        }
+      ]
+    },
+    "events": {
+      "contents": [
+        {
+          "value": "```nginx\nevents {\n    worker_connections 1024;\n    multi_accept on;\n    use epoll;  # Linux\n}\n```\n**events** block configures the connection processing model. Sets maximum concurrent connections per worker (`worker_connections`), enables accepting multiple connections at once (`multi_accept`), and selects the event method (`epoll`, `kqueue`)."
+        }
+      ]
+    },
+    "include": {
+      "contents": [
+        {
+          "value": "```nginx\ninclude /etc/nginx/mime.types;\ninclude /etc/nginx/conf.d/*.conf;\ninclude /etc/nginx/sites-enabled/*;\ninclude snippets/ssl-params.conf;\n```\n**include** imports another configuration file or files matching a glob pattern. Supports wildcards. Used to organize configs into modular files. Paths are relative to the main config directory unless absolute."
+        }
+      ]
+    },
+    "worker_processes": {
+      "contents": [
+        {
+          "value": "```nginx\nworker_processes auto;  # one per CPU core (recommended)\nworker_processes 4;     # fixed count\n```\n**worker_processes** sets the number of Nginx worker processes. `auto` detects the number of CPU cores. Each worker handles thousands of connections. Generally set to `auto` or match the CPU core count."
+        }
+      ]
+    },
+    "worker_connections": {
+      "contents": [
+        {
+          "value": "```nginx\nevents {\n    worker_connections 1024;\n}\n# Max connections = worker_processes × worker_connections\n```\n**worker_connections** sets the maximum number of simultaneous connections each worker process can handle. Includes both client connections and upstream connections. Total capacity = workers × connections."
+        }
+      ]
+    },
+    "worker_rlimit_nofile": {
+      "contents": [
+        {
+          "value": "```nginx\nworker_rlimit_nofile 65535;\n```\n**worker_rlimit_nofile** sets the maximum number of open file descriptors for worker processes. Should be at least `2 × worker_connections`. Set this to avoid 'Too many open files' errors under high load."
+        }
+      ]
+    },
+    "multi_accept": {
+      "contents": [
+        {
+          "value": "```nginx\nevents {\n    multi_accept on;\n}\n```\n**multi_accept** allows a worker process to accept multiple new connections at once instead of one at a time. Improves performance under high connection rates. Default: `off`."
+        }
+      ]
+    },
+    "sendfile": {
+      "contents": [
+        {
+          "value": "```nginx\nsendfile on;\nsendfile_max_chunk 1m;\n```\n**sendfile** enables the `sendfile()` system call for serving static files, which bypasses user-space buffering by transferring data directly between file descriptors in the kernel. Significantly improves static file serving performance."
+        }
+      ]
+    },
+    "tcp_nopush": {
+      "contents": [
+        {
+          "value": "```nginx\nsendfile on;\ntcp_nopush on;\n```\n**tcp_nopush** enables `TCP_CORK` (Linux) or `TCP_NOPUSH` (BSD). Optimizes static file delivery by sending HTTP headers and file contents in a single packet. Only works when `sendfile` is enabled."
+        }
+      ]
+    },
+    "tcp_nodelay": {
+      "contents": [
+        {
+          "value": "```nginx\ntcp_nodelay on;\n```\n**tcp_nodelay** enables the `TCP_NODELAY` option, disabling Nagle's algorithm. Sends data immediately without waiting to coalesce small packets. Enabled by default for keep-alive connections. Important for low-latency websocket/streaming scenarios."
+        }
+      ]
+    },
+    "keepalive_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nkeepalive_timeout 65;        # server timeout\nkeepalive_timeout 65 60;     # server 65s, client header 60s\n```\n**keepalive_timeout** sets how long an idle keep-alive connection stays open. First parameter is the server timeout; optional second parameter sets the `Keep-Alive: timeout=N` response header for the client."
+        }
+      ]
+    },
+    "keepalive_requests": {
+      "contents": [
+        {
+          "value": "```nginx\nkeepalive_requests 1000;  # max requests per keep-alive connection\n```\n**keepalive_requests** limits the maximum number of requests served through a single keep-alive connection. After this limit, the connection is closed. Default: 1000. Increase for high-traffic APIs."
+        }
+      ]
+    },
+    "client_max_body_size": {
+      "contents": [
+        {
+          "value": "```nginx\nclient_max_body_size 100m;\nclient_max_body_size 0;     # unlimited\n```\n**client_max_body_size** sets the maximum allowed size of the client request body. Returns `413 Request Entity Too Large` if exceeded. Set to `0` to disable checking. Applies to file uploads and POST data."
+        }
+      ]
+    },
+    "client_body_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nclient_body_timeout 60s;\n```\n**client_body_timeout** sets the timeout for reading the client request body. The timeout is set only between two successive read operations, not for the entire body transfer. Returns `408 Request Timeout` on expiry."
+        }
+      ]
+    },
+    "client_header_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nclient_header_timeout 60s;\n```\n**client_header_timeout** defines the timeout for reading the client request header. If the client does not transmit the complete header within this time, Nginx returns `408 Request Timeout`."
+        }
+      ]
+    },
+    "default_type": {
+      "contents": [
+        {
+          "value": "```nginx\ndefault_type application/octet-stream;\ndefault_type text/plain;\n```\n**default_type** sets the MIME type for responses when the type cannot be determined from the file extension via the `types` block. `application/octet-stream` triggers download; `text/plain` shows as text."
+        }
+      ]
+    },
+    "types": {
+      "contents": [
+        {
+          "value": "```nginx\ntypes {\n    text/html  html htm;\n    text/css   css;\n    application/javascript js;\n    image/png  png;\n}\n# Usually loaded via: include mime.types;\n```\n**types** maps file extensions to MIME types. Typically loaded from the `mime.types` file using `include`. Custom types can be added for specific file extensions."
+        }
+      ]
+    },
+    "index": {
+      "contents": [
+        {
+          "value": "```nginx\nindex index.html index.htm index.php;\n```\n**index** defines the default files to serve when a directory is requested. Nginx checks files in order and serves the first one found. Can be set at `http`, `server`, or `location` level."
+        }
+      ]
+    },
+    "root": {
+      "contents": [
+        {
+          "value": "```nginx\nserver {\n    root /var/www/html;\n    location /images/ {\n        root /data;  # serves from /data/images/\n    }\n}\n```\n**root** sets the document root directory for requests. The full path is constructed by appending the URI to `root`. Unlike `alias`, the location prefix is included in the filesystem path."
+        }
+      ]
+    },
+    "alias": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /static/ {\n    alias /var/www/assets/;  # /static/img.png → /var/www/assets/img.png\n}\n# versus root:\nlocation /static/ {\n    root /var/www;  # /static/img.png → /var/www/static/img.png\n}\n```\n**alias** replaces the location prefix with the specified path. Unlike `root`, the location prefix is stripped. Must end with `/` when the location ends with `/`."
+        }
+      ]
+    },
+    "return": {
+      "contents": [
+        {
+          "value": "```nginx\nreturn 301 https://$host$request_uri;  # permanent redirect\nreturn 302 /maintenance.html;              # temporary redirect\nreturn 200 'OK';                           # direct response\nreturn 403;                                # forbidden\n```\n**return** sends a response with the specified status code and optional body/URL. For 301/302/303/307/308, the second argument is the redirect URL. For other codes, it's the response body. Faster than `rewrite` for simple redirects."
+        }
+      ]
+    },
+    "set": {
+      "contents": [
+        {
+          "value": "```nginx\nset $backend http://localhost:8080;\nset $limit_key $binary_remote_addr;\nif ($http_x_custom) {\n    set $backend http://localhost:9090;\n}\nproxy_pass $backend;\n```\n**set** assigns a value to a variable. Variables can be used throughout the configuration for dynamic routing, header values, and conditional logic. Variables are evaluated lazily per-request."
+        }
+      ]
+    },
+    "if": {
+      "contents": [
+        {
+          "value": "```nginx\nif ($request_method = POST) { return 405; }\nif ($http_user_agent ~* \"bot\") { return 403; }\nif ($scheme = http) {\n    return 301 https://$host$request_uri;\n}\n# Operators: =, !=, ~, ~*, !~, !~*, -f, -d, -e, -x\n```\n**if** evaluates a condition and applies the enclosed directives. Supports string comparison (`=`, `!=`), regex (`~`, `~*`), and file tests (`-f`, `-d`, `-e`). **Warning**: `if` inside `location` has known issues — prefer `map` or `try_files` when possible."
+        }
+      ]
+    },
+    "error_log": {
+      "contents": [
+        {
+          "value": "```nginx\nerror_log /var/log/nginx/error.log warn;\nerror_log /var/log/nginx/debug.log debug;\nerror_log syslog:server=192.168.1.1 info;\n# Levels: debug, info, notice, warn, error, crit, alert, emerg\n```\n**error_log** configures the error log file and minimum severity level. Can be set at `main`, `http`, `server`, or `location` level. Multiple `error_log` directives can be used for different log levels."
+        }
+      ]
+    },
+    "access_log": {
+      "contents": [
+        {
+          "value": "```nginx\naccess_log /var/log/nginx/access.log main;\naccess_log /var/log/nginx/json.log json_format buffer=32k flush=5s;\naccess_log off;  # disable\n```\n**access_log** configures the access log file, format, and optional buffering. Reference a `log_format` by name. Supports buffered writes for performance. Use `off` to disable logging for specific locations."
+        }
+      ]
+    },
+    "log_format": {
+      "contents": [
+        {
+          "value": "```nginx\nlog_format main '$remote_addr - $remote_user [$time_local] '\n                '\"$request\" $status $body_bytes_sent '\n                '\"$http_referer\" \"$http_user_agent\"';\n\nlog_format json escape=json '{\"time\":\"$time_iso8601\",'\n               '\"status\":$status,\"request\":\"$request\"}';\n```\n**log_format** defines a named log format template using Nginx variables. Referenced by `access_log`. Supports `escape=json` for JSON logging. Only valid in the `http` block."
+        }
+      ]
+    },
+    "internal": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /internal-api/ {\n    internal;  # only accessible via internal redirects\n    proxy_pass http://backend;\n}\nerror_page 404 /404.html;\nlocation = /404.html {\n    internal;\n}\n```\n**internal** marks a location as only accessible through internal requests (e.g., `error_page`, `try_files`, `X-Accel-Redirect`). Direct client requests to an internal location return `404`."
+        }
+      ]
+    },
+    "proxy_set_header": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_set_header Host $host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\nproxy_set_header X-Forwarded-Proto $scheme;\n```\n**proxy_set_header** sets or overrides request headers sent to the proxied server. Essential for passing client IP, hostname, and protocol information to backends. Inherited from outer blocks but reset if any are set in the current block."
+        }
+      ]
+    },
+    "proxy_http_version": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_http_version 1.1;\nproxy_set_header Connection \"\";  # enable keepalive\n```\n**proxy_http_version** sets the HTTP protocol version for proxying. Use `1.1` for keep-alive connections to upstreams and WebSocket support. Default is `1.0` which closes connections after each request."
+        }
+      ]
+    },
+    "proxy_buffering": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_buffering on;   # default, buffer upstream response\nproxy_buffering off;  # stream directly to client (SSE, streaming)\n```\n**proxy_buffering** controls whether Nginx buffers the response from the upstream server. When `on`, Nginx reads the entire response before sending to the client. Turn `off` for Server-Sent Events, streaming, or real-time responses."
+        }
+      ]
+    },
+    "proxy_buffer_size": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_buffer_size 4k;  # buffer for first part of response (headers)\n```\n**proxy_buffer_size** sets the size of the buffer for reading the first part of the upstream response (usually headers). If upstream headers exceed this, Nginx returns `502 Bad Gateway`. Increase for backends with large headers/cookies."
+        }
+      ]
+    },
+    "proxy_cache_path": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cache_path /var/cache/nginx levels=1:2\n    keys_zone=my_cache:10m\n    max_size=10g\n    inactive=60m\n    use_temp_path=off;\n\nserver {\n    location / {\n        proxy_cache my_cache;\n        proxy_pass http://backend;\n    }\n}\n```\n**proxy_cache_path** defines a disk cache zone. `keys_zone` sets the shared memory zone for keys; `max_size` limits disk usage; `inactive` sets how long unused items are kept; `levels` sets the directory hierarchy depth."
+        }
+      ]
+    },
+    "proxy_cache_valid": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cache_valid 200 302 10m;  # cache success for 10 min\nproxy_cache_valid 404 1m;        # cache 404 for 1 min\nproxy_cache_valid any 5m;        # cache everything for 5 min\n```\n**proxy_cache_valid** sets cache duration per HTTP status code. Overrides cache headers from upstream. Use `any` to match all status codes. Only applies when `proxy_cache` is active."
+        }
+      ]
+    },
+    "proxy_cache_bypass": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cache_bypass $http_cache_control $cookie_nocache;\nproxy_cache_bypass $arg_nocache;\n```\n**proxy_cache_bypass** defines conditions to bypass the cache and fetch from upstream. If any listed variable is non-empty and not `0`, the cache is bypassed. The response may still be cached for future requests."
+        }
+      ]
+    },
+    "proxy_cache_key": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cache_key \"$scheme$request_method$host$request_uri\";\nproxy_cache_key \"$host$uri$is_args$args\";  # include query string\n```\n**proxy_cache_key** defines the key used for cache storage and lookup. Default: `$scheme$proxy_host$request_uri`. Customize to control cache granularity — e.g., include cookies or specific headers for user-specific caching."
+        }
+      ]
+    },
+    "proxy_connect_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_connect_timeout 60s;  # default: 60s\n```\n**proxy_connect_timeout** sets the timeout for establishing a connection with the upstream server. This does not limit the time for the entire response. If the connection cannot be established within this time, Nginx returns `502 Bad Gateway` or tries the next upstream."
+        }
+      ]
+    },
+    "proxy_read_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_read_timeout 60s;  # default: 60s\nproxy_read_timeout 300s; # for long-running APIs\n```\n**proxy_read_timeout** sets the timeout for reading a response from the upstream server. The timeout is between two successive read operations, not for the entire transfer. Increase for long-polling, slow APIs, or heavy computations."
+        }
+      ]
+    },
+    "proxy_send_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_send_timeout 60s;  # default: 60s\n```\n**proxy_send_timeout** sets the timeout for transmitting a request to the upstream server. The timeout applies between two successive write operations. If the upstream does not receive any data within this time, the connection is closed."
+        }
+      ]
+    },
+    "proxy_next_upstream": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_next_upstream error timeout http_502 http_503;\nproxy_next_upstream_tries 3;\nproxy_next_upstream_timeout 10s;\n```\n**proxy_next_upstream** defines conditions under which a request is passed to the next upstream server. Enables automatic failover in load-balanced setups. Use with `upstream` blocks."
+        }
+      ]
+    },
+    "proxy_redirect": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_redirect off;\nproxy_redirect http://backend/ /;\nproxy_redirect default;\n```\n**proxy_redirect** rewrites the `Location` and `Refresh` headers in upstream responses. `default` replaces the upstream URL with the location; `off` disables rewriting. Needed when backends send absolute redirect URLs that don't match the public URL."
+        }
+      ]
+    },
+    "proxy_cookie_domain": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cookie_domain backend.internal example.com;\nproxy_cookie_domain ~\\.internal$ .example.com;\n```\n**proxy_cookie_domain** rewrites the `domain` attribute of `Set-Cookie` headers from the upstream server. Essential when the backend uses internal hostnames that differ from the public domain."
+        }
+      ]
+    },
+    "proxy_cookie_path": {
+      "contents": [
+        {
+          "value": "```nginx\nproxy_cookie_path /api/ /;\nproxy_cookie_path ~*^/internal /;\n```\n**proxy_cookie_path** rewrites the `path` attribute of `Set-Cookie` headers from upstream. Needed when the backend sets cookie paths that differ from the public URL structure."
+        }
+      ]
+    },
+    "add_header": {
+      "contents": [
+        {
+          "value": "```nginx\nadd_header X-Frame-Options \"SAMEORIGIN\" always;\nadd_header X-Content-Type-Options \"nosniff\" always;\nadd_header Strict-Transport-Security \"max-age=31536000\" always;\nadd_header Cache-Control \"public, max-age=3600\";\n```\n**add_header** adds a response header. Use `always` to include the header in error responses too (4xx/5xx). Headers are inherited from outer blocks only if no `add_header` directives exist in the current block."
+        }
+      ]
+    },
+    "ssl_certificate": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\n```\n**ssl_certificate** specifies the path to the SSL/TLS certificate file (PEM format). Should be the full chain (server cert + intermediates). Required for HTTPS server blocks."
+        }
+      ]
+    },
+    "ssl_certificate_key": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n```\n**ssl_certificate_key** specifies the path to the private key file for the SSL certificate. File should be readable only by the Nginx master process (`chmod 600`)."
+        }
+      ]
+    },
+    "ssl_protocols": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_protocols TLSv1.2 TLSv1.3;  # recommended minimum\n```\n**ssl_protocols** specifies the TLS protocol versions to enable. Disable TLSv1 and TLSv1.1 for security. TLSv1.2 provides broad compatibility; TLSv1.3 offers the best performance and security."
+        }
+      ]
+    },
+    "ssl_ciphers": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384';\nssl_ciphers HIGH:!aNULL:!MD5;  # simpler approach\n```\n**ssl_ciphers** defines the OpenSSL cipher suite list for TLS connections. Use `ssl_prefer_server_ciphers on` to enforce server cipher order. With TLSv1.3, ciphers are fixed and this directive is ignored."
+        }
+      ]
+    },
+    "ssl_prefer_server_ciphers": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_prefer_server_ciphers on;\n```\n**ssl_prefer_server_ciphers** tells Nginx to use the server's cipher preference order instead of the client's. Ensures stronger ciphers are preferred. Enable alongside a curated `ssl_ciphers` list."
+        }
+      ]
+    },
+    "ssl_dhparam": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_dhparam /etc/nginx/dhparam.pem;\n# Generate: openssl dhparam -out /etc/nginx/dhparam.pem 2048\n```\n**ssl_dhparam** specifies the Diffie-Hellman parameters file for DHE ciphers. Provides forward secrecy. Generate with `openssl dhparam`. Use at least 2048-bit parameters."
+        }
+      ]
+    },
+    "ssl_session_cache": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_session_cache shared:SSL:10m;  # 10MB shared across workers\n# ~40,000 sessions per 1MB\n```\n**ssl_session_cache** configures the TLS session cache. `shared:NAME:SIZE` creates a cache shared between all worker processes. Reduces CPU overhead by reusing TLS sessions. Set size based on expected concurrent connections."
+        }
+      ]
+    },
+    "ssl_session_timeout": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_session_timeout 1d;  # cache sessions for 1 day\n```\n**ssl_session_timeout** sets how long a TLS session is kept in the session cache. Longer times reduce TLS handshakes for returning clients. Default: 5m. Common production value: 1d."
+        }
+      ]
+    },
+    "ssl_session_tickets": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_session_tickets off;  # disable for forward secrecy\n```\n**ssl_session_tickets** enables/disables TLS session tickets (RFC 5077). While improving performance, tickets can compromise forward secrecy unless ticket keys are rotated regularly. Disable for maximum security."
+        }
+      ]
+    },
+    "ssl_stapling": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_stapling on;\nssl_stapling_verify on;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\n```\n**ssl_stapling** enables OCSP stapling — Nginx fetches and caches the OCSP response and sends it during the TLS handshake. Improves client connection speed by avoiding separate OCSP queries. Requires a `resolver`."
+        }
+      ]
+    },
+    "ssl_stapling_verify": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_stapling_verify on;\nssl_trusted_certificate /etc/letsencrypt/live/example.com/chain.pem;\n```\n**ssl_stapling_verify** enables verification of OCSP responses. Requires `ssl_trusted_certificate` pointing to the CA chain. Protects against forged OCSP responses."
+        }
+      ]
+    },
+    "ssl_trusted_certificate": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_trusted_certificate /etc/letsencrypt/live/example.com/chain.pem;\n```\n**ssl_trusted_certificate** specifies the CA certificate chain for verifying OCSP responses (used with `ssl_stapling_verify on`) and client certificates. Must contain the full chain from server cert to root CA."
+        }
+      ]
+    },
+    "allow": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /admin/ {\n    allow 192.168.1.0/24;\n    allow 10.0.0.0/8;\n    deny all;\n}\n```\n**allow** permits access from the specified IP address or CIDR range. Processed in order with `deny` directives — first match wins. Always end with `deny all` for whitelist-only access."
+        }
+      ]
+    },
+    "deny": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /admin/ {\n    allow 192.168.1.0/24;\n    deny all;  # block everyone else\n}\ndeny 10.0.0.1;  # block specific IP\n```\n**deny** blocks access from the specified IP address or CIDR range. `deny all` blocks everyone. Processed in order with `allow` directives — first match wins. Returns `403 Forbidden`."
+        }
+      ]
+    },
+    "auth_basic_user_file": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /admin/ {\n    auth_basic \"Admin Area\";\n    auth_basic_user_file /etc/nginx/.htpasswd;\n}\n# Create password file: htpasswd -c /etc/nginx/.htpasswd username\n```\n**auth_basic_user_file** specifies the file containing username:password pairs for HTTP Basic authentication. Generate with `htpasswd` from Apache utils. Pairs with `auth_basic` directive."
+        }
+      ]
+    },
+    "auth_request_set": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /protected/ {\n    auth_request /auth;\n    auth_request_set $auth_user $upstream_http_x_auth_user;\n    proxy_set_header X-Auth-User $auth_user;\n    proxy_pass http://backend;\n}\n```\n**auth_request_set** captures values from the auth subrequest response into variables. Commonly extracts user info, roles, or tokens from auth service headers for forwarding to the backend."
+        }
+      ]
+    },
+    "sub_filter": {
+      "contents": [
+        {
+          "value": "```nginx\nsub_filter 'http://backend' 'https://example.com';\nsub_filter_once off;  # replace all occurrences\nsub_filter_types text/html text/css;\n```\n**sub_filter** performs string replacement in the response body. Useful for fixing URLs, injecting scripts, or modifying upstream responses without changing the backend. Use `sub_filter_once off` for global replacement."
+        }
+      ]
+    },
+    "limit_req_zone": {
+      "contents": [
+        {
+          "value": "```nginx\nhttp {\n    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;\n}\nserver {\n    location /api/ {\n        limit_req zone=api burst=20 nodelay;\n    }\n}\n```\n**limit_req_zone** defines a shared memory zone for request rate limiting. Key (typically `$binary_remote_addr`) identifies clients; `rate` sets requests per second/minute. Zone size determines how many keys can be tracked."
+        }
+      ]
+    },
+    "limit_req": {
+      "contents": [
+        {
+          "value": "```nginx\nlimit_req zone=api burst=20 nodelay;\nlimit_req zone=api burst=5;  # with delay (default)\n```\n**limit_req** applies request rate limiting defined by `limit_req_zone`. `burst` allows short bursts beyond the rate. `nodelay` processes burst requests immediately; without it, excess requests are delayed. Returns `503` when limit exceeded."
+        }
+      ]
+    },
+    "limit_conn_zone": {
+      "contents": [
+        {
+          "value": "```nginx\nlimit_conn_zone $binary_remote_addr zone=conn:10m;\n```\n**limit_conn_zone** defines a shared memory zone for concurrent connection limiting. The key determines how connections are grouped (typically by client IP). Used with `limit_conn` to restrict simultaneous connections per key."
+        }
+      ]
+    },
+    "limit_conn": {
+      "contents": [
+        {
+          "value": "```nginx\nlimit_conn conn 10;  # max 10 concurrent connections per IP\nlimit_conn_status 429;\n```\n**limit_conn** restricts the number of concurrent connections from a single key (defined by `limit_conn_zone`). Returns `503` by default when exceeded (override with `limit_conn_status`). Effective against slow-connection DDoS attacks."
+        }
+      ]
+    },
+    "geo": {
+      "contents": [
+        {
+          "value": "```nginx\ngeo $allowed {\n    default 0;\n    192.168.1.0/24 1;\n    10.0.0.0/8 1;\n}\nif ($allowed = 0) { return 403; }\n```\n**geo** creates a variable whose value depends on the client IP address. Matches against IP ranges/CIDRs. More efficient than multiple `if` conditions for IP-based routing or access control."
+        }
+      ]
+    },
+    "resolver": {
+      "contents": [
+        {
+          "value": "```nginx\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver 127.0.0.1 valid=30s ipv6=off;  # local DNS\n```\n**resolver** configures DNS servers for resolving upstream hostnames, OCSP responders, and other dynamic names. `valid` sets the TTL override. Required for `ssl_stapling`, variables in `proxy_pass`, and dynamic upstreams."
+        }
+      ]
+    },
+    "real_ip_header": {
+      "contents": [
+        {
+          "value": "```nginx\nset_real_ip_from 10.0.0.0/8;\nreal_ip_header X-Forwarded-For;\nreal_ip_header X-Real-IP;\nreal_ip_header proxy_protocol;\n```\n**real_ip_header** specifies the header to extract the real client IP from when Nginx is behind a proxy/load balancer. Common values: `X-Forwarded-For`, `X-Real-IP`, `proxy_protocol`. Requires `ngx_http_realip_module`."
+        }
+      ]
+    },
+    "set_real_ip_from": {
+      "contents": [
+        {
+          "value": "```nginx\nset_real_ip_from 10.0.0.0/8;\nset_real_ip_from 172.16.0.0/12;\nset_real_ip_from 192.168.0.0/16;\nreal_ip_header X-Forwarded-For;\n```\n**set_real_ip_from** defines trusted proxy addresses. Only `real_ip_header` values from these IPs are accepted. Prevents IP spoofing. List all load balancers, CDNs (e.g., Cloudflare ranges), and proxy IPs."
+        }
+      ]
+    },
+    "autoindex": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /files/ {\n    autoindex on;\n    autoindex_exact_size off;  # show human-readable sizes\n    autoindex_localtime on;    # show local time\n}\n```\n**autoindex** enables automatic directory listing when no index file is found. Shows files with sizes and modification dates. Default: `off`. Use with caution — may expose sensitive directory contents."
+        }
+      ]
+    },
+    "open_file_cache": {
+      "contents": [
+        {
+          "value": "```nginx\nopen_file_cache max=1000 inactive=20s;\nopen_file_cache_valid 30s;\nopen_file_cache_min_uses 2;\n```\n**open_file_cache** caches file descriptors, sizes, modification times, and directory lookups. Reduces filesystem syscalls for frequently accessed files. `max` limits entries; `inactive` sets how long unused entries are kept."
+        }
+      ]
+    },
+    "fastcgi_pass": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation ~ \\.php$ {\n    fastcgi_pass unix:/var/run/php/php-fpm.sock;\n    fastcgi_pass 127.0.0.1:9000;\n    fastcgi_index index.php;\n    include fastcgi_params;\n}\n```\n**fastcgi_pass** sets the address of a FastCGI server. Can be a Unix socket or TCP address. Primary directive for proxying requests to PHP-FPM and other FastCGI applications."
+        }
+      ]
+    },
+    "fastcgi_param": {
+      "contents": [
+        {
+          "value": "```nginx\nfastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\nfastcgi_param QUERY_STRING $query_string;\nfastcgi_param PHP_VALUE \"error_log=/var/log/php_errors.log\";\n# Usually: include fastcgi_params;\n```\n**fastcgi_param** sets a parameter passed to the FastCGI server. `SCRIPT_FILENAME` is required for PHP-FPM. Standard parameters are typically loaded via `include fastcgi_params`. Custom PHP settings can be passed via `PHP_VALUE`."
+        }
+      ]
+    },
+    "fastcgi_index": {
+      "contents": [
+        {
+          "value": "```nginx\nfastcgi_index index.php;\n```\n**fastcgi_index** sets the filename appended to a URI ending with `/` when proxying to a FastCGI server. Used to construct the `SCRIPT_FILENAME` for directory requests."
+        }
+      ]
+    },
+    "uwsgi_pass": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation / {\n    uwsgi_pass unix:/tmp/uwsgi.sock;\n    uwsgi_pass 127.0.0.1:8000;\n    include uwsgi_params;\n}\n```\n**uwsgi_pass** sets the address of a uWSGI server. Can be a Unix socket or TCP address. Primary directive for proxying to Python WSGI applications (Django, Flask) running under uWSGI."
+        }
+      ]
+    },
+    "grpc_pass": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /grpc.Service/ {\n    grpc_pass grpc://127.0.0.1:50051;\n    grpc_pass grpcs://backend;  # with TLS\n}\n```\n**grpc_pass** proxies requests to a gRPC backend server. Use `grpc://` for plaintext or `grpcs://` for TLS backends. Requires `proxy_http_version 2` implicitly. Available since Nginx 1.13.10."
+        }
+      ]
+    },
+    "mail": {
+      "contents": [
+        {
+          "value": "```nginx\nmail {\n    server_name mail.example.com;\n    auth_http localhost:9000/auth;\n\n    server {\n        listen 993 ssl;\n        protocol imap;\n    }\n    server {\n        listen 587 ssl;\n        protocol smtp;\n        smtp_auth login plain;\n    }\n}\n```\n**mail** is the top-level block for configuring Nginx as a mail proxy (IMAP, POP3, SMTP). Requires `ngx_mail_module`. Supports authentication via HTTP backend and SSL/TLS."
+        }
+      ]
+    },
+    "gzip_comp_level": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip_comp_level 5;  # range: 1-9\n# 1 = fastest/least compression\n# 9 = slowest/best compression\n# 5-6 = good balance\n```\n**gzip_comp_level** sets the gzip compression level (1-9). Higher values compress more but use more CPU. Levels 4-6 provide the best balance between compression ratio and CPU overhead. Default: 1."
+        }
+      ]
+    },
+    "gzip_types": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip_types text/plain text/css application/json application/javascript\n           text/xml application/xml text/javascript image/svg+xml;\n```\n**gzip_types** specifies which MIME types to compress in addition to `text/html` (which is always compressed). Add all text-based types. Don't compress already-compressed formats (images, video, archives)."
+        }
+      ]
+    },
+    "gzip_min_length": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip_min_length 256;  # don't compress tiny responses\n```\n**gzip_min_length** sets the minimum response size to apply gzip compression. Responses smaller than this are sent uncompressed. Prevents overhead on tiny responses where compression adds more bytes than it saves. Default: 20."
+        }
+      ]
+    },
+    "gzip_proxied": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip_proxied any;       # compress all proxied responses\ngzip_proxied no-cache no-store private expired auth;\n```\n**gzip_proxied** controls whether responses from proxied requests are compressed, based on the `Via` header presence and cache-control headers. `any` compresses all proxied responses."
+        }
+      ]
+    },
+    "gzip_vary": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip_vary on;\n# Adds: Vary: Accept-Encoding\n```\n**gzip_vary** adds a `Vary: Accept-Encoding` response header when gzip is active. Essential for correct caching behavior — ensures CDNs and proxies cache compressed and uncompressed versions separately."
+        }
+      ]
     }
   }
 }

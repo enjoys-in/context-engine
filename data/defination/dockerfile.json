@@ -3,111 +3,293 @@
   "definitions": {
     "FROM": {
       "signature": "FROM [--platform=<platform>] <image>[:<tag>|@<digest>] [AS <name>]",
-      "description": "Initialize a new build stage and set the base image. Every valid Dockerfile must begin with a FROM instruction (except ARG before FROM). Supports multi-stage builds via multiple FROM instructions. The optional AS keyword names the stage for COPY --from references.",
+      "description": "Initialize a new build stage and set the base image. Every Dockerfile must begin with a FROM instruction (ARG is allowed before FROM). Multiple FROM instructions create multi-stage builds.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "RUN": {
-      "signature": "RUN [--mount=<type>] [--network=<type>] [--security=<type>] <command> | RUN [\"executable\", \"param1\", \"param2\"]",
-      "description": "Execute a command in a new layer on top of the current image and commit the result. Shell form runs via /bin/sh -c (or SHELL override). Exec form (JSON array) runs directly without shell processing. Supports BuildKit mount types: cache, bind, secret, ssh, tmpfs. Each RUN creates a new image layer — combine related commands with && to reduce layers.",
+      "signature": "RUN [--mount=<opts>] [--network=<type>] [--security=<type>] <command> | RUN [\"executable\", \"arg1\", ...]",
+      "description": "Execute a command in a new layer on top of the current image. Shell form runs via /bin/sh -c; exec form runs directly. Each RUN creates a new layer.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "CMD": {
-      "signature": "CMD [\"executable\", \"param1\", \"param2\"] | CMD [\"param1\", \"param2\"] | CMD command param1 param2",
-      "description": "Set the default command to execute when a container starts. Only the last CMD in a Dockerfile takes effect. Three forms: exec form (preferred, JSON array), as default parameters to ENTRYPOINT (JSON array), and shell form. CMD is overridden by arguments passed to docker run.",
+      "signature": "CMD [\"executable\",\"param1\",\"param2\"] | CMD [\"param1\",\"param2\"] | CMD command param1",
+      "description": "Provide defaults for an executing container. Only the last CMD takes effect. Exec form is preferred. If used with ENTRYPOINT, provides default arguments.",
+      "type": "instruction",
+      "module": "Dockerfile"
+    },
+    "ENTRYPOINT": {
+      "signature": "ENTRYPOINT [\"executable\", \"param1\"] | ENTRYPOINT command param1",
+      "description": "Configure a container that will run as an executable. Exec form is preferred. CMD arguments are appended. Override with docker run --entrypoint.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "LABEL": {
       "signature": "LABEL <key>=<value> [<key>=<value> ...]",
-      "description": "Add metadata to an image as key-value pairs. Labels are inherited from base images and can be inspected with docker inspect. Use OCI standard annotations (org.opencontainers.image.*) for interoperability. Combine multiple labels in one instruction to create a single layer.",
+      "description": "Add metadata to an image as key-value pairs. Use OCI annotation keys for standard metadata (org.opencontainers.image.*).",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "MAINTAINER": {
       "signature": "MAINTAINER <name>",
-      "description": "Set the Author field of the generated image. Deprecated in favor of LABEL: use LABEL maintainer=\"name <email>\" instead. Still parsed for backward compatibility but should not be used in new Dockerfiles.",
+      "description": "Set the Author field. Deprecated: use LABEL org.opencontainers.image.authors instead.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "EXPOSE": {
       "signature": "EXPOSE <port>[/<protocol>] [<port>[/<protocol>] ...]",
-      "description": "Inform Docker that the container listens on the specified network port(s) at runtime. Default protocol is TCP; specify /udp for UDP. EXPOSE does not actually publish the port — it documents which ports are intended to be published. Use -p at docker run or ports in compose to actually publish.",
+      "description": "Document which ports the container listens on. Does not actually publish ports; use -p at runtime. Protocol defaults to TCP.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "ENV": {
       "signature": "ENV <key>=<value> [<key>=<value> ...]",
-      "description": "Set environment variables that persist in the built image and running containers. ENV values are available during build (in subsequent instructions) and at runtime. Use ARG for build-only variables. ENV values can be overridden at runtime with docker run --env. Each ENV instruction creates a new layer; combine related variables in one instruction.",
+      "description": "Set environment variables that persist in the built image and running containers. Values can be overridden at runtime with docker run --env.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "ADD": {
-      "signature": "ADD [--chown=<user>:<group>] [--chmod=<perms>] [--checksum=<hash>] <src> ... <dest>",
-      "description": "Copy files, directories, or remote URLs from <src> to the filesystem of the image at <dest>. ADD has special features: automatic extraction of recognized archive formats (tar, gzip, bzip2, xz) and support for remote URLs. For plain file copies, COPY is preferred. --chown sets ownership (Linux only). --checksum validates remote URLs.",
+      "signature": "ADD [--chown=<user>:<group>] [--chmod=<perms>] [--checksum=<hash>] <src>... <dest>",
+      "description": "Copy files, directories, or remote URLs into the image. Unlike COPY, ADD supports URL sources and automatic tar extraction. Prefer COPY for simple file copying.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "COPY": {
-      "signature": "COPY [--from=<name|index>] [--chown=<user>:<group>] [--chmod=<perms>] [--link] <src> ... <dest>",
-      "description": "Copy files or directories from the build context (or a named build stage / external image with --from) into the image filesystem. Preferred over ADD for basic file copying. --chown sets ownership (Linux only). --link creates independent layers for better cache reuse. Paths are relative to the build context.",
-      "type": "instruction",
-      "module": "Dockerfile"
-    },
-    "ENTRYPOINT": {
-      "signature": "ENTRYPOINT [\"executable\", \"param1\", \"param2\"] | ENTRYPOINT command param1 param2",
-      "description": "Configure the container to run as an executable. Arguments from CMD or docker run are appended to the exec form ENTRYPOINT. Only the last ENTRYPOINT takes effect. Exec form (JSON array) is preferred. Shell form runs as /bin/sh -c subcommand, which does not pass signals. Use ENTRYPOINT for the main process and CMD for default arguments.",
+      "signature": "COPY [--from=<name>] [--chown=<user>:<group>] [--chmod=<perms>] [--link] <src>... <dest>",
+      "description": "Copy files or directories from the build context (or a previous stage with --from) into the image. Preferred over ADD for simple file operations.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "VOLUME": {
       "signature": "VOLUME [\"/path\"] | VOLUME /path1 /path2",
-      "description": "Create a mount point with the specified path and mark it as holding externally mounted volumes from the host or other containers. Data in volumes persists beyond the container lifecycle. Changes to volumes after the VOLUME instruction are not preserved during build. Use named volumes or bind mounts at runtime for data persistence.",
+      "description": "Create a mount point and mark it for holding externally mounted volumes. Data in volumes persists independently of the container lifecycle.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "USER": {
       "signature": "USER <user>[:<group>] | USER <UID>[:<GID>]",
-      "description": "Set the user name (or UID) and optionally the group (or GID) for RUN, CMD, and ENTRYPOINT instructions that follow in the Dockerfile. The user must exist in the image (create with useradd/adduser). Running containers as non-root is a security best practice. The user can be overridden at runtime with docker run --user.",
+      "description": "Set the user and optionally group for RUN, CMD, and ENTRYPOINT instructions that follow. Best practice: run as non-root user for security.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "WORKDIR": {
-      "signature": "WORKDIR /path/to/workdir",
-      "description": "Set the working directory for RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow. If the directory does not exist, it is created. WORKDIR can be set multiple times and is resolved relative to the previous WORKDIR. Use absolute paths for clarity. Environment variables set with ENV can be used in the path.",
+      "signature": "WORKDIR /path/to/dir",
+      "description": "Set the working directory for subsequent RUN, CMD, ENTRYPOINT, COPY, and ADD instructions. Creates the directory if it does not exist. Can be used multiple times.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "ARG": {
       "signature": "ARG <name>[=<default value>]",
-      "description": "Define a build-time variable that users can pass with docker build --build-arg <name>=<value>. ARG values are not persisted in the final image (unlike ENV). ARG before FROM is available only for the FROM instruction. ARG after FROM is scoped to the current build stage. Predefined ARGs include HTTP_PROXY, BUILDPLATFORM, TARGETPLATFORM, etc.",
+      "description": "Define a build-time variable. Values are supplied with --build-arg. ARGs before FROM are available only in FROM; ARGs after FROM are available in that build stage.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "ONBUILD": {
       "signature": "ONBUILD <INSTRUCTION>",
-      "description": "Add a trigger instruction to the image metadata that executes when the image is used as a base for another build. The trigger fires immediately after the FROM instruction in the child Dockerfile. Useful for building generic base images. ONBUILD ONBUILD is not allowed. ONBUILD instructions are not inherited beyond one level.",
+      "description": "Register a trigger instruction to execute when the image is used as a FROM base for another Dockerfile. Useful for creating base images that auto-configure child images.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "STOPSIGNAL": {
       "signature": "STOPSIGNAL <signal>",
-      "description": "Set the system call signal sent to the container to stop it. The signal can be a signal name (e.g., SIGTERM, SIGKILL, SIGQUIT) or an unsigned number matching a position in the kernel's syscall table (e.g., 9 for SIGKILL). Default is SIGTERM. Can be overridden at runtime with docker run --stop-signal.",
+      "description": "Set the system call signal sent to the container when docker stop is called. Can be a signal name (SIGTERM) or number (15). Default is SIGTERM.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "HEALTHCHECK": {
       "signature": "HEALTHCHECK [OPTIONS] CMD <command> | HEALTHCHECK NONE",
-      "description": "Tell Docker how to test the container to check that it is still working. Options: --interval=DURATION (default 30s), --timeout=DURATION (default 30s), --start-period=DURATION (default 0s, grace period for startup), --retries=N (default 3). The command exit code determines health: 0=healthy, 1=unhealthy. Only the last HEALTHCHECK takes effect. Use HEALTHCHECK NONE to disable.",
+      "description": "Define a command to periodically check container health. Options: --interval, --timeout, --start-period, --start-interval, --retries. Use NONE to disable inherited checks.",
       "type": "instruction",
       "module": "Dockerfile"
     },
     "SHELL": {
       "signature": "SHELL [\"executable\", \"parameters\"]",
-      "description": "Override the default shell used for the shell form of RUN, CMD, and ENTRYPOINT instructions. Default on Linux is [\"/bin/sh\", \"-c\"], on Windows is [\"cmd\", \"/S\", \"/C\"]. SHELL can appear multiple times and affects all subsequent shell-form instructions. Useful for switching to bash, powershell, or other shells.",
+      "description": "Override the default shell for shell-form commands. Default on Linux: [\"/bin/sh\", \"-c\"]. Default on Windows: [\"cmd\", \"/S\", \"/C\"]. Affects subsequent RUN, CMD, ENTRYPOINT shell forms.",
       "type": "instruction",
       "module": "Dockerfile"
+    },
+    "syntax": {
+      "signature": "# syntax=<frontend-image>",
+      "description": "Parser directive specifying the BuildKit frontend to use. Must be the very first line. Example: # syntax=docker/dockerfile:1",
+      "type": "parser-directive",
+      "module": "Dockerfile"
+    },
+    "escape": {
+      "signature": "# escape=<char>",
+      "description": "Parser directive to set the escape character. Default is backslash (\\\\). Use backtick (`) on Windows. Must appear before any instruction.",
+      "type": "parser-directive",
+      "module": "Dockerfile"
+    },
+    "--mount=type=cache": {
+      "signature": "--mount=type=cache,target=<path>[,id=<id>][,sharing=<shared|private|locked>][,from=<image>][,source=<path>][,mode=<mode>][,uid=<uid>][,gid=<gid>]",
+      "description": "Mount a persistent cache directory across builds. Ideal for package manager caches (apt, pip, npm). Survives between builds for faster installs.",
+      "type": "mount-type",
+      "module": "BuildKit"
+    },
+    "--mount=type=bind": {
+      "signature": "--mount=type=bind,target=<path>[,source=<path>][,from=<image|stage>][,rw]",
+      "description": "Bind mount a directory from the build context or another stage. Read-only by default. Does not persist in the image layer.",
+      "type": "mount-type",
+      "module": "BuildKit"
+    },
+    "--mount=type=secret": {
+      "signature": "--mount=type=secret,id=<id>[,target=<path>][,required=<bool>][,mode=<mode>][,uid=<uid>][,gid=<gid>]",
+      "description": "Mount a secret file during build without persisting in the final image. Pass with --secret id=mysecret,src=secret.txt. Ideal for API keys, tokens, SSH keys.",
+      "type": "mount-type",
+      "module": "BuildKit"
+    },
+    "--mount=type=ssh": {
+      "signature": "--mount=type=ssh[,id=<id>][,target=<path>][,required=<bool>][,mode=<mode>][,uid=<uid>][,gid=<gid>]",
+      "description": "Forward the SSH agent socket during build. Useful for cloning private repos. Use with docker build --ssh default.",
+      "type": "mount-type",
+      "module": "BuildKit"
+    },
+    "--mount=type=tmpfs": {
+      "signature": "--mount=type=tmpfs,target=<path>[,size=<bytes>]",
+      "description": "Mount a tmpfs (RAM-backed) filesystem. Useful for scratch space that should not be committed to the image layer.",
+      "type": "mount-type",
+      "module": "BuildKit"
+    },
+    "--link": {
+      "signature": "COPY --link | ADD --link",
+      "description": "Enable link mode for COPY/ADD. Files are added in an independent layer that does not depend on previous layers, improving cache reuse when base image changes.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--checksum": {
+      "signature": "ADD --checksum=sha256:<hash>",
+      "description": "Verify the checksum of a remote file added with ADD. Ensures integrity of downloaded files. Only sha256 is supported.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--chmod": {
+      "signature": "COPY --chmod=<perms> | ADD --chmod=<perms>",
+      "description": "Set file permissions on copied/added files. Octal notation (755, 644). Avoids an extra RUN chmod layer.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--chown": {
+      "signature": "COPY --chown=<user>:<group> | ADD --chown=<user>:<group>",
+      "description": "Set ownership on copied/added files. Accepts user/group names or numeric UID/GID. Avoids an extra RUN chown layer.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--network": {
+      "signature": "RUN --network=<type>",
+      "description": "Control the network environment for RUN. Types: default (normal networking), none (no network), host (host networking).",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--security": {
+      "signature": "RUN --security=<type>",
+      "description": "Run with modified security mode. Types: sandbox (default), insecure (elevated privileges). Insecure requires security.insecure entitlement.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "--platform": {
+      "signature": "FROM --platform=<platform>",
+      "description": "Set the target platform for the build stage. Values: linux/amd64, linux/arm64, linux/arm/v7, $BUILDPLATFORM, $TARGETPLATFORM.",
+      "type": "flag",
+      "module": "BuildKit"
+    },
+    "build stage": {
+      "signature": "FROM ... AS <name>",
+      "description": "A build stage is defined by each FROM instruction. Stages can be named with AS and referenced by COPY --from. Multi-stage builds allow copying artifacts between stages while keeping the final image small.",
+      "type": "concept",
+      "module": "Dockerfile"
+    },
+    "layer": {
+      "signature": "Each RUN, COPY, ADD creates a layer",
+      "description": "An image layer is a filesystem diff created by an instruction. Layers are cached and shared between images. Combining commands in a single RUN reduces layer count and image size.",
+      "type": "concept",
+      "module": "Dockerfile"
+    },
+    "build context": {
+      "signature": "docker build [OPTIONS] <path|URL>",
+      "description": "The set of files sent to the Docker daemon for the build. Controlled by the path argument and .dockerignore. Minimize context for faster builds.",
+      "type": "concept",
+      "module": "Dockerfile"
+    },
+    "build cache": {
+      "signature": "Layer caching mechanism",
+      "description": "Docker caches each layer and reuses it if the instruction and its inputs have not changed. Invalidation propagates to all subsequent layers. Order instructions from least to most frequently changing.",
+      "type": "concept",
+      "module": "Dockerfile"
+    },
+    "multi-stage build": {
+      "signature": "FROM ... AS stage1 / FROM ... COPY --from=stage1",
+      "description": "Use multiple FROM statements to create intermediate stages. Copy only needed artifacts into the final image. Dramatically reduces final image size by excluding build tools.",
+      "type": "concept",
+      "module": "Dockerfile"
+    },
+    "BUILDPLATFORM": {
+      "signature": "ARG BUILDPLATFORM",
+      "description": "The platform of the build node (e.g., linux/amd64). Available automatically in BuildKit builds.",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "TARGETPLATFORM": {
+      "signature": "ARG TARGETPLATFORM",
+      "description": "The target platform specified with --platform (e.g., linux/arm64). Used for cross-compilation.",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "TARGETOS": {
+      "signature": "ARG TARGETOS",
+      "description": "The OS component of TARGETPLATFORM (e.g., linux, windows).",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "TARGETARCH": {
+      "signature": "ARG TARGETARCH",
+      "description": "The architecture component of TARGETPLATFORM (e.g., amd64, arm64, arm).",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "TARGETVARIANT": {
+      "signature": "ARG TARGETVARIANT",
+      "description": "The variant component of TARGETPLATFORM (e.g., v7 for arm/v7).",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "BUILDOS": {
+      "signature": "ARG BUILDOS",
+      "description": "The OS component of BUILDPLATFORM.",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "BUILDARCH": {
+      "signature": "ARG BUILDARCH",
+      "description": "The architecture component of BUILDPLATFORM.",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "BUILDVARIANT": {
+      "signature": "ARG BUILDVARIANT",
+      "description": "The variant component of BUILDPLATFORM.",
+      "type": "predefined-arg",
+      "module": "BuildKit"
+    },
+    "--parents": {
+      "signature": "COPY --parents <src> <dest>",
+      "description": "Preserve the parent directory structure of source files when copying. BuildKit feature.",
+      "type": "flag"
+    },
+    "--keep-git-dir": {
+      "signature": "ADD --keep-git-dir=true <git-url> <dest>",
+      "description": "When adding from a Git URL, keep the .git directory.",
+      "type": "flag"
+    },
+    ".dockerignore": {
+      "signature": ".dockerignore file",
+      "description": "File listing patterns to exclude from the build context. Reduces context size and prevents sensitive files from being sent to the Docker daemon.",
+      "type": "concept"
+    },
+    "heredoc": {
+      "signature": "<<EOF ... EOF",
+      "description": "Heredoc syntax allows inline multi-line content in RUN and COPY instructions. Requires BuildKit (syntax >= docker/dockerfile:1.4).",
+      "type": "concept"
     }
   }
 }

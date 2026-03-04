@@ -1,0 +1,66 @@
+{
+  "name": "dockerfile",
+  "description": "Dockerfile — instructions to build Docker container images",
+  "category": "containerization",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "fish", "powershell"],
+  "subcommands": [],
+  "globalOptions": [],
+  "examples": [
+    "FROM node:20-alpine",
+    "FROM python:3.12-slim AS builder",
+    "WORKDIR /app",
+    "COPY package*.json ./",
+    "COPY . .",
+    "RUN npm ci --production",
+    "RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*",
+    "ENV NODE_ENV=production",
+    "EXPOSE 3000",
+    "CMD [\"node\", \"server.js\"]",
+    "ENTRYPOINT [\"python\", \"app.py\"]",
+    "ARG BUILD_VERSION=latest",
+    "LABEL maintainer=\"dev@example.com\"",
+    "HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:3000/health || exit 1",
+    "USER node",
+    "VOLUME /data",
+    "ADD https://example.com/file.tar.gz /tmp/",
+    "SHELL [\"/bin/bash\", \"-c\"]",
+    "STOPSIGNAL SIGTERM",
+    "# Multi-stage: FROM builder AS final"
+  ],
+  "relatedCommands": ["docker", "docker-compose", "podman", "buildah"],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "docker_version",
+        "description": "Docker engine version",
+        "command": "docker version --format '{{.Server.Version}}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "buildkit_enabled",
+        "description": "Check if BuildKit is enabled",
+        "command": "echo $DOCKER_BUILDKIT",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "local_images",
+        "description": "Local Docker images",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "dockerfiles_present",
+        "description": "Dockerfiles in current directory",
+        "command": "find . -maxdepth 2 -name 'Dockerfile*' -o -name '*.dockerfile' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
+}
