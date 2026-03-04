@@ -2,6 +2,14 @@
 
 Comprehensive CLI command context engine with **190 tools** and **35 languages** — completions, definitions, hovers, subcommands, options, examples, and runtime context detectors for intelligent terminal autocomplete in Monaco Editor.
 
+## Why Context Engine?
+
+Traditional LSP (Language Server Protocol) setups require a backend server running a separate language server process for every language you want to support. Each language server needs its own binary installed — Go, Rust, Python, TypeScript, and so on. At scale, this makes the backend **heavy**, memory-hungry, and CPU-intensive. Supporting all languages can easily consume **1 GB+** of disk space and significant runtime resources just to keep those servers alive.
+
+Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** loaded directly via API — completions, hover docs, definitions, and 190 CLI command definitions — all in a single package under **~100 MB**. No language binaries to install. No background processes to manage. No backend required for intelligence.
+
+> **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, inline definitions, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
+
 ## Install
 
 ```bash
@@ -584,6 +592,26 @@ const ctx = getContextEngine('systemctl');
 ```
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
+
+## Upcoming Monaco Provider Support
+
+The following Monaco providers are planned for future releases, bringing Context Engine closer to full LSP-level intelligence — all without a backend:
+
+| Provider | Status |
+|----------|--------|
+| `registerCodeActionProvider` | 🔜 Planned |
+| `registerDocumentHighlightProvider` | 🔜 Planned |
+| `registerDocumentSymbolProvider` | 🔜 Planned |
+| `registerLinkProvider` | 🔜 Planned |
+| `registerTypeDefinitionProvider` | 🔜 Planned |
+| `registerReferenceProvider` | 🔜 Planned |
+| `registerImplementationProvider` | 🔜 Planned |
+| `registerInlineCompletionsProvider` | 🔜 Planned |
+| `registerDocumentFormattingEditProvider` | 🔜 Planned |
+| `registerCodeLensProvider` | 🔜 Planned |
+| `registerColorProvider` | 🔜 Planned |
+| `registerDeclarationProvider` | 🔜 Planned |
+| `registerInlayHintsProvider` | 🔜 Planned |
 
 ## License
 
