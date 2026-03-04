@@ -1,0 +1,47 @@
+{
+  "language": "ssh_config",
+  "hovers": {
+    "Host": {
+      "contents": [
+        {
+          "value": "```\nHost myserver\n    HostName 10.0.1.50\n    User deploy\n\nHost *.internal\n    ProxyJump bastion\n\nHost *\n    ServerAliveInterval 60\n```\n**Host** blocks match by name/pattern. `Host *` sets defaults. Wildcards and negation (`!pattern`) are supported."
+        }
+      ]
+    },
+    "IdentityFile": {
+      "contents": [
+        {
+          "value": "```\nIdentityFile ~/.ssh/id_ed25519\nIdentityFile ~/.ssh/work_key\n```\n**IdentityFile** specifies the private key. Multiple keys can be listed - SSH tries them in order. Ed25519 keys are recommended."
+        }
+      ]
+    },
+    "ProxyJump": {
+      "contents": [
+        {
+          "value": "```\nHost internal\n    HostName 10.0.1.50\n    ProxyJump bastion\n\n# Equivalent to:\n# ssh -J bastion internal\n```\n**ProxyJump** connects through a bastion/jump host. Supports chaining: `ProxyJump host1,host2`."
+        }
+      ]
+    },
+    "LocalForward": {
+      "contents": [
+        {
+          "value": "```\nLocalForward 5432 db-server:5432\nLocalForward 8080 localhost:80\n\n# Then connect:\n# psql -h localhost -p 5432\n```\n**LocalForward** tunnels a local port to a remote destination via SSH. Great for accessing internal databases."
+        }
+      ]
+    },
+    "ForwardAgent": {
+      "contents": [
+        {
+          "value": "```\nForwardAgent yes\n\n# Security warning: only enable for trusted hosts\n# Allows the remote host to use your SSH keys\n```\n**ForwardAgent** forwards your SSH agent. Useful for hopping between hosts but poses a security risk on untrusted servers."
+        }
+      ]
+    },
+    "ServerAliveInterval": {
+      "contents": [
+        {
+          "value": "```\nHost *\n    ServerAliveInterval 60\n    ServerAliveCountMax 3\n```\n**ServerAliveInterval** sends keep-alive packets every N seconds. With CountMax=3, connection drops after 180s of no response. Prevents idle disconnections."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "language": "crontab",
+  "hovers": {
+    "format": {
+      "contents": [
+        {
+          "value": "```\n# .---------------- minute (0-59)\n# |  .------------- hour (0-23)\n# |  |  .---------- day of month (1-31)\n# |  |  |  .------- month (1-12 or jan-dec)\n# |  |  |  |  .---- day of week (0-7 or sun-sat)\n# |  |  |  |  |\n  *  *  *  *  *  command\n```\n**Cron expression** has 5 time fields followed by the command. Fields support `*`, ranges (`1-5`), lists (`1,3,5`), and steps (`*/5`)."
+        }
+      ]
+    },
+    "examples": {
+      "contents": [
+        {
+          "value": "```cron\n*/5 * * * *     # every 5 minutes\n0 */2 * * *     # every 2 hours\n0 9 * * 1-5     # weekdays at 9 AM\n0 0 1 * *       # monthly (1st at midnight)\n0 0 * * 0       # weekly (Sunday midnight)\n30 2 * * *      # daily at 2:30 AM\n```\n**Common schedules** - The most frequently used cron patterns for server tasks."
+        }
+      ]
+    },
+    "special": {
+      "contents": [
+        {
+          "value": "```cron\n@reboot   command    # run once at startup\n@hourly   command    # 0 * * * *\n@daily    command    # 0 0 * * *\n@weekly   command    # 0 0 * * 0\n@monthly  command    # 0 0 1 * *\n@yearly   command    # 0 0 1 1 *\n```\n**Special strings** are shortcuts for common schedules. `@reboot` is particularly useful for startup tasks."
+        }
+      ]
+    },
+    "logging": {
+      "contents": [
+        {
+          "value": "```cron\n# Log stdout and stderr to file:\n0 2 * * * /opt/backup.sh >> /var/log/backup.log 2>&1\n\n# Silence output:\n0 * * * * /opt/check.sh > /dev/null 2>&1\n\n# Email output:\nMAILTO=admin@example.com\n```\n**Logging** - Redirect output to files. Without redirection, cron emails output to MAILTO."
+        }
+      ]
+    },
+    "PATH": {
+      "contents": [
+        {
+          "value": "```cron\n# Cron has minimal PATH by default!\n# Always set PATH or use absolute paths:\nPATH=/usr/local/bin:/usr/bin:/bin\n\n# Or use absolute command paths:\n0 * * * * /usr/local/bin/node /opt/app/task.js\n```\n**PATH** - Cron's default PATH is minimal. Commands that work in your shell may fail in cron without setting PATH."
+        }
+      ]
+    },
+    "flock": {
+      "contents": [
+        {
+          "value": "```cron\n# Prevent overlapping runs:\n*/5 * * * * flock -n /tmp/myjob.lock /opt/slow-task.sh\n\n# With timeout:\n*/5 * * * * flock -w 10 /tmp/myjob.lock /opt/task.sh\n```\n**flock** prevents concurrent execution. Use `-n` to skip if locked, `-w N` to wait up to N seconds."
+        }
+      ]
+    }
+  }
+}

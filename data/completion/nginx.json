@@ -1,0 +1,280 @@
+{
+  "language": "nginx",
+  "completions": [
+    {
+      "label": "server block",
+      "kind": 15,
+      "detail": "Server block",
+      "documentation": {
+        "value": "Define a virtual server that listens on a port and handles requests for a domain."
+      },
+      "insertText": "server {\n    listen ${1:80};\n    server_name ${2:example.com};\n\n    location / {\n        ${3:root /var/www/html;}\n    }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_server"
+    },
+    {
+      "label": "location block",
+      "kind": 15,
+      "detail": "Location block",
+      "documentation": {
+        "value": "Match request URIs and define how to handle them."
+      },
+      "insertText": "location ${1:/path} {\n    ${2:proxy_pass http://localhost:3000;}\n}",
+      "insertTextRules": 4,
+      "sortText": "00_location"
+    },
+    {
+      "label": "upstream block",
+      "kind": 15,
+      "detail": "Upstream (load balancing)",
+      "documentation": {
+        "value": "Define a group of backend servers for load balancing."
+      },
+      "insertText": "upstream ${1:backend} {\n    server ${2:127.0.0.1:8001};\n    server ${3:127.0.0.1:8002};\n}",
+      "insertTextRules": 4,
+      "sortText": "00_upstream"
+    },
+    {
+      "label": "listen",
+      "kind": 14,
+      "detail": "Listen directive",
+      "documentation": {
+        "value": "Set the address and port for the server to accept requests on."
+      },
+      "insertText": "listen ${1:80};",
+      "insertTextRules": 4,
+      "sortText": "01_listen"
+    },
+    {
+      "label": "listen 443 ssl",
+      "kind": 14,
+      "detail": "Listen HTTPS",
+      "documentation": {
+        "value": "Listen on port 443 with SSL/TLS enabled."
+      },
+      "insertText": "listen 443 ssl;\nssl_certificate ${1:/etc/ssl/certs/cert.pem};\nssl_certificate_key ${2:/etc/ssl/private/key.pem};",
+      "insertTextRules": 4,
+      "sortText": "01_listen_ssl"
+    },
+    {
+      "label": "server_name",
+      "kind": 14,
+      "detail": "Server name",
+      "documentation": {
+        "value": "Set the virtual host names this server block responds to."
+      },
+      "insertText": "server_name ${1:example.com www.example.com};",
+      "insertTextRules": 4,
+      "sortText": "01_servername"
+    },
+    {
+      "label": "root",
+      "kind": 14,
+      "detail": "Document root",
+      "documentation": {
+        "value": "Set the root directory for serving static files."
+      },
+      "insertText": "root ${1:/var/www/html};",
+      "insertTextRules": 4,
+      "sortText": "01_root"
+    },
+    {
+      "label": "index",
+      "kind": 14,
+      "detail": "Index files",
+      "documentation": {
+        "value": "Define the default files to serve when a directory is requested."
+      },
+      "insertText": "index ${1:index.html index.htm};",
+      "insertTextRules": 4,
+      "sortText": "01_index"
+    },
+    {
+      "label": "proxy_pass",
+      "kind": 14,
+      "detail": "Reverse proxy",
+      "documentation": {
+        "value": "Forward requests to a backend server (reverse proxy)."
+      },
+      "insertText": "proxy_pass http://${1:localhost}:${2:3000};",
+      "insertTextRules": 4,
+      "sortText": "01_proxy"
+    },
+    {
+      "label": "proxy_set_header",
+      "kind": 14,
+      "detail": "Proxy header",
+      "documentation": {
+        "value": "Set or modify HTTP headers passed to the proxied server."
+      },
+      "insertText": "proxy_set_header ${1:Host} ${2:$host};",
+      "insertTextRules": 4,
+      "sortText": "01_proxyheader"
+    },
+    {
+      "label": "proxy headers (full)",
+      "kind": 15,
+      "detail": "Common proxy headers",
+      "documentation": {
+        "value": "Commonly used proxy headers for reverse proxy setups."
+      },
+      "insertText": "proxy_set_header Host $host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\nproxy_set_header X-Forwarded-Proto $scheme;",
+      "insertTextRules": 4,
+      "sortText": "01_proxyheaders"
+    },
+    {
+      "label": "ssl_certificate",
+      "kind": 14,
+      "detail": "SSL certificate",
+      "documentation": {
+        "value": "Path to the SSL/TLS certificate file."
+      },
+      "insertText": "ssl_certificate ${1:/etc/letsencrypt/live/example.com/fullchain.pem};",
+      "insertTextRules": 4,
+      "sortText": "02_sslcert"
+    },
+    {
+      "label": "ssl_certificate_key",
+      "kind": 14,
+      "detail": "SSL certificate key",
+      "documentation": {
+        "value": "Path to the SSL/TLS private key file."
+      },
+      "insertText": "ssl_certificate_key ${1:/etc/letsencrypt/live/example.com/privkey.pem};",
+      "insertTextRules": 4,
+      "sortText": "02_sslkey"
+    },
+    {
+      "label": "return",
+      "kind": 14,
+      "detail": "Return response",
+      "documentation": {
+        "value": "Return a specific HTTP status code and optional redirect URL."
+      },
+      "insertText": "return ${1:301} ${2:https://$host$request_uri};",
+      "insertTextRules": 4,
+      "sortText": "02_return"
+    },
+    {
+      "label": "rewrite",
+      "kind": 14,
+      "detail": "URL rewrite",
+      "documentation": {
+        "value": "Rewrite the request URI using a regex pattern."
+      },
+      "insertText": "rewrite ${1:^/old/(.*)} ${2:/new/$1} ${3:permanent};",
+      "insertTextRules": 4,
+      "sortText": "02_rewrite"
+    },
+    {
+      "label": "try_files",
+      "kind": 14,
+      "detail": "Try files",
+      "documentation": {
+        "value": "Check for file existence in order and serve the first match."
+      },
+      "insertText": "try_files $uri $uri/ ${1:=404};",
+      "insertTextRules": 4,
+      "sortText": "02_tryfiles"
+    },
+    {
+      "label": "access_log",
+      "kind": 14,
+      "detail": "Access log",
+      "documentation": {
+        "value": "Set the path for the access log file."
+      },
+      "insertText": "access_log ${1:/var/log/nginx/access.log};",
+      "insertTextRules": 4,
+      "sortText": "03_accesslog"
+    },
+    {
+      "label": "error_log",
+      "kind": 14,
+      "detail": "Error log",
+      "documentation": {
+        "value": "Set the path and level for the error log."
+      },
+      "insertText": "error_log ${1:/var/log/nginx/error.log} ${2:warn};",
+      "insertTextRules": 4,
+      "sortText": "03_errorlog"
+    },
+    {
+      "label": "gzip",
+      "kind": 14,
+      "detail": "Enable gzip",
+      "documentation": {
+        "value": "Enable gzip compression for responses."
+      },
+      "insertText": "gzip on;\ngzip_types text/plain text/css application/json application/javascript text/xml;",
+      "insertTextRules": 4,
+      "sortText": "03_gzip"
+    },
+    {
+      "label": "client_max_body_size",
+      "kind": 14,
+      "detail": "Max body size",
+      "documentation": {
+        "value": "Set the maximum allowed size of the client request body."
+      },
+      "insertText": "client_max_body_size ${1:10M};",
+      "insertTextRules": 4,
+      "sortText": "03_bodysize"
+    },
+    {
+      "label": "http to https redirect",
+      "kind": 15,
+      "detail": "HTTP to HTTPS redirect",
+      "documentation": {
+        "value": "Redirect all HTTP traffic to HTTPS."
+      },
+      "insertText": "server {\n    listen 80;\n    server_name ${1:example.com};\n    return 301 https://$host$request_uri;\n}",
+      "insertTextRules": 4,
+      "sortText": "04_redirect"
+    },
+    {
+      "label": "websocket proxy",
+      "kind": 15,
+      "detail": "WebSocket proxy config",
+      "documentation": {
+        "value": "Configure nginx to proxy WebSocket connections."
+      },
+      "insertText": "location ${1:/ws} {\n    proxy_pass http://${2:localhost:3000};\n    proxy_http_version 1.1;\n    proxy_set_header Upgrade $http_upgrade;\n    proxy_set_header Connection \"upgrade\";\n}",
+      "insertTextRules": 4,
+      "sortText": "04_websocket"
+    },
+    {
+      "label": "rate limiting",
+      "kind": 15,
+      "detail": "Rate limit zone",
+      "documentation": {
+        "value": "Define and apply a rate limiting zone."
+      },
+      "insertText": "limit_req_zone $binary_remote_addr zone=${1:mylimit}:10m rate=${2:10r/s};",
+      "insertTextRules": 4,
+      "sortText": "04_ratelimit"
+    },
+    {
+      "label": "add_header",
+      "kind": 14,
+      "detail": "Add response header",
+      "documentation": {
+        "value": "Add a custom header to the response."
+      },
+      "insertText": "add_header ${1:X-Frame-Options} ${2:SAMEORIGIN};",
+      "insertTextRules": 4,
+      "sortText": "03_addheader"
+    },
+    {
+      "label": "expires",
+      "kind": 14,
+      "detail": "Cache expiry",
+      "documentation": {
+        "value": "Set the Expires header and Cache-Control max-age for static assets."
+      },
+      "insertText": "expires ${1:30d};",
+      "insertTextRules": 4,
+      "sortText": "03_expires"
+    }
+  ]
+}

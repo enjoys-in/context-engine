@@ -1,0 +1,47 @@
+{
+  "language": "graphql",
+  "hovers": {
+    "type": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  id: ID!\n  name: String!\n  email: String\n  posts: [Post!]!\n  role: Role!\n  createdAt: DateTime!\n}\n```\n**type** defines an object with fields. `!` means non-null, `[Type]` means list. Fields can have arguments."
+        }
+      ]
+    },
+    "query": {
+      "contents": [
+        {
+          "value": "```graphql\n# Schema definition:\ntype Query {\n  user(id: ID!): User\n  users(limit: Int = 10): [User!]!\n}\n\n# Client query:\nquery GetUser($id: ID!) {\n  user(id: $id) {\n    name\n    email\n    posts { title }\n  }\n}\n```\n**Query** is the read-only entry point. Variables prefixed with `$` are passed separately from the query."
+        }
+      ]
+    },
+    "mutation": {
+      "contents": [
+        {
+          "value": "```graphql\nmutation CreateUser($input: CreateUserInput!) {\n  createUser(input: $input) {\n    id\n    name\n  }\n}\n\n# Variables:\n# { \"input\": { \"name\": \"John\", \"email\": \"john@example.com\" } }\n```\n**Mutation** modifies server data. Use input types for complex arguments. Returns the modified data."
+        }
+      ]
+    },
+    "fragment": {
+      "contents": [
+        {
+          "value": "```graphql\nfragment UserFields on User {\n  id\n  name\n  email\n}\n\nquery {\n  user(id: \"1\") { ...UserFields }\n  admin: user(id: \"2\") { ...UserFields }\n}\n```\n**fragment** avoids field duplication. Spread with `...FragmentName`. Inline fragments: `... on Type { }`."
+        }
+      ]
+    },
+    "directives": {
+      "contents": [
+        {
+          "value": "```graphql\n# Built-in directives:\nfield @deprecated(reason: \"Use newField\")\nfield @skip(if: $condition)\nfield @include(if: $condition)\n\n# Custom directive:\ndirective @auth(requires: Role = ADMIN) on FIELD_DEFINITION\n\ntype Mutation {\n  deleteUser(id: ID!): Boolean! @auth(requires: ADMIN)\n}\n```\n**Directives** add metadata. Built-in: `@deprecated`, `@skip`, `@include`. Custom directives extend functionality."
+        }
+      ]
+    },
+    "scalars": {
+      "contents": [
+        {
+          "value": "```graphql\n# Built-in scalars:\nID       # unique identifier (serialized as String)\nString   # UTF-8 text\nInt      # 32-bit signed integer\nFloat    # double-precision float\nBoolean  # true/false\n\n# Custom scalars:\nscalar DateTime\nscalar JSON\nscalar Upload\n```\n**Scalars** are leaf types. Custom scalars need resolver implementation on the server side."
+        }
+      ]
+    }
+  }
+}

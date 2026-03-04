@@ -1,0 +1,54 @@
+{
+  "language": "systemd",
+  "hovers": {
+    "Unit": {
+      "contents": [
+        {
+          "value": "```ini\n[Unit]\nDescription=My Web Application\nAfter=network.target postgresql.service\nRequires=postgresql.service\n```\n**[Unit]** section defines metadata and dependencies. `After` controls startup order. `Requires` enforces hard dependencies."
+        }
+      ]
+    },
+    "Service": {
+      "contents": [
+        {
+          "value": "```ini\n[Service]\nType=simple\nUser=www-data\nExecStart=/opt/app/server\nRestart=on-failure\nRestartSec=5\n```\n**[Service]** section defines how to run the service. Type, user, command, restart policy, and environment are set here."
+        }
+      ]
+    },
+    "Type": {
+      "contents": [
+        {
+          "value": "```ini\nType=simple    # default, main process stays foreground\nType=forking   # traditional daemon (forks to background)\nType=oneshot   # run once and exit\nType=notify    # signals readiness via sd_notify()\n```\n**Type** defines the process start-up type. Most modern services use `simple`."
+        }
+      ]
+    },
+    "Restart": {
+      "contents": [
+        {
+          "value": "```ini\nRestart=on-failure   # restart on non-zero exit, signal, timeout\nRestart=always       # restart no matter what\nRestart=no           # never restart (default)\nRestartSec=5         # wait 5 seconds before restart\n```\n**Restart** controls automatic restart behavior. Use `on-failure` for production services."
+        }
+      ]
+    },
+    "Timer": {
+      "contents": [
+        {
+          "value": "```ini\n[Timer]\nOnCalendar=*-*-* 02:00:00   # daily at 2 AM\nOnCalendar=Mon *-*-* 09:00  # Mondays at 9 AM\nOnCalendar=hourly           # every hour\nPersistent=true             # catch up missed runs\n```\n**Timer** units are the modern systemd alternative to cron. More flexible and integrated with logging."
+        }
+      ]
+    },
+    "Install": {
+      "contents": [
+        {
+          "value": "```ini\n[Install]\nWantedBy=multi-user.target  # start on boot (non-GUI)\nWantedBy=graphical.target   # start on boot (GUI)\n```\n**[Install]** defines how `systemctl enable` sets up the unit. `WantedBy` creates a dependency symlink."
+        }
+      ]
+    },
+    "security": {
+      "contents": [
+        {
+          "value": "```ini\nProtectSystem=strict\nProtectHome=true\nNoNewPrivileges=true\nPrivateTmp=true\nReadOnlyPaths=/\nReadWritePaths=/var/lib/myapp\n```\n**Security hardening** restricts what the service can access. Use `systemd-analyze security myservice` to audit."
+        }
+      ]
+    }
+  }
+}

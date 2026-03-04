@@ -1,0 +1,75 @@
+{
+  "language": "hcl",
+  "hovers": {
+    "resource": {
+      "contents": [
+        {
+          "value": "```hcl\nresource \"aws_instance\" \"web\" {\n  ami           = \"ami-abc123\"\n  instance_type = \"t2.micro\"\n}\n```\n**resource** blocks define infrastructure objects. The first label is the resource type, the second is the local name."
+        }
+      ]
+    },
+    "variable": {
+      "contents": [
+        {
+          "value": "```hcl\nvariable \"region\" {\n  type        = string\n  default     = \"us-east-1\"\n  description = \"AWS region\"\n}\n```\n**variable** blocks declare input parameters. Set via `-var`, `.tfvars` files, or environment variables `TF_VAR_name`."
+        }
+      ]
+    },
+    "output": {
+      "contents": [
+        {
+          "value": "```hcl\noutput \"instance_ip\" {\n  value = aws_instance.web.public_ip\n}\n```\n**output** blocks expose values from your module, visible after `terraform apply`."
+        }
+      ]
+    },
+    "data": {
+      "contents": [
+        {
+          "value": "```hcl\ndata \"aws_ami\" \"ubuntu\" {\n  most_recent = true\n  filter {\n    name   = \"name\"\n    values = [\"ubuntu/images/*\"]\n  }\n}\n```\n**data** sources read existing infrastructure. Referenced as `data.type.name.attribute`."
+        }
+      ]
+    },
+    "provider": {
+      "contents": [
+        {
+          "value": "```hcl\nprovider \"aws\" {\n  region = \"us-east-1\"\n}\n```\n**provider** configures the connection to a cloud/service API. Each resource type belongs to a provider."
+        }
+      ]
+    },
+    "module": {
+      "contents": [
+        {
+          "value": "```hcl\nmodule \"vpc\" {\n  source  = \"terraform-aws-modules/vpc/aws\"\n  version = \"5.0.0\"\n  cidr    = \"10.0.0.0/16\"\n}\n```\n**module** calls reuse configurations. Source can be local paths, Terraform Registry, Git, or S3."
+        }
+      ]
+    },
+    "for_each": {
+      "contents": [
+        {
+          "value": "```hcl\nresource \"aws_instance\" \"web\" {\n  for_each      = toset([\"a\", \"b\", \"c\"])\n  ami           = \"ami-abc123\"\n  instance_type = \"t2.micro\"\n}\n```\n**for_each** creates one instance per item. Access current item with `each.key` and `each.value`."
+        }
+      ]
+    },
+    "lifecycle": {
+      "contents": [
+        {
+          "value": "```hcl\nlifecycle {\n  create_before_destroy = true\n  prevent_destroy       = true\n  ignore_changes        = [tags]\n}\n```\n**lifecycle** customizes resource behavior: create before destroy, prevent accidental deletion, ignore drift."
+        }
+      ]
+    },
+    "backend": {
+      "contents": [
+        {
+          "value": "```hcl\nterraform {\n  backend \"s3\" {\n    bucket = \"my-state\"\n    key    = \"terraform.tfstate\"\n    region = \"us-east-1\"\n  }\n}\n```\n**backend** stores Terraform state remotely. Enables team collaboration and state locking."
+        }
+      ]
+    },
+    "dynamic": {
+      "contents": [
+        {
+          "value": "```hcl\ndynamic \"ingress\" {\n  for_each = var.ports\n  content {\n    from_port = ingress.value\n    to_port   = ingress.value\n  }\n}\n```\n**dynamic** blocks generate repeated nested blocks from collections. Avoids repetitive configuration."
+        }
+      ]
+    }
+  }
+}

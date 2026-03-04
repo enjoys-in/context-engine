@@ -1,0 +1,89 @@
+{
+  "language": "nginx",
+  "hovers": {
+    "server": {
+      "contents": [
+        {
+          "value": "```nginx\nserver {\n    listen 80;\n    server_name example.com;\n    root /var/www/html;\n}\n```\n**server** block defines a virtual host. Each server block listens on specific ports and responds to specific domain names."
+        }
+      ]
+    },
+    "location": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation / { ... }          # prefix match\nlocation = /exact { ... }    # exact match\nlocation ~ \\.php$ { ... }    # regex match\nlocation ^~ /images/ { ... } # prefix priority\n```\n**location** matches request URIs and applies configuration. Priority: exact (=) > prefix (^~) > regex (~, ~*) > prefix."
+        }
+      ]
+    },
+    "upstream": {
+      "contents": [
+        {
+          "value": "```nginx\nupstream backend {\n    server 10.0.0.1:8080;\n    server 10.0.0.2:8080;\n}\n```\n**upstream** defines a group of backend servers for load balancing. Default method is round-robin."
+        }
+      ]
+    },
+    "listen": {
+      "contents": [
+        {
+          "value": "```nginx\nlisten 80;\nlisten 443 ssl;\nlisten [::]:80;\n```\n**listen** sets the address and port. Supports IPv4, IPv6, SSL, and HTTP/2."
+        }
+      ]
+    },
+    "proxy_pass": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation /api {\n    proxy_pass http://backend:3000;\n}\n```\n**proxy_pass** forwards requests to a backend server (reverse proxy). The URL can be an upstream name or direct address."
+        }
+      ]
+    },
+    "ssl_certificate": {
+      "contents": [
+        {
+          "value": "```nginx\nssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\nssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n```\n**SSL certificate** directives specify the public certificate and private key for HTTPS."
+        }
+      ]
+    },
+    "try_files": {
+      "contents": [
+        {
+          "value": "```nginx\nlocation / {\n    try_files $uri $uri/ /index.html;\n}\n```\n**try_files** checks for file existence in order. Commonly used for SPA fallback routing."
+        }
+      ]
+    },
+    "rewrite": {
+      "contents": [
+        {
+          "value": "```nginx\nrewrite ^/blog/(.*)$ /articles/$1 permanent;\n```\n**rewrite** transforms the request URI using regex. Flags: last, break, redirect (302), permanent (301)."
+        }
+      ]
+    },
+    "gzip": {
+      "contents": [
+        {
+          "value": "```nginx\ngzip on;\ngzip_types text/plain text/css application/json;\ngzip_min_length 1000;\n```\n**gzip** enables response compression. Reduces bandwidth but uses CPU. Set gzip_types for which MIME types to compress."
+        }
+      ]
+    },
+    "rate_limit": {
+      "contents": [
+        {
+          "value": "```nginx\nlimit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;\nlimit_req zone=api burst=20 nodelay;\n```\n**Rate limiting** restricts request rates per client IP. burst allows temporary spikes. nodelay processes burst immediately."
+        }
+      ]
+    },
+    "client_max_body_size": {
+      "contents": [
+        {
+          "value": "```nginx\nclient_max_body_size 50M;\n```\n**client_max_body_size** sets the max upload size. Returns 413 (Request Entity Too Large) if exceeded. Default is 1M."
+        }
+      ]
+    },
+    "add_header": {
+      "contents": [
+        {
+          "value": "```nginx\nadd_header X-Frame-Options SAMEORIGIN;\nadd_header X-Content-Type-Options nosniff;\nadd_header Strict-Transport-Security \"max-age=31536000\";\n```\n**add_header** adds security and custom headers to responses."
+        }
+      ]
+    }
+  }
+}

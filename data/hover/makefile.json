@@ -1,0 +1,68 @@
+{
+  "language": "makefile",
+  "hovers": {
+    "target": {
+      "contents": [
+        {
+          "value": "```makefile\nbuild: main.o utils.o\n\tgcc -o app main.o utils.o\n```\n**Targets** define what to build. Prerequisites are checked first; if any are newer than the target, the recipe runs."
+        }
+      ]
+    },
+    "phony": {
+      "contents": [
+        {
+          "value": "```makefile\n.PHONY: all build test clean\n```\n**.PHONY** declares targets that aren't files. Without it, `make clean` won't run if a file named `clean` exists."
+        }
+      ]
+    },
+    "variable": {
+      "contents": [
+        {
+          "value": "```makefile\nCC := gcc          # simple expansion\nCFLAGS = -Wall     # recursive expansion\nPORT ?= 8080       # conditional (default)\nLDFLAGS += -lm     # append\n```\n**Variables** store values for reuse. `:=` expands immediately, `=` expands on use, `?=` only if unset."
+        }
+      ]
+    },
+    "automatic": {
+      "contents": [
+        {
+          "value": "```makefile\n%.o: %.c\n\t$(CC) -c $< -o $@\n\n# $@  = target name\n# $<  = first prerequisite\n# $^  = all prerequisites\n# $*  = stem (matched %)\n```\n**Automatic variables** are set by Make for each rule. They refer to the target and prerequisites."
+        }
+      ]
+    },
+    "shell": {
+      "contents": [
+        {
+          "value": "```makefile\nGIT_HASH := $(shell git rev-parse --short HEAD)\nFILES := $(shell find src -name '*.go')\n```\n**$(shell ...)** executes a command and captures stdout. Used to get dynamic values like git hashes or file lists."
+        }
+      ]
+    },
+    "tab": {
+      "contents": [
+        {
+          "value": "```makefile\n# CORRECT (tab):\nbuild:\n\tgo build ./...\n\n# WRONG (spaces):\nbuild:\n    go build ./...\n```\n**Recipe lines MUST use TAB** characters, not spaces. This is the #1 Makefile gotcha. Configure your editor to insert real tabs."
+        }
+      ]
+    },
+    "include": {
+      "contents": [
+        {
+          "value": "```makefile\ninclude Makefile.common\n-include .env.mk   # - means don't error if missing\n```\n**include** reads another Makefile. Prefix with `-` to silently ignore if the file doesn't exist."
+        }
+      ]
+    },
+    "conditional": {
+      "contents": [
+        {
+          "value": "```makefile\nifeq ($(OS),Windows_NT)\n  BINARY := app.exe\nelse\n  BINARY := app\nendif\n```\n**Conditionals** (`ifeq`, `ifneq`, `ifdef`, `ifndef`) control which parts of the Makefile are processed."
+        }
+      ]
+    },
+    "pattern_rule": {
+      "contents": [
+        {
+          "value": "```makefile\n%.o: %.c\n\t$(CC) $(CFLAGS) -c $< -o $@\n```\n**Pattern rules** use `%` as a wildcard. This rule says: to make any `.o` file, compile the corresponding `.c` file."
+        }
+      ]
+    }
+  }
+}
