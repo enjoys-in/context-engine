@@ -2181,27 +2181,6 @@
         ]
       },
       {
-        "name": "top",
-        "description": "Interactive real-time process viewer (see also htop, btop)",
-        "options": [
-          { "name": "-b", "description": "Batch mode (for scripts/logging)" },
-          { "name": "-n", "description": "Number of iterations", "takesValue": true },
-          { "name": "-d", "description": "Delay between updates (seconds)", "takesValue": true },
-          { "name": "-p", "description": "Monitor specific PIDs", "takesValue": true },
-          { "name": "-u", "description": "Show only processes of user", "takesValue": true },
-          { "name": "-H", "description": "Show individual threads" },
-          { "name": "-o", "description": "Sort by field", "takesValue": true }
-        ],
-        "examples": [
-          { "command": "top", "description": "Interactive process monitor" },
-          { "command": "top -bn1 | head -20", "description": "One snapshot, first 20 lines" },
-          { "command": "top -u www-data", "description": "Show only www-data processes" },
-          { "command": "top -p 1234,5678", "description": "Monitor specific PIDs" },
-          { "command": "top -d 0.5", "description": "Update every 0.5 seconds" },
-          { "command": "top -o %MEM", "description": "Sort by memory usage" }
-        ]
-      },
-      {
         "name": "free",
         "description": "Display amount of free and used memory in the system",
         "options": [
@@ -3000,6 +2979,832 @@
         "options": [],
         "examples": [
           { "command": "sudo aa-complain /etc/apparmor.d/usr.sbin.mysqld", "description": "Set MySQL to complain mode" }
+        ]
+      }
+    ],
+    "misc": [
+      {
+        "name": "modprobe",
+        "description": "Add or remove kernel modules",
+        "options": [
+          { "name": "-r", "description": "Remove module" },
+          { "name": "-v", "description": "Verbose" },
+          { "name": "-n", "description": "Dry run" },
+          { "name": "--show-depends", "description": "Show module dependencies" }
+        ],
+        "examples": [
+          { "command": "sudo modprobe vboxdrv", "description": "Load VirtualBox driver module" },
+          { "command": "sudo modprobe -r snd_hda_intel", "description": "Remove sound driver module" },
+          { "command": "modprobe --show-depends ext4", "description": "Show ext4 dependencies" }
+        ]
+      },
+      {
+        "name": "lsmod",
+        "description": "Show the status of loaded kernel modules",
+        "options": [],
+        "examples": [
+          { "command": "lsmod", "description": "List all loaded modules" },
+          { "command": "lsmod | grep nvidia", "description": "Check if nvidia module is loaded" },
+          { "command": "lsmod | wc -l", "description": "Count loaded modules" }
+        ]
+      },
+      {
+        "name": "insmod",
+        "description": "Insert a module into the Linux kernel (low-level)",
+        "options": [],
+        "examples": [
+          { "command": "sudo insmod /lib/modules/$(uname -r)/kernel/drivers/net/tun.ko", "description": "Insert TUN module" }
+        ]
+      },
+      {
+        "name": "rmmod",
+        "description": "Remove a module from the Linux kernel (low-level)",
+        "options": [
+          { "name": "-f", "description": "Force removal" },
+          { "name": "-v", "description": "Verbose" }
+        ],
+        "examples": [
+          { "command": "sudo rmmod snd_hda_intel", "description": "Remove sound module" }
+        ]
+      },
+      {
+        "name": "depmod",
+        "description": "Generate modules.dep and map files for kernel modules",
+        "options": [
+          { "name": "-a", "description": "Probe all modules" },
+          { "name": "-n", "description": "Dry run, output to stdout" }
+        ],
+        "examples": [
+          { "command": "sudo depmod -a", "description": "Regenerate module dependency list" },
+          { "command": "depmod -n | grep ext4", "description": "Show ext4 dependencies (dry run)" }
+        ]
+      },
+      {
+        "name": "md5sum",
+        "description": "Compute and check MD5 message digest",
+        "options": [
+          { "name": "-c", "description": "Read checksums from file and verify" },
+          { "name": "--quiet", "description": "Only print failures" }
+        ],
+        "examples": [
+          { "command": "md5sum file.iso", "description": "Get MD5 hash of file" },
+          { "command": "md5sum -c checksums.md5", "description": "Verify checksums" },
+          { "command": "echo -n 'hello' | md5sum", "description": "Hash a string" }
+        ]
+      },
+      {
+        "name": "sha256sum",
+        "description": "Compute and check SHA-256 message digest",
+        "options": [
+          { "name": "-c", "description": "Read checksums from file and verify" },
+          { "name": "--quiet", "description": "Only print failures" }
+        ],
+        "examples": [
+          { "command": "sha256sum file.iso", "description": "Get SHA-256 hash" },
+          { "command": "sha256sum -c SHA256SUMS", "description": "Verify checksums file" },
+          { "command": "echo -n 'hello' | sha256sum", "description": "Hash a string" }
+        ]
+      },
+      {
+        "name": "sha1sum",
+        "description": "Compute and check SHA-1 message digest",
+        "options": [
+          { "name": "-c", "description": "Verify checksums from file" }
+        ],
+        "examples": [
+          { "command": "sha1sum file.tar.gz", "description": "Get SHA-1 hash" }
+        ]
+      },
+      {
+        "name": "base64",
+        "description": "Base64 encode/decode data",
+        "options": [
+          { "name": "-d", "description": "Decode" },
+          { "name": "-w", "description": "Wrap lines after N columns (0=no wrap)", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "echo 'hello' | base64", "description": "Encode string" },
+          { "command": "echo 'aGVsbG8K' | base64 -d", "description": "Decode string" },
+          { "command": "base64 -w 0 file.bin > encoded.txt", "description": "Encode file with no line wrapping" }
+        ]
+      },
+      {
+        "name": "gpg",
+        "description": "GNU Privacy Guard - encrypt, sign, verify files",
+        "options": [
+          { "name": "-c", "description": "Symmetric encryption with passphrase" },
+          { "name": "-d", "description": "Decrypt" },
+          { "name": "--decrypt", "description": "Decrypt file" },
+          { "name": "-e", "description": "Encrypt" },
+          { "name": "-r", "description": "Recipient for encryption", "takesValue": true },
+          { "name": "-s", "description": "Sign" },
+          { "name": "--verify", "description": "Verify a signature" },
+          { "name": "--gen-key", "description": "Generate a new key pair" },
+          { "name": "--list-keys", "description": "List public keys" },
+          { "name": "--list-secret-keys", "description": "List secret keys" },
+          { "name": "--export", "description": "Export public key" },
+          { "name": "--import", "description": "Import a key" },
+          { "name": "--armor", "description": "ASCII armor output" },
+          { "name": "--output", "description": "Output file", "takesValue": true },
+          { "name": "--keyserver", "description": "Keyserver to use", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "gpg -c secret.txt", "description": "Encrypt with passphrase" },
+          { "command": "gpg -d secret.txt.gpg", "description": "Decrypt file" },
+          { "command": "gpg -e -r user@email.com file.txt", "description": "Encrypt for recipient" },
+          { "command": "gpg --gen-key", "description": "Generate new key pair" },
+          { "command": "gpg --list-keys", "description": "List all public keys" },
+          { "command": "gpg --armor --export user@email.com > pubkey.asc", "description": "Export public key" },
+          { "command": "gpg --verify file.sig file.txt", "description": "Verify detached signature" }
+        ]
+      },
+      {
+        "name": "chroot",
+        "description": "Run command or interactive shell with special root directory",
+        "options": [
+          { "name": "--userspec", "description": "Run as user:group", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "sudo chroot /mnt/newroot /bin/bash", "description": "Enter chroot environment" },
+          { "command": "sudo chroot /mnt/rescue", "description": "Chroot into rescue system" }
+        ]
+      },
+      {
+        "name": "nsenter",
+        "description": "Run program with namespaces of another process",
+        "options": [
+          { "name": "-t", "description": "Target PID", "takesValue": true },
+          { "name": "-m", "description": "Enter mount namespace" },
+          { "name": "-u", "description": "Enter UTS namespace" },
+          { "name": "-i", "description": "Enter IPC namespace" },
+          { "name": "-n", "description": "Enter network namespace" },
+          { "name": "-p", "description": "Enter PID namespace" }
+        ],
+        "examples": [
+          { "command": "sudo nsenter -t 1234 -m -u -i -n -p -- /bin/bash", "description": "Enter all namespaces of PID 1234" },
+          { "command": "sudo nsenter -t $(docker inspect -f '{{.State.Pid}}' mycontainer) -n ip addr", "description": "Enter container network namespace" }
+        ]
+      },
+      {
+        "name": "unshare",
+        "description": "Run program in new namespaces",
+        "options": [
+          { "name": "--mount", "description": "Create new mount namespace" },
+          { "name": "--uts", "description": "Create new UTS namespace" },
+          { "name": "--ipc", "description": "Create new IPC namespace" },
+          { "name": "--net", "description": "Create new network namespace" },
+          { "name": "--pid", "description": "Create new PID namespace" },
+          { "name": "--user", "description": "Create new user namespace" },
+          { "name": "--map-root-user", "description": "Map current user to root in new namespace" },
+          { "name": "-r", "description": "Map current user to root" },
+          { "name": "--fork", "description": "Fork before running" }
+        ],
+        "examples": [
+          { "command": "unshare --net ip addr", "description": "Run in isolated network namespace" },
+          { "command": "unshare --user --map-root-user bash", "description": "Get fake root in user namespace" },
+          { "command": "unshare --pid --fork --mount-proc bash", "description": "New PID namespace with own /proc" }
+        ]
+      },
+      {
+        "name": "logger",
+        "description": "Make entries in the system log (syslog)",
+        "options": [
+          { "name": "-p", "description": "Priority (facility.level)", "takesValue": true },
+          { "name": "-t", "description": "Tag/identifier", "takesValue": true },
+          { "name": "-s", "description": "Also log to stderr" },
+          { "name": "-f", "description": "Log contents of file", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "logger 'Backup completed successfully'", "description": "Log a message" },
+          { "command": "logger -t myapp -p local0.info 'Started'", "description": "Log with tag and priority" },
+          { "command": "logger -s 'Error occurred'", "description": "Log to syslog and stderr" }
+        ]
+      },
+      {
+        "name": "cpio",
+        "description": "Copy files to and from archives",
+        "options": [
+          { "name": "-o", "description": "Create archive (copy-out mode)" },
+          { "name": "-i", "description": "Extract archive (copy-in mode)" },
+          { "name": "-p", "description": "Pass-through (copy files to directory)" },
+          { "name": "-d", "description": "Create directories as needed" },
+          { "name": "-v", "description": "Verbose" },
+          { "name": "-t", "description": "List contents" },
+          { "name": "--format", "description": "Archive format (newc, crc, etc.)", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "find . -name '*.conf' | cpio -ov > configs.cpio", "description": "Archive config files" },
+          { "command": "cpio -idv < archive.cpio", "description": "Extract archive" },
+          { "command": "cpio -t < archive.cpio", "description": "List archive contents" },
+          { "command": "find . -depth | cpio -pdv /backup/", "description": "Copy directory tree" }
+        ]
+      },
+      {
+        "name": "fmt",
+        "description": "Simple optimal text formatter (reformat paragraphs)",
+        "options": [
+          { "name": "-w", "description": "Maximum line width", "takesValue": true },
+          { "name": "-s", "description": "Split long lines only, no refilling" },
+          { "name": "-u", "description": "Uniform spacing (one space between words)" }
+        ],
+        "examples": [
+          { "command": "fmt -w 72 article.txt", "description": "Reformat to 72 columns" },
+          { "command": "fmt -s long_lines.txt", "description": "Split long lines without joining short ones" }
+        ]
+      },
+      {
+        "name": "fold",
+        "description": "Wrap each input line to fit in specified width",
+        "options": [
+          { "name": "-w", "description": "Width in columns", "takesValue": true },
+          { "name": "-s", "description": "Break at spaces" },
+          { "name": "-b", "description": "Count bytes instead of columns" }
+        ],
+        "examples": [
+          { "command": "fold -w 80 -s longfile.txt", "description": "Wrap at 80 cols, break at spaces" },
+          { "command": "echo $PATH | fold -s -w 60", "description": "Wrap PATH for readability" }
+        ]
+      },
+      {
+        "name": "expand",
+        "description": "Convert tabs to spaces",
+        "options": [
+          { "name": "-t", "description": "Tab stop positions", "takesValue": true },
+          { "name": "--initial", "description": "Only convert leading tabs" }
+        ],
+        "examples": [
+          { "command": "expand -t 4 file.txt", "description": "Convert tabs to 4 spaces" },
+          { "command": "expand --initial file.txt", "description": "Only expand leading tabs" }
+        ]
+      },
+      {
+        "name": "unexpand",
+        "description": "Convert spaces to tabs",
+        "options": [
+          { "name": "-t", "description": "Tab stop positions", "takesValue": true },
+          { "name": "-a", "description": "Convert all spaces, not just leading" }
+        ],
+        "examples": [
+          { "command": "unexpand -t 4 file.txt", "description": "Convert 4-space indents to tabs" },
+          { "command": "unexpand --first-only file.txt", "description": "Only convert leading spaces" }
+        ]
+      },
+      {
+        "name": "wall",
+        "description": "Write a message to all logged-in users",
+        "options": [
+          { "name": "-n", "description": "Suppress banner" }
+        ],
+        "examples": [
+          { "command": "wall 'System going down in 10 minutes'", "description": "Broadcast message" },
+          { "command": "echo 'Maintenance at 3 AM' | wall", "description": "Pipe message to wall" }
+        ]
+      },
+      {
+        "name": "write",
+        "description": "Send a message to another user's terminal",
+        "options": [],
+        "examples": [
+          { "command": "write john pts/1", "description": "Send message to john on pts/1" }
+        ]
+      },
+      {
+        "name": "mesg",
+        "description": "Control write access to your terminal",
+        "options": [],
+        "examples": [
+          { "command": "mesg n", "description": "Disable messages from other users" },
+          { "command": "mesg y", "description": "Enable messages from other users" },
+          { "command": "mesg", "description": "Show current message status" }
+        ]
+      },
+      {
+        "name": "test",
+        "description": "Evaluate conditional expressions (also [ ])",
+        "options": [
+          { "name": "-f", "description": "True if file exists and is regular" },
+          { "name": "-d", "description": "True if file exists and is directory" },
+          { "name": "-e", "description": "True if file exists" },
+          { "name": "-r", "description": "True if file is readable" },
+          { "name": "-w", "description": "True if file is writable" },
+          { "name": "-x", "description": "True if file is executable" },
+          { "name": "-s", "description": "True if file exists and is non-empty" },
+          { "name": "-z", "description": "True if string is empty" },
+          { "name": "-n", "description": "True if string is non-empty" },
+          { "name": "-eq", "description": "Integer equal" },
+          { "name": "-ne", "description": "Integer not equal" },
+          { "name": "-gt", "description": "Integer greater than" },
+          { "name": "-lt", "description": "Integer less than" },
+          { "name": "-ge", "description": "Integer greater or equal" },
+          { "name": "-le", "description": "Integer less or equal" }
+        ],
+        "examples": [
+          { "command": "test -f /etc/passwd && echo exists", "description": "Check if file exists" },
+          { "command": "[ -d /tmp ] && echo 'is directory'", "description": "Check if directory exists" },
+          { "command": "test $a -eq $b && echo equal", "description": "Compare integers" },
+          { "command": "[ -z \"$VAR\" ] && echo 'empty'", "description": "Check if variable is empty" }
+        ]
+      },
+      {
+        "name": "expr",
+        "description": "Evaluate expressions (arithmetic, string, comparison)",
+        "options": [],
+        "examples": [
+          { "command": "expr 5 + 3", "description": "Add numbers" },
+          { "command": "expr 10 \\* 5", "description": "Multiply (escape the *)" },
+          { "command": "expr length 'hello world'", "description": "Get string length" },
+          { "command": "expr substr 'hello' 1 3", "description": "Substring extraction" }
+        ]
+      },
+      {
+        "name": "bc",
+        "description": "Arbitrary precision calculator language",
+        "options": [
+          { "name": "-l", "description": "Use math library (enables decimals, trig, etc.)" },
+          { "name": "-q", "description": "Quiet mode (no welcome banner)" }
+        ],
+        "examples": [
+          { "command": "echo '3.14 * 2.5' | bc -l", "description": "Floating point math" },
+          { "command": "echo 'scale=10; 1/3' | bc", "description": "Division with precision" },
+          { "command": "echo 'obase=16; 255' | bc", "description": "Convert to hex" },
+          { "command": "echo 'ibase=2; 11010' | bc", "description": "Convert from binary" },
+          { "command": "echo 'sqrt(144)' | bc -l", "description": "Square root" }
+        ]
+      },
+      {
+        "name": "seq",
+        "description": "Print a sequence of numbers",
+        "options": [
+          { "name": "-s", "description": "Separator string", "takesValue": true },
+          { "name": "-w", "description": "Equal width (zero-padded)" },
+          { "name": "-f", "description": "Format string (printf-style)", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "seq 1 10", "description": "Print 1 through 10" },
+          { "command": "seq 0 2 20", "description": "Even numbers 0 to 20" },
+          { "command": "seq -w 01 100", "description": "Zero-padded sequence" },
+          { "command": "seq -s ', ' 1 5", "description": "Comma-separated: 1, 2, 3, 4, 5" }
+        ]
+      },
+      {
+        "name": "xdg-open",
+        "description": "Open a file or URL with the default application (desktop)",
+        "options": [],
+        "examples": [
+          { "command": "xdg-open https://example.com", "description": "Open URL in default browser" },
+          { "command": "xdg-open document.pdf", "description": "Open PDF with default viewer" },
+          { "command": "xdg-open .", "description": "Open current directory in file manager" }
+        ]
+      },
+      {
+        "name": "systemd-analyze",
+        "description": "Analyze systemd boot-up performance",
+        "options": [],
+        "subcommands": [
+          { "name": "blame", "description": "Show time taken by each service to start" },
+          { "name": "critical-chain", "description": "Show critical chain of boot" },
+          { "name": "plot", "description": "Generate SVG boot chart" },
+          { "name": "dot", "description": "Generate dependency graph in dot format" },
+          { "name": "verify", "description": "Verify unit files" },
+          { "name": "security", "description": "Analyze security of service units" }
+        ],
+        "examples": [
+          { "command": "systemd-analyze", "description": "Show total boot time" },
+          { "command": "systemd-analyze blame", "description": "Show per-service boot times" },
+          { "command": "systemd-analyze critical-chain", "description": "Show critical chain" },
+          { "command": "systemd-analyze plot > boot.svg", "description": "Generate boot chart" },
+          { "command": "systemd-analyze security nginx.service", "description": "Check service security" }
+        ]
+      },
+      {
+        "name": "coredumpctl",
+        "description": "Manage stored core dumps (systemd-coredump)",
+        "subcommands": [
+          { "name": "list", "description": "List available core dumps" },
+          { "name": "info", "description": "Show info about a core dump" },
+          { "name": "dump", "description": "Save core dump to file" },
+          { "name": "debug", "description": "Launch debugger on a core dump" }
+        ],
+        "examples": [
+          { "command": "coredumpctl list", "description": "List all core dumps" },
+          { "command": "coredumpctl info", "description": "Info about last core dump" },
+          { "command": "coredumpctl debug", "description": "Debug last crash with gdb" }
+        ]
+      },
+      {
+        "name": "busctl",
+        "description": "Introspect D-Bus (systemd bus)",
+        "subcommands": [
+          { "name": "list", "description": "List bus names" },
+          { "name": "tree", "description": "Show object tree of service" },
+          { "name": "introspect", "description": "Introspect object" },
+          { "name": "monitor", "description": "Monitor bus messages" },
+          { "name": "call", "description": "Call a method" }
+        ],
+        "examples": [
+          { "command": "busctl list", "description": "List D-Bus services" },
+          { "command": "busctl tree org.freedesktop.systemd1", "description": "Show systemd object tree" },
+          { "command": "busctl monitor", "description": "Monitor all D-Bus messages" }
+        ]
+      },
+      {
+        "name": "networkctl",
+        "description": "Query/control systemd-networkd",
+        "subcommands": [
+          { "name": "list", "description": "List links" },
+          { "name": "status", "description": "Show network status" },
+          { "name": "up", "description": "Bring interface up" },
+          { "name": "down", "description": "Bring interface down" },
+          { "name": "lldp", "description": "Show LLDP neighbors" }
+        ],
+        "examples": [
+          { "command": "networkctl list", "description": "List network interfaces" },
+          { "command": "networkctl status eth0", "description": "Show interface details" },
+          { "command": "networkctl status", "description": "Show overall network status" }
+        ]
+      },
+      {
+        "name": "lscpu",
+        "description": "Display information about CPU architecture",
+        "options": [
+          { "name": "-e", "description": "Extended output (table)" },
+          { "name": "-J", "description": "JSON output" },
+          { "name": "-p", "description": "Parseable output" }
+        ],
+        "examples": [
+          { "command": "lscpu", "description": "Show CPU info" },
+          { "command": "lscpu -J", "description": "CPU info as JSON" },
+          { "command": "lscpu | grep 'Model name'", "description": "Get CPU model" }
+        ]
+      },
+      {
+        "name": "lsmem",
+        "description": "List available memory ranges and their online status",
+        "options": [
+          { "name": "-J", "description": "JSON output" },
+          { "name": "--summary", "description": "Only print summary" }
+        ],
+        "examples": [
+          { "command": "lsmem", "description": "Show memory ranges" },
+          { "command": "lsmem --summary", "description": "Show memory summary" }
+        ]
+      },
+      {
+        "name": "lspci",
+        "description": "List all PCI devices",
+        "options": [
+          { "name": "-v", "description": "Verbose" },
+          { "name": "-vv", "description": "Very verbose" },
+          { "name": "-k", "description": "Show kernel drivers handling each device" },
+          { "name": "-nn", "description": "Show numeric and text vendor/device IDs" },
+          { "name": "-t", "description": "Tree view" },
+          { "name": "-s", "description": "Show specific slot", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "lspci", "description": "List all PCI devices" },
+          { "command": "lspci -k", "description": "Show kernel driver for each device" },
+          { "command": "lspci | grep -i vga", "description": "Show GPU" },
+          { "command": "lspci -vnn -s 00:02.0", "description": "Detailed info for specific device" }
+        ]
+      },
+      {
+        "name": "lsusb",
+        "description": "List USB devices",
+        "options": [
+          { "name": "-v", "description": "Verbose" },
+          { "name": "-t", "description": "Tree view" },
+          { "name": "-s", "description": "Show specific bus/device", "takesValue": true },
+          { "name": "-d", "description": "Show specific vendor:product", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "lsusb", "description": "List all USB devices" },
+          { "command": "lsusb -t", "description": "Show USB device tree" },
+          { "command": "lsusb -v -s 001:002", "description": "Verbose info for specific device" }
+        ]
+      },
+      {
+        "name": "dmidecode",
+        "description": "DMI/SMBIOS table decoder (hardware info from BIOS)",
+        "options": [
+          { "name": "-t", "description": "Type (bios, system, baseboard, chassis, processor, memory, cache, connector, slot)", "takesValue": true },
+          { "name": "-s", "description": "Show specific keyword string", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "sudo dmidecode -t memory", "description": "Show RAM details" },
+          { "command": "sudo dmidecode -t bios", "description": "Show BIOS info" },
+          { "command": "sudo dmidecode -t system", "description": "Show system/motherboard info" },
+          { "command": "sudo dmidecode -s system-product-name", "description": "Get product name" },
+          { "command": "sudo dmidecode -t processor", "description": "Show processor info" }
+        ]
+      },
+      {
+        "name": "hwinfo",
+        "description": "Probe for hardware (SUSE/general, install with package manager)",
+        "options": [
+          { "name": "--short", "description": "Short listing" },
+          { "name": "--cpu", "description": "CPU info" },
+          { "name": "--disk", "description": "Disk info" },
+          { "name": "--memory", "description": "Memory info" },
+          { "name": "--network", "description": "Network info" },
+          { "name": "--gfxcard", "description": "Graphics card info" },
+          { "name": "--sound", "description": "Sound card info" }
+        ],
+        "examples": [
+          { "command": "sudo hwinfo --short", "description": "Brief hardware summary" },
+          { "command": "sudo hwinfo --disk", "description": "Detailed disk info" },
+          { "command": "sudo hwinfo --network --short", "description": "Network hardware summary" }
+        ]
+      },
+      {
+        "name": "lsns",
+        "description": "List Linux namespaces",
+        "options": [
+          { "name": "-t", "description": "Filter by type (mnt, net, pid, user, uts, ipc, cgroup)", "takesValue": true },
+          { "name": "-J", "description": "JSON output" }
+        ],
+        "examples": [
+          { "command": "lsns", "description": "List all namespaces" },
+          { "command": "lsns -t net", "description": "List network namespaces" },
+          { "command": "lsns -J", "description": "JSON format output" }
+        ]
+      },
+      {
+        "name": "lsipc",
+        "description": "Show information on IPC facilities (shared memory, semaphores, message queues)",
+        "options": [
+          { "name": "-m", "description": "Shared memory" },
+          { "name": "-s", "description": "Semaphores" },
+          { "name": "-q", "description": "Message queues" },
+          { "name": "-J", "description": "JSON output" }
+        ],
+        "examples": [
+          { "command": "lsipc", "description": "Show all IPC resources" },
+          { "command": "lsipc -m", "description": "Show shared memory segments" }
+        ]
+      },
+      {
+        "name": "ipcs",
+        "description": "Show info on IPC facilities",
+        "options": [
+          { "name": "-m", "description": "Shared memory" },
+          { "name": "-s", "description": "Semaphores" },
+          { "name": "-q", "description": "Message queues" },
+          { "name": "-a", "description": "All" }
+        ],
+        "examples": [
+          { "command": "ipcs -a", "description": "Show all IPC resources" }
+        ]
+      },
+      {
+        "name": "ipcrm",
+        "description": "Remove IPC resources",
+        "options": [
+          { "name": "-m", "description": "Remove shared memory by shmid", "takesValue": true },
+          { "name": "-s", "description": "Remove semaphore by semid", "takesValue": true },
+          { "name": "-q", "description": "Remove message queue by msqid", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "ipcrm -m 12345", "description": "Remove shared memory segment" }
+        ]
+      },
+      {
+        "name": "taskset",
+        "description": "Set or retrieve a process's CPU affinity",
+        "options": [
+          { "name": "-p", "description": "Operate on existing process", "takesValue": true },
+          { "name": "-c", "description": "Use CPU list format" }
+        ],
+        "examples": [
+          { "command": "taskset -c 0,1 ./myapp", "description": "Run on CPUs 0 and 1 only" },
+          { "command": "taskset -p 1234", "description": "Show CPU affinity of PID 1234" },
+          { "command": "taskset -cp 0-3 1234", "description": "Set PID 1234 to CPUs 0-3" }
+        ]
+      },
+      {
+        "name": "chrt",
+        "description": "Manipulate real-time scheduling attributes of a process",
+        "options": [
+          { "name": "-f", "description": "FIFO scheduling" },
+          { "name": "-r", "description": "Round-robin scheduling" },
+          { "name": "-o", "description": "Normal scheduling" },
+          { "name": "-p", "description": "Operate on existing PID", "takesValue": true },
+          { "name": "-m", "description": "Show min/max priorities" }
+        ],
+        "examples": [
+          { "command": "chrt -m", "description": "Show priority ranges" },
+          { "command": "sudo chrt -f 99 ./realtime_app", "description": "Run with FIFO priority 99" },
+          { "command": "chrt -p 1234", "description": "Show scheduling of PID 1234" }
+        ]
+      },
+      {
+        "name": "ionice",
+        "description": "Set or get I/O scheduling class and priority",
+        "options": [
+          { "name": "-c", "description": "Class (1=realtime,2=best-effort,3=idle)", "takesValue": true },
+          { "name": "-n", "description": "Priority (0-7, lower is higher)", "takesValue": true },
+          { "name": "-p", "description": "Process ID", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "ionice -c 3 cp bigfile /backup/", "description": "Copy with idle I/O priority" },
+          { "command": "ionice -c 2 -n 0 dd if=/dev/sda of=/dev/sdb", "description": "Best-effort high priority" },
+          { "command": "ionice -p 1234", "description": "Show I/O class of PID 1234" }
+        ]
+      },
+      {
+        "name": "numfmt",
+        "description": "Convert numbers from/to human-readable strings",
+        "options": [
+          { "name": "--to", "description": "Output format (iec, si, iec-i, auto)", "takesValue": true },
+          { "name": "--from", "description": "Input format (iec, si, iec-i, auto)", "takesValue": true },
+          { "name": "--suffix", "description": "Append suffix", "takesValue": true },
+          { "name": "--field", "description": "Convert specific field", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "numfmt --to=iec 1048576", "description": "Convert to 1.0M" },
+          { "command": "numfmt --from=iec 1G", "description": "Convert 1G to bytes" },
+          { "command": "df | numfmt --field 2,3,4 --to=iec --header", "description": "Human-readable df output" }
+        ]
+      },
+      {
+        "name": "rev",
+        "description": "Reverse lines characterwise",
+        "options": [],
+        "examples": [
+          { "command": "echo 'hello' | rev", "description": "Output: olleh" },
+          { "command": "rev file.txt", "description": "Reverse each line in file" }
+        ]
+      },
+      {
+        "name": "tac",
+        "description": "Concatenate and print files in reverse (reverse of cat)",
+        "options": [
+          { "name": "-s", "description": "Separator string", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "tac file.txt", "description": "Print file bottom to top" },
+          { "command": "tac access.log | head -20", "description": "Last 20 lines in reverse order" }
+        ]
+      },
+      {
+        "name": "yes",
+        "description": "Output a string repeatedly until killed",
+        "options": [],
+        "examples": [
+          { "command": "yes | rm -i *.tmp", "description": "Auto-answer yes to all prompts" },
+          { "command": "yes n | command", "description": "Auto-answer no" },
+          { "command": "yes 'text' | head -100", "description": "Generate 100 lines of text" }
+        ]
+      },
+      {
+        "name": "rename",
+        "description": "Rename files using perl regex (prename) or simple patterns",
+        "options": [
+          { "name": "-n", "description": "Dry run (show what would happen)" },
+          { "name": "-v", "description": "Verbose" },
+          { "name": "-f", "description": "Force overwrite" }
+        ],
+        "examples": [
+          { "command": "rename 's/.txt/.md/' *.txt", "description": "Change .txt to .md" },
+          { "command": "rename 's/IMG_/photo_/' *.jpg", "description": "Rename photo prefix" },
+          { "command": "rename -n 'y/A-Z/a-z/' *", "description": "Dry run: lowercase filenames" }
+        ]
+      },
+      {
+        "name": "updatedb",
+        "description": "Update the file name database used by locate",
+        "options": [
+          { "name": "--prunepaths", "description": "Paths to skip", "takesValue": true }
+        ],
+        "examples": [
+          { "command": "sudo updatedb", "description": "Update locate database" }
+        ]
+      },
+      {
+        "name": "locate",
+        "description": "Find files by name (uses pre-built database from updatedb)",
+        "options": [
+          { "name": "-i", "description": "Case insensitive" },
+          { "name": "-n", "description": "Limit results", "takesValue": true },
+          { "name": "-r", "description": "Search by regex", "takesValue": true },
+          { "name": "--existing", "description": "Only show existing files" }
+        ],
+        "examples": [
+          { "command": "locate nginx.conf", "description": "Find nginx config files" },
+          { "command": "locate -i readme", "description": "Case-insensitive search" },
+          { "command": "locate -n 10 '*.log'", "description": "First 10 log files" }
+        ]
+      },
+      {
+        "name": "whatis",
+        "description": "Display one-line manual page descriptions",
+        "options": [],
+        "examples": [
+          { "command": "whatis ls", "description": "Short description of ls" },
+          { "command": "whatis -w 'git*'", "description": "All git-related commands" }
+        ]
+      },
+      {
+        "name": "apropos",
+        "description": "Search manual page names and descriptions",
+        "options": [],
+        "examples": [
+          { "command": "apropos network", "description": "Find commands related to network" },
+          { "command": "apropos partition", "description": "Find partition-related commands" }
+        ]
+      },
+      {
+        "name": "man",
+        "description": "Display manual pages",
+        "options": [
+          { "name": "-k", "description": "Search by keyword (same as apropos)" },
+          { "name": "-f", "description": "Whatis (short description)" }
+        ],
+        "examples": [
+          { "command": "man ls", "description": "Show manual for ls" },
+          { "command": "man 5 crontab", "description": "Show section 5 (file format) for crontab" },
+          { "command": "man -k compress", "description": "Search for compression-related pages" }
+        ]
+      },
+      {
+        "name": "info",
+        "description": "Read Info documents (GNU hypertext system)",
+        "options": [],
+        "examples": [
+          { "command": "info coreutils", "description": "Browse coreutils documentation" },
+          { "command": "info grep", "description": "Read grep info page" }
+        ]
+      },
+      {
+        "name": "help",
+        "description": "Display help for shell builtins",
+        "options": [],
+        "examples": [
+          { "command": "help cd", "description": "Help for cd builtin" },
+          { "command": "help test", "description": "Help for test/[ builtin" }
+        ]
+      },
+      {
+        "name": "type",
+        "description": "Show how a command name would be interpreted",
+        "options": [
+          { "name": "-a", "description": "Show all matches" },
+          { "name": "-t", "description": "Show type only (alias, builtin, file, function, keyword)" }
+        ],
+        "examples": [
+          { "command": "type ls", "description": "Is ls an alias, builtin, or file?" },
+          { "command": "type -a python", "description": "Show all python executables" }
+        ]
+      },
+      {
+        "name": "which",
+        "description": "Show full path of shell commands",
+        "options": [
+          { "name": "-a", "description": "Show all matches in PATH" }
+        ],
+        "examples": [
+          { "command": "which python3", "description": "Find python3 path" },
+          { "command": "which -a node", "description": "All node executables in PATH" }
+        ]
+      },
+      {
+        "name": "whereis",
+        "description": "Locate binary, source, and manual page files for a command",
+        "options": [
+          { "name": "-b", "description": "Only binaries" },
+          { "name": "-m", "description": "Only manuals" },
+          { "name": "-s", "description": "Only sources" }
+        ],
+        "examples": [
+          { "command": "whereis nginx", "description": "Find nginx binary, config, and man page" },
+          { "command": "whereis -b python3", "description": "Find python3 binary only" }
+        ]
+      },
+      {
+        "name": "printenv",
+        "description": "Print all or specific environment variables",
+        "options": [],
+        "examples": [
+          { "command": "printenv", "description": "Print all environment variables" },
+          { "command": "printenv HOME", "description": "Print value of HOME" },
+          { "command": "printenv PATH", "description": "Print value of PATH" }
+        ]
+      },
+      {
+        "name": "ulimit",
+        "description": "Get or set user resource limits",
+        "options": [
+          { "name": "-a", "description": "Show all limits" },
+          { "name": "-n", "description": "Max open file descriptors" },
+          { "name": "-u", "description": "Max user processes" },
+          { "name": "-s", "description": "Max stack size" },
+          { "name": "-v", "description": "Max virtual memory" },
+          { "name": "-S", "description": "Soft limit" },
+          { "name": "-H", "description": "Hard limit" }
+        ],
+        "examples": [
+          { "command": "ulimit -a", "description": "Show all limits" },
+          { "command": "ulimit -n 65536", "description": "Set max open files to 65536" },
+          { "command": "ulimit -u 4096", "description": "Set max user processes" }
         ]
       }
     ]
