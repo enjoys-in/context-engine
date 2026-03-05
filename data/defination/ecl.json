@@ -1,0 +1,92 @@
+{
+  "language": "ecl",
+  "definitions": {
+    "RECORD": {
+      "signature": "recname := RECORD fieldtype fieldname; ... END;",
+      "description": "Defines a record structure (schema) that describes the layout of fields in a dataset. Each field has a data type and name. Records are the fundamental building block for defining the shape of data flowing through ECL transformations and are analogous to row schemas in SQL tables.",
+      "type": "keyword",
+      "module": "ECL Language"
+    },
+    "DATASET": {
+      "signature": "dsname := DATASET(filename, recstruct, filetype)",
+      "description": "Declares a dataset, which is the primary data structure in ECL representing a collection of records stored in a logical file on the HPCC cluster. Datasets can be read from disk, created inline, or produced as output from transforms and operations. They are the core data-flow abstraction.",
+      "type": "keyword",
+      "module": "ECL Language",
+      "members": {
+        "SORT": {
+          "signature": "SORT(dataset, field1, field2, ...)",
+          "description": "Returns a new dataset with records sorted by the specified fields in ascending order (prefix with - for descending).",
+          "type": "function"
+        },
+        "FILTER": {
+          "signature": "dataset(condition)",
+          "description": "Filters the dataset to include only records where the Boolean condition evaluates to true.",
+          "type": "function"
+        },
+        "COUNT": {
+          "signature": "COUNT(dataset) -> INTEGER",
+          "description": "Returns the total number of records in the dataset as an integer value.",
+          "type": "function"
+        },
+        "TABLE": {
+          "signature": "TABLE(dataset, record_layout, group_fields)",
+          "description": "Creates a cross-tab (aggregation) of the dataset, grouping by specified fields and computing aggregate expressions.",
+          "type": "function"
+        },
+        "JOIN": {
+          "signature": "JOIN(left, right, condition, transform, jointype)",
+          "description": "Combines records from two datasets based on a matching condition, applying a transform to produce output records.",
+          "type": "function"
+        }
+      }
+    },
+    "OUTPUT": {
+      "signature": "OUTPUT(expression [, recorddef] [, filename] [, options])",
+      "description": "Writes data to the HPCC cluster's distributed file system, displays results in the ECL Watch workunit viewer, or sends data to a specified destination. OUTPUT is the primary way to materialize results from ECL computations and make them available for downstream processes.",
+      "type": "function",
+      "module": "ECL Actions"
+    },
+    "TRANSFORM": {
+      "signature": "recstruct funcname(recstruct L, recstruct R) := TRANSFORM SELF.field := expression; ... END;",
+      "description": "Defines a transformation function that produces a new record from one or more input records. Transforms specify how each output field is computed from input fields using SELF assignments. They are used with PROJECT, JOIN, ROLLUP, and other operations to reshape data.",
+      "type": "keyword",
+      "module": "ECL Language"
+    },
+    "STRING": {
+      "signature": "STRING[n]",
+      "description": "A fixed-length or variable-length character string data type in ECL. STRING without a size specifier is variable-length. STRING[n] declares a fixed-length string of n characters. Strings support concatenation (+), comparison, and pattern matching operations for text processing.",
+      "type": "class",
+      "module": "ECL Types"
+    },
+    "INTEGER": {
+      "signature": "INTEGER[n]",
+      "description": "A signed integer data type in ECL. The optional size specifier [n] indicates the number of bytes (1-8) used for storage, determining the range of values. INTEGER4 is a 4-byte signed integer (-2^31 to 2^31-1). Without a size, defaults to INTEGER8 for maximum range.",
+      "type": "class",
+      "module": "ECL Types"
+    },
+    "REAL": {
+      "signature": "REAL[n]",
+      "description": "A floating-point numeric data type in ECL using IEEE 754 representation. REAL4 provides single-precision (32-bit) and REAL8 provides double-precision (64-bit) floating-point numbers. Used for scientific computations and values requiring decimal precision.",
+      "type": "class",
+      "module": "ECL Types"
+    },
+    "SET": {
+      "signature": "SET OF type",
+      "description": "Declares a set data type containing an ordered collection of values of the same type. Sets in ECL support the IN operator for membership testing and can be created from literals, dataset field values, or function results. Used for filtering and lookup operations.",
+      "type": "class",
+      "module": "ECL Types"
+    },
+    "PROJECT": {
+      "signature": "PROJECT(dataset, transform)",
+      "description": "Applies a transform function to every record in the dataset, producing a new dataset with potentially different field structure. PROJECT is the primary operation for reshaping records, computing derived fields, renaming fields, and changing record schemas one record at a time.",
+      "type": "function",
+      "module": "ECL Operations"
+    },
+    "ROLLUP": {
+      "signature": "ROLLUP(dataset, condition, transform)",
+      "description": "Combines adjacent records that match the specified condition into a single record using the transform function. The dataset must be sorted by the grouping fields first. ROLLUP is used for aggregation, deduplication, and summarization of sorted datasets.",
+      "type": "function",
+      "module": "ECL Operations"
+    }
+  }
+}

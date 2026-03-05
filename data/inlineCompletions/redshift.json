@@ -1,0 +1,29 @@
+{
+  "language": "redshift",
+  "inlineCompletions": [
+    {
+      "triggerPattern": "^\\\\s*SELECT\\\\s*$",
+      "insertText": "SELECT ${1:columns}\nFROM ${2:table}\nWHERE ${3:condition}\nORDER BY ${4:column}\nLIMIT ${5:100};",
+      "description": "SELECT query",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\\\s*CREATE TABLE\\\\s*$",
+      "insertText": "CREATE TABLE ${1:schema}.${2:table_name} (\n\t${3:id} INTEGER IDENTITY(1,1),\n\t${4:column_name} ${5:VARCHAR(256)},\n\tPRIMARY KEY (${3:id})\n)\nDISTSTYLE ${6:KEY}\nDISTKEY (${7:id})\nSORTKEY (${8:id});",
+      "description": "CREATE TABLE with Redshift distribution",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\\\s*COPY\\\\s*$",
+      "insertText": "COPY ${1:table_name}\nFROM '${2:s3://bucket/path/}'\nIAM_ROLE '${3:arn:aws:iam::role/RedshiftRole}'\nFORMAT AS ${4:CSV}\nIGNOREHEADER ${5:1}\nREGION '${6:us-east-1}';",
+      "description": "COPY from S3",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\\\s*UNLOAD\\\\s*$",
+      "insertText": "UNLOAD ('${1:SELECT * FROM table}')\nTO '${2:s3://bucket/path/}'\nIAM_ROLE '${3:arn:aws:iam::role/RedshiftRole}'\nFORMAT AS ${4:PARQUET}\nALLOWOVERWRITE;",
+      "description": "UNLOAD query results to S3",
+      "completeBracketPairs": true
+    }
+  ]
+}

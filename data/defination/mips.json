@@ -1,0 +1,185 @@
+{
+  "language": "mips",
+  "definitions": {
+    "add": {
+      "signature": "add $rd, $rs, $rt",
+      "description": "Adds the values in registers rs and rt, storing the result in register rd. Triggers an arithmetic overflow exception if the result exceeds the signed 32-bit integer range.",
+      "type": "function",
+      "module": "R-Type Arithmetic"
+    },
+    "addi": {
+      "signature": "addi $rt, $rs, immediate",
+      "description": "Adds a sign-extended 16-bit immediate value to the contents of register rs and stores the result in register rt. Raises overflow exception on signed overflow.",
+      "type": "function",
+      "module": "I-Type Arithmetic"
+    },
+    "sub": {
+      "signature": "sub $rd, $rs, $rt",
+      "description": "Subtracts the value in register rt from register rs and stores the result in register rd. Triggers an arithmetic overflow exception on signed integer overflow.",
+      "type": "function",
+      "module": "R-Type Arithmetic"
+    },
+    "mul": {
+      "signature": "mul $rd, $rs, $rt",
+      "description": "Multiplies the values in registers rs and rt, storing the lower 32 bits of the result in register rd. A pseudo-instruction in some assemblers that wraps mult and mflo.",
+      "type": "function",
+      "module": "R-Type Arithmetic"
+    },
+    "and": {
+      "signature": "and $rd, $rs, $rt",
+      "description": "Performs a bitwise AND operation between the values in registers rs and rt, storing the result in register rd for masking and flag extraction operations.",
+      "type": "function",
+      "module": "R-Type Logic"
+    },
+    "or": {
+      "signature": "or $rd, $rs, $rt",
+      "description": "Performs a bitwise OR operation between the values in registers rs and rt, storing the result in register rd for combining bit flags or setting specific bits.",
+      "type": "function",
+      "module": "R-Type Logic"
+    },
+    "sll": {
+      "signature": "sll $rd, $rt, shamt",
+      "description": "Shifts the value in register rt left by the specified shift amount of 0 to 31 bits, filling vacated positions with zeros and storing the result in register rd.",
+      "type": "function",
+      "module": "R-Type Shift"
+    },
+    "srl": {
+      "signature": "srl $rd, $rt, shamt",
+      "description": "Shifts the value in register rt right by the specified shift amount of 0 to 31 bits, filling vacated positions with zeros as a logical shift and storing result in register rd.",
+      "type": "function",
+      "module": "R-Type Shift"
+    },
+    "lw": {
+      "signature": "lw $rt, offset($rs)",
+      "description": "Loads a 32-bit word from memory at the address computed by adding the sign-extended offset to register rs, storing the value in register rt. Address must be word-aligned.",
+      "type": "function",
+      "module": "Memory Access"
+    },
+    "sw": {
+      "signature": "sw $rt, offset($rs)",
+      "description": "Stores the 32-bit word from register rt into memory at the address computed by adding the sign-extended offset to register rs. Address must be word-aligned.",
+      "type": "function",
+      "module": "Memory Access"
+    },
+    "lb": {
+      "signature": "lb $rt, offset($rs)",
+      "description": "Loads a byte from memory at the computed address, sign-extends it to 32 bits, and stores the result in register rt. Used for reading signed character data.",
+      "type": "function",
+      "module": "Memory Access"
+    },
+    "sb": {
+      "signature": "sb $rt, offset($rs)",
+      "description": "Stores the least significant byte of register rt into memory at the address computed by adding the sign-extended offset to register rs.",
+      "type": "function",
+      "module": "Memory Access"
+    },
+    "la": {
+      "signature": "la $rt, label",
+      "description": "Pseudo-instruction that loads the 32-bit address of a label into register rt. Typically expands to a lui and ori instruction pair for the upper and lower 16 bits.",
+      "type": "function",
+      "module": "Pseudo-Instructions"
+    },
+    "li": {
+      "signature": "li $rt, immediate",
+      "description": "Pseudo-instruction that loads a 32-bit immediate constant into register rt, expanding to lui and ori as needed depending on the magnitude of the value.",
+      "type": "function",
+      "module": "Pseudo-Instructions"
+    },
+    "beq": {
+      "signature": "beq $rs, $rt, label",
+      "description": "Branch on Equal compares registers rs and rt, and if they are equal, branches to the target label by adding the sign-extended offset to the program counter.",
+      "type": "function",
+      "module": "Branch"
+    },
+    "bne": {
+      "signature": "bne $rs, $rt, label",
+      "description": "Branch on Not Equal compares registers rs and rt, and if they differ, branches to the target label by adding the sign-extended offset to the program counter.",
+      "type": "function",
+      "module": "Branch"
+    },
+    "slt": {
+      "signature": "slt $rd, $rs, $rt",
+      "description": "Set on Less Than sets register rd to 1 if the signed value in rs is less than the signed value in rt, otherwise sets rd to 0. Essential for comparison-based branching.",
+      "type": "function",
+      "module": "R-Type Comparison"
+    },
+    "j": {
+      "signature": "j target",
+      "description": "Unconditional Jump instruction that jumps to the instruction at the specified 26-bit target address, with the upper 4 bits from the current program counter. Used for loops and gotos.",
+      "type": "function",
+      "module": "Jump"
+    },
+    "jal": {
+      "signature": "jal target",
+      "description": "Jump and Link saves the return address PC+4 in register $ra and jumps to the target address. The standard instruction for calling subroutines in MIPS assembly programs.",
+      "type": "function",
+      "module": "Jump"
+    },
+    "jr": {
+      "signature": "jr $rs",
+      "description": "Jump Register jumps to the address stored in register rs. Commonly used with $ra to return from a subroutine called by jal, restoring execution to the caller.",
+      "type": "function",
+      "module": "Jump"
+    },
+    "syscall": {
+      "signature": "syscall",
+      "description": "Triggers a system call to the operating system or simulator. The service number in $v0 with arguments in $a0-$a3. Common services include 1 for print_int, 4 for print_string, 10 for exit.",
+      "type": "function",
+      "module": "System"
+    },
+    "$v0": {
+      "signature": "$v0 (Register 2)",
+      "description": "Value register 0, used for function return values and syscall service numbers. By convention, integer return values from functions are placed in $v0 before returning.",
+      "type": "function",
+      "module": "Registers"
+    },
+    "$a0": {
+      "signature": "$a0 (Register 4)",
+      "description": "Argument register 0, used to pass the first argument to subroutines and syscalls. Part of the $a0-$a3 convention for the first four function parameters in MIPS calling convention.",
+      "type": "function",
+      "module": "Registers"
+    },
+    "$sp": {
+      "signature": "$sp (Register 29)",
+      "description": "Stack Pointer register, pointing to the top of the runtime stack in memory. Grows downward by convention; functions adjust it with addi $sp, $sp, -N to allocate stack frames.",
+      "type": "function",
+      "module": "Registers"
+    },
+    "$ra": {
+      "signature": "$ra (Register 31)",
+      "description": "Return Address register, automatically set by the jal instruction to hold the address of the instruction following the call. Used by jr $ra to return from subroutines.",
+      "type": "function",
+      "module": "Registers"
+    },
+    ".data": {
+      "signature": ".data",
+      "description": "Assembler directive that marks the beginning of the data segment, where variables, strings, and constants are declared using directives like .word, .asciiz, and .byte.",
+      "type": "function",
+      "module": "Directives"
+    },
+    ".text": {
+      "signature": ".text",
+      "description": "Assembler directive that marks the beginning of the code and text segment containing executable instructions. Typically follows the .data section in MIPS assembly programs.",
+      "type": "function",
+      "module": "Directives"
+    },
+    ".globl": {
+      "signature": ".globl label",
+      "description": "Assembler directive that declares a label as globally visible, making it accessible to the linker and other object files. Commonly used with main as the program entry point.",
+      "type": "function",
+      "module": "Directives"
+    },
+    ".asciiz": {
+      "signature": ".asciiz \"string\"",
+      "description": "Assembler directive that stores a null-terminated ASCII string in the data segment, automatically appending a zero byte. Used for strings passed to print_string syscall.",
+      "type": "function",
+      "module": "Directives"
+    },
+    ".word": {
+      "signature": ".word value [, value ...]",
+      "description": "Assembler directive that stores one or more 32-bit integer values in the data segment, each occupying four consecutive bytes with proper word alignment.",
+      "type": "function",
+      "module": "Directives"
+    }
+  }
+}

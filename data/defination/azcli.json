@@ -1,0 +1,184 @@
+{
+  "language": "azcli",
+  "definitions": {
+    "az": {
+      "signature": "az [group] [subgroup] [command] [--parameters]",
+      "description": "The root command for the Azure CLI, a cross-platform command-line tool for creating and managing Azure resources. All Azure CLI commands begin with 'az' followed by a command group, optional subgroup, a command, and parameters. Supports JSON, table, TSV, and YAML output formats.",
+      "type": "function",
+      "module": "Azure CLI",
+      "members": {
+        "login": {
+          "signature": "az login [--use-device-code] [--tenant TENANT_ID] [--service-principal -u CLIENT_ID -p SECRET --tenant TENANT_ID]",
+          "description": "Authenticates to Azure, opening a browser for interactive login or using device code, service principal, or managed identity credentials.",
+          "type": "method"
+        },
+        "account set": {
+          "signature": "az account set --subscription SUBSCRIPTION_NAME_OR_ID",
+          "description": "Sets the active subscription for subsequent CLI commands when the account has access to multiple subscriptions.",
+          "type": "method"
+        },
+        "configure": {
+          "signature": "az configure [--defaults group=RESOURCE_GROUP location=REGION]",
+          "description": "Manages Azure CLI configuration including default resource group, region, and output format preferences.",
+          "type": "method"
+        }
+      }
+    },
+    "az group": {
+      "signature": "az group [create|delete|list|show|update|exists]",
+      "description": "Manages Azure Resource Groups, which are logical containers that hold related Azure resources for an application. Resource groups allow you to manage, monitor, and control access to resources as a single unit and define the region where metadata is stored.",
+      "type": "function",
+      "module": "Azure CLI - Resource",
+      "members": {
+        "create": {
+          "signature": "az group create --name NAME --location LOCATION [--tags KEY=VALUE]",
+          "description": "Creates a new resource group in the specified Azure region with optional tags for organization and billing.",
+          "type": "method"
+        },
+        "delete": {
+          "signature": "az group delete --name NAME [--yes] [--no-wait]",
+          "description": "Deletes a resource group and all resources contained within it. This operation is irreversible.",
+          "type": "method"
+        },
+        "list": {
+          "signature": "az group list [--query JMESPATH] [--output {json,table,tsv,yaml}]",
+          "description": "Lists all resource groups in the active subscription with optional JMESPath query filtering.",
+          "type": "method"
+        }
+      }
+    },
+    "az vm": {
+      "signature": "az vm [create|delete|start|stop|restart|list|show|deallocate|resize]",
+      "description": "Manages Azure Virtual Machines, including creation, configuration, starting, stopping, resizing, and deletion. Supports Linux and Windows VMs with various sizes, images, networking options, and disk configurations.",
+      "type": "function",
+      "module": "Azure CLI - Compute",
+      "members": {
+        "create": {
+          "signature": "az vm create --resource-group RG --name NAME --image IMAGE [--size SIZE] [--admin-username USER] [--generate-ssh-keys]",
+          "description": "Creates a new virtual machine with the specified image, size, and authentication configuration in the given resource group.",
+          "type": "method"
+        },
+        "start": {
+          "signature": "az vm start --resource-group RG --name NAME [--no-wait]",
+          "description": "Powers on a stopped or deallocated virtual machine, resuming billing for compute resources.",
+          "type": "method"
+        },
+        "stop": {
+          "signature": "az vm stop --resource-group RG --name NAME [--no-wait]",
+          "description": "Powers off a virtual machine but keeps it allocated, still incurring compute charges until deallocated.",
+          "type": "method"
+        },
+        "deallocate": {
+          "signature": "az vm deallocate --resource-group RG --name NAME [--no-wait]",
+          "description": "Deallocates a virtual machine, releasing compute resources and stopping billing while retaining disks and network configuration.",
+          "type": "method"
+        }
+      }
+    },
+    "az storage": {
+      "signature": "az storage [account|container|blob|file|queue|table] [command]",
+      "description": "Manages Azure Storage resources including storage accounts, blob containers, file shares, queues, and tables. Provides commands for creating accounts, uploading and downloading data, managing access policies, and configuring storage features.",
+      "type": "function",
+      "module": "Azure CLI - Storage",
+      "members": {
+        "account create": {
+          "signature": "az storage account create --name NAME --resource-group RG --location LOCATION --sku {Standard_LRS,Standard_GRS}",
+          "description": "Creates a new storage account with the specified redundancy level, access tier, and networking configuration.",
+          "type": "method"
+        },
+        "blob upload": {
+          "signature": "az storage blob upload --account-name ACCOUNT --container-name CONTAINER --file FILE --name BLOB_NAME",
+          "description": "Uploads a local file as a blob to the specified container in Azure Blob Storage.",
+          "type": "method"
+        },
+        "blob download": {
+          "signature": "az storage blob download --account-name ACCOUNT --container-name CONTAINER --name BLOB_NAME --file DEST",
+          "description": "Downloads a blob from Azure Blob Storage to a local file path.",
+          "type": "method"
+        }
+      }
+    },
+    "az webapp": {
+      "signature": "az webapp [create|delete|list|show|start|stop|restart|deploy]",
+      "description": "Manages Azure App Service web applications, which host web apps, REST APIs, and mobile backends. Supports deployment from source code, containers, or zip packages with built-in scaling, SSL, authentication, and continuous deployment capabilities.",
+      "type": "function",
+      "module": "Azure CLI - App Service",
+      "members": {
+        "create": {
+          "signature": "az webapp create --resource-group RG --plan PLAN --name NAME [--runtime RUNTIME]",
+          "description": "Creates a new web app in an App Service plan with the specified runtime stack (e.g., NODE:18-lts, PYTHON:3.11).",
+          "type": "method"
+        },
+        "deploy": {
+          "signature": "az webapp deploy --resource-group RG --name NAME --src-path PATH [--type {zip,war,jar,ear,startup}]",
+          "description": "Deploys code or a package to the web app using the Kudu deployment engine.",
+          "type": "method"
+        },
+        "log tail": {
+          "signature": "az webapp log tail --resource-group RG --name NAME",
+          "description": "Streams live log output from the web app to the terminal for real-time debugging.",
+          "type": "method"
+        }
+      }
+    },
+    "az aks": {
+      "signature": "az aks [create|delete|list|show|get-credentials|scale|upgrade]",
+      "description": "Manages Azure Kubernetes Service (AKS) clusters for running containerized applications. Provides commands for cluster lifecycle management, node pool scaling, version upgrades, and kubectl credential retrieval.",
+      "type": "function",
+      "module": "Azure CLI - AKS",
+      "members": {
+        "create": {
+          "signature": "az aks create --resource-group RG --name NAME --node-count N [--node-vm-size SIZE] [--generate-ssh-keys]",
+          "description": "Creates a new managed Kubernetes cluster with the specified node count, VM size, and networking configuration.",
+          "type": "method"
+        },
+        "get-credentials": {
+          "signature": "az aks get-credentials --resource-group RG --name NAME [--overwrite-existing]",
+          "description": "Downloads and merges the cluster kubeconfig into ~/.kube/config for kubectl access.",
+          "type": "method"
+        }
+      }
+    },
+    "az network": {
+      "signature": "az network [vnet|nsg|public-ip|lb|dns] [command]",
+      "description": "Manages Azure networking resources including virtual networks, subnets, network security groups, public IP addresses, load balancers, and DNS zones for building secure and scalable network architectures.",
+      "type": "function",
+      "module": "Azure CLI - Network",
+      "members": {
+        "vnet create": {
+          "signature": "az network vnet create --resource-group RG --name NAME --address-prefix CIDR [--subnet-name NAME --subnet-prefix CIDR]",
+          "description": "Creates a virtual network with the specified address space and optional initial subnet.",
+          "type": "method"
+        },
+        "nsg create": {
+          "signature": "az network nsg create --resource-group RG --name NAME",
+          "description": "Creates a network security group that contains access control rules for filtering network traffic.",
+          "type": "method"
+        }
+      }
+    },
+    "az acr": {
+      "signature": "az acr [create|login|build|list|show|repository]",
+      "description": "Manages Azure Container Registry instances for storing and managing Docker container images and OCI artifacts. Supports image building, geo-replication, vulnerability scanning, and integration with AKS and App Service.",
+      "type": "function",
+      "module": "Azure CLI - ACR",
+      "members": {
+        "create": {
+          "signature": "az acr create --resource-group RG --name NAME --sku {Basic,Standard,Premium}",
+          "description": "Creates a new container registry with the specified SKU tier determining storage, throughput, and features.",
+          "type": "method"
+        },
+        "login": {
+          "signature": "az acr login --name NAME",
+          "description": "Authenticates the local Docker client with the Azure Container Registry for push and pull operations.",
+          "type": "method"
+        },
+        "build": {
+          "signature": "az acr build --registry NAME --image IMAGE:TAG .",
+          "description": "Builds a Docker image in the cloud using ACR Tasks without requiring a local Docker daemon.",
+          "type": "method"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "language": "bicep",
+  "definitions": {
+    "resource": {
+      "signature": "resource symbolicName 'Microsoft.Provider/resourceType@apiVersion' = { name: 'name', location: location, properties: { ... } }",
+      "description": "Declares an Azure resource to be deployed or updated. The resource declaration includes a symbolic name for referencing within the template, the fully qualified resource type with API version, and a body containing the resource's name, location, and configuration properties.",
+      "type": "keyword",
+      "module": "Bicep Language",
+      "members": {
+        "name": {
+          "signature": "name: string",
+          "description": "The deployment name of the Azure resource, which must be unique within its resource group and type.",
+          "type": "property"
+        },
+        "location": {
+          "signature": "location: string",
+          "description": "The Azure region where the resource will be deployed, typically set via resourceGroup().location.",
+          "type": "property"
+        },
+        "properties": {
+          "signature": "properties: { ... }",
+          "description": "The resource-specific configuration properties that vary by resource type as defined by the Azure Resource Manager API.",
+          "type": "property"
+        },
+        "dependsOn": {
+          "signature": "dependsOn: [ symbolicName1, symbolicName2 ]",
+          "description": "Explicitly declares deployment dependencies; Bicep auto-detects most, use this only for implicit dependencies.",
+          "type": "property"
+        },
+        "tags": {
+          "signature": "tags: { key: 'value' }",
+          "description": "Name/value pairs for categorizing resources and consolidating billing across resource groups.",
+          "type": "property"
+        }
+      }
+    },
+    "module": {
+      "signature": "module symbolicName 'path/to/module.bicep' = { name: 'deploymentName', params: { param1: value1 } }",
+      "description": "References another Bicep file as a reusable module, enabling composition and separation of concerns in infrastructure deployments. Modules encapsulate a set of related resources and expose parameters and outputs for configuration and chaining.",
+      "type": "keyword",
+      "module": "Bicep Language",
+      "members": {
+        "name": {
+          "signature": "name: string",
+          "description": "The name of the deployment created for this module, which appears in Azure deployment history.",
+          "type": "property"
+        },
+        "params": {
+          "signature": "params: { paramName: value }",
+          "description": "Passes values to the module's declared parameters for configuring the resources within the module.",
+          "type": "property"
+        },
+        "scope": {
+          "signature": "scope: resourceGroup('rgName') | subscription() | managementGroup('mgName') | tenant()",
+          "description": "Deploys the module to a different scope than the parent, enabling cross-resource-group or cross-subscription deployments.",
+          "type": "property"
+        }
+      }
+    },
+    "param": {
+      "signature": "param paramName paramType [= defaultValue]",
+      "description": "Declares an input parameter for the Bicep template that can be provided at deployment time. Parameters support type constraints, default values, decorators for validation (@minLength, @maxLength, @minValue, @maxValue, @allowed, @description), and secure string handling with @secure().",
+      "type": "keyword",
+      "module": "Bicep Language"
+    },
+    "output": {
+      "signature": "output outputName outputType = value",
+      "description": "Declares an output value from the Bicep deployment that can be referenced by parent templates, modules, or deployment scripts. Outputs are commonly used to expose resource IDs, endpoints, connection strings, and other deployment artifacts.",
+      "type": "keyword",
+      "module": "Bicep Language"
+    },
+    "var": {
+      "signature": "var varName = expression",
+      "description": "Declares a variable that holds a computed value for reuse throughout the template. Variables simplify complex expressions, avoid repetition, and improve readability. They are evaluated once at deployment time and can reference parameters, other variables, and resource properties.",
+      "type": "keyword",
+      "module": "Bicep Language"
+    },
+    "targetScope": {
+      "signature": "targetScope = 'resourceGroup' | 'subscription' | 'managementGroup' | 'tenant'",
+      "description": "Sets the deployment scope for the entire Bicep file. The default scope is 'resourceGroup'. Setting it to 'subscription' enables subscription-level deployments for creating resource groups, policies, and role assignments.",
+      "type": "keyword",
+      "module": "Bicep Language"
+    },
+    "existing": {
+      "signature": "resource symbolicName 'Microsoft.Provider/resourceType@apiVersion' existing = { name: 'existingResourceName' }",
+      "description": "References an existing Azure resource that is already deployed, without creating or modifying it. This allows the template to read properties of existing resources (like connection strings or IDs) for use in configuring new resources.",
+      "type": "keyword",
+      "module": "Bicep Language"
+    },
+    "resourceGroup": {
+      "signature": "resourceGroup() -> { id: string, name: string, location: string, tags: object }",
+      "description": "A built-in function that returns an object representing the resource group where the deployment is being executed. Commonly used to set resource locations to match the resource group's region via resourceGroup().location.",
+      "type": "function",
+      "module": "Bicep Functions"
+    },
+    "subscription": {
+      "signature": "subscription() -> { id: string, subscriptionId: string, displayName: string, tenantId: string }",
+      "description": "A built-in function that returns an object representing the current Azure subscription context, providing the subscription ID, display name, and tenant ID for cross-resource referencing.",
+      "type": "function",
+      "module": "Bicep Functions"
+    },
+    "uniqueString": {
+      "signature": "uniqueString(baseString: string, ...strings: string[]) -> string",
+      "description": "Creates a deterministic 13-character hash string based on the input values. Commonly used to generate globally unique resource names by passing resource group ID, ensuring the same inputs always produce the same output.",
+      "type": "function",
+      "module": "Bicep Functions"
+    }
+  }
+}

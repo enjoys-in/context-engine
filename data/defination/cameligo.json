@@ -1,0 +1,147 @@
+{
+  "language": "cameligo",
+  "definitions": {
+    "int": {
+      "signature": "type int",
+      "description": "A signed integer type in CameLIGO used for representing positive and negative whole numbers on the Tezos blockchain. Integer arithmetic is unbounded (arbitrary precision) and supports addition, subtraction, multiplication, and Euclidean division.",
+      "type": "class",
+      "module": "LIGO.Stdlib",
+      "members": {
+        "abs": {
+          "signature": "abs(i: int) -> nat",
+          "description": "Returns the absolute value of the integer as a natural number (nat type).",
+          "type": "function"
+        },
+        "is_nat": {
+          "signature": "is_nat(i: int) -> option<nat>",
+          "description": "Converts an integer to a natural number, returning Some(n) if non-negative or None if negative.",
+          "type": "function"
+        },
+        "int": {
+          "signature": "int(n: nat) -> int",
+          "description": "Converts a natural number (nat) to a signed integer value.",
+          "type": "function"
+        }
+      }
+    },
+    "string": {
+      "signature": "type string",
+      "description": "The string type in CameLIGO represents immutable sequences of characters. Strings support concatenation with the ^ operator and can be sliced to extract substrings. String operations are commonly used in error messages, metadata, and entrypoint annotations on Tezos smart contracts.",
+      "type": "class",
+      "module": "LIGO.Stdlib",
+      "members": {
+        "String.length": {
+          "signature": "String.length(s: string) -> nat",
+          "description": "Returns the length of the string in characters as a natural number.",
+          "type": "function"
+        },
+        "String.concat": {
+          "signature": "String.concat(s1: string, s2: string) -> string",
+          "description": "Concatenates two strings together, producing a new string with s1 followed by s2.",
+          "type": "function"
+        },
+        "String.sub": {
+          "signature": "String.sub(offset: nat, length: nat, s: string) -> string",
+          "description": "Extracts a substring from the string starting at the given offset with the specified length.",
+          "type": "function"
+        }
+      }
+    },
+    "nat": {
+      "signature": "type nat",
+      "description": "A natural number (non-negative integer) type in CameLIGO, representing zero and positive whole numbers. Natural numbers are essential in Tezos smart contracts for representing quantities like token amounts, counters, and sizes. Literal values use the 'n' suffix (e.g., 42n).",
+      "type": "class",
+      "module": "LIGO.Stdlib"
+    },
+    "tez": {
+      "signature": "type tez",
+      "description": "The tez type represents amounts of the Tezos native cryptocurrency (XTZ) in mutez (micro-tez, 1 tez = 1,000,000 mutez). Tez values are used for transfers, balance checks, and specifying amounts in smart contract operations. Literal values use the 'tez' or 'mutez' suffix.",
+      "type": "class",
+      "module": "LIGO.Stdlib"
+    },
+    "address": {
+      "signature": "type address",
+      "description": "The address type represents a Tezos account address, which can be either an implicit account (tz1, tz2, tz3 prefixed) or a smart contract address (KT1 prefixed). Addresses are used for identifying senders, receivers, and contract targets in on-chain operations.",
+      "type": "class",
+      "module": "LIGO.Stdlib"
+    },
+    "map": {
+      "signature": "type ('key, 'value) map",
+      "description": "An immutable ordered key-value mapping in CameLIGO that associates keys to values. Maps use balanced binary trees and support efficient lookup, insertion, and removal. For larger datasets in contracts, big_map should be used instead to reduce gas costs.",
+      "type": "class",
+      "module": "LIGO.Stdlib",
+      "members": {
+        "Map.empty": {
+          "signature": "Map.empty : ('k, 'v) map",
+          "description": "Creates a new empty map with no key-value bindings.",
+          "type": "function"
+        },
+        "Map.add": {
+          "signature": "Map.add(key: 'k, value: 'v, m: ('k, 'v) map) -> ('k, 'v) map",
+          "description": "Returns a new map with the binding of key to value added or updated, leaving the original unchanged.",
+          "type": "function"
+        },
+        "Map.remove": {
+          "signature": "Map.remove(key: 'k, m: ('k, 'v) map) -> ('k, 'v) map",
+          "description": "Returns a new map with the binding for the specified key removed, if it exists.",
+          "type": "function"
+        },
+        "Map.find_opt": {
+          "signature": "Map.find_opt(key: 'k, m: ('k, 'v) map) -> option<'v>",
+          "description": "Looks up a key in the map, returning Some(value) if found or None if the key is not present.",
+          "type": "function"
+        },
+        "Map.mem": {
+          "signature": "Map.mem(key: 'k, m: ('k, 'v) map) -> bool",
+          "description": "Returns true if the specified key exists in the map, false otherwise.",
+          "type": "function"
+        },
+        "Map.fold": {
+          "signature": "Map.fold(f: ('acc * ('k * 'v)) -> 'acc, m: ('k, 'v) map, init: 'acc) -> 'acc",
+          "description": "Folds over all key-value pairs in the map, accumulating a result from left to right starting with the initial value.",
+          "type": "function"
+        }
+      }
+    },
+    "list": {
+      "signature": "type 'a list",
+      "description": "An immutable singly-linked list in CameLIGO that supports pattern matching and functional operations. Lists are constructed with the cons operator (::) and the empty list ([]) and are the primary sequential data structure for Tezos smart contracts.",
+      "type": "class",
+      "module": "LIGO.Stdlib",
+      "members": {
+        "List.length": {
+          "signature": "List.length(l: 'a list) -> nat",
+          "description": "Returns the number of elements in the list as a natural number.",
+          "type": "function"
+        },
+        "List.map": {
+          "signature": "List.map(f: 'a -> 'b, l: 'a list) -> 'b list",
+          "description": "Applies a function to each element of the list and returns a new list with the transformed values.",
+          "type": "function"
+        },
+        "List.iter": {
+          "signature": "List.iter(f: 'a -> unit, l: 'a list) -> unit",
+          "description": "Applies a function to each element of the list in order for its side effects only.",
+          "type": "function"
+        },
+        "List.fold": {
+          "signature": "List.fold(f: ('acc * 'a) -> 'acc, l: 'a list, init: 'acc) -> 'acc",
+          "description": "Folds over the list elements from left to right, threading an accumulator through each application.",
+          "type": "function"
+        }
+      }
+    },
+    "option": {
+      "signature": "type 'a option = Some of 'a | None",
+      "description": "A variant type representing an optional value that may or may not be present. Some(value) wraps a present value while None indicates absence. Option types are pervasive in CameLIGO for safe handling of map lookups and operations that may fail.",
+      "type": "class",
+      "module": "LIGO.Stdlib"
+    },
+    "unit": {
+      "signature": "type unit",
+      "description": "A type with a single value, written as (), representing no meaningful information. Unit is used as the return type for side-effect functions and as the parameter type for entrypoints that take no arguments in Tezos smart contracts.",
+      "type": "class",
+      "module": "LIGO.Stdlib"
+    }
+  }
+}

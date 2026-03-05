@@ -1,0 +1,125 @@
+{
+  "language": "redis",
+  "definitions": {
+    "redis.call": {
+      "signature": "redis.call(command, arg1, arg2, ...) -> reply",
+      "description": "Executes a Redis command from within a Lua script and returns the result. If the command returns an error, redis.call raises a Lua error that aborts the script execution immediately.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "redis.pcall": {
+      "signature": "redis.pcall(command, arg1, arg2, ...) -> reply",
+      "description": "Executes a Redis command from within a Lua script in protected mode. Unlike redis.call, errors are caught and returned as Lua tables with an err field instead of aborting the script.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "redis.log": {
+      "signature": "redis.log(loglevel, message)",
+      "description": "Writes a log message to the Redis server log from within a Lua script. Log levels include redis.LOG_DEBUG, redis.LOG_VERBOSE, redis.LOG_NOTICE, and redis.LOG_WARNING.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "redis.error_reply": {
+      "signature": "redis.error_reply(error_string) -> table",
+      "description": "Creates an error reply table that can be returned from a Lua script to the Redis client, formatted as a Redis error response with the specified error message string.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "redis.status_reply": {
+      "signature": "redis.status_reply(status_string) -> table",
+      "description": "Creates a status reply table that can be returned from a Lua script to the Redis client, formatted as a Redis simple status response like OK or QUEUED.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "KEYS": {
+      "signature": "KEYS pattern -> Array<string>",
+      "description": "Returns all keys matching the specified glob-style pattern. Supports wildcards: * matches any sequence, ? matches one character, and [ae] matches character classes. Avoid in production due to O(N) scan.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "TYPE": {
+      "signature": "TYPE key -> string",
+      "description": "Returns the data type of the value stored at the given key as a string: string, list, set, zset, hash, stream, or none if the key does not exist in the database.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "TTL": {
+      "signature": "TTL key -> integer",
+      "description": "Returns the remaining time to live of a key that has a timeout set, in whole seconds. Returns -1 if the key exists but has no expiry, or -2 if the key does not exist.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "PTTL": {
+      "signature": "PTTL key -> integer",
+      "description": "Returns the remaining time to live of a key in milliseconds for higher precision than TTL. Returns -1 for keys without expiry and -2 for non-existent keys.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "EXPIRE": {
+      "signature": "EXPIRE key seconds [NX|XX|GT|LT] -> integer",
+      "description": "Sets a timeout on a key in seconds after which it will be automatically deleted. Returns 1 if set successfully, 0 if key does not exist. Supports NX, XX, GT, LT flags in Redis 7.0+.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "PERSIST": {
+      "signature": "PERSIST key -> integer",
+      "description": "Removes the existing timeout on a key, making it persistent so it will not be automatically deleted. Returns 1 if the timeout was removed, 0 if the key has no associated timeout.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "SCAN": {
+      "signature": "SCAN cursor [MATCH pattern] [COUNT count] [TYPE type] -> [cursor, Array<string>]",
+      "description": "Incrementally iterates over the key space using a cursor-based approach, returning a new cursor and a batch of keys. Production-safe alternative to KEYS for large databases without blocking.",
+      "type": "function",
+      "module": "Generic"
+    },
+    "EVAL": {
+      "signature": "EVAL script numkeys [key ...] [arg ...] -> reply",
+      "description": "Evaluates a Lua script server-side with atomic execution guarantee. The script receives keys via KEYS table and arguments via ARGV table. All Redis commands within the script are atomic.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "EVALSHA": {
+      "signature": "EVALSHA sha1 numkeys [key ...] [arg ...] -> reply",
+      "description": "Evaluates a previously loaded Lua script by its SHA1 hash, avoiding retransmission of the script body. Use SCRIPT LOAD to cache the script and obtain its SHA1 digest.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "SCRIPT LOAD": {
+      "signature": "SCRIPT LOAD script -> string",
+      "description": "Loads a Lua script into the Redis script cache without executing it, returning the SHA1 digest of the script. The cached script can then be executed with EVALSHA for reduced bandwidth.",
+      "type": "function",
+      "module": "Scripting"
+    },
+    "CONFIG GET": {
+      "signature": "CONFIG GET parameter -> Array<string>",
+      "description": "Retrieves the value of a Redis configuration parameter at runtime. Supports glob-style patterns to retrieve multiple parameters at once for server introspection and diagnostics.",
+      "type": "function",
+      "module": "Server"
+    },
+    "CONFIG SET": {
+      "signature": "CONFIG SET parameter value [parameter value ...] -> string",
+      "description": "Dynamically reconfigures a Redis server parameter at runtime without restart. Not all parameters are modifiable; some require a server restart to take effect from the configuration file.",
+      "type": "function",
+      "module": "Server"
+    },
+    "INFO": {
+      "signature": "INFO [section ...] -> string",
+      "description": "Returns detailed information and statistics about the Redis server in a human-readable format. Sections include server, clients, memory, stats, replication, cpu, keyspace, and modules.",
+      "type": "function",
+      "module": "Server"
+    },
+    "MULTI": {
+      "signature": "MULTI -> string",
+      "description": "Marks the start of a Redis transaction block. Subsequent commands are queued for atomic execution when EXEC is called. All commands in the transaction execute sequentially without interruption.",
+      "type": "function",
+      "module": "Transactions"
+    },
+    "EXEC": {
+      "signature": "EXEC -> Array<reply>",
+      "description": "Executes all previously queued commands in a MULTI transaction block atomically and returns an array of replies, one for each command in the order they were queued.",
+      "type": "function",
+      "module": "Transactions"
+    }
+  }
+}

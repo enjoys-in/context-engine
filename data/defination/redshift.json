@@ -1,0 +1,112 @@
+{
+  "language": "redshift",
+  "definitions": {
+    "COPY": {
+      "signature": "COPY table_name FROM 's3://bucket/path' IAM_ROLE 'arn:aws:iam::role' [FORMAT AS CSV|JSON|AVRO|PARQUET] [DELIMITER 'char'] [IGNOREHEADER n] [GZIP|LZOP|BZIP2]",
+      "description": "Loads data from Amazon S3, DynamoDB, or remote hosts into a Redshift table using massively parallel processing for high-throughput bulk ingestion of large datasets.",
+      "type": "statement",
+      "module": "Data Loading"
+    },
+    "UNLOAD": {
+      "signature": "UNLOAD ('select_statement') TO 's3://bucket/path' IAM_ROLE 'arn:aws:iam::role' [FORMAT AS CSV|JSON|PARQUET] [PARALLEL ON|OFF] [MAXFILESIZE n MB]",
+      "description": "Exports the results of a query to one or more files on Amazon S3, supporting parallel writes across slices for fast extraction of large result sets.",
+      "type": "statement",
+      "module": "Data Unloading"
+    },
+    "GETDATE": {
+      "signature": "GETDATE() -> TIMESTAMP",
+      "description": "Returns the current date and time in UTC as a timestamp value, equivalent to CURRENT_TIMESTAMP but specific to Redshift SQL dialect for compatibility purposes.",
+      "type": "function",
+      "module": "Date/Time Functions"
+    },
+    "DATEADD": {
+      "signature": "DATEADD(datepart, interval, expression) -> TIMESTAMP|DATE",
+      "description": "Adds a specified number of intervals (years, months, days, hours, minutes, seconds) to a date or timestamp expression and returns the resulting value.",
+      "type": "function",
+      "module": "Date/Time Functions"
+    },
+    "DATEDIFF": {
+      "signature": "DATEDIFF(datepart, start_date, end_date) -> BIGINT",
+      "description": "Calculates the difference between two date or timestamp expressions in the specified date part units such as years, months, days, hours, minutes, or seconds.",
+      "type": "function",
+      "module": "Date/Time Functions"
+    },
+    "NVL": {
+      "signature": "NVL(expression1, expression2) -> value",
+      "description": "Returns the first non-null expression among its arguments, functioning as a null-coalescing operator equivalent to COALESCE with exactly two parameters in standard SQL.",
+      "type": "function",
+      "module": "Conditional Functions"
+    },
+    "LISTAGG": {
+      "signature": "LISTAGG(expression [, delimiter]) WITHIN GROUP (ORDER BY sort_expression) -> VARCHAR",
+      "description": "Aggregates values from multiple rows into a single concatenated string with an optional delimiter, ordered by the specified sort expression within each group.",
+      "type": "function",
+      "module": "Aggregate Functions"
+    },
+    "DISTKEY": {
+      "signature": "DISTKEY (column_name)",
+      "description": "Table distribution style attribute that specifies the column used to distribute rows across compute node slices, optimizing join performance by co-locating matching rows on the same node.",
+      "type": "keyword",
+      "module": "Table Design"
+    },
+    "SORTKEY": {
+      "signature": "SORTKEY (column_name [, ...]) | COMPOUND SORTKEY (...) | INTERLEAVED SORTKEY (...)",
+      "description": "Defines the sort order of data stored on disk within each slice, enabling zone map filtering to skip blocks during query execution and dramatically reducing I/O for filtered queries.",
+      "type": "keyword",
+      "module": "Table Design"
+    },
+    "DISTSTYLE": {
+      "signature": "DISTSTYLE EVEN | KEY | ALL | AUTO",
+      "description": "Specifies how table rows are distributed across compute node slices; EVEN distributes round-robin, KEY uses a column hash, ALL replicates to every node, and AUTO lets Redshift choose.",
+      "type": "keyword",
+      "module": "Table Design"
+    },
+    "APPROXIMATE COUNT": {
+      "signature": "APPROXIMATE COUNT(DISTINCT column) -> BIGINT",
+      "description": "Returns an approximate distinct count using a HyperLogLog algorithm, providing significantly faster results than exact COUNT DISTINCT for large datasets with minimal error margin.",
+      "type": "function",
+      "module": "Aggregate Functions"
+    },
+    "CONVERT_TIMEZONE": {
+      "signature": "CONVERT_TIMEZONE('source_timezone', 'target_timezone', timestamp) -> TIMESTAMP",
+      "description": "Converts a timestamp from one time zone to another, supporting IANA time zone names and UTC offsets for accurate cross-timezone date and time calculations in analytics.",
+      "type": "function",
+      "module": "Date/Time Functions"
+    },
+    "WLM_QUERY_SLOT_COUNT": {
+      "signature": "SET WLM_QUERY_SLOT_COUNT TO n",
+      "description": "Temporarily increases the number of workload management query slots allocated to the current session, allowing a single query to use more memory for complex operations.",
+      "type": "statement",
+      "module": "Workload Management"
+    },
+    "STL_QUERY": {
+      "signature": "SELECT * FROM STL_QUERY WHERE ...",
+      "description": "System table that logs information about database queries including query text, start and end times, and status, essential for monitoring and troubleshooting query performance.",
+      "type": "class",
+      "module": "System Tables",
+      "members": {
+        "query": {
+          "signature": "STL_QUERY.query -> INTEGER",
+          "description": "Unique query identifier assigned by Redshift.",
+          "type": "method"
+        },
+        "querytxt": {
+          "signature": "STL_QUERY.querytxt -> VARCHAR",
+          "description": "Text of the SQL query truncated to 4000 characters.",
+          "type": "method"
+        },
+        "elapsed": {
+          "signature": "STL_QUERY.elapsed -> BIGINT",
+          "description": "Elapsed execution time in microseconds.",
+          "type": "method"
+        }
+      }
+    },
+    "SPECTRUM": {
+      "signature": "CREATE EXTERNAL SCHEMA schema_name FROM DATA CATALOG DATABASE 'db' IAM_ROLE 'arn' CREATE EXTERNAL DATABASE IF NOT EXISTS",
+      "description": "Redshift Spectrum enables querying data stored in Amazon S3 using external tables without loading, leveraging the Glue Data Catalog for schema definitions and partition management.",
+      "type": "statement",
+      "module": "External Tables"
+    }
+  }
+}

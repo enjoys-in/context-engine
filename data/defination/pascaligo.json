@@ -1,0 +1,183 @@
+{
+  "language": "pascaligo",
+  "definitions": {
+    "int": {
+      "signature": "int",
+      "description": "The signed integer type in PascaLIGO representing whole numbers of arbitrary precision on the Tezos blockchain. Supports standard arithmetic operations and comparison for smart contract logic.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "nat": {
+      "signature": "nat",
+      "description": "The natural number type in PascaLIGO representing non-negative integers. Used for counters, token amounts, and sizes where negative values are semantically invalid in smart contracts.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "string": {
+      "signature": "string",
+      "description": "The string type in PascaLIGO representing immutable sequences of characters. Supports concatenation with the caret operator and provides size and slice operations for text manipulation.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "String.concat": {
+          "signature": "String.concat(a: string, b: string) -> string",
+          "description": "Concatenates two strings and returns the combined result.",
+          "type": "method"
+        },
+        "String.length": {
+          "signature": "String.length(s: string) -> nat",
+          "description": "Returns the length of the string as a natural number.",
+          "type": "method"
+        },
+        "String.sub": {
+          "signature": "String.sub(offset: nat, length: nat, s: string) -> string",
+          "description": "Returns a substring starting at offset with the given length.",
+          "type": "method"
+        }
+      }
+    },
+    "tez": {
+      "signature": "tez",
+      "description": "The native currency type in PascaLIGO representing Tezos tokens (XTZ). Values are expressed in mutez (millionths of tez) internally and support arithmetic for financial smart contract operations.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "address": {
+      "signature": "address",
+      "description": "The Tezos account address type in PascaLIGO, representing implicit accounts (tz1/tz2/tz3) or originated contracts (KT1). Used for identifying transaction participants and contract targets.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "map": {
+      "signature": "map(key_type, value_type)",
+      "description": "An immutable key-value mapping type in PascaLIGO that stores associations between keys and values. Maps are suitable for small datasets and support lookup, update, and iteration operations.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "Map.find_opt": {
+          "signature": "Map.find_opt(key: k, m: map(k, v)) -> option(v)",
+          "description": "Looks up a key in the map and returns Some(value) if found, or None otherwise.",
+          "type": "method"
+        },
+        "Map.update": {
+          "signature": "Map.update(key: k, value: option(v), m: map(k, v)) -> map(k, v)",
+          "description": "Returns a new map with the key updated to the given value, or removed if None.",
+          "type": "method"
+        },
+        "Map.add": {
+          "signature": "Map.add(key: k, value: v, m: map(k, v)) -> map(k, v)",
+          "description": "Returns a new map with the key-value pair added or replaced.",
+          "type": "method"
+        },
+        "Map.remove": {
+          "signature": "Map.remove(key: k, m: map(k, v)) -> map(k, v)",
+          "description": "Returns a new map with the specified key removed.",
+          "type": "method"
+        },
+        "Map.size": {
+          "signature": "Map.size(m: map(k, v)) -> nat",
+          "description": "Returns the number of key-value pairs in the map.",
+          "type": "method"
+        }
+      }
+    },
+    "big_map": {
+      "signature": "big_map(key_type, value_type)",
+      "description": "A lazily deserialized key-value mapping optimized for large datasets on the Tezos blockchain. Unlike map, big_map entries are loaded on demand, reducing gas costs for contracts with many entries.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "Big_map.find_opt": {
+          "signature": "Big_map.find_opt(key: k, m: big_map(k, v)) -> option(v)",
+          "description": "Looks up a key in the big_map and returns Some(value) if found, or None.",
+          "type": "method"
+        },
+        "Big_map.update": {
+          "signature": "Big_map.update(key: k, value: option(v), m: big_map(k, v)) -> big_map(k, v)",
+          "description": "Returns a new big_map with the key updated or removed based on the option value.",
+          "type": "method"
+        }
+      }
+    },
+    "list": {
+      "signature": "list(element_type)",
+      "description": "An immutable singly-linked list type in PascaLIGO supporting prepend with cons operator, pattern matching for head/tail decomposition, and functional operations like map, fold, and iter.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "List.map": {
+          "signature": "List.map(f: (a -> b), l: list(a)) -> list(b)",
+          "description": "Applies a function to each element and returns a new list of results.",
+          "type": "method"
+        },
+        "List.fold": {
+          "signature": "List.fold(f: ((acc, a) -> acc), l: list(a), init: acc) -> acc",
+          "description": "Reduces the list to a single value by applying a function with an accumulator.",
+          "type": "method"
+        },
+        "List.iter": {
+          "signature": "List.iter(f: (a -> unit), l: list(a)) -> unit",
+          "description": "Applies a side-effecting function to each element of the list.",
+          "type": "method"
+        },
+        "List.size": {
+          "signature": "List.size(l: list(a)) -> nat",
+          "description": "Returns the number of elements in the list.",
+          "type": "method"
+        }
+      }
+    },
+    "set": {
+      "signature": "set(element_type)",
+      "description": "An immutable collection of unique elements in PascaLIGO. Sets are ordered and support membership testing, addition, removal, and iteration for managing distinct value collections in contracts.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "Set.mem": {
+          "signature": "Set.mem(element: a, s: set(a)) -> bool",
+          "description": "Returns true if the element is a member of the set.",
+          "type": "method"
+        },
+        "Set.add": {
+          "signature": "Set.add(element: a, s: set(a)) -> set(a)",
+          "description": "Returns a new set with the element added.",
+          "type": "method"
+        },
+        "Set.remove": {
+          "signature": "Set.remove(element: a, s: set(a)) -> set(a)",
+          "description": "Returns a new set with the element removed.",
+          "type": "method"
+        },
+        "Set.size": {
+          "signature": "Set.size(s: set(a)) -> nat",
+          "description": "Returns the number of elements in the set.",
+          "type": "method"
+        }
+      }
+    },
+    "option": {
+      "signature": "option(value_type)",
+      "description": "An algebraic type representing an optional value that is either Some(value) or None. Used extensively in PascaLIGO for safe handling of values that may or may not exist, such as map lookups.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "Tezos.sender": {
+      "signature": "Tezos.sender -> address",
+      "description": "Returns the address of the account or contract that directly called the current entry point. Essential for access control and authorization logic in Tezos smart contracts.",
+      "type": "function",
+      "module": "Tezos"
+    },
+    "Tezos.amount": {
+      "signature": "Tezos.amount -> tez",
+      "description": "Returns the amount of tez sent with the current transaction. Used for payable entry point validation and ensuring correct payment amounts in financial smart contracts.",
+      "type": "function",
+      "module": "Tezos"
+    },
+    "failwith": {
+      "signature": "failwith(error_message: string) -> never",
+      "description": "Terminates the current contract execution and reverts all state changes with the given error message. The primary mechanism for enforcing preconditions and access control in PascaLIGO.",
+      "type": "function",
+      "module": "builtin"
+    }
+  }
+}

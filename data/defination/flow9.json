@@ -1,0 +1,156 @@
+{
+  "language": "flow9",
+  "definitions": {
+    "array": {
+      "signature": "[T]",
+      "description": "The array type in Flow9 represents an immutable, ordered sequence of elements of the same type. Arrays are the primary collection type and are created using bracket syntax [1, 2, 3]. Since Flow9 arrays are persistent, operations that modify content return new arrays while leaving the original unchanged.",
+      "type": "class",
+      "module": "Flow9 Runtime",
+      "members": {
+        "length": {
+          "signature": "length(a : [?]) -> int",
+          "description": "Returns the number of elements in the array.",
+          "type": "function"
+        },
+        "concat": {
+          "signature": "concat(a : [?], b : [?]) -> [?]",
+          "description": "Returns a new array that is the concatenation of the two input arrays.",
+          "type": "function"
+        },
+        "map": {
+          "signature": "map(a : [?], fn : (?) -> ??) -> [??]",
+          "description": "Returns a new array with the function applied to each element of the input array.",
+          "type": "function"
+        },
+        "filter": {
+          "signature": "filter(a : [?], fn : (?) -> bool) -> [?]",
+          "description": "Returns a new array containing only the elements for which the predicate function returns true.",
+          "type": "function"
+        },
+        "fold": {
+          "signature": "fold(a : [?], init : ??, fn : (??, ?) -> ??) -> ??",
+          "description": "Reduces the array to a single value by applying the function to the accumulator and each element from left to right.",
+          "type": "function"
+        },
+        "arrayPush": {
+          "signature": "arrayPush(a : [?], v : ?) -> [?]",
+          "description": "Returns a new array with the given value appended as the last element.",
+          "type": "function"
+        }
+      }
+    },
+    "tree": {
+      "signature": "Tree<K, V>",
+      "description": "The Tree type in Flow9 is an immutable balanced binary search tree (similar to a sorted map/dictionary) that maps keys to values. Trees provide O(log n) lookup, insertion, and deletion. They are the standard key-value data structure when ordered access or efficient lookup by key is needed.",
+      "type": "class",
+      "module": "Flow9 Runtime",
+      "members": {
+        "makeTree": {
+          "signature": "makeTree() -> Tree<?, ??>",
+          "description": "Creates a new empty tree with no key-value bindings.",
+          "type": "function"
+        },
+        "setTree": {
+          "signature": "setTree(tree : Tree<?, ??>, key : ?, value : ??) -> Tree<?, ??>",
+          "description": "Returns a new tree with the given key-value pair added or updated.",
+          "type": "function"
+        },
+        "lookupTree": {
+          "signature": "lookupTree(tree : Tree<?, ??>, key : ?) -> Maybe<??>",
+          "description": "Looks up a key in the tree, returning Some(value) if found or None() if absent.",
+          "type": "function"
+        },
+        "removeFromTree": {
+          "signature": "removeFromTree(tree : Tree<?, ??>, key : ?) -> Tree<?, ??>",
+          "description": "Returns a new tree with the specified key and its value removed.",
+          "type": "function"
+        },
+        "foldTree": {
+          "signature": "foldTree(tree : Tree<?, ??>, init : ???, fn : (?, ??, ???) -> ???) -> ???",
+          "description": "Folds over all key-value pairs in the tree in order, accumulating a result.",
+          "type": "function"
+        }
+      }
+    },
+    "string": {
+      "signature": "string",
+      "description": "The string type in Flow9 represents an immutable sequence of Unicode characters. Strings support concatenation with the + operator and various built-in functions for searching, splitting, trimming, and converting. String literals are enclosed in double quotes with standard escape sequences.",
+      "type": "class",
+      "module": "Flow9 Runtime",
+      "members": {
+        "strlen": {
+          "signature": "strlen(s : string) -> int",
+          "description": "Returns the length of the string in characters.",
+          "type": "function"
+        },
+        "strContainsAt": {
+          "signature": "strContainsAt(str : string, pos : int, substr : string) -> bool",
+          "description": "Returns true if the substring is found at the specified position in the string.",
+          "type": "function"
+        },
+        "substring": {
+          "signature": "substring(s : string, start : int, length : int) -> string",
+          "description": "Returns a substring starting at the given index with the specified length.",
+          "type": "function"
+        },
+        "strIndexOf": {
+          "signature": "strIndexOf(str : string, substr : string) -> int",
+          "description": "Returns the index of the first occurrence of the substring, or -1 if not found.",
+          "type": "function"
+        },
+        "toLowerCase": {
+          "signature": "toLowerCase(s : string) -> string",
+          "description": "Returns a new string with all characters converted to lowercase.",
+          "type": "function"
+        }
+      }
+    },
+    "ref": {
+      "signature": "ref T",
+      "description": "A mutable reference cell in Flow9 that holds a value of type T and can be updated in place. Refs are the primary mechanism for mutable state in the otherwise functional Flow9 language. Created with ref(value), read with ^refVar (dereference), and updated with refVar := newValue.",
+      "type": "class",
+      "module": "Flow9 Runtime"
+    },
+    "maybe": {
+      "signature": "Maybe<?> ::= None | Some(value : ?)",
+      "description": "A union type representing an optional value that may or may not be present. Maybe is used throughout Flow9 for safe handling of possibly-absent values, particularly as return types from lookups in trees and arrays. Pattern matching with switch is used to extract the contained value.",
+      "type": "class",
+      "module": "Flow9 Runtime",
+      "members": {
+        "Some": {
+          "signature": "Some(value : ?) -> Maybe<?>",
+          "description": "Wraps a present value in the Maybe type, indicating the value exists.",
+          "type": "function"
+        },
+        "None": {
+          "signature": "None() -> Maybe<?>",
+          "description": "Represents the absence of a value in the Maybe type.",
+          "type": "function"
+        },
+        "either": {
+          "signature": "either(m : Maybe<?>, default : ?) -> ?",
+          "description": "Extracts the value from a Maybe, returning the default if it is None.",
+          "type": "function"
+        }
+      }
+    },
+    "int": {
+      "signature": "int",
+      "description": "A 32-bit signed integer type in Flow9 for representing whole numbers. Supports standard arithmetic operations (+, -, *, /, %), comparison operators, and bitwise operations. Integer division truncates toward zero.",
+      "type": "class",
+      "module": "Flow9 Runtime"
+    },
+    "double": {
+      "signature": "double",
+      "description": "A 64-bit double-precision floating-point number type in Flow9 for representing decimal numbers. Follows IEEE 754 standard. Supports standard arithmetic operations and mathematical functions from the math module.",
+      "type": "class",
+      "module": "Flow9 Runtime"
+    },
+    "bool": {
+      "signature": "bool",
+      "description": "A Boolean type in Flow9 with two possible values: true and false. Supports logical operators && (and), || (or), and ! (not). Used in conditional expressions, filter predicates, and control flow statements.",
+      "type": "class",
+      "module": "Flow9 Runtime"
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "language": "abap",
+  "definitions": {
+    "STRING": {
+      "signature": "DATA var TYPE string.",
+      "description": "The variable-length character string type in ABAP, used for storing text data of arbitrary length. Unlike fixed-length character types (C), STRING dynamically adjusts its length and is the preferred type for text processing in modern ABAP.",
+      "type": "class",
+      "module": "ABAP Built-in Types",
+      "members": {
+        "STRLEN": {
+          "signature": "strlen( string ) -> int",
+          "description": "Returns the number of characters in the string, excluding trailing blanks for fixed-length types.",
+          "type": "function"
+        },
+        "CONCATENATE": {
+          "signature": "CONCATENATE s1 s2 ... INTO result [SEPARATED BY sep].",
+          "description": "Joins two or more strings together into a single result string, optionally separated by a delimiter.",
+          "type": "statement"
+        },
+        "REPLACE": {
+          "signature": "REPLACE [ALL OCCURRENCES OF] pattern IN string WITH replacement.",
+          "description": "Replaces the first or all occurrences of a substring or regex pattern within the string with the specified replacement text.",
+          "type": "statement"
+        },
+        "FIND": {
+          "signature": "FIND [FIRST OCCURRENCE OF | ALL OCCURRENCES OF] pattern IN string [MATCH OFFSET off] [MATCH LENGTH len].",
+          "description": "Searches for a substring or regex pattern within the string and returns the offset and length of the match.",
+          "type": "statement"
+        },
+        "SPLIT": {
+          "signature": "SPLIT string AT separator INTO TABLE result_tab.",
+          "description": "Splits a string at each occurrence of the separator into an internal table of substrings.",
+          "type": "statement"
+        },
+        "CONDENSE": {
+          "signature": "CONDENSE string [NO-GAPS].",
+          "description": "Removes leading and trailing blanks from the string and replaces sequences of inner blanks with a single blank, or removes all blanks with NO-GAPS.",
+          "type": "statement"
+        }
+      }
+    },
+    "TABLE": {
+      "signature": "DATA itab TYPE TABLE OF line_type [WITH KEY key_fields].",
+      "description": "An internal table is a dynamic sequential data structure in ABAP, similar to an array or list. Internal tables can be STANDARD (index access), SORTED (always sorted by key), or HASHED (unique key with hash access). They are the primary mechanism for processing collections of records.",
+      "type": "class",
+      "module": "ABAP Built-in Types",
+      "members": {
+        "APPEND": {
+          "signature": "APPEND wa TO itab.",
+          "description": "Adds a single row (work area) to the end of a standard internal table, increasing its size by one.",
+          "type": "statement"
+        },
+        "INSERT": {
+          "signature": "INSERT wa INTO TABLE itab.",
+          "description": "Inserts a row into the internal table respecting the table key for sorted and hashed tables, or at a specific index for standard tables.",
+          "type": "statement"
+        },
+        "READ TABLE": {
+          "signature": "READ TABLE itab INTO wa WITH KEY field = value.",
+          "description": "Reads a single row from the internal table matching the specified key into the work area. Sets SY-SUBRC to 0 on success.",
+          "type": "statement"
+        },
+        "MODIFY": {
+          "signature": "MODIFY TABLE itab FROM wa.",
+          "description": "Overwrites an existing row in the internal table that matches the table key with the values from the work area.",
+          "type": "statement"
+        },
+        "DELETE": {
+          "signature": "DELETE itab WHERE condition.",
+          "description": "Removes all rows from the internal table that match the specified WHERE condition.",
+          "type": "statement"
+        },
+        "SORT": {
+          "signature": "SORT itab BY field1 [ASCENDING|DESCENDING].",
+          "description": "Sorts the rows of a standard internal table by the specified fields in ascending or descending order.",
+          "type": "statement"
+        },
+        "LOOP AT": {
+          "signature": "LOOP AT itab INTO wa [WHERE condition]. ... ENDLOOP.",
+          "description": "Iterates over each row of the internal table, assigning each row to the work area for processing within the loop body.",
+          "type": "statement"
+        },
+        "LINES": {
+          "signature": "lines( itab ) -> int",
+          "description": "Returns the number of rows currently contained in the internal table.",
+          "type": "function"
+        }
+      }
+    },
+    "STRUCTURE": {
+      "signature": "DATA: BEGIN OF struc, field1 TYPE type1, field2 TYPE type2, END OF struc.",
+      "description": "A structure in ABAP is a composite data type that groups together multiple fields of different types into a single logical unit. Structures serve as work areas for internal tables and database table rows, and can be nested to represent complex data hierarchies.",
+      "type": "class",
+      "module": "ABAP Built-in Types",
+      "members": {
+        "MOVE-CORRESPONDING": {
+          "signature": "MOVE-CORRESPONDING source TO destination.",
+          "description": "Copies values between structures by matching field names, only transferring fields that exist in both source and destination.",
+          "type": "statement"
+        },
+        "CLEAR": {
+          "signature": "CLEAR struc.",
+          "description": "Resets all fields of the structure to their initial values (spaces for character types, zero for numeric types).",
+          "type": "statement"
+        }
+      }
+    },
+    "SELECT": {
+      "signature": "SELECT [SINGLE] fields FROM dbtab [INTO target] [WHERE condition] [ORDER BY fields].",
+      "description": "The Open SQL SELECT statement reads data from one or more database tables into ABAP variables or internal tables. It supports joins, subqueries, aggregate functions, grouping, and ordering. SELECT SINGLE retrieves exactly one row, while SELECT without SINGLE retrieves multiple rows.",
+      "type": "statement",
+      "module": "Open SQL",
+      "members": {
+        "INTO TABLE": {
+          "signature": "SELECT ... INTO TABLE @itab.",
+          "description": "Reads all result rows directly into an internal table, replacing any existing content.",
+          "type": "clause"
+        },
+        "APPENDING TABLE": {
+          "signature": "SELECT ... APPENDING TABLE @itab.",
+          "description": "Appends result rows to the internal table without clearing existing rows.",
+          "type": "clause"
+        },
+        "FOR ALL ENTRIES IN": {
+          "signature": "SELECT ... FOR ALL ENTRIES IN @itab WHERE field = @itab-field.",
+          "description": "Executes the SELECT for each row in the specified internal table, effectively performing a parameterized mass selection.",
+          "type": "clause"
+        },
+        "UP TO n ROWS": {
+          "signature": "SELECT ... UP TO n ROWS.",
+          "description": "Limits the result set to the specified maximum number of rows, useful for pagination or sampling.",
+          "type": "clause"
+        }
+      }
+    },
+    "LOOP": {
+      "signature": "LOOP AT itab INTO wa [WHERE condition]. ... ENDLOOP.",
+      "description": "Iterates over the rows of an internal table, assigning each row to a work area, field symbol, or data reference for processing. The loop supports WHERE conditions for filtering, GROUP BY for grouping, and AT ... ENDAT control break statements for detecting changes in sorted data.",
+      "type": "statement",
+      "module": "ABAP"
+    },
+    "MODIFY": {
+      "signature": "MODIFY dbtab FROM wa | MODIFY dbtab FROM TABLE itab.",
+      "description": "Updates an existing database row or inserts a new one if it does not exist (upsert semantics). When used with FROM TABLE, it processes multiple rows at once for efficient mass database operations. Also used with internal tables to update rows matching the table key.",
+      "type": "statement",
+      "module": "Open SQL"
+    },
+    "APPEND": {
+      "signature": "APPEND wa TO itab | APPEND LINES OF itab1 TO itab2.",
+      "description": "Adds one or more rows to the end of a standard internal table. APPEND wa adds a single work area as a new row. APPEND LINES OF copies all rows from one internal table to another. The system variable SY-TABIX is set to the index of the appended row.",
+      "type": "statement",
+      "module": "ABAP"
+    },
+    "cl_salv_table": {
+      "signature": "cl_salv_table=>factory( IMPORTING r_salv_table = lo_table CHANGING t_table = itab ).",
+      "description": "The SALV (Simple ALV) table class provides a simplified, object-oriented interface for creating ALV (ABAP List Viewer) reports. It handles column configuration, sorting, filtering, aggregation, and layout management without requiring a custom screen or container.",
+      "type": "class",
+      "module": "SALV",
+      "members": {
+        "factory": {
+          "signature": "cl_salv_table=>factory( IMPORTING r_salv_table = lo_table CHANGING t_table = itab ).",
+          "description": "Static factory method that creates a new ALV table instance bound to the provided internal table data.",
+          "type": "method"
+        },
+        "display": {
+          "signature": "lo_table->display( ).",
+          "description": "Displays the ALV table as a fullscreen list or in a specified container.",
+          "type": "method"
+        },
+        "get_columns": {
+          "signature": "lo_table->get_columns( ) -> cl_salv_columns_table.",
+          "description": "Returns the columns object for configuring column visibility, width, labels, and formatting.",
+          "type": "method"
+        },
+        "get_sorts": {
+          "signature": "lo_table->get_sorts( ) -> cl_salv_sorts.",
+          "description": "Returns the sorts object for adding ascending or descending sort criteria on columns.",
+          "type": "method"
+        },
+        "get_filters": {
+          "signature": "lo_table->get_filters( ) -> cl_salv_filters.",
+          "description": "Returns the filters object for setting column-based filter criteria on the displayed data.",
+          "type": "method"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "language": "cypher",
+  "definitions": {
+    "MATCH": {
+      "signature": "MATCH (pattern) [WHERE condition] RETURN expression",
+      "description": "The primary read clause in Cypher for finding graph patterns in Neo4j. MATCH specifies node and relationship patterns using ASCII art syntax — (node)-[rel]->(node) — and binds matched elements to variables. Supports variable-length paths, optional matches, and complex traversal patterns.",
+      "type": "keyword",
+      "module": "Cypher Reading",
+      "members": {
+        "OPTIONAL MATCH": {
+          "signature": "OPTIONAL MATCH (pattern)",
+          "description": "Matches a pattern like MATCH but returns null for missing parts instead of filtering out rows, similar to an outer join in SQL.",
+          "type": "clause"
+        },
+        "WHERE": {
+          "signature": "WHERE predicate",
+          "description": "Filters the matched patterns to only include rows where the Boolean predicate evaluates to true, supporting property comparisons, existence checks, and regex.",
+          "type": "clause"
+        }
+      }
+    },
+    "CREATE": {
+      "signature": "CREATE (n:Label {prop: value})-[:REL_TYPE]->(m:Label {prop: value})",
+      "description": "Creates new nodes and relationships in the Neo4j graph database. Each node can have labels (like types) and properties (key-value pairs). Relationships connect two nodes with a type and optional properties. CREATE always creates new elements and never reuses existing ones.",
+      "type": "keyword",
+      "module": "Cypher Writing"
+    },
+    "MERGE": {
+      "signature": "MERGE (n:Label {key: value}) [ON CREATE SET ...] [ON MATCH SET ...]",
+      "description": "Ensures a pattern exists in the graph by either matching an existing element or creating a new one if no match is found. MERGE is an idempotent operation that prevents duplicate nodes and relationships, with optional ON CREATE and ON MATCH clauses for conditional property setting.",
+      "type": "keyword",
+      "module": "Cypher Writing",
+      "members": {
+        "ON CREATE SET": {
+          "signature": "ON CREATE SET n.property = value",
+          "description": "Sets properties only when MERGE creates a new node or relationship, not when it matches an existing one.",
+          "type": "clause"
+        },
+        "ON MATCH SET": {
+          "signature": "ON MATCH SET n.property = value",
+          "description": "Sets properties only when MERGE matches an existing node or relationship, not when it creates a new one.",
+          "type": "clause"
+        }
+      }
+    },
+    "SET": {
+      "signature": "SET n.property = value | SET n:Label | SET n += {props}",
+      "description": "Updates properties on nodes and relationships or adds labels to nodes. SET can assign a single property, add a label, or merge a map of properties. Using += merges properties (preserving existing ones), while = replaces all properties.",
+      "type": "keyword",
+      "module": "Cypher Writing"
+    },
+    "DELETE": {
+      "signature": "DELETE node | DETACH DELETE node",
+      "description": "Removes nodes and relationships from the graph. Plain DELETE can only remove nodes with no relationships; DETACH DELETE automatically removes all connected relationships before deleting the node. Deleting a relationship does not affect its connected nodes.",
+      "type": "keyword",
+      "module": "Cypher Writing"
+    },
+    "RETURN": {
+      "signature": "RETURN expression [AS alias] [ORDER BY field] [SKIP n] [LIMIT n]",
+      "description": "Defines what data to return from a Cypher query. Can return nodes, relationships, properties, aggregations, or computed values. Supports aliasing with AS, ordering with ORDER BY, pagination with SKIP and LIMIT, and DISTINCT for unique results.",
+      "type": "keyword",
+      "module": "Cypher Reading",
+      "members": {
+        "ORDER BY": {
+          "signature": "ORDER BY expression [ASC|DESC]",
+          "description": "Sorts the result rows by one or more expressions in ascending (default) or descending order.",
+          "type": "clause"
+        },
+        "LIMIT": {
+          "signature": "LIMIT count",
+          "description": "Constrains the number of result rows returned, useful for pagination and top-N queries.",
+          "type": "clause"
+        },
+        "SKIP": {
+          "signature": "SKIP count",
+          "description": "Skips the specified number of result rows, used in combination with LIMIT for pagination.",
+          "type": "clause"
+        },
+        "DISTINCT": {
+          "signature": "RETURN DISTINCT expression",
+          "description": "Removes duplicate rows from the result set based on the returned expressions.",
+          "type": "clause"
+        }
+      }
+    },
+    "WITH": {
+      "signature": "WITH expression [AS alias] [WHERE condition]",
+      "description": "Chains query parts together by passing results from one part to the next, acting as both a projection and a pipeline separator. WITH allows intermediate filtering, aggregation, and variable scoping within a single Cypher query, similar to a subquery boundary.",
+      "type": "keyword",
+      "module": "Cypher Reading"
+    },
+    "WHERE": {
+      "signature": "WHERE predicate",
+      "description": "Filters results to only include rows where the Boolean predicate is true. Supports property comparisons (=, <>, <, >), string matching (STARTS WITH, ENDS WITH, CONTAINS), regular expressions (=~), NULL checks (IS NULL, IS NOT NULL), list predicates, and path existence patterns.",
+      "type": "keyword",
+      "module": "Cypher Reading"
+    },
+    "UNWIND": {
+      "signature": "UNWIND list AS variable",
+      "description": "Expands a list into individual rows, one per element. UNWIND is essential for processing collections passed as parameters, transforming list properties into rows for further matching or creation, and implementing batch operations in Cypher queries.",
+      "type": "keyword",
+      "module": "Cypher Reading"
+    }
+  }
+}

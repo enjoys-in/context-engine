@@ -1,0 +1,220 @@
+{
+  "language": "m3",
+  "definitions": {
+    "TEXT": {
+      "signature": "TEXT",
+      "description": "The built-in immutable string type in Modula-3, representing a sequence of characters with reference semantics. TEXT values are garbage-collected and support concatenation with the ampersand operator.",
+      "type": "class",
+      "module": "Text",
+      "members": {
+        "Length": {
+          "signature": "Text.Length(t: TEXT) -> CARDINAL",
+          "description": "Returns the number of characters in the given text value.",
+          "type": "method"
+        },
+        "GetChar": {
+          "signature": "Text.GetChar(t: TEXT, i: CARDINAL) -> CHAR",
+          "description": "Returns the character at position i in the text, with zero-based indexing.",
+          "type": "method"
+        },
+        "Sub": {
+          "signature": "Text.Sub(t: TEXT, start: CARDINAL, length: CARDINAL) -> TEXT",
+          "description": "Returns a substring of t starting at position start with the given length.",
+          "type": "method"
+        },
+        "Equal": {
+          "signature": "Text.Equal(t: TEXT, u: TEXT) -> BOOLEAN",
+          "description": "Returns TRUE if the two text values contain identical character sequences.",
+          "type": "method"
+        },
+        "Cat": {
+          "signature": "Text.Cat(t: TEXT, u: TEXT) -> TEXT",
+          "description": "Concatenates two text values and returns the combined result.",
+          "type": "method"
+        }
+      }
+    },
+    "INTEGER": {
+      "signature": "INTEGER",
+      "description": "The built-in signed integer type in Modula-3, representing whole numbers within the platform-dependent range. Supports standard arithmetic, comparison, and bitwise operations defined by the language.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "REAL": {
+      "signature": "REAL",
+      "description": "The standard single-precision floating-point type in Modula-3, conforming to IEEE 754 representation. Used for numeric computations requiring fractional values with moderate precision.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "LONGREAL": {
+      "signature": "LONGREAL",
+      "description": "The double-precision floating-point type in Modula-3, providing higher precision than REAL for scientific and mathematical computations requiring greater accuracy in decimal representation.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "BOOLEAN": {
+      "signature": "BOOLEAN = {FALSE, TRUE}",
+      "description": "The built-in enumeration type with exactly two values, FALSE and TRUE, used for logical operations, conditionals, and control flow in Modula-3 programs.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "CHAR": {
+      "signature": "CHAR",
+      "description": "The built-in character type representing a single 8-bit character in the ISO Latin-1 character set. CHAR values are ordinal and support ORD and VAL operations for conversion.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "ARRAY": {
+      "signature": "ARRAY [index_type] OF element_type",
+      "description": "A fixed-size or open array type in Modula-3 that stores elements of a uniform type indexed by an ordinal type. Open arrays use ARRAY OF T syntax and are passed by reference.",
+      "type": "class",
+      "module": "builtin",
+      "members": {
+        "NUMBER": {
+          "signature": "NUMBER(a: ARRAY) -> CARDINAL",
+          "description": "Returns the number of elements in the array.",
+          "type": "method"
+        },
+        "FIRST": {
+          "signature": "FIRST(a: ARRAY) -> index_type",
+          "description": "Returns the first valid index of the array.",
+          "type": "method"
+        },
+        "LAST": {
+          "signature": "LAST(a: ARRAY) -> index_type",
+          "description": "Returns the last valid index of the array.",
+          "type": "method"
+        }
+      }
+    },
+    "RECORD": {
+      "signature": "RECORD field1: Type1; field2: Type2; END",
+      "description": "A composite value type in Modula-3 that groups named fields of potentially different types into a single structured data unit, similar to structs in C or records in Pascal.",
+      "type": "class",
+      "module": "builtin"
+    },
+    "NEW": {
+      "signature": "NEW(T, ...) -> REF T",
+      "description": "Allocates heap memory for a reference type and returns a traced reference to the newly created object. Accepts optional field initializers for record and object types in Modula-3.",
+      "type": "function",
+      "module": "builtin"
+    },
+    "THREAD": {
+      "signature": "THREAD",
+      "description": "The standard Modula-3 interface for concurrent programming, providing thread creation via Fork, synchronization with Mutex and Condition variables, and cooperative scheduling primitives.",
+      "type": "interface",
+      "module": "Thread",
+      "members": {
+        "Fork": {
+          "signature": "Thread.Fork(cl: Thread.Closure) -> Thread.T",
+          "description": "Creates and starts a new thread executing the given closure's apply method.",
+          "type": "method"
+        },
+        "Join": {
+          "signature": "Thread.Join(t: Thread.T) -> REFANY",
+          "description": "Blocks the calling thread until thread t completes and returns its result.",
+          "type": "method"
+        },
+        "Wait": {
+          "signature": "Thread.Wait(m: MUTEX, c: Thread.Condition)",
+          "description": "Atomically releases the mutex and suspends the thread until the condition is signaled.",
+          "type": "method"
+        },
+        "Signal": {
+          "signature": "Thread.Signal(c: Thread.Condition)",
+          "description": "Wakes one thread waiting on the given condition variable.",
+          "type": "method"
+        },
+        "Broadcast": {
+          "signature": "Thread.Broadcast(c: Thread.Condition)",
+          "description": "Wakes all threads waiting on the given condition variable.",
+          "type": "method"
+        }
+      }
+    },
+    "Fmt": {
+      "signature": "Fmt",
+      "description": "The standard formatting interface in Modula-3 providing functions to convert integers, reals, booleans, and characters to their TEXT representations for output and string construction.",
+      "type": "interface",
+      "module": "Fmt",
+      "members": {
+        "Int": {
+          "signature": "Fmt.Int(n: INTEGER, base: [2..16]) -> TEXT",
+          "description": "Converts an integer to its text representation in the specified base.",
+          "type": "method"
+        },
+        "Real": {
+          "signature": "Fmt.Real(x: REAL, style: Fmt.Style, prec: CARDINAL) -> TEXT",
+          "description": "Converts a real number to text with the given formatting style and precision.",
+          "type": "method"
+        },
+        "Bool": {
+          "signature": "Fmt.Bool(b: BOOLEAN) -> TEXT",
+          "description": "Returns the text TRUE or FALSE for the given boolean value.",
+          "type": "method"
+        },
+        "Char": {
+          "signature": "Fmt.Char(c: CHAR) -> TEXT",
+          "description": "Converts a single character to a one-character text value.",
+          "type": "method"
+        }
+      }
+    },
+    "Wr": {
+      "signature": "Wr",
+      "description": "The standard writer interface in Modula-3 providing buffered output streams for writing text to files, standard output, and other destinations with flush and close operations.",
+      "type": "interface",
+      "module": "Wr",
+      "members": {
+        "PutText": {
+          "signature": "Wr.PutText(wr: Wr.T, t: TEXT)",
+          "description": "Writes the given text string to the output writer stream.",
+          "type": "method"
+        },
+        "PutChar": {
+          "signature": "Wr.PutChar(wr: Wr.T, c: CHAR)",
+          "description": "Writes a single character to the output writer stream.",
+          "type": "method"
+        },
+        "Flush": {
+          "signature": "Wr.Flush(wr: Wr.T)",
+          "description": "Flushes any buffered output to the underlying destination.",
+          "type": "method"
+        },
+        "Close": {
+          "signature": "Wr.Close(wr: Wr.T)",
+          "description": "Flushes remaining output and closes the writer, releasing associated resources.",
+          "type": "method"
+        }
+      }
+    },
+    "Rd": {
+      "signature": "Rd",
+      "description": "The standard reader interface in Modula-3 providing buffered input streams for reading characters and lines from files, standard input, and other sources with EOF detection.",
+      "type": "interface",
+      "module": "Rd",
+      "members": {
+        "GetChar": {
+          "signature": "Rd.GetChar(rd: Rd.T) -> CHAR",
+          "description": "Reads and returns the next character from the input reader stream.",
+          "type": "method"
+        },
+        "GetLine": {
+          "signature": "Rd.GetLine(rd: Rd.T) -> TEXT",
+          "description": "Reads and returns text up to the next newline character from the input stream.",
+          "type": "method"
+        },
+        "EOF": {
+          "signature": "Rd.EOF(rd: Rd.T) -> BOOLEAN",
+          "description": "Returns TRUE if the reader has reached the end of the input stream.",
+          "type": "method"
+        },
+        "Close": {
+          "signature": "Rd.Close(rd: Rd.T)",
+          "description": "Closes the reader and releases associated resources.",
+          "type": "method"
+        }
+      }
+    }
+  }
+}
