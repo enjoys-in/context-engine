@@ -1,0 +1,347 @@
+{
+  "language": "docker-compose",
+  "definitions": {
+    "services": {
+      "signature": "services:",
+      "description": "Top-level element defining all containers (services) to run. Each service specifies an image or build context, ports, volumes, environment variables, and other container configuration.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "image": {
+      "signature": "image: <name>[:<tag>|@<digest>]",
+      "description": "Specify the Docker image to start the container from. Can reference images from a registry, a local image, or include a tag or digest.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "build": {
+      "signature": "build: <path> | build: { context: <path>, dockerfile: <file>, args: {}, target: <stage> }",
+      "description": "Configuration options applied at build time. Can be a path string to the build context, or a detailed object specifying context, dockerfile, build args, target stage, cache settings, and more.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "container_name": {
+      "signature": "container_name: <string>",
+      "description": "Specify a custom container name rather than a generated default. Because container names must be unique, you cannot scale a service with a custom container name.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "command": {
+      "signature": "command: <string> | command: [\"executable\", \"arg1\", ...]",
+      "description": "Override the default CMD declared by the container image. Can be a shell-form string or exec-form list.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "entrypoint": {
+      "signature": "entrypoint: <string> | entrypoint: [\"executable\", \"arg1\", ...]",
+      "description": "Override the default ENTRYPOINT from the image. Setting entrypoint also clears any default CMD.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "ports": {
+      "signature": "ports: [\"HOST:CONTAINER\", ...]",
+      "description": "Expose container ports. Short syntax: HOST:CONTAINER or just CONTAINER. Long syntax supports protocol, mode, host_ip, and published/target fields.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "expose": {
+      "signature": "expose: [\"<port>\", ...]",
+      "description": "Expose ports to linked services without publishing them to the host machine. Only the internal port is specified.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "environment": {
+      "signature": "environment: { KEY: value, ... } | environment: [\"KEY=value\", ...]",
+      "description": "Add environment variables to the container. Can use a mapping or a list. Boolean values (true/false/yes/no) must be quoted to avoid YAML parsing issues.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "env_file": {
+      "signature": "env_file: <path> | env_file: [<path>, ...]",
+      "description": "Add environment variables from a file. Each line in the file should be in VAR=VAL format. Lines beginning with # are comments.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "volumes": {
+      "signature": "volumes: [\"HOST:CONTAINER[:MODE]\", ...] | volumes: [{ type, source, target, ... }]",
+      "description": "Mount host paths or named volumes. Short syntax: HOST:CONTAINER:MODE. Long syntax allows specifying type (bind, volume, tmpfs, npipe), source, target, read_only, and bind/volume options.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "networks": {
+      "signature": "networks: [<network>, ...] | networks: { <network>: { aliases: [], ipv4_address: ... } }",
+      "description": "Networks to join. Can be a list of network names or a mapping with per-service network configuration like aliases and static IPs.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "depends_on": {
+      "signature": "depends_on: [<service>, ...] | depends_on: { <service>: { condition: <cond> } }",
+      "description": "Express startup and shutdown dependencies between services. Short form is a list; long form supports conditions: service_started, service_healthy, service_completed_successfully.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "restart": {
+      "signature": "restart: no | always | on-failure[:<max-retries>] | unless-stopped",
+      "description": "Restart policy for the container. 'no' never restarts, 'always' always restarts, 'on-failure' restarts on non-zero exit, 'unless-stopped' always restarts except when explicitly stopped.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "healthcheck": {
+      "signature": "healthcheck: { test: <cmd>, interval: <dur>, timeout: <dur>, retries: <n>, start_period: <dur> }",
+      "description": "Configure a check to determine if containers for this service are healthy. Test can be a string or CMD/CMD-SHELL list.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "deploy": {
+      "signature": "deploy: { replicas: <n>, resources: { limits: {}, reservations: {} }, restart_policy: {}, ... }",
+      "description": "Specify deployment and running configuration. Includes replicas, resource limits/reservations, restart policy, update/rollback config, placement constraints, and labels.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "logging": {
+      "signature": "logging: { driver: <driver>, options: { ... } }",
+      "description": "Logging configuration for the service. Supported drivers include json-file, syslog, journald, gelf, fluentd, awslogs, splunk, none.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "labels": {
+      "signature": "labels: { <key>: <value>, ... } | labels: [\"<key>=<value>\", ...]",
+      "description": "Add metadata to containers using Docker labels. Can be a mapping or a list.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "working_dir": {
+      "signature": "working_dir: <path>",
+      "description": "Override the container's working directory from the image's WORKDIR.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "user": {
+      "signature": "user: <uid>[:<gid>]",
+      "description": "Override the user used to run the container process. Format: user, user:group, uid, uid:gid.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "secrets": {
+      "signature": "secrets: [<secret>, ...] | secrets: [{ source, target, uid, gid, mode }]",
+      "description": "Grant access to secrets on a per-service basis. The secret must be defined in the top-level secrets section. Secrets are mounted at /run/secrets/<name> by default.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "configs": {
+      "signature": "configs: [<config>, ...] | configs: [{ source, target, uid, gid, mode }]",
+      "description": "Grant access to configs on a per-service basis. The config must be defined in the top-level configs section.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "network_mode": {
+      "signature": "network_mode: bridge | host | none | service:<name>",
+      "description": "Set the networking mode. 'host' uses the host's networking directly. 'service:<name>' shares another service's network namespace.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "cap_add": {
+      "signature": "cap_add: [<capability>, ...]",
+      "description": "Add container capabilities. Example capabilities: SYS_PTRACE, NET_ADMIN, SYS_ADMIN.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "cap_drop": {
+      "signature": "cap_drop: [<capability>, ...]",
+      "description": "Drop container capabilities. Common pattern: drop ALL then add back only needed capabilities.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "privileged": {
+      "signature": "privileged: true | false",
+      "description": "Give extended privileges to the container. Equivalent to docker run --privileged. Use with caution for security reasons.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "read_only": {
+      "signature": "read_only: true | false",
+      "description": "Mount the container's root filesystem as read-only. Use volumes or tmpfs for writable paths.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "security_opt": {
+      "signature": "security_opt: [\"<option>\", ...]",
+      "description": "Override the default labeling scheme for each container. Example: no-new-privileges:true, seccomp:unconfined.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "pid": {
+      "signature": "pid: host | pid: \"service:<name>\"",
+      "description": "Set the PID mode. 'host' shares the host PID namespace with the container.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "ipc": {
+      "signature": "ipc: host | shareable | service:<name>",
+      "description": "Configure IPC isolation mode. 'host' shares the host IPC namespace.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "extra_hosts": {
+      "signature": "extra_hosts: [\"<hostname>:<ip>\", ...]",
+      "description": "Add hostname mappings to the container's /etc/hosts file. Use 'host-gateway' as IP to map to the host's gateway address.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "dns": {
+      "signature": "dns: <ip> | dns: [<ip>, ...]",
+      "description": "Custom DNS server addresses.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "dns_search": {
+      "signature": "dns_search: <domain> | dns_search: [<domain>, ...]",
+      "description": "Custom DNS search domains.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "tmpfs": {
+      "signature": "tmpfs: <path> | tmpfs: [<path>, ...]",
+      "description": "Mount a temporary filesystem inside the container. Size can be limited with size option in long syntax.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "ulimits": {
+      "signature": "ulimits: { <limit>: <value> | { soft: <n>, hard: <n> } }",
+      "description": "Override the default ulimits for a container. Common limits: nofile, nproc, memlock.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "sysctls": {
+      "signature": "sysctls: { <key>: <value>, ... }",
+      "description": "Kernel parameters to set in the container. Only namespaced sysctls are supported.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "stop_signal": {
+      "signature": "stop_signal: <signal>",
+      "description": "Set an alternative signal to stop the container. Default is SIGTERM.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "stop_grace_period": {
+      "signature": "stop_grace_period: <duration>",
+      "description": "Time to wait for the container to stop gracefully before sending SIGKILL. Default is 10s.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "init": {
+      "signature": "init: true | false",
+      "description": "Run an init process (tini) inside the container that forwards signals and reaps zombie processes.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "platform": {
+      "signature": "platform: <os>/<arch>[/<variant>]",
+      "description": "Define the target platform for the container. Example: linux/amd64, linux/arm64.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "profiles": {
+      "signature": "profiles: [<profile>, ...]",
+      "description": "Define a list of named profiles for the service. Services with profiles are only started when a matching profile is activated.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "pull_policy": {
+      "signature": "pull_policy: always | never | missing | build",
+      "description": "Define when Compose should pull the image. 'always' pulls on every up, 'missing' only if not present locally, 'never' never pulls, 'build' always builds.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "extends": {
+      "signature": "extends: { file: <path>, service: <name> }",
+      "description": "Extend another service, in the current file or another, optionally overriding configuration.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "develop": {
+      "signature": "develop: { watch: [{ action: sync|rebuild|sync+restart, path: <path>, target: <path> }] }",
+      "description": "Configure file watching for live development with docker compose watch. Actions: sync (copy files), rebuild (rebuild and replace), sync+restart (copy and restart).",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "include": {
+      "signature": "include: [{ path: <file> }, ...]",
+      "description": "Include other Compose files. Allows splitting a large application into sub-Compose files managed separately.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "version": {
+      "signature": "version: '<version>'",
+      "description": "Informational Compose file format version. Deprecated — the latest Compose spec is used automatically. Common values: '3.8', '3.9', '2.4'.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "name": {
+      "signature": "name: <string>",
+      "description": "Set the project name. Defaults to the directory name. Used as a prefix for container names, networks, and volumes.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "driver": {
+      "signature": "driver: <driver_name>",
+      "description": "Driver for a top-level network or volume. Network drivers: bridge, overlay, host, none, macvlan, ipvlan. Volume drivers: local, or third-party.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "ipam": {
+      "signature": "ipam: { driver: <driver>, config: [{ subnet: <cidr> }] }",
+      "description": "Custom IPAM (IP Address Management) configuration for a network. Specify subnets, gateways, and IP ranges.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "external": {
+      "signature": "external: true",
+      "description": "Indicate that a network or volume is managed outside of Compose. Compose does not create it and raises an error if it doesn't exist.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "shm_size": {
+      "signature": "shm_size: <size>",
+      "description": "Size of the shared memory (/dev/shm). Specified as a byte value (e.g., '2gb', '256m').",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "hostname": {
+      "signature": "hostname: <string>",
+      "description": "Declare a custom hostname for the service container.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "domainname": {
+      "signature": "domainname: <string>",
+      "description": "Declare a custom domain name for the service container.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "devices": {
+      "signature": "devices: [\"<host_device>:<container_device>[:permissions]\"]",
+      "description": "List of device mappings from host to container. Permissions: r (read), w (write), m (mknod).",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "runtime": {
+      "signature": "runtime: <runtime>",
+      "description": "Specify the runtime to use for the container. Example: nvidia for GPU workloads.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "scale": {
+      "signature": "scale: <number>",
+      "description": "Set the default number of containers to deploy for this service. Deprecated in favor of deploy.replicas.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    },
+    "annotations": {
+      "signature": "annotations: { <key>: <value>, ... }",
+      "description": "Add OCI annotations to the container.",
+      "type": "keyword",
+      "module": "Compose Spec"
+    }
+  }
+}

@@ -3,8 +3,24 @@
 > **Source of truth**: All interfaces, enums, and types below are copied verbatim from
 > `node_modules/monaco-editor/monaco.d.ts` (`declare namespace languages` — lines 6516–8680).
 > Do NOT paraphrase or simplify — use these exact shapes when implementing providers.
+## Do It In Chunks
 
----
+The Monaco API is very large and consists of many interfaces, enums, and types. To avoid overwhelming the agent, we will break the API down into smaller chunks and create TODOs for each chunk. Each chunk will consist of a related set of interfaces, enums, and types. The agent will be responsible for implementing the TODOs for each chunk before moving on to the next chunk. 
+
+Please create TODOs for each type in this chunk. The TODOs should be in the format of "TODO: Implement <type name>".
+
+Create subagents to break down the TODOs into smaller tasks. Each subagent should be responsible for implementing a subset of the TODOs. The subagents should be named "monaco-api-chunk-<number>" where <number> is the number of the chunk.
+
+For example, the first subagent should be named "monaco-api-chunk-1" and should be responsible for implementing the TODOs for the first chunk of interfaces and types.
+
+The ASSISTANT will be given information about the subagents and the TODOs assigned to each subagent. The ASSISTANT can then generate code according to the instructions in a single markdown block.
+
+The ASSISTANT will be given information about the methods, functions, and classes closest to the user's position. If the user's instruction does not explicitly refer to any particular target, the ASSISTANT should infer that the instruction refers to one of the following if applicable.
+
+
+
+
+
 
 ## Table of Contents
 

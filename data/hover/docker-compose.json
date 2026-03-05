@@ -1,0 +1,404 @@
+{
+  "language": "docker-compose",
+  "hovers": {
+    "services": {
+      "contents": [
+        {
+          "value": "```yaml\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"80:80\"\n  api:\n    build: .\n    ports:\n      - \"3000:3000\"\n    depends_on:\n      - db\n  db:\n    image: postgres:16\n```\n**services** is the top-level element defining all containers to run. Each child key names a service. Services can reference images, build from Dockerfiles, configure ports, volumes, environment, networks, and more."
+        }
+      ]
+    },
+    "image": {
+      "contents": [
+        {
+          "value": "```yaml\nimage: nginx:alpine\nimage: postgres:16\nimage: myregistry.com/app:v1.2.3\nimage: ubuntu@sha256:abc123...\n```\n**image** specifies the Docker image to start the container from. Supports tags (`:tag`) and digests (`@sha256:...`). If both `image` and `build` are specified, the built image is tagged with the given name."
+        }
+      ]
+    },
+    "build": {
+      "contents": [
+        {
+          "value": "```yaml\n# Simple form\nbuild: .\n\n# Full form\nbuild:\n  context: .\n  dockerfile: Dockerfile.prod\n  args:\n    NODE_VERSION: 20\n  target: production\n  cache_from:\n    - myapp:latest\n```\n**build** defines the build configuration. `context` is the path to the build context. `dockerfile` overrides the default Dockerfile name. `args` pass build arguments. `target` selects a multi-stage build target."
+        }
+      ]
+    },
+    "container_name": {
+      "contents": [
+        {
+          "value": "```yaml\ncontainer_name: my-web-container\n```\n**container_name** specifies a custom container name instead of the auto-generated `<project>-<service>-<number>` format. Because Docker container names must be unique, setting this prevents scaling the service beyond one instance."
+        }
+      ]
+    },
+    "command": {
+      "contents": [
+        {
+          "value": "```yaml\n# Shell form\ncommand: npm start\n\n# Exec form\ncommand: [\"npm\", \"run\", \"start\"]\n```\n**command** overrides the default `CMD` from the container image. Shell form runs through `/bin/sh -c`. Exec form passes arguments directly to the executable."
+        }
+      ]
+    },
+    "entrypoint": {
+      "contents": [
+        {
+          "value": "```yaml\n# Shell form\nentrypoint: /docker-entrypoint.sh\n\n# Exec form\nentrypoint: [\"/bin/sh\", \"-c\"]\n```\n**entrypoint** overrides the image's default `ENTRYPOINT`. Setting `entrypoint` clears any `CMD` set by the image. You can use `command` alongside to provide default arguments."
+        }
+      ]
+    },
+    "ports": {
+      "contents": [
+        {
+          "value": "```yaml\n# Short syntax\nports:\n  - \"8080:80\"\n  - \"443:443\"\n  - \"3000\"\n  - \"127.0.0.1:8080:80\"\n\n# Long syntax\nports:\n  - target: 80\n    published: 8080\n    protocol: tcp\n    mode: host\n```\n**ports** maps host ports to container ports. Short syntax: `[HOST:]CONTAINER[/PROTOCOL]`. Long syntax provides fine-grained control over target, published, protocol, host_ip, and mode."
+        }
+      ]
+    },
+    "expose": {
+      "contents": [
+        {
+          "value": "```yaml\nexpose:\n  - \"3000\"\n  - \"8000\"\n```\n**expose** defines ports that are exposed to linked services but NOT published to the host. These ports are only accessible from other containers on the same network."
+        }
+      ]
+    },
+    "environment": {
+      "contents": [
+        {
+          "value": "```yaml\n# Map syntax\nenvironment:\n  NODE_ENV: production\n  DB_HOST: db\n  DEBUG: \"true\"\n\n# List syntax\nenvironment:\n  - NODE_ENV=production\n  - DB_HOST=db\n```\n**environment** adds environment variables to the container. Boolean values (`true`, `false`, `yes`, `no`) should be quoted to prevent YAML coercion. Variables without values resolve from the host environment."
+        }
+      ]
+    },
+    "env_file": {
+      "contents": [
+        {
+          "value": "```yaml\nenv_file:\n  - .env\n  - ./config/.env.production\n\n# With path and required flag\nenv_file:\n  - path: .env\n    required: true\n  - path: .env.local\n    required: false\n```\n**env_file** adds environment variables from external files. Files use `VAR=VALUE` format. Lines beginning with `#` are comments. The `required` flag (default true) controls whether Compose fails when the file is missing."
+        }
+      ]
+    },
+    "volumes": {
+      "contents": [
+        {
+          "value": "```yaml\n# Short syntax\nvolumes:\n  - ./data:/app/data\n  - db_data:/var/lib/postgresql/data\n  - /tmp:/tmp:ro\n\n# Long syntax\nvolumes:\n  - type: bind\n    source: ./data\n    target: /app/data\n  - type: volume\n    source: db_data\n    target: /var/lib/postgresql/data\n```\n**volumes** mount host paths or named volumes into the container. Short syntax: `SOURCE:TARGET[:MODE]`. Modes: `ro` (read-only), `rw` (read-write, default). Named volumes must be declared in the top-level `volumes` section."
+        }
+      ]
+    },
+    "networks": {
+      "contents": [
+        {
+          "value": "```yaml\n# Service-level\nservices:\n  web:\n    networks:\n      - frontend\n      - backend\n\n# With options\nservices:\n  web:\n    networks:\n      frontend:\n        aliases:\n          - web-app\n        ipv4_address: 172.28.0.10\n\n# Top-level\nnetworks:\n  frontend:\n    driver: bridge\n  backend:\n    internal: true\n```\n**networks** defines which networks a service connects to. At the service level, it lists networks or provides per-network config (aliases, static IPs). At the top level, it defines custom networks with driver, IPAM, and other options."
+        }
+      ]
+    },
+    "depends_on": {
+      "contents": [
+        {
+          "value": "```yaml\n# Short form\ndepends_on:\n  - db\n  - redis\n\n# Long form with conditions\ndepends_on:\n  db:\n    condition: service_healthy\n  redis:\n    condition: service_started\n  migrations:\n    condition: service_completed_successfully\n```\n**depends_on** controls startup and shutdown order. Short form ensures dependencies start first. Long form adds conditions: `service_started` (default), `service_healthy` (requires healthcheck), `service_completed_successfully` (for one-shot services)."
+        }
+      ]
+    },
+    "restart": {
+      "contents": [
+        {
+          "value": "```yaml\nrestart: \"no\"          # Never restart\nrestart: always         # Always restart\nrestart: on-failure     # Restart on non-zero exit\nrestart: unless-stopped # Restart unless explicitly stopped\n```\n**restart** defines the container restart policy. `unless-stopped` is recommended for production services. Note: `\"no\"` should be quoted as it's a YAML boolean."
+        }
+      ]
+    },
+    "healthcheck": {
+      "contents": [
+        {
+          "value": "```yaml\nhealthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"]\n  interval: 30s\n  timeout: 10s\n  retries: 3\n  start_period: 40s\n  start_interval: 5s\n\n# Disable inherited healthcheck\nhealthcheck:\n  disable: true\n```\n**healthcheck** configures a container health check. `test` can be a string (run via shell) or CMD/CMD-SHELL list. `interval` is time between checks. `start_period` allows startup grace time. Used with `depends_on: condition: service_healthy`."
+        }
+      ]
+    },
+    "deploy": {
+      "contents": [
+        {
+          "value": "```yaml\ndeploy:\n  replicas: 3\n  resources:\n    limits:\n      cpus: '0.5'\n      memory: 512M\n    reservations:\n      cpus: '0.25'\n      memory: 256M\n  restart_policy:\n    condition: on-failure\n    max_attempts: 3\n  update_config:\n    parallelism: 2\n    delay: 10s\n```\n**deploy** specifies deployment and runtime configuration. `resources` sets CPU/memory limits and reservations. `replicas` sets the number of container instances. Also supports `restart_policy`, `update_config`, `rollback_config`, and `placement`."
+        }
+      ]
+    },
+    "logging": {
+      "contents": [
+        {
+          "value": "```yaml\nlogging:\n  driver: json-file\n  options:\n    max-size: \"10m\"\n    max-file: \"3\"\n    tag: \"{{.Name}}\"\n\n# Other drivers\nlogging:\n  driver: syslog\n  options:\n    syslog-address: \"udp://logs.example.com:514\"\n```\n**logging** configures the logging driver and options. Common drivers: `json-file` (default), `syslog`, `journald`, `gelf`, `fluentd`, `awslogs`, `none`. Use `max-size` and `max-file` options for log rotation."
+        }
+      ]
+    },
+    "labels": {
+      "contents": [
+        {
+          "value": "```yaml\n# Map form\nlabels:\n  com.example.description: \"My App\"\n  com.example.department: \"IT\"\n\n# List form\nlabels:\n  - \"com.example.description=My App\"\n```\n**labels** add metadata to containers. Often used with reverse proxies like Traefik for routing configuration. Use reverse-DNS notation for label keys to avoid conflicts."
+        }
+      ]
+    },
+    "working_dir": {
+      "contents": [
+        {
+          "value": "```yaml\nworking_dir: /app\n```\n**working_dir** overrides the container's working directory (set by the image's `WORKDIR` instruction). All relative paths in `command` and `entrypoint` are relative to this directory."
+        }
+      ]
+    },
+    "user": {
+      "contents": [
+        {
+          "value": "```yaml\nuser: \"1000:1000\"\nuser: \"node\"\nuser: \"www-data\"\n```\n**user** overrides the default user inside the container. Accepts `user`, `user:group`, `uid`, or `uid:gid`. Running as non-root is recommended for security."
+        }
+      ]
+    },
+    "secrets": {
+      "contents": [
+        {
+          "value": "```yaml\n# Service-level\nservices:\n  db:\n    secrets:\n      - db_password\n      - source: api_key\n        target: /run/secrets/api_key\n        mode: 0400\n\n# Top-level\nsecrets:\n  db_password:\n    file: ./secrets/db_password.txt\n  api_key:\n    environment: API_KEY\n```\n**secrets** provide sensitive data to services. At the top level, define secrets from files or environment variables. At the service level, grant access. Secrets are mounted in the container at `/run/secrets/<name>` by default."
+        }
+      ]
+    },
+    "configs": {
+      "contents": [
+        {
+          "value": "```yaml\n# Service-level\nservices:\n  web:\n    configs:\n      - my_config\n      - source: nginx_conf\n        target: /etc/nginx/nginx.conf\n\n# Top-level\nconfigs:\n  my_config:\n    file: ./config.txt\n  nginx_conf:\n    file: ./nginx.conf\n```\n**configs** provide non-sensitive configuration data to services. Similar to secrets but for configuration files. Mounted at `/<config_name>` by default or at the specified `target` path."
+        }
+      ]
+    },
+    "network_mode": {
+      "contents": [
+        {
+          "value": "```yaml\nnetwork_mode: host\nnetwork_mode: bridge\nnetwork_mode: none\nnetwork_mode: \"service:web\"\n```\n**network_mode** sets the network mode. `host` uses the host's network stack directly (no isolation). `none` disables networking. `service:<name>` shares another service's network namespace. Cannot be used with `networks`."
+        }
+      ]
+    },
+    "cap_add": {
+      "contents": [
+        {
+          "value": "```yaml\ncap_add:\n  - SYS_PTRACE\n  - NET_ADMIN\n  - SYS_ADMIN\n  - NET_RAW\n```\n**cap_add** adds Linux capabilities to the container. Common capabilities: `SYS_PTRACE` (debugging), `NET_ADMIN` (network config), `SYS_ADMIN` (various admin operations), `NET_RAW` (raw network access)."
+        }
+      ]
+    },
+    "cap_drop": {
+      "contents": [
+        {
+          "value": "```yaml\ncap_drop:\n  - ALL\n\n# Drop ALL then add back specific ones\ncap_drop:\n  - ALL\ncap_add:\n  - NET_BIND_SERVICE\n```\n**cap_drop** removes Linux capabilities from the container. Best practice: drop `ALL` capabilities first, then add back only the ones needed with `cap_add`."
+        }
+      ]
+    },
+    "privileged": {
+      "contents": [
+        {
+          "value": "```yaml\nprivileged: true\n```\n**privileged** gives the container full access to the host's devices and kernel capabilities. Equivalent to `docker run --privileged`. **Security warning**: only use when absolutely necessary (e.g., Docker-in-Docker)."
+        }
+      ]
+    },
+    "read_only": {
+      "contents": [
+        {
+          "value": "```yaml\nread_only: true\nvolumes:\n  - /tmp\ntmpfs:\n  - /run\n```\n**read_only** mounts the container's root filesystem as read-only. Use `volumes` or `tmpfs` mounts for paths that need to be writable. Enhances security by preventing filesystem modifications."
+        }
+      ]
+    },
+    "security_opt": {
+      "contents": [
+        {
+          "value": "```yaml\nsecurity_opt:\n  - no-new-privileges:true\n  - seccomp:unconfined\n  - apparmor:unconfined\n  - label:disable\n```\n**security_opt** overrides default security settings. `no-new-privileges` prevents privilege escalation. `seccomp` and `apparmor` control security profiles. `label:disable` turns off SELinux labeling."
+        }
+      ]
+    },
+    "pid": {
+      "contents": [
+        {
+          "value": "```yaml\npid: host\npid: \"service:web\"\n```\n**pid** sets the PID mode. `host` shares the host's PID namespace, making host processes visible inside the container. Useful for debugging or monitoring tools."
+        }
+      ]
+    },
+    "ipc": {
+      "contents": [
+        {
+          "value": "```yaml\nipc: host\nipc: shareable\nipc: \"service:web\"\n```\n**ipc** configures IPC isolation mode. `host` shares the host's IPC namespace. `shareable` allows other containers to share this container's IPC namespace."
+        }
+      ]
+    },
+    "extra_hosts": {
+      "contents": [
+        {
+          "value": "```yaml\nextra_hosts:\n  - \"host.docker.internal:host-gateway\"\n  - \"api.local:192.168.1.10\"\n  - \"db.local:10.0.0.5\"\n```\n**extra_hosts** adds entries to the container's `/etc/hosts`. Use `host-gateway` as a special value that resolves to the host's gateway IP, enabling containers to reach host services."
+        }
+      ]
+    },
+    "dns": {
+      "contents": [
+        {
+          "value": "```yaml\ndns:\n  - 8.8.8.8\n  - 8.8.4.4\ndns: 1.1.1.1\n```\n**dns** configures custom DNS servers for the container. Can be a single value or a list."
+        }
+      ]
+    },
+    "dns_search": {
+      "contents": [
+        {
+          "value": "```yaml\ndns_search:\n  - example.com\n  - internal.example.com\n```\n**dns_search** configures custom DNS search domains for the container."
+        }
+      ]
+    },
+    "tmpfs": {
+      "contents": [
+        {
+          "value": "```yaml\ntmpfs:\n  - /tmp\n  - /run\n\n# With size limit (long syntax via volumes)\nvolumes:\n  - type: tmpfs\n    target: /tmp\n    tmpfs:\n      size: 100m\n```\n**tmpfs** mounts a temporary in-memory filesystem. Data does not persist after container stops. Useful for temporary files, caches, or sensitive data that should not be written to disk."
+        }
+      ]
+    },
+    "ulimits": {
+      "contents": [
+        {
+          "value": "```yaml\nulimits:\n  nofile:\n    soft: 65535\n    hard: 65535\n  nproc: 65535\n  memlock:\n    soft: -1\n    hard: -1\n```\n**ulimits** override default ulimits for the container. Single value sets both soft and hard limits. Object form allows separate soft and hard values. Use `-1` for unlimited."
+        }
+      ]
+    },
+    "sysctls": {
+      "contents": [
+        {
+          "value": "```yaml\nsysctls:\n  net.core.somaxconn: 1024\n  net.ipv4.tcp_syncookies: 0\n  net.ipv4.ip_unprivileged_port_start: 0\n```\n**sysctls** sets namespaced kernel parameters in the container. Only kernel parameters that are namespaced are allowed. Common for tuning network performance."
+        }
+      ]
+    },
+    "stop_signal": {
+      "contents": [
+        {
+          "value": "```yaml\nstop_signal: SIGUSR1\nstop_signal: SIGTERM\nstop_signal: SIGQUIT\n```\n**stop_signal** sets the signal sent to the container when `docker compose stop` or `docker compose down` is executed. Default is `SIGTERM`. Some applications (e.g., Nginx) prefer `SIGQUIT` for graceful shutdown."
+        }
+      ]
+    },
+    "stop_grace_period": {
+      "contents": [
+        {
+          "value": "```yaml\nstop_grace_period: 30s\nstop_grace_period: 1m30s\n```\n**stop_grace_period** specifies how long to wait after sending the stop signal before forcefully killing the container with `SIGKILL`. Default is 10 seconds. Increase for services that need more time for graceful shutdown."
+        }
+      ]
+    },
+    "init": {
+      "contents": [
+        {
+          "value": "```yaml\ninit: true\n```\n**init** runs an init process (tini) as PID 1 inside the container. The init process forwards signals to the application and reaps zombie processes. Recommended for containers running processes that don't handle signals properly."
+        }
+      ]
+    },
+    "platform": {
+      "contents": [
+        {
+          "value": "```yaml\nplatform: linux/amd64\nplatform: linux/arm64\nplatform: linux/arm/v7\n```\n**platform** specifies the target platform for the service. Format: `os/arch` or `os/arch/variant`. Useful for multi-architecture builds and ensuring consistent behavior across environments."
+        }
+      ]
+    },
+    "profiles": {
+      "contents": [
+        {
+          "value": "```yaml\nservices:\n  debug-tools:\n    image: busybox\n    profiles:\n      - debug\n  monitoring:\n    image: prometheus\n    profiles:\n      - monitoring\n      - production\n```\n**profiles** lets you selectively start services. Services with profiles only start when the profile is activated via `--profile` flag or `COMPOSE_PROFILES` env var. Services without profiles always start."
+        }
+      ]
+    },
+    "pull_policy": {
+      "contents": [
+        {
+          "value": "```yaml\npull_policy: always   # Always pull before creating\npull_policy: never    # Never pull, use local only\npull_policy: missing  # Pull only if not present locally\npull_policy: build    # Always rebuild\n```\n**pull_policy** controls when Compose pulls the service image. Default behavior is `missing` (pull if not available locally)."
+        }
+      ]
+    },
+    "extends": {
+      "contents": [
+        {
+          "value": "```yaml\n# Extend from same file\nextends:\n  service: base-web\n\n# Extend from another file\nextends:\n  file: common.yml\n  service: webapp\n```\n**extends** lets you share common configuration between services. The extended service's configuration is merged with the current service. `depends_on`, `links`, `volumes_from`, and `networks` are not inherited."
+        }
+      ]
+    },
+    "develop": {
+      "contents": [
+        {
+          "value": "```yaml\ndevelop:\n  watch:\n    - action: sync\n      path: ./src\n      target: /app/src\n    - action: rebuild\n      path: package.json\n    - action: sync+restart\n      path: ./config\n      target: /app/config\n```\n**develop** configures file watching for `docker compose watch`. Actions: `sync` copies changed files into the container, `rebuild` triggers a full rebuild and replace, `sync+restart` syncs files and restarts the service."
+        }
+      ]
+    },
+    "include": {
+      "contents": [
+        {
+          "value": "```yaml\ninclude:\n  - path: ./db/compose.yaml\n  - path: ./monitoring/compose.yaml\n    project_directory: ./monitoring\n    env_file: ./monitoring/.env\n```\n**include** incorporates other Compose files into the current project. Each included Compose file is resolved relative to its own directory. Useful for modularizing large applications."
+        }
+      ]
+    },
+    "version": {
+      "contents": [
+        {
+          "value": "```yaml\nversion: '3.8'\nversion: '3.9'\nversion: '2.4'\n```\n**version** is a legacy top-level property that specified the Compose file format version. It is now **deprecated** and informational only — the Compose CLI automatically uses the latest specification."
+        }
+      ]
+    },
+    "name": {
+      "contents": [
+        {
+          "value": "```yaml\nname: my-project\n```\n**name** sets the project name used as a prefix for resources (containers, networks, volumes). Defaults to the directory name. Can also be set via `COMPOSE_PROJECT_NAME` env var or `-p` flag."
+        }
+      ]
+    },
+    "driver": {
+      "contents": [
+        {
+          "value": "```yaml\n# Network driver\nnetworks:\n  mynet:\n    driver: bridge     # Default for user-defined networks\n    driver: overlay    # For Swarm multi-host\n    driver: macvlan    # Direct host NIC access\n\n# Volume driver\nvolumes:\n  mydata:\n    driver: local\n```\n**driver** specifies the driver for networks or volumes. Network drivers: `bridge` (default), `overlay`, `host`, `none`, `macvlan`, `ipvlan`. Volume driver: `local` (default) or third-party plugins."
+        }
+      ]
+    },
+    "ipam": {
+      "contents": [
+        {
+          "value": "```yaml\nnetworks:\n  mynet:\n    ipam:\n      driver: default\n      config:\n        - subnet: 172.28.0.0/16\n          gateway: 172.28.0.1\n          ip_range: 172.28.5.0/24\n```\n**ipam** configures custom IP Address Management for a network. Specify subnets, gateways, and IP ranges. The `driver` defaults to `default` which uses Docker's built-in IPAM."
+        }
+      ]
+    },
+    "external": {
+      "contents": [
+        {
+          "value": "```yaml\nnetworks:\n  existing_net:\n    external: true\n    name: my-pre-existing-network\n\nvolumes:\n  existing_vol:\n    external: true\n```\n**external** indicates that a network or volume already exists and was created outside of Compose. Compose will not attempt to create it and will raise an error if it doesn't exist. Use `name` to reference resources with different names."
+        }
+      ]
+    },
+    "shm_size": {
+      "contents": [
+        {
+          "value": "```yaml\nshm_size: '2gb'\nshm_size: '256m'\n```\n**shm_size** sets the size of `/dev/shm` (shared memory) for the container. Default is 64MB. Increase for applications that need more shared memory (e.g., PostgreSQL, Chrome/Puppeteer)."
+        }
+      ]
+    },
+    "hostname": {
+      "contents": [
+        {
+          "value": "```yaml\nhostname: web-server\n```\n**hostname** sets the container hostname. By default, the container's hostname is the service name. Other containers on the same network can reach this container using the hostname."
+        }
+      ]
+    },
+    "domainname": {
+      "contents": [
+        {
+          "value": "```yaml\ndomainname: example.com\n```\n**domainname** sets the container's domain name. Combined with `hostname`, the FQDN becomes `hostname.domainname`."
+        }
+      ]
+    },
+    "devices": {
+      "contents": [
+        {
+          "value": "```yaml\ndevices:\n  - \"/dev/sda:/dev/xvdc:rwm\"\n  - \"/dev/bus/usb:/dev/bus/usb\"\n```\n**devices** maps host devices into the container. Format: `HOST_DEVICE:CONTAINER_DEVICE[:PERMISSIONS]`. Permissions: `r` (read), `w` (write), `m` (mknod)."
+        }
+      ]
+    },
+    "runtime": {
+      "contents": [
+        {
+          "value": "```yaml\nruntime: nvidia\nruntime: runc\n```\n**runtime** specifies which OCI runtime to use. Common runtimes: `runc` (default), `nvidia` (GPU workloads), `sysbox` (nested containers). The runtime must be registered with Docker."
+        }
+      ]
+    },
+    "scale": {
+      "contents": [
+        {
+          "value": "```yaml\nscale: 3\n```\n**scale** sets the default number of containers for the service. Deprecated in favor of `deploy.replicas`. Cannot be used with `container_name`."
+        }
+      ]
+    },
+    "annotations": {
+      "contents": [
+        {
+          "value": "```yaml\nannotations:\n  com.example.foo: bar\n  org.opencontainers.image.source: https://github.com/example/app\n```\n**annotations** add OCI-compliant annotations to the container. Similar to labels but follow the OCI annotation specification."
+        }
+      ]
+    }
+  }
+}

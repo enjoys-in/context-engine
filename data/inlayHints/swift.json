@@ -1,0 +1,37 @@
+{
+  "language": "swift",
+  "inlayHintPatterns": [
+    {"pattern": "(?:let|var)\\s+(\\w+)\\s*=\\s*(.+)", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show inferred type for variable/constant assignments"},
+    {"pattern": "(\\w+)\\s*\\(([^)]+)\\)", "kind": 2, "label": "{param_name}:", "position": "before_each_arg", "paddingRight": true, "description": "Show parameter names at call sites"},
+    {"pattern": "func\\s+\\w+\\([^)]*\\)\\s*->\\s*some\\s+\\w+\\s*\\{", "kind": 1, "label": "// opaque: {inferred_type}", "position": "end_of_line", "paddingLeft": true, "description": "Show concrete type behind opaque return type"},
+    {"pattern": "func\\s+\\w+\\([^)]*\\)\\s*\\{", "kind": 1, "label": "-> Void", "position": "before_brace", "paddingLeft": true, "description": "Show implicit Void return type"},
+    {"pattern": "\\{\\s*(\\w+)\\s*in", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show closure parameter types"},
+    {"pattern": "\\.map\\s*\\{|\\. filter\\s*\\{|\\.compactMap\\s*\\{|\\.flatMap\\s*\\{|\\.reduce\\s*\\(|\\.sorted\\s*\\{|\\.forEach\\s*\\{", "kind": 1, "label": "-> {inferred_type}", "position": "end_of_line", "paddingLeft": true, "description": "Show return type of chained collection operations"},
+    {"pattern": "case\\s+\\.(\\w+)\\s*=\\s*(.+)", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show enum case associated value types"}
+  ],
+  "typeInferenceRules": {
+    "string_literal": {"pattern": "\".*\"", "type": "String"},
+    "multiline_string": {"pattern": "\"\"\"[\\s\\S]*?\"\"\"", "type": "String"},
+    "integer_literal": {"pattern": "\\b\\d+\\b", "type": "Int"},
+    "double_literal": {"pattern": "\\b\\d+\\.\\d+\\b", "type": "Double"},
+    "float_literal": {"pattern": "\\b\\d+\\.\\d+[fF]\\b", "type": "Float"},
+    "boolean_literal": {"pattern": "\\b(true|false)\\b", "type": "Bool"},
+    "nil_literal": {"pattern": "\\bnil\\b", "type": "Optional"},
+    "character_literal": {"pattern": "Character\\(\"[^\"]*\"\\)", "type": "Character"},
+    "array_literal": {"pattern": "\\[.*\\]", "type": "[Element]"},
+    "dictionary_literal": {"pattern": "\\[.*:.*\\]", "type": "[Key: Value]"},
+    "empty_array": {"pattern": "\\[\\s*\\]", "type": "[Any]"},
+    "empty_dictionary": {"pattern": "\\[\\s*:\\s*\\]", "type": "[AnyHashable: Any]"},
+    "tuple_literal": {"pattern": "\\(.*,.*\\)", "type": "(T1, T2)"},
+    "optional_chaining": {"pattern": "\\w+\\?\\.", "type": "Optional<T>"},
+    "string_interpolation": {"pattern": "\".*\\\\\\(.*\\).*\"", "type": "String"},
+    "range_literal": {"pattern": "\\d+\\.\\.<\\d+", "type": "Range<Int>"},
+    "closed_range_literal": {"pattern": "\\d+\\.\\.\\.\\d+", "type": "ClosedRange<Int>"},
+    "url_init": {"pattern": "URL\\(string:\\s*\"[^\"]+\"\\)", "type": "URL?"},
+    "data_init": {"pattern": "Data\\(", "type": "Data"},
+    "date_init": {"pattern": "Date\\(", "type": "Date"},
+    "task_init": {"pattern": "Task\\s*\\{", "type": "Task<Void, Never>"},
+    "result_success": {"pattern": "\\.success\\(", "type": "Result<Success, Failure>"},
+    "result_failure": {"pattern": "\\.failure\\(", "type": "Result<Success, Failure>"}
+  }
+}
