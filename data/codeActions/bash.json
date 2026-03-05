@@ -1,0 +1,169 @@
+{
+  "language": "bash",
+  "codeActions": [
+    {
+      "title": "Add 'set -euo pipefail' header",
+      "kind": "source",
+      "description": "Add strict mode header (set -euo pipefail) to the beginning of the script for safer execution",
+      "pattern": "^#!/",
+      "isPreferred": true
+    },
+    {
+      "title": "Add shebang line",
+      "kind": "source",
+      "description": "Add #!/usr/bin/env bash shebang as the first line of the script",
+      "pattern": "^[^#]",
+      "isPreferred": true
+    },
+    {
+      "title": "Organize source/import statements",
+      "kind": "source.organizeImports",
+      "description": "Sort and deduplicate source/. statements at the top of the script",
+      "pattern": "\\bsource\\b|^\\s*\\.\\s+",
+      "isPreferred": true
+    },
+    {
+      "title": "Extract to function",
+      "kind": "refactor.extract",
+      "description": "Extract selected code into a new bash function with appropriate local variables",
+      "pattern": ".*",
+      "isPreferred": false
+    },
+    {
+      "title": "Extract to variable",
+      "kind": "refactor.extract",
+      "description": "Extract command substitution or expression into a named variable",
+      "pattern": "\\$\\(|`",
+      "isPreferred": false
+    },
+    {
+      "title": "Inline variable",
+      "kind": "refactor.inline",
+      "description": "Replace variable with its value at all usage sites",
+      "pattern": "\\blocal\\b|^\\s*\\w+=",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert to function keyword syntax",
+      "kind": "refactor.rewrite",
+      "description": "Convert name() { } to function name() { } syntax",
+      "pattern": "^\\s*\\w+\\s*\\(\\s*\\)",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert to POSIX function syntax",
+      "kind": "refactor.rewrite",
+      "description": "Convert function name() { } to name() { } (POSIX-compatible) syntax",
+      "pattern": "^\\s*function\\s+\\w+",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert backticks to $() syntax",
+      "kind": "quickfix",
+      "description": "Replace legacy backtick command substitution with modern $(command) syntax",
+      "pattern": "`[^`]+`",
+      "isPreferred": true
+    },
+    {
+      "title": "Convert [ ] to [[ ]]",
+      "kind": "quickfix",
+      "description": "Replace POSIX test brackets with bash extended test brackets for safer evaluation",
+      "pattern": "\\[\\s+.*\\s+\\]",
+      "isPreferred": false
+    },
+    {
+      "title": "Quote unquoted variable",
+      "kind": "quickfix",
+      "description": "Add double quotes around unquoted variable expansion to prevent word splitting and globbing",
+      "pattern": "\\$\\w+|\\$\\{\\w+\\}",
+      "isPreferred": true
+    },
+    {
+      "title": "Add missing 'local' keyword",
+      "kind": "quickfix",
+      "description": "Add 'local' keyword to variable assignments inside functions to prevent global scope pollution",
+      "pattern": "^\\s*\\w+=(?!.*\\bexport\\b)",
+      "isPreferred": false
+    },
+    {
+      "title": "Replace echo with printf",
+      "kind": "refactor.rewrite",
+      "description": "Replace echo with printf for more portable and predictable output formatting",
+      "pattern": "\\becho\\b",
+      "isPreferred": false
+    },
+    {
+      "title": "Add error handling to command",
+      "kind": "quickfix",
+      "description": "Add || { echo 'Error' >&2; exit 1; } error handling to a command",
+      "pattern": "^\\s*\\w+",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert to here-document",
+      "kind": "refactor.rewrite",
+      "description": "Convert multiple echo/printf statements into a single here-document (<<EOF)",
+      "pattern": "\\becho\\b|\\bprintf\\b",
+      "isPreferred": false
+    },
+    {
+      "title": "Wrap in if-check for command existence",
+      "kind": "refactor.rewrite",
+      "description": "Wrap command in 'if command -v cmd &>/dev/null; then ... fi' to check availability",
+      "pattern": "^\\s*\\w+",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert arithmetic to (( )) syntax",
+      "kind": "quickfix",
+      "description": "Replace expr or let with modern (( )) arithmetic syntax",
+      "pattern": "\\bexpr\\b|\\blet\\b",
+      "isPreferred": true
+    },
+    {
+      "title": "Fix all ShellCheck warnings",
+      "kind": "source.fixAll",
+      "description": "Apply all available ShellCheck-based quick-fixes automatically",
+      "pattern": ".*",
+      "isPreferred": false
+    },
+    {
+      "title": "Add trap for cleanup on exit",
+      "kind": "source",
+      "description": "Add a trap command to clean up temporary files or resources on script exit",
+      "pattern": "\\bmktemp\\b|\\btmp\\b",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert to array iteration",
+      "kind": "refactor.rewrite",
+      "description": "Convert whitespace-separated variable to proper array with safe iteration",
+      "pattern": "\\bfor\\s+\\w+\\s+in\\s+\\$",
+      "isPreferred": false
+    },
+    {
+      "title": "Add input validation",
+      "kind": "quickfix",
+      "description": "Add parameter count check and usage message at the top of the script or function",
+      "pattern": "\\$1|\\$\\{1",
+      "isPreferred": false
+    },
+    {
+      "title": "Convert to getopts argument parsing",
+      "kind": "refactor.rewrite",
+      "description": "Replace manual argument parsing with getopts-based option handling loop",
+      "pattern": "\\$1|\\$\\{1|\\bshift\\b",
+      "isPreferred": false
+    }
+  ],
+  "providedCodeActionKinds": [
+    "quickfix",
+    "refactor",
+    "refactor.extract",
+    "refactor.inline",
+    "refactor.rewrite",
+    "source",
+    "source.fixAll",
+    "source.organizeImports"
+  ]
+}
