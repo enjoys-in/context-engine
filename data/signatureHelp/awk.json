@@ -1,0 +1,102 @@
+{
+  "language": "awk",
+  "triggerCharacters": ["(", ","],
+  "retriggerCharacters": [","],
+  "signatures": [
+    {
+      "label": "print expr1, expr2, ...",
+      "documentation": { "value": "Prints one or more expressions to standard output, separated by OFS, terminated by ORS.\n```awk\nprint $1, $2\nprint \"Total:\", sum\n```" },
+      "parameters": [
+        { "label": "expr1, expr2, ...", "documentation": { "value": "One or more expressions to print, separated by commas (OFS)." } }
+      ]
+    },
+    {
+      "label": "split(string, array, separator): int",
+      "documentation": { "value": "Splits `string` into pieces separated by `separator` and stores in `array`. Returns the number of pieces.\n```awk\nn = split(\"a:b:c\", arr, \":\")\n# arr[1]=\"a\", arr[2]=\"b\", arr[3]=\"c\", n=3\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The input string to split." } },
+        { "label": "array", "documentation": { "value": "The array to store the resulting pieces." } },
+        { "label": "separator", "documentation": { "value": "The field separator regex or string. Defaults to FS if omitted." } }
+      ]
+    },
+    {
+      "label": "sub(regexp, replacement, target): int",
+      "documentation": { "value": "Substitutes the first occurrence of `regexp` in `target` with `replacement`. Returns 1 if substitution made, 0 otherwise.\n```awk\nsub(/old/, \"new\", $0)\n```" },
+      "parameters": [
+        { "label": "regexp", "documentation": { "value": "The regular expression pattern to match." } },
+        { "label": "replacement", "documentation": { "value": "The replacement string. Use `&` to reference the matched text." } },
+        { "label": "target", "documentation": { "value": "The target string variable. Defaults to `$0` if omitted." } }
+      ]
+    },
+    {
+      "label": "gsub(regexp, replacement, target): int",
+      "documentation": { "value": "Globally substitutes all occurrences of `regexp` in `target` with `replacement`. Returns the number of substitutions.\n```awk\ngsub(/[[:space:]]/, \"_\", $0)\n```" },
+      "parameters": [
+        { "label": "regexp", "documentation": { "value": "The regular expression pattern to match." } },
+        { "label": "replacement", "documentation": { "value": "The replacement string. Use `&` to reference the matched text." } },
+        { "label": "target", "documentation": { "value": "The target string variable. Defaults to `$0` if omitted." } }
+      ]
+    },
+    {
+      "label": "length(s): int",
+      "documentation": { "value": "Returns the length of string `s`, or the number of elements in an array.\n```awk\nlen = length(\"hello\")  # 5\nlen = length(arr)       # number of elements\n```" },
+      "parameters": [
+        { "label": "s", "documentation": { "value": "A string or array. If omitted, uses `$0`." } }
+      ]
+    },
+    {
+      "label": "tolower(string): string",
+      "documentation": { "value": "Returns a copy of `string` with all uppercase characters converted to lowercase.\n```awk\nprint tolower(\"HELLO\")  # \"hello\"\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The input string to convert." } }
+      ]
+    },
+    {
+      "label": "toupper(string): string",
+      "documentation": { "value": "Returns a copy of `string` with all lowercase characters converted to uppercase.\n```awk\nprint toupper(\"hello\")  # \"HELLO\"\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The input string to convert." } }
+      ]
+    },
+    {
+      "label": "index(string, target): int",
+      "documentation": { "value": "Returns the position of the first occurrence of `target` in `string`, or 0 if not found.\n```awk\npos = index(\"hello world\", \"world\")  # 7\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The string to search in." } },
+        { "label": "target", "documentation": { "value": "The substring to search for." } }
+      ]
+    },
+    {
+      "label": "match(string, regexp): int",
+      "documentation": { "value": "Searches `string` for the longest leftmost match of `regexp`. Sets RSTART and RLENGTH. Returns RSTART or 0.\n```awk\nif (match($0, /[0-9]+/)) print substr($0, RSTART, RLENGTH)\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The string to search in." } },
+        { "label": "regexp", "documentation": { "value": "The regular expression pattern to match." } }
+      ]
+    },
+    {
+      "label": "sprintf(format, expr1, expr2, ...): string",
+      "documentation": { "value": "Returns a string formatted according to `format` (printf-style), without printing.\n```awk\ns = sprintf(\"%05d\", 42)       # \"00042\"\ns = sprintf(\"%-10s %d\", name, age)\n```" },
+      "parameters": [
+        { "label": "format", "documentation": { "value": "A printf-style format string (`%d`, `%s`, `%f`, etc.)." } },
+        { "label": "expr1, expr2, ...", "documentation": { "value": "Values to substitute into the format string." } }
+      ]
+    },
+    {
+      "label": "substr(string, start, length): string",
+      "documentation": { "value": "Returns a substring of `string` starting at position `start` (1-based) with optional `length`.\n```awk\ns = substr(\"hello\", 2, 3)  # \"ell\"\ns = substr(\"hello\", 2)     # \"ello\"\n```" },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The source string." } },
+        { "label": "start", "documentation": { "value": "Starting position (1-based)." } },
+        { "label": "length", "documentation": { "value": "Optional number of characters to extract. If omitted, returns to end of string." } }
+      ]
+    },
+    {
+      "label": "system(command): int",
+      "documentation": { "value": "Executes `command` as a shell command and returns its exit status.\n```awk\nsystem(\"ls -la\")\nret = system(\"mkdir -p output\")\n```" },
+      "parameters": [
+        { "label": "command", "documentation": { "value": "The shell command string to execute." } }
+      ]
+    }
+  ]
+}

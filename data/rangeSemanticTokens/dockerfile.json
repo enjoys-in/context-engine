@@ -1,0 +1,76 @@
+{
+  "language": "dockerfile",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["variable", "property", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "documentation"]
+  },
+  "rangeTokenRules": [
+    {
+      "type": "keyword",
+      "pattern": "^\\s*(FROM|RUN|CMD|LABEL|MAINTAINER|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL)\\b[^\\n]*",
+      "modifiers": [],
+      "description": "Dockerfile instruction statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "^\\s*FROM\\s+\\S+\\s+AS\\s+\\w+",
+      "modifiers": ["declaration"],
+      "description": "Multi-stage build declarations with AS alias",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "variable",
+      "pattern": "^\\s*ARG\\s+\\w+(=\\S*)?",
+      "modifiers": ["declaration"],
+      "description": "ARG build argument declarations",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "variable",
+      "pattern": "^\\s*ENV\\s+\\w+(=\\S*|\\s+\\S+)",
+      "modifiers": ["declaration"],
+      "description": "ENV environment variable declarations",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "keyword",
+      "pattern": "^\\s*RUN\\b[\\s\\S]*?(?=^\\s*[A-Z]|$)",
+      "modifiers": [],
+      "description": "RUN instruction blocks with multi-line continuation",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{[^}]+\\}|\\$[A-Za-z_][A-Za-z0-9_]*",
+      "modifiers": [],
+      "description": "Variable expansion expressions",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "comment",
+      "pattern": "^\\s*#.*$",
+      "modifiers": ["documentation"],
+      "description": "Comment lines",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "^\\s*COPY\\s+--from=\\w+",
+      "modifiers": [],
+      "description": "COPY from stage references in multi-stage builds",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "^\\s*HEALTHCHECK\\s+(--\\w+=\\S+\\s+)*CMD\\b[^\\n]*",
+      "modifiers": [],
+      "description": "HEALTHCHECK instruction with CMD",
+      "rangeScope": "statement"
+    }
+  ],
+  "supportedRangeScopes": ["statement", "declaration", "expression"],
+  "multilineTokens": ["comment", "string"]
+}

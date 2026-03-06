@@ -1,0 +1,58 @@
+{
+  "language": "powershell",
+  "autoFormatTriggerCharacters": ["}", ";", "\n"],
+  "formatRules": [
+    {
+      "trigger": "}",
+      "description": "Outdent closing brace",
+      "rules": [
+        {
+          "action": "outdent",
+          "pattern": "^\\s*\\}",
+          "description": "Outdent closing brace to match opening"
+        }
+      ]
+    },
+    {
+      "trigger": ";",
+      "description": "Format statement on semicolon",
+      "rules": [
+        {
+          "action": "trimWhitespace",
+          "pattern": "\\s+;",
+          "description": "Remove trailing whitespace before semicolon"
+        }
+      ]
+    },
+    {
+      "trigger": "\n",
+      "description": "Auto-indent based on PowerShell context",
+      "rules": [
+        {
+          "action": "indent",
+          "pattern": "\\{\\s*$",
+          "description": "Indent after opening brace"
+        },
+        {
+          "action": "indent",
+          "pattern": "^\\s*(if|elseif|else|foreach|for|while|do|switch|try|catch|finally|function|filter|class|enum)\\b.*$",
+          "description": "Indent after control flow or declaration"
+        },
+        {
+          "action": "outdent",
+          "pattern": "^\\s*(\\}|else|elseif|catch|finally)\\b",
+          "description": "Outdent closing brace or mid-block keyword"
+        },
+        {
+          "action": "trimWhitespace",
+          "pattern": "\\s+$",
+          "description": "Remove trailing whitespace"
+        }
+      ]
+    }
+  ],
+  "indentation": {
+    "increasePattern": "\\{\\s*$|^\\s*(if|elseif|else|foreach|for|while|do|switch|try|catch|finally|function)\\b(?!.*\\{).*$",
+    "decreasePattern": "^\\s*(\\}|else|elseif|catch|finally)\\b"
+  }
+}

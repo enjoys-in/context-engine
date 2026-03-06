@@ -1,0 +1,76 @@
+{
+  "language": "pgsql",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "rangeTokenRules": [
+    {
+      "type": "function",
+      "pattern": "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?FUNCTION\\s+\\w+",
+      "modifiers": ["declaration"],
+      "description": "CREATE FUNCTION declarations",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(BEGIN|END|DECLARE|EXCEPTION)\\b",
+      "modifiers": [],
+      "description": "PL/pgSQL block structure keywords",
+      "rangeScope": "block"
+    },
+    {
+      "type": "string",
+      "pattern": "\\$\\$[\\s\\S]*?\\$\\$|\\$[a-zA-Z_]+\\$[\\s\\S]*?\\$[a-zA-Z_]+\\$",
+      "modifiers": [],
+      "description": "Dollar-quoted string literals",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(SELECT|INSERT\\s+INTO|UPDATE|DELETE\\s+FROM)\\b",
+      "modifiers": [],
+      "description": "DML statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(CREATE\\s+TABLE|CREATE\\s+TYPE|CREATE\\s+SCHEMA|CREATE\\s+INDEX|ALTER\\s+TABLE)\\b",
+      "modifiers": ["declaration"],
+      "description": "DDL declarations for tables, types, and schemas",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(CREATE\\s+TRIGGER|CREATE\\s+RULE)\\s+\\w+",
+      "modifiers": ["declaration"],
+      "description": "Trigger and rule declarations",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(IF|THEN|ELSE|ELSIF|END\\s+IF|LOOP|END\\s+LOOP|FOR|WHILE|RETURN)\\b",
+      "modifiers": [],
+      "description": "PL/pgSQL control flow",
+      "rangeScope": "block"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(INTEGER|BIGINT|SMALLINT|SERIAL|TEXT|VARCHAR|BOOLEAN|TIMESTAMP|JSONB|JSON|UUID|NUMERIC|REAL|ARRAY)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Built-in PostgreSQL data types",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "comment",
+      "pattern": "--.*$|/\\*[\\s\\S]*?\\*/",
+      "modifiers": [],
+      "description": "Single-line and block comments",
+      "rangeScope": "statement"
+    }
+  ],
+  "supportedRangeScopes": ["statement", "block", "expression", "declaration"],
+  "multilineTokens": ["comment", "string"]
+}

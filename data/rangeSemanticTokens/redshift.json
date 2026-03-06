@@ -1,0 +1,76 @@
+{
+  "language": "redshift",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "variable", "function", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "rangeTokenRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\b(CREATE\\s+TABLE|CREATE\\s+EXTERNAL\\s+TABLE|ALTER\\s+TABLE|DROP\\s+TABLE|CREATE\\s+VIEW|CREATE\\s+SCHEMA)\\b",
+      "modifiers": ["declaration"],
+      "description": "DDL statements for tables, views, and schemas",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(SELECT|INSERT\\s+INTO|UPDATE|DELETE\\s+FROM|MERGE)\\b",
+      "modifiers": [],
+      "description": "DML statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bCOPY\\s+\\w+\\s+FROM\\b",
+      "modifiers": [],
+      "description": "COPY command for bulk data loading",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bUNLOAD\\s*\\(",
+      "modifiers": [],
+      "description": "UNLOAD command for exporting data",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "function",
+      "pattern": "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?FUNCTION\\s+\\w+|\\bCREATE\\s+(OR\\s+REPLACE\\s+)?PROCEDURE\\s+\\w+",
+      "modifiers": ["declaration"],
+      "description": "Function and stored procedure declarations",
+      "rangeScope": "declaration"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(SMALLINT|INTEGER|BIGINT|DECIMAL|REAL|DOUBLE\\s+PRECISION|BOOLEAN|CHAR|VARCHAR|DATE|TIMESTAMP|TIMESTAMPTZ|SUPER|GEOMETRY|HLLSKETCH)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Redshift data types",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(DISTKEY|SORTKEY|DISTSTYLE|ENCODE|BACKUP|INTERLEAVED)\\b",
+      "modifiers": [],
+      "description": "Redshift-specific table attributes",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(GRANT|REVOKE|CREATE\\s+USER|ALTER\\s+USER|CREATE\\s+GROUP)\\b",
+      "modifiers": [],
+      "description": "Access control and user management statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "comment",
+      "pattern": "--.*$|/\\*[\\s\\S]*?\\*/",
+      "modifiers": [],
+      "description": "Single-line and block comments",
+      "rangeScope": "statement"
+    }
+  ],
+  "supportedRangeScopes": ["statement", "block", "expression", "declaration"],
+  "multilineTokens": ["comment", "string"]
+}

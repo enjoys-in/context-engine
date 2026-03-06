@@ -1,0 +1,77 @@
+{
+  "language": "r",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "class", "variable", "parameter", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "function",
+      "pattern": "(\\w+)\\s*<-\\s*function\\s*\\(",
+      "modifiers": ["declaration"],
+      "description": "Function definitions assigned with <- operator"
+    },
+    {
+      "type": "operator",
+      "pattern": "<-|<<-|->|->>|\\|>|%%|%in%|%\\*%|%o%|%/%",
+      "modifiers": [],
+      "description": "Assignment operators (<-, <<-, ->, ->>), pipe |>, and special operators"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(library|require|source|install\\.packages|loadNamespace)\\s*\\(",
+      "modifiers": ["defaultLibrary"],
+      "description": "Package loading and sourcing functions"
+    },
+    {
+      "type": "class",
+      "pattern": "\\b(setClass|setRefClass|R6Class|setGeneric|setMethod)\\s*\\(",
+      "modifiers": ["declaration"],
+      "description": "S4, Reference, and R6 class definitions"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(if|else|for|in|while|repeat|break|next|return|function|switch|tryCatch|withCallingHandlers|on\\.exit|stop|warning|message|invisible|NULL|NA|NA_integer_|NA_real_|NA_complex_|NA_character_|TRUE|FALSE|Inf|NaN|T|F)\\b",
+      "modifiers": [],
+      "description": "R keywords, control flow, and special constants"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(c|length|dim|nrow|ncol|names|class|typeof|is\\.|as\\.|which|match|sum|mean|median|sd|var|min|max|range|sort|order|table|apply|lapply|sapply|vapply|tapply|mapply|do\\.call|Reduce|Filter|Map|paste|paste0|sprintf|cat|print|head|tail|str|summary|data\\.frame|matrix|list|vector|array|factor|seq|rep)\\s*\\(",
+      "modifiers": ["defaultLibrary"],
+      "description": "Common built-in R functions"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\b\\w+\\s*(?:<-|=)\\s*(?!function)",
+      "modifiers": ["declaration"],
+      "description": "Variable assignments with <- or ="
+    },
+    {
+      "type": "property",
+      "pattern": "\\$\\w+|@\\w+",
+      "modifiers": [],
+      "description": "List element access ($) and S4 slot access (@)"
+    },
+    {
+      "type": "comment",
+      "pattern": "#[^\\n]*",
+      "modifiers": [],
+      "description": "Single-line comments starting with #"
+    },
+    {
+      "type": "string",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+      "modifiers": [],
+      "description": "String literals in single or double quotes"
+    },
+    {
+      "type": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?L?\\b|0x[0-9a-fA-F]+L?\\b",
+      "modifiers": [],
+      "description": "Numeric literals including integer (L suffix) and hexadecimal"
+    }
+  ]
+}

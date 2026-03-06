@@ -1,0 +1,71 @@
+{
+  "language": "hcl",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\b(resource|data|variable|output|locals|module|provider|terraform|backend|provisioner|lifecycle|dynamic|for_each|count|depends_on)\\b",
+      "modifiers": [],
+      "description": "HCL/Terraform block type keywords"
+    },
+    {
+      "type": "type",
+      "pattern": "(?<=(?:resource|data|provider)\\s+)\"[a-z_]+\"",
+      "modifiers": ["declaration"],
+      "description": "Resource, data source, and provider type names"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{[^}]+\\}",
+      "modifiers": [],
+      "description": "Interpolation expressions ${...}"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*[a-z_][a-zA-Z0-9_]*\\s*=",
+      "modifiers": ["definition"],
+      "description": "Attribute assignments in block bodies"
+    },
+    {
+      "type": "namespace",
+      "pattern": "\\b(var|local|module|data|each|count|self|path|terraform)\\.[a-z_][a-z0-9_]*",
+      "modifiers": [],
+      "description": "Namespace-qualified references like var.name, local.value"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(lookup|merge|concat|element|length|file|templatefile|jsonencode|yamldecode|toset|tolist|tomap|try|can|format|join|split|replace|regex|cidrsubnet|coalesce)\\s*(?=\\()",
+      "modifiers": ["defaultLibrary"],
+      "description": "Built-in HCL/Terraform functions"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(for|in|if|true|false|null)\\b",
+      "modifiers": [],
+      "description": "Expression-level keywords"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(string|number|bool|list|map|set|object|tuple|any)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "HCL type constraint keywords"
+    },
+    {
+      "type": "comment",
+      "pattern": "#.*$|//.*$|/\\*[\\s\\S]*?\\*/",
+      "modifiers": ["documentation"],
+      "description": "Hash, double-slash, and block comments"
+    },
+    {
+      "type": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|<<-?[A-Z]+[\\s\\S]*?^\\s*[A-Z]+",
+      "modifiers": [],
+      "description": "Quoted strings and heredoc syntax"
+    }
+  ]
+}

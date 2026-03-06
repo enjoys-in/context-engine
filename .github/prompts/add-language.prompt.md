@@ -21,7 +21,7 @@ Create these files:
 | # | File | Monaco Provider | Description |
 |---|------|----------------|-------------|
 | 1 | `data/completion/{{input}}.json` | `registerCompletionItemProvider` | Autocomplete items (keywords, built-ins, snippets, stdlib) |
-| 2 | `data/defination/{{input}}.json` | `registerDefinitionProvider` | Symbol definitions / Go-to-Definition data *(folder intentionally spelled "defination")* |
+| 2 | `data/definition/{{input}}.json` | `registerDefinitionProvider` | Symbol definitions / Go-to-Definition data |
 | 3 | `data/hover/{{input}}.json` | `registerHoverProvider` | Hover tooltips |
 | 4 | `data/commands/{{input}}.json` | — | Terminal commands & CLI actions |
 | 5 | `data/codeActions/{{input}}.json` | `registerCodeActionProvider` | Quick-fix & refactor actions |
@@ -84,7 +84,7 @@ Include **comprehensive** coverage: all keywords, built-in functions, standard l
 
 ---
 
-## 2. Format: Definition (`data/defination/{lang}.json`)
+## 2. Format: Definition (`data/definition/{lang}.json`)
 
 > Maps to `DefinitionProvider` → `Definition | LocationLink[]`
 
@@ -586,7 +586,7 @@ After creating all files, update `data/manifest.json` — add an entry in the `l
   "name": "{Display Name}",
   "files": {
     "completion": "completion/{lang_id}.json",
-    "defination": "defination/{lang_id}.json",
+    "definition": "definition/{lang_id}.json",
     "hover": "hover/{lang_id}.json",
     "codeActions": "codeActions/{lang_id}.json",
     "documentHighlight": "documentHighlight/{lang_id}.json",
@@ -635,4 +635,4 @@ Also update `data/commands/manifest.json` to include `"{lang_id}.json"` in the `
 ## Reference
 
 - **Monaco API types**: [MONACO_LANGUAGES_API.instructions.md](../../MONACO_LANGUAGES_API.instructions.md) — all enums, interfaces, and register functions
-- **Existing examples**: [data/completion/lua.json](../../data/completion/lua.json), [data/defination/lua.json](../../data/defination/lua.json), [data/hover/lua.json](../../data/hover/lua.json)
+- **Existing examples**: [data/completion/lua.json](../../data/completion/lua.json), [data/definition/lua.json](../../data/definition/lua.json), [data/hover/lua.json](../../data/hover/lua.json)

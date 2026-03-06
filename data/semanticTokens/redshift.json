@@ -1,0 +1,77 @@
+{
+  "language": "redshift",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "variable", "function", "keyword", "modifier", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|UNION|ALL|INTO|VALUES|SET|AS|WITH|RECURSIVE|TABLE|VIEW|SCHEMA|INDEX|GRANT|REVOKE|BEGIN|COMMIT|ROLLBACK|EXPLAIN|ANALYZE|VACUUM|TRUNCATE)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Standard SQL and Redshift DDL/DML keywords"
+    },
+    {
+      "type": "modifier",
+      "pattern": "\\b(DISTKEY|SORTKEY|DISTSTYLE|COMPOUND|INTERLEAVED|EVEN|KEY|ALL|AUTO|ENCODE|RAW|AZ64|BYTEDICT|DELTA|DELTA32K|LZO|MOSTLY8|MOSTLY16|MOSTLY32|RUNLENGTH|TEXT255|TEXT32K|ZSTD)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Redshift distribution keys, sort keys, and compression encodings"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(COPY|UNLOAD)\\s+",
+      "modifiers": ["defaultLibrary"],
+      "description": "COPY and UNLOAD commands for data loading/exporting"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(FROM|TO)\\s+'s3://[^']*'",
+      "modifiers": [],
+      "description": "S3 path references in COPY/UNLOAD statements"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(EXTERNAL\\s+SCHEMA|EXTERNAL\\s+TABLE|SPECTRUM)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Redshift Spectrum external schema and table references"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(SMALLINT|INT2|INTEGER|INT|INT4|BIGINT|INT8|DECIMAL|NUMERIC|REAL|FLOAT4|DOUBLE\\s+PRECISION|FLOAT8|FLOAT|BOOLEAN|BOOL|CHAR|CHARACTER|NCHAR|BPCHAR|VARCHAR|CHARACTER\\s+VARYING|NVARCHAR|TEXT|DATE|TIMESTAMP|TIMESTAMPTZ|TIME|TIMETZ|SUPER|GEOMETRY|GEOGRAPHY|HLLSKETCH|VARBYTE)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Redshift data types"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(NVL|NVL2|DECODE|GETDATE|SYSDATE|DATEADD|DATEDIFF|DATE_TRUNC|CONVERT_TIMEZONE|JSON_EXTRACT_PATH_TEXT|JSON_PARSE|LISTAGG|APPROXIMATE\\s+COUNT|MEDIAN|PERCENTILE_CONT|PERCENTILE_DISC|RATIO_TO_REPORT|CUME_DIST|DENSE_RANK|RANK|ROW_NUMBER|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|STRTOL|LEN|CHARINDEX|REGEXP_SUBSTR|REGEXP_REPLACE|REGEXP_COUNT)\\s*\\(",
+      "modifiers": ["defaultLibrary"],
+      "description": "Redshift built-in and window functions"
+    },
+    {
+      "type": "namespace",
+      "pattern": "\\b(CREATE\\s+SCHEMA|CREATE\\s+EXTERNAL\\s+SCHEMA)\\s+(\\w+)",
+      "modifiers": ["declaration"],
+      "description": "Schema declarations including external schemas"
+    },
+    {
+      "type": "comment",
+      "pattern": "--[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "modifiers": [],
+      "description": "Single-line and multi-line SQL comments"
+    },
+    {
+      "type": "string",
+      "pattern": "'([^'\\\\]|\\\\.)*'",
+      "modifiers": [],
+      "description": "String literals in single quotes"
+    },
+    {
+      "type": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "modifiers": [],
+      "description": "Numeric literals"
+    }
+  ]
+}

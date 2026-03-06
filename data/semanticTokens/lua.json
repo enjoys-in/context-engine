@@ -1,0 +1,77 @@
+{
+  "language": "lua",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "variable", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\b(function|local|end|return|if|then|elseif|else|for|in|do|while|repeat|until|break|goto|and|or|not|nil|true|false)\\b",
+      "modifiers": [],
+      "description": "Lua language keywords"
+    },
+    {
+      "type": "function",
+      "pattern": "(?<=function\\s+)[a-zA-Z_][a-zA-Z0-9_.]*",
+      "modifiers": ["declaration"],
+      "description": "Named function declarations"
+    },
+    {
+      "type": "function",
+      "pattern": "(?<=local\\s+function\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "modifiers": ["declaration"],
+      "description": "Local function declarations"
+    },
+    {
+      "type": "variable",
+      "pattern": "(?<=local\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "modifiers": ["declaration"],
+      "description": "Local variable declarations"
+    },
+    {
+      "type": "property",
+      "pattern": "\\{[^}]*\\}",
+      "modifiers": [],
+      "description": "Table constructor expressions"
+    },
+    {
+      "type": "method",
+      "pattern": "(?<=:)[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()",
+      "modifiers": [],
+      "description": "Method calls using colon operator (self-passing)"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(require|dofile|loadfile|pcall|xpcall|setmetatable|getmetatable|rawget|rawset|rawequal|type|tostring|tonumber|print|error|assert|pairs|ipairs|next|select|unpack|table\\.\\w+|string\\.\\w+|math\\.\\w+|io\\.\\w+|os\\.\\w+)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Built-in functions and standard library functions"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bself\\b",
+      "modifiers": [],
+      "description": "Self reference in methods"
+    },
+    {
+      "type": "operator",
+      "pattern": "(\\.\\.|\\.\\.\\.|\\.\\.|~=|==|<=|>=|<<|>>|//|#)",
+      "modifiers": [],
+      "description": "Lua operators: concatenation, varargs, comparison, length"
+    },
+    {
+      "type": "comment",
+      "pattern": "--\\[\\[[\\s\\S]*?\\]\\]|--.*$",
+      "modifiers": ["documentation"],
+      "description": "Single-line and long bracket comments"
+    },
+    {
+      "type": "string",
+      "pattern": "\\[\\[[\\s\\S]*?\\]\\]|\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
+      "modifiers": [],
+      "description": "Long bracket strings, double-quoted and single-quoted strings"
+    }
+  ]
+}

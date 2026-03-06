@@ -1,0 +1,111 @@
+{
+  "language": "bash",
+  "triggerCharacters": ["(", ",", " "],
+  "retriggerCharacters": [" "],
+  "signatures": [
+    {
+      "label": "echo [-n] [-e] [string ...]",
+      "documentation": { "value": "Outputs the given strings to standard output.\n```bash\necho \"Hello World\"\necho -n \"No newline\"\necho -e \"Line1\\nLine2\"\n```" },
+      "parameters": [
+        { "label": "-n", "documentation": { "value": "Do not output the trailing newline." } },
+        { "label": "-e", "documentation": { "value": "Enable interpretation of backslash escapes (`\\n`, `\\t`, etc.)." } },
+        { "label": "string ...", "documentation": { "value": "One or more strings to output." } }
+      ]
+    },
+    {
+      "label": "read [-r] [-p prompt] [-t timeout] [-d delim] [name ...]",
+      "documentation": { "value": "Reads a line of input and splits it into variables.\n```bash\nread -p \"Enter name: \" name\nread -r line < file.txt\nread -t 5 -p \"Quick! \" answer\n```" },
+      "parameters": [
+        { "label": "-r", "documentation": { "value": "Do not treat backslashes as escape characters." } },
+        { "label": "-p prompt", "documentation": { "value": "Display `prompt` before reading input (without trailing newline)." } },
+        { "label": "-t timeout", "documentation": { "value": "Time out and return failure after `timeout` seconds." } },
+        { "label": "-d delim", "documentation": { "value": "Use `delim` as the line delimiter instead of newline." } },
+        { "label": "name ...", "documentation": { "value": "Variable name(s) to assign input to. Defaults to `REPLY` if omitted." } }
+      ]
+    },
+    {
+      "label": "printf format [arguments ...]",
+      "documentation": { "value": "Formats and prints data according to a format string.\n```bash\nprintf \"%s is %d years old\\n\" \"Alice\" 30\nprintf \"%05d\\n\" 42\n```" },
+      "parameters": [
+        { "label": "format", "documentation": { "value": "A format string using `%s` (string), `%d` (integer), `%f` (float), `%x` (hex), etc." } },
+        { "label": "arguments ...", "documentation": { "value": "Arguments to substitute into the format string." } }
+      ]
+    },
+    {
+      "label": "test expression / [ expression ]",
+      "documentation": { "value": "Evaluates a conditional expression and returns 0 (true) or 1 (false).\n```bash\ntest -f /etc/passwd && echo \"File exists\"\n[ -d /tmp ] && echo \"Directory exists\"\n[ \"$a\" = \"$b\" ] && echo \"Equal\"\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "A conditional expression: `-f file`, `-d dir`, `-z string`, `-n string`, `s1 = s2`, `n1 -eq n2`, etc." } }
+      ]
+    },
+    {
+      "label": "declare [-a] [-A] [-i] [-r] [-x] [name[=value] ...]",
+      "documentation": { "value": "Declares variables and sets attributes.\n```bash\ndeclare -i num=42\ndeclare -a arr=(1 2 3)\ndeclare -A map=([key1]=val1 [key2]=val2)\ndeclare -r CONST=\"immutable\"\n```" },
+      "parameters": [
+        { "label": "-a", "documentation": { "value": "Declare an indexed array variable." } },
+        { "label": "-A", "documentation": { "value": "Declare an associative array variable." } },
+        { "label": "-i", "documentation": { "value": "Give the variable the integer attribute." } },
+        { "label": "-r", "documentation": { "value": "Make the variable readonly." } },
+        { "label": "-x", "documentation": { "value": "Mark the variable for export to child processes." } },
+        { "label": "name[=value]", "documentation": { "value": "Variable name with optional initial value." } }
+      ]
+    },
+    {
+      "label": "local [name[=value] ...]",
+      "documentation": { "value": "Creates a local variable within a function.\n```bash\nmy_func() {\n  local name=\"Alice\"\n  local -i count=0\n  echo \"$name\"\n}\n```" },
+      "parameters": [
+        { "label": "name[=value]", "documentation": { "value": "Variable name with optional initial value, scoped to the current function." } }
+      ]
+    },
+    {
+      "label": "export [-n] [name[=value] ...]",
+      "documentation": { "value": "Marks variables for export to child processes.\n```bash\nexport PATH=\"/usr/local/bin:$PATH\"\nexport MY_VAR=\"hello\"\nexport -n MY_VAR  # unexport\n```" },
+      "parameters": [
+        { "label": "-n", "documentation": { "value": "Remove the export property from the variable." } },
+        { "label": "name[=value]", "documentation": { "value": "Variable name with optional value to export." } }
+      ]
+    },
+    {
+      "label": "source filename [arguments]",
+      "documentation": { "value": "Reads and executes commands from `filename` in the current shell.\n```bash\nsource ~/.bashrc\nsource ./config.sh arg1 arg2\n. ./env.sh\n```" },
+      "parameters": [
+        { "label": "filename", "documentation": { "value": "The file to source (execute in current shell)." } },
+        { "label": "arguments", "documentation": { "value": "Optional positional parameters passed to the sourced script." } }
+      ]
+    },
+    {
+      "label": "trap [-l] [action] [signal ...]",
+      "documentation": { "value": "Defines actions to execute when the shell receives a signal.\n```bash\ntrap 'echo Interrupted; exit' INT TERM\ntrap 'rm -f /tmp/lockfile' EXIT\ntrap '' SIGINT  # ignore SIGINT\n```" },
+      "parameters": [
+        { "label": "action", "documentation": { "value": "Command string to execute when signal is received. Use `''` to ignore, `-` to reset." } },
+        { "label": "signal ...", "documentation": { "value": "One or more signal names or numbers: `EXIT`, `INT`, `TERM`, `HUP`, `ERR`, `DEBUG`, etc." } }
+      ]
+    },
+    {
+      "label": "set [-e] [-u] [-x] [-o option]",
+      "documentation": { "value": "Sets or unsets shell options and positional parameters.\n```bash\nset -euo pipefail\nset -x  # enable debug tracing\nset +x  # disable debug tracing\n```" },
+      "parameters": [
+        { "label": "-e", "documentation": { "value": "Exit immediately if a command exits with non-zero status." } },
+        { "label": "-u", "documentation": { "value": "Treat unset variables as an error." } },
+        { "label": "-x", "documentation": { "value": "Print each command before executing (debug mode)." } },
+        { "label": "-o option", "documentation": { "value": "Set option by name: `pipefail`, `noclobber`, `nounset`, etc." } }
+      ]
+    },
+    {
+      "label": "shift [n]",
+      "documentation": { "value": "Shifts positional parameters to the left by `n` (default 1).\n```bash\nwhile [ \"$#\" -gt 0 ]; do\n  echo \"$1\"\n  shift\ndone\n```" },
+      "parameters": [
+        { "label": "n", "documentation": { "value": "Number of positions to shift. Defaults to 1." } }
+      ]
+    },
+    {
+      "label": "getopts optstring name [args]",
+      "documentation": { "value": "Parses positional parameters as options.\n```bash\nwhile getopts \"hf:v\" opt; do\n  case $opt in\n    h) usage ;;\n    f) file=\"$OPTARG\" ;;\n    v) verbose=1 ;;\n  esac\ndone\n```" },
+      "parameters": [
+        { "label": "optstring", "documentation": { "value": "A string of option characters. A colon after a character means it takes an argument (e.g. `\"f:v\"`)." } },
+        { "label": "name", "documentation": { "value": "Variable name to store the current option character." } },
+        { "label": "args", "documentation": { "value": "Optional arguments to parse instead of positional parameters." } }
+      ]
+    }
+  ]
+}

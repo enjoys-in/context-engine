@@ -1,0 +1,59 @@
+{
+  "language": "pla",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["keyword", "variable", "number", "comment", "operator", "type", "property"],
+    "tokenModifiers": ["declaration", "definition", "readonly"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\.(i|o|ilb|ob|p|e|type|phase)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "PLA format directives: .i (inputs), .o (outputs), .p (products), .e (end)"
+    },
+    {
+      "type": "number",
+      "pattern": "\\b\\d+\\b",
+      "modifiers": [],
+      "description": "Numeric values for input/output counts and field sizes"
+    },
+    {
+      "type": "variable",
+      "pattern": "[01-~]+\\s+[01-~]+",
+      "modifiers": [],
+      "description": "Truth table entries with input and output columns (0, 1, -, ~)"
+    },
+    {
+      "type": "property",
+      "pattern": "(?<=\\.ilb\\s+)[\\w\\s]+",
+      "modifiers": ["declaration"],
+      "description": "Input label names declared after .ilb directive"
+    },
+    {
+      "type": "property",
+      "pattern": "(?<=\\.ob\\s+)[\\w\\s]+",
+      "modifiers": ["declaration"],
+      "description": "Output label names declared after .ob directive"
+    },
+    {
+      "type": "comment",
+      "pattern": "#[^\\n]*",
+      "modifiers": [],
+      "description": "Comment lines starting with #"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(fr|fd|dr|f|r|d)\\b",
+      "modifiers": ["readonly"],
+      "description": "PLA type specifiers for output format (e.g., fr, fd, f, r, d)"
+    },
+    {
+      "type": "operator",
+      "pattern": "[-~]",
+      "modifiers": [],
+      "description": "Don't-care (-) and complement (~) operators in table entries"
+    }
+  ]
+}

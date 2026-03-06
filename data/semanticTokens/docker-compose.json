@@ -1,0 +1,65 @@
+{
+  "language": "docker-compose",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["keyword", "property", "variable", "string", "namespace", "type", "number"],
+    "tokenModifiers": ["declaration", "definition", "readonly"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "^(services|volumes|networks|configs|secrets):",
+      "modifiers": [],
+      "description": "Top-level compose keys"
+    },
+    {
+      "type": "namespace",
+      "pattern": "^\\s{2}([a-zA-Z_][a-zA-Z0-9_-]*):",
+      "modifiers": ["declaration"],
+      "description": "Service name declarations"
+    },
+    {
+      "type": "property",
+      "pattern": "\\b(image|build|ports|volumes|environment|depends_on|networks|restart|command|entrypoint|container_name|hostname|working_dir|healthcheck|deploy|labels|logging):",
+      "modifiers": [],
+      "description": "Service configuration properties"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*)(?::-[^}]*)?\\}",
+      "modifiers": [],
+      "description": "Environment variable interpolation (${VAR}, ${VAR:-default})"
+    },
+    {
+      "type": "string",
+      "pattern": "\\b([a-z][a-z0-9_.-]*/[a-z][a-z0-9_.-]*(?::[a-zA-Z0-9_.-]+)?)\\b",
+      "modifiers": ["readonly"],
+      "description": "Docker image references (registry/image:tag)"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(bridge|host|overlay|macvlan|none)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Network driver types"
+    },
+    {
+      "type": "property",
+      "pattern": "\\b(driver|external|name|driver_opts|attachable|internal|ipam):",
+      "modifiers": [],
+      "description": "Volume and network sub-properties"
+    },
+    {
+      "type": "variable",
+      "pattern": "^\\s+- ([A-Z_][A-Z0-9_]*)=",
+      "modifiers": ["definition"],
+      "description": "Environment variable definitions in lists"
+    },
+    {
+      "type": "number",
+      "pattern": "\"?([0-9]+):([0-9]+)\"?",
+      "modifiers": [],
+      "description": "Port mappings (host:container)"
+    }
+  ]
+}

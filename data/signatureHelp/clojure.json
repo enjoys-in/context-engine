@@ -1,0 +1,126 @@
+{
+  "language": "clojure",
+  "triggerCharacters": ["(", " "],
+  "retriggerCharacters": [" "],
+  "signatures": [
+    {
+      "label": "(map f coll): lazy-seq",
+      "documentation": { "value": "Returns a lazy sequence of applying `f` to each element of `coll`.\n```clojure\n(map inc [1 2 3])       ;=> (2 3 4)\n(map + [1 2] [3 4])     ;=> (4 6)\n(map str [1 2 3])       ;=> (\"1\" \"2\" \"3\")\n```" },
+      "parameters": [
+        { "label": "f", "documentation": { "value": "A function to apply to each element." } },
+        { "label": "coll", "documentation": { "value": "One or more collections. If multiple, `f` receives one element from each." } }
+      ]
+    },
+    {
+      "label": "(filter pred coll): lazy-seq",
+      "documentation": { "value": "Returns a lazy sequence of items in `coll` for which `pred` returns truthy.\n```clojure\n(filter even? [1 2 3 4 5]) ;=> (2 4)\n(filter #(> % 3) [1 5 2 4]) ;=> (5 4)\n```" },
+      "parameters": [
+        { "label": "pred", "documentation": { "value": "A predicate function that returns truthy/falsey." } },
+        { "label": "coll", "documentation": { "value": "The collection to filter." } }
+      ]
+    },
+    {
+      "label": "(reduce f init coll): value",
+      "documentation": { "value": "Reduces a collection to a single value using `f`.\n```clojure\n(reduce + [1 2 3 4])       ;=> 10\n(reduce + 0 [1 2 3 4])     ;=> 10\n(reduce conj [] '(1 2 3))  ;=> [1 2 3]\n```" },
+      "parameters": [
+        { "label": "f", "documentation": { "value": "A reducing function `(fn [acc val] ...)` of two arguments." } },
+        { "label": "init", "documentation": { "value": "Optional initial value. If not supplied, first element of `coll` is used." } },
+        { "label": "coll", "documentation": { "value": "The collection to reduce." } }
+      ]
+    },
+    {
+      "label": "(println & args): nil",
+      "documentation": { "value": "Prints arguments separated by spaces followed by a newline to *out*.\n```clojure\n(println \"Hello\" \"World\") ; prints: Hello World\n(println {:a 1})           ; prints: {:a 1}\n```" },
+      "parameters": [
+        { "label": "args", "documentation": { "value": "Zero or more values to print." } }
+      ]
+    },
+    {
+      "label": "(str & args): string",
+      "documentation": { "value": "Concatenates the string representations of its arguments.\n```clojure\n(str \"Hello\" \" \" \"World\")  ;=> \"Hello World\"\n(str 1 2 3)                ;=> \"123\"\n(str nil)                  ;=> \"\"\n```" },
+      "parameters": [
+        { "label": "args", "documentation": { "value": "Zero or more values. `nil` becomes empty string." } }
+      ]
+    },
+    {
+      "label": "(conj coll & xs): coll",
+      "documentation": { "value": "Adds elements to a collection. Position depends on collection type (end for vectors, front for lists).\n```clojure\n(conj [1 2] 3)       ;=> [1 2 3]\n(conj '(1 2) 3)      ;=> (3 1 2)\n(conj #{1 2} 3)      ;=> #{1 2 3}\n```" },
+      "parameters": [
+        { "label": "coll", "documentation": { "value": "The collection to add to. Can be vector, list, set, or map." } },
+        { "label": "xs", "documentation": { "value": "One or more elements to add." } }
+      ]
+    },
+    {
+      "label": "(assoc map key val & kvs): map",
+      "documentation": { "value": "Associates key-value pairs with a map or vector.\n```clojure\n(assoc {} :a 1 :b 2)      ;=> {:a 1, :b 2}\n(assoc [1 2 3] 1 :two)    ;=> [1 :two 3]\n```" },
+      "parameters": [
+        { "label": "map", "documentation": { "value": "A map or vector." } },
+        { "label": "key", "documentation": { "value": "The key (or index for vectors)." } },
+        { "label": "val", "documentation": { "value": "The value to associate." } },
+        { "label": "kvs", "documentation": { "value": "Additional key-value pairs." } }
+      ]
+    },
+    {
+      "label": "(get map key not-found?): value",
+      "documentation": { "value": "Returns the value for `key` in `map`, or `not-found`/nil.\n```clojure\n(get {:a 1 :b 2} :a)        ;=> 1\n(get {:a 1} :c :default)    ;=> :default\n```" },
+      "parameters": [
+        { "label": "map", "documentation": { "value": "A map, vector, set, or string." } },
+        { "label": "key", "documentation": { "value": "The key to look up." } },
+        { "label": "not-found?", "documentation": { "value": "Optional value to return if key is not found (default `nil`)." } }
+      ]
+    },
+    {
+      "label": "(apply f args & more): value",
+      "documentation": { "value": "Applies function `f` to the argument list formed by prepending `args` to `more`.\n```clojure\n(apply + [1 2 3])        ;=> 6\n(apply str [\"a\" \"b\" \"c\"]) ;=> \"abc\"\n(apply max 1 2 [3 4])   ;=> 4\n```" },
+      "parameters": [
+        { "label": "f", "documentation": { "value": "The function to apply." } },
+        { "label": "args", "documentation": { "value": "Arguments, with the last being a sequence." } }
+      ]
+    },
+    {
+      "label": "(partial f & args): fn",
+      "documentation": { "value": "Returns a function that is `f` with some arguments pre-filled.\n```clojure\n(def add5 (partial + 5))\n(add5 3)   ;=> 8\n(add5 10)  ;=> 15\n```" },
+      "parameters": [
+        { "label": "f", "documentation": { "value": "The function to partially apply." } },
+        { "label": "args", "documentation": { "value": "Arguments to pre-fill." } }
+      ]
+    },
+    {
+      "label": "(comp & fns): fn",
+      "documentation": { "value": "Returns a function that is the composition of `fns` (right to left).\n```clojure\n((comp str inc) 1)           ;=> \"2\"\n((comp clojure.string/upper-case str) 42) ;=> \"42\"\n```" },
+      "parameters": [
+        { "label": "fns", "documentation": { "value": "Functions to compose, applied right to left." } }
+      ]
+    },
+    {
+      "label": "(first coll): value",
+      "documentation": { "value": "Returns the first element of a collection, or `nil` if empty.\n```clojure\n(first [1 2 3])  ;=> 1\n(first '())      ;=> nil\n```" },
+      "parameters": [
+        { "label": "coll", "documentation": { "value": "A collection or sequence." } }
+      ]
+    },
+    {
+      "label": "(rest coll): seq",
+      "documentation": { "value": "Returns a sequence of all elements except the first. Returns `()` if empty.\n```clojure\n(rest [1 2 3])  ;=> (2 3)\n(rest [1])      ;=> ()\n```" },
+      "parameters": [
+        { "label": "coll", "documentation": { "value": "A collection or sequence." } }
+      ]
+    },
+    {
+      "label": "(cons x seq): list",
+      "documentation": { "value": "Returns a new sequence with `x` as the first element and `seq` as the rest.\n```clojure\n(cons 0 [1 2 3])  ;=> (0 1 2 3)\n(cons :a nil)     ;=> (:a)\n```" },
+      "parameters": [
+        { "label": "x", "documentation": { "value": "The element to prepend." } },
+        { "label": "seq", "documentation": { "value": "The rest of the sequence." } }
+      ]
+    },
+    {
+      "label": "(into to from): coll",
+      "documentation": { "value": "Returns a new collection with all items from `from` conjoined into `to`.\n```clojure\n(into [] '(1 2 3))          ;=> [1 2 3]\n(into #{} [1 2 2 3])        ;=> #{1 2 3}\n(into {} [[:a 1] [:b 2]])   ;=> {:a 1, :b 2}\n```" },
+      "parameters": [
+        { "label": "to", "documentation": { "value": "The target collection." } },
+        { "label": "from", "documentation": { "value": "The source collection whose items are added." } }
+      ]
+    }
+  ]
+}

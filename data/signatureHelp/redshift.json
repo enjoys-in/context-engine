@@ -1,0 +1,105 @@
+{
+  "language": "redshift",
+  "triggerCharacters": ["(", ","],
+  "retriggerCharacters": [","],
+  "signatures": [
+    {
+      "label": "SELECT column1, column2 FROM table_name WHERE condition",
+      "documentation": { "value": "Retrieves rows from Amazon Redshift tables. Optimized for columnar storage and massively parallel processing." },
+      "parameters": [
+        { "label": "column1, column2", "documentation": { "value": "The columns to retrieve. Use * for all columns." } },
+        { "label": "table_name", "documentation": { "value": "The table or view to query." } },
+        { "label": "condition", "documentation": { "value": "Optional WHERE clause for filtering." } }
+      ]
+    },
+    {
+      "label": "COPY table_name FROM 's3://bucket/path' IAM_ROLE 'arn:aws:iam::role' FORMAT AS format",
+      "documentation": { "value": "Loads data from Amazon S3 into a Redshift table. The most efficient way to load large datasets." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The target table to load data into." } },
+        { "label": "s3://bucket/path", "documentation": { "value": "The S3 path containing the source data files." } },
+        { "label": "IAM_ROLE", "documentation": { "value": "The ARN of the IAM role with S3 read permissions." } },
+        { "label": "FORMAT AS format", "documentation": { "value": "The data format: CSV, JSON, AVRO, PARQUET, ORC, DELIMITER." } }
+      ]
+    },
+    {
+      "label": "UNLOAD ('select_statement') TO 's3://bucket/path' IAM_ROLE 'arn:aws:iam::role' FORMAT AS format",
+      "documentation": { "value": "Unloads the result of a query to one or more files in Amazon S3." },
+      "parameters": [
+        { "label": "select_statement", "documentation": { "value": "The SELECT query whose results will be unloaded." } },
+        { "label": "s3://bucket/path", "documentation": { "value": "The S3 destination path for the output files." } },
+        { "label": "IAM_ROLE", "documentation": { "value": "The ARN of the IAM role with S3 write permissions." } },
+        { "label": "FORMAT AS format", "documentation": { "value": "The output format: CSV, PARQUET, JSON, DELIMITER." } }
+      ]
+    },
+    {
+      "label": "CREATE TABLE table_name (column1 type, column2 type) DISTSTYLE style SORTKEY (column)",
+      "documentation": { "value": "Creates a new Redshift table with optional distribution style and sort keys for query optimization." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The name of the table (optionally schema-qualified)." } },
+        { "label": "column1 type", "documentation": { "value": "Column definitions. Redshift types: SMALLINT, INT, BIGINT, DECIMAL, REAL, DOUBLE, BOOLEAN, CHAR, VARCHAR, DATE, TIMESTAMP." } },
+        { "label": "DISTSTYLE style", "documentation": { "value": "Distribution style: EVEN, KEY, ALL, or AUTO." } },
+        { "label": "SORTKEY (column)", "documentation": { "value": "The sort key column(s) for optimizing query performance. Use COMPOUND or INTERLEAVED." } }
+      ]
+    },
+    {
+      "label": "ALTER TABLE table_name ADD COLUMN column_name type",
+      "documentation": { "value": "Modifies an existing table in Redshift. Supports ADD/DROP COLUMN, RENAME, owner changes." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The table to alter." } },
+        { "label": "column_name", "documentation": { "value": "The new column name." } },
+        { "label": "type", "documentation": { "value": "The data type of the new column." } }
+      ]
+    },
+    {
+      "label": "VACUUM [FULL | SORT ONLY | DELETE ONLY | REINDEX] [table_name] [TO threshold PERCENT]",
+      "documentation": { "value": "Reclaims disk space and resorts rows. Run after large DELETE or UPDATE operations." },
+      "parameters": [
+        { "label": "FULL | SORT ONLY | DELETE ONLY | REINDEX", "documentation": { "value": "FULL: reclaims space and resorts. SORT ONLY: resorts only. DELETE ONLY: reclaims space only. REINDEX: reinitializes interleaved sort keys." } },
+        { "label": "table_name", "documentation": { "value": "Optional. Specific table to vacuum. Without it, all tables are vacuumed." } },
+        { "label": "TO threshold PERCENT", "documentation": { "value": "Optional. The minimum percentage of rows to reclaim." } }
+      ]
+    },
+    {
+      "label": "ANALYZE [VERBOSE] [table_name [(column1, column2, ...)]]",
+      "documentation": { "value": "Updates table statistics for the query optimizer. Run after significant data changes." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "Optional. The specific table to analyze. Without it, all tables are analyzed." } },
+        { "label": "column1, column2", "documentation": { "value": "Optional. Specific columns to analyze." } }
+      ]
+    },
+    {
+      "label": "GRANT privilege ON object TO user_or_group",
+      "documentation": { "value": "Grants access privileges on database objects to users, groups, or roles." },
+      "parameters": [
+        { "label": "privilege", "documentation": { "value": "The privilege: SELECT, INSERT, UPDATE, DELETE, ALL, EXECUTE, USAGE, CREATE." } },
+        { "label": "object", "documentation": { "value": "The database object (TABLE name, SCHEMA name, DATABASE name, FUNCTION name)." } },
+        { "label": "user_or_group", "documentation": { "value": "The grantee: a user name, GROUP group_name, or PUBLIC." } }
+      ]
+    },
+    {
+      "label": "REVOKE privilege ON object FROM user_or_group",
+      "documentation": { "value": "Removes access privileges on database objects from users, groups, or roles." },
+      "parameters": [
+        { "label": "privilege", "documentation": { "value": "The privilege to revoke: SELECT, INSERT, UPDATE, DELETE, ALL, EXECUTE, USAGE, CREATE." } },
+        { "label": "object", "documentation": { "value": "The database object." } },
+        { "label": "user_or_group", "documentation": { "value": "The user, group, or PUBLIC to revoke from." } }
+      ]
+    },
+    {
+      "label": "SELECT * FROM STL_QUERY WHERE userid = user_id ORDER BY starttime DESC",
+      "documentation": { "value": "System table that logs query information. Useful for monitoring query history and performance." },
+      "parameters": [
+        { "label": "userid", "documentation": { "value": "Filter by user ID." } },
+        { "label": "starttime", "documentation": { "value": "The timestamp when the query started." } }
+      ]
+    },
+    {
+      "label": "SELECT * FROM SVV_TABLE_INFO WHERE schema = 'schema_name'",
+      "documentation": { "value": "System view that provides table storage and design information including distribution style, sort keys, and compression." },
+      "parameters": [
+        { "label": "schema", "documentation": { "value": "Filter by schema name." } }
+      ]
+    }
+  ]
+}

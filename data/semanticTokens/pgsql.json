@@ -1,0 +1,71 @@
+{
+  "language": "pgsql",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "function",
+      "pattern": "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?FUNCTION\\s+([\\w.]+)",
+      "modifiers": ["declaration"],
+      "description": "CREATE FUNCTION declarations for PL/pgSQL functions"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|OFFSET|UNION|INTO|VALUES|SET|RETURNING|WITH|RECURSIVE|AS|TABLE|INDEX|VIEW|SCHEMA|SEQUENCE|TRIGGER|EXTENSION|GRANT|REVOKE|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|EXPLAIN|ANALYZE|VACUUM|NOTIFY|LISTEN|PERFORM|RAISE|EXCEPTION|NOTICE|LOOP|EXIT|CONTINUE|FOREACH|EXECUTE|OPEN|CLOSE|FETCH|MOVE)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "PostgreSQL SQL and PL/pgSQL keywords"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(DECLARE|BEGIN|END|IF|THEN|ELSIF|ELSE|CASE|WHEN|LOOP|WHILE|FOR|IN|RETURN|RETURNS|LANGUAGE|PLPGSQL|SQL|VOLATILE|STABLE|IMMUTABLE|SECURITY\\s+DEFINER|SECURITY\\s+INVOKER)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "PL/pgSQL block structure and function attributes"
+    },
+    {
+      "type": "string",
+      "pattern": "\\$\\$[\\s\\S]*?\\$\\$|\\$[a-zA-Z_]*\\$[\\s\\S]*?\\$[a-zA-Z_]*\\$",
+      "modifiers": [],
+      "description": "Dollar-quoted string blocks used in function bodies"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(INTEGER|INT|BIGINT|SMALLINT|SERIAL|BIGSERIAL|NUMERIC|DECIMAL|REAL|DOUBLE\\s+PRECISION|FLOAT|TEXT|VARCHAR|CHAR|CHARACTER|BOOLEAN|BOOL|DATE|TIME|TIMESTAMP|TIMESTAMPTZ|INTERVAL|UUID|JSONB|JSON|BYTEA|ARRAY|RECORD|VOID|HSTORE|INET|CIDR|MACADDR|POINT|LINE|LSEG|BOX|PATH|POLYGON|CIRCLE|TSQUERY|TSVECTOR|REGCLASS|OID)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "PostgreSQL data types"
+    },
+    {
+      "type": "namespace",
+      "pattern": "\\b(CREATE\\s+SCHEMA|SET\\s+search_path)\\s+(?:TO\\s+)?([\\w,\\s]+)",
+      "modifiers": ["definition"],
+      "description": "Schema declarations and search path configuration"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\bNEW\\b|\\bOLD\\b|\\bTG_\\w+\\b|\\bFOUND\\b",
+      "modifiers": ["readonly", "defaultLibrary"],
+      "description": "Special PL/pgSQL variables in trigger and function context"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(array_agg|string_agg|json_build_object|jsonb_build_object|row_to_json|to_json|coalesce|nullif|greatest|least|generate_series|unnest|now|current_timestamp|current_date|pg_sleep|regexp_matches|regexp_replace)\\s*\\(",
+      "modifiers": ["defaultLibrary"],
+      "description": "Built-in PostgreSQL functions"
+    },
+    {
+      "type": "comment",
+      "pattern": "--[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "modifiers": [],
+      "description": "Single-line and multi-line SQL comments"
+    },
+    {
+      "type": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "modifiers": [],
+      "description": "Numeric literals"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "language": "julia",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "struct", "typeParameter", "parameter", "variable", "property", "function", "method", "macro", "keyword", "comment", "string", "number", "operator"],
+    "tokenModifiers": ["declaration", "definition", "abstract", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "keyword",
+      "pattern": "\\b(function|end|struct|module|macro|begin|let|if|elseif|else|for|while|do|try|catch|finally|return|break|continue|import|using|export|const|global|local|mutable|abstract|primitive|where|baremodule|quote)\\b",
+      "modifiers": [],
+      "description": "Julia language keywords"
+    },
+    {
+      "type": "function",
+      "pattern": "(?<=function\\s+)[a-zA-Z_][a-zA-Z0-9_!]*",
+      "modifiers": ["declaration"],
+      "description": "Function declarations including bang functions"
+    },
+    {
+      "type": "macro",
+      "pattern": "@[a-zA-Z_][a-zA-Z0-9_]*",
+      "modifiers": [],
+      "description": "Macro invocations like @show, @time, @assert"
+    },
+    {
+      "type": "struct",
+      "pattern": "(?<=(?:mutable\\s+)?struct\\s+)[A-Z][a-zA-Z0-9_]*",
+      "modifiers": ["declaration"],
+      "description": "Struct type declarations, mutable and immutable"
+    },
+    {
+      "type": "namespace",
+      "pattern": "(?<=module\\s+)[A-Z][a-zA-Z0-9_]*",
+      "modifiers": ["declaration"],
+      "description": "Module declarations"
+    },
+    {
+      "type": "type",
+      "pattern": "(?<=::)\\s*[A-Z][a-zA-Z0-9_]*",
+      "modifiers": [],
+      "description": "Type annotations after :: operator"
+    },
+    {
+      "type": "operator",
+      "pattern": "(::|<:|>:|\\|>|\\.(?=[a-zA-Z(])|=>|\\.\\.\\.|∈|∘|⊂|⊃|∩|∪)",
+      "modifiers": [],
+      "description": "Type annotation ::, subtype <:, pipe |>, broadcast ., and Unicode operators"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b[a-z_][a-zA-Z0-9_!]*\\s*(?=\\([^)]*\\)\\s*where)",
+      "modifiers": ["definition"],
+      "description": "Method definitions with multiple dispatch (where clause)"
+    },
+    {
+      "type": "type",
+      "pattern": "\\b(Int|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Bool|Char|String|Symbol|Nothing|Any|Union|Tuple|NamedTuple|Array|Vector|Matrix|Dict|Set)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Built-in types in the Julia standard library"
+    },
+    {
+      "type": "comment",
+      "pattern": "#=.*?=#|#.*$",
+      "modifiers": ["documentation"],
+      "description": "Single-line and block comments"
+    },
+    {
+      "type": "string",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"|\"(?:[^\"\\\\]|\\\\.)*\"",
+      "modifiers": [],
+      "description": "Triple-quoted and regular string literals"
+    }
+  ]
+}

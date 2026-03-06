@@ -1,0 +1,82 @@
+{
+  "language": "docker-compose",
+  "triggerCharacters": [" ", ":"],
+  "retriggerCharacters": [" "],
+  "signatures": [
+    {
+      "label": "services.<name>.image: <image>[:<tag>]",
+      "documentation": { "value": "Specifies the Docker image to use for the service.\n```yaml\nservices:\n  web:\n    image: nginx:latest\n  db:\n    image: postgres:16-alpine\n```" },
+      "parameters": [
+        { "label": "image", "documentation": { "value": "The Docker image name (e.g. `nginx`, `postgres`, `node`)." } },
+        { "label": "tag", "documentation": { "value": "Optional image tag (e.g. `latest`, `16-alpine`, `3.12-slim`)." } }
+      ]
+    },
+    {
+      "label": "services.<name>.build: <context> | { context, dockerfile, args, target }",
+      "documentation": { "value": "Configures how to build the image for this service.\n```yaml\nservices:\n  app:\n    build: .\n  app2:\n    build:\n      context: ./backend\n      dockerfile: Dockerfile.prod\n      args:\n        NODE_ENV: production\n      target: production\n```" },
+      "parameters": [
+        { "label": "context", "documentation": { "value": "Build context path (e.g. `.`, `./app`)." } },
+        { "label": "dockerfile", "documentation": { "value": "Path to the Dockerfile relative to context." } },
+        { "label": "args", "documentation": { "value": "Build arguments passed to the Dockerfile as `ARG`." } },
+        { "label": "target", "documentation": { "value": "Multi-stage build target to build." } }
+      ]
+    },
+    {
+      "label": "services.<name>.ports: [\"<host>:<container>\", ...]",
+      "documentation": { "value": "Exposes container ports to the host.\n```yaml\nservices:\n  web:\n    ports:\n      - \"8080:80\"\n      - \"443:443\"\n      - \"127.0.0.1:3000:3000\"\n```" },
+      "parameters": [
+        { "label": "host", "documentation": { "value": "Host port or `[host_ip:]host_port`." } },
+        { "label": "container", "documentation": { "value": "Container port to expose." } }
+      ]
+    },
+    {
+      "label": "services.<name>.volumes: [\"<source>:<target>[:<mode>]\", ...]",
+      "documentation": { "value": "Mounts volumes or bind mounts into the container.\n```yaml\nservices:\n  app:\n    volumes:\n      - ./data:/app/data\n      - myvolume:/var/lib/data\n      - ./config.yml:/app/config.yml:ro\n```" },
+      "parameters": [
+        { "label": "source", "documentation": { "value": "Host path, named volume, or `tmpfs`. Use `.` for relative paths." } },
+        { "label": "target", "documentation": { "value": "Path inside the container where the volume is mounted." } },
+        { "label": "mode", "documentation": { "value": "Optional mount mode: `rw` (read-write, default) or `ro` (read-only)." } }
+      ]
+    },
+    {
+      "label": "services.<name>.environment: [\"KEY=value\", ...] | { KEY: value, ... }",
+      "documentation": { "value": "Sets environment variables in the container.\n```yaml\nservices:\n  app:\n    environment:\n      - NODE_ENV=production\n      - DATABASE_URL=postgres://db:5432/mydb\n    # or map syntax:\n    environment:\n      NODE_ENV: production\n      DATABASE_URL: postgres://db:5432/mydb\n```" },
+      "parameters": [
+        { "label": "KEY=value", "documentation": { "value": "Environment variable in `KEY=value` format." } }
+      ]
+    },
+    {
+      "label": "services.<name>.depends_on: [service1, service2] | { service1: { condition } }",
+      "documentation": { "value": "Defines service startup dependencies.\n```yaml\nservices:\n  app:\n    depends_on:\n      - db\n      - redis\n  # With conditions:\n  app:\n    depends_on:\n      db:\n        condition: service_healthy\n```" },
+      "parameters": [
+        { "label": "service", "documentation": { "value": "Name of the dependent service." } },
+        { "label": "condition", "documentation": { "value": "Startup condition: `service_started`, `service_healthy`, or `service_completed_successfully`." } }
+      ]
+    },
+    {
+      "label": "services.<name>.networks: [network1, network2]",
+      "documentation": { "value": "Connects the service to specified networks.\n```yaml\nservices:\n  app:\n    networks:\n      - frontend\n      - backend\nnetworks:\n  frontend:\n  backend:\n```" },
+      "parameters": [
+        { "label": "network", "documentation": { "value": "Name of a network defined in the top-level `networks` section." } }
+      ]
+    },
+    {
+      "label": "volumes.<name>: { driver, driver_opts, external }",
+      "documentation": { "value": "Defines a named volume.\n```yaml\nvolumes:\n  db_data:\n  my_external:\n    external: true\n  nfs_data:\n    driver: local\n    driver_opts:\n      type: nfs\n      o: addr=10.0.0.1,rw\n      device: \":/exported/path\"\n```" },
+      "parameters": [
+        { "label": "driver", "documentation": { "value": "Volume driver (default: `local`)." } },
+        { "label": "driver_opts", "documentation": { "value": "Driver-specific options as key-value pairs." } },
+        { "label": "external", "documentation": { "value": "If `true`, the volume is expected to already exist." } }
+      ]
+    },
+    {
+      "label": "networks.<name>: { driver, ipam, external }",
+      "documentation": { "value": "Defines a network.\n```yaml\nnetworks:\n  frontend:\n    driver: bridge\n  backend:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 172.28.0.0/16\n```" },
+      "parameters": [
+        { "label": "driver", "documentation": { "value": "Network driver: `bridge` (default), `host`, `overlay`, `none`." } },
+        { "label": "ipam", "documentation": { "value": "IP Address Management configuration (subnet, gateway, etc.)." } },
+        { "label": "external", "documentation": { "value": "If `true`, the network is expected to already exist." } }
+      ]
+    }
+  ]
+}

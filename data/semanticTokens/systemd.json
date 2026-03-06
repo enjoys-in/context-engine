@@ -1,0 +1,65 @@
+{
+  "language": "systemd",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "variable", "property", "keyword", "comment", "string", "number"],
+    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "namespace",
+      "pattern": "^\\[\\s*(Unit|Service|Timer|Socket|Mount|Automount|Swap|Path|Slice|Scope|Install)\\s*\\]",
+      "modifiers": ["declaration"],
+      "description": "Section headers like [Unit], [Service], [Timer]"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*(ExecStart|ExecStartPre|ExecStartPost|ExecStop|ExecStopPost|ExecReload|ExecCondition)\\s*=",
+      "modifiers": ["defaultLibrary"],
+      "description": "Exec directives for service commands"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*(Type|Restart|RestartSec|TimeoutStartSec|TimeoutStopSec|WatchdogSec|RemainAfterExit|GuessMainPID|PIDFile|BusName|NotifyAccess)\\s*=",
+      "modifiers": ["defaultLibrary"],
+      "description": "Service type and restart directives"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*(Description|Documentation|After|Before|Requires|Wants|BindsTo|PartOf|Conflicts|Condition[A-Za-z]*|Assert[A-Za-z]*)\\s*=",
+      "modifiers": ["defaultLibrary"],
+      "description": "Unit dependency and metadata directives"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*(WantedBy|RequiredBy|Also|DefaultInstance|Alias)\\s*=",
+      "modifiers": ["defaultLibrary"],
+      "description": "Install section directives"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(simple|exec|forking|oneshot|dbus|notify|idle|always|on-failure|on-abnormal|on-abort|on-watchdog|on-success|no)\\b",
+      "modifiers": [],
+      "description": "Common directive values for Type= and Restart="
+    },
+    {
+      "type": "variable",
+      "pattern": "%([nNpPiIfcrRtTsSCdDhHbBLjJGvVwW])",
+      "modifiers": [],
+      "description": "Systemd unit specifiers like %n, %i, %u"
+    },
+    {
+      "type": "property",
+      "pattern": "^\\s*(User|Group|WorkingDirectory|Environment|EnvironmentFile|StandardOutput|StandardError|SyslogIdentifier|PrivateTmp|ProtectSystem|ProtectHome|ReadOnlyPaths|NoNewPrivileges|LimitNOFILE|LimitNPROC)\\s*=",
+      "modifiers": ["defaultLibrary"],
+      "description": "Security, environment, and resource directives"
+    },
+    {
+      "type": "comment",
+      "pattern": "^\\s*[#;][^\\n]*",
+      "modifiers": [],
+      "description": "Comments starting with # or ;"
+    }
+  ]
+}

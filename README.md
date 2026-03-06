@@ -24,7 +24,7 @@ data/
 │   └── *.json       # subcommands, options, examples, context detectors
 ├── completion/      # 35 languages — Monaco completions (snippets, insertText)
 │   └── *.json       # ready-to-use CompletionItem[] for Monaco
-├── defination/      # 35 languages — definitions (signatures, descriptions)
+├── definition/      # 89 languages — definitions (signatures, descriptions)
 │   └── *.json       # keyword → { signature, description, type }
 ├── hover/           # 35 languages — hover documentation
 │   └── *.json       # keyword → { contents: [{ value }] }
@@ -42,7 +42,7 @@ import * as monaco from 'monaco-editor';
 
 // ── 1. Import language data (e.g., nginx) ──
 import nginxCompletions from '@enjoys/context-engine/completion/nginx.json';
-import nginxDefinitions from '@enjoys/context-engine/defination/nginx.json';
+import nginxDefinitions from '@enjoys/context-engine/definition/nginx.json';
 import nginxHovers from '@enjoys/context-engine/hover/nginx.json';
 
 // ── 2. Import command data ──
@@ -164,7 +164,7 @@ import manifest from '@enjoys/context-engine/data/manifest.json';
 for (const lang of manifest.languages) {
   const completionData = await import(`@enjoys/context-engine/${lang.files.completion}`);
   const hoverData = await import(`@enjoys/context-engine/${lang.files.hover}`);
-  const defData = await import(`@enjoys/context-engine/${lang.files.defination}`);
+  const defData = await import(`@enjoys/context-engine/${lang.files.definition}`);
 
   monaco.languages.registerCompletionItemProvider(lang.id, {
     provideCompletionItems(model, position) {
@@ -434,7 +434,7 @@ const git = require('@enjoys/context-engine/commands/git.json');
 
 // Language data
 const nginxCompletion = require('@enjoys/context-engine/completion/nginx.json');
-const nginxDefinition = require('@enjoys/context-engine/defination/nginx.json');
+const nginxDefinition = require('@enjoys/context-engine/definition/nginx.json');
 const nginxHover = require('@enjoys/context-engine/hover/nginx.json');
 
 // Manifest (all languages)
@@ -467,7 +467,7 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 `kind` values: `15` = Snippet, `5` = Field, `14` = Keyword, `9` = Function, `12` = Value, `6` = Variable  
 `insertTextRules`: `4` = InsertAsSnippet (supports `${1:placeholder}` tab stops)
 
-### Definition Item (`data/defination/*.json`)
+### Definition Item (`data/definition/*.json`)
 
 ```json
 {

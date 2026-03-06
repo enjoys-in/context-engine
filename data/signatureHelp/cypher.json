@@ -1,0 +1,103 @@
+{
+  "language": "cypher",
+  "triggerCharacters": ["(", ",", " "],
+  "retriggerCharacters": [",", " "],
+  "signatures": [
+    {
+      "label": "MATCH (pattern) WHERE condition RETURN expression",
+      "documentation": { "value": "Finds nodes and relationships matching a pattern in the graph.\n```cypher\nMATCH (n:Person) RETURN n\nMATCH (a:Person)-[:KNOWS]->(b:Person) WHERE a.name = 'Alice' RETURN b\nMATCH (n) WHERE n.age > 30 RETURN n.name, n.age\n```" },
+      "parameters": [
+        { "label": "pattern", "documentation": { "value": "A graph pattern with nodes `()` and relationships `-[]->`. Labels like `:Person`, properties like `{name: 'Alice'}`." } },
+        { "label": "condition", "documentation": { "value": "Optional WHERE clause to filter results." } },
+        { "label": "expression", "documentation": { "value": "What to return: nodes, properties, aggregations, aliases." } }
+      ]
+    },
+    {
+      "label": "CREATE (pattern)",
+      "documentation": { "value": "Creates new nodes and relationships in the graph.\n```cypher\nCREATE (n:Person {name: 'Alice', age: 30})\nCREATE (a)-[:KNOWS {since: 2020}]->(b)\n```" },
+      "parameters": [
+        { "label": "pattern", "documentation": { "value": "A graph pattern describing nodes/relationships to create, with labels and properties." } }
+      ]
+    },
+    {
+      "label": "MERGE (pattern) ON CREATE SET ... ON MATCH SET ...",
+      "documentation": { "value": "Ensures a pattern exists in the graph. Creates it if missing.\n```cypher\nMERGE (n:Person {name: 'Alice'})\nON CREATE SET n.created = timestamp()\nON MATCH SET n.lastSeen = timestamp()\n```" },
+      "parameters": [
+        { "label": "pattern", "documentation": { "value": "A graph pattern to match or create." } },
+        { "label": "ON CREATE SET", "documentation": { "value": "Properties to set when the pattern is newly created." } },
+        { "label": "ON MATCH SET", "documentation": { "value": "Properties to set when the pattern already exists." } }
+      ]
+    },
+    {
+      "label": "SET variable.property = value",
+      "documentation": { "value": "Updates properties on nodes or relationships.\n```cypher\nMATCH (n:Person {name: 'Alice'}) SET n.age = 31\nMATCH (n) SET n += {updated: true}\n```" },
+      "parameters": [
+        { "label": "variable.property", "documentation": { "value": "The node/relationship variable and property to set." } },
+        { "label": "value", "documentation": { "value": "The new value for the property." } }
+      ]
+    },
+    {
+      "label": "DELETE variable",
+      "documentation": { "value": "Deletes nodes and relationships from the graph.\n```cypher\nMATCH (n:Temp) DELETE n\nMATCH (n)-[r]-() DELETE r, n  -- DETACH DELETE is safer\nMATCH (n:Person {name: 'old'}) DETACH DELETE n\n```" },
+      "parameters": [
+        { "label": "variable", "documentation": { "value": "The node or relationship variable to delete. Use `DETACH DELETE` to also remove relationships." } }
+      ]
+    },
+    {
+      "label": "REMOVE variable.property",
+      "documentation": { "value": "Removes a property or label from a node or relationship.\n```cypher\nMATCH (n:Person {name: 'Alice'}) REMOVE n.age\nMATCH (n) REMOVE n:Temporary\n```" },
+      "parameters": [
+        { "label": "variable.property", "documentation": { "value": "The property to remove, or `variable:Label` to remove a label." } }
+      ]
+    },
+    {
+      "label": "toInteger(expression): Integer",
+      "documentation": { "value": "Converts a value to an integer.\n```cypher\nRETURN toInteger('42')      // 42\nRETURN toInteger(3.14)      // 3\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "A string or float value to convert." } }
+      ]
+    },
+    {
+      "label": "toString(expression): String",
+      "documentation": { "value": "Converts a value to a string.\n```cypher\nRETURN toString(42)         // '42'\nRETURN toString(true)       // 'true'\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "Any value to convert to its string representation." } }
+      ]
+    },
+    {
+      "label": "collect(expression): List",
+      "documentation": { "value": "Aggregates values into a list.\n```cypher\nMATCH (p:Person) RETURN collect(p.name) AS names\nMATCH (a)-[:KNOWS]->(b) RETURN a.name, collect(b.name) AS friends\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "The expression to collect into a list." } }
+      ]
+    },
+    {
+      "label": "count(expression): Integer",
+      "documentation": { "value": "Returns the number of values (excluding nulls) or rows.\n```cypher\nMATCH (n:Person) RETURN count(n)\nMATCH (n) RETURN count(DISTINCT n.city)\nRETURN count(*)\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "The expression to count. Use `*` for all rows, or a specific expression (nulls excluded)." } }
+      ]
+    },
+    {
+      "label": "sum(expression): Number",
+      "documentation": { "value": "Returns the sum of numeric values.\n```cypher\nMATCH (o:Order) RETURN sum(o.amount)\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "A numeric expression to sum." } }
+      ]
+    },
+    {
+      "label": "avg(expression): Float",
+      "documentation": { "value": "Returns the average of numeric values.\n```cypher\nMATCH (p:Person) RETURN avg(p.age)\n```" },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "A numeric expression to average." } }
+      ]
+    },
+    {
+      "label": "size(list_or_pattern): Integer",
+      "documentation": { "value": "Returns the number of elements in a list or the length of a string.\n```cypher\nRETURN size([1, 2, 3])       // 3\nRETURN size('hello')         // 5\nMATCH (a) RETURN a.name, size((a)-->()) AS degree\n```" },
+      "parameters": [
+        { "label": "list_or_pattern", "documentation": { "value": "A list, string, or pattern expression." } }
+      ]
+    }
+  ]
+}

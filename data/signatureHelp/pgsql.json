@@ -1,0 +1,126 @@
+{
+  "language": "pgsql",
+  "triggerCharacters": ["(", ","],
+  "retriggerCharacters": [","],
+  "signatures": [
+    {
+      "label": "SELECT column1, column2 FROM table_name WHERE condition",
+      "documentation": { "value": "Retrieves rows from one or more tables. The most commonly used SQL command in PostgreSQL." },
+      "parameters": [
+        { "label": "column1, column2", "documentation": { "value": "The columns to retrieve. Use * for all columns." } },
+        { "label": "table_name", "documentation": { "value": "The table or view to query from." } },
+        { "label": "condition", "documentation": { "value": "Optional WHERE clause to filter results." } }
+      ]
+    },
+    {
+      "label": "INSERT INTO table_name (column1, column2) VALUES (value1, value2) RETURNING *",
+      "documentation": { "value": "Inserts new rows into a table. PostgreSQL supports RETURNING clause to return inserted rows." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The target table." } },
+        { "label": "column1, column2", "documentation": { "value": "The columns to insert values into." } },
+        { "label": "value1, value2", "documentation": { "value": "The values to insert." } }
+      ]
+    },
+    {
+      "label": "UPDATE table_name SET column1 = value1 WHERE condition RETURNING *",
+      "documentation": { "value": "Modifies existing rows in a table. Supports RETURNING to return the updated rows." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The table to update." } },
+        { "label": "column1 = value1", "documentation": { "value": "The column-value assignments." } },
+        { "label": "condition", "documentation": { "value": "The WHERE clause to identify rows to update." } }
+      ]
+    },
+    {
+      "label": "CREATE TABLE table_name (column1 type, column2 type, ...)",
+      "documentation": { "value": "Creates a new table in the database. Supports PostgreSQL-specific types like SERIAL, JSONB, UUID, ARRAY." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The name of the new table (optionally schema-qualified)." } },
+        { "label": "column1 type", "documentation": { "value": "Column definitions with name and type (e.g., id SERIAL PRIMARY KEY, data JSONB)." } }
+      ]
+    },
+    {
+      "label": "ALTER TABLE table_name ADD COLUMN column_name type",
+      "documentation": { "value": "Modifies an existing table definition. Supports ADD/DROP COLUMN, RENAME, SET DEFAULT, constraints." },
+      "parameters": [
+        { "label": "table_name", "documentation": { "value": "The table to alter." } },
+        { "label": "column_name", "documentation": { "value": "The name of the column to add." } },
+        { "label": "type", "documentation": { "value": "The PostgreSQL data type for the new column." } }
+      ]
+    },
+    {
+      "label": "COALESCE(value1, value2, ...): any",
+      "documentation": { "value": "Returns the first non-NULL argument. Often used to provide default values for nullable columns." },
+      "parameters": [
+        { "label": "value1", "documentation": { "value": "The first expression to evaluate." } },
+        { "label": "value2", "documentation": { "value": "The fallback expression if value1 is NULL." } }
+      ]
+    },
+    {
+      "label": "NULLIF(value1, value2): any",
+      "documentation": { "value": "Returns NULL if value1 equals value2; otherwise returns value1. Useful to avoid division-by-zero." },
+      "parameters": [
+        { "label": "value1", "documentation": { "value": "The value to return if not equal to value2." } },
+        { "label": "value2", "documentation": { "value": "The value to compare against." } }
+      ]
+    },
+    {
+      "label": "array_agg(expression ORDER BY ...): anyarray",
+      "documentation": { "value": "Aggregate function that collects all input values into an array." },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "The expression to aggregate into an array." } }
+      ]
+    },
+    {
+      "label": "string_agg(expression, delimiter ORDER BY ...): text",
+      "documentation": { "value": "Concatenates input values into a string separated by a delimiter." },
+      "parameters": [
+        { "label": "expression", "documentation": { "value": "The text expression to aggregate." } },
+        { "label": "delimiter", "documentation": { "value": "The separator string placed between values." } }
+      ]
+    },
+    {
+      "label": "json_build_object(key1, value1, key2, value2, ...): json",
+      "documentation": { "value": "Builds a JSON object from a variadic argument list of alternating keys and values." },
+      "parameters": [
+        { "label": "key1", "documentation": { "value": "The key for the first entry (must be text)." } },
+        { "label": "value1", "documentation": { "value": "The value for the first entry (any SQL type)." } },
+        { "label": "key2", "documentation": { "value": "The key for the second entry." } },
+        { "label": "value2", "documentation": { "value": "The value for the second entry." } }
+      ]
+    },
+    {
+      "label": "to_char(value, format): text",
+      "documentation": { "value": "Converts a timestamp, interval, integer, or numeric value to a string using a format pattern." },
+      "parameters": [
+        { "label": "value", "documentation": { "value": "The value to format (timestamp, interval, numeric)." } },
+        { "label": "format", "documentation": { "value": "The format pattern (e.g., 'YYYY-MM-DD HH24:MI:SS', 'FM999,999.00')." } }
+      ]
+    },
+    {
+      "label": "date_trunc(field, source): timestamp",
+      "documentation": { "value": "Truncates a timestamp or interval to the specified precision." },
+      "parameters": [
+        { "label": "field", "documentation": { "value": "The precision: 'microseconds', 'milliseconds', 'second', 'minute', 'hour', 'day', 'week', 'month', 'quarter', 'year'." } },
+        { "label": "source", "documentation": { "value": "The timestamp or interval value to truncate." } }
+      ]
+    },
+    {
+      "label": "generate_series(start, stop, step): setof",
+      "documentation": { "value": "Generates a series of values from start to stop with an optional step. Works with integer, bigint, and timestamp types." },
+      "parameters": [
+        { "label": "start", "documentation": { "value": "The start value of the series." } },
+        { "label": "stop", "documentation": { "value": "The end value of the series (inclusive)." } },
+        { "label": "step", "documentation": { "value": "Optional step increment. Defaults to 1 for integers or '1 day' for timestamps." } }
+      ]
+    },
+    {
+      "label": "regexp_matches(string, pattern, flags): text[]",
+      "documentation": { "value": "Returns all captured substrings from a POSIX regular expression match." },
+      "parameters": [
+        { "label": "string", "documentation": { "value": "The string to match against." } },
+        { "label": "pattern", "documentation": { "value": "The POSIX regular expression pattern." } },
+        { "label": "flags", "documentation": { "value": "Optional flags: 'g' (global), 'i' (case-insensitive), 'n' (newline-sensitive)." } }
+      ]
+    }
+  ]
+}

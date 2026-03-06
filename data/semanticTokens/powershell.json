@@ -1,0 +1,77 @@
+{
+  "language": "powershell",
+  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
+  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenLegend": {
+    "tokenTypes": ["namespace", "type", "class", "enum", "variable", "parameter", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
+    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  },
+  "semanticRules": [
+    {
+      "type": "function",
+      "pattern": "\\b(function|filter)\\s+([\\w-]+)",
+      "modifiers": ["declaration"],
+      "description": "Function and filter declarations"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(\\w+-\\w+)\\b",
+      "modifiers": ["defaultLibrary"],
+      "description": "Cmdlet names in Verb-Noun format (e.g., Get-Process, Set-Content)"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*|\\$\\{[^}]+\\}",
+      "modifiers": [],
+      "description": "PowerShell variables prefixed with $"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\w+:\\w+",
+      "modifiers": ["readonly"],
+      "description": "Scoped variables like $env:PATH, $script:var, $global:var"
+    },
+    {
+      "type": "type",
+      "pattern": "\\[\\w+(?:\\.\\w+)*(?:\\[\\])?\\]",
+      "modifiers": [],
+      "description": "Type accelerators and .NET type references in brackets"
+    },
+    {
+      "type": "parameter",
+      "pattern": "-[a-zA-Z][a-zA-Z0-9]*\\b",
+      "modifiers": [],
+      "description": "Named parameters prefixed with -"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(param|begin|process|end|if|elseif|else|switch|while|for|foreach|do|until|try|catch|finally|throw|return|break|continue|exit|trap|class|enum|using|in|workflow|parallel|sequence|inlinescript)\\b",
+      "modifiers": [],
+      "description": "PowerShell keywords and control flow statements"
+    },
+    {
+      "type": "operator",
+      "pattern": "\\||\\|\\||&&|\\+=|-=|\\*=|/=|%=|-eq|-ne|-lt|-gt|-le|-ge|-match|-notmatch|-like|-notlike|-contains|-notcontains|-in|-notin|-replace|-split|-join|-as|-is|-isnot|-band|-bor|-bxor|-bnot|-shl|-shr",
+      "modifiers": [],
+      "description": "Pipeline, assignment, comparison, and bitwise operators"
+    },
+    {
+      "type": "decorator",
+      "pattern": "\\[\\w+(?:Attribute)?\\([^)]*\\)\\]|\\[Parameter\\([^)]*\\)\\]|\\[CmdletBinding\\([^)]*\\)\\]|\\[ValidateSet\\([^)]*\\)\\]",
+      "modifiers": [],
+      "description": "Attribute decorators for parameters and cmdlet bindings"
+    },
+    {
+      "type": "comment",
+      "pattern": "#[^\\n]*|<#[\\s\\S]*?#>",
+      "modifiers": [],
+      "description": "Single-line # comments and block <# #> comments"
+    },
+    {
+      "type": "string",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^']*)'|@\"[\\s\\S]*?\"@|@'[\\s\\S]*?'@",
+      "modifiers": [],
+      "description": "Single/double quoted strings and here-strings"
+    }
+  ]
+}

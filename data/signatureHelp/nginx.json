@@ -1,0 +1,95 @@
+{
+  "language": "nginx",
+  "triggerCharacters": ["(", ","],
+  "retriggerCharacters": [","],
+  "signatures": [
+    {
+      "label": "server { listen, server_name, root, location }",
+      "documentation": { "value": "Defines a virtual server configuration block that handles requests for a specific domain or IP." },
+      "parameters": [
+        { "label": "listen", "documentation": { "value": "The address and port to listen on (e.g., 80, 443 ssl, [::]:80)." } },
+        { "label": "server_name", "documentation": { "value": "The domain names this server block responds to." } }
+      ]
+    },
+    {
+      "label": "location uri { ... }",
+      "documentation": { "value": "Sets configuration for a specific request URI. Supports exact match (=), prefix, and regex (~, ~*) matching." },
+      "parameters": [
+        { "label": "uri", "documentation": { "value": "The URI pattern to match. Prefixes: = (exact), ~ (case-sensitive regex), ~* (case-insensitive regex), ^~ (prefix priority)." } }
+      ]
+    },
+    {
+      "label": "proxy_pass url",
+      "documentation": { "value": "Sets the protocol, address, and URI of a proxied server. Used to forward requests to backend servers." },
+      "parameters": [
+        { "label": "url", "documentation": { "value": "The upstream URL (e.g., http://backend:8080, http://unix:/tmp/sock.sock)." } }
+      ]
+    },
+    {
+      "label": "listen address[:port] [ssl] [http2] [default_server]",
+      "documentation": { "value": "Sets the address and port on which the server will accept requests." },
+      "parameters": [
+        { "label": "address[:port]", "documentation": { "value": "The IP address and/or port to listen on (e.g., 80, 127.0.0.1:8080, [::]:443)." } },
+        { "label": "ssl", "documentation": { "value": "Optional. Enables SSL/TLS for this listening socket." } },
+        { "label": "default_server", "documentation": { "value": "Optional. Makes this the default server for the address:port pair." } }
+      ]
+    },
+    {
+      "label": "root path",
+      "documentation": { "value": "Sets the root directory for serving files. The full file path is constructed by appending the URI to the root." },
+      "parameters": [
+        { "label": "path", "documentation": { "value": "The filesystem path to serve files from (e.g., /var/www/html)." } }
+      ]
+    },
+    {
+      "label": "index file1 [file2 ...]",
+      "documentation": { "value": "Defines files that will be used as an index when a directory is requested." },
+      "parameters": [
+        { "label": "file1", "documentation": { "value": "The primary index file (e.g., index.html)." } },
+        { "label": "file2", "documentation": { "value": "Optional fallback index file (e.g., index.htm, index.php)." } }
+      ]
+    },
+    {
+      "label": "ssl_certificate file",
+      "documentation": { "value": "Specifies the path to the PEM-format SSL/TLS certificate file for the server." },
+      "parameters": [
+        { "label": "file", "documentation": { "value": "Path to the certificate file (e.g., /etc/ssl/certs/server.crt)." } }
+      ]
+    },
+    {
+      "label": "upstream name { server address; }",
+      "documentation": { "value": "Defines a group of backend servers for load balancing." },
+      "parameters": [
+        { "label": "name", "documentation": { "value": "The name used to reference this upstream group in proxy_pass." } },
+        { "label": "server address", "documentation": { "value": "Backend server address with optional parameters (weight, max_fails, fail_timeout)." } }
+      ]
+    },
+    {
+      "label": "rewrite regex replacement [flag]",
+      "documentation": { "value": "Rewrites the request URI using a regular expression. If the replacement starts with http://, the client gets a redirect." },
+      "parameters": [
+        { "label": "regex", "documentation": { "value": "The regular expression to match against the request URI." } },
+        { "label": "replacement", "documentation": { "value": "The replacement string. Can use captured groups ($1, $2, etc.)." } },
+        { "label": "flag", "documentation": { "value": "Optional flag: last (stop and re-search), break (stop), redirect (302), permanent (301)." } }
+      ]
+    },
+    {
+      "label": "add_header name value [always]",
+      "documentation": { "value": "Adds a custom header to the response. Headers are only added when the response code is 2xx or 3xx unless 'always' is specified." },
+      "parameters": [
+        { "label": "name", "documentation": { "value": "The header name (e.g., X-Frame-Options, Cache-Control)." } },
+        { "label": "value", "documentation": { "value": "The header value." } },
+        { "label": "always", "documentation": { "value": "Optional. If present, the header is added regardless of response code." } }
+      ]
+    },
+    {
+      "label": "try_files file1 [file2 ...] uri",
+      "documentation": { "value": "Checks for the existence of files in order and uses the first found. The last parameter is a fallback URI or =code." },
+      "parameters": [
+        { "label": "file1", "documentation": { "value": "The first file path to check (e.g., $uri)." } },
+        { "label": "file2", "documentation": { "value": "Additional file paths to try (e.g., $uri/)." } },
+        { "label": "uri", "documentation": { "value": "The fallback URI or error code (e.g., /index.html, =404)." } }
+      ]
+    }
+  ]
+}
