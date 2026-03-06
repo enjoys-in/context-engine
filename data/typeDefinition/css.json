@@ -1,0 +1,53 @@
+{
+  "language": "css",
+  "typeDefinitionPatterns": [
+    {
+      "pattern": "var\\(\\s*--(([a-zA-Z_][a-zA-Z0-9_-]*))\\s*(?:,\\s*[^)]*)?\\)",
+      "captureGroup": 1,
+      "targetPattern": "--(\\1)\\s*:",
+      "description": "Navigate from var(--name) usage to the custom property definition (--name: value). Resolves through the cascade to find the most specific definition."
+    },
+    {
+      "pattern": "animation(?:-name)?\\s*:\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "targetPattern": "@keyframes\\s+(\\1)\\s*\\{",
+      "description": "Navigate from animation-name usage to the @keyframes definition. Locates the keyframe animation sequence that defines the animation."
+    },
+    {
+      "pattern": "font-family\\s*:[^;]*['\"]?([a-zA-Z][a-zA-Z0-9 _-]+)['\"]?",
+      "captureGroup": 1,
+      "targetPattern": "@font-face\\s*\\{[^}]*font-family\\s*:\\s*['\"]?(\\1)['\"]?",
+      "description": "Navigate from font-family usage to the @font-face definition. Resolves custom font declarations including source files."
+    },
+    {
+      "pattern": "grid-area\\s*:\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "targetPattern": "grid-template-areas\\s*:[^;]*\"[^\"]*\\b(\\1)\\b",
+      "description": "Navigate from grid-area name to the grid-template-areas definition in the parent grid container."
+    },
+    {
+      "pattern": "list-style-type\\s*:\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "targetPattern": "@counter-style\\s+(\\1)\\s*\\{",
+      "description": "Navigate from list-style-type to @counter-style definition. Resolves custom counter style declarations."
+    },
+    {
+      "pattern": "counter(?:s)?\\(\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "targetPattern": "counter-reset\\s*:[^;]*(\\1)",
+      "description": "Navigate from counter() or counters() function to the counter-reset that initializes the named counter."
+    },
+    {
+      "pattern": "@import\\s+(?:url\\()?['\"]?([^'\"\\);]+)['\"]?\\)?\\s+layer\\(([a-zA-Z_][a-zA-Z0-9_-]*)\\)",
+      "captureGroup": 2,
+      "targetPattern": "@layer\\s+(\\2)\\s*[{;]",
+      "description": "Navigate from @import layer assignment to the @layer declaration that establishes the cascade layer."
+    },
+    {
+      "pattern": "container-name\\s*:\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "targetPattern": "@container\\s+(\\1)\\s+\\(",
+      "description": "Navigate from container-name definition to @container queries referencing this named container."
+    }
+  ]
+}

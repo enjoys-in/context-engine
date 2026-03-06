@@ -1,0 +1,47 @@
+{
+  "language": "tailwindcss",
+  "typeDefinitionPatterns": [
+    {
+      "pattern": "@apply\\s+([\\w:-]+)",
+      "captureGroup": 1,
+      "targetPattern": "\\.${1}\\s*\\{([^}]+)\\}",
+      "description": "Navigate from @apply utility reference to its generated CSS definition."
+    },
+    {
+      "pattern": "theme\\(['\"]([^'\"]+)['\"]\\)",
+      "captureGroup": 1,
+      "targetPattern": "${config_path}:\\s*['\"]?([^,'\"\\s]+)",
+      "description": "Navigate from theme() function call to the corresponding value in tailwind.config.js."
+    },
+    {
+      "pattern": "screen\\(['\"]([^'\"]+)['\"]\\)",
+      "captureGroup": 1,
+      "targetPattern": "screens:\\s*\\{[^}]*${1}:\\s*['\"]?([^,'\"]+)",
+      "description": "Navigate from screen() function call to the breakpoint definition in config."
+    },
+    {
+      "pattern": "\\b(flex|grid|block|inline|hidden|table)\\b",
+      "captureGroup": 1,
+      "targetPattern": "display:\\s*${1}",
+      "description": "Navigate from display utility class to its CSS display property definition."
+    },
+    {
+      "pattern": "\\b(bg|text|border|ring)-(\\w+)-(\\d+)\\b",
+      "captureGroup": 0,
+      "targetPattern": "colors:\\s*\\{[^}]*${2}:\\s*\\{[^}]*${3}:",
+      "description": "Navigate from color utility to color definition in the theme."
+    },
+    {
+      "pattern": "@config\\s+['\"]([^'\"]+)['\"]",
+      "captureGroup": 1,
+      "targetPattern": "module\\.exports\\s*=",
+      "description": "Navigate from @config directive to the Tailwind configuration file."
+    },
+    {
+      "pattern": "@layer\\s+(base|components|utilities)",
+      "captureGroup": 1,
+      "targetPattern": "@tailwind\\s+${1}",
+      "description": "Navigate from @layer definition to corresponding @tailwind injection point."
+    }
+  ]
+}

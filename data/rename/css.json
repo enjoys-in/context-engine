@@ -1,0 +1,91 @@
+{
+  "language": "css",
+  "renamePatterns": [
+    {
+      "pattern": "--(([a-zA-Z_][a-zA-Z0-9_-]*))\\s*:",
+      "captureGroup": 1,
+      "kind": "variable",
+      "description": "Rename CSS custom property definition. Updates the --name declaration and all var(--name) references across stylesheets."
+    },
+    {
+      "pattern": "var\\(\\s*--(([a-zA-Z_][a-zA-Z0-9_-]*))\\s*(?:,\\s*[^)]*)?\\)",
+      "captureGroup": 1,
+      "kind": "variable-reference",
+      "description": "Rename CSS custom property from a var() reference. Propagates the rename to the definition and all other references."
+    },
+    {
+      "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_-]*)\\s*(?=[{,>+~:\\[\\s])",
+      "captureGroup": 1,
+      "kind": "class",
+      "description": "Rename CSS class selector. Updates the class name in CSS rules and optionally in HTML class attributes."
+    },
+    {
+      "pattern": "#([a-zA-Z_][a-zA-Z0-9_-]*)\\s*(?=[{,>+~:\\[\\s])",
+      "captureGroup": 1,
+      "kind": "id",
+      "description": "Rename CSS ID selector. Updates the ID name in CSS rules and optionally in HTML id attributes."
+    },
+    {
+      "pattern": "@keyframes\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\s*\\{",
+      "captureGroup": 1,
+      "kind": "animation",
+      "description": "Rename @keyframes animation. Updates the keyframes name and all animation-name property references."
+    },
+    {
+      "pattern": "animation(?:-name)?\\s*:\\s*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "kind": "animation-reference",
+      "description": "Rename animation name from a usage site. Propagates to the @keyframes definition and all other references."
+    },
+    {
+      "pattern": "@layer\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\s*[{;]",
+      "captureGroup": 1,
+      "kind": "layer",
+      "description": "Rename cascade layer. Updates the @layer declaration and all layer references including @import layer() assignments."
+    },
+    {
+      "pattern": "@font-face\\s*\\{[^}]*font-family\\s*:\\s*['\"]?([^'\";}]+)",
+      "captureGroup": 1,
+      "kind": "font",
+      "description": "Rename @font-face font-family. Updates the font-face declaration and all font-family property references."
+    },
+    {
+      "pattern": "@counter-style\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\s*\\{",
+      "captureGroup": 1,
+      "kind": "counter-style",
+      "description": "Rename @counter-style. Updates the counter style definition and all list-style-type references."
+    }
+  ],
+  "prepareRenamePatterns": [
+    {
+      "pattern": "--(([a-zA-Z_][a-zA-Z0-9_-]*))",
+      "captureGroup": 1,
+      "description": "Identifies a CSS custom property name (without the -- prefix) as a valid rename target."
+    },
+    {
+      "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "description": "Identifies a CSS class name (without the . prefix) as a valid rename target."
+    },
+    {
+      "pattern": "#([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "description": "Identifies a CSS ID name (without the # prefix) as a valid rename target."
+    },
+    {
+      "pattern": "@keyframes\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "description": "Identifies a @keyframes animation name as a valid rename target."
+    },
+    {
+      "pattern": "@layer\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "description": "Identifies a cascade layer name as a valid rename target."
+    },
+    {
+      "pattern": "@counter-style\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captureGroup": 1,
+      "description": "Identifies a @counter-style name as a valid rename target."
+    }
+  ]
+}
