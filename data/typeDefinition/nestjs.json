@@ -1,0 +1,334 @@
+{
+  "language": "nestjs",
+  "typeDefinitions": {
+    "INestApplication": {
+      "type": "interface",
+      "signature": "interface INestApplication extends INestApplicationContext { listen(port: number | string, callback?: () => void): Promise<any>; use(...args: any[]): this; useGlobalPipes(...pipes: PipeTransform[]): this; useGlobalFilters(...filters: ExceptionFilter[]): this; useGlobalGuards(...guards: CanActivate[]): this; useGlobalInterceptors(...interceptors: NestInterceptor[]): this; enableCors(options?: CorsOptions): void; setGlobalPrefix(prefix: string): this; enableVersioning(options?: VersioningOptions): this; }",
+      "description": "Interface for the NestJS HTTP application instance. Provides methods for configuring middleware, global pipes, filters, guards, interceptors, CORS, route prefixes, and versioning.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/first-steps"
+    },
+    "INestMicroservice": {
+      "type": "interface",
+      "signature": "interface INestMicroservice extends INestApplicationContext { listen(): Promise<any>; close(): Promise<void>; }",
+      "description": "Interface for a NestJS microservice instance. Provides methods for listening and closing the microservice.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/microservices/basics"
+    },
+    "ModuleMetadata": {
+      "type": "interface",
+      "signature": "interface ModuleMetadata { imports?: Array<Type<any> | DynamicModule | Promise<DynamicModule> | ForwardReference>; controllers?: Type<any>[]; providers?: Provider[]; exports?: Array<DynamicModule | Promise<DynamicModule> | string | symbol | Provider | ForwardReference | Abstract<any> | Function>; }",
+      "description": "Metadata interface for the @Module() decorator. Defines the module's imports, controllers, providers, and exports.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/modules"
+    },
+    "DynamicModule": {
+      "type": "interface",
+      "signature": "interface DynamicModule extends ModuleMetadata { module: Type<any>; global?: boolean; }",
+      "description": "Interface returned by static methods like forRoot() and forRootAsync() for dynamic module registration.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/dynamic-modules"
+    },
+    "Provider": {
+      "type": "type_alias",
+      "signature": "type Provider<T = any> = Type<T> | ClassProvider<T> | ValueProvider<T> | FactoryProvider<T> | ExistingProvider<T>",
+      "description": "Union type representing all valid NestJS provider types: class, value, factory, or existing provider.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers"
+    },
+    "FactoryProvider": {
+      "type": "interface",
+      "signature": "interface FactoryProvider<T = any> { provide: InjectionToken; useFactory: (...args: any[]) => T | Promise<T>; inject?: Array<InjectionToken | OptionalFactoryDependency>; scope?: Scope; }",
+      "description": "Provider that uses a factory function to create the provider instance. Dependencies are specified in the inject array.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory"
+    },
+    "ClassProvider": {
+      "type": "interface",
+      "signature": "interface ClassProvider<T = any> { provide: InjectionToken; useClass: Type<T>; scope?: Scope; }",
+      "description": "Provider that maps a token to a class implementation. The class will be instantiated by the IoC container.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers#class-providers-useclass"
+    },
+    "ValueProvider": {
+      "type": "interface",
+      "signature": "interface ValueProvider<T = any> { provide: InjectionToken; useValue: T; }",
+      "description": "Provider that maps a token to a static value. Useful for constants, mock objects, and configuration.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers#value-providers-usevalue"
+    },
+    "ExistingProvider": {
+      "type": "interface",
+      "signature": "interface ExistingProvider<T = any> { provide: InjectionToken; useExisting: InjectionToken; }",
+      "description": "Provider that creates an alias for an existing provider. The alias resolves to the same instance.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers#alias-providers-useexisting"
+    },
+    "Type": {
+      "type": "interface",
+      "signature": "interface Type<T = any> extends Function { new (...args: any[]): T; }",
+      "description": "Represents a constructable type (class). Used throughout NestJS for type references in providers and modules.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers"
+    },
+    "Abstract": {
+      "type": "interface",
+      "signature": "interface Abstract<T> extends Function { prototype: T; }",
+      "description": "Represents an abstract class type. Used for abstract class-based injection tokens.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/custom-providers"
+    },
+    "NestModule": {
+      "type": "interface",
+      "signature": "interface NestModule { configure(consumer: MiddlewareConsumer): void; }",
+      "description": "Interface for modules that need to configure middleware. Implement configure() to apply middleware.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/middleware"
+    },
+    "NestInterceptor": {
+      "type": "interface",
+      "signature": "interface NestInterceptor<T = any, R = any> { intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> | Promise<Observable<R>>; }",
+      "description": "Interface for NestJS interceptors. Implement intercept() to add logic before/after method execution.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/interceptors"
+    },
+    "CanActivate": {
+      "type": "interface",
+      "signature": "interface CanActivate { canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean>; }",
+      "description": "Interface for NestJS guards. Implement canActivate() to determine if a request should be handled.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/guards"
+    },
+    "PipeTransform": {
+      "type": "interface",
+      "signature": "interface PipeTransform<T = any, R = any> { transform(value: T, metadata: ArgumentMetadata): R; }",
+      "description": "Interface for NestJS pipes. Implement transform() to validate or transform input data.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/pipes"
+    },
+    "ExceptionFilter": {
+      "type": "interface",
+      "signature": "interface ExceptionFilter<T = any> { catch(exception: T, host: ArgumentsHost): void; }",
+      "description": "Interface for NestJS exception filters. Implement catch() to handle specific exception types.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters"
+    },
+    "NestMiddleware": {
+      "type": "interface",
+      "signature": "interface NestMiddleware { use(req: any, res: any, next: (error?: any) => void): void; }",
+      "description": "Interface for NestJS middleware. Implement use() with request, response, and next function parameters.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/middleware"
+    },
+    "OnModuleInit": {
+      "type": "interface",
+      "signature": "interface OnModuleInit { onModuleInit(): any | Promise<any>; }",
+      "description": "Lifecycle hook interface. Called once the host module's dependencies have been resolved.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/lifecycle-events"
+    },
+    "OnModuleDestroy": {
+      "type": "interface",
+      "signature": "interface OnModuleDestroy { onModuleDestroy(): any | Promise<any>; }",
+      "description": "Lifecycle hook interface. Called when the host module is being destroyed (app.close() invoked).",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/lifecycle-events"
+    },
+    "OnApplicationBootstrap": {
+      "type": "interface",
+      "signature": "interface OnApplicationBootstrap { onApplicationBootstrap(): any | Promise<any>; }",
+      "description": "Lifecycle hook interface. Called once all modules have been initialized, before listening for connections.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/lifecycle-events"
+    },
+    "OnApplicationShutdown": {
+      "type": "interface",
+      "signature": "interface OnApplicationShutdown { onApplicationShutdown(signal?: string): any | Promise<any>; }",
+      "description": "Lifecycle hook interface. Called after all connections are closed (app.close() resolves). Receives the system signal.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/lifecycle-events"
+    },
+    "BeforeApplicationShutdown": {
+      "type": "interface",
+      "signature": "interface BeforeApplicationShutdown { beforeApplicationShutdown(signal?: string): any | Promise<any>; }",
+      "description": "Lifecycle hook interface. Called before the shutdown sequence. Connections are still open at this point.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/lifecycle-events"
+    },
+    "ExecutionContext": {
+      "type": "interface",
+      "signature": "interface ExecutionContext extends ArgumentsHost { getClass<T = any>(): Type<T>; getHandler(): Function; }",
+      "description": "Extends ArgumentsHost with helper methods to determine the current handler and class being invoked. Used in guards and interceptors.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/execution-context"
+    },
+    "ArgumentsHost": {
+      "type": "interface",
+      "signature": "interface ArgumentsHost { switchToHttp(): HttpArgumentsHost; switchToWs(): WsArgumentsHost; switchToRpc(): RpcArgumentsHost; getType<T extends string = ContextType>(): T; getArgs<T extends any[] = any[]>(): T; }",
+      "description": "Provides methods to retrieve handler arguments for HTTP, WebSocket, or RPC contexts. Foundation for ExecutionContext.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/execution-context#arguments-host"
+    },
+    "CallHandler": {
+      "type": "interface",
+      "signature": "interface CallHandler<T = any> { handle(): Observable<T>; }",
+      "description": "Represents the next interceptor or route handler in the chain. Call handle() to invoke it and get an Observable.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/interceptors"
+    },
+    "ArgumentMetadata": {
+      "type": "interface",
+      "signature": "interface ArgumentMetadata { type: 'body' | 'query' | 'param' | 'custom'; metatype?: Type<any>; data?: string; }",
+      "description": "Metadata about the argument being processed by a pipe. Includes the parameter type, metatype, and data key.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/pipes#custom-pipes"
+    },
+    "HttpException": {
+      "type": "class",
+      "signature": "class HttpException extends Error { constructor(response: string | Record<string, any>, status: number, options?: HttpExceptionOptions); getStatus(): number; getResponse(): string | object; }",
+      "description": "Base class for all HTTP exceptions. All built-in HTTP exceptions (BadRequestException, NotFoundException, etc.) extend this class.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "BadRequestException": {
+      "type": "class",
+      "signature": "class BadRequestException extends HttpException",
+      "description": "HTTP 400 Bad Request exception. Used when the server cannot process the request due to client error.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "UnauthorizedException": {
+      "type": "class",
+      "signature": "class UnauthorizedException extends HttpException",
+      "description": "HTTP 401 Unauthorized exception. Used when authentication is required but has failed or not been provided.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "ForbiddenException": {
+      "type": "class",
+      "signature": "class ForbiddenException extends HttpException",
+      "description": "HTTP 403 Forbidden exception. Used when the user is authenticated but lacks permission for the resource.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "NotFoundException": {
+      "type": "class",
+      "signature": "class NotFoundException extends HttpException",
+      "description": "HTTP 404 Not Found exception. Used when the requested resource does not exist.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "ConflictException": {
+      "type": "class",
+      "signature": "class ConflictException extends HttpException",
+      "description": "HTTP 409 Conflict exception. Used when the request conflicts with the current state of the resource.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "InternalServerErrorException": {
+      "type": "class",
+      "signature": "class InternalServerErrorException extends HttpException",
+      "description": "HTTP 500 Internal Server Error exception. Used for unexpected server-side errors.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "NotImplementedException": {
+      "type": "class",
+      "signature": "class NotImplementedException extends HttpException",
+      "description": "HTTP 501 Not Implemented exception. Used when the server does not support the requested functionality.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "GoneException": {
+      "type": "class",
+      "signature": "class GoneException extends HttpException",
+      "description": "HTTP 410 Gone exception. Used when the resource is no longer available.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "PayloadTooLargeException": {
+      "type": "class",
+      "signature": "class PayloadTooLargeException extends HttpException",
+      "description": "HTTP 413 Payload Too Large exception. Used when the request body exceeds the maximum allowed size.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "UnprocessableEntityException": {
+      "type": "class",
+      "signature": "class UnprocessableEntityException extends HttpException",
+      "description": "HTTP 422 Unprocessable Entity exception. Used when the request is well-formed but semantically erroneous.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "ServiceUnavailableException": {
+      "type": "class",
+      "signature": "class ServiceUnavailableException extends HttpException",
+      "description": "HTTP 503 Service Unavailable exception. Used when the service is temporarily unavailable.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "RequestTimeoutException": {
+      "type": "class",
+      "signature": "class RequestTimeoutException extends HttpException",
+      "description": "HTTP 408 Request Timeout exception. Used when the server timed out waiting for the request.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/exception-filters#built-in-http-exceptions"
+    },
+    "RpcException": {
+      "type": "class",
+      "signature": "class RpcException extends Error { constructor(error: string | object); getError(): string | object; }",
+      "description": "Base exception class for microservice RPC communication. Used instead of HttpException in microservice handlers.",
+      "module": "@nestjs/microservices",
+      "url": "https://docs.nestjs.com/microservices/exception-filters"
+    },
+    "WsException": {
+      "type": "class",
+      "signature": "class WsException extends Error { constructor(error: string | object); getError(): string | object; }",
+      "description": "Base exception class for WebSocket gateways. Used instead of HttpException in gateway handlers.",
+      "module": "@nestjs/websockets",
+      "url": "https://docs.nestjs.com/websockets/exception-filters"
+    },
+    "ControllerOptions": {
+      "type": "interface",
+      "signature": "interface ControllerOptions { path?: string | string[]; host?: string | RegExp | Array<string | RegExp>; scope?: Scope; version?: VersionValue; }",
+      "description": "Options for the @Controller() decorator. Configures route path, host filtering, scope, and API version.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/controllers"
+    },
+    "MiddlewareConsumer": {
+      "type": "interface",
+      "signature": "interface MiddlewareConsumer { apply(...middleware: (Type<any> | Function)[]): MiddlewareConfigProxy; }",
+      "description": "Interface for configuring middleware in a module's configure() method. Chain apply().forRoutes() to specify middleware routes.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/middleware#applying-middleware"
+    },
+    "Scope": {
+      "type": "enum",
+      "signature": "enum Scope { DEFAULT = 0, TRANSIENT = 1, REQUEST = 2 }",
+      "description": "Enum defining provider injection scopes: DEFAULT (singleton), TRANSIENT (new per injection), REQUEST (new per request).",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/injection-scopes"
+    },
+    "HttpArgumentsHost": {
+      "type": "interface",
+      "signature": "interface HttpArgumentsHost { getRequest<T = any>(): T; getResponse<T = any>(): T; getNext<T = any>(): T; }",
+      "description": "Provides access to HTTP-specific arguments (request, response, next) from an ArgumentsHost.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/execution-context"
+    },
+    "WsArgumentsHost": {
+      "type": "interface",
+      "signature": "interface WsArgumentsHost { getData<T = any>(): T; getClient<T = any>(): T; getPattern(): string; }",
+      "description": "Provides access to WebSocket-specific arguments (data, client, pattern) from an ArgumentsHost.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/execution-context"
+    },
+    "RpcArgumentsHost": {
+      "type": "interface",
+      "signature": "interface RpcArgumentsHost { getData<T = any>(): T; getContext<T = any>(): T; }",
+      "description": "Provides access to RPC/microservice-specific arguments (data, context) from an ArgumentsHost.",
+      "module": "@nestjs/common",
+      "url": "https://docs.nestjs.com/fundamentals/execution-context"
+    }
+  }
+}

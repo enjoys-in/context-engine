@@ -1,0 +1,24 @@
+{
+  "language": "nestjs",
+  "inlayHintPatterns": [
+    { "pattern": "constructor\\((?:private|protected|public)\\s+(?:readonly\\s+)?(\\w+):\\s*(\\w+)", "kind": 1, "label": ": {type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show injected service types" },
+    { "pattern": "@(Body|Param|Query|Headers)\\((?:['\"]([^'\"]+)['\"])?\\)\\s+(\\w+)", "kind": 2, "label": "{param_name}:", "position": "before_capture_3", "paddingRight": true, "description": "Show decorator parameter source" },
+    { "pattern": "(\\w+)\\s*=\\s*(?:await\\s+)?this\\.(\\w+Service)\\.(\\w+)\\(", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Infer service method return type" },
+    { "pattern": "(?:const|let)\\s+(\\w+)\\s*=\\s*(?:await\\s+)?this\\.configService\\.get(?:<[^>]+>)?\\(['\"]([^'\"]+)['\"]\\)", "kind": 1, "label": ": {config_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Config value type hint" },
+    { "pattern": "@HttpCode\\((\\d+)\\)", "kind": 2, "label": "HTTP {status}", "position": "after_capture_1", "paddingLeft": true, "description": "HTTP status code meaning" },
+    { "pattern": "@(Get|Post|Put|Patch|Delete)\\(['\"]([^'\"]*)['\"]\\)", "kind": 2, "label": "{method} {path}", "position": "after_capture_0", "paddingLeft": true, "description": "Full route path hint" },
+    { "pattern": "\\bnew\\s+(\\w+Exception)\\(", "kind": 1, "label": "extends HttpException", "position": "after_capture_1", "paddingLeft": true, "description": "Exception class hierarchy" },
+    { "pattern": "module\\.get<(\\w+)>\\((\\w+)\\)", "kind": 1, "label": ": {type}", "position": "after_capture_0", "paddingLeft": true, "description": "Testing module.get return type" },
+    { "pattern": "(\\w+)\\s*=\\s*(.+)", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Variable type inference" }
+  ],
+  "typeInferenceRules": {
+    "string_literal": { "pattern": "['\"].*['\"]", "type": "string" },
+    "number_literal": { "pattern": "\\d+(\\.\\d+)?", "type": "number" },
+    "boolean_literal": { "pattern": "\\b(true|false)\\b", "type": "boolean" },
+    "array_literal": { "pattern": "\\[.*\\]", "type": "array" },
+    "object_literal": { "pattern": "\\{.*\\}", "type": "object" },
+    "null_literal": { "pattern": "\\b(null|undefined)\\b", "type": "null" },
+    "new_instance": { "pattern": "new\\s+(\\w+)\\(", "type": "{capture_1}" },
+    "await_expression": { "pattern": "await\\s+", "type": "Promise<unknown>" }
+  }
+}

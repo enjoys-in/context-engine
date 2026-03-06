@@ -1,0 +1,198 @@
+{
+  "language": "nextjs",
+  "codeActions": [
+    {
+      "title": "Add 'use client' directive",
+      "kind": "quickfix",
+      "description": "Adds 'use client' directive at the top of the file to mark it as a Client Component.",
+      "pattern": "useState|useEffect|useContext|useReducer|useRef|useCallback|useMemo|onClick|onChange|onSubmit|addEventListener",
+      "edit": {
+        "insertText": "'use client';\n\n",
+        "position": "top"
+      }
+    },
+    {
+      "title": "Add 'use server' directive",
+      "kind": "quickfix",
+      "description": "Adds 'use server' directive to mark the file or function as a Server Action.",
+      "pattern": "formData|revalidatePath|revalidateTag|redirect|db\\.|prisma\\.",
+      "edit": {
+        "insertText": "'use server';\n\n",
+        "position": "top"
+      }
+    },
+    {
+      "title": "Convert to Server Component",
+      "kind": "refactor",
+      "description": "Removes 'use client' directive and converts client-specific code to server-compatible patterns.",
+      "pattern": "^'use client'",
+      "edit": {
+        "removePattern": "^'use client';?\\s*\\n?",
+        "position": "top"
+      }
+    },
+    {
+      "title": "Convert to Client Component",
+      "kind": "refactor",
+      "description": "Adds 'use client' directive and ensures the component uses client-side patterns.",
+      "pattern": "export\\s+(default\\s+)?(async\\s+)?function",
+      "edit": {
+        "insertText": "'use client';\n\n",
+        "position": "top"
+      }
+    },
+    {
+      "title": "Extract Server Action",
+      "kind": "refactor.extract",
+      "description": "Extracts inline server action into a separate 'use server' function.",
+      "pattern": "'use server'\\s*;?\\s*\\n\\s*(?=.*formData)",
+      "edit": {
+        "extractTo": "actions.ts",
+        "directive": "'use server'"
+      }
+    },
+    {
+      "title": "Add generateMetadata export",
+      "kind": "quickfix",
+      "description": "Adds a generateMetadata function for dynamic SEO metadata.",
+      "pattern": "export\\s+default\\s+(async\\s+)?function\\s+\\w+Page",
+      "edit": {
+        "insertText": "\nimport type { Metadata } from 'next';\n\nexport async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {\n  return {\n    title: '',\n    description: '',\n  };\n}\n",
+        "position": "beforeExport"
+      }
+    },
+    {
+      "title": "Add generateStaticParams export",
+      "kind": "quickfix",
+      "description": "Adds a generateStaticParams function for static generation of dynamic routes.",
+      "pattern": "params:\\s*\\{\\s*\\w+:\\s*string",
+      "edit": {
+        "insertText": "\nexport async function generateStaticParams() {\n  return [];\n}\n",
+        "position": "beforeExport"
+      }
+    },
+    {
+      "title": "Wrap with Suspense boundary",
+      "kind": "refactor",
+      "description": "Wraps the selected async component with a React Suspense boundary and loading fallback.",
+      "pattern": "<\\w+.*/>|<\\w+.*>.*</\\w+>",
+      "edit": {
+        "wrapWith": "<Suspense fallback={<Loading />}>",
+        "wrapEnd": "</Suspense>",
+        "import": "import { Suspense } from 'react';"
+      }
+    },
+    {
+      "title": "Add loading.tsx file",
+      "kind": "source",
+      "description": "Creates a loading.tsx file in the current route segment directory for streaming.",
+      "pattern": "page\\.(tsx|jsx|ts|js)$",
+      "edit": {
+        "createFile": "loading.tsx",
+        "content": "export default function Loading() {\n  return <div>Loading...</div>;\n}\n"
+      }
+    },
+    {
+      "title": "Add error.tsx file",
+      "kind": "source",
+      "description": "Creates an error.tsx file in the current route segment directory for error handling.",
+      "pattern": "page\\.(tsx|jsx|ts|js)$",
+      "edit": {
+        "createFile": "error.tsx",
+        "content": "'use client';\n\nexport default function Error({\n  error,\n  reset,\n}: {\n  error: Error & { digest?: string };\n  reset: () => void;\n}) {\n  return (\n    <div>\n      <h2>Something went wrong!</h2>\n      <button onClick={() => reset()}>Try again</button>\n    </div>\n  );\n}\n"
+      }
+    },
+    {
+      "title": "Convert getServerSideProps to App Router",
+      "kind": "refactor",
+      "description": "Converts Pages Router getServerSideProps to App Router async Server Component with fetch.",
+      "pattern": "getServerSideProps",
+      "edit": {
+        "convertPattern": "getServerSideProps",
+        "replacement": "async-server-component",
+        "fetchOptions": "{ cache: 'no-store' }"
+      }
+    },
+    {
+      "title": "Convert API Route to Route Handler",
+      "kind": "refactor",
+      "description": "Converts Pages Router API route (req, res) to App Router Route Handler with NextRequest/NextResponse.",
+      "pattern": "NextApiRequest|NextApiResponse|req\\.method|res\\.status",
+      "edit": {
+        "convertPattern": "api-route-to-route-handler",
+        "importReplace": {
+          "from": "import type { NextApiRequest, NextApiResponse } from 'next';",
+          "to": "import { NextRequest, NextResponse } from 'next/server';"
+        }
+      }
+    },
+    {
+      "title": "Add revalidation to fetch",
+      "kind": "quickfix",
+      "description": "Adds next.revalidate or next.tags option to an existing fetch call.",
+      "pattern": "fetch\\([^)]+\\)(?!.*next:)",
+      "edit": {
+        "appendToFetch": ", { next: { revalidate: 3600 } }"
+      }
+    },
+    {
+      "title": "Optimize Image component",
+      "kind": "quickfix",
+      "description": "Converts HTML <img> tag to Next.js <Image> component with optimization props.",
+      "pattern": "<img\\s",
+      "edit": {
+        "replaceTag": "Image",
+        "addImport": "import Image from 'next/image';",
+        "requiredProps": ["width", "height", "alt"]
+      }
+    },
+    {
+      "title": "Add middleware matcher",
+      "kind": "quickfix",
+      "description": "Adds or updates the config.matcher export in middleware.ts for route matching.",
+      "pattern": "export\\s+function\\s+middleware",
+      "edit": {
+        "insertText": "\nexport const config = {\n  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],\n};\n",
+        "position": "bottom"
+      }
+    },
+    {
+      "title": "Convert to dynamic import",
+      "kind": "refactor",
+      "description": "Converts a static import to a dynamic import using next/dynamic for code splitting.",
+      "pattern": "import\\s+\\w+\\s+from\\s+'[^']+'",
+      "edit": {
+        "convertPattern": "static-to-dynamic",
+        "addImport": "import dynamic from 'next/dynamic';"
+      }
+    },
+    {
+      "title": "Add route segment config",
+      "kind": "source",
+      "description": "Adds route segment configuration exports (dynamic, revalidate, runtime, etc.).",
+      "pattern": "page\\.(tsx|jsx|ts|js)|route\\.(tsx|jsx|ts|js)|layout\\.(tsx|jsx|ts|js)",
+      "edit": {
+        "insertText": "export const dynamic = 'auto';\nexport const revalidate = false;\n",
+        "position": "afterImports"
+      }
+    },
+    {
+      "title": "Organize Next.js imports",
+      "kind": "source.organizeImports",
+      "description": "Organizes imports with next/* imports first, then third-party, then local imports.",
+      "pattern": "import.*from\\s+'next/",
+      "edit": {
+        "sortOrder": ["next/*", "react", "third-party", "local"]
+      }
+    }
+  ],
+  "providedCodeActionKinds": [
+    "quickfix",
+    "refactor",
+    "refactor.extract",
+    "refactor.inline",
+    "source",
+    "source.fixAll",
+    "source.organizeImports"
+  ]
+}

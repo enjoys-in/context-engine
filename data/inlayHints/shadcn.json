@@ -1,0 +1,109 @@
+{
+  "language": "shadcn",
+  "inlayHintPatterns": [
+    {
+      "pattern": "const\\s+(\\w+Variants?)\\s*=\\s*cva\\(",
+      "captureGroup": 1,
+      "label": ": (props?: VariantProps) => string",
+      "kind": 1,
+      "tooltip": "cva() returns a function that accepts variant props and returns a class string",
+      "position": "after"
+    },
+    {
+      "pattern": "\\bcn\\(([^)]+)\\)",
+      "captureGroup": 0,
+      "label": ": string",
+      "kind": 1,
+      "tooltip": "cn() returns a merged Tailwind CSS class string",
+      "position": "after"
+    },
+    {
+      "pattern": "const\\s+\\{\\s*(toast).*\\}\\s*=\\s*useToast\\(",
+      "captureGroup": 1,
+      "label": ": (props: ToastProps) => { id, dismiss, update }",
+      "kind": 1,
+      "tooltip": "toast() creates a new toast notification and returns control handles",
+      "position": "after"
+    },
+    {
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useFormField\\(",
+      "captureGroup": 1,
+      "label": ": { id, name, formItemId, formDescriptionId, formMessageId, invalid, isDirty, isTouched, error }",
+      "kind": 1,
+      "tooltip": "useFormField() returns form field state and accessibility IDs",
+      "position": "after"
+    },
+    {
+      "pattern": "variant=[\"'](\\w+)[\"']",
+      "captureGroup": 1,
+      "label": ": VariantProps[\"variant\"]",
+      "kind": 1,
+      "tooltip": "Variant prop value from the component's cva definition",
+      "position": "after"
+    },
+    {
+      "pattern": "React\\.forwardRef<(\\w+),\\s*(\\w+)>",
+      "captureGroup": 1,
+      "label": ": React.Ref<$1>",
+      "kind": 1,
+      "tooltip": "Ref type forwarded to the underlying DOM element",
+      "position": "after"
+    },
+    {
+      "pattern": "<FormField[^>]*render=\\{\\(\\{\\s*field\\s*\\}\\)",
+      "captureGroup": 0,
+      "label": ": ControllerRenderProps<TFieldValues>",
+      "kind": 1,
+      "tooltip": "field object contains value, onChange, onBlur, name, and ref",
+      "position": "after"
+    },
+    {
+      "pattern": "z\\.infer<typeof\\s+(\\w+)>",
+      "captureGroup": 1,
+      "label": ": inferred type",
+      "kind": 1,
+      "tooltip": "Type inferred from the referenced zod schema",
+      "position": "after"
+    },
+    {
+      "pattern": "accessorKey:\\s*[\"'](\\w+)[\"']",
+      "captureGroup": 1,
+      "label": ": keyof TData",
+      "kind": 1,
+      "tooltip": "Column accessor key typed to a property of the row data",
+      "position": "after"
+    }
+  ],
+  "typeInferenceRules": [
+    {
+      "pattern": "const\\s+\\w+\\s*=\\s*cva\\(",
+      "inferredType": "(props?: VariantProps<typeof variants>) => string",
+      "description": "cva() call infers a variant function type based on the provided config"
+    },
+    {
+      "pattern": "useForm<z\\.infer<typeof\\s+(\\w+)>>",
+      "inferredType": "UseFormReturn<z.infer<typeof $1>>",
+      "description": "useForm infers form type from zod schema via z.infer"
+    },
+    {
+      "pattern": "useReactTable\\(\\{",
+      "inferredType": "Table<TData>",
+      "description": "useReactTable returns a Table instance typed to the data shape"
+    },
+    {
+      "pattern": "const\\s+\\{\\s*toast\\s*,?\\s*toasts\\s*\\}\\s*=\\s*useToast\\(",
+      "inferredType": "{ toast: ToastFunction; toasts: Toast[]; dismiss: (id?: string) => void }",
+      "description": "useToast hook returns toast action and current toasts array"
+    },
+    {
+      "pattern": "React\\.forwardRef<(\\w+),\\s*(\\w+)>",
+      "inferredType": "React.ForwardRefExoticComponent<$2 & React.RefAttributes<$1>>",
+      "description": "forwardRef infers an exotic component type from element and props generics"
+    },
+    {
+      "pattern": "const\\s+\\w+\\s*=\\s*useFormField\\(",
+      "inferredType": "{ id: string; name: string; formItemId: string; formDescriptionId: string; formMessageId: string; invalid: boolean; isDirty: boolean; isTouched: boolean; error?: FieldError }",
+      "description": "useFormField returns form field context with validation state"
+    }
+  ]
+}

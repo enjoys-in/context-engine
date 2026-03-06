@@ -1,0 +1,1319 @@
+{
+  "language": "react",
+  "completions": [
+    {
+      "label": "rfc",
+      "kind": 28,
+      "detail": "React Functional Component",
+      "documentation": { "value": "Creates a new React functional component with props interface and export." },
+      "insertText": "import React from 'react';\n\ninterface ${1:ComponentName}Props {\n  ${2:// props}\n}\n\nexport const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = ({ ${3:} }) => {\n  return (\n    <div>\n      ${0}\n    </div>\n  );\n};\n\nexport default ${1:ComponentName};",
+      "insertTextRules": 4,
+      "sortText": "00_rfc"
+    },
+    {
+      "label": "rafc",
+      "kind": 28,
+      "detail": "React Arrow Function Component",
+      "documentation": { "value": "Creates a React arrow function component with default export." },
+      "insertText": "const ${1:ComponentName} = () => {\n  return (\n    <div>\n      ${0}\n    </div>\n  );\n};\n\nexport default ${1:ComponentName};",
+      "insertTextRules": 4,
+      "sortText": "00_rafc"
+    },
+    {
+      "label": "rmemo",
+      "kind": 28,
+      "detail": "React.memo Component",
+      "documentation": { "value": "Creates a memoized React component using React.memo for performance optimization." },
+      "insertText": "import React from 'react';\n\ninterface ${1:ComponentName}Props {\n  ${2:// props}\n}\n\nexport const ${1:ComponentName} = React.memo<${1:ComponentName}Props>(({ ${3:} }) => {\n  return (\n    <div>\n      ${0}\n    </div>\n  );\n});\n\n${1:ComponentName}.displayName = '${1:ComponentName}';",
+      "insertTextRules": 4,
+      "sortText": "00_rmemo"
+    },
+    {
+      "label": "rfref",
+      "kind": 28,
+      "detail": "forwardRef Component",
+      "documentation": { "value": "Creates a React component with forwardRef for passing refs to child elements." },
+      "insertText": "import React, { forwardRef } from 'react';\n\ninterface ${1:ComponentName}Props {\n  ${2:// props}\n}\n\nexport const ${1:ComponentName} = forwardRef<${3:HTMLDivElement}, ${1:ComponentName}Props>(\n  ({ ${4:} }, ref) => {\n    return (\n      <div ref={ref}>\n        ${0}\n      </div>\n    );\n  }\n);\n\n${1:ComponentName}.displayName = '${1:ComponentName}';",
+      "insertTextRules": 4,
+      "sortText": "00_rfref"
+    },
+    {
+      "label": "rctxp",
+      "kind": 28,
+      "detail": "Context Provider Component",
+      "documentation": { "value": "Creates a React Context with Provider component and custom hook." },
+      "insertText": "import React, { createContext, useContext, useState } from 'react';\n\ninterface ${1:Name}ContextType {\n  ${2:value}: ${3:string};\n  ${4:setValue}: (val: ${3:string}) => void;\n}\n\nconst ${1:Name}Context = createContext<${1:Name}ContextType | undefined>(undefined);\n\nexport const ${1:Name}Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {\n  const [${2:value}, ${4:setValue}] = useState<${3:string}>(${5:''});\n\n  return (\n    <${1:Name}Context.Provider value={{ ${2:value}, ${4:setValue} }}>\n      {children}\n    </${1:Name}Context.Provider>\n  );\n};\n\nexport const use${1:Name} = () => {\n  const context = useContext(${1:Name}Context);\n  if (!context) throw new Error('use${1:Name} must be used within ${1:Name}Provider');\n  return context;\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rctxp"
+    },
+    {
+      "label": "rcustomhook",
+      "kind": 28,
+      "detail": "Custom Hook",
+      "documentation": { "value": "Creates a custom React hook with state management." },
+      "insertText": "import { useState, useEffect } from 'react';\n\nexport const use${1:HookName} = (${2:initialValue}: ${3:any}) => {\n  const [${4:state}, set${4/(.*)/${1:/capitalize}/}] = useState<${3:any}>(${2:initialValue});\n\n  useEffect(() => {\n    ${5:// effect logic}\n    return () => {\n      ${6:// cleanup}\n    };\n  }, [${7:}]);\n\n  return { ${4:state}, set${4/(.*)/${1:/capitalize}/} };\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rcustomhook"
+    },
+    {
+      "label": "ruecleanup",
+      "kind": 28,
+      "detail": "useEffect with Cleanup",
+      "documentation": { "value": "Creates a useEffect hook with cleanup function for subscriptions and timers." },
+      "insertText": "useEffect(() => {\n  ${1:// setup}\n  const ${2:subscription} = ${3:subscribe()};\n\n  return () => {\n    ${2:subscription}.${4:unsubscribe}();\n  };\n}, [${5:}]);",
+      "insertTextRules": 4,
+      "sortText": "00_ruecleanup"
+    },
+    {
+      "label": "rreducer",
+      "kind": 28,
+      "detail": "useReducer with Types",
+      "documentation": { "value": "Creates a typed useReducer with action types and reducer function." },
+      "insertText": "type ${1:State} = {\n  ${2:count}: number;\n};\n\ntype ${1:State}Action =\n  | { type: '${3:INCREMENT}' }\n  | { type: '${4:DECREMENT}' }\n  | { type: '${5:RESET}'; payload: number };\n\nconst ${6:reducer} = (state: ${1:State}, action: ${1:State}Action): ${1:State} => {\n  switch (action.type) {\n    case '${3:INCREMENT}':\n      return { ...state, ${2:count}: state.${2:count} + 1 };\n    case '${4:DECREMENT}':\n      return { ...state, ${2:count}: state.${2:count} - 1 };\n    case '${5:RESET}':\n      return { ...state, ${2:count}: action.payload };\n    default:\n      return state;\n  }\n};\n\nconst [state, dispatch] = useReducer(${6:reducer}, { ${2:count}: ${7:0} });",
+      "insertTextRules": 4,
+      "sortText": "00_rreducer"
+    },
+    {
+      "label": "rerrboundary",
+      "kind": 28,
+      "detail": "Error Boundary Class Component",
+      "documentation": { "value": "Creates an Error Boundary class component for catching rendering errors." },
+      "insertText": "import React, { Component, ErrorInfo, ReactNode } from 'react';\n\ninterface ErrorBoundaryProps {\n  children: ReactNode;\n  fallback?: ReactNode;\n}\n\ninterface ErrorBoundaryState {\n  hasError: boolean;\n  error: Error | null;\n}\n\nclass ${1:ErrorBoundary} extends Component<ErrorBoundaryProps, ErrorBoundaryState> {\n  constructor(props: ErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false, error: null };\n  }\n\n  static getDerivedStateFromError(error: Error): ErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {\n    console.error('Error caught by boundary:', error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return this.props.fallback || <h1>Something went wrong.</h1>;\n    }\n    return this.props.children;\n  }\n}\n\nexport default ${1:ErrorBoundary};",
+      "insertTextRules": 4,
+      "sortText": "00_rerrboundary"
+    },
+    {
+      "label": "rlazy",
+      "kind": 28,
+      "detail": "Lazy Component Import",
+      "documentation": { "value": "Creates a lazily loaded component with React.lazy and Suspense." },
+      "insertText": "const ${1:LazyComponent} = React.lazy(() => import('${2:./components/${1:LazyComponent}}'));\n\n// Usage:\n// <Suspense fallback={<${3:Loading} />}>\n//   <${1:LazyComponent} />\n// </Suspense>",
+      "insertTextRules": 4,
+      "sortText": "00_rlazy"
+    },
+    {
+      "label": "rsuspense",
+      "kind": 28,
+      "detail": "Suspense Boundary",
+      "documentation": { "value": "Wraps components in a Suspense boundary with a fallback UI." },
+      "insertText": "<React.Suspense fallback={<${1:div}>Loading...</${1:div}>}>\n  ${0}\n</React.Suspense>",
+      "insertTextRules": 4,
+      "sortText": "00_rsuspense"
+    },
+    {
+      "label": "rportal",
+      "kind": 28,
+      "detail": "React Portal",
+      "documentation": { "value": "Creates a React Portal for rendering children into a different DOM subtree." },
+      "insertText": "import { createPortal } from 'react-dom';\n\nconst ${1:Portal}: React.FC<{ children: React.ReactNode }> = ({ children }) => {\n  const portalRoot = document.getElementById('${2:portal-root}');\n  if (!portalRoot) return null;\n  return createPortal(children, portalRoot);\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rportal"
+    },
+    {
+      "label": "rfrag",
+      "kind": 28,
+      "detail": "React Fragment",
+      "documentation": { "value": "Wraps content in a React Fragment without adding extra DOM nodes." },
+      "insertText": "<React.Fragment>\n  ${0}\n</React.Fragment>",
+      "insertTextRules": 4,
+      "sortText": "00_rfrag"
+    },
+    {
+      "label": "rcinput",
+      "kind": 28,
+      "detail": "Controlled Input Component",
+      "documentation": { "value": "Creates a controlled input with state binding and onChange handler." },
+      "insertText": "const [${1:value}, set${1/(.*)/${1:/capitalize}/}] = useState('');\n\nconst handle${1/(.*)/${1:/capitalize}/}Change = (e: React.ChangeEvent<HTMLInputElement>) => {\n  set${1/(.*)/${1:/capitalize}/}(e.target.value);\n};\n\n// JSX:\n// <input value={${1:value}} onChange={handle${1/(.*)/${1:/capitalize}/}Change} />",
+      "insertTextRules": 4,
+      "sortText": "00_rcinput"
+    },
+    {
+      "label": "rformhandler",
+      "kind": 28,
+      "detail": "Form Handler",
+      "documentation": { "value": "Creates a form with submit handler and state management." },
+      "insertText": "const [formData, setFormData] = useState({\n  ${1:email}: '',\n  ${2:password}: ''\n});\n\nconst handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n  const { name, value } = e.target;\n  setFormData(prev => ({ ...prev, [name]: value }));\n};\n\nconst handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {\n  e.preventDefault();\n  ${0:// submit logic}\n};\n\n// <form onSubmit={handleSubmit}>\n//   <input name=\"${1:email}\" value={formData.${1:email}} onChange={handleChange} />\n// </form>",
+      "insertTextRules": 4,
+      "sortText": "00_rformhandler"
+    },
+    {
+      "label": "rcondrender",
+      "kind": 28,
+      "detail": "Conditional Rendering",
+      "documentation": { "value": "Pattern for conditional rendering with ternary and logical AND." },
+      "insertText": "{${1:condition} ? (\n  <${2:div}>${3:Truthy content}</${2:div}>\n) : (\n  <${4:div}>${5:Falsy content}</${4:div}>\n)}",
+      "insertTextRules": 4,
+      "sortText": "00_rcondrender"
+    },
+    {
+      "label": "rlistmap",
+      "kind": 28,
+      "detail": "List Rendering with Key",
+      "documentation": { "value": "Maps over an array to render a list with unique keys." },
+      "insertText": "{${1:items}.map((${2:item}) => (\n  <${3:div} key={${2:item}.${4:id}}>\n    {${2:item}.${5:name}}\n  </${3:div}>\n))}",
+      "insertTextRules": 4,
+      "sortText": "00_rlistmap"
+    },
+    {
+      "label": "rhoc",
+      "kind": 28,
+      "detail": "Higher-Order Component Pattern",
+      "documentation": { "value": "Creates a Higher-Order Component (HOC) that wraps a component with additional props or logic." },
+      "insertText": "import React, { ComponentType } from 'react';\n\ninterface With${1:Feature}Props {\n  ${2:featureProp}: ${3:string};\n}\n\nexport const with${1:Feature} = <P extends object>(\n  WrappedComponent: ComponentType<P & With${1:Feature}Props>\n) => {\n  const WithFeatureComponent = (props: P) => {\n    const ${2:featureProp} = ${4:'value'};\n    return <WrappedComponent {...props} ${2:featureProp}={${2:featureProp}} />;\n  };\n  WithFeatureComponent.displayName = \\`with${1:Feature}(\\${WrappedComponent.displayName || WrappedComponent.name})\\`;\n  return WithFeatureComponent;\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rhoc"
+    },
+    {
+      "label": "rrenderprops",
+      "kind": 28,
+      "detail": "Render Props Pattern",
+      "documentation": { "value": "Creates a component using the render props pattern for sharing logic." },
+      "insertText": "interface ${1:DataProvider}Props {\n  render: (data: { ${2:value}: ${3:string}; ${4:loading}: boolean }) => React.ReactNode;\n}\n\nconst ${1:DataProvider}: React.FC<${1:DataProvider}Props> = ({ render }) => {\n  const [${2:value}, set${2/(.*)/${1:/capitalize}/}] = useState<${3:string}>('');\n  const [${4:loading}, setLoading] = useState(true);\n\n  useEffect(() => {\n    ${5:// fetch data}\n    setLoading(false);\n  }, []);\n\n  return <>{render({ ${2:value}, ${4:loading} })}</>;\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rrenderprops"
+    },
+    {
+      "label": "rcompound",
+      "kind": 28,
+      "detail": "Compound Component Pattern",
+      "documentation": { "value": "Creates a compound component with shared context between parent and children." },
+      "insertText": "import React, { createContext, useContext, useState } from 'react';\n\ninterface ${1:Tabs}ContextType {\n  activeTab: string;\n  setActiveTab: (tab: string) => void;\n}\n\nconst ${1:Tabs}Context = createContext<${1:Tabs}ContextType | undefined>(undefined);\n\nconst ${1:Tabs}: React.FC<{ children: React.ReactNode; defaultTab: string }> & {\n  Tab: typeof Tab;\n  Panel: typeof Panel;\n} = ({ children, defaultTab }) => {\n  const [activeTab, setActiveTab] = useState(defaultTab);\n  return (\n    <${1:Tabs}Context.Provider value={{ activeTab, setActiveTab }}>\n      {children}\n    </${1:Tabs}Context.Provider>\n  );\n};\n\nconst Tab: React.FC<{ name: string; children: React.ReactNode }> = ({ name, children }) => {\n  const ctx = useContext(${1:Tabs}Context)!;\n  return <button onClick={() => ctx.setActiveTab(name)}>{children}</button>;\n};\n\nconst Panel: React.FC<{ name: string; children: React.ReactNode }> = ({ name, children }) => {\n  const ctx = useContext(${1:Tabs}Context)!;\n  return ctx.activeTab === name ? <>{children}</> : null;\n};\n\n${1:Tabs}.Tab = Tab;\n${1:Tabs}.Panel = Panel;\n\nexport default ${1:Tabs};",
+      "insertTextRules": 4,
+      "sortText": "00_rcompound"
+    },
+    {
+      "label": "rcc",
+      "kind": 28,
+      "detail": "Class Component (Legacy)",
+      "documentation": { "value": "Creates a legacy class-based React component with state and lifecycle methods." },
+      "insertText": "import React, { Component } from 'react';\n\ninterface ${1:ComponentName}Props {\n  ${2:// props}\n}\n\ninterface ${1:ComponentName}State {\n  ${3:// state}\n}\n\nclass ${1:ComponentName} extends Component<${1:ComponentName}Props, ${1:ComponentName}State> {\n  state: ${1:ComponentName}State = {\n    ${4}\n  };\n\n  componentDidMount() {\n    ${5}\n  }\n\n  render() {\n    return (\n      <div>\n        ${0}\n      </div>\n    );\n  }\n}\n\nexport default ${1:ComponentName};",
+      "insertTextRules": 4,
+      "sortText": "00_rcc"
+    },
+    {
+      "label": "rpropsdestructure",
+      "kind": 28,
+      "detail": "Component with Props Destructuring",
+      "documentation": { "value": "Creates a functional component with inline props destructuring and default values." },
+      "insertText": "interface ${1:ComponentName}Props {\n  ${2:title}: string;\n  ${3:count}?: number;\n  ${4:children}?: React.ReactNode;\n}\n\nexport const ${1:ComponentName} = ({\n  ${2:title},\n  ${3:count} = ${5:0},\n  ${4:children}\n}: ${1:ComponentName}Props) => {\n  return (\n    <div>\n      <h2>{${2:title}}</h2>\n      ${0}\n      {${4:children}}\n    </div>\n  );\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rpropsdestructure"
+    },
+    {
+      "label": "useState",
+      "kind": 1,
+      "detail": "React Hook: useState",
+      "documentation": { "value": "Declares a state variable. Returns a stateful value and a function to update it.\n\n```jsx\nconst [state, setState] = useState(initialState);\n```" },
+      "insertText": "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState${2:<${3:type}>}(${4:initialValue});",
+      "insertTextRules": 4,
+      "sortText": "02_useState"
+    },
+    {
+      "label": "useEffect",
+      "kind": 1,
+      "detail": "React Hook: useEffect",
+      "documentation": { "value": "Accepts a function that contains imperative, possibly effectful code. Runs after render.\n\n```jsx\nuseEffect(() => { /* effect */ return () => { /* cleanup */ }; }, [deps]);\n```" },
+      "insertText": "useEffect(() => {\n  ${1:// effect}\n  return () => {\n    ${2:// cleanup}\n  };\n}, [${3:}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useEffect"
+    },
+    {
+      "label": "useContext",
+      "kind": 1,
+      "detail": "React Hook: useContext",
+      "documentation": { "value": "Accepts a context object and returns the current context value.\n\n```jsx\nconst value = useContext(MyContext);\n```" },
+      "insertText": "const ${1:value} = useContext(${2:MyContext});",
+      "insertTextRules": 4,
+      "sortText": "02_useContext"
+    },
+    {
+      "label": "useReducer",
+      "kind": 1,
+      "detail": "React Hook: useReducer",
+      "documentation": { "value": "An alternative to useState for complex state logic. Accepts a reducer and initial state.\n\n```jsx\nconst [state, dispatch] = useReducer(reducer, initialState);\n```" },
+      "insertText": "const [${1:state}, dispatch] = useReducer(${2:reducer}, ${3:initialState});",
+      "insertTextRules": 4,
+      "sortText": "02_useReducer"
+    },
+    {
+      "label": "useMemo",
+      "kind": 1,
+      "detail": "React Hook: useMemo",
+      "documentation": { "value": "Returns a memoized value. Only recomputes when dependencies change.\n\n```jsx\nconst memoizedValue = useMemo(() => computeExpensive(a, b), [a, b]);\n```" },
+      "insertText": "const ${1:memoizedValue} = useMemo(() => ${2:computeExpensiveValue(${3:a, b})}, [${3:a, b}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useMemo"
+    },
+    {
+      "label": "useCallback",
+      "kind": 1,
+      "detail": "React Hook: useCallback",
+      "documentation": { "value": "Returns a memoized callback function. Only changes when dependencies change.\n\n```jsx\nconst memoizedFn = useCallback(() => { doSomething(a, b); }, [a, b]);\n```" },
+      "insertText": "const ${1:memoizedCallback} = useCallback(${2:(${3:}) => {\n  ${4:// callback logic}\n}}, [${5:}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useCallback"
+    },
+    {
+      "label": "useRef",
+      "kind": 1,
+      "detail": "React Hook: useRef",
+      "documentation": { "value": "Returns a mutable ref object whose .current property is initialized to the passed argument.\n\n```jsx\nconst ref = useRef(initialValue);\n```" },
+      "insertText": "const ${1:ref} = useRef<${2:HTMLDivElement}>(${3:null});",
+      "insertTextRules": 4,
+      "sortText": "02_useRef"
+    },
+    {
+      "label": "useId",
+      "kind": 1,
+      "detail": "React Hook: useId",
+      "documentation": { "value": "Generates a unique ID for accessibility attributes. Stable across server and client.\n\n```jsx\nconst id = useId();\n```" },
+      "insertText": "const ${1:id} = useId();",
+      "insertTextRules": 4,
+      "sortText": "02_useId"
+    },
+    {
+      "label": "useTransition",
+      "kind": 1,
+      "detail": "React Hook: useTransition",
+      "documentation": { "value": "Returns a stateful value for the pending state of a transition and a function to start it.\n\n```jsx\nconst [isPending, startTransition] = useTransition();\n```" },
+      "insertText": "const [isPending, startTransition] = useTransition();",
+      "insertTextRules": 4,
+      "sortText": "02_useTransition"
+    },
+    {
+      "label": "useDeferredValue",
+      "kind": 1,
+      "detail": "React Hook: useDeferredValue",
+      "documentation": { "value": "Accepts a value and returns a deferred version that may lag behind. Useful for expensive re-renders.\n\n```jsx\nconst deferredValue = useDeferredValue(value);\n```" },
+      "insertText": "const ${1:deferredValue} = useDeferredValue(${2:value});",
+      "insertTextRules": 4,
+      "sortText": "02_useDeferredValue"
+    },
+    {
+      "label": "useSyncExternalStore",
+      "kind": 1,
+      "detail": "React Hook: useSyncExternalStore",
+      "documentation": { "value": "Subscribes to an external store. Recommended for integrating with non-React state.\n\n```jsx\nconst snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot?);\n```" },
+      "insertText": "const ${1:snapshot} = useSyncExternalStore(\n  ${2:subscribe},\n  ${3:getSnapshot},\n  ${4:getServerSnapshot}\n);",
+      "insertTextRules": 4,
+      "sortText": "02_useSyncExternalStore"
+    },
+    {
+      "label": "useInsertionEffect",
+      "kind": 1,
+      "detail": "React Hook: useInsertionEffect",
+      "documentation": { "value": "Fires synchronously before all DOM mutations. Use for injecting styles into the DOM before layout effects.\n\n```jsx\nuseInsertionEffect(() => { /* inject styles */ }, [deps]);\n```" },
+      "insertText": "useInsertionEffect(() => {\n  ${1:// inject styles before DOM mutations}\n}, [${2:}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useInsertionEffect"
+    },
+    {
+      "label": "useLayoutEffect",
+      "kind": 1,
+      "detail": "React Hook: useLayoutEffect",
+      "documentation": { "value": "Fires synchronously after all DOM mutations. Use for reading layout and synchronously re-rendering.\n\n```jsx\nuseLayoutEffect(() => { /* read DOM */ }, [deps]);\n```" },
+      "insertText": "useLayoutEffect(() => {\n  ${1:// read layout / DOM measurements}\n  return () => {\n    ${2:// cleanup}\n  };\n}, [${3:}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useLayoutEffect"
+    },
+    {
+      "label": "useImperativeHandle",
+      "kind": 1,
+      "detail": "React Hook: useImperativeHandle",
+      "documentation": { "value": "Customizes the instance value that is exposed to parent components when using ref.\n\n```jsx\nuseImperativeHandle(ref, () => ({ focus() { ... } }), [deps]);\n```" },
+      "insertText": "useImperativeHandle(${1:ref}, () => ({\n  ${2:focus}() {\n    ${3:// imperative method}\n  }\n}), [${4:}]);",
+      "insertTextRules": 4,
+      "sortText": "02_useImperativeHandle"
+    },
+    {
+      "label": "useDebugValue",
+      "kind": 1,
+      "detail": "React Hook: useDebugValue",
+      "documentation": { "value": "Displays a label in React DevTools for custom hooks.\n\n```jsx\nuseDebugValue(value, formatFn?);\n```" },
+      "insertText": "useDebugValue(${1:value}${2:, (val) => ${3:formatValue(val)}});",
+      "insertTextRules": 4,
+      "sortText": "02_useDebugValue"
+    },
+    {
+      "label": "useOptimistic",
+      "kind": 1,
+      "detail": "React Hook: useOptimistic",
+      "documentation": { "value": "Allows optimistic UI updates while async actions are in progress.\n\n```jsx\nconst [optimisticState, addOptimistic] = useOptimistic(state, updateFn);\n```" },
+      "insertText": "const [${1:optimisticState}, ${2:addOptimistic}] = useOptimistic(\n  ${3:state},\n  (${4:currentState}, ${5:optimisticValue}) => {\n    return ${6:/* merged state */};\n  }\n);",
+      "insertTextRules": 4,
+      "sortText": "02_useOptimistic"
+    },
+    {
+      "label": "useFormStatus",
+      "kind": 1,
+      "detail": "React Hook: useFormStatus",
+      "documentation": { "value": "Gives status information of the last form submission. Must be called from a component rendered inside a <form>.\n\n```jsx\nconst { pending, data, method, action } = useFormStatus();\n```" },
+      "insertText": "const { pending, data, method, action } = useFormStatus();",
+      "insertTextRules": 4,
+      "sortText": "02_useFormStatus"
+    },
+    {
+      "label": "useActionState",
+      "kind": 1,
+      "detail": "React Hook: useActionState",
+      "documentation": { "value": "Allows you to update state based on the result of a form action.\n\n```jsx\nconst [state, formAction] = useActionState(fn, initialState, permalink?);\n```" },
+      "insertText": "const [${1:state}, ${2:formAction}] = useActionState(\n  async (${3:previousState}, ${4:formData}) => {\n    ${5:// action logic}\n    return ${6:newState};\n  },\n  ${7:initialState}\n);",
+      "insertTextRules": 4,
+      "sortText": "02_useActionState"
+    },
+    {
+      "label": "use",
+      "kind": 1,
+      "detail": "React Hook: use",
+      "documentation": { "value": "Reads the value of a resource like a Promise or context. Can be called conditionally unlike other hooks.\n\n```jsx\nconst value = use(resource);\n```" },
+      "insertText": "const ${1:value} = use(${2:resource});",
+      "insertTextRules": 4,
+      "sortText": "02_use"
+    },
+    {
+      "label": "createElement",
+      "kind": 1,
+      "detail": "React.createElement",
+      "documentation": { "value": "Create a React element. JSX is compiled to createElement calls.\n\n```jsx\nReact.createElement(type, props, ...children)\n```" },
+      "insertText": "React.createElement(${1:'div'}, ${2:{ className: '${3:}' }}, ${4:children})",
+      "insertTextRules": 4,
+      "sortText": "02_createElement"
+    },
+    {
+      "label": "cloneElement",
+      "kind": 1,
+      "detail": "React.cloneElement",
+      "documentation": { "value": "Clone and return a new React element using element as the starting point with new props merged in.\n\n```jsx\nReact.cloneElement(element, props, ...children)\n```" },
+      "insertText": "React.cloneElement(${1:element}, ${2:{ ...newProps }})",
+      "insertTextRules": 4,
+      "sortText": "02_cloneElement"
+    },
+    {
+      "label": "createContext",
+      "kind": 1,
+      "detail": "React.createContext",
+      "documentation": { "value": "Creates a Context object for passing data through the component tree without prop drilling.\n\n```jsx\nconst MyContext = createContext(defaultValue);\n```" },
+      "insertText": "const ${1:MyContext} = createContext<${2:ContextType}>(${3:defaultValue});",
+      "insertTextRules": 4,
+      "sortText": "02_createContext"
+    },
+    {
+      "label": "forwardRef",
+      "kind": 1,
+      "detail": "React.forwardRef",
+      "documentation": { "value": "Creates a React component that forwards the ref attribute to a child component.\n\n```jsx\nconst FancyInput = forwardRef((props, ref) => <input ref={ref} />);\n```" },
+      "insertText": "const ${1:Component} = forwardRef<${2:HTMLDivElement}, ${3:Props}>((props, ref) => {\n  return <${4:div} ref={ref}>${0}</${4:div}>;\n});",
+      "insertTextRules": 4,
+      "sortText": "02_forwardRef"
+    },
+    {
+      "label": "lazy",
+      "kind": 1,
+      "detail": "React.lazy",
+      "documentation": { "value": "Defines a component that is loaded dynamically via code splitting.\n\n```jsx\nconst OtherComponent = React.lazy(() => import('./OtherComponent'));\n```" },
+      "insertText": "const ${1:Component} = lazy(() => import('${2:./path}'));",
+      "insertTextRules": 4,
+      "sortText": "02_lazy"
+    },
+    {
+      "label": "memo",
+      "kind": 1,
+      "detail": "React.memo",
+      "documentation": { "value": "Higher order component that memoizes the result. Only re-renders if props change.\n\n```jsx\nconst MemoComponent = React.memo(MyComponent);\n```" },
+      "insertText": "const ${1:MemoizedComponent} = memo(${2:Component}${3:, (prevProps, nextProps) => {\n  return ${4:/* true to skip re-render */};\n}});",
+      "insertTextRules": 4,
+      "sortText": "02_memo"
+    },
+    {
+      "label": "startTransition",
+      "kind": 1,
+      "detail": "React.startTransition",
+      "documentation": { "value": "Marks state updates inside the callback as transitions, allowing urgent updates to interrupt them.\n\n```jsx\nstartTransition(() => { setState(newValue); });\n```" },
+      "insertText": "startTransition(() => {\n  ${1:setState(${2:newValue})};\n});",
+      "insertTextRules": 4,
+      "sortText": "02_startTransition"
+    },
+    {
+      "label": "createPortal",
+      "kind": 1,
+      "detail": "ReactDOM.createPortal",
+      "documentation": { "value": "Creates a portal to render children into a DOM node outside the parent component hierarchy.\n\n```jsx\ncreatePortal(children, domNode, key?)\n```" },
+      "insertText": "createPortal(\n  ${1:children},\n  document.getElementById('${2:portal-root}')!\n)",
+      "insertTextRules": 4,
+      "sortText": "02_createPortal"
+    },
+    {
+      "label": "flushSync",
+      "kind": 1,
+      "detail": "ReactDOM.flushSync",
+      "documentation": { "value": "Forces React to flush any pending state updates synchronously. Use sparingly.\n\n```jsx\nflushSync(() => { setState(newValue); });\n```" },
+      "insertText": "flushSync(() => {\n  ${1:setState(${2:newValue})};\n});",
+      "insertTextRules": 4,
+      "sortText": "02_flushSync"
+    },
+    {
+      "label": "createRoot",
+      "kind": 1,
+      "detail": "ReactDOM.createRoot",
+      "documentation": { "value": "Creates a root to display React components inside a browser DOM node (React 18+).\n\n```jsx\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);\n```" },
+      "insertText": "const root = createRoot(document.getElementById('${1:root}')!);\nroot.render(\n  <React.StrictMode>\n    <${2:App} />\n  </React.StrictMode>\n);",
+      "insertTextRules": 4,
+      "sortText": "02_createRoot"
+    },
+    {
+      "label": "hydrateRoot",
+      "kind": 1,
+      "detail": "ReactDOM.hydrateRoot",
+      "documentation": { "value": "Hydrates a server-rendered DOM container with React components.\n\n```jsx\nconst root = hydrateRoot(domNode, reactNode, options?);\n```" },
+      "insertText": "const root = hydrateRoot(\n  document.getElementById('${1:root}')!,\n  <React.StrictMode>\n    <${2:App} />\n  </React.StrictMode>\n);",
+      "insertTextRules": 4,
+      "sortText": "02_hydrateRoot"
+    },
+    {
+      "label": "Children.map",
+      "kind": 1,
+      "detail": "React.Children.map",
+      "documentation": { "value": "Invokes a function on every immediate child contained within children.\n\n```jsx\nReact.Children.map(children, (child, index) => { ... });\n```" },
+      "insertText": "React.Children.map(${1:children}, (child, index) => {\n  ${0:return child;}\n})",
+      "insertTextRules": 4,
+      "sortText": "02_Children_map"
+    },
+    {
+      "label": "Children.forEach",
+      "kind": 1,
+      "detail": "React.Children.forEach",
+      "documentation": { "value": "Like React.Children.map() but does not return an array.\n\n```jsx\nReact.Children.forEach(children, (child, index) => { ... });\n```" },
+      "insertText": "React.Children.forEach(${1:children}, (child, index) => {\n  ${0}\n});",
+      "insertTextRules": 4,
+      "sortText": "02_Children_forEach"
+    },
+    {
+      "label": "Children.count",
+      "kind": 1,
+      "detail": "React.Children.count",
+      "documentation": { "value": "Returns the total number of components in children.\n\n```jsx\nconst count = React.Children.count(children);\n```" },
+      "insertText": "React.Children.count(${1:children})",
+      "insertTextRules": 4,
+      "sortText": "02_Children_count"
+    },
+    {
+      "label": "Children.only",
+      "kind": 1,
+      "detail": "React.Children.only",
+      "documentation": { "value": "Verifies that children has only one child and returns it. Throws otherwise.\n\n```jsx\nconst onlyChild = React.Children.only(children);\n```" },
+      "insertText": "React.Children.only(${1:children})",
+      "insertTextRules": 4,
+      "sortText": "02_Children_only"
+    },
+    {
+      "label": "Children.toArray",
+      "kind": 1,
+      "detail": "React.Children.toArray",
+      "documentation": { "value": "Returns the children opaque data structure as a flat array with keys assigned.\n\n```jsx\nconst childArray = React.Children.toArray(children);\n```" },
+      "insertText": "React.Children.toArray(${1:children})",
+      "insertTextRules": 4,
+      "sortText": "02_Children_toArray"
+    },
+    {
+      "label": "isValidElement",
+      "kind": 1,
+      "detail": "React.isValidElement",
+      "documentation": { "value": "Verifies the object is a React element. Returns true or false.\n\n```jsx\nReact.isValidElement(object);\n```" },
+      "insertText": "React.isValidElement(${1:object})",
+      "insertTextRules": 4,
+      "sortText": "02_isValidElement"
+    },
+    {
+      "label": "cache",
+      "kind": 1,
+      "detail": "React.cache",
+      "documentation": { "value": "Caches the result of a data fetch or computation. React Server Components feature.\n\n```jsx\nconst getData = cache(async (id) => { ... });\n```" },
+      "insertText": "const ${1:cachedFn} = cache(async (${2:args}) => {\n  ${3:// computation}\n  return ${4:result};\n});",
+      "insertTextRules": 4,
+      "sortText": "02_cache"
+    },
+    {
+      "label": "experimental_taintObjectReference",
+      "kind": 1,
+      "detail": "React.experimental_taintObjectReference",
+      "documentation": { "value": "Prevents a specific object from being passed to a Client Component. Server Components security feature.\n\n```jsx\nexperimental_taintObjectReference(message, object);\n```" },
+      "insertText": "experimental_taintObjectReference(\n  '${1:Do not pass this object to the client}',\n  ${2:object}\n);",
+      "insertTextRules": 4,
+      "sortText": "02_experimental_taintObjectReference"
+    },
+    {
+      "label": "import React",
+      "kind": 17,
+      "detail": "Import React",
+      "documentation": { "value": "Import default React module." },
+      "insertText": "import React from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_react"
+    },
+    {
+      "label": "export default",
+      "kind": 17,
+      "detail": "Default Export",
+      "documentation": { "value": "Export component as default export." },
+      "insertText": "export default ${1:ComponentName};",
+      "insertTextRules": 4,
+      "sortText": "01_export_default"
+    },
+    {
+      "label": "Fragment",
+      "kind": 17,
+      "detail": "React.Fragment",
+      "documentation": { "value": "A component that lets you group elements without a wrapper DOM node. Shorthand: `<></>`." },
+      "insertText": "Fragment",
+      "insertTextRules": 4,
+      "sortText": "01_Fragment"
+    },
+    {
+      "label": "StrictMode",
+      "kind": 17,
+      "detail": "React.StrictMode",
+      "documentation": { "value": "Activates additional development-only checks and warnings for the component tree." },
+      "insertText": "<React.StrictMode>\n  ${0}\n</React.StrictMode>",
+      "insertTextRules": 4,
+      "sortText": "01_StrictMode"
+    },
+    {
+      "label": "Suspense",
+      "kind": 17,
+      "detail": "React.Suspense",
+      "documentation": { "value": "Lets you display a fallback UI while child components are loading (code splitting, data fetching)." },
+      "insertText": "<Suspense fallback={<${1:Loading} />}>\n  ${0}\n</Suspense>",
+      "insertTextRules": 4,
+      "sortText": "01_Suspense"
+    },
+    {
+      "label": "Profiler",
+      "kind": 17,
+      "detail": "React.Profiler",
+      "documentation": { "value": "Measures the rendering performance of a React tree programmatically." },
+      "insertText": "<Profiler id=\"${1:name}\" onRender={(id, phase, actualDuration) => {\n  console.log({ id, phase, actualDuration });\n}}>\n  ${0}\n</Profiler>",
+      "insertTextRules": 4,
+      "sortText": "01_Profiler"
+    },
+    {
+      "label": "React.FC",
+      "kind": 5,
+      "detail": "Type: React.FunctionComponent",
+      "documentation": { "value": "Type alias for a functional component. Generic over props type.\n\n```tsx\nconst MyComponent: React.FC<Props> = (props) => { ... };\n```" },
+      "insertText": "React.FC<${1:Props}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_FC"
+    },
+    {
+      "label": "React.ReactNode",
+      "kind": 5,
+      "detail": "Type: React.ReactNode",
+      "documentation": { "value": "Represents any renderable React content: elements, strings, numbers, fragments, portals, booleans, null, undefined." },
+      "insertText": "React.ReactNode",
+      "insertTextRules": 4,
+      "sortText": "03_React_ReactNode"
+    },
+    {
+      "label": "React.ReactElement",
+      "kind": 5,
+      "detail": "Type: React.ReactElement",
+      "documentation": { "value": "Represents a React element returned by JSX or createElement. Narrower than ReactNode." },
+      "insertText": "React.ReactElement",
+      "insertTextRules": 4,
+      "sortText": "03_React_ReactElement"
+    },
+    {
+      "label": "React.CSSProperties",
+      "kind": 5,
+      "detail": "Type: React.CSSProperties",
+      "documentation": { "value": "Type for inline style objects. All CSS properties converted to camelCase.\n\n```tsx\nconst style: React.CSSProperties = { display: 'flex', gap: '1rem' };\n```" },
+      "insertText": "React.CSSProperties",
+      "insertTextRules": 4,
+      "sortText": "03_React_CSSProperties"
+    },
+    {
+      "label": "React.ChangeEvent",
+      "kind": 5,
+      "detail": "Type: React.ChangeEvent<T>",
+      "documentation": { "value": "Event type for onChange handlers on input, select, textarea.\n\n```tsx\nconst handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { ... };\n```" },
+      "insertText": "React.ChangeEvent<${1:HTMLInputElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ChangeEvent"
+    },
+    {
+      "label": "React.FormEvent",
+      "kind": 5,
+      "detail": "Type: React.FormEvent<T>",
+      "documentation": { "value": "Event type for form submission handlers.\n\n```tsx\nconst handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); };\n```" },
+      "insertText": "React.FormEvent<${1:HTMLFormElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_FormEvent"
+    },
+    {
+      "label": "React.MouseEvent",
+      "kind": 5,
+      "detail": "Type: React.MouseEvent<T>",
+      "documentation": { "value": "Event type for mouse event handlers (onClick, onMouseEnter, etc.).\n\n```tsx\nconst handleClick = (e: React.MouseEvent<HTMLButtonElement>) => { ... };\n```" },
+      "insertText": "React.MouseEvent<${1:HTMLButtonElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_MouseEvent"
+    },
+    {
+      "label": "React.KeyboardEvent",
+      "kind": 5,
+      "detail": "Type: React.KeyboardEvent<T>",
+      "documentation": { "value": "Event type for keyboard event handlers (onKeyDown, onKeyUp, onKeyPress).\n\n```tsx\nconst handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => { ... };\n```" },
+      "insertText": "React.KeyboardEvent<${1:HTMLInputElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_KeyboardEvent"
+    },
+    {
+      "label": "React.RefObject",
+      "kind": 5,
+      "detail": "Type: React.RefObject<T>",
+      "documentation": { "value": "Type for refs created with useRef or createRef. The .current property is read-only." },
+      "insertText": "React.RefObject<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_RefObject"
+    },
+    {
+      "label": "React.MutableRefObject",
+      "kind": 5,
+      "detail": "Type: React.MutableRefObject<T>",
+      "documentation": { "value": "Type for mutable refs. The .current property can be freely modified." },
+      "insertText": "React.MutableRefObject<${1:any}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_MutableRefObject"
+    },
+    {
+      "label": "React.Dispatch",
+      "kind": 5,
+      "detail": "Type: React.Dispatch<A>",
+      "documentation": { "value": "Type for the dispatch function returned by useReducer.\n\n```tsx\ntype MyDispatch = React.Dispatch<MyAction>;\n```" },
+      "insertText": "React.Dispatch<${1:Action}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_Dispatch"
+    },
+    {
+      "label": "React.SetStateAction",
+      "kind": 5,
+      "detail": "Type: React.SetStateAction<S>",
+      "documentation": { "value": "Type for the argument to a setState function. Can be a value or updater function." },
+      "insertText": "React.SetStateAction<${1:StateType}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_SetStateAction"
+    },
+    {
+      "label": "React.Context",
+      "kind": 5,
+      "detail": "Type: React.Context<T>",
+      "documentation": { "value": "Type for a context object created by createContext." },
+      "insertText": "React.Context<${1:ContextType}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_Context"
+    },
+    {
+      "label": "React.ComponentType",
+      "kind": 5,
+      "detail": "Type: React.ComponentType<P>",
+      "documentation": { "value": "Union type of component class and function component. Useful for HOCs.\n\n```tsx\ntype HOC = (Component: React.ComponentType<Props>) => React.ComponentType<Props>;\n```" },
+      "insertText": "React.ComponentType<${1:Props}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ComponentType"
+    },
+    {
+      "label": "React.PropsWithChildren",
+      "kind": 5,
+      "detail": "Type: React.PropsWithChildren<P>",
+      "documentation": { "value": "Utility type that adds the `children` prop to a props type.\n\n```tsx\ntype MyProps = React.PropsWithChildren<{ title: string }>;\n```" },
+      "insertText": "React.PropsWithChildren<${1:Props}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_PropsWithChildren"
+    },
+    {
+      "label": "React.HTMLAttributes",
+      "kind": 5,
+      "detail": "Type: React.HTMLAttributes<T>",
+      "documentation": { "value": "Type for all standard HTML attributes for a given element type." },
+      "insertText": "React.HTMLAttributes<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_HTMLAttributes"
+    },
+    {
+      "label": "JSX.Element",
+      "kind": 5,
+      "detail": "Type: JSX.Element",
+      "documentation": { "value": "Represents the return type of a JSX expression. Equivalent to React.ReactElement." },
+      "insertText": "JSX.Element",
+      "insertTextRules": 4,
+      "sortText": "03_JSX_Element"
+    },
+    {
+      "label": "JSX.IntrinsicElements",
+      "kind": 5,
+      "detail": "Type: JSX.IntrinsicElements",
+      "documentation": { "value": "Interface that maps HTML/SVG tag names to their attribute types. Used for type-checking JSX." },
+      "insertText": "JSX.IntrinsicElements",
+      "insertTextRules": 4,
+      "sortText": "03_JSX_IntrinsicElements"
+    },
+    {
+      "label": "import { useState }",
+      "kind": 17,
+      "detail": "Import useState hook",
+      "documentation": { "value": "Named import of useState from react." },
+      "insertText": "import { useState } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useState"
+    },
+    {
+      "label": "import { useEffect }",
+      "kind": 17,
+      "detail": "Import useEffect hook",
+      "documentation": { "value": "Named import of useEffect from react." },
+      "insertText": "import { useEffect } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useEffect"
+    },
+    {
+      "label": "import { useContext }",
+      "kind": 17,
+      "detail": "Import useContext hook",
+      "documentation": { "value": "Named import of useContext from react." },
+      "insertText": "import { useContext } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useContext"
+    },
+    {
+      "label": "import { useReducer }",
+      "kind": 17,
+      "detail": "Import useReducer hook",
+      "documentation": { "value": "Named import of useReducer from react." },
+      "insertText": "import { useReducer } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useReducer"
+    },
+    {
+      "label": "import { useMemo }",
+      "kind": 17,
+      "detail": "Import useMemo hook",
+      "documentation": { "value": "Named import of useMemo from react." },
+      "insertText": "import { useMemo } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useMemo"
+    },
+    {
+      "label": "import { useCallback }",
+      "kind": 17,
+      "detail": "Import useCallback hook",
+      "documentation": { "value": "Named import of useCallback from react." },
+      "insertText": "import { useCallback } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useCallback"
+    },
+    {
+      "label": "import { useRef }",
+      "kind": 17,
+      "detail": "Import useRef hook",
+      "documentation": { "value": "Named import of useRef from react." },
+      "insertText": "import { useRef } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useRef"
+    },
+    {
+      "label": "import ReactDOM",
+      "kind": 17,
+      "detail": "Import ReactDOM",
+      "documentation": { "value": "Import default ReactDOM module for DOM rendering." },
+      "insertText": "import ReactDOM from 'react-dom';",
+      "insertTextRules": 4,
+      "sortText": "01_import_reactdom"
+    },
+    {
+      "label": "import { createRoot }",
+      "kind": 17,
+      "detail": "Import createRoot from react-dom/client",
+      "documentation": { "value": "Named import of createRoot for React 18 rendering." },
+      "insertText": "import { createRoot } from 'react-dom/client';",
+      "insertTextRules": 4,
+      "sortText": "01_import_createRoot"
+    },
+    {
+      "label": "import { createPortal }",
+      "kind": 17,
+      "detail": "Import createPortal from react-dom",
+      "documentation": { "value": "Named import of createPortal for rendering outside parent hierarchy." },
+      "insertText": "import { createPortal } from 'react-dom';",
+      "insertTextRules": 4,
+      "sortText": "01_import_createPortal"
+    },
+    {
+      "label": "import { memo, forwardRef }",
+      "kind": 17,
+      "detail": "Import memo and forwardRef",
+      "documentation": { "value": "Named imports of commonly used React utilities." },
+      "insertText": "import { memo, forwardRef } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_memo_forwardRef"
+    },
+    {
+      "label": "import { Suspense, lazy }",
+      "kind": 17,
+      "detail": "Import Suspense and lazy",
+      "documentation": { "value": "Named imports for code-splitting support." },
+      "insertText": "import { Suspense, lazy } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_suspense_lazy"
+    },
+    {
+      "label": "ruefetch",
+      "kind": 28,
+      "detail": "useEffect Data Fetching",
+      "documentation": { "value": "useEffect pattern for fetching data with loading and error states." },
+      "insertText": "const [${1:data}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:DataType} | null>(null);\nconst [loading, setLoading] = useState(true);\nconst [error, setError] = useState<Error | null>(null);\n\nuseEffect(() => {\n  let cancelled = false;\n  const fetchData = async () => {\n    try {\n      setLoading(true);\n      const response = await fetch('${3:/api/endpoint}');\n      if (!response.ok) throw new Error('Failed to fetch');\n      const result = await response.json();\n      if (!cancelled) {\n        set${1/(.*)/${1:/capitalize}/}(result);\n      }\n    } catch (err) {\n      if (!cancelled) {\n        setError(err instanceof Error ? err : new Error('Unknown error'));\n      }\n    } finally {\n      if (!cancelled) setLoading(false);\n    }\n  };\n  fetchData();\n  return () => { cancelled = true; };\n}, [${4:}]);",
+      "insertTextRules": 4,
+      "sortText": "00_ruefetch"
+    },
+    {
+      "label": "ruselocalstorage",
+      "kind": 28,
+      "detail": "useLocalStorage Custom Hook",
+      "documentation": { "value": "Custom hook for syncing state with localStorage." },
+      "insertText": "function useLocalStorage<T>(key: string, initialValue: T) {\n  const [storedValue, setStoredValue] = useState<T>(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch {\n      return initialValue;\n    }\n  });\n\n  const setValue = (value: T | ((val: T) => T)) => {\n    const valueToStore = value instanceof Function ? value(storedValue) : value;\n    setStoredValue(valueToStore);\n    window.localStorage.setItem(key, JSON.stringify(valueToStore));\n  };\n\n  return [storedValue, setValue] as const;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruselocalstorage"
+    },
+    {
+      "label": "rusemediaquery",
+      "kind": 28,
+      "detail": "useMediaQuery Custom Hook",
+      "documentation": { "value": "Custom hook for responsive design with media queries." },
+      "insertText": "function useMediaQuery(query: string): boolean {\n  const [matches, setMatches] = useState(() =>\n    typeof window !== 'undefined' ? window.matchMedia(query).matches : false\n  );\n\n  useEffect(() => {\n    const mediaQuery = window.matchMedia(query);\n    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);\n    mediaQuery.addEventListener('change', handler);\n    return () => mediaQuery.removeEventListener('change', handler);\n  }, [query]);\n\n  return matches;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rusemediaquery"
+    },
+    {
+      "label": "rusedebounce",
+      "kind": 28,
+      "detail": "useDebounce Custom Hook",
+      "documentation": { "value": "Custom hook that debounces a value over a specified delay." },
+      "insertText": "function useDebounce<T>(value: T, delay: number): T {\n  const [debouncedValue, setDebouncedValue] = useState(value);\n\n  useEffect(() => {\n    const timer = setTimeout(() => setDebouncedValue(value), delay);\n    return () => clearTimeout(timer);\n  }, [value, delay]);\n\n  return debouncedValue;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rusedebounce"
+    },
+    {
+      "label": "ruseprevious",
+      "kind": 28,
+      "detail": "usePrevious Custom Hook",
+      "documentation": { "value": "Custom hook to track the previous value of a state or prop." },
+      "insertText": "function usePrevious<T>(value: T): T | undefined {\n  const ref = useRef<T>();\n  useEffect(() => {\n    ref.current = value;\n  });\n  return ref.current;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseprevious"
+    },
+    {
+      "label": "rusetoggle",
+      "kind": 28,
+      "detail": "useToggle Custom Hook",
+      "documentation": { "value": "Simple toggle hook for boolean state management." },
+      "insertText": "function useToggle(initialValue = false): [boolean, () => void] {\n  const [value, setValue] = useState(initialValue);\n  const toggle = useCallback(() => setValue(v => !v), []);\n  return [value, toggle];\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rusetoggle"
+    },
+    {
+      "label": "rmodal",
+      "kind": 28,
+      "detail": "Modal Component",
+      "documentation": { "value": "Creates a modal dialog component using portal and keyboard handling." },
+      "insertText": "import { createPortal } from 'react-dom';\n\ninterface ${1:Modal}Props {\n  isOpen: boolean;\n  onClose: () => void;\n  children: React.ReactNode;\n  title?: string;\n}\n\nexport const ${1:Modal}: React.FC<${1:Modal}Props> = ({ isOpen, onClose, children, title }) => {\n  useEffect(() => {\n    const handleEscape = (e: KeyboardEvent) => {\n      if (e.key === 'Escape') onClose();\n    };\n    if (isOpen) document.addEventListener('keydown', handleEscape);\n    return () => document.removeEventListener('keydown', handleEscape);\n  }, [isOpen, onClose]);\n\n  if (!isOpen) return null;\n\n  return createPortal(\n    <div className=\"modal-overlay\" onClick={onClose}>\n      <div className=\"modal-content\" onClick={(e) => e.stopPropagation()}>\n        {title && <h2>{title}</h2>}\n        {children}\n        <button onClick={onClose}>Close</button>\n      </div>\n    </div>,\n    document.body\n  );\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rmodal"
+    },
+    {
+      "label": "rcontext",
+      "kind": 28,
+      "detail": "Create Context Pattern",
+      "documentation": { "value": "Complete context pattern with provider, consumer hook, and type safety." },
+      "insertText": "const ${1:MyContext} = createContext<${2:ContextType} | undefined>(undefined);\n\nexport function use${1:MyContext}() {\n  const context = useContext(${1:MyContext});\n  if (context === undefined) {\n    throw new Error('use${1:MyContext} must be used within a ${1:MyContext}Provider');\n  }\n  return context;\n}\n\nexport function ${1:MyContext}Provider({ children }: { children: React.ReactNode }) {\n  const value = ${3:useMemo(() => ({ }), [])};\n  return <${1:MyContext}.Provider value={value}>{children}</${1:MyContext}.Provider>;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rcontext"
+    },
+    {
+      "label": "ruseonclickoutside",
+      "kind": 28,
+      "detail": "useOnClickOutside Custom Hook",
+      "documentation": { "value": "Custom hook to detect clicks outside a referenced element." },
+      "insertText": "function useOnClickOutside(\n  ref: React.RefObject<HTMLElement>,\n  handler: (event: MouseEvent | TouchEvent) => void\n) {\n  useEffect(() => {\n    const listener = (event: MouseEvent | TouchEvent) => {\n      if (!ref.current || ref.current.contains(event.target as Node)) return;\n      handler(event);\n    };\n    document.addEventListener('mousedown', listener);\n    document.addEventListener('touchstart', listener);\n    return () => {\n      document.removeEventListener('mousedown', listener);\n      document.removeEventListener('touchstart', listener);\n    };\n  }, [ref, handler]);\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseonclickoutside"
+    },
+    {
+      "label": "ruseintersectionobserver",
+      "kind": 28,
+      "detail": "useIntersectionObserver Hook",
+      "documentation": { "value": "Custom hook for detecting element visibility in the viewport." },
+      "insertText": "function useIntersectionObserver(\n  ref: React.RefObject<HTMLElement>,\n  options?: IntersectionObserverInit\n): boolean {\n  const [isIntersecting, setIntersecting] = useState(false);\n\n  useEffect(() => {\n    const element = ref.current;\n    if (!element) return;\n    const observer = new IntersectionObserver(\n      ([entry]) => setIntersecting(entry.isIntersecting),\n      options\n    );\n    observer.observe(element);\n    return () => observer.disconnect();\n  }, [ref, options]);\n\n  return isIntersecting;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseintersectionobserver"
+    },
+    {
+      "label": "rusekeypress",
+      "kind": 28,
+      "detail": "useKeyPress Hook",
+      "documentation": { "value": "Custom hook to detect when a specific key is pressed." },
+      "insertText": "function useKeyPress(targetKey: string): boolean {\n  const [keyPressed, setKeyPressed] = useState(false);\n\n  useEffect(() => {\n    const downHandler = (e: KeyboardEvent) => {\n      if (e.key === targetKey) setKeyPressed(true);\n    };\n    const upHandler = (e: KeyboardEvent) => {\n      if (e.key === targetKey) setKeyPressed(false);\n    };\n    window.addEventListener('keydown', downHandler);\n    window.addEventListener('keyup', upHandler);\n    return () => {\n      window.removeEventListener('keydown', downHandler);\n      window.removeEventListener('keyup', upHandler);\n    };\n  }, [targetKey]);\n\n  return keyPressed;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rusekeypress"
+    },
+    {
+      "label": "reventhandler",
+      "kind": 28,
+      "detail": "Event Handler Pattern",
+      "documentation": { "value": "Creates a typed event handler function for React events." },
+      "insertText": "const handle${1:Click} = useCallback((e: React.${2:MouseEvent}<${3:HTMLButtonElement}>) => {\n  ${4:e.preventDefault();}\n  ${0}\n}, []);",
+      "insertTextRules": 4,
+      "sortText": "00_reventhandler"
+    },
+    {
+      "label": "rimportall",
+      "kind": 28,
+      "detail": "Import All Common React Hooks",
+      "documentation": { "value": "Import statement for all commonly used React hooks." },
+      "insertText": "import {\n  useState,\n  useEffect,\n  useContext,\n  useReducer,\n  useCallback,\n  useMemo,\n  useRef\n} from 'react';",
+      "insertTextRules": 4,
+      "sortText": "00_rimportall"
+    },
+    {
+      "label": "React.SyntheticEvent",
+      "kind": 5,
+      "detail": "Type: React.SyntheticEvent<T>",
+      "documentation": { "value": "Base event type for all React synthetic events. Cross-browser wrapper around native events." },
+      "insertText": "React.SyntheticEvent<${1:HTMLElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_SyntheticEvent"
+    },
+    {
+      "label": "React.ComponentProps",
+      "kind": 5,
+      "detail": "Type: React.ComponentProps<T>",
+      "documentation": { "value": "Extracts the props type from a component type. Works with intrinsic elements and custom components.\n\n```tsx\ntype ButtonProps = React.ComponentProps<'button'>;\ntype MyProps = React.ComponentProps<typeof MyComponent>;\n```" },
+      "insertText": "React.ComponentProps<${1:typeof Component}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ComponentProps"
+    },
+    {
+      "label": "React.ElementType",
+      "kind": 5,
+      "detail": "Type: React.ElementType",
+      "documentation": { "value": "Type representing any valid component type: string (intrinsic element) or component." },
+      "insertText": "React.ElementType",
+      "insertTextRules": 4,
+      "sortText": "03_React_ElementType"
+    },
+    {
+      "label": "rdynamic",
+      "kind": 28,
+      "detail": "Dynamic Component Rendering",
+      "documentation": { "value": "Pattern for dynamically rendering components based on a map." },
+      "insertText": "const componentMap: Record<string, React.ComponentType<any>> = {\n  ${1:type1}: ${2:Component1},\n  ${3:type2}: ${4:Component2}\n};\n\nconst DynamicComponent = ({ type, ...props }: { type: string; [key: string]: any }) => {\n  const Component = componentMap[type];\n  if (!Component) return null;\n  return <Component {...props} />;\n};",
+      "insertTextRules": 4,
+      "sortText": "00_rdynamic"
+    },
+    {
+      "label": "rusewindowsize",
+      "kind": 28,
+      "detail": "useWindowSize Custom Hook",
+      "documentation": { "value": "Custom hook that tracks window dimensions with resize listener." },
+      "insertText": "function useWindowSize() {\n  const [size, setSize] = useState({ width: 0, height: 0 });\n\n  useEffect(() => {\n    const handleResize = () => {\n      setSize({ width: window.innerWidth, height: window.innerHeight });\n    };\n    handleResize();\n    window.addEventListener('resize', handleResize);\n    return () => window.removeEventListener('resize', handleResize);\n  }, []);\n\n  return size;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rusewindowsize"
+    },
+    {
+      "label": "ruseasync",
+      "kind": 28,
+      "detail": "useAsync Custom Hook",
+      "documentation": { "value": "Generic async operation hook with loading, error, and data states." },
+      "insertText": "function useAsync<T>(asyncFn: () => Promise<T>, deps: any[] = []) {\n  const [state, setState] = useState<{\n    loading: boolean;\n    error: Error | null;\n    data: T | null;\n  }>({ loading: true, error: null, data: null });\n\n  useEffect(() => {\n    let cancelled = false;\n    setState(s => ({ ...s, loading: true }));\n    asyncFn()\n      .then(data => { if (!cancelled) setState({ loading: false, error: null, data }); })\n      .catch(error => { if (!cancelled) setState({ loading: false, error, data: null }); });\n    return () => { cancelled = true; };\n  }, deps);\n\n  return state;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseasync"
+    },
+    {
+      "label": "rtable",
+      "kind": 28,
+      "detail": "Table Component",
+      "documentation": { "value": "Creates a generic typed table component with column definitions." },
+      "insertText": "interface Column<T> {\n  key: keyof T;\n  header: string;\n  render?: (value: T[keyof T], row: T) => React.ReactNode;\n}\n\ninterface TableProps<T> {\n  data: T[];\n  columns: Column<T>[];\n}\n\nfunction ${1:Table}<T extends { id: string | number }>({ data, columns }: TableProps<T>) {\n  return (\n    <table>\n      <thead>\n        <tr>\n          {columns.map(col => (\n            <th key={String(col.key)}>{col.header}</th>\n          ))}\n        </tr>\n      </thead>\n      <tbody>\n        {data.map(row => (\n          <tr key={row.id}>\n            {columns.map(col => (\n              <td key={String(col.key)}>\n                {col.render ? col.render(row[col.key], row) : String(row[col.key])}\n              </td>\n            ))}\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rtable"
+    },
+    {
+      "label": "rpolymorphic",
+      "kind": 28,
+      "detail": "Polymorphic Component Pattern",
+      "documentation": { "value": "Creates a polymorphic component that can render as different HTML elements." },
+      "insertText": "type ${1:Box}Props<C extends React.ElementType> = {\n  as?: C;\n  children?: React.ReactNode;\n} & Omit<React.ComponentPropsWithoutRef<C>, 'as' | 'children'>;\n\nexport function ${1:Box}<C extends React.ElementType = 'div'>({\n  as,\n  children,\n  ...props\n}: ${1:Box}Props<C>) {\n  const Component = as || 'div';\n  return <Component {...props}>{children}</Component>;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_rpolymorphic"
+    },
+    {
+      "label": "rsuspenselist",
+      "kind": 28,
+      "detail": "Suspense List Pattern",
+      "documentation": { "value": "Pattern for coordinating multiple Suspense boundaries." },
+      "insertText": "<Suspense fallback={<${1:Skeleton} />}>\n  <${2:DataComponent1} />\n</Suspense>\n<Suspense fallback={<${1:Skeleton} />}>\n  <${3:DataComponent2} />\n</Suspense>",
+      "insertTextRules": 4,
+      "sortText": "00_rsuspenselist"
+    },
+    {
+      "label": "rerrboundaryusage",
+      "kind": 28,
+      "detail": "Error Boundary Usage",
+      "documentation": { "value": "Wraps a component tree with an error boundary and fallback UI." },
+      "insertText": "<ErrorBoundary\n  fallback={<div>${1:Something went wrong}</div>}\n>\n  ${0}\n</ErrorBoundary>",
+      "insertTextRules": 4,
+      "sortText": "00_rerrboundaryusage"
+    },
+    {
+      "label": "roptimisticupdate",
+      "kind": 28,
+      "detail": "Optimistic Update Pattern",
+      "documentation": { "value": "Pattern for optimistic UI updates with rollback on failure." },
+      "insertText": "const [items, setItems] = useState<${1:Item}[]>([]);\n\nconst handleOptimisticUpdate = async (newItem: ${1:Item}) => {\n  const previousItems = items;\n  setItems(prev => [...prev, newItem]);\n  try {\n    await ${2:apiCall}(newItem);\n  } catch (error) {\n    setItems(previousItems);\n    ${3:// show error notification}\n  }\n};",
+      "insertTextRules": 4,
+      "sortText": "00_roptimisticupdate"
+    },
+    {
+      "label": "import { useId }",
+      "kind": 17,
+      "detail": "Import useId hook",
+      "documentation": { "value": "Named import of useId from react." },
+      "insertText": "import { useId } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useId"
+    },
+    {
+      "label": "import { useTransition }",
+      "kind": 17,
+      "detail": "Import useTransition hook",
+      "documentation": { "value": "Named import of useTransition from react." },
+      "insertText": "import { useTransition } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useTransition"
+    },
+    {
+      "label": "import { useDeferredValue }",
+      "kind": 17,
+      "detail": "Import useDeferredValue hook",
+      "documentation": { "value": "Named import of useDeferredValue from react." },
+      "insertText": "import { useDeferredValue } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_useDeferredValue"
+    },
+    {
+      "label": "import { startTransition }",
+      "kind": 17,
+      "detail": "Import startTransition",
+      "documentation": { "value": "Named import of startTransition from react." },
+      "insertText": "import { startTransition } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_startTransition"
+    },
+    {
+      "label": "import { createContext, useContext }",
+      "kind": 17,
+      "detail": "Import createContext and useContext",
+      "documentation": { "value": "Named imports for context creation and consumption." },
+      "insertText": "import { createContext, useContext } from 'react';",
+      "insertTextRules": 4,
+      "sortText": "01_import_createContext_useContext"
+    },
+    {
+      "label": "import { flushSync }",
+      "kind": 17,
+      "detail": "Import flushSync from react-dom",
+      "documentation": { "value": "Named import of flushSync for synchronous state updates." },
+      "insertText": "import { flushSync } from 'react-dom';",
+      "insertTextRules": 4,
+      "sortText": "01_import_flushSync"
+    },
+    {
+      "label": "React.DragEvent",
+      "kind": 5,
+      "detail": "Type: React.DragEvent<T>",
+      "documentation": { "value": "Event type for drag and drop handlers." },
+      "insertText": "React.DragEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_DragEvent"
+    },
+    {
+      "label": "React.FocusEvent",
+      "kind": 5,
+      "detail": "Type: React.FocusEvent<T>",
+      "documentation": { "value": "Event type for focus and blur handlers." },
+      "insertText": "React.FocusEvent<${1:HTMLInputElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_FocusEvent"
+    },
+    {
+      "label": "React.TouchEvent",
+      "kind": 5,
+      "detail": "Type: React.TouchEvent<T>",
+      "documentation": { "value": "Event type for touch event handlers on mobile devices." },
+      "insertText": "React.TouchEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_TouchEvent"
+    },
+    {
+      "label": "React.ClipboardEvent",
+      "kind": 5,
+      "detail": "Type: React.ClipboardEvent<T>",
+      "documentation": { "value": "Event type for clipboard operations (copy, paste, cut)." },
+      "insertText": "React.ClipboardEvent<${1:HTMLInputElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ClipboardEvent"
+    },
+    {
+      "label": "React.WheelEvent",
+      "kind": 5,
+      "detail": "Type: React.WheelEvent<T>",
+      "documentation": { "value": "Event type for mouse wheel event handlers." },
+      "insertText": "React.WheelEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_WheelEvent"
+    },
+    {
+      "label": "React.AnimationEvent",
+      "kind": 5,
+      "detail": "Type: React.AnimationEvent<T>",
+      "documentation": { "value": "Event type for CSS animation event handlers." },
+      "insertText": "React.AnimationEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_AnimationEvent"
+    },
+    {
+      "label": "React.TransitionEvent",
+      "kind": 5,
+      "detail": "Type: React.TransitionEvent<T>",
+      "documentation": { "value": "Event type for CSS transition event handlers." },
+      "insertText": "React.TransitionEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_TransitionEvent"
+    },
+    {
+      "label": "React.PointerEvent",
+      "kind": 5,
+      "detail": "Type: React.PointerEvent<T>",
+      "documentation": { "value": "Event type for unified pointer events (mouse, touch, pen)." },
+      "insertText": "React.PointerEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_PointerEvent"
+    },
+    {
+      "label": "React.UIEvent",
+      "kind": 5,
+      "detail": "Type: React.UIEvent<T>",
+      "documentation": { "value": "Base event type for UI events like scroll." },
+      "insertText": "React.UIEvent<${1:HTMLDivElement}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_UIEvent"
+    },
+    {
+      "label": "rdndinput",
+      "kind": 28,
+      "detail": "Drag and Drop Input",
+      "documentation": { "value": "File drag and drop zone component." },
+      "insertText": "const [isDragOver, setIsDragOver] = useState(false);\n\nconst handleDragOver = (e: React.DragEvent) => {\n  e.preventDefault();\n  setIsDragOver(true);\n};\n\nconst handleDragLeave = () => setIsDragOver(false);\n\nconst handleDrop = (e: React.DragEvent) => {\n  e.preventDefault();\n  setIsDragOver(false);\n  const files = Array.from(e.dataTransfer.files);\n  ${1:// process files}\n};\n\n// <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} />",
+      "insertTextRules": 4,
+      "sortText": "00_rdndinput"
+    },
+    {
+      "label": "ruseinterval",
+      "kind": 28,
+      "detail": "useInterval Custom Hook",
+      "documentation": { "value": "Declarative interval hook with automatic cleanup." },
+      "insertText": "function useInterval(callback: () => void, delay: number | null) {\n  const savedCallback = useRef(callback);\n\n  useEffect(() => {\n    savedCallback.current = callback;\n  }, [callback]);\n\n  useEffect(() => {\n    if (delay === null) return;\n    const id = setInterval(() => savedCallback.current(), delay);\n    return () => clearInterval(id);\n  }, [delay]);\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseinterval"
+    },
+    {
+      "label": "ruseanimationframe",
+      "kind": 28,
+      "detail": "useAnimationFrame Hook",
+      "documentation": { "value": "Hook for running logic on every animation frame." },
+      "insertText": "function useAnimationFrame(callback: (deltaTime: number) => void) {\n  const requestRef = useRef<number>();\n  const previousTimeRef = useRef<number>();\n\n  useEffect(() => {\n    const animate = (time: number) => {\n      if (previousTimeRef.current !== undefined) {\n        const delta = time - previousTimeRef.current;\n        callback(delta);\n      }\n      previousTimeRef.current = time;\n      requestRef.current = requestAnimationFrame(animate);\n    };\n    requestRef.current = requestAnimationFrame(animate);\n    return () => {\n      if (requestRef.current) cancelAnimationFrame(requestRef.current);\n    };\n  }, [callback]);\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseanimationframe"
+    },
+    {
+      "label": "rreducerctx",
+      "kind": 28,
+      "detail": "Reducer + Context Pattern",
+      "documentation": { "value": "Combines useReducer with Context for global state management." },
+      "insertText": "type State = { ${1:count}: number };\ntype Action = { type: '${2:INCREMENT}' } | { type: '${3:DECREMENT}' };\n\nconst initialState: State = { ${1:count}: 0 };\n\nfunction reducer(state: State, action: Action): State {\n  switch (action.type) {\n    case '${2:INCREMENT}': return { ...state, ${1:count}: state.${1:count} + 1 };\n    case '${3:DECREMENT}': return { ...state, ${1:count}: state.${1:count} - 1 };\n    default: return state;\n  }\n}\n\nconst StateContext = createContext<State>(initialState);\nconst DispatchContext = createContext<React.Dispatch<Action>>(() => {});\n\nexport function StateProvider({ children }: { children: React.ReactNode }) {\n  const [state, dispatch] = useReducer(reducer, initialState);\n  return (\n    <StateContext.Provider value={state}>\n      <DispatchContext.Provider value={dispatch}>\n        {children}\n      </DispatchContext.Provider>\n    </StateContext.Provider>\n  );\n}\n\nexport const useAppState = () => useContext(StateContext);\nexport const useAppDispatch = () => useContext(DispatchContext);",
+      "insertTextRules": 4,
+      "sortText": "00_rreducerctx"
+    },
+    {
+      "label": "rtest",
+      "kind": 28,
+      "detail": "React Testing Library Test",
+      "documentation": { "value": "Creates a test file structure using React Testing Library." },
+      "insertText": "import { render, screen, fireEvent } from '@testing-library/react';\nimport { ${1:Component} } from './${1:Component}';\n\ndescribe('${1:Component}', () => {\n  it('renders correctly', () => {\n    render(<${1:Component} ${2:} />);\n    expect(screen.getByText('${3:expected text}')).toBeInTheDocument();\n  });\n\n  it('handles user interaction', () => {\n    render(<${1:Component} ${2:} />);\n    fireEvent.click(screen.getByRole('button'));\n    ${0}\n  });\n});",
+      "insertTextRules": 4,
+      "sortText": "00_rtest"
+    },
+    {
+      "label": "ruseonline",
+      "kind": 28,
+      "detail": "useOnlineStatus Hook",
+      "documentation": { "value": "Hook to track browser online/offline status." },
+      "insertText": "function useOnlineStatus(): boolean {\n  const [isOnline, setIsOnline] = useState(navigator.onLine);\n\n  useEffect(() => {\n    const goOnline = () => setIsOnline(true);\n    const goOffline = () => setIsOnline(false);\n    window.addEventListener('online', goOnline);\n    window.addEventListener('offline', goOffline);\n    return () => {\n      window.removeEventListener('online', goOnline);\n      window.removeEventListener('offline', goOffline);\n    };\n  }, []);\n\n  return isOnline;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_ruseonline"
+    },
+    {
+      "label": "React.Reducer",
+      "kind": 5,
+      "detail": "Type: React.Reducer<S, A>",
+      "documentation": { "value": "Type for a reducer function used with useReducer." },
+      "insertText": "React.Reducer<${1:State}, ${2:Action}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_Reducer"
+    },
+    {
+      "label": "React.ReducerAction",
+      "kind": 5,
+      "detail": "Type: React.ReducerAction<R>",
+      "documentation": { "value": "Extracts the action type from a Reducer type." },
+      "insertText": "React.ReducerAction<typeof ${1:reducer}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ReducerAction"
+    },
+    {
+      "label": "React.ReducerState",
+      "kind": 5,
+      "detail": "Type: React.ReducerState<R>",
+      "documentation": { "value": "Extracts the state type from a Reducer type." },
+      "insertText": "React.ReducerState<typeof ${1:reducer}>",
+      "insertTextRules": 4,
+      "sortText": "03_React_ReducerState"
+    },
+    {
+      "label": "React.ReactPortal",
+      "kind": 5,
+      "detail": "Type: React.ReactPortal",
+      "documentation": { "value": "Type representing a React portal element." },
+      "insertText": "React.ReactPortal",
+      "insertTextRules": 4,
+      "sortText": "03_React_ReactPortal"
+    },
+    {
+      "label": "React.ErrorInfo",
+      "kind": 5,
+      "detail": "Type: React.ErrorInfo",
+      "documentation": { "value": "Type for the error info object passed to componentDidCatch. Contains the componentStack." },
+      "insertText": "React.ErrorInfo",
+      "insertTextRules": 4,
+      "sortText": "03_React_ErrorInfo"
+    }
+  ]
+}

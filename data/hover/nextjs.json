@@ -1,0 +1,305 @@
+{
+  "language": "nextjs",
+  "hovers": {
+    "page": {
+      "contents": [{ "value": "```tsx\nexport default function Page({ params, searchParams }: PageProps): JSX.Element\n```\nA `page.tsx` is the unique UI of a route in the App Router. It is the default export that renders when the route is matched. Pages receive `params` for dynamic segments and `searchParams` for query parameters." }]
+    },
+    "layout": {
+      "contents": [{ "value": "```tsx\nexport default function Layout({ children, params }: LayoutProps): JSX.Element\n```\nA `layout.tsx` defines shared UI for a segment and its children. Layouts preserve state, remain interactive, and do not re-render on navigation. The root layout must contain `<html>` and `<body>` tags." }]
+    },
+    "loading": {
+      "contents": [{ "value": "```tsx\nexport default function Loading(): JSX.Element\n```\nA `loading.tsx` creates instant loading UI with React Suspense. The content is displayed while the segment's content loads. It automatically wraps the page in a `<Suspense>` boundary." }]
+    },
+    "error": {
+      "contents": [{ "value": "```tsx\n'use client'\nexport default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }): JSX.Element\n```\nAn `error.tsx` defines an error UI boundary for a route segment. It must be a Client Component. Receives `error` (the thrown error) and `reset` (a function to attempt re-rendering)." }]
+    },
+    "not-found": {
+      "contents": [{ "value": "```tsx\nexport default function NotFound(): JSX.Element\n```\nA `not-found.tsx` renders UI when the `notFound()` function is thrown within a route segment. It also serves as a catch-all for unmatched URLs at the app level." }]
+    },
+    "template": {
+      "contents": [{ "value": "```tsx\nexport default function Template({ children }: { children: React.ReactNode }): JSX.Element\n```\nA `template.tsx` is similar to `layout.tsx` but creates a new instance on each navigation. It does not preserve state between navigations and re-mounts DOM elements." }]
+    },
+    "route": {
+      "contents": [{ "value": "```tsx\nexport async function GET(request: NextRequest, context: { params: Promise<Params> }): Promise<NextResponse>\n```\nA `route.ts` file defines a Route Handler. Route Handlers allow you to create custom request handlers for a given route using the Web Request and Response APIs." }]
+    },
+    "middleware": {
+      "contents": [{ "value": "```tsx\nimport { NextResponse } from 'next/server'\nimport type { NextRequest } from 'next/server'\n\nexport function middleware(request: NextRequest): NextResponse\n```\nMiddleware runs before a request is completed. It can rewrite, redirect, modify headers, or respond directly. Define in `middleware.ts` at the project root." }]
+    },
+    "default": {
+      "contents": [{ "value": "```tsx\nexport default function Default({ params }: { params: Params }): JSX.Element\n```\nA `default.tsx` is a fallback for parallel routes when Next.js cannot recover a slot's active state after a full-page load. It serves as the default content for `@slot` folders." }]
+    },
+    "global-error": {
+      "contents": [{ "value": "```tsx\n'use client'\nexport default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }): JSX.Element\n```\nA `global-error.tsx` handles uncaught errors in the root layout. It must define its own `<html>` and `<body>` tags since it replaces the root layout when active." }]
+    },
+    "generateStaticParams": {
+      "contents": [{ "value": "```tsx\nexport async function generateStaticParams(): Promise<Array<{ [key: string]: string }>>\n```\nUsed in combination with dynamic route segments to statically generate routes at build time instead of on-demand at request time. Returns an array of params objects for each route to pre-render." }]
+    },
+    "generateMetadata": {
+      "contents": [{ "value": "```tsx\nexport async function generateMetadata({ params, searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata>\n```\nGenerates dynamic metadata for a page. Receives route params and parent metadata. Returns a `Metadata` object that sets `<head>` elements like title, description, Open Graph, etc." }]
+    },
+    "revalidatePath": {
+      "contents": [{ "value": "```tsx\nimport { revalidatePath } from 'next/cache'\n\nrevalidatePath(path: string, type?: 'page' | 'layout'): void\n```\nPurges cached data for a specific path on-demand. Can be used in Server Actions or Route Handlers. The `type` parameter controls whether to revalidate a page or its layout tree." }]
+    },
+    "revalidateTag": {
+      "contents": [{ "value": "```tsx\nimport { revalidateTag } from 'next/cache'\n\nrevalidateTag(tag: string): void\n```\nPurges cached data associated with a specific cache tag on-demand. Tags are assigned via `fetch` options: `fetch(url, { next: { tags: ['tagName'] } })`. Use in Server Actions or Route Handlers." }]
+    },
+    "use client": {
+      "contents": [{ "value": "```tsx\n'use client'\n```\nThe `\"use client\"` directive marks a component as a Client Component. Client Components are rendered on the client and can use React hooks like `useState`, `useEffect`, event handlers, and browser APIs. Must be at the top of the file." }]
+    },
+    "use server": {
+      "contents": [{ "value": "```tsx\n'use server'\n```\nThe `\"use server\"` directive marks a function or module as a Server Action. Server Actions can be called from Client Components and run exclusively on the server. They can be used in form actions and event handlers." }]
+    },
+    "useRouter": {
+      "contents": [{ "value": "```tsx\nimport { useRouter } from 'next/navigation'\n\nconst router = useRouter(): AppRouterInstance\n```\nReturns a router instance for programmatic navigation in Client Components. Methods: `router.push(href)`, `router.replace(href)`, `router.refresh()`, `router.prefetch(href)`, `router.back()`, `router.forward()`." }]
+    },
+    "usePathname": {
+      "contents": [{ "value": "```tsx\nimport { usePathname } from 'next/navigation'\n\nconst pathname = usePathname(): string\n```\nReturns the current URL pathname as a string. For example, `/dashboard/settings`. Client Component hook that reads the current route. Updates on navigation." }]
+    },
+    "useSearchParams": {
+      "contents": [{ "value": "```tsx\nimport { useSearchParams } from 'next/navigation'\n\nconst searchParams = useSearchParams(): ReadonlyURLSearchParams\n```\nReturns a read-only `URLSearchParams` object for accessing the current URL's query parameters. Must be used in a Client Component and wrapped in a `<Suspense>` boundary." }]
+    },
+    "useParams": {
+      "contents": [{ "value": "```tsx\nimport { useParams } from 'next/navigation'\n\nconst params = useParams(): Params\n```\nReturns an object containing the current route's dynamic parameters. For example, for `/shop/[slug]` visiting `/shop/1` returns `{ slug: '1' }`. Client Component hook." }]
+    },
+    "redirect": {
+      "contents": [{ "value": "```tsx\nimport { redirect } from 'next/navigation'\n\nredirect(path: string, type?: RedirectType): never\n```\nRedirects the user to another URL. Can be used in Server Components, Server Actions, and Route Handlers. Throws a `NEXT_REDIRECT` error internally. Default type is `'replace'`." }]
+    },
+    "notFound": {
+      "contents": [{ "value": "```tsx\nimport { notFound } from 'next/navigation'\n\nnotFound(): never\n```\nInvokes the `not-found.tsx` file for the current route segment. Throws a `NEXT_NOT_FOUND` error that terminates rendering of the current segment and renders the not-found UI." }]
+    },
+    "useSelectedLayoutSegment": {
+      "contents": [{ "value": "```tsx\nimport { useSelectedLayoutSegment } from 'next/navigation'\n\nconst segment = useSelectedLayoutSegment(parallelRoutesKey?: string): string | null\n```\nReturns the active route segment one level below the layout it's called from. Useful for navigation UI like tabs that change style based on the active child segment." }]
+    },
+    "useSelectedLayoutSegments": {
+      "contents": [{ "value": "```tsx\nimport { useSelectedLayoutSegments } from 'next/navigation'\n\nconst segments = useSelectedLayoutSegments(parallelRoutesKey?: string): string[]\n```\nReturns an array of active route segments below the layout it's called from. Useful for building breadcrumbs or other UI that needs knowledge of all active child segments." }]
+    },
+    "Image": {
+      "contents": [{ "value": "```tsx\nimport Image from 'next/image'\n\n<Image src={src} width={number} height={number} alt={string} />\n```\nThe `next/image` component extends HTML `<img>` with automatic image optimization: lazy loading, responsive sizing, format conversion (WebP/AVIF), and prevents layout shift." }]
+    },
+    "src": {
+      "contents": [{ "value": "```tsx\nsrc: string | StaticImport\n```\nThe source of the image. Can be a path string (local or remote), or a statically imported image file. Remote images require `remotePatterns` configuration in `next.config.js`." }]
+    },
+    "width": {
+      "contents": [{ "value": "```tsx\nwidth: number\n```\nThe intrinsic width of the image in pixels. Required unless using `fill` prop or a statically imported image. Used to determine the correct aspect ratio and avoid layout shift." }]
+    },
+    "height": {
+      "contents": [{ "value": "```tsx\nheight: number\n```\nThe intrinsic height of the image in pixels. Required unless using `fill` prop or a statically imported image. Used to determine the correct aspect ratio and avoid layout shift." }]
+    },
+    "alt": {
+      "contents": [{ "value": "```tsx\nalt: string\n```\nDescriptive text for the image used by screen readers and search engines. Required prop on the `next/image` component for accessibility compliance." }]
+    },
+    "fill": {
+      "contents": [{ "value": "```tsx\nfill?: boolean\n```\nCauses the image to fill its parent element instead of using explicit width/height. The parent must have `position: relative`. Use with `sizes` prop and `object-fit` CSS." }]
+    },
+    "sizes": {
+      "contents": [{ "value": "```tsx\nsizes?: string\n```\nA media query string that indicates how wide the image will be at various breakpoints. Important for performance when using `fill` or responsive images. Example: `\"(max-width: 768px) 100vw, 50vw\"`." }]
+    },
+    "quality": {
+      "contents": [{ "value": "```tsx\nquality?: number // 1-100, default 75\n```\nThe quality of the optimized image. Higher values produce better quality but larger file sizes. Integer between 1 and 100." }]
+    },
+    "priority": {
+      "contents": [{ "value": "```tsx\npriority?: boolean // default false\n```\nWhen true, the image is considered high priority and will be preloaded. Disables lazy loading. Use for the Largest Contentful Paint (LCP) element on each page." }]
+    },
+    "placeholder": {
+      "contents": [{ "value": "```tsx\nplaceholder?: 'empty' | 'blur' | 'data:image/...' // default 'empty'\n```\nA placeholder to show while the image is loading. `'blur'` uses `blurDataURL` (auto-generated for static imports). `'empty'` shows nothing during load." }]
+    },
+    "blurDataURL": {
+      "contents": [{ "value": "```tsx\nblurDataURL?: string\n```\nA base64-encoded Data URL used as the placeholder image before `src` loads. Only takes effect when combined with `placeholder=\"blur\"`. Auto-generated for statically imported images." }]
+    },
+    "Link": {
+      "contents": [{ "value": "```tsx\nimport Link from 'next/link'\n\n<Link href={string | UrlObject} prefetch={boolean} replace={boolean} scroll={boolean}>{children}</Link>\n```\nThe `next/link` component enables client-side navigation between routes with automatic prefetching. It extends HTML `<a>` with Next.js routing capabilities." }]
+    },
+    "href": {
+      "contents": [{ "value": "```tsx\nhref: string | UrlObject\n```\nThe path or URL to navigate to. Can be a string path (`\"/dashboard\"`), an object with `pathname` and `query`, or a full URL for external links." }]
+    },
+    "prefetch": {
+      "contents": [{ "value": "```tsx\nprefetch?: boolean | null // default: true\n```\nControls prefetching behavior for `next/link`. When `true`, the linked route is prefetched when the link enters the viewport. Set to `false` to disable prefetching." }]
+    },
+    "replace": {
+      "contents": [{ "value": "```tsx\nreplace?: boolean // default false\n```\nWhen `true`, `next/link` replaces the current history state instead of adding a new entry to the browser's history stack." }]
+    },
+    "scroll": {
+      "contents": [{ "value": "```tsx\nscroll?: boolean // default true\n```\nControls whether the page scrolls to the top after navigation. Set to `false` to maintain the current scroll position when navigating via `next/link`." }]
+    },
+    "localFont": {
+      "contents": [{ "value": "```tsx\nimport localFont from 'next/font/local'\n\nconst myFont = localFont({ src: './my-font.woff2', display?: string, variable?: string })\n```\nLoads a local font file. Supports `.woff`, `.woff2`, `.ttf`, `.otf`. Automatically self-hosts and optimizes fonts with zero layout shift." }]
+    },
+    "next/font/google": {
+      "contents": [{ "value": "```tsx\nimport { Inter } from 'next/font/google'\n\nconst inter = Inter({ subsets: ['latin'], display?: string, variable?: string, weight?: string | string[] })\n```\nLoads Google Fonts with automatic self-hosting. No requests are sent to Google by the browser. Supports variable and non-variable fonts." }]
+    },
+    "Script": {
+      "contents": [{ "value": "```tsx\nimport Script from 'next/script'\n\n<Script src={string} strategy={string} onLoad={Function} onReady={Function} onError={Function} />\n```\nThe `next/script` component enables loading third-party scripts with optimized strategies: `beforeInteractive`, `afterInteractive` (default), `lazyOnload`, and `worker`." }]
+    },
+    "strategy": {
+      "contents": [{ "value": "```tsx\nstrategy?: 'beforeInteractive' | 'afterInteractive' | 'lazyOnload' | 'worker'\n```\nControls when the third-party script loads. `beforeInteractive`: before hydration. `afterInteractive` (default): after hydration. `lazyOnload`: during idle time. `worker`: in a web worker." }]
+    },
+    "onLoad": {
+      "contents": [{ "value": "```tsx\nonLoad?: () => void\n```\nCallback executed once after the script has finished loading. Only works with `afterInteractive` and `lazyOnload` strategies." }]
+    },
+    "onReady": {
+      "contents": [{ "value": "```tsx\nonReady?: () => void\n```\nCallback executed after the script has finished loading and every time the component is mounted. Useful for scripts that need re-initialization on route changes." }]
+    },
+    "headers": {
+      "contents": [{ "value": "```tsx\nimport { headers } from 'next/headers'\n\nconst headersList = await headers(): Promise<ReadonlyHeaders>\n```\nReturns a read-only Headers object for the incoming request. Used in Server Components and Route Handlers. Dynamic function that opts into dynamic rendering." }]
+    },
+    "cookies": {
+      "contents": [{ "value": "```tsx\nimport { cookies } from 'next/headers'\n\nconst cookieStore = await cookies(): Promise<ReadonlyRequestCookies>\n```\nReturns a read-only cookies object. Methods: `.get(name)`, `.getAll()`, `.has(name)`. To set cookies, use `cookies().set()` in a Server Action or Route Handler." }]
+    },
+    "NextRequest": {
+      "contents": [{ "value": "```tsx\nimport { NextRequest } from 'next/server'\n\nclass NextRequest extends Request {\n  cookies: RequestCookies\n  nextUrl: NextURL\n  ip?: string\n  geo?: { city, country, region, latitude, longitude }\n}\n```\nExtends the Web `Request` API with additional Next.js-specific properties. Used in Middleware and Route Handlers." }]
+    },
+    "NextResponse": {
+      "contents": [{ "value": "```tsx\nimport { NextResponse } from 'next/server'\n\nclass NextResponse extends Response {\n  static json(body, init?): NextResponse\n  static redirect(url, status?): NextResponse\n  static rewrite(destination): NextResponse\n  static next(init?): NextResponse\n  cookies: ResponseCookies\n}\n```\nExtends the Web `Response` API with helper methods for Next.js middleware and route handlers." }]
+    },
+    "NextMiddleware": {
+      "contents": [{ "value": "```tsx\ntype NextMiddleware = (\n  request: NextRequest,\n  event: NextFetchEvent\n) => NextResponse | Response | null | undefined | void | Promise<...>\n```\nThe function type for Next.js middleware. Receives the request and an event object with `waitUntil()` for extending the lifetime of the function." }]
+    },
+    "fetch": {
+      "contents": [{ "value": "```tsx\nfetch(url: string, {\n  cache?: 'force-cache' | 'no-store',\n  next?: { revalidate?: number | false, tags?: string[] }\n}): Promise<Response>\n```\nNext.js extends the native `fetch` API with caching and revalidation options. `cache: 'force-cache'` caches indefinitely. `next.revalidate` sets time-based revalidation in seconds." }]
+    },
+    "revalidate": {
+      "contents": [{ "value": "```tsx\nexport const revalidate = number | false | 0\n```\nSets the default revalidation time (in seconds) for a layout or page segment. `0` means always revalidate. `false` means cache indefinitely. Applies to all `fetch` requests in the segment." }]
+    },
+    "tags": {
+      "contents": [{ "value": "```tsx\nnext: { tags: string[] }\n```\nAssigns cache tags to a `fetch` request. Tags enable on-demand revalidation via `revalidateTag(tag)`. Example: `fetch(url, { next: { tags: ['posts'] } })`." }]
+    },
+    "cache": {
+      "contents": [{ "value": "```tsx\ncache?: 'force-cache' | 'no-store'\n```\nThe `cache` option on `fetch()` controls request caching. `'force-cache'` (default for GET in Server Components) caches the response. `'no-store'` skips the cache entirely." }]
+    },
+    "unstable_cache": {
+      "contents": [{ "value": "```tsx\nimport { unstable_cache } from 'next/cache'\n\nconst getCachedData = unstable_cache(\n  async () => { /* fetch data */ },\n  keyParts?: string[],\n  options?: { revalidate?: number, tags?: string[] }\n)\n```\nWraps a function with caching. The result is cached and can be revalidated by time or tags. Useful for caching database queries and other non-fetch data sources." }]
+    },
+    "unstable_noStore": {
+      "contents": [{ "value": "```tsx\nimport { unstable_noStore as noStore } from 'next/cache'\n\nnoStore(): void\n```\nOpts a Server Component or function out of static rendering, ensuring it always runs dynamically. Equivalent to `cache: 'no-store'` on a fetch request." }]
+    },
+    "images": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  images: {\n    remotePatterns: [{ protocol, hostname, port, pathname }],\n    domains: string[],\n    formats: ('image/avif' | 'image/webp')[],\n    deviceSizes: number[],\n    imageSizes: number[]\n  }\n}\n```\nConfigures the Next.js Image Optimization API. Define allowed remote image sources, supported formats, and responsive breakpoints." }]
+    },
+    "redirects": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  async redirects(): Promise<Redirect[]> {\n    return [{ source: '/old', destination: '/new', permanent: true }]\n  }\n}\n```\nDefines URL redirects. Each redirect has `source` (incoming path pattern), `destination` (target path), and `permanent` (308 vs 307 status code)." }]
+    },
+    "rewrites": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  async rewrites() {\n    return [{ source: '/api/:path*', destination: 'https://backend.example.com/:path*' }]\n  }\n}\n```\nRewrites map an incoming request path to a different destination path. Unlike redirects, rewrites act as a URL proxy and mask the destination path." }]
+    },
+    "env": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  env: { CUSTOM_KEY: 'value' }\n}\n```\nExposes environment variables to the browser bundle at build time. Variables prefixed with `NEXT_PUBLIC_` are automatically exposed without this config." }]
+    },
+    "webpack": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  webpack: (config: WebpackConfig, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {\n    return config\n  }\n}\n```\nCustom webpack configuration function. Called twice: once for the server and once for the client. Use to add loaders, plugins, or modify the config." }]
+    },
+    "turbopack": {
+      "contents": [{ "value": "```tsx\n// next.config.js\nmodule.exports = {\n  experimental: {\n    turbo: {\n      rules: { '*.svg': { loaders: ['@svgr/webpack'], as: '*.js' } },\n      resolveAlias: { underscore: 'lodash' }\n    }\n  }\n}\n```\nTurbopack configuration for the Next.js dev server (`next dev --turbo`). Supports custom loaders and module resolution aliases." }]
+    },
+    "metadata": {
+      "contents": [{ "value": "```tsx\nimport type { Metadata } from 'next'\n\nexport const metadata: Metadata = {\n  title: string | { default, template, absolute },\n  description: string,\n  openGraph: { ... },\n  twitter: { ... },\n  icons: { ... },\n  robots: { ... }\n}\n```\nStatic metadata export for a page or layout. Generates `<head>` elements including title, description, Open Graph tags, Twitter cards, icons, and robots directives." }]
+    },
+    "viewport": {
+      "contents": [{ "value": "```tsx\nimport type { Viewport } from 'next'\n\nexport const viewport: Viewport = {\n  width: 'device-width',\n  initialScale: 1,\n  maximumScale: 1,\n  themeColor: string | { media: string, color: string }[]\n}\n```\nStatic viewport configuration export. Separated from metadata for better static optimization. Controls viewport meta tag and theme color." }]
+    },
+    "MetadataBase": {
+      "contents": [{ "value": "```tsx\nexport const metadata: Metadata = {\n  metadataBase: new URL('https://example.com')\n}\n```\nSets the base URL for metadata fields that require a fully qualified URL (like Open Graph images). Resolves relative URLs in `openGraph`, `twitter`, and other metadata fields." }]
+    },
+    "openGraph": {
+      "contents": [{ "value": "```tsx\nopenGraph: {\n  title: string,\n  description: string,\n  url: string,\n  siteName: string,\n  images: [{ url, width, height, alt }],\n  locale: string,\n  type: 'website' | 'article'\n}\n```\nOpen Graph metadata for social media sharing. Generates `og:` meta tags. Used within the `metadata` or `generateMetadata` exports." }]
+    },
+    "twitter": {
+      "contents": [{ "value": "```tsx\ntwitter: {\n  card: 'summary' | 'summary_large_image' | 'app' | 'player',\n  title: string,\n  description: string,\n  images: string[],\n  creator: string\n}\n```\nTwitter Card metadata. Generates `twitter:` meta tags for rich link previews on Twitter/X." }]
+    },
+    "icons": {
+      "contents": [{ "value": "```tsx\nicons: {\n  icon: string | { url, type, sizes }[],\n  shortcut: string,\n  apple: string | { url, sizes }[],\n  other: { rel, url }[]\n}\n```\nFavicon and app icon metadata. Generates `<link rel=\"icon\">`, `<link rel=\"apple-touch-icon\">`, and other icon-related tags." }]
+    },
+    "robots": {
+      "contents": [{ "value": "```tsx\nrobots: {\n  index: boolean,\n  follow: boolean,\n  nocache: boolean,\n  googleBot: { index, follow, noimageindex, 'max-video-preview', 'max-image-preview', 'max-snippet' }\n}\n```\nRobots metadata for search engine crawling directives. Generates the `robots` meta tag." }]
+    },
+    "sitemap": {
+      "contents": [{ "value": "```tsx\n// app/sitemap.ts\nimport type { MetadataRoute } from 'next'\n\nexport default function sitemap(): MetadataRoute.Sitemap {\n  return [{ url: 'https://example.com', lastModified: new Date(), changeFrequency: 'yearly', priority: 1 }]\n}\n```\nGenerates a `sitemap.xml` file for search engine discoverability. Export a default function from `app/sitemap.ts`." }]
+    },
+    "manifest": {
+      "contents": [{ "value": "```tsx\n// app/manifest.ts\nimport type { MetadataRoute } from 'next'\n\nexport default function manifest(): MetadataRoute.Manifest {\n  return { name: 'App', short_name: 'App', start_url: '/', display: 'standalone' }\n}\n```\nGenerates a `manifest.json` / `manifest.webmanifest` for Progressive Web App (PWA) support." }]
+    },
+    "dynamic": {
+      "contents": [{ "value": "```tsx\nimport dynamic from 'next/dynamic'\n\nconst Component = dynamic(() => import('./Component'), {\n  loading: () => <p>Loading...</p>,\n  ssr: boolean\n})\n```\nLazy loads a component with code splitting. Supports SSR toggle and a loading component. Uses `React.lazy()` and `Suspense` under the hood." }]
+    },
+    "useFormStatus": {
+      "contents": [{ "value": "```tsx\nimport { useFormStatus } from 'react-dom'\n\nconst { pending, data, method, action } = useFormStatus()\n```\nReturns status information for the last form submission. `pending` is `true` while the Server Action is executing. Must be used inside a `<form>` element." }]
+    },
+    "useFormState": {
+      "contents": [{ "value": "```tsx\nimport { useFormState } from 'react-dom'\n\nconst [state, formAction] = useFormState(action: ServerAction, initialState: State)\n```\nManages form state with a Server Action. Returns the current state and a wrapped action. The action receives previous state and form data as arguments." }]
+    },
+    "useOptimistic": {
+      "contents": [{ "value": "```tsx\nimport { useOptimistic } from 'react'\n\nconst [optimisticState, addOptimistic] = useOptimistic(state, updateFn)\n```\nProvides optimistic UI updates. Shows a temporary state while an async action (like a Server Action) is in progress. Reverts to actual state when the action completes." }]
+    },
+    "GET": {
+      "contents": [{ "value": "```tsx\nexport async function GET(request: NextRequest, { params }: { params: Promise<Params> }): Promise<Response | NextResponse>\n```\nHTTP GET handler in a Route Handler (`route.ts`). Handles GET requests. Cached by default unless using dynamic functions." }]
+    },
+    "POST": {
+      "contents": [{ "value": "```tsx\nexport async function POST(request: NextRequest, { params }: { params: Promise<Params> }): Promise<Response | NextResponse>\n```\nHTTP POST handler in a Route Handler (`route.ts`). Handles POST requests. Not cached by default." }]
+    },
+    "PUT": {
+      "contents": [{ "value": "```tsx\nexport async function PUT(request: NextRequest, { params }: { params: Promise<Params> }): Promise<Response | NextResponse>\n```\nHTTP PUT handler in a Route Handler (`route.ts`). Handles PUT requests for full resource updates." }]
+    },
+    "PATCH": {
+      "contents": [{ "value": "```tsx\nexport async function PATCH(request: NextRequest, { params }: { params: Promise<Params> }): Promise<Response | NextResponse>\n```\nHTTP PATCH handler in a Route Handler (`route.ts`). Handles PATCH requests for partial resource updates." }]
+    },
+    "DELETE": {
+      "contents": [{ "value": "```tsx\nexport async function DELETE(request: NextRequest, { params }: { params: Promise<Params> }): Promise<Response | NextResponse>\n```\nHTTP DELETE handler in a Route Handler (`route.ts`). Handles DELETE requests for resource removal." }]
+    },
+    "HEAD": {
+      "contents": [{ "value": "```tsx\nexport async function HEAD(request: NextRequest): Promise<Response>\n```\nHTTP HEAD handler in a Route Handler (`route.ts`). Similar to GET but without a response body. Useful for checking resource existence or headers." }]
+    },
+    "OPTIONS": {
+      "contents": [{ "value": "```tsx\nexport async function OPTIONS(request: NextRequest): Promise<Response>\n```\nHTTP OPTIONS handler in a Route Handler (`route.ts`). Used for CORS preflight requests. If not defined, Next.js auto-handles OPTIONS based on other defined methods." }]
+    },
+    "@folder": {
+      "contents": [{ "value": "```\napp/\n  @analytics/\n    page.tsx\n  @team/\n    page.tsx\n  layout.tsx\n  page.tsx\n```\nParallel routes are defined by naming a folder with the `@` prefix (slot). Each slot is passed as a prop to the parent layout. Parallel routes render simultaneously in the same layout." }]
+    },
+    "slots": {
+      "contents": [{ "value": "```tsx\nexport default function Layout({\n  children,\n  analytics,\n  team\n}: {\n  children: React.ReactNode\n  analytics: React.ReactNode\n  team: React.ReactNode\n}) { ... }\n```\nSlots are the props passed to a layout from parallel routes (`@folder`). Each slot renders independently and can have its own loading, error, and not-found states." }]
+    },
+    "(.)": {
+      "contents": [{ "value": "```\n(.) - matches the same level\n(..) - matches one level above\n(..)(..) - matches two levels above\n(...) - matches from the root app directory\n```\nIntercepting routes convention. Allows loading a route within the current layout while showing a different URL. Commonly used for modals (e.g., photo gallery overlays)." }]
+    },
+    "(..)": {
+      "contents": [{ "value": "```\n(..) - Intercepts a route one level above the current segment.\n```\nUsed for intercepting routes one directory level above. Place inside a folder like `(..)photo/[id]/page.tsx` to intercept `/photo/[id]` from a sibling route." }]
+    },
+    "(...)": {
+      "contents": [{ "value": "```\n(...) - Intercepts a route from the root app directory.\n```\nUsed for intercepting routes from the root of the app directory structure. Matches regardless of nesting depth." }]
+    },
+    "(..)(..)": {
+      "contents": [{ "value": "```\n(..)(..) - Intercepts a route two levels above the current segment.\n```\nUsed for intercepting routes two directory levels above. Useful for deeply nested interception patterns." }]
+    },
+    "runtime": {
+      "contents": [{ "value": "```tsx\nexport const runtime = 'nodejs' | 'edge'\n```\nSets the runtime for a route segment. `'nodejs'` (default) uses the Node.js runtime. `'edge'` uses the Edge Runtime with a smaller API surface but faster cold starts." }]
+    },
+    "dynamicParams": {
+      "contents": [{ "value": "```tsx\nexport const dynamicParams = true | false\n```\nControls behavior when visiting a dynamic segment not generated with `generateStaticParams`. `true` (default) generates on demand. `false` returns a 404." }]
+    },
+    "fetchCache": {
+      "contents": [{ "value": "```tsx\nexport const fetchCache = 'auto' | 'default-cache' | 'only-cache' | 'force-cache' | 'default-no-store' | 'only-no-store' | 'force-no-store'\n```\nOverrides the default caching behavior of all `fetch` requests in a route segment. Advanced option for fine-grained cache control." }]
+    },
+    "NextPage": {
+      "contents": [{ "value": "```tsx\nimport type { NextPage } from 'next'\n\nconst Page: NextPage<Props> = ({ prop1, prop2 }) => { ... }\n```\nType for page components in the Pages Router. Generic type that accepts page props. Includes `getInitialProps` support." }]
+    },
+    "NextApiRequest": {
+      "contents": [{ "value": "```tsx\nimport type { NextApiRequest } from 'next'\n\ninterface NextApiRequest extends IncomingMessage {\n  query: Partial<{ [key: string]: string | string[] }>\n  cookies: Partial<{ [key: string]: string }>\n  body: any\n  env: Env\n}\n```\nType for API route request objects in the Pages Router (`pages/api/`). Extends Node.js `IncomingMessage` with parsed query, cookies, and body."}]
+    },
+    "NextApiResponse": {
+      "contents": [{ "value": "```tsx\nimport type { NextApiResponse } from 'next'\n\ninterface NextApiResponse<T = any> extends ServerResponse {\n  status(code: number): NextApiResponse<T>\n  json(body: T): void\n  redirect(url: string): NextApiResponse<T>\n  send(body: string): void\n}\n```\nType for API route response objects in the Pages Router. Provides helper methods for status codes, JSON, redirects, and sending responses." }]
+    },
+    "getServerSideProps": {
+      "contents": [{ "value": "```tsx\nimport type { GetServerSideProps } from 'next'\n\nexport const getServerSideProps: GetServerSideProps = async (context) => {\n  return { props: {} }\n}\n```\nPages Router data fetching function. Runs on every request on the server side. Can return `props`, `redirect`, or `notFound`. The page receives returned props as component props." }]
+    },
+    "getStaticProps": {
+      "contents": [{ "value": "```tsx\nimport type { GetStaticProps } from 'next'\n\nexport const getStaticProps: GetStaticProps = async (context) => {\n  return { props: {}, revalidate?: number }\n}\n```\nPages Router data fetching for static generation. Runs at build time. Supports ISR with `revalidate`. Returns `props`, `redirect`, `notFound`, or `revalidate`." }]
+    },
+    "getStaticPaths": {
+      "contents": [{ "value": "```tsx\nimport type { GetStaticPaths } from 'next'\n\nexport const getStaticPaths: GetStaticPaths = async () => {\n  return { paths: [{ params: { id: '1' } }], fallback: false | true | 'blocking' }\n}\n```\nPages Router function for defining dynamic routes to pre-render at build time. Used with `getStaticProps`. `fallback` controls behavior for non-generated paths." }]
+    },
+    "config": {
+      "contents": [{ "value": "```tsx\nexport const config = {\n  matcher: string | string[]\n}\n```\nMiddleware configuration object. The `matcher` property defines which routes the middleware should run on. Supports path patterns with parameters." }]
+    },
+    "shallow": {
+      "contents": [{ "value": "```tsx\nshallow?: boolean\n```\nWhen used with `next/link` or `router.push`, updates the URL without running data fetching methods (Pages Router). In the App Router, use `window.history.pushState` instead." }]
+    }
+  }
+}

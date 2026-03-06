@@ -1,0 +1,1202 @@
+{
+  "language": "shadcn",
+  "completions": [
+    {
+      "label": "shadcn-form-with-zod",
+      "kind": 28,
+      "detail": "Form with react-hook-form + zod validation",
+      "documentation": { "value": "Complete form setup with shadcn/ui Form component, react-hook-form, and zod schema validation.\n\n```tsx\nconst formSchema = z.object({\n  username: z.string().min(2),\n});\n\nfunction MyForm() {\n  const form = useForm<z.infer<typeof formSchema>>({\n    resolver: zodResolver(formSchema),\n  });\n  return (\n    <Form {...form}>\n      <FormField control={form.control} name=\"username\" render={({ field }) => (\n        <FormItem>\n          <FormLabel>Username</FormLabel>\n          <FormControl><Input {...field} /></FormControl>\n          <FormMessage />\n        </FormItem>\n      )} />\n    </Form>\n  );\n}\n```" },
+      "insertText": "const ${1:formSchema} = z.object({\n\t${2:field}: z.string().min(${3:2}, { message: \"${4:Must be at least 2 characters}\" }),\n});\n\nfunction ${5:MyForm}() {\n\tconst form = useForm<z.infer<typeof ${1:formSchema}>>({\n\t\tresolver: zodResolver(${1:formSchema}),\n\t\tdefaultValues: { ${2:field}: \"\" },\n\t});\n\n\tfunction onSubmit(values: z.infer<typeof ${1:formSchema}>) {\n\t\tconsole.log(values);\n\t}\n\n\treturn (\n\t\t<Form {...form}>\n\t\t\t<form onSubmit={form.handleSubmit(onSubmit)} className=\"space-y-4\">\n\t\t\t\t<FormField\n\t\t\t\t\tcontrol={form.control}\n\t\t\t\t\tname=\"${2:field}\"\n\t\t\t\t\trender={({ field }) => (\n\t\t\t\t\t\t<FormItem>\n\t\t\t\t\t\t\t<FormLabel>${6:Label}</FormLabel>\n\t\t\t\t\t\t\t<FormControl>\n\t\t\t\t\t\t\t\t<Input placeholder=\"${7:placeholder}\" {...field} />\n\t\t\t\t\t\t\t</FormControl>\n\t\t\t\t\t\t\t<FormDescription>${8:Description}</FormDescription>\n\t\t\t\t\t\t\t<FormMessage />\n\t\t\t\t\t\t</FormItem>\n\t\t\t\t\t)}\n\t\t\t\t/>\n\t\t\t\t<Button type=\"submit\">Submit</Button>\n\t\t\t</form>\n\t\t</Form>\n\t);\n}",
+      "insertTextRules": 4,
+      "sortText": "00_form_zod"
+    },
+    {
+      "label": "shadcn-data-table",
+      "kind": 28,
+      "detail": "DataTable with TanStack Table setup",
+      "documentation": { "value": "Full DataTable component setup with column definitions and TanStack Table.\n\n```tsx\nconst columns: ColumnDef<Payment>[] = [\n  { accessorKey: \"status\", header: \"Status\" },\n  { accessorKey: \"amount\", header: \"Amount\" },\n];\n```" },
+      "insertText": "const columns: ColumnDef<${1:TData}>[] = [\n\t{\n\t\taccessorKey: \"${2:field}\",\n\t\theader: \"${3:Header}\",\n\t},\n];\n\nexport function ${4:DataTable}() {\n\tconst [data, setData] = React.useState<${1:TData}[]>([]);\n\tconst table = useReactTable({\n\t\tdata,\n\t\tcolumns,\n\t\tgetCoreRowModel: getCoreRowModel(),\n\t});\n\n\treturn (\n\t\t<Table>\n\t\t\t<TableHeader>\n\t\t\t\t{table.getHeaderGroups().map((headerGroup) => (\n\t\t\t\t\t<TableRow key={headerGroup.id}>\n\t\t\t\t\t\t{headerGroup.headers.map((header) => (\n\t\t\t\t\t\t\t<TableHead key={header.id}>\n\t\t\t\t\t\t\t\t{flexRender(header.column.columnDef.header, header.getContext())}\n\t\t\t\t\t\t\t</TableHead>\n\t\t\t\t\t\t))}\n\t\t\t\t\t</TableRow>\n\t\t\t\t))}\n\t\t\t</TableHeader>\n\t\t\t<TableBody>\n\t\t\t\t{table.getRowModel().rows.map((row) => (\n\t\t\t\t\t<TableRow key={row.id}>\n\t\t\t\t\t\t{row.getVisibleCells().map((cell) => (\n\t\t\t\t\t\t\t<TableCell key={cell.id}>\n\t\t\t\t\t\t\t\t{flexRender(cell.column.columnDef.cell, cell.getContext())}\n\t\t\t\t\t\t\t</TableCell>\n\t\t\t\t\t\t))}\n\t\t\t\t\t</TableRow>\n\t\t\t\t))}\n\t\t\t</TableBody>\n\t\t</Table>\n\t);\n}",
+      "insertTextRules": 4,
+      "sortText": "00_data_table"
+    },
+    {
+      "label": "shadcn-date-picker",
+      "kind": 28,
+      "detail": "Date Picker with Calendar and Popover",
+      "documentation": { "value": "Date picker implemented with Calendar inside a Popover.\n\n```tsx\n<Popover>\n  <PopoverTrigger asChild>\n    <Button variant=\"outline\">Pick a date</Button>\n  </PopoverTrigger>\n  <PopoverContent>\n    <Calendar mode=\"single\" selected={date} onSelect={setDate} />\n  </PopoverContent>\n</Popover>\n```" },
+      "insertText": "const [${1:date}, ${2:setDate}] = React.useState<Date>();\n\n<Popover>\n\t<PopoverTrigger asChild>\n\t\t<Button variant=\"outline\" className={cn(\"w-[280px] justify-start text-left font-normal\", !${1:date} && \"text-muted-foreground\")}>\n\t\t\t<CalendarIcon className=\"mr-2 h-4 w-4\" />\n\t\t\t{${1:date} ? format(${1:date}, \"PPP\") : <span>Pick a date</span>}\n\t\t</Button>\n\t</PopoverTrigger>\n\t<PopoverContent className=\"w-auto p-0\">\n\t\t<Calendar mode=\"single\" selected={${1:date}} onSelect={${2:setDate}} initialFocus />\n\t</PopoverContent>\n</Popover>",
+      "insertTextRules": 4,
+      "sortText": "00_date_picker"
+    },
+    {
+      "label": "shadcn-command-palette",
+      "kind": 28,
+      "detail": "Command palette with dialog",
+      "documentation": { "value": "Command palette using CommandDialog for keyboard-driven navigation.\n\n```tsx\n<CommandDialog open={open} onOpenChange={setOpen}>\n  <CommandInput placeholder=\"Type a command...\" />\n  <CommandList>\n    <CommandGroup heading=\"Suggestions\">\n      <CommandItem>Calendar</CommandItem>\n    </CommandGroup>\n  </CommandList>\n</CommandDialog>\n```" },
+      "insertText": "const [${1:open}, ${2:setOpen}] = React.useState(false);\n\nReact.useEffect(() => {\n\tconst down = (e: KeyboardEvent) => {\n\t\tif (e.key === \"k\" && (e.metaKey || e.ctrlKey)) {\n\t\t\te.preventDefault();\n\t\t\t${2:setOpen}((open) => !open);\n\t\t}\n\t};\n\tdocument.addEventListener(\"keydown\", down);\n\treturn () => document.removeEventListener(\"keydown\", down);\n}, []);\n\n<CommandDialog open={${1:open}} onOpenChange={${2:setOpen}}>\n\t<CommandInput placeholder=\"Type a command or search...\" />\n\t<CommandList>\n\t\t<CommandEmpty>No results found.</CommandEmpty>\n\t\t<CommandGroup heading=\"${3:Suggestions}\">\n\t\t\t<CommandItem>${4:Item}</CommandItem>\n\t\t</CommandGroup>\n\t</CommandList>\n</CommandDialog>",
+      "insertTextRules": 4,
+      "sortText": "00_command_palette"
+    },
+    {
+      "label": "shadcn-toast-notification",
+      "kind": 28,
+      "detail": "Toast notification with useToast",
+      "documentation": { "value": "Show a toast notification using the shadcn/ui toast system.\n\n```tsx\nconst { toast } = useToast();\ntoast({ title: \"Success\", description: \"Action completed.\" });\n```" },
+      "insertText": "const { toast } = useToast();\n\ntoast({\n\ttitle: \"${1:Notification}\",\n\tdescription: \"${2:Your action was successful.}\",\n\tvariant: \"${3|default,destructive|}\",\n});",
+      "insertTextRules": 4,
+      "sortText": "00_toast"
+    },
+    {
+      "label": "shadcn-dialog-pattern",
+      "kind": 28,
+      "detail": "Dialog with header, content, and footer",
+      "documentation": { "value": "Full dialog pattern with trigger, content, header, description, and footer." },
+      "insertText": "<Dialog>\n\t<DialogTrigger asChild>\n\t\t<Button variant=\"outline\">${1:Open Dialog}</Button>\n\t</DialogTrigger>\n\t<DialogContent className=\"sm:max-w-[425px]\">\n\t\t<DialogHeader>\n\t\t\t<DialogTitle>${2:Title}</DialogTitle>\n\t\t\t<DialogDescription>${3:Description}</DialogDescription>\n\t\t</DialogHeader>\n\t\t<div className=\"grid gap-4 py-4\">\n\t\t\t${4:content}\n\t\t</div>\n\t\t<DialogFooter>\n\t\t\t<Button type=\"submit\">${5:Save changes}</Button>\n\t\t</DialogFooter>\n\t</DialogContent>\n</Dialog>",
+      "insertTextRules": 4,
+      "sortText": "00_dialog_pattern"
+    },
+    {
+      "label": "shadcn-sheet-pattern",
+      "kind": 28,
+      "detail": "Sheet with side panel content",
+      "documentation": { "value": "Sheet side panel with trigger, header, content, and footer." },
+      "insertText": "<Sheet>\n\t<SheetTrigger asChild>\n\t\t<Button variant=\"outline\">${1:Open Sheet}</Button>\n\t</SheetTrigger>\n\t<SheetContent side=\"${2|right,left,top,bottom|}\">\n\t\t<SheetHeader>\n\t\t\t<SheetTitle>${3:Title}</SheetTitle>\n\t\t\t<SheetDescription>${4:Description}</SheetDescription>\n\t\t</SheetHeader>\n\t\t<div className=\"py-4\">\n\t\t\t${5:content}\n\t\t</div>\n\t\t<SheetFooter>\n\t\t\t<Button>${6:Save}</Button>\n\t\t</SheetFooter>\n\t</SheetContent>\n</Sheet>",
+      "insertTextRules": 4,
+      "sortText": "00_sheet_pattern"
+    },
+    {
+      "label": "shadcn-dropdown-pattern",
+      "kind": 28,
+      "detail": "Dropdown menu with items",
+      "documentation": { "value": "DropdownMenu with trigger, content, labels, items, and separators." },
+      "insertText": "<DropdownMenu>\n\t<DropdownMenuTrigger asChild>\n\t\t<Button variant=\"outline\">${1:Open}</Button>\n\t</DropdownMenuTrigger>\n\t<DropdownMenuContent className=\"w-56\">\n\t\t<DropdownMenuLabel>${2:My Account}</DropdownMenuLabel>\n\t\t<DropdownMenuSeparator />\n\t\t<DropdownMenuItem>${3:Profile}</DropdownMenuItem>\n\t\t<DropdownMenuItem>${4:Settings}</DropdownMenuItem>\n\t\t<DropdownMenuSeparator />\n\t\t<DropdownMenuItem>${5:Log out}</DropdownMenuItem>\n\t</DropdownMenuContent>\n</DropdownMenu>",
+      "insertTextRules": 4,
+      "sortText": "00_dropdown_pattern"
+    },
+    {
+      "label": "shadcn-alert-dialog-pattern",
+      "kind": 28,
+      "detail": "Alert dialog for confirmations",
+      "documentation": { "value": "AlertDialog for destructive or confirmation actions." },
+      "insertText": "<AlertDialog>\n\t<AlertDialogTrigger asChild>\n\t\t<Button variant=\"destructive\">${1:Delete}</Button>\n\t</AlertDialogTrigger>\n\t<AlertDialogContent>\n\t\t<AlertDialogHeader>\n\t\t\t<AlertDialogTitle>${2:Are you sure?}</AlertDialogTitle>\n\t\t\t<AlertDialogDescription>${3:This action cannot be undone.}</AlertDialogDescription>\n\t\t</AlertDialogHeader>\n\t\t<AlertDialogFooter>\n\t\t\t<AlertDialogCancel>Cancel</AlertDialogCancel>\n\t\t\t<AlertDialogAction>${4:Continue}</AlertDialogAction>\n\t\t</AlertDialogFooter>\n\t</AlertDialogContent>\n</AlertDialog>",
+      "insertTextRules": 4,
+      "sortText": "00_alert_dialog_pattern"
+    },
+    {
+      "label": "shadcn-tabs-pattern",
+      "kind": 28,
+      "detail": "Tabs with tab list and content panels",
+      "documentation": { "value": "Tabs component with TabsList, TabsTrigger, and TabsContent." },
+      "insertText": "<Tabs defaultValue=\"${1:tab1}\" className=\"w-[400px]\">\n\t<TabsList>\n\t\t<TabsTrigger value=\"${1:tab1}\">${2:Tab 1}</TabsTrigger>\n\t\t<TabsTrigger value=\"${3:tab2}\">${4:Tab 2}</TabsTrigger>\n\t</TabsList>\n\t<TabsContent value=\"${1:tab1}\">${5:Content 1}</TabsContent>\n\t<TabsContent value=\"${3:tab2}\">${6:Content 2}</TabsContent>\n</Tabs>",
+      "insertTextRules": 4,
+      "sortText": "00_tabs_pattern"
+    },
+    {
+      "label": "import Accordion",
+      "kind": 8,
+      "detail": "Import Accordion components from shadcn/ui",
+      "documentation": { "value": "Import Accordion, AccordionItem, AccordionTrigger, and AccordionContent from `@/components/ui/accordion`." },
+      "insertText": "import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_accordion"
+    },
+    {
+      "label": "import Alert",
+      "kind": 8,
+      "detail": "Import Alert components from shadcn/ui",
+      "documentation": { "value": "Import Alert, AlertTitle, and AlertDescription from `@/components/ui/alert`." },
+      "insertText": "import { Alert, AlertDescription, AlertTitle } from \"@/components/ui/alert\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_alert"
+    },
+    {
+      "label": "import AlertDialog",
+      "kind": 8,
+      "detail": "Import AlertDialog components from shadcn/ui",
+      "documentation": { "value": "Import AlertDialog components from `@/components/ui/alert-dialog`." },
+      "insertText": "import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from \"@/components/ui/alert-dialog\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_alertdialog"
+    },
+    {
+      "label": "import AspectRatio",
+      "kind": 8,
+      "detail": "Import AspectRatio from shadcn/ui",
+      "documentation": { "value": "Import AspectRatio from `@/components/ui/aspect-ratio`." },
+      "insertText": "import { AspectRatio } from \"@/components/ui/aspect-ratio\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_aspectratio"
+    },
+    {
+      "label": "import Avatar",
+      "kind": 8,
+      "detail": "Import Avatar components from shadcn/ui",
+      "documentation": { "value": "Import Avatar, AvatarImage, and AvatarFallback from `@/components/ui/avatar`." },
+      "insertText": "import { Avatar, AvatarFallback, AvatarImage } from \"@/components/ui/avatar\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_avatar"
+    },
+    {
+      "label": "import Badge",
+      "kind": 8,
+      "detail": "Import Badge from shadcn/ui",
+      "documentation": { "value": "Import Badge and badgeVariants from `@/components/ui/badge`." },
+      "insertText": "import { Badge, badgeVariants } from \"@/components/ui/badge\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_badge"
+    },
+    {
+      "label": "import Button",
+      "kind": 8,
+      "detail": "Import Button from shadcn/ui",
+      "documentation": { "value": "Import Button and buttonVariants from `@/components/ui/button`." },
+      "insertText": "import { Button, buttonVariants } from \"@/components/ui/button\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_button"
+    },
+    {
+      "label": "import Calendar",
+      "kind": 8,
+      "detail": "Import Calendar from shadcn/ui",
+      "documentation": { "value": "Import Calendar from `@/components/ui/calendar`." },
+      "insertText": "import { Calendar } from \"@/components/ui/calendar\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_calendar"
+    },
+    {
+      "label": "import Card",
+      "kind": 8,
+      "detail": "Import Card components from shadcn/ui",
+      "documentation": { "value": "Import Card, CardHeader, CardTitle, CardDescription, CardContent, and CardFooter from `@/components/ui/card`." },
+      "insertText": "import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_card"
+    },
+    {
+      "label": "import Carousel",
+      "kind": 8,
+      "detail": "Import Carousel components from shadcn/ui",
+      "documentation": { "value": "Import Carousel, CarouselContent, CarouselItem, CarouselNext, and CarouselPrevious from `@/components/ui/carousel`." },
+      "insertText": "import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from \"@/components/ui/carousel\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_carousel"
+    },
+    {
+      "label": "import Checkbox",
+      "kind": 8,
+      "detail": "Import Checkbox from shadcn/ui",
+      "documentation": { "value": "Import Checkbox from `@/components/ui/checkbox`." },
+      "insertText": "import { Checkbox } from \"@/components/ui/checkbox\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_checkbox"
+    },
+    {
+      "label": "import Collapsible",
+      "kind": 8,
+      "detail": "Import Collapsible components from shadcn/ui",
+      "documentation": { "value": "Import Collapsible, CollapsibleContent, and CollapsibleTrigger from `@/components/ui/collapsible`." },
+      "insertText": "import { Collapsible, CollapsibleContent, CollapsibleTrigger } from \"@/components/ui/collapsible\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_collapsible"
+    },
+    {
+      "label": "import Command",
+      "kind": 8,
+      "detail": "Import Command components from shadcn/ui",
+      "documentation": { "value": "Import Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator from `@/components/ui/command`." },
+      "insertText": "import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from \"@/components/ui/command\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_command"
+    },
+    {
+      "label": "import ContextMenu",
+      "kind": 8,
+      "detail": "Import ContextMenu components from shadcn/ui",
+      "documentation": { "value": "Import ContextMenu, ContextMenuContent, ContextMenuItem, and ContextMenuTrigger from `@/components/ui/context-menu`." },
+      "insertText": "import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from \"@/components/ui/context-menu\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_contextmenu"
+    },
+    {
+      "label": "import Dialog",
+      "kind": 8,
+      "detail": "Import Dialog components from shadcn/ui",
+      "documentation": { "value": "Import Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger from `@/components/ui/dialog`." },
+      "insertText": "import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from \"@/components/ui/dialog\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_dialog"
+    },
+    {
+      "label": "import Drawer",
+      "kind": 8,
+      "detail": "Import Drawer components from shadcn/ui",
+      "documentation": { "value": "Import Drawer components from `@/components/ui/drawer`." },
+      "insertText": "import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from \"@/components/ui/drawer\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_drawer"
+    },
+    {
+      "label": "import DropdownMenu",
+      "kind": 8,
+      "detail": "Import DropdownMenu components from shadcn/ui",
+      "documentation": { "value": "Import DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger from `@/components/ui/dropdown-menu`." },
+      "insertText": "import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from \"@/components/ui/dropdown-menu\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_dropdownmenu"
+    },
+    {
+      "label": "import Form",
+      "kind": 8,
+      "detail": "Import Form components from shadcn/ui",
+      "documentation": { "value": "Import Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage from `@/components/ui/form`." },
+      "insertText": "import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from \"@/components/ui/form\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_form"
+    },
+    {
+      "label": "import HoverCard",
+      "kind": 8,
+      "detail": "Import HoverCard components from shadcn/ui",
+      "documentation": { "value": "Import HoverCard, HoverCardContent, and HoverCardTrigger from `@/components/ui/hover-card`." },
+      "insertText": "import { HoverCard, HoverCardContent, HoverCardTrigger } from \"@/components/ui/hover-card\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_hovercard"
+    },
+    {
+      "label": "import Input",
+      "kind": 8,
+      "detail": "Import Input from shadcn/ui",
+      "documentation": { "value": "Import Input from `@/components/ui/input`." },
+      "insertText": "import { Input } from \"@/components/ui/input\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_input"
+    },
+    {
+      "label": "import Label",
+      "kind": 8,
+      "detail": "Import Label from shadcn/ui",
+      "documentation": { "value": "Import Label from `@/components/ui/label`." },
+      "insertText": "import { Label } from \"@/components/ui/label\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_label"
+    },
+    {
+      "label": "import Menubar",
+      "kind": 8,
+      "detail": "Import Menubar from shadcn/ui",
+      "documentation": { "value": "Import Menubar from `@/components/ui/menubar`." },
+      "insertText": "import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from \"@/components/ui/menubar\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_menubar"
+    },
+    {
+      "label": "import NavigationMenu",
+      "kind": 8,
+      "detail": "Import NavigationMenu from shadcn/ui",
+      "documentation": { "value": "Import NavigationMenu components from `@/components/ui/navigation-menu`." },
+      "insertText": "import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from \"@/components/ui/navigation-menu\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_navigationmenu"
+    },
+    {
+      "label": "import Pagination",
+      "kind": 8,
+      "detail": "Import Pagination from shadcn/ui",
+      "documentation": { "value": "Import Pagination components from `@/components/ui/pagination`." },
+      "insertText": "import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from \"@/components/ui/pagination\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_pagination"
+    },
+    {
+      "label": "import Popover",
+      "kind": 8,
+      "detail": "Import Popover components from shadcn/ui",
+      "documentation": { "value": "Import Popover, PopoverContent, and PopoverTrigger from `@/components/ui/popover`." },
+      "insertText": "import { Popover, PopoverContent, PopoverTrigger } from \"@/components/ui/popover\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_popover"
+    },
+    {
+      "label": "import Progress",
+      "kind": 8,
+      "detail": "Import Progress from shadcn/ui",
+      "documentation": { "value": "Import Progress from `@/components/ui/progress`." },
+      "insertText": "import { Progress } from \"@/components/ui/progress\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_progress"
+    },
+    {
+      "label": "import RadioGroup",
+      "kind": 8,
+      "detail": "Import RadioGroup from shadcn/ui",
+      "documentation": { "value": "Import RadioGroup and RadioGroupItem from `@/components/ui/radio-group`." },
+      "insertText": "import { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_radiogroup"
+    },
+    {
+      "label": "import ScrollArea",
+      "kind": 8,
+      "detail": "Import ScrollArea from shadcn/ui",
+      "documentation": { "value": "Import ScrollArea from `@/components/ui/scroll-area`." },
+      "insertText": "import { ScrollArea } from \"@/components/ui/scroll-area\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_scrollarea"
+    },
+    {
+      "label": "import Select",
+      "kind": 8,
+      "detail": "Import Select components from shadcn/ui",
+      "documentation": { "value": "Import Select, SelectContent, SelectItem, SelectTrigger, and SelectValue from `@/components/ui/select`." },
+      "insertText": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@/components/ui/select\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_select"
+    },
+    {
+      "label": "import Separator",
+      "kind": 8,
+      "detail": "Import Separator from shadcn/ui",
+      "documentation": { "value": "Import Separator from `@/components/ui/separator`." },
+      "insertText": "import { Separator } from \"@/components/ui/separator\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_separator"
+    },
+    {
+      "label": "import Sheet",
+      "kind": 8,
+      "detail": "Import Sheet components from shadcn/ui",
+      "documentation": { "value": "Import Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger from `@/components/ui/sheet`." },
+      "insertText": "import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from \"@/components/ui/sheet\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_sheet"
+    },
+    {
+      "label": "import Skeleton",
+      "kind": 8,
+      "detail": "Import Skeleton from shadcn/ui",
+      "documentation": { "value": "Import Skeleton from `@/components/ui/skeleton`." },
+      "insertText": "import { Skeleton } from \"@/components/ui/skeleton\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_skeleton"
+    },
+    {
+      "label": "import Slider",
+      "kind": 8,
+      "detail": "Import Slider from shadcn/ui",
+      "documentation": { "value": "Import Slider from `@/components/ui/slider`." },
+      "insertText": "import { Slider } from \"@/components/ui/slider\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_slider"
+    },
+    {
+      "label": "import Switch",
+      "kind": 8,
+      "detail": "Import Switch from shadcn/ui",
+      "documentation": { "value": "Import Switch from `@/components/ui/switch`." },
+      "insertText": "import { Switch } from \"@/components/ui/switch\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_switch"
+    },
+    {
+      "label": "import Table",
+      "kind": 8,
+      "detail": "Import Table components from shadcn/ui",
+      "documentation": { "value": "Import Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow from `@/components/ui/table`." },
+      "insertText": "import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_table"
+    },
+    {
+      "label": "import Tabs",
+      "kind": 8,
+      "detail": "Import Tabs components from shadcn/ui",
+      "documentation": { "value": "Import Tabs, TabsContent, TabsList, and TabsTrigger from `@/components/ui/tabs`." },
+      "insertText": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_tabs"
+    },
+    {
+      "label": "import Textarea",
+      "kind": 8,
+      "detail": "Import Textarea from shadcn/ui",
+      "documentation": { "value": "Import Textarea from `@/components/ui/textarea`." },
+      "insertText": "import { Textarea } from \"@/components/ui/textarea\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_textarea"
+    },
+    {
+      "label": "import Toast",
+      "kind": 8,
+      "detail": "Import Toast and Toaster from shadcn/ui",
+      "documentation": { "value": "Import Toast, Toaster, and useToast from `@/components/ui/toast` and `@/components/ui/use-toast`." },
+      "insertText": "import { Toaster } from \"@/components/ui/toaster\";\nimport { useToast } from \"@/components/ui/use-toast\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_toast"
+    },
+    {
+      "label": "import Toggle",
+      "kind": 8,
+      "detail": "Import Toggle from shadcn/ui",
+      "documentation": { "value": "Import Toggle from `@/components/ui/toggle`." },
+      "insertText": "import { Toggle } from \"@/components/ui/toggle\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_toggle"
+    },
+    {
+      "label": "import ToggleGroup",
+      "kind": 8,
+      "detail": "Import ToggleGroup from shadcn/ui",
+      "documentation": { "value": "Import ToggleGroup and ToggleGroupItem from `@/components/ui/toggle-group`." },
+      "insertText": "import { ToggleGroup, ToggleGroupItem } from \"@/components/ui/toggle-group\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_togglegroup"
+    },
+    {
+      "label": "import Tooltip",
+      "kind": 8,
+      "detail": "Import Tooltip components from shadcn/ui",
+      "documentation": { "value": "Import Tooltip, TooltipContent, TooltipProvider, and TooltipTrigger from `@/components/ui/tooltip`." },
+      "insertText": "import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from \"@/components/ui/tooltip\";",
+      "insertTextRules": 4,
+      "sortText": "01_import_tooltip"
+    },
+    {
+      "label": "Accordion",
+      "kind": 5,
+      "detail": "shadcn/ui Accordion component",
+      "documentation": { "value": "A vertically stacked set of interactive headings that reveal content. Built on Radix UI Accordion primitive.\n\n```tsx\n<Accordion type=\"single\" collapsible>\n  <AccordionItem value=\"item-1\">\n    <AccordionTrigger>Is it accessible?</AccordionTrigger>\n    <AccordionContent>Yes.</AccordionContent>\n  </AccordionItem>\n</Accordion>\n```" },
+      "insertText": "<Accordion type=\"${1|single,multiple|}\" ${2:collapsible}>\n\t<AccordionItem value=\"${3:item-1}\">\n\t\t<AccordionTrigger>${4:Title}</AccordionTrigger>\n\t\t<AccordionContent>${5:Content}</AccordionContent>\n\t</AccordionItem>\n</Accordion>",
+      "insertTextRules": 4,
+      "sortText": "02_accordion"
+    },
+    {
+      "label": "AccordionItem",
+      "kind": 5,
+      "detail": "shadcn/ui AccordionItem",
+      "documentation": { "value": "Individual item within an Accordion. Requires a unique `value` prop." },
+      "insertText": "<AccordionItem value=\"${1:item}\">\n\t<AccordionTrigger>${2:Title}</AccordionTrigger>\n\t<AccordionContent>${3:Content}</AccordionContent>\n</AccordionItem>",
+      "insertTextRules": 4,
+      "sortText": "02_accordionitem"
+    },
+    {
+      "label": "AccordionTrigger",
+      "kind": 5,
+      "detail": "shadcn/ui AccordionTrigger",
+      "documentation": { "value": "The clickable heading that toggles an AccordionItem open/closed." },
+      "insertText": "<AccordionTrigger>${1:Title}</AccordionTrigger>",
+      "insertTextRules": 4,
+      "sortText": "02_accordiontrigger"
+    },
+    {
+      "label": "AccordionContent",
+      "kind": 5,
+      "detail": "shadcn/ui AccordionContent",
+      "documentation": { "value": "The collapsible content area of an AccordionItem." },
+      "insertText": "<AccordionContent>${1:Content}</AccordionContent>",
+      "insertTextRules": 4,
+      "sortText": "02_accordioncontent"
+    },
+    {
+      "label": "Alert",
+      "kind": 5,
+      "detail": "shadcn/ui Alert component",
+      "documentation": { "value": "Displays a callout for important information.\n\n```tsx\n<Alert>\n  <AlertTitle>Heads up!</AlertTitle>\n  <AlertDescription>Description here.</AlertDescription>\n</Alert>\n```" },
+      "insertText": "<Alert variant=\"${1|default,destructive|}\">\n\t<AlertTitle>${2:Title}</AlertTitle>\n\t<AlertDescription>${3:Description}</AlertDescription>\n</Alert>",
+      "insertTextRules": 4,
+      "sortText": "02_alert"
+    },
+    {
+      "label": "AlertTitle",
+      "kind": 5,
+      "detail": "shadcn/ui AlertTitle",
+      "documentation": { "value": "Title element within an Alert component." },
+      "insertText": "<AlertTitle>${1:Title}</AlertTitle>",
+      "insertTextRules": 4,
+      "sortText": "02_alerttitle"
+    },
+    {
+      "label": "AlertDescription",
+      "kind": 5,
+      "detail": "shadcn/ui AlertDescription",
+      "documentation": { "value": "Description element within an Alert component." },
+      "insertText": "<AlertDescription>${1:Description}</AlertDescription>",
+      "insertTextRules": 4,
+      "sortText": "02_alertdescription"
+    },
+    {
+      "label": "AlertDialog",
+      "kind": 5,
+      "detail": "shadcn/ui AlertDialog component",
+      "documentation": { "value": "A modal dialog that interrupts the user for important confirmations. Built on Radix UI AlertDialog." },
+      "insertText": "<AlertDialog>\n\t<AlertDialogTrigger>${1:Open}</AlertDialogTrigger>\n\t<AlertDialogContent>\n\t\t<AlertDialogHeader>\n\t\t\t<AlertDialogTitle>${2:Title}</AlertDialogTitle>\n\t\t\t<AlertDialogDescription>${3:Description}</AlertDialogDescription>\n\t\t</AlertDialogHeader>\n\t\t<AlertDialogFooter>\n\t\t\t<AlertDialogCancel>Cancel</AlertDialogCancel>\n\t\t\t<AlertDialogAction>${4:Continue}</AlertDialogAction>\n\t\t</AlertDialogFooter>\n\t</AlertDialogContent>\n</AlertDialog>",
+      "insertTextRules": 4,
+      "sortText": "02_alertdialog"
+    },
+    {
+      "label": "AspectRatio",
+      "kind": 5,
+      "detail": "shadcn/ui AspectRatio component",
+      "documentation": { "value": "Displays content within a desired ratio. Built on Radix UI AspectRatio.\n\n```tsx\n<AspectRatio ratio={16 / 9}>\n  <img src=\"...\" alt=\"...\" />\n</AspectRatio>\n```" },
+      "insertText": "<AspectRatio ratio={${1:16 / 9}}>\n\t${2:content}\n</AspectRatio>",
+      "insertTextRules": 4,
+      "sortText": "02_aspectratio"
+    },
+    {
+      "label": "Avatar",
+      "kind": 5,
+      "detail": "shadcn/ui Avatar component",
+      "documentation": { "value": "An image element with a fallback for representing the user. Built on Radix UI Avatar.\n\n```tsx\n<Avatar>\n  <AvatarImage src=\"https://example.com/avatar.png\" />\n  <AvatarFallback>CN</AvatarFallback>\n</Avatar>\n```" },
+      "insertText": "<Avatar>\n\t<AvatarImage src=\"${1:url}\" alt=\"${2:alt}\" />\n\t<AvatarFallback>${3:FB}</AvatarFallback>\n</Avatar>",
+      "insertTextRules": 4,
+      "sortText": "02_avatar"
+    },
+    {
+      "label": "Badge",
+      "kind": 5,
+      "detail": "shadcn/ui Badge component",
+      "documentation": { "value": "Displays a badge or label. Supports variants: default, secondary, outline, destructive." },
+      "insertText": "<Badge variant=\"${1|default,secondary,outline,destructive|}\">${2:Badge}</Badge>",
+      "insertTextRules": 4,
+      "sortText": "02_badge"
+    },
+    {
+      "label": "Button",
+      "kind": 5,
+      "detail": "shadcn/ui Button component",
+      "documentation": { "value": "A button component with multiple variants and sizes.\n\n```tsx\n<Button variant=\"default\" size=\"default\">Click me</Button>\n<Button variant=\"destructive\">Delete</Button>\n<Button variant=\"outline\" size=\"sm\">Small</Button>\n<Button variant=\"ghost\" size=\"icon\"><Icon /></Button>\n```" },
+      "insertText": "<Button variant=\"${1|default,destructive,outline,secondary,ghost,link|}\" size=\"${2|default,sm,lg,icon|}\">${3:Click me}</Button>",
+      "insertTextRules": 4,
+      "sortText": "02_button"
+    },
+    {
+      "label": "Calendar",
+      "kind": 5,
+      "detail": "shadcn/ui Calendar component",
+      "documentation": { "value": "A date picker calendar component. Built on react-day-picker.\n\n```tsx\n<Calendar mode=\"single\" selected={date} onSelect={setDate} />\n```" },
+      "insertText": "<Calendar\n\tmode=\"${1|single,multiple,range|}\"\n\tselected={${2:date}}\n\tonSelect={${3:setDate}}\n\tclassName=\"rounded-md border\"\n/>",
+      "insertTextRules": 4,
+      "sortText": "02_calendar"
+    },
+    {
+      "label": "Card",
+      "kind": 5,
+      "detail": "shadcn/ui Card component",
+      "documentation": { "value": "A card container with header, content, and footer sections.\n\n```tsx\n<Card>\n  <CardHeader>\n    <CardTitle>Title</CardTitle>\n    <CardDescription>Description</CardDescription>\n  </CardHeader>\n  <CardContent>Content</CardContent>\n  <CardFooter>Footer</CardFooter>\n</Card>\n```" },
+      "insertText": "<Card>\n\t<CardHeader>\n\t\t<CardTitle>${1:Title}</CardTitle>\n\t\t<CardDescription>${2:Description}</CardDescription>\n\t</CardHeader>\n\t<CardContent>\n\t\t${3:Content}\n\t</CardContent>\n\t<CardFooter>\n\t\t${4:Footer}\n\t</CardFooter>\n</Card>",
+      "insertTextRules": 4,
+      "sortText": "02_card"
+    },
+    {
+      "label": "Carousel",
+      "kind": 5,
+      "detail": "shadcn/ui Carousel component",
+      "documentation": { "value": "A carousel with motion and swipe built using Embla Carousel." },
+      "insertText": "<Carousel>\n\t<CarouselContent>\n\t\t<CarouselItem>${1:Slide 1}</CarouselItem>\n\t\t<CarouselItem>${2:Slide 2}</CarouselItem>\n\t</CarouselContent>\n\t<CarouselPrevious />\n\t<CarouselNext />\n</Carousel>",
+      "insertTextRules": 4,
+      "sortText": "02_carousel"
+    },
+    {
+      "label": "Checkbox",
+      "kind": 5,
+      "detail": "shadcn/ui Checkbox component",
+      "documentation": { "value": "A control that allows the user to toggle between checked and not checked. Built on Radix UI Checkbox." },
+      "insertText": "<Checkbox id=\"${1:terms}\" checked={${2:checked}} onCheckedChange={${3:setChecked}} />",
+      "insertTextRules": 4,
+      "sortText": "02_checkbox"
+    },
+    {
+      "label": "Collapsible",
+      "kind": 5,
+      "detail": "shadcn/ui Collapsible component",
+      "documentation": { "value": "An interactive component that expands/collapses content. Built on Radix UI Collapsible." },
+      "insertText": "<Collapsible>\n\t<CollapsibleTrigger>${1:Toggle}</CollapsibleTrigger>\n\t<CollapsibleContent>${2:Content}</CollapsibleContent>\n</Collapsible>",
+      "insertTextRules": 4,
+      "sortText": "02_collapsible"
+    },
+    {
+      "label": "Command",
+      "kind": 5,
+      "detail": "shadcn/ui Command component",
+      "documentation": { "value": "Fast, composable command menu. Built on cmdk." },
+      "insertText": "<Command>\n\t<CommandInput placeholder=\"${1:Type a command...}\" />\n\t<CommandList>\n\t\t<CommandEmpty>No results found.</CommandEmpty>\n\t\t<CommandGroup heading=\"${2:Group}\">\n\t\t\t<CommandItem>${3:Item}</CommandItem>\n\t\t</CommandGroup>\n\t</CommandList>\n</Command>",
+      "insertTextRules": 4,
+      "sortText": "02_command"
+    },
+    {
+      "label": "ContextMenu",
+      "kind": 5,
+      "detail": "shadcn/ui ContextMenu component",
+      "documentation": { "value": "Displays a menu at the pointer's position upon right-click. Built on Radix UI ContextMenu." },
+      "insertText": "<ContextMenu>\n\t<ContextMenuTrigger>${1:Right click here}</ContextMenuTrigger>\n\t<ContextMenuContent>\n\t\t<ContextMenuItem>${2:Item}</ContextMenuItem>\n\t</ContextMenuContent>\n</ContextMenu>",
+      "insertTextRules": 4,
+      "sortText": "02_contextmenu"
+    },
+    {
+      "label": "Dialog",
+      "kind": 5,
+      "detail": "shadcn/ui Dialog component",
+      "documentation": { "value": "A window overlaid on the primary window. Built on Radix UI Dialog." },
+      "insertText": "<Dialog>\n\t<DialogTrigger>${1:Open}</DialogTrigger>\n\t<DialogContent>\n\t\t<DialogHeader>\n\t\t\t<DialogTitle>${2:Title}</DialogTitle>\n\t\t\t<DialogDescription>${3:Description}</DialogDescription>\n\t\t</DialogHeader>\n\t\t${4:content}\n\t</DialogContent>\n</Dialog>",
+      "insertTextRules": 4,
+      "sortText": "02_dialog"
+    },
+    {
+      "label": "Drawer",
+      "kind": 5,
+      "detail": "shadcn/ui Drawer component",
+      "documentation": { "value": "A drawer component for mobile interfaces. Built on vaul." },
+      "insertText": "<Drawer>\n\t<DrawerTrigger>${1:Open}</DrawerTrigger>\n\t<DrawerContent>\n\t\t<DrawerHeader>\n\t\t\t<DrawerTitle>${2:Title}</DrawerTitle>\n\t\t\t<DrawerDescription>${3:Description}</DrawerDescription>\n\t\t</DrawerHeader>\n\t\t${4:content}\n\t\t<DrawerFooter>\n\t\t\t<Button>${5:Submit}</Button>\n\t\t</DrawerFooter>\n\t</DrawerContent>\n</Drawer>",
+      "insertTextRules": 4,
+      "sortText": "02_drawer"
+    },
+    {
+      "label": "DropdownMenu",
+      "kind": 5,
+      "detail": "shadcn/ui DropdownMenu component",
+      "documentation": { "value": "Displays a menu to the user triggered by a button. Built on Radix UI DropdownMenu." },
+      "insertText": "<DropdownMenu>\n\t<DropdownMenuTrigger>${1:Open}</DropdownMenuTrigger>\n\t<DropdownMenuContent>\n\t\t<DropdownMenuLabel>${2:Label}</DropdownMenuLabel>\n\t\t<DropdownMenuSeparator />\n\t\t<DropdownMenuItem>${3:Item}</DropdownMenuItem>\n\t</DropdownMenuContent>\n</DropdownMenu>",
+      "insertTextRules": 4,
+      "sortText": "02_dropdownmenu"
+    },
+    {
+      "label": "Form",
+      "kind": 5,
+      "detail": "shadcn/ui Form component",
+      "documentation": { "value": "Form component built on react-hook-form with accessible form fields, labels, and validation messages." },
+      "insertText": "<Form {...${1:form}}>\n\t<form onSubmit={${1:form}.handleSubmit(${2:onSubmit})} className=\"space-y-4\">\n\t\t${3:fields}\n\t\t<Button type=\"submit\">Submit</Button>\n\t</form>\n</Form>",
+      "insertTextRules": 4,
+      "sortText": "02_form"
+    },
+    {
+      "label": "FormField",
+      "kind": 5,
+      "detail": "shadcn/ui FormField component",
+      "documentation": { "value": "Connects a form control to react-hook-form with automatic error handling." },
+      "insertText": "<FormField\n\tcontrol={${1:form}.control}\n\tname=\"${2:name}\"\n\trender={({ field }) => (\n\t\t<FormItem>\n\t\t\t<FormLabel>${3:Label}</FormLabel>\n\t\t\t<FormControl>\n\t\t\t\t<Input placeholder=\"${4:placeholder}\" {...field} />\n\t\t\t</FormControl>\n\t\t\t<FormMessage />\n\t\t</FormItem>\n\t)}\n/>",
+      "insertTextRules": 4,
+      "sortText": "02_formfield"
+    },
+    {
+      "label": "HoverCard",
+      "kind": 5,
+      "detail": "shadcn/ui HoverCard component",
+      "documentation": { "value": "For sighted users to preview content behind a link. Built on Radix UI HoverCard." },
+      "insertText": "<HoverCard>\n\t<HoverCardTrigger>${1:Hover me}</HoverCardTrigger>\n\t<HoverCardContent>${2:Content}</HoverCardContent>\n</HoverCard>",
+      "insertTextRules": 4,
+      "sortText": "02_hovercard"
+    },
+    {
+      "label": "Input",
+      "kind": 5,
+      "detail": "shadcn/ui Input component",
+      "documentation": { "value": "A styled input element.\n\n```tsx\n<Input type=\"email\" placeholder=\"Email\" />\n```" },
+      "insertText": "<Input type=\"${1|text,email,password,number,search,tel,url|}\" placeholder=\"${2:placeholder}\" />",
+      "insertTextRules": 4,
+      "sortText": "02_input"
+    },
+    {
+      "label": "Label",
+      "kind": 5,
+      "detail": "shadcn/ui Label component",
+      "documentation": { "value": "Renders an accessible label associated with controls. Built on Radix UI Label." },
+      "insertText": "<Label htmlFor=\"${1:id}\">${2:Label}</Label>",
+      "insertTextRules": 4,
+      "sortText": "02_label"
+    },
+    {
+      "label": "Menubar",
+      "kind": 5,
+      "detail": "shadcn/ui Menubar component",
+      "documentation": { "value": "A visually persistent menu common in desktop applications. Built on Radix UI Menubar." },
+      "insertText": "<Menubar>\n\t<MenubarMenu>\n\t\t<MenubarTrigger>${1:File}</MenubarTrigger>\n\t\t<MenubarContent>\n\t\t\t<MenubarItem>${2:New}</MenubarItem>\n\t\t</MenubarContent>\n\t</MenubarMenu>\n</Menubar>",
+      "insertTextRules": 4,
+      "sortText": "02_menubar"
+    },
+    {
+      "label": "NavigationMenu",
+      "kind": 5,
+      "detail": "shadcn/ui NavigationMenu component",
+      "documentation": { "value": "A collection of links for navigation. Built on Radix UI NavigationMenu." },
+      "insertText": "<NavigationMenu>\n\t<NavigationMenuList>\n\t\t<NavigationMenuItem>\n\t\t\t<NavigationMenuTrigger>${1:Item}</NavigationMenuTrigger>\n\t\t\t<NavigationMenuContent>\n\t\t\t\t${2:Content}\n\t\t\t</NavigationMenuContent>\n\t\t</NavigationMenuItem>\n\t</NavigationMenuList>\n</NavigationMenu>",
+      "insertTextRules": 4,
+      "sortText": "02_navigationmenu"
+    },
+    {
+      "label": "Pagination",
+      "kind": 5,
+      "detail": "shadcn/ui Pagination component",
+      "documentation": { "value": "Pagination with page navigation, previous/next links." },
+      "insertText": "<Pagination>\n\t<PaginationContent>\n\t\t<PaginationItem>\n\t\t\t<PaginationPrevious href=\"#\" />\n\t\t</PaginationItem>\n\t\t<PaginationItem>\n\t\t\t<PaginationLink href=\"#\">${1:1}</PaginationLink>\n\t\t</PaginationItem>\n\t\t<PaginationItem>\n\t\t\t<PaginationNext href=\"#\" />\n\t\t</PaginationItem>\n\t</PaginationContent>\n</Pagination>",
+      "insertTextRules": 4,
+      "sortText": "02_pagination"
+    },
+    {
+      "label": "Popover",
+      "kind": 5,
+      "detail": "shadcn/ui Popover component",
+      "documentation": { "value": "Displays rich content in a portal, triggered by a button. Built on Radix UI Popover." },
+      "insertText": "<Popover>\n\t<PopoverTrigger>${1:Open}</PopoverTrigger>\n\t<PopoverContent>${2:Content}</PopoverContent>\n</Popover>",
+      "insertTextRules": 4,
+      "sortText": "02_popover"
+    },
+    {
+      "label": "Progress",
+      "kind": 5,
+      "detail": "shadcn/ui Progress component",
+      "documentation": { "value": "Displays an indicator showing completion progress. Built on Radix UI Progress." },
+      "insertText": "<Progress value={${1:33}} />",
+      "insertTextRules": 4,
+      "sortText": "02_progress"
+    },
+    {
+      "label": "RadioGroup",
+      "kind": 5,
+      "detail": "shadcn/ui RadioGroup component",
+      "documentation": { "value": "A set of checkable buttons where only one can be checked at a time. Built on Radix UI RadioGroup." },
+      "insertText": "<RadioGroup defaultValue=\"${1:option-1}\">\n\t<div className=\"flex items-center space-x-2\">\n\t\t<RadioGroupItem value=\"${1:option-1}\" id=\"${1:option-1}\" />\n\t\t<Label htmlFor=\"${1:option-1}\">${2:Option 1}</Label>\n\t</div>\n</RadioGroup>",
+      "insertTextRules": 4,
+      "sortText": "02_radiogroup"
+    },
+    {
+      "label": "ScrollArea",
+      "kind": 5,
+      "detail": "shadcn/ui ScrollArea component",
+      "documentation": { "value": "Augments native scroll with custom styling. Built on Radix UI ScrollArea." },
+      "insertText": "<ScrollArea className=\"h-[${1:200px}] w-[${2:350px}] rounded-md border p-4\">\n\t${3:content}\n</ScrollArea>",
+      "insertTextRules": 4,
+      "sortText": "02_scrollarea"
+    },
+    {
+      "label": "Select",
+      "kind": 5,
+      "detail": "shadcn/ui Select component",
+      "documentation": { "value": "Displays a list of options for the user to pick from. Built on Radix UI Select." },
+      "insertText": "<Select>\n\t<SelectTrigger className=\"w-[180px]\">\n\t\t<SelectValue placeholder=\"${1:Select}\" />\n\t</SelectTrigger>\n\t<SelectContent>\n\t\t<SelectItem value=\"${2:value}\">${3:Label}</SelectItem>\n\t</SelectContent>\n</Select>",
+      "insertTextRules": 4,
+      "sortText": "02_select"
+    },
+    {
+      "label": "Separator",
+      "kind": 5,
+      "detail": "shadcn/ui Separator component",
+      "documentation": { "value": "Visually or semantically separates content. Built on Radix UI Separator." },
+      "insertText": "<Separator orientation=\"${1|horizontal,vertical|}\" />",
+      "insertTextRules": 4,
+      "sortText": "02_separator"
+    },
+    {
+      "label": "Sheet",
+      "kind": 5,
+      "detail": "shadcn/ui Sheet component",
+      "documentation": { "value": "Extends the Dialog component to display content that complements the main screen. Slides in from screen edge." },
+      "insertText": "<Sheet>\n\t<SheetTrigger>${1:Open}</SheetTrigger>\n\t<SheetContent>\n\t\t<SheetHeader>\n\t\t\t<SheetTitle>${2:Title}</SheetTitle>\n\t\t\t<SheetDescription>${3:Description}</SheetDescription>\n\t\t</SheetHeader>\n\t\t${4:content}\n\t</SheetContent>\n</Sheet>",
+      "insertTextRules": 4,
+      "sortText": "02_sheet"
+    },
+    {
+      "label": "Skeleton",
+      "kind": 5,
+      "detail": "shadcn/ui Skeleton component",
+      "documentation": { "value": "Used to show a placeholder while content is loading." },
+      "insertText": "<Skeleton className=\"h-[${1:20px}] w-[${2:100px}]\" />",
+      "insertTextRules": 4,
+      "sortText": "02_skeleton"
+    },
+    {
+      "label": "Slider",
+      "kind": 5,
+      "detail": "shadcn/ui Slider component",
+      "documentation": { "value": "An input for selecting a value from a range. Built on Radix UI Slider." },
+      "insertText": "<Slider defaultValue={[${1:50}]} max={${2:100}} step={${3:1}} />",
+      "insertTextRules": 4,
+      "sortText": "02_slider"
+    },
+    {
+      "label": "Switch",
+      "kind": 5,
+      "detail": "shadcn/ui Switch component",
+      "documentation": { "value": "A toggle control that switches between on and off. Built on Radix UI Switch." },
+      "insertText": "<Switch id=\"${1:mode}\" checked={${2:checked}} onCheckedChange={${3:setChecked}} />",
+      "insertTextRules": 4,
+      "sortText": "02_switch"
+    },
+    {
+      "label": "Table",
+      "kind": 5,
+      "detail": "shadcn/ui Table component",
+      "documentation": { "value": "A responsive table component with header, body, and caption support." },
+      "insertText": "<Table>\n\t<TableCaption>${1:Caption}</TableCaption>\n\t<TableHeader>\n\t\t<TableRow>\n\t\t\t<TableHead>${2:Header}</TableHead>\n\t\t</TableRow>\n\t</TableHeader>\n\t<TableBody>\n\t\t<TableRow>\n\t\t\t<TableCell>${3:Cell}</TableCell>\n\t\t</TableRow>\n\t</TableBody>\n</Table>",
+      "insertTextRules": 4,
+      "sortText": "02_table"
+    },
+    {
+      "label": "Tabs",
+      "kind": 5,
+      "detail": "shadcn/ui Tabs component",
+      "documentation": { "value": "A set of layered sections of content. Built on Radix UI Tabs." },
+      "insertText": "<Tabs defaultValue=\"${1:tab1}\">\n\t<TabsList>\n\t\t<TabsTrigger value=\"${1:tab1}\">${2:Tab 1}</TabsTrigger>\n\t\t<TabsTrigger value=\"${3:tab2}\">${4:Tab 2}</TabsTrigger>\n\t</TabsList>\n\t<TabsContent value=\"${1:tab1}\">${5:Content 1}</TabsContent>\n\t<TabsContent value=\"${3:tab2}\">${6:Content 2}</TabsContent>\n</Tabs>",
+      "insertTextRules": 4,
+      "sortText": "02_tabs"
+    },
+    {
+      "label": "Textarea",
+      "kind": 5,
+      "detail": "shadcn/ui Textarea component",
+      "documentation": { "value": "A styled textarea element for multi-line text input." },
+      "insertText": "<Textarea placeholder=\"${1:Type your message here.}\" />",
+      "insertTextRules": 4,
+      "sortText": "02_textarea"
+    },
+    {
+      "label": "Toast",
+      "kind": 5,
+      "detail": "shadcn/ui Toast component",
+      "documentation": { "value": "A succinct message displayed temporarily. Uses Radix UI Toast." },
+      "insertText": "<Toast>\n\t<ToastTitle>${1:Title}</ToastTitle>\n\t<ToastDescription>${2:Description}</ToastDescription>\n</Toast>",
+      "insertTextRules": 4,
+      "sortText": "02_toast"
+    },
+    {
+      "label": "Toaster",
+      "kind": 5,
+      "detail": "shadcn/ui Toaster component",
+      "documentation": { "value": "Renders toast notifications. Place in your root layout.\n\n```tsx\n<Toaster />\n```" },
+      "insertText": "<Toaster />",
+      "insertTextRules": 4,
+      "sortText": "02_toaster"
+    },
+    {
+      "label": "Toggle",
+      "kind": 5,
+      "detail": "shadcn/ui Toggle component",
+      "documentation": { "value": "A two-state button that can be on or off. Built on Radix UI Toggle." },
+      "insertText": "<Toggle variant=\"${1|default,outline|}\" aria-label=\"${2:Toggle}\">\n\t${3:content}\n</Toggle>",
+      "insertTextRules": 4,
+      "sortText": "02_toggle"
+    },
+    {
+      "label": "ToggleGroup",
+      "kind": 5,
+      "detail": "shadcn/ui ToggleGroup component",
+      "documentation": { "value": "A group of toggle buttons. Built on Radix UI ToggleGroup." },
+      "insertText": "<ToggleGroup type=\"${1|single,multiple|}\">\n\t<ToggleGroupItem value=\"${2:a}\">${3:A}</ToggleGroupItem>\n\t<ToggleGroupItem value=\"${4:b}\">${5:B}</ToggleGroupItem>\n</ToggleGroup>",
+      "insertTextRules": 4,
+      "sortText": "02_togglegroup"
+    },
+    {
+      "label": "Tooltip",
+      "kind": 5,
+      "detail": "shadcn/ui Tooltip component",
+      "documentation": { "value": "A popup that displays information on hover/focus. Built on Radix UI Tooltip. Must be wrapped in TooltipProvider." },
+      "insertText": "<TooltipProvider>\n\t<Tooltip>\n\t\t<TooltipTrigger>${1:Hover me}</TooltipTrigger>\n\t\t<TooltipContent>\n\t\t\t<p>${2:Tooltip text}</p>\n\t\t</TooltipContent>\n\t</Tooltip>\n</TooltipProvider>",
+      "insertTextRules": 4,
+      "sortText": "02_tooltip"
+    },
+    {
+      "label": "DataTable",
+      "kind": 5,
+      "detail": "shadcn/ui DataTable component",
+      "documentation": { "value": "Powerful table built with TanStack Table for sorting, filtering, and pagination." },
+      "insertText": "<DataTable columns={${1:columns}} data={${2:data}} />",
+      "insertTextRules": 4,
+      "sortText": "02_datatable"
+    },
+    {
+      "label": "DatePicker",
+      "kind": 5,
+      "detail": "shadcn/ui DatePicker component",
+      "documentation": { "value": "Date picker composed from Popover and Calendar components." },
+      "insertText": "<DatePicker date={${1:date}} setDate={${2:setDate}} />",
+      "insertTextRules": 4,
+      "sortText": "02_datepicker"
+    },
+    {
+      "label": "cn",
+      "kind": 1,
+      "detail": "Utility: merge Tailwind CSS classes",
+      "documentation": { "value": "Merges class names using clsx and tailwind-merge. Handles conditional classes and deduplication.\n\n```tsx\nimport { cn } from \"@/lib/utils\";\ncn(\"px-2 py-1\", condition && \"bg-blue-500\", \"text-white\");\n```" },
+      "insertText": "cn(${1:classes})",
+      "insertTextRules": 4,
+      "sortText": "03_cn"
+    },
+    {
+      "label": "cva",
+      "kind": 1,
+      "detail": "Utility: class-variance-authority",
+      "documentation": { "value": "Creates variant-based class name functions using class-variance-authority.\n\n```tsx\nconst buttonVariants = cva(\"inline-flex items-center\", {\n  variants: {\n    variant: { default: \"bg-primary\", destructive: \"bg-destructive\" },\n    size: { default: \"h-10 px-4\", sm: \"h-9 px-3\" },\n  },\n  defaultVariants: { variant: \"default\", size: \"default\" },\n});\n```" },
+      "insertText": "cva(\"${1:base-classes}\", {\n\tvariants: {\n\t\t${2:variant}: {\n\t\t\t${3:default}: \"${4:classes}\",\n\t\t},\n\t},\n\tdefaultVariants: {\n\t\t${2:variant}: \"${3:default}\",\n\t},\n})",
+      "insertTextRules": 4,
+      "sortText": "03_cva"
+    },
+    {
+      "label": "buttonVariants",
+      "kind": 1,
+      "detail": "Button variant function",
+      "documentation": { "value": "Pre-defined variant function for Button component. Use to apply button styles to non-button elements.\n\n```tsx\n<Link className={buttonVariants({ variant: \"outline\" })}>Link</Link>\n```" },
+      "insertText": "buttonVariants({ variant: \"${1|default,destructive,outline,secondary,ghost,link|}\", size: \"${2|default,sm,lg,icon|}\" })",
+      "insertTextRules": 4,
+      "sortText": "03_buttonvariants"
+    },
+    {
+      "label": "badgeVariants",
+      "kind": 1,
+      "detail": "Badge variant function",
+      "documentation": { "value": "Pre-defined variant function for Badge component.\n\n```tsx\n<div className={badgeVariants({ variant: \"outline\" })}>Custom badge</div>\n```" },
+      "insertText": "badgeVariants({ variant: \"${1|default,secondary,outline,destructive|}\" })",
+      "insertTextRules": 4,
+      "sortText": "03_badgevariants"
+    },
+    {
+      "label": "useToast",
+      "kind": 1,
+      "detail": "Hook: toast notification system",
+      "documentation": { "value": "Returns toast function and toasts array for managing notifications.\n\n```tsx\nconst { toast } = useToast();\ntoast({ title: \"Done!\", description: \"Saved.\" });\n```" },
+      "insertText": "const { toast } = useToast();",
+      "insertTextRules": 4,
+      "sortText": "03_usetoast"
+    },
+    {
+      "label": "toast",
+      "kind": 1,
+      "detail": "Show toast notification",
+      "documentation": { "value": "Displays a notification toast.\n\n```tsx\ntoast({\n  title: \"Scheduled\",\n  description: \"Friday, Feb 10, 2024\",\n});\n```" },
+      "insertText": "toast({\n\ttitle: \"${1:Title}\",\n\tdescription: \"${2:Description}\",\n})",
+      "insertTextRules": 4,
+      "sortText": "03_toast"
+    },
+    {
+      "label": "useFormField",
+      "kind": 1,
+      "detail": "Hook: access form field context",
+      "documentation": { "value": "Returns the current form field context including error, id, name. Used internally by FormItem, FormLabel, FormMessage." },
+      "insertText": "const { error, formItemId, formDescriptionId, formMessageId } = useFormField();",
+      "insertTextRules": 4,
+      "sortText": "03_useformfield"
+    },
+    {
+      "label": "variant-default",
+      "kind": 9,
+      "detail": "variant=\"default\"",
+      "documentation": { "value": "Default variant prop for shadcn/ui components." },
+      "insertText": "variant=\"default\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_default"
+    },
+    {
+      "label": "variant-destructive",
+      "kind": 9,
+      "detail": "variant=\"destructive\"",
+      "documentation": { "value": "Destructive variant for alerts, buttons, badges, and toasts." },
+      "insertText": "variant=\"destructive\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_destructive"
+    },
+    {
+      "label": "variant-outline",
+      "kind": 9,
+      "detail": "variant=\"outline\"",
+      "documentation": { "value": "Outline variant — bordered with transparent background." },
+      "insertText": "variant=\"outline\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_outline"
+    },
+    {
+      "label": "variant-secondary",
+      "kind": 9,
+      "detail": "variant=\"secondary\"",
+      "documentation": { "value": "Secondary variant — muted background color." },
+      "insertText": "variant=\"secondary\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_secondary"
+    },
+    {
+      "label": "variant-ghost",
+      "kind": 9,
+      "detail": "variant=\"ghost\"",
+      "documentation": { "value": "Ghost variant — transparent background, visible on hover." },
+      "insertText": "variant=\"ghost\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_ghost"
+    },
+    {
+      "label": "variant-link",
+      "kind": 9,
+      "detail": "variant=\"link\"",
+      "documentation": { "value": "Link variant — styled as an underlined hyperlink." },
+      "insertText": "variant=\"link\"",
+      "insertTextRules": 4,
+      "sortText": "04_variant_link"
+    },
+    {
+      "label": "size-default",
+      "kind": 9,
+      "detail": "size=\"default\"",
+      "documentation": { "value": "Default size for buttons (h-10 px-4 py-2)." },
+      "insertText": "size=\"default\"",
+      "insertTextRules": 4,
+      "sortText": "04_size_default"
+    },
+    {
+      "label": "size-sm",
+      "kind": 9,
+      "detail": "size=\"sm\"",
+      "documentation": { "value": "Small size variant (h-9 rounded-md px-3)." },
+      "insertText": "size=\"sm\"",
+      "insertTextRules": 4,
+      "sortText": "04_size_sm"
+    },
+    {
+      "label": "size-lg",
+      "kind": 9,
+      "detail": "size=\"lg\"",
+      "documentation": { "value": "Large size variant (h-11 rounded-md px-8)." },
+      "insertText": "size=\"lg\"",
+      "insertTextRules": 4,
+      "sortText": "04_size_lg"
+    },
+    {
+      "label": "size-icon",
+      "kind": 9,
+      "detail": "size=\"icon\"",
+      "documentation": { "value": "Icon size variant (h-10 w-10) — for icon-only buttons." },
+      "insertText": "size=\"icon\"",
+      "insertTextRules": 4,
+      "sortText": "04_size_icon"
+    },
+    {
+      "label": "asChild",
+      "kind": 9,
+      "detail": "asChild prop (Radix UI)",
+      "documentation": { "value": "Merges props onto the child element instead of rendering a default element. Common Radix UI pattern.\n\n```tsx\n<DialogTrigger asChild>\n  <Button>Open</Button>\n</DialogTrigger>\n```" },
+      "insertText": "asChild",
+      "insertTextRules": 4,
+      "sortText": "04_aschild"
+    },
+    {
+      "label": "className-cn",
+      "kind": 9,
+      "detail": "className with cn() utility",
+      "documentation": { "value": "className prop using cn() for conditional class merging." },
+      "insertText": "className={cn(\"${1:base-classes}\", ${2:condition} && \"${3:conditional-classes}\")}",
+      "insertTextRules": 4,
+      "sortText": "04_classname_cn"
+    },
+    {
+      "label": "--background",
+      "kind": 14,
+      "detail": "CSS variable: background color",
+      "documentation": { "value": "shadcn/ui theme variable for the default background color.\n\n```css\n--background: 0 0% 100%; /* hsl */\n```" },
+      "insertText": "--background",
+      "insertTextRules": 4,
+      "sortText": "04_css_background"
+    },
+    {
+      "label": "--foreground",
+      "kind": 14,
+      "detail": "CSS variable: foreground color",
+      "documentation": { "value": "shadcn/ui theme variable for the default foreground/text color.\n\n```css\n--foreground: 222.2 84% 4.9%;\n```" },
+      "insertText": "--foreground",
+      "insertTextRules": 4,
+      "sortText": "04_css_foreground"
+    },
+    {
+      "label": "--primary",
+      "kind": 14,
+      "detail": "CSS variable: primary color",
+      "documentation": { "value": "shadcn/ui theme variable for the primary brand color.\n\n```css\n--primary: 222.2 47.4% 11.2%;\n```" },
+      "insertText": "--primary",
+      "insertTextRules": 4,
+      "sortText": "04_css_primary"
+    },
+    {
+      "label": "--secondary",
+      "kind": 14,
+      "detail": "CSS variable: secondary color",
+      "documentation": { "value": "shadcn/ui theme variable for the secondary color.\n\n```css\n--secondary: 210 40% 96.1%;\n```" },
+      "insertText": "--secondary",
+      "insertTextRules": 4,
+      "sortText": "04_css_secondary"
+    },
+    {
+      "label": "--muted",
+      "kind": 14,
+      "detail": "CSS variable: muted color",
+      "documentation": { "value": "shadcn/ui theme variable for muted backgrounds.\n\n```css\n--muted: 210 40% 96.1%;\n```" },
+      "insertText": "--muted",
+      "insertTextRules": 4,
+      "sortText": "04_css_muted"
+    },
+    {
+      "label": "--accent",
+      "kind": 14,
+      "detail": "CSS variable: accent color",
+      "documentation": { "value": "shadcn/ui theme variable for accent highlights.\n\n```css\n--accent: 210 40% 96.1%;\n```" },
+      "insertText": "--accent",
+      "insertTextRules": 4,
+      "sortText": "04_css_accent"
+    },
+    {
+      "label": "--destructive",
+      "kind": 14,
+      "detail": "CSS variable: destructive color",
+      "documentation": { "value": "shadcn/ui theme variable for destructive actions (red).\n\n```css\n--destructive: 0 84.2% 60.2%;\n```" },
+      "insertText": "--destructive",
+      "insertTextRules": 4,
+      "sortText": "04_css_destructive"
+    },
+    {
+      "label": "--border",
+      "kind": 14,
+      "detail": "CSS variable: border color",
+      "documentation": { "value": "shadcn/ui theme variable for default border color.\n\n```css\n--border: 214.3 31.8% 91.4%;\n```" },
+      "insertText": "--border",
+      "insertTextRules": 4,
+      "sortText": "04_css_border"
+    },
+    {
+      "label": "--input",
+      "kind": 14,
+      "detail": "CSS variable: input border color",
+      "documentation": { "value": "shadcn/ui theme variable for input element borders.\n\n```css\n--input: 214.3 31.8% 91.4%;\n```" },
+      "insertText": "--input",
+      "insertTextRules": 4,
+      "sortText": "04_css_input"
+    },
+    {
+      "label": "--ring",
+      "kind": 14,
+      "detail": "CSS variable: focus ring color",
+      "documentation": { "value": "shadcn/ui theme variable for focus ring outlines.\n\n```css\n--ring: 222.2 84% 4.9%;\n```" },
+      "insertText": "--ring",
+      "insertTextRules": 4,
+      "sortText": "04_css_ring"
+    },
+    {
+      "label": "--radius",
+      "kind": 14,
+      "detail": "CSS variable: border radius",
+      "documentation": { "value": "shadcn/ui theme variable for default border radius.\n\n```css\n--radius: 0.5rem;\n```" },
+      "insertText": "--radius",
+      "insertTextRules": 4,
+      "sortText": "04_css_radius"
+    },
+    {
+      "label": "--card",
+      "kind": 14,
+      "detail": "CSS variable: card background",
+      "documentation": { "value": "shadcn/ui theme variable for card background color.\n\n```css\n--card: 0 0% 100%;\n```" },
+      "insertText": "--card",
+      "insertTextRules": 4,
+      "sortText": "04_css_card"
+    },
+    {
+      "label": "--popover",
+      "kind": 14,
+      "detail": "CSS variable: popover background",
+      "documentation": { "value": "shadcn/ui theme variable for popover background color.\n\n```css\n--popover: 0 0% 100%;\n```" },
+      "insertText": "--popover",
+      "insertTextRules": 4,
+      "sortText": "04_css_popover"
+    }
+  ]
+}

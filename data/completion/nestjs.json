@@ -1,0 +1,1454 @@
+{
+  "language": "nestjs",
+  "completions": [
+    {
+      "label": "nest-controller",
+      "kind": 28,
+      "detail": "NestJS Controller Class",
+      "documentation": { "value": "Creates a NestJS controller with route prefix and sample GET endpoint." },
+      "insertText": "import { Controller, Get } from '@nestjs/common';\nimport { ${1:AppService} } from './${2:app}.service';\n\n@Controller('${3:route}')\nexport class ${4:App}Controller {\n  constructor(private readonly ${5:appService}: ${1:AppService}) {}\n\n  @Get()\n  findAll() {\n    return this.${5:appService}.findAll();\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-controller"
+    },
+    {
+      "label": "nest-module",
+      "kind": 28,
+      "detail": "NestJS Module Definition",
+      "documentation": { "value": "Creates a NestJS module with imports, controllers, providers, and exports arrays." },
+      "insertText": "import { Module } from '@nestjs/common';\nimport { ${1:App}Controller } from './${2:app}.controller';\nimport { ${3:App}Service } from './${2:app}.service';\n\n@Module({\n  imports: [${4}],\n  controllers: [${1:App}Controller],\n  providers: [${3:App}Service],\n  exports: [${5}]\n})\nexport class ${6:App}Module {}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-module"
+    },
+    {
+      "label": "nest-service",
+      "kind": 28,
+      "detail": "NestJS Injectable Service",
+      "documentation": { "value": "Creates a NestJS injectable service class with constructor." },
+      "insertText": "import { Injectable } from '@nestjs/common';\n\n@Injectable()\nexport class ${1:App}Service {\n  constructor(${2}) {}\n\n  findAll() {\n    return ${3:'This action returns all items'};\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-service"
+    },
+    {
+      "label": "nest-guard",
+      "kind": 28,
+      "detail": "NestJS Guard Implementation",
+      "documentation": { "value": "Creates a NestJS guard implementing CanActivate interface." },
+      "insertText": "import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';\nimport { Observable } from 'rxjs';\n\n@Injectable()\nexport class ${1:Auth}Guard implements CanActivate {\n  canActivate(\n    context: ExecutionContext,\n  ): boolean | Promise<boolean> | Observable<boolean> {\n    const request = context.switchToHttp().getRequest();\n    ${0:// validate request}\n    return true;\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-guard"
+    },
+    {
+      "label": "nest-pipe",
+      "kind": 28,
+      "detail": "NestJS Pipe Implementation",
+      "documentation": { "value": "Creates a NestJS custom pipe implementing PipeTransform." },
+      "insertText": "import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';\n\n@Injectable()\nexport class ${1:Validation}Pipe implements PipeTransform {\n  transform(value: any, metadata: ArgumentMetadata) {\n    ${0:// transform and validate}\n    return value;\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-pipe"
+    },
+    {
+      "label": "nest-interceptor",
+      "kind": 28,
+      "detail": "NestJS Interceptor Implementation",
+      "documentation": { "value": "Creates a NestJS interceptor implementing NestInterceptor." },
+      "insertText": "import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';\nimport { Observable } from 'rxjs';\nimport { map } from 'rxjs/operators';\n\n@Injectable()\nexport class ${1:Transform}Interceptor implements NestInterceptor {\n  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {\n    return next.handle().pipe(\n      map(data => ({\n        ${0:data}\n      })),\n    );\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-interceptor"
+    },
+    {
+      "label": "nest-filter",
+      "kind": 28,
+      "detail": "NestJS Exception Filter",
+      "documentation": { "value": "Creates a NestJS exception filter implementing ExceptionFilter." },
+      "insertText": "import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';\nimport { Request, Response } from 'express';\n\n@Catch(HttpException)\nexport class ${1:Http}ExceptionFilter implements ExceptionFilter {\n  catch(exception: HttpException, host: ArgumentsHost) {\n    const ctx = host.switchToHttp();\n    const response = ctx.getResponse<Response>();\n    const request = ctx.getRequest<Request>();\n    const status = exception.getStatus();\n\n    response.status(status).json({\n      statusCode: status,\n      timestamp: new Date().toISOString(),\n      path: request.url,\n      message: exception.message,\n    });\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-filter"
+    },
+    {
+      "label": "nest-middleware",
+      "kind": 28,
+      "detail": "NestJS Middleware",
+      "documentation": { "value": "Creates a NestJS middleware implementing NestMiddleware." },
+      "insertText": "import { Injectable, NestMiddleware } from '@nestjs/common';\nimport { Request, Response, NextFunction } from 'express';\n\n@Injectable()\nexport class ${1:Logger}Middleware implements NestMiddleware {\n  use(req: Request, res: Response, next: NextFunction) {\n    ${0:console.log(`[${req.method}] ${req.url}`);}\n    next();\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-middleware"
+    },
+    {
+      "label": "nest-gateway",
+      "kind": 28,
+      "detail": "NestJS WebSocket Gateway",
+      "documentation": { "value": "Creates a NestJS WebSocket gateway with event handling." },
+      "insertText": "import {\n  WebSocketGateway,\n  SubscribeMessage,\n  MessageBody,\n  WebSocketServer,\n  ConnectedSocket,\n} from '@nestjs/websockets';\nimport { Server, Socket } from 'socket.io';\n\n@WebSocketGateway({ cors: { origin: '*' } })\nexport class ${1:Events}Gateway {\n  @WebSocketServer()\n  server: Server;\n\n  @SubscribeMessage('${2:message}')\n  handle${3:Message}(@MessageBody() data: ${4:string}, @ConnectedSocket() client: Socket) {\n    ${0:return data;}\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-gateway"
+    },
+    {
+      "label": "nest-microservice",
+      "kind": 28,
+      "detail": "NestJS Microservice Handler",
+      "documentation": { "value": "Creates a NestJS microservice controller with message patterns." },
+      "insertText": "import { Controller } from '@nestjs/common';\nimport { MessagePattern, Payload } from '@nestjs/microservices';\n\n@Controller()\nexport class ${1:App}Controller {\n  @MessagePattern('${2:pattern}')\n  handle${3:Message}(@Payload() data: ${4:any}) {\n    ${0:return data;}\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-microservice"
+    },
+    {
+      "label": "nest-crud",
+      "kind": 28,
+      "detail": "NestJS CRUD Controller",
+      "documentation": { "value": "Creates a full CRUD controller with all HTTP methods." },
+      "insertText": "import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';\nimport { ${1:App}Service } from './${2:app}.service';\nimport { Create${3:Item}Dto } from './dto/create-${2:app}.dto';\nimport { Update${3:Item}Dto } from './dto/update-${2:app}.dto';\n\n@Controller('${4:items}')\nexport class ${1:App}Controller {\n  constructor(private readonly ${5:service}: ${1:App}Service) {}\n\n  @Post()\n  create(@Body() dto: Create${3:Item}Dto) {\n    return this.${5:service}.create(dto);\n  }\n\n  @Get()\n  findAll() {\n    return this.${5:service}.findAll();\n  }\n\n  @Get(':id')\n  findOne(@Param('id') id: string) {\n    return this.${5:service}.findOne(id);\n  }\n\n  @Put(':id')\n  update(@Param('id') id: string, @Body() dto: Update${3:Item}Dto) {\n    return this.${5:service}.update(id, dto);\n  }\n\n  @Delete(':id')\n  remove(@Param('id') id: string) {\n    return this.${5:service}.remove(id);\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-crud"
+    },
+    {
+      "label": "nest-entity",
+      "kind": 28,
+      "detail": "TypeORM Entity Definition",
+      "documentation": { "value": "Creates a TypeORM entity class with common decorators." },
+      "insertText": "import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';\n\n@Entity('${1:items}')\nexport class ${2:Item} {\n  @PrimaryGeneratedColumn('uuid')\n  id: string;\n\n  @Column()\n  ${3:name}: string;\n\n  @CreateDateColumn()\n  createdAt: Date;\n\n  @UpdateDateColumn()\n  updatedAt: Date;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-entity"
+    },
+    {
+      "label": "nest-dto",
+      "kind": 28,
+      "detail": "NestJS DTO Class",
+      "documentation": { "value": "Creates a DTO class with class-validator decorators." },
+      "insertText": "import { IsString, IsNotEmpty, IsOptional } from 'class-validator';\nimport { ApiProperty } from '@nestjs/swagger';\n\nexport class ${1:Create}${2:Item}Dto {\n  @ApiProperty({ description: '${3:Name of the item}' })\n  @IsString()\n  @IsNotEmpty()\n  ${4:name}: string;\n\n  @ApiProperty({ description: '${5:Description}', required: false })\n  @IsString()\n  @IsOptional()\n  ${6:description}?: string;\n}",
+      "insertTextRules": 4,
+      "sortText": "00_nest-dto"
+    },
+    {
+      "label": "nest-e2e-test",
+      "kind": 28,
+      "detail": "NestJS E2E Test",
+      "documentation": { "value": "Creates a NestJS end-to-end test with supertest." },
+      "insertText": "import { Test, TestingModule } from '@nestjs/testing';\nimport { INestApplication } from '@nestjs/common';\nimport * as request from 'supertest';\nimport { ${1:App}Module } from '../src/${2:app}.module';\n\ndescribe('${3:AppController} (e2e)', () => {\n  let app: INestApplication;\n\n  beforeEach(async () => {\n    const moduleFixture: TestingModule = await Test.createTestingModule({\n      imports: [${1:App}Module],\n    }).compile();\n\n    app = moduleFixture.createNestApplication();\n    await app.init();\n  });\n\n  afterAll(async () => {\n    await app.close();\n  });\n\n  it('/ (GET)', () => {\n    return request(app.getHttpServer())\n      .get('/')\n      .expect(200);\n  });\n});",
+      "insertTextRules": 4,
+      "sortText": "00_nest-e2e-test"
+    },
+    {
+      "label": "nest-unit-test",
+      "kind": 28,
+      "detail": "NestJS Unit Test",
+      "documentation": { "value": "Creates a NestJS unit test for a service with TestingModule." },
+      "insertText": "import { Test, TestingModule } from '@nestjs/testing';\nimport { ${1:App}Service } from './${2:app}.service';\n\ndescribe('${1:App}Service', () => {\n  let service: ${1:App}Service;\n\n  beforeEach(async () => {\n    const module: TestingModule = await Test.createTestingModule({\n      providers: [${1:App}Service],\n    }).compile();\n\n    service = module.get<${1:App}Service>(${1:App}Service);\n  });\n\n  it('should be defined', () => {\n    expect(service).toBeDefined();\n  });\n});",
+      "insertTextRules": 4,
+      "sortText": "00_nest-unit-test"
+    },
+    {
+      "label": "@Controller",
+      "kind": 1,
+      "detail": "Controller decorator",
+      "documentation": { "value": "Marks a class as a NestJS controller. Accepts an optional route path prefix." },
+      "insertText": "@Controller('${1:route}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Controller"
+    },
+    {
+      "label": "@Get",
+      "kind": 1,
+      "detail": "HTTP GET decorator",
+      "documentation": { "value": "Routes HTTP GET requests to the decorated method. Accepts an optional path." },
+      "insertText": "@Get('${1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Get"
+    },
+    {
+      "label": "@Post",
+      "kind": 1,
+      "detail": "HTTP POST decorator",
+      "documentation": { "value": "Routes HTTP POST requests to the decorated method. Accepts an optional path." },
+      "insertText": "@Post('${1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Post"
+    },
+    {
+      "label": "@Put",
+      "kind": 1,
+      "detail": "HTTP PUT decorator",
+      "documentation": { "value": "Routes HTTP PUT requests to the decorated method. Accepts an optional path." },
+      "insertText": "@Put('${1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Put"
+    },
+    {
+      "label": "@Patch",
+      "kind": 1,
+      "detail": "HTTP PATCH decorator",
+      "documentation": { "value": "Routes HTTP PATCH requests to the decorated method. Accepts an optional path." },
+      "insertText": "@Patch('${1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Patch"
+    },
+    {
+      "label": "@Delete",
+      "kind": 1,
+      "detail": "HTTP DELETE decorator",
+      "documentation": { "value": "Routes HTTP DELETE requests to the decorated method. Accepts an optional path." },
+      "insertText": "@Delete('${1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Delete"
+    },
+    {
+      "label": "@Module",
+      "kind": 1,
+      "detail": "Module decorator",
+      "documentation": { "value": "Marks a class as a NestJS module. Accepts metadata: imports, controllers, providers, exports." },
+      "insertText": "@Module({\n  imports: [${1}],\n  controllers: [${2}],\n  providers: [${3}],\n  exports: [${4}]\n})",
+      "insertTextRules": 4,
+      "sortText": "01_@Module"
+    },
+    {
+      "label": "@Injectable",
+      "kind": 1,
+      "detail": "Injectable decorator",
+      "documentation": { "value": "Marks a class as a provider that can be managed by the NestJS IoC container." },
+      "insertText": "@Injectable()",
+      "insertTextRules": 4,
+      "sortText": "01_@Injectable"
+    },
+    {
+      "label": "@Inject",
+      "kind": 1,
+      "detail": "Inject decorator",
+      "documentation": { "value": "Injects a provider by token. Used for non-class-based (custom) provider injection." },
+      "insertText": "@Inject(${1:TOKEN})",
+      "insertTextRules": 4,
+      "sortText": "01_@Inject"
+    },
+    {
+      "label": "@Optional",
+      "kind": 1,
+      "detail": "Optional decorator",
+      "documentation": { "value": "Marks a constructor parameter as optional. Prevents errors when the provider is not available." },
+      "insertText": "@Optional()",
+      "insertTextRules": 4,
+      "sortText": "01_@Optional"
+    },
+    {
+      "label": "@Body",
+      "kind": 1,
+      "detail": "Body parameter decorator",
+      "documentation": { "value": "Extracts the request body. Accepts an optional property key." },
+      "insertText": "@Body(${1}) ${2:body}: ${3:any}",
+      "insertTextRules": 4,
+      "sortText": "01_@Body"
+    },
+    {
+      "label": "@Param",
+      "kind": 1,
+      "detail": "Param decorator",
+      "documentation": { "value": "Extracts a route parameter. Accepts an optional parameter name." },
+      "insertText": "@Param('${1:id}') ${1:id}: ${2:string}",
+      "insertTextRules": 4,
+      "sortText": "01_@Param"
+    },
+    {
+      "label": "@Query",
+      "kind": 1,
+      "detail": "Query parameter decorator",
+      "documentation": { "value": "Extracts query string parameters. Accepts an optional query key." },
+      "insertText": "@Query('${1}') ${2:query}: ${3:string}",
+      "insertTextRules": 4,
+      "sortText": "01_@Query"
+    },
+    {
+      "label": "@Headers",
+      "kind": 1,
+      "detail": "Headers decorator",
+      "documentation": { "value": "Extracts headers from the request. Accepts an optional header name." },
+      "insertText": "@Headers('${1}') ${2:headers}: ${3:string}",
+      "insertTextRules": 4,
+      "sortText": "01_@Headers"
+    },
+    {
+      "label": "@Req",
+      "kind": 1,
+      "detail": "Request decorator",
+      "documentation": { "value": "Injects the underlying platform request object (e.g., Express Request)." },
+      "insertText": "@Req() ${1:req}: Request",
+      "insertTextRules": 4,
+      "sortText": "01_@Req"
+    },
+    {
+      "label": "@Res",
+      "kind": 1,
+      "detail": "Response decorator",
+      "documentation": { "value": "Injects the underlying platform response object. Note: using @Res() disables NestJS standard response handling." },
+      "insertText": "@Res() ${1:res}: Response",
+      "insertTextRules": 4,
+      "sortText": "01_@Res"
+    },
+    {
+      "label": "@HttpCode",
+      "kind": 1,
+      "detail": "HTTP status code decorator",
+      "documentation": { "value": "Sets the HTTP response status code for the decorated route handler." },
+      "insertText": "@HttpCode(${1:200})",
+      "insertTextRules": 4,
+      "sortText": "01_@HttpCode"
+    },
+    {
+      "label": "@Header",
+      "kind": 1,
+      "detail": "Response header decorator",
+      "documentation": { "value": "Sets a custom response header for the decorated route handler." },
+      "insertText": "@Header('${1:key}', '${2:value}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Header"
+    },
+    {
+      "label": "@Redirect",
+      "kind": 1,
+      "detail": "Redirect decorator",
+      "documentation": { "value": "Redirects the response to the given URL with an optional status code." },
+      "insertText": "@Redirect('${1:url}', ${2:301})",
+      "insertTextRules": 4,
+      "sortText": "01_@Redirect"
+    },
+    {
+      "label": "@Render",
+      "kind": 1,
+      "detail": "Render decorator",
+      "documentation": { "value": "Renders a view template using the configured template engine (e.g., Handlebars, Pug)." },
+      "insertText": "@Render('${1:template}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Render"
+    },
+    {
+      "label": "@UseGuards",
+      "kind": 1,
+      "detail": "Guards decorator",
+      "documentation": { "value": "Binds guards to the scope of the controller or method. Guards determine whether a request should be handled." },
+      "insertText": "@UseGuards(${1:AuthGuard})",
+      "insertTextRules": 4,
+      "sortText": "01_@UseGuards"
+    },
+    {
+      "label": "@UseInterceptors",
+      "kind": 1,
+      "detail": "Interceptors decorator",
+      "documentation": { "value": "Binds interceptors to the scope of the controller or method. Interceptors add extra logic before/after method execution." },
+      "insertText": "@UseInterceptors(${1:LoggingInterceptor})",
+      "insertTextRules": 4,
+      "sortText": "01_@UseInterceptors"
+    },
+    {
+      "label": "@UsePipes",
+      "kind": 1,
+      "detail": "Pipes decorator",
+      "documentation": { "value": "Binds pipes to the scope of the controller or method. Pipes transform or validate input data." },
+      "insertText": "@UsePipes(${1:ValidationPipe})",
+      "insertTextRules": 4,
+      "sortText": "01_@UsePipes"
+    },
+    {
+      "label": "@UseFilters",
+      "kind": 1,
+      "detail": "Filters decorator",
+      "documentation": { "value": "Binds exception filters to the scope of the controller or method." },
+      "insertText": "@UseFilters(${1:HttpExceptionFilter})",
+      "insertTextRules": 4,
+      "sortText": "01_@UseFilters"
+    },
+    {
+      "label": "@SetMetadata",
+      "kind": 1,
+      "detail": "Metadata decorator",
+      "documentation": { "value": "Attaches custom metadata to a route handler, accessible via Reflector." },
+      "insertText": "@SetMetadata('${1:key}', ${2:value})",
+      "insertTextRules": 4,
+      "sortText": "01_@SetMetadata"
+    },
+    {
+      "label": "@Catch",
+      "kind": 1,
+      "detail": "Catch decorator",
+      "documentation": { "value": "Marks a class as an exception filter for the given exception type(s)." },
+      "insertText": "@Catch(${1:HttpException})",
+      "insertTextRules": 4,
+      "sortText": "01_@Catch"
+    },
+    {
+      "label": "@EventPattern",
+      "kind": 1,
+      "detail": "Event pattern decorator",
+      "documentation": { "value": "Subscribes to an event-based microservice pattern (fire-and-forget)." },
+      "insertText": "@EventPattern('${1:event_name}')",
+      "insertTextRules": 4,
+      "sortText": "01_@EventPattern"
+    },
+    {
+      "label": "@MessagePattern",
+      "kind": 1,
+      "detail": "Message pattern decorator",
+      "documentation": { "value": "Subscribes to a request-response microservice message pattern." },
+      "insertText": "@MessagePattern('${1:pattern}')",
+      "insertTextRules": 4,
+      "sortText": "01_@MessagePattern"
+    },
+    {
+      "label": "@WebSocketGateway",
+      "kind": 1,
+      "detail": "WebSocket gateway decorator",
+      "documentation": { "value": "Marks a class as a WebSocket gateway. Accepts optional port and namespace options." },
+      "insertText": "@WebSocketGateway(${1:{ cors: { origin: '*' \\} \\}})",
+      "insertTextRules": 4,
+      "sortText": "01_@WebSocketGateway"
+    },
+    {
+      "label": "@SubscribeMessage",
+      "kind": 1,
+      "detail": "Subscribe message decorator",
+      "documentation": { "value": "Subscribes to a specific WebSocket message event." },
+      "insertText": "@SubscribeMessage('${1:event}')",
+      "insertTextRules": 4,
+      "sortText": "01_@SubscribeMessage"
+    },
+    {
+      "label": "@ConnectedSocket",
+      "kind": 1,
+      "detail": "Connected socket decorator",
+      "documentation": { "value": "Injects the connected client socket instance into a gateway method." },
+      "insertText": "@ConnectedSocket() ${1:client}: Socket",
+      "insertTextRules": 4,
+      "sortText": "01_@ConnectedSocket"
+    },
+    {
+      "label": "@WebSocketServer",
+      "kind": 1,
+      "detail": "WebSocket server decorator",
+      "documentation": { "value": "Injects the underlying WebSocket server instance." },
+      "insertText": "@WebSocketServer()\nserver: Server;",
+      "insertTextRules": 4,
+      "sortText": "01_@WebSocketServer"
+    },
+    {
+      "label": "@Sse",
+      "kind": 1,
+      "detail": "Server-Sent Events decorator",
+      "documentation": { "value": "Marks a method as a Server-Sent Events endpoint." },
+      "insertText": "@Sse('${1:sse}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Sse"
+    },
+    {
+      "label": "@Cron",
+      "kind": 1,
+      "detail": "Cron job decorator",
+      "documentation": { "value": "Schedules a method to run on a cron expression using @nestjs/schedule." },
+      "insertText": "@Cron('${1:*/30 * * * * *}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Cron"
+    },
+    {
+      "label": "@Interval",
+      "kind": 1,
+      "detail": "Interval decorator",
+      "documentation": { "value": "Schedules a method to run at a fixed interval in milliseconds." },
+      "insertText": "@Interval(${1:10000})",
+      "insertTextRules": 4,
+      "sortText": "01_@Interval"
+    },
+    {
+      "label": "@Timeout",
+      "kind": 1,
+      "detail": "Timeout decorator",
+      "documentation": { "value": "Schedules a method to run once after a timeout in milliseconds." },
+      "insertText": "@Timeout(${1:5000})",
+      "insertTextRules": 4,
+      "sortText": "01_@Timeout"
+    },
+    {
+      "label": "@ApiTags",
+      "kind": 1,
+      "detail": "Swagger API tags",
+      "documentation": { "value": "Adds tags to the Swagger documentation for grouping endpoints." },
+      "insertText": "@ApiTags('${1:tag}')",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiTags"
+    },
+    {
+      "label": "@ApiOperation",
+      "kind": 1,
+      "detail": "Swagger API operation",
+      "documentation": { "value": "Describes an API operation for Swagger documentation." },
+      "insertText": "@ApiOperation({ summary: '${1:Description}' })",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiOperation"
+    },
+    {
+      "label": "@ApiResponse",
+      "kind": 1,
+      "detail": "Swagger API response",
+      "documentation": { "value": "Documents an API response status code and description for Swagger." },
+      "insertText": "@ApiResponse({ status: ${1:200}, description: '${2:Success}' })",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiResponse"
+    },
+    {
+      "label": "@ApiProperty",
+      "kind": 1,
+      "detail": "Swagger API property",
+      "documentation": { "value": "Decorates a DTO property for Swagger schema documentation." },
+      "insertText": "@ApiProperty({ description: '${1:Description}' })",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiProperty"
+    },
+    {
+      "label": "@ApiBody",
+      "kind": 1,
+      "detail": "Swagger API body",
+      "documentation": { "value": "Describes the request body schema for Swagger documentation." },
+      "insertText": "@ApiBody({ type: ${1:CreateDto} })",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiBody"
+    },
+    {
+      "label": "@ApiBearerAuth",
+      "kind": 1,
+      "detail": "Swagger Bearer Auth",
+      "documentation": { "value": "Marks an endpoint as requiring Bearer token authentication in Swagger." },
+      "insertText": "@ApiBearerAuth()",
+      "insertTextRules": 4,
+      "sortText": "01_@ApiBearerAuth"
+    },
+    {
+      "label": "@Payload",
+      "kind": 1,
+      "detail": "Microservice payload decorator",
+      "documentation": { "value": "Extracts the payload from a microservice message." },
+      "insertText": "@Payload() ${1:data}: ${2:any}",
+      "insertTextRules": 4,
+      "sortText": "01_@Payload"
+    },
+    {
+      "label": "@Ctx",
+      "kind": 1,
+      "detail": "Microservice context decorator",
+      "documentation": { "value": "Injects the microservice context object into a handler." },
+      "insertText": "@Ctx() ${1:context}",
+      "insertTextRules": 4,
+      "sortText": "01_@Ctx"
+    },
+    {
+      "label": "@Ip",
+      "kind": 1,
+      "detail": "IP address decorator",
+      "documentation": { "value": "Extracts the client IP address from the request." },
+      "insertText": "@Ip() ${1:ip}: string",
+      "insertTextRules": 4,
+      "sortText": "01_@Ip"
+    },
+    {
+      "label": "@Session",
+      "kind": 1,
+      "detail": "Session decorator",
+      "documentation": { "value": "Extracts the session object from the request." },
+      "insertText": "@Session() ${1:session}",
+      "insertTextRules": 4,
+      "sortText": "01_@Session"
+    },
+    {
+      "label": "@UploadedFile",
+      "kind": 1,
+      "detail": "Uploaded file decorator",
+      "documentation": { "value": "Extracts a single uploaded file from the request (used with FileInterceptor)." },
+      "insertText": "@UploadedFile() ${1:file}: Express.Multer.File",
+      "insertTextRules": 4,
+      "sortText": "01_@UploadedFile"
+    },
+    {
+      "label": "@UploadedFiles",
+      "kind": 1,
+      "detail": "Uploaded files decorator",
+      "documentation": { "value": "Extracts multiple uploaded files from the request (used with FilesInterceptor)." },
+      "insertText": "@UploadedFiles() ${1:files}: Express.Multer.File[]",
+      "insertTextRules": 4,
+      "sortText": "01_@UploadedFiles"
+    },
+    {
+      "label": "@Global",
+      "kind": 1,
+      "detail": "Global module decorator",
+      "documentation": { "value": "Makes a module global-scoped. Global modules are available everywhere without importing." },
+      "insertText": "@Global()",
+      "insertTextRules": 4,
+      "sortText": "01_@Global"
+    },
+    {
+      "label": "NestFactory",
+      "kind": 5,
+      "detail": "NestJS Application Factory",
+      "documentation": { "value": "Factory class to create a NestJS application instance. Provides create() and createMicroservice() methods." },
+      "insertText": "NestFactory",
+      "insertTextRules": 4,
+      "sortText": "02_NestFactory"
+    },
+    {
+      "label": "NestFactory.create",
+      "kind": 0,
+      "detail": "Create NestJS application",
+      "documentation": { "value": "Creates an instance of NestApplication from a root module." },
+      "insertText": "const app = await NestFactory.create(${1:AppModule});\nawait app.listen(${2:3000});",
+      "insertTextRules": 4,
+      "sortText": "02_NestFactory.create"
+    },
+    {
+      "label": "INestApplication",
+      "kind": 7,
+      "detail": "NestJS Application Interface",
+      "documentation": { "value": "Interface for the NestJS application instance. Provides methods like listen(), use(), useGlobalPipes(), etc." },
+      "insertText": "INestApplication",
+      "insertTextRules": 4,
+      "sortText": "02_INestApplication"
+    },
+    {
+      "label": "ModuleRef",
+      "kind": 5,
+      "detail": "Module Reference",
+      "documentation": { "value": "Provides access to the internal provider container for dynamic provider resolution." },
+      "insertText": "ModuleRef",
+      "insertTextRules": 4,
+      "sortText": "02_ModuleRef"
+    },
+    {
+      "label": "Reflector",
+      "kind": 5,
+      "detail": "Metadata Reflector",
+      "documentation": { "value": "Helper class to retrieve metadata set via @SetMetadata(). Used in guards and interceptors." },
+      "insertText": "Reflector",
+      "insertTextRules": 4,
+      "sortText": "02_Reflector"
+    },
+    {
+      "label": "HttpException",
+      "kind": 5,
+      "detail": "HTTP Exception",
+      "documentation": { "value": "Base class for HTTP exceptions. Accepts a response body and status code." },
+      "insertText": "throw new HttpException('${1:message}', HttpStatus.${2:BAD_REQUEST});",
+      "insertTextRules": 4,
+      "sortText": "02_HttpException"
+    },
+    {
+      "label": "HttpStatus",
+      "kind": 8,
+      "detail": "HTTP Status Codes Enum",
+      "documentation": { "value": "Enum of standard HTTP status codes (OK, CREATED, BAD_REQUEST, UNAUTHORIZED, etc.)." },
+      "insertText": "HttpStatus.${1:OK}",
+      "insertTextRules": 4,
+      "sortText": "02_HttpStatus"
+    },
+    {
+      "label": "BadRequestException",
+      "kind": 5,
+      "detail": "400 Bad Request",
+      "documentation": { "value": "Throws a 400 Bad Request HTTP exception." },
+      "insertText": "throw new BadRequestException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_BadRequestException"
+    },
+    {
+      "label": "UnauthorizedException",
+      "kind": 5,
+      "detail": "401 Unauthorized",
+      "documentation": { "value": "Throws a 401 Unauthorized HTTP exception." },
+      "insertText": "throw new UnauthorizedException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_UnauthorizedException"
+    },
+    {
+      "label": "ForbiddenException",
+      "kind": 5,
+      "detail": "403 Forbidden",
+      "documentation": { "value": "Throws a 403 Forbidden HTTP exception." },
+      "insertText": "throw new ForbiddenException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_ForbiddenException"
+    },
+    {
+      "label": "NotFoundException",
+      "kind": 5,
+      "detail": "404 Not Found",
+      "documentation": { "value": "Throws a 404 Not Found HTTP exception." },
+      "insertText": "throw new NotFoundException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_NotFoundException"
+    },
+    {
+      "label": "ConflictException",
+      "kind": 5,
+      "detail": "409 Conflict",
+      "documentation": { "value": "Throws a 409 Conflict HTTP exception." },
+      "insertText": "throw new ConflictException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_ConflictException"
+    },
+    {
+      "label": "InternalServerErrorException",
+      "kind": 5,
+      "detail": "500 Internal Server Error",
+      "documentation": { "value": "Throws a 500 Internal Server Error HTTP exception." },
+      "insertText": "throw new InternalServerErrorException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_InternalServerErrorException"
+    },
+    {
+      "label": "NotImplementedException",
+      "kind": 5,
+      "detail": "501 Not Implemented",
+      "documentation": { "value": "Throws a 501 Not Implemented HTTP exception." },
+      "insertText": "throw new NotImplementedException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_NotImplementedException"
+    },
+    {
+      "label": "GoneException",
+      "kind": 5,
+      "detail": "410 Gone",
+      "documentation": { "value": "Throws a 410 Gone HTTP exception." },
+      "insertText": "throw new GoneException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_GoneException"
+    },
+    {
+      "label": "PayloadTooLargeException",
+      "kind": 5,
+      "detail": "413 Payload Too Large",
+      "documentation": { "value": "Throws a 413 Payload Too Large HTTP exception." },
+      "insertText": "throw new PayloadTooLargeException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_PayloadTooLargeException"
+    },
+    {
+      "label": "UnprocessableEntityException",
+      "kind": 5,
+      "detail": "422 Unprocessable Entity",
+      "documentation": { "value": "Throws a 422 Unprocessable Entity HTTP exception." },
+      "insertText": "throw new UnprocessableEntityException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_UnprocessableEntityException"
+    },
+    {
+      "label": "ServiceUnavailableException",
+      "kind": 5,
+      "detail": "503 Service Unavailable",
+      "documentation": { "value": "Throws a 503 Service Unavailable HTTP exception." },
+      "insertText": "throw new ServiceUnavailableException('${1:message}');",
+      "insertTextRules": 4,
+      "sortText": "02_ServiceUnavailableException"
+    },
+    {
+      "label": "Test.createTestingModule",
+      "kind": 0,
+      "detail": "Create Testing Module",
+      "documentation": { "value": "Creates a testing module for unit and integration tests with NestJS." },
+      "insertText": "const module: TestingModule = await Test.createTestingModule({\n  ${1:providers: []}\n}).compile();",
+      "insertTextRules": 4,
+      "sortText": "02_Test.createTestingModule"
+    },
+    {
+      "label": "TestingModule",
+      "kind": 5,
+      "detail": "NestJS Testing Module",
+      "documentation": { "value": "Compiled testing module that provides get() and resolve() methods for retrieving providers." },
+      "insertText": "TestingModule",
+      "insertTextRules": 4,
+      "sortText": "02_TestingModule"
+    },
+    {
+      "label": "ExecutionContext",
+      "kind": 7,
+      "detail": "Execution Context",
+      "documentation": { "value": "Extends ArgumentsHost with helper methods to determine the current handler and class being invoked." },
+      "insertText": "ExecutionContext",
+      "insertTextRules": 4,
+      "sortText": "02_ExecutionContext"
+    },
+    {
+      "label": "ArgumentsHost",
+      "kind": 7,
+      "detail": "Arguments Host",
+      "documentation": { "value": "Provides methods to retrieve arguments for HTTP, WebSocket, or RPC contexts." },
+      "insertText": "ArgumentsHost",
+      "insertTextRules": 4,
+      "sortText": "02_ArgumentsHost"
+    },
+    {
+      "label": "Logger",
+      "kind": 5,
+      "detail": "NestJS Logger",
+      "documentation": { "value": "Built-in logger service with log levels: log, error, warn, debug, verbose." },
+      "insertText": "private readonly logger = new Logger(${1:this.constructor.name});",
+      "insertTextRules": 4,
+      "sortText": "02_Logger"
+    },
+    {
+      "label": "ConfigModule",
+      "kind": 8,
+      "detail": "Configuration Module",
+      "documentation": { "value": "Module for loading environment variables and configuration. Provides ConfigService for accessing values." },
+      "insertText": "ConfigModule.forRoot({\n  isGlobal: true,\n  envFilePath: '${1:.env}',\n})",
+      "insertTextRules": 4,
+      "sortText": "03_ConfigModule"
+    },
+    {
+      "label": "ConfigService",
+      "kind": 5,
+      "detail": "Configuration Service",
+      "documentation": { "value": "Service to access configuration values loaded by ConfigModule. Use get() to retrieve values." },
+      "insertText": "this.configService.get<${1:string}>('${2:KEY}')",
+      "insertTextRules": 4,
+      "sortText": "03_ConfigService"
+    },
+    {
+      "label": "TypeOrmModule",
+      "kind": 8,
+      "detail": "TypeORM Module",
+      "documentation": { "value": "Module for integrating TypeORM with NestJS. Provides forRoot() and forFeature() methods." },
+      "insertText": "TypeOrmModule.forRoot({\n  type: '${1:postgres}',\n  host: '${2:localhost}',\n  port: ${3:5432},\n  username: '${4:user}',\n  password: '${5:password}',\n  database: '${6:db}',\n  entities: [${7}],\n  synchronize: ${8:false},\n})",
+      "insertTextRules": 4,
+      "sortText": "03_TypeOrmModule"
+    },
+    {
+      "label": "TypeOrmModule.forFeature",
+      "kind": 0,
+      "detail": "TypeORM Feature Module",
+      "documentation": { "value": "Registers TypeORM repositories for the given entities in the current module scope." },
+      "insertText": "TypeOrmModule.forFeature([${1:Entity}])",
+      "insertTextRules": 4,
+      "sortText": "03_TypeOrmModule.forFeature"
+    },
+    {
+      "label": "MongooseModule",
+      "kind": 8,
+      "detail": "Mongoose Module",
+      "documentation": { "value": "Module for integrating Mongoose ODM with NestJS. Provides forRoot() and forFeature() methods." },
+      "insertText": "MongooseModule.forRoot('${1:mongodb://localhost/nest}')",
+      "insertTextRules": 4,
+      "sortText": "03_MongooseModule"
+    },
+    {
+      "label": "MongooseModule.forFeature",
+      "kind": 0,
+      "detail": "Mongoose Feature Module",
+      "documentation": { "value": "Registers Mongoose schemas for the given models in the current module scope." },
+      "insertText": "MongooseModule.forFeature([{ name: ${1:Model}.name, schema: ${1:Model}Schema }])",
+      "insertTextRules": 4,
+      "sortText": "03_MongooseModule.forFeature"
+    },
+    {
+      "label": "JwtModule",
+      "kind": 8,
+      "detail": "JWT Module",
+      "documentation": { "value": "Module for JWT token generation and verification using @nestjs/jwt." },
+      "insertText": "JwtModule.register({\n  secret: '${1:secret}',\n  signOptions: { expiresIn: '${2:60s}' },\n})",
+      "insertTextRules": 4,
+      "sortText": "03_JwtModule"
+    },
+    {
+      "label": "PassportModule",
+      "kind": 8,
+      "detail": "Passport Module",
+      "documentation": { "value": "Module for integrating Passport.js authentication strategies with NestJS." },
+      "insertText": "PassportModule.register({ defaultStrategy: '${1:jwt}' })",
+      "insertTextRules": 4,
+      "sortText": "03_PassportModule"
+    },
+    {
+      "label": "ThrottlerModule",
+      "kind": 8,
+      "detail": "Throttler Module",
+      "documentation": { "value": "Rate limiting module to protect endpoints from brute-force attacks." },
+      "insertText": "ThrottlerModule.forRoot([{\n  ttl: ${1:60000},\n  limit: ${2:10},\n}])",
+      "insertTextRules": 4,
+      "sortText": "03_ThrottlerModule"
+    },
+    {
+      "label": "CacheModule",
+      "kind": 8,
+      "detail": "Cache Module",
+      "documentation": { "value": "Module for caching responses. Supports in-memory and external stores like Redis." },
+      "insertText": "CacheModule.register({\n  ttl: ${1:5},\n  max: ${2:10},\n})",
+      "insertTextRules": 4,
+      "sortText": "03_CacheModule"
+    },
+    {
+      "label": "ScheduleModule",
+      "kind": 8,
+      "detail": "Schedule Module",
+      "documentation": { "value": "Module for task scheduling using cron jobs, intervals, and timeouts." },
+      "insertText": "ScheduleModule.forRoot()",
+      "insertTextRules": 4,
+      "sortText": "03_ScheduleModule"
+    },
+    {
+      "label": "BullModule",
+      "kind": 8,
+      "detail": "Bull Queue Module",
+      "documentation": { "value": "Module for queue management using Bull and Redis for background job processing." },
+      "insertText": "BullModule.forRoot({\n  redis: {\n    host: '${1:localhost}',\n    port: ${2:6379},\n  },\n})",
+      "insertTextRules": 4,
+      "sortText": "03_BullModule"
+    },
+    {
+      "label": "EventEmitterModule",
+      "kind": 8,
+      "detail": "Event Emitter Module",
+      "documentation": { "value": "Module for event-driven architecture using Node.js EventEmitter." },
+      "insertText": "EventEmitterModule.forRoot()",
+      "insertTextRules": 4,
+      "sortText": "03_EventEmitterModule"
+    },
+    {
+      "label": "ServeStaticModule",
+      "kind": 8,
+      "detail": "Serve Static Module",
+      "documentation": { "value": "Module for serving static files (SPA, assets) from a directory." },
+      "insertText": "ServeStaticModule.forRoot({\n  rootPath: join(__dirname, '..', '${1:client}'),\n})",
+      "insertTextRules": 4,
+      "sortText": "03_ServeStaticModule"
+    },
+    {
+      "label": "GraphQLModule",
+      "kind": 8,
+      "detail": "GraphQL Module",
+      "documentation": { "value": "Module for integrating GraphQL with NestJS. Supports code-first and schema-first approaches." },
+      "insertText": "GraphQLModule.forRoot<ApolloDriverConfig>({\n  driver: ApolloDriver,\n  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),\n})",
+      "insertTextRules": 4,
+      "sortText": "03_GraphQLModule"
+    },
+    {
+      "label": "AuthGuard",
+      "kind": 5,
+      "detail": "Passport Auth Guard",
+      "documentation": { "value": "Guard that triggers Passport authentication for a given strategy (e.g., 'jwt', 'local')." },
+      "insertText": "AuthGuard('${1:jwt}')",
+      "insertTextRules": 4,
+      "sortText": "04_AuthGuard"
+    },
+    {
+      "label": "ValidationPipe",
+      "kind": 5,
+      "detail": "Validation Pipe",
+      "documentation": { "value": "Pipe that validates incoming data using class-validator decorators. Supports whitelist, transform, and forbidNonWhitelisted." },
+      "insertText": "new ValidationPipe({\n  whitelist: true,\n  transform: true,\n  forbidNonWhitelisted: true,\n})",
+      "insertTextRules": 4,
+      "sortText": "04_ValidationPipe"
+    },
+    {
+      "label": "ParseIntPipe",
+      "kind": 5,
+      "detail": "Parse Int Pipe",
+      "documentation": { "value": "Pipe that transforms a string parameter into an integer. Throws BadRequestException on failure." },
+      "insertText": "ParseIntPipe",
+      "insertTextRules": 4,
+      "sortText": "04_ParseIntPipe"
+    },
+    {
+      "label": "ParseBoolPipe",
+      "kind": 5,
+      "detail": "Parse Bool Pipe",
+      "documentation": { "value": "Pipe that transforms a string parameter into a boolean." },
+      "insertText": "ParseBoolPipe",
+      "insertTextRules": 4,
+      "sortText": "04_ParseBoolPipe"
+    },
+    {
+      "label": "ParseArrayPipe",
+      "kind": 5,
+      "detail": "Parse Array Pipe",
+      "documentation": { "value": "Pipe that parses and validates arrays. Supports item type validation." },
+      "insertText": "new ParseArrayPipe({ items: ${1:Number} })",
+      "insertTextRules": 4,
+      "sortText": "04_ParseArrayPipe"
+    },
+    {
+      "label": "ParseUUIDPipe",
+      "kind": 5,
+      "detail": "Parse UUID Pipe",
+      "documentation": { "value": "Pipe that validates and parses UUID parameters." },
+      "insertText": "ParseUUIDPipe",
+      "insertTextRules": 4,
+      "sortText": "04_ParseUUIDPipe"
+    },
+    {
+      "label": "ParseEnumPipe",
+      "kind": 5,
+      "detail": "Parse Enum Pipe",
+      "documentation": { "value": "Pipe that validates a parameter is a valid enum value." },
+      "insertText": "new ParseEnumPipe(${1:MyEnum})",
+      "insertTextRules": 4,
+      "sortText": "04_ParseEnumPipe"
+    },
+    {
+      "label": "DefaultValuePipe",
+      "kind": 5,
+      "detail": "Default Value Pipe",
+      "documentation": { "value": "Pipe that provides a default value when the parameter is null or undefined." },
+      "insertText": "new DefaultValuePipe(${1:0})",
+      "insertTextRules": 4,
+      "sortText": "04_DefaultValuePipe"
+    },
+    {
+      "label": "ParseFloatPipe",
+      "kind": 5,
+      "detail": "Parse Float Pipe",
+      "documentation": { "value": "Pipe that transforms a string parameter into a floating-point number." },
+      "insertText": "ParseFloatPipe",
+      "insertTextRules": 4,
+      "sortText": "04_ParseFloatPipe"
+    },
+    {
+      "label": "ClassSerializerInterceptor",
+      "kind": 5,
+      "detail": "Class Serializer Interceptor",
+      "documentation": { "value": "Interceptor that serializes response objects using class-transformer. Respects @Exclude() and @Expose() decorators." },
+      "insertText": "ClassSerializerInterceptor",
+      "insertTextRules": 4,
+      "sortText": "04_ClassSerializerInterceptor"
+    },
+    {
+      "label": "CacheInterceptor",
+      "kind": 5,
+      "detail": "Cache Interceptor",
+      "documentation": { "value": "Interceptor that automatically caches responses. Works with CacheModule." },
+      "insertText": "CacheInterceptor",
+      "insertTextRules": 4,
+      "sortText": "04_CacheInterceptor"
+    },
+    {
+      "label": "FileInterceptor",
+      "kind": 5,
+      "detail": "File Upload Interceptor",
+      "documentation": { "value": "Interceptor for handling single file uploads via multipart/form-data using Multer." },
+      "insertText": "FileInterceptor('${1:file}')",
+      "insertTextRules": 4,
+      "sortText": "04_FileInterceptor"
+    },
+    {
+      "label": "FilesInterceptor",
+      "kind": 5,
+      "detail": "Multiple Files Interceptor",
+      "documentation": { "value": "Interceptor for handling multiple file uploads via multipart/form-data using Multer." },
+      "insertText": "FilesInterceptor('${1:files}', ${2:10})",
+      "insertTextRules": 4,
+      "sortText": "04_FilesInterceptor"
+    },
+    {
+      "label": "nest new",
+      "kind": 17,
+      "detail": "Create new NestJS project",
+      "documentation": { "value": "Scaffolds a new NestJS project with the CLI. Usage: nest new project-name" },
+      "insertText": "nest new ${1:project-name}",
+      "insertTextRules": 4,
+      "sortText": "05_nest_new"
+    },
+    {
+      "label": "nest generate controller",
+      "kind": 17,
+      "detail": "Generate controller",
+      "documentation": { "value": "Generates a new NestJS controller with the CLI." },
+      "insertText": "nest generate controller ${1:name}",
+      "insertTextRules": 4,
+      "sortText": "05_nest_generate_controller"
+    },
+    {
+      "label": "nest generate service",
+      "kind": 17,
+      "detail": "Generate service",
+      "documentation": { "value": "Generates a new NestJS service with the CLI." },
+      "insertText": "nest generate service ${1:name}",
+      "insertTextRules": 4,
+      "sortText": "05_nest_generate_service"
+    },
+    {
+      "label": "nest generate module",
+      "kind": 17,
+      "detail": "Generate module",
+      "documentation": { "value": "Generates a new NestJS module with the CLI." },
+      "insertText": "nest generate module ${1:name}",
+      "insertTextRules": 4,
+      "sortText": "05_nest_generate_module"
+    },
+    {
+      "label": "nest generate resource",
+      "kind": 17,
+      "detail": "Generate CRUD resource",
+      "documentation": { "value": "Generates a complete CRUD resource (module, controller, service, DTOs, entities)." },
+      "insertText": "nest generate resource ${1:name}",
+      "insertTextRules": 4,
+      "sortText": "05_nest_generate_resource"
+    },
+    {
+      "label": "nest build",
+      "kind": 17,
+      "detail": "Build NestJS project",
+      "documentation": { "value": "Compiles the NestJS application." },
+      "insertText": "nest build",
+      "insertTextRules": 4,
+      "sortText": "05_nest_build"
+    },
+    {
+      "label": "nest start",
+      "kind": 17,
+      "detail": "Start NestJS application",
+      "documentation": { "value": "Compiles and runs the NestJS application." },
+      "insertText": "nest start --watch",
+      "insertTextRules": 4,
+      "sortText": "05_nest_start"
+    },
+    {
+      "label": "app.useGlobalPipes",
+      "kind": 0,
+      "detail": "Set global validation pipe",
+      "documentation": { "value": "Applies a pipe globally to every route handler in the application." },
+      "insertText": "app.useGlobalPipes(new ValidationPipe({\n  whitelist: true,\n  transform: true,\n  forbidNonWhitelisted: true,\n}));",
+      "insertTextRules": 4,
+      "sortText": "02_app.useGlobalPipes"
+    },
+    {
+      "label": "app.useGlobalFilters",
+      "kind": 0,
+      "detail": "Set global exception filter",
+      "documentation": { "value": "Applies an exception filter globally to every route handler." },
+      "insertText": "app.useGlobalFilters(new ${1:HttpExceptionFilter}());",
+      "insertTextRules": 4,
+      "sortText": "02_app.useGlobalFilters"
+    },
+    {
+      "label": "app.useGlobalGuards",
+      "kind": 0,
+      "detail": "Set global guard",
+      "documentation": { "value": "Applies a guard globally to every route handler." },
+      "insertText": "app.useGlobalGuards(new ${1:AuthGuard}());",
+      "insertTextRules": 4,
+      "sortText": "02_app.useGlobalGuards"
+    },
+    {
+      "label": "app.useGlobalInterceptors",
+      "kind": 0,
+      "detail": "Set global interceptor",
+      "documentation": { "value": "Applies an interceptor globally to every route handler." },
+      "insertText": "app.useGlobalInterceptors(new ${1:TransformInterceptor}());",
+      "insertTextRules": 4,
+      "sortText": "02_app.useGlobalInterceptors"
+    },
+    {
+      "label": "app.enableCors",
+      "kind": 0,
+      "detail": "Enable CORS",
+      "documentation": { "value": "Enables Cross-Origin Resource Sharing on the NestJS application." },
+      "insertText": "app.enableCors({\n  origin: '${1:http://localhost:3000}',\n  methods: '${2:GET,HEAD,PUT,PATCH,POST,DELETE}',\n  credentials: ${3:true},\n});",
+      "insertTextRules": 4,
+      "sortText": "02_app.enableCors"
+    },
+    {
+      "label": "app.setGlobalPrefix",
+      "kind": 0,
+      "detail": "Set global route prefix",
+      "documentation": { "value": "Sets a prefix for every HTTP route registered in the application (e.g., 'api')." },
+      "insertText": "app.setGlobalPrefix('${1:api}');",
+      "insertTextRules": 4,
+      "sortText": "02_app.setGlobalPrefix"
+    },
+    {
+      "label": "app.enableVersioning",
+      "kind": 0,
+      "detail": "Enable API versioning",
+      "documentation": { "value": "Enables URI, header, or media-type based API versioning." },
+      "insertText": "app.enableVersioning({\n  type: VersioningType.${1:URI},\n});",
+      "insertTextRules": 4,
+      "sortText": "02_app.enableVersioning"
+    },
+    {
+      "label": "SwaggerModule.setup",
+      "kind": 0,
+      "detail": "Setup Swagger documentation",
+      "documentation": { "value": "Sets up Swagger UI documentation endpoint for the NestJS application." },
+      "insertText": "const config = new DocumentBuilder()\n  .setTitle('${1:API}')\n  .setDescription('${2:API description}')\n  .setVersion('${3:1.0}')\n  .addBearerAuth()\n  .build();\nconst document = SwaggerModule.createDocument(app, config);\nSwaggerModule.setup('${4:api}', app, document);",
+      "insertTextRules": 4,
+      "sortText": "02_SwaggerModule.setup"
+    },
+    {
+      "label": "onModuleInit",
+      "kind": 0,
+      "detail": "OnModuleInit lifecycle hook",
+      "documentation": { "value": "Lifecycle hook called once the host module's dependencies have been resolved." },
+      "insertText": "async onModuleInit() {\n  ${0}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_onModuleInit"
+    },
+    {
+      "label": "onModuleDestroy",
+      "kind": 0,
+      "detail": "OnModuleDestroy lifecycle hook",
+      "documentation": { "value": "Lifecycle hook called when the host module is being destroyed." },
+      "insertText": "async onModuleDestroy() {\n  ${0}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_onModuleDestroy"
+    },
+    {
+      "label": "onApplicationBootstrap",
+      "kind": 0,
+      "detail": "OnApplicationBootstrap lifecycle hook",
+      "documentation": { "value": "Lifecycle hook called once all modules have been initialized." },
+      "insertText": "async onApplicationBootstrap() {\n  ${0}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_onApplicationBootstrap"
+    },
+    {
+      "label": "onApplicationShutdown",
+      "kind": 0,
+      "detail": "OnApplicationShutdown lifecycle hook",
+      "documentation": { "value": "Lifecycle hook called after app.close() is invoked. Receives the signal string." },
+      "insertText": "async onApplicationShutdown(signal?: string) {\n  ${0}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_onApplicationShutdown"
+    },
+    {
+      "label": "beforeApplicationShutdown",
+      "kind": 0,
+      "detail": "BeforeApplicationShutdown lifecycle hook",
+      "documentation": { "value": "Lifecycle hook called before the application shutdown sequence. Connections are still open." },
+      "insertText": "async beforeApplicationShutdown(signal?: string) {\n  ${0}\n}",
+      "insertTextRules": 4,
+      "sortText": "02_beforeApplicationShutdown"
+    },
+    {
+      "label": "@InjectRepository",
+      "kind": 1,
+      "detail": "TypeORM repository injection",
+      "documentation": { "value": "Injects a TypeORM repository for the given entity into a constructor parameter." },
+      "insertText": "@InjectRepository(${1:Entity}) private readonly ${2:repo}: Repository<${1:Entity}>",
+      "insertTextRules": 4,
+      "sortText": "01_@InjectRepository"
+    },
+    {
+      "label": "@InjectModel",
+      "kind": 1,
+      "detail": "Mongoose model injection",
+      "documentation": { "value": "Injects a Mongoose model for the given schema into a constructor parameter." },
+      "insertText": "@InjectModel(${1:Model}.name) private ${2:model}: Model<${1:Model}Document>",
+      "insertTextRules": 4,
+      "sortText": "01_@InjectModel"
+    },
+    {
+      "label": "JwtService",
+      "kind": 5,
+      "detail": "JWT Service",
+      "documentation": { "value": "Service for signing and verifying JWT tokens. Provided by JwtModule." },
+      "insertText": "JwtService",
+      "insertTextRules": 4,
+      "sortText": "02_JwtService"
+    },
+    {
+      "label": "HttpService",
+      "kind": 5,
+      "detail": "HTTP Service",
+      "documentation": { "value": "Service for making HTTP requests using Axios. Provided by HttpModule." },
+      "insertText": "HttpService",
+      "insertTextRules": 4,
+      "sortText": "02_HttpService"
+    },
+    {
+      "label": "HttpModule",
+      "kind": 8,
+      "detail": "HTTP Module",
+      "documentation": { "value": "Module that exposes HttpService for making external HTTP requests via Axios." },
+      "insertText": "HttpModule.register({\n  timeout: ${1:5000},\n  maxRedirects: ${2:5},\n})",
+      "insertTextRules": 4,
+      "sortText": "03_HttpModule"
+    },
+    {
+      "label": "TerminusModule",
+      "kind": 8,
+      "detail": "Health Check Module",
+      "documentation": { "value": "Module for implementing health check endpoints using @nestjs/terminus." },
+      "insertText": "TerminusModule",
+      "insertTextRules": 4,
+      "sortText": "03_TerminusModule"
+    },
+    {
+      "label": "MicroserviceOptions",
+      "kind": 7,
+      "detail": "Microservice Options",
+      "documentation": { "value": "Configuration options for NestJS microservices (transport, options, etc.)." },
+      "insertText": "MicroserviceOptions",
+      "insertTextRules": 4,
+      "sortText": "02_MicroserviceOptions"
+    },
+    {
+      "label": "Transport",
+      "kind": 8,
+      "detail": "Transport Enum",
+      "documentation": { "value": "Enum of microservice transport layers: TCP, REDIS, NATS, MQTT, gRPC, KAFKA, RMQ." },
+      "insertText": "Transport.${1:TCP}",
+      "insertTextRules": 4,
+      "sortText": "02_Transport"
+    },
+    {
+      "label": "ClientProxy",
+      "kind": 5,
+      "detail": "Microservice Client Proxy",
+      "documentation": { "value": "Proxy class for sending messages to other microservices." },
+      "insertText": "ClientProxy",
+      "insertTextRules": 4,
+      "sortText": "02_ClientProxy"
+    },
+    {
+      "label": "ClientsModule",
+      "kind": 8,
+      "detail": "Microservice Clients Module",
+      "documentation": { "value": "Module for registering microservice client connections." },
+      "insertText": "ClientsModule.register([\n  {\n    name: '${1:SERVICE_NAME}',\n    transport: Transport.${2:TCP},\n    options: {\n      host: '${3:localhost}',\n      port: ${4:3001},\n    },\n  },\n])",
+      "insertTextRules": 4,
+      "sortText": "03_ClientsModule"
+    },
+    {
+      "label": "VersioningType",
+      "kind": 8,
+      "detail": "API Versioning Type",
+      "documentation": { "value": "Enum for API versioning strategies: URI, HEADER, MEDIA_TYPE, CUSTOM." },
+      "insertText": "VersioningType.${1:URI}",
+      "insertTextRules": 4,
+      "sortText": "02_VersioningType"
+    },
+    {
+      "label": "@Version",
+      "kind": 1,
+      "detail": "API version decorator",
+      "documentation": { "value": "Sets the API version for a controller or route handler." },
+      "insertText": "@Version('${1:1}')",
+      "insertTextRules": 4,
+      "sortText": "01_@Version"
+    },
+    {
+      "label": "DocumentBuilder",
+      "kind": 5,
+      "detail": "Swagger Document Builder",
+      "documentation": { "value": "Builder class for creating Swagger/OpenAPI document configuration." },
+      "insertText": "new DocumentBuilder()\n  .setTitle('${1:API}')\n  .setDescription('${2:Description}')\n  .setVersion('${3:1.0}')\n  .build()",
+      "insertTextRules": 4,
+      "sortText": "02_DocumentBuilder"
+    },
+    {
+      "label": "ThrottlerGuard",
+      "kind": 5,
+      "detail": "Throttler Guard",
+      "documentation": { "value": "Guard that limits request rates. Used with ThrottlerModule." },
+      "insertText": "ThrottlerGuard",
+      "insertTextRules": 4,
+      "sortText": "04_ThrottlerGuard"
+    },
+    {
+      "label": "RolesGuard",
+      "kind": 5,
+      "detail": "Roles Guard (pattern)",
+      "documentation": { "value": "Common pattern for role-based access control guard using Reflector." },
+      "insertText": "@Injectable()\nexport class RolesGuard implements CanActivate {\n  constructor(private reflector: Reflector) {}\n\n  canActivate(context: ExecutionContext): boolean {\n    const roles = this.reflector.get<string[]>('roles', context.getHandler());\n    if (!roles) return true;\n    const request = context.switchToHttp().getRequest();\n    const user = request.user;\n    return roles.some((role) => user.roles?.includes(role));\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "04_RolesGuard"
+    },
+    {
+      "label": "MapPipe",
+      "kind": 5,
+      "detail": "Map Pipe",
+      "documentation": { "value": "Pipe that applies a transformation function to the input value." },
+      "insertText": "new MapPipe(${1:value => value})",
+      "insertTextRules": 4,
+      "sortText": "04_MapPipe"
+    },
+    {
+      "label": "ParseFilePipe",
+      "kind": 5,
+      "detail": "Parse File Pipe",
+      "documentation": { "value": "Pipe for validating file uploads with validators like MaxFileSizeValidator and FileTypeValidator." },
+      "insertText": "new ParseFilePipe({\n  validators: [\n    new MaxFileSizeValidator({ maxSize: ${1:1000000} }),\n    new FileTypeValidator({ fileType: '${2:image/jpeg}' }),\n  ],\n})",
+      "insertTextRules": 4,
+      "sortText": "04_ParseFilePipe"
+    },
+    {
+      "label": "TimeoutInterceptor",
+      "kind": 5,
+      "detail": "Timeout Interceptor (pattern)",
+      "documentation": { "value": "Common pattern for a timeout interceptor that throws RequestTimeoutException." },
+      "insertText": "@Injectable()\nexport class TimeoutInterceptor implements NestInterceptor {\n  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {\n    return next.handle().pipe(\n      timeout(${1:5000}),\n      catchError(err => {\n        if (err instanceof TimeoutError) {\n          throw new RequestTimeoutException();\n        }\n        throw err;\n      }),\n    );\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "04_TimeoutInterceptor"
+    },
+    {
+      "label": "LoggingInterceptor",
+      "kind": 5,
+      "detail": "Logging Interceptor (pattern)",
+      "documentation": { "value": "Common pattern for a logging interceptor that logs method execution time." },
+      "insertText": "@Injectable()\nexport class LoggingInterceptor implements NestInterceptor {\n  private readonly logger = new Logger(LoggingInterceptor.name);\n\n  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {\n    const now = Date.now();\n    return next.handle().pipe(\n      tap(() => this.logger.log(`${context.getHandler().name} - ${Date.now() - now}ms`)),\n    );\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "04_LoggingInterceptor"
+    },
+    {
+      "label": "AllExceptionsFilter",
+      "kind": 5,
+      "detail": "All Exceptions Filter (pattern)",
+      "documentation": { "value": "Exception filter that catches all exceptions, not just HttpException." },
+      "insertText": "@Catch()\nexport class AllExceptionsFilter implements ExceptionFilter {\n  catch(exception: unknown, host: ArgumentsHost) {\n    const ctx = host.switchToHttp();\n    const response = ctx.getResponse();\n    const status = exception instanceof HttpException\n      ? exception.getStatus()\n      : HttpStatus.INTERNAL_SERVER_ERROR;\n\n    response.status(status).json({\n      statusCode: status,\n      timestamp: new Date().toISOString(),\n      message: exception instanceof Error ? exception.message : 'Internal server error',\n    });\n  }\n}",
+      "insertTextRules": 4,
+      "sortText": "04_AllExceptionsFilter"
+    },
+    {
+      "label": "@UseInterceptors(FileInterceptor)",
+      "kind": 1,
+      "detail": "File upload setup",
+      "documentation": { "value": "Applies FileInterceptor for handling single file upload endpoints." },
+      "insertText": "@UseInterceptors(FileInterceptor('${1:file}'))\n@Post('upload')\nuploadFile(@UploadedFile() file: Express.Multer.File) {\n  return { filename: file.originalname };\n}",
+      "insertTextRules": 4,
+      "sortText": "01_@UseInterceptors_File"
+    },
+    {
+      "label": "DynamicModule",
+      "kind": 7,
+      "detail": "Dynamic Module interface",
+      "documentation": { "value": "Interface returned by static methods like forRoot() and forRootAsync() for dynamic module registration." },
+      "insertText": "DynamicModule",
+      "insertTextRules": 4,
+      "sortText": "02_DynamicModule"
+    },
+    {
+      "label": "Provider",
+      "kind": 7,
+      "detail": "Provider type",
+      "documentation": { "value": "Union type representing all valid NestJS provider types: class, value, factory, existing." },
+      "insertText": "Provider",
+      "insertTextRules": 4,
+      "sortText": "02_Provider"
+    },
+    {
+      "label": "FactoryProvider",
+      "kind": 7,
+      "detail": "Factory Provider",
+      "documentation": { "value": "Provider that uses a factory function to create the provider instance." },
+      "insertText": "{\n  provide: '${1:TOKEN}',\n  useFactory: (${2:dep}: ${3:Dep}) => {\n    return ${0:new Service(dep)};\n  },\n  inject: [${3:Dep}],\n}",
+      "insertTextRules": 4,
+      "sortText": "02_FactoryProvider"
+    },
+    {
+      "label": "ClassProvider",
+      "kind": 7,
+      "detail": "Class Provider",
+      "documentation": { "value": "Provider that maps a token to a class implementation." },
+      "insertText": "{\n  provide: ${1:AbstractService},\n  useClass: ${2:ConcreteService},\n}",
+      "insertTextRules": 4,
+      "sortText": "02_ClassProvider"
+    },
+    {
+      "label": "ValueProvider",
+      "kind": 7,
+      "detail": "Value Provider",
+      "documentation": { "value": "Provider that maps a token to a static value." },
+      "insertText": "{\n  provide: '${1:CONFIG}',\n  useValue: ${2:{ key: 'value' }},\n}",
+      "insertTextRules": 4,
+      "sortText": "02_ValueProvider"
+    }
+  ]
+}

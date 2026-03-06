@@ -1,0 +1,285 @@
+{
+  "language": "nextjs",
+  "typeDefinitions": {
+    "NextPage": {
+      "type": "type_alias",
+      "signature": "type NextPage<P = {}, IP = P> = React.ComponentType<P> & { getInitialProps?(context: NextPageContext): IP | Promise<IP> }",
+      "description": "Type for page components in the Pages Router. Accepts props and initial props generics.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/routing/pages-and-layouts"
+    },
+    "NextApiRequest": {
+      "type": "interface",
+      "signature": "interface NextApiRequest extends IncomingMessage { query: Partial<{ [key: string]: string | string[] }>; cookies: Partial<{ [key: string]: string }>; body: any; env: Env; preview?: boolean; previewData?: PreviewData }",
+      "description": "Request type for Pages Router API routes. Extends Node.js IncomingMessage with parsed query, cookies, and body.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/routing/api-routes"
+    },
+    "NextApiResponse": {
+      "type": "interface",
+      "signature": "interface NextApiResponse<Data = any> extends ServerResponse { status(statusCode: number): NextApiResponse<Data>; json(body: Data): void; send(body: string): void; redirect(statusOrUrl: number | string, url?: string): NextApiResponse<Data>; revalidate(urlPath: string): Promise<void> }",
+      "description": "Response type for Pages Router API routes. Provides helper methods for sending responses.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/routing/api-routes"
+    },
+    "GetServerSideProps": {
+      "type": "type_alias",
+      "signature": "type GetServerSideProps<Props = { [key: string]: any }, Params extends ParsedUrlQuery = ParsedUrlQuery, Preview extends PreviewData = PreviewData> = (context: GetServerSidePropsContext<Params, Preview>) => Promise<GetServerSidePropsResult<Props>>",
+      "description": "Type for the getServerSideProps data fetching function. Runs on every request server-side.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/data-fetching/get-server-side-props"
+    },
+    "GetStaticProps": {
+      "type": "type_alias",
+      "signature": "type GetStaticProps<Props = { [key: string]: any }, Params extends ParsedUrlQuery = ParsedUrlQuery, Preview extends PreviewData = PreviewData> = (context: GetStaticPropsContext<Params, Preview>) => Promise<GetStaticPropsResult<Props>>",
+      "description": "Type for the getStaticProps static generation function. Runs at build time.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/data-fetching/get-static-props"
+    },
+    "GetStaticPaths": {
+      "type": "type_alias",
+      "signature": "type GetStaticPaths<Params extends ParsedUrlQuery = ParsedUrlQuery> = () => Promise<{ paths: Array<string | { params: Params; locale?: string }>; fallback: boolean | 'blocking' }>",
+      "description": "Type for defining dynamic paths for static generation. Returns paths and fallback behavior.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/building-your-application/data-fetching/get-static-paths"
+    },
+    "NextRequest": {
+      "type": "class",
+      "signature": "class NextRequest extends Request { cookies: RequestCookies; nextUrl: NextURL; ip?: string; geo?: { city?: string; country?: string; region?: string; latitude?: string; longitude?: string } }",
+      "description": "Extended Web Request with Next.js-specific properties. Used in Middleware and Route Handlers.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/next-request"
+    },
+    "NextResponse": {
+      "type": "class",
+      "signature": "class NextResponse extends Response { cookies: ResponseCookies; static json(body: any, init?: ResponseInit): NextResponse; static redirect(url: string | URL, status?: number): NextResponse; static rewrite(destination: string | URL, init?: MiddlewareResponseInit): NextResponse; static next(init?: MiddlewareResponseInit): NextResponse }",
+      "description": "Extended Web Response with Next.js middleware and routing helpers.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/next-response"
+    },
+    "NextMiddleware": {
+      "type": "type_alias",
+      "signature": "type NextMiddleware = (request: NextRequest, event: NextFetchEvent) => NextResponse | Response | null | undefined | void | Promise<NextResponse | Response | null | undefined | void>",
+      "description": "Type for the middleware function. Receives request and event objects.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+    },
+    "Metadata": {
+      "type": "interface",
+      "signature": "interface Metadata { title?: string | { default: string; template: string; absolute: string }; description?: string; applicationName?: string; authors?: Author[]; generator?: string; keywords?: string[]; referrer?: string; themeColor?: string; colorScheme?: string; viewport?: string; creator?: string; publisher?: string; robots?: Robots; alternates?: Alternates; icons?: Icons; openGraph?: OpenGraph; twitter?: Twitter; manifest?: string; metadataBase?: URL; other?: Record<string, string> }",
+      "description": "Static metadata type for pages and layouts. Configures all HTML head meta tags.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+    },
+    "Viewport": {
+      "type": "interface",
+      "signature": "interface Viewport { width?: string | number; height?: string | number; initialScale?: number; minimumScale?: number; maximumScale?: number; userScalable?: boolean; viewportFit?: 'auto' | 'cover' | 'contain'; interactiveWidget?: 'resizes-visual' | 'resizes-content' | 'overlays-content'; themeColor?: string | { media: string; color: string }[] }",
+      "description": "Viewport configuration type. Separated from Metadata for better static optimization.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-viewport"
+    },
+    "MetadataRoute": {
+      "type": "type_alias",
+      "signature": "type MetadataRoute = { Sitemap: Array<{ url: string; lastModified?: Date; changeFrequency?: string; priority?: number }>; Manifest: { name?: string; short_name?: string; description?: string; start_url?: string; display?: string; background_color?: string; theme_color?: string; icons?: Array<{ src: string; sizes: string; type: string }> }; Robots: { rules: RobotsRule | RobotsRule[]; sitemap?: string | string[]; host?: string } }",
+      "description": "Types for metadata route files (sitemap.ts, manifest.ts, robots.ts).",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/metadata"
+    },
+    "ImageProps": {
+      "type": "interface",
+      "signature": "interface ImageProps { src: string | StaticImport; alt: string; width?: number; height?: number; fill?: boolean; sizes?: string; quality?: number; priority?: boolean; placeholder?: 'empty' | 'blur' | 'data:image/...'; blurDataURL?: string; loader?: ImageLoader; loading?: 'lazy' | 'eager'; style?: CSSProperties; className?: string; onLoad?: (event: SyntheticEvent<HTMLImageElement>) => void; onError?: (event: SyntheticEvent<HTMLImageElement>) => void }",
+      "description": "Props type for the next/image component.",
+      "module": "next/image",
+      "url": "https://nextjs.org/docs/app/api-reference/components/image"
+    },
+    "LinkProps": {
+      "type": "interface",
+      "signature": "interface LinkProps { href: string | UrlObject; as?: string | UrlObject; replace?: boolean; scroll?: boolean; shallow?: boolean; passHref?: boolean; prefetch?: boolean | null; locale?: string | false; legacyBehavior?: boolean; onClick?: (e: MouseEvent) => void; onMouseEnter?: (e: MouseEvent) => void; children?: React.ReactNode }",
+      "description": "Props type for the next/link component.",
+      "module": "next/link",
+      "url": "https://nextjs.org/docs/app/api-reference/components/link"
+    },
+    "ScriptProps": {
+      "type": "interface",
+      "signature": "interface ScriptProps { src?: string; strategy?: 'beforeInteractive' | 'afterInteractive' | 'lazyOnload' | 'worker'; onLoad?: () => void; onReady?: () => void; onError?: (e: Error) => void; id?: string; dangerouslySetInnerHTML?: { __html: string } }",
+      "description": "Props type for the next/script component.",
+      "module": "next/script",
+      "url": "https://nextjs.org/docs/app/api-reference/components/script"
+    },
+    "PageProps": {
+      "type": "interface",
+      "signature": "interface PageProps<Params = {}, SearchParams = {}> { params: Promise<Params>; searchParams: Promise<SearchParams> }",
+      "description": "Props received by a page component in the App Router. Includes dynamic params and search params.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+    },
+    "LayoutProps": {
+      "type": "interface",
+      "signature": "interface LayoutProps<Params = {}> { children: React.ReactNode; params: Promise<Params> }",
+      "description": "Props received by a layout component. Includes children and dynamic route params.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/layout"
+    },
+    "ErrorProps": {
+      "type": "interface",
+      "signature": "interface ErrorProps { error: Error & { digest?: string }; reset: () => void }",
+      "description": "Props received by an error boundary component. Includes the error and a reset function.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/error"
+    },
+    "LoadingProps": {
+      "type": "interface",
+      "signature": "interface LoadingProps {}",
+      "description": "Loading component receives no props. It is rendered as a Suspense fallback.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+    },
+    "NextFetchEvent": {
+      "type": "class",
+      "signature": "class NextFetchEvent extends FetchEvent { waitUntil(promise: Promise<any>): void }",
+      "description": "Event object passed to middleware. Extends FetchEvent with waitUntil for background work.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+    },
+    "NextURL": {
+      "type": "class",
+      "signature": "class NextURL extends URL { basePath: string; buildId?: string; locale?: string; defaultLocale?: string }",
+      "description": "Extended URL class with Next.js-specific properties like basePath and locale.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/next-request"
+    },
+    "RequestCookies": {
+      "type": "class",
+      "signature": "class RequestCookies { get(name: string): RequestCookie | undefined; getAll(): RequestCookie[]; has(name: string): boolean; set(name: string, value: string): void; delete(name: string): void }",
+      "description": "Cookie jar for reading and modifying request cookies in middleware.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/next-request"
+    },
+    "ResponseCookies": {
+      "type": "class",
+      "signature": "class ResponseCookies { get(name: string): ResponseCookie | undefined; getAll(): ResponseCookie[]; has(name: string): boolean; set(name: string, value: string, options?: CookieOptions): void; delete(name: string): void }",
+      "description": "Cookie jar for reading and setting response cookies.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/next-response"
+    },
+    "ReadonlyHeaders": {
+      "type": "class",
+      "signature": "class ReadonlyHeaders extends Headers { get(name: string): string | null; has(name: string): boolean; entries(): IterableIterator<[string, string]>; keys(): IterableIterator<string>; values(): IterableIterator<string>; forEach(callback: (value: string, key: string) => void): void }",
+      "description": "Read-only Headers object returned by the headers() function in Server Components.",
+      "module": "next/headers",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/headers"
+    },
+    "ReadonlyRequestCookies": {
+      "type": "class",
+      "signature": "class ReadonlyRequestCookies { get(name: string): RequestCookie | undefined; getAll(): RequestCookie[]; has(name: string): boolean }",
+      "description": "Read-only cookie jar returned by the cookies() function in Server Components.",
+      "module": "next/headers",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/cookies"
+    },
+    "AppRouterInstance": {
+      "type": "interface",
+      "signature": "interface AppRouterInstance { push(href: string, options?: NavigateOptions): void; replace(href: string, options?: NavigateOptions): void; refresh(): void; prefetch(href: string): void; back(): void; forward(): void }",
+      "description": "Router instance type returned by useRouter() in the App Router.",
+      "module": "next/navigation",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/use-router"
+    },
+    "ReadonlyURLSearchParams": {
+      "type": "class",
+      "signature": "class ReadonlyURLSearchParams extends URLSearchParams { append(): void; delete(): void; set(): void; sort(): void }",
+      "description": "Read-only URLSearchParams returned by useSearchParams(). Write methods throw errors.",
+      "module": "next/navigation",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+    },
+    "NextConfig": {
+      "type": "interface",
+      "signature": "interface NextConfig { reactStrictMode?: boolean; images?: ImagesConfig; redirects?: () => Promise<Redirect[]>; rewrites?: () => Promise<Rewrite[]>; headers?: () => Promise<Header[]>; env?: Record<string, string>; basePath?: string; i18n?: I18NConfig; webpack?: (config: WebpackConfig, context: WebpackContext) => WebpackConfig; experimental?: ExperimentalConfig; output?: 'standalone' | 'export' }",
+      "description": "Configuration type for next.config.js / next.config.mjs.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/next-config-js"
+    },
+    "Redirect": {
+      "type": "interface",
+      "signature": "interface Redirect { source: string; destination: string; permanent: boolean; basePath?: false; locale?: false; has?: RouteHas[]; missing?: RouteHas[] }",
+      "description": "Configuration type for Next.js redirects in next.config.js.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/next-config-js/redirects"
+    },
+    "Rewrite": {
+      "type": "interface",
+      "signature": "interface Rewrite { source: string; destination: string; basePath?: false; locale?: false; has?: RouteHas[]; missing?: RouteHas[] }",
+      "description": "Configuration type for Next.js rewrites in next.config.js.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/next-config-js/rewrites"
+    },
+    "GetServerSidePropsContext": {
+      "type": "interface",
+      "signature": "interface GetServerSidePropsContext<Params extends ParsedUrlQuery = ParsedUrlQuery> { req: IncomingMessage & { cookies: { [key: string]: string } }; res: ServerResponse; params?: Params; query: ParsedUrlQuery; preview?: boolean; previewData?: PreviewData; resolvedUrl: string; locale?: string }",
+      "description": "Context object passed to getServerSideProps.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/api-reference/functions/get-server-side-props"
+    },
+    "GetStaticPropsContext": {
+      "type": "interface",
+      "signature": "interface GetStaticPropsContext<Params extends ParsedUrlQuery = ParsedUrlQuery> { params?: Params; preview?: boolean; previewData?: PreviewData; locale?: string; locales?: string[]; defaultLocale?: string }",
+      "description": "Context object passed to getStaticProps.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/pages/api-reference/functions/get-static-props"
+    },
+    "DynamicOptions": {
+      "type": "interface",
+      "signature": "interface DynamicOptions { loading?: () => React.ReactNode; ssr?: boolean }",
+      "description": "Options for next/dynamic lazy loading. Controls SSR and loading fallback.",
+      "module": "next/dynamic",
+      "url": "https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"
+    },
+    "NavigateOptions": {
+      "type": "interface",
+      "signature": "interface NavigateOptions { scroll?: boolean }",
+      "description": "Options for router.push() and router.replace() in the App Router.",
+      "module": "next/navigation",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/use-router"
+    },
+    "RouteHandlerContext": {
+      "type": "interface",
+      "signature": "interface RouteHandlerContext<Params = {}> { params: Promise<Params> }",
+      "description": "Second argument passed to Route Handler functions. Contains resolved dynamic params.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+    },
+    "MiddlewareConfig": {
+      "type": "interface",
+      "signature": "interface MiddlewareConfig { matcher: string | string[] }",
+      "description": "Config export type for middleware. Defines which routes middleware should match.",
+      "module": "next/server",
+      "url": "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+    },
+    "ServerActionFunction": {
+      "type": "type_alias",
+      "signature": "type ServerActionFunction = (formData: FormData) => Promise<void | { error?: string; success?: boolean }>",
+      "description": "Common type signature for Server Action functions used in form actions.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+    },
+    "ResolvingMetadata": {
+      "type": "type_alias",
+      "signature": "type ResolvingMetadata = Promise<Metadata>",
+      "description": "Type for the parent metadata parameter in generateMetadata. Resolves to the parent layout's metadata.",
+      "module": "next",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+    },
+    "StaticImport": {
+      "type": "interface",
+      "signature": "interface StaticImport { src: string; height: number; width: number; blurDataURL?: string; blurWidth?: number; blurHeight?: number }",
+      "description": "Type for statically imported images used with next/image.",
+      "module": "next/image",
+      "url": "https://nextjs.org/docs/app/api-reference/components/image"
+    },
+    "ImageLoader": {
+      "type": "type_alias",
+      "signature": "type ImageLoader = (params: { src: string; width: number; quality?: number }) => string",
+      "description": "Custom loader function type for next/image. Returns a URL string for the image.",
+      "module": "next/image",
+      "url": "https://nextjs.org/docs/app/api-reference/components/image"
+    }
+  }
+}
