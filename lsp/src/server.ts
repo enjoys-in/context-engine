@@ -72,7 +72,7 @@ wss.on("connection", (ws, req) => {
           writer
         );
       } else {
-        handleNotification(message as JsonRpcNotification, languageId);
+        handleNotification(message as JsonRpcNotification, languageId, providers, writer);
       }
     }
   });

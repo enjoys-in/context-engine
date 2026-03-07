@@ -1,6 +1,12 @@
 export function buildCapabilities(providers: Record<string, any>): Record<string, any> {
   const caps: Record<string, any> = {};
 
+  // Document sync — full content on open/change
+  caps.textDocumentSync = {
+    openClose: true,
+    change: 1, // Full content sync
+  };
+
   if (providers.completion) {
     const trigger = providers.completion.triggerCharacters || ["."];
     caps.completionProvider = { triggerCharacters: trigger, resolveProvider: false };

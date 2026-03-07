@@ -16,6 +16,10 @@ function sendError(
   writer.write({ jsonrpc: "2.0", id, error: { code, message } } as any);
 }
 
+function sendNotification(writer: WebSocketMessageWriter, method: string, params: any): void {
+  writer.write({ jsonrpc: "2.0", method, params } as any);
+}
+
 function extractWord(params: any): string {
   if (params?.context?.word) return params.context.word;
   if (params?.word) return params.word;
@@ -199,15 +203,98 @@ export function handleRequest(
 // ── Notification handler ────────────────────────────────────────────
 export function handleNotification(
   message: JsonRpcNotification,
-  languageId: string
+  languageId: string,
+  providers: Record<string, any>,
+  writer: WebSocketMessageWriter
 ): void {
-  switch (message.method) {
+  const { method, params } = message;
+
+  switch (method) {
     case "initialized":
       console.log(`[${languageId}] client initialized`);
       break;
+
+    case "textDocument/didOpen": {
+      const uri = params?.textDocument?.uri;
+      const text = params?.textDocument?.text;
+      console.log(`[${languageId}] didOpen: ${uri}`);
+      if (uri && text) {
+        publishDiagnostics(uri, text, providers, writer);
+      }
+      break;
+    }
+
+    case "textDocument/didChange": {
+      const uri = params?.textDocument?.uri;
+      const changes = params?.contentChanges;
+      const text = changes?.[changes.length - 1]?.text;
+      if (uri && text) {
+        publishDiagnostics(uri, text, providers, writer);
+      }
+      break;
+    }
+
+    case "textDocument/didClose": {
+      const uri = params?.textDocument?.uri;
+      console.log(`[${languageId}] didClose: ${uri}`);
+      // Clear diagnostics on close
+      if (uri) {
+        sendNotification(writer, "textDocument/publishDiagnostics", {
+          uri,
+          diagnostics: [],
+        });
+      }
+      break;
+    }
+
     case "exit":
       break;
     default:
       break;
   }
+}
+
+// ── Diagnostics from codeActions data ───────────────────────────────
+function publishDiagnostics(
+  uri: string,
+  text: string,
+  providers: Record<string, any>,
+  writer: WebSocketMessageWriter
+): void {
+  const diagnostics: any[] = [];
+  const actions = providers.codeActions?.codeActions;
+
+  if (Array.isArray(actions)) {
+    const lines = text.split("\n");
+    for (const action of actions) {
+      // Only emit diagnostics for actions explicitly marked as diagnostic
+      if (!action.diagnostic || !action.pattern) continue;
+      try {
+        const regex = new RegExp(action.pattern, action.flags || "g");
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i]!;
+          let match: RegExpExecArray | null;
+          regex.lastIndex = 0;
+          while ((match = regex.exec(line)) !== null) {
+            diagnostics.push({
+              range: {
+                start: { line: i, character: match.index },
+                end: { line: i, character: match.index + match[0].length },
+              },
+              severity: action.severity ?? 2, // Warning
+              source: "context-engine",
+              message: action.title || action.description || "Issue detected",
+            });
+          }
+        }
+      } catch {
+        // invalid regex in data — skip
+      }
+    }
+  }
+
+  sendNotification(writer, "textDocument/publishDiagnostics", {
+    uri,
+    diagnostics,
+  });
 }
