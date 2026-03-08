@@ -65,8 +65,14 @@ export function handleRequest(
     }
 
     case "textDocument/signatureHelp": {
-      const sigs = providers.signatureHelp?.signatures ?? [];
-      sendResult(writer, id, { signatures: sigs, activeSignature: 0, activeParameter: 0 });
+      const sh = providers.signatureHelp;
+      sendResult(writer, id, {
+        signatures: sh?.signatures ?? [],
+        activeSignature: 0,
+        activeParameter: 0,
+        triggerCharacters: sh?.triggerCharacters ?? [],
+        retriggerCharacters: sh?.retriggerCharacters ?? [],
+      });
       break;
     }
 
@@ -89,17 +95,21 @@ export function handleRequest(
     }
 
     case "textDocument/implementation": {
-      sendResult(writer, id, providers.implementation?.implementations ?? []);
+      const impl = providers.implementation;
+      sendResult(writer, id, {
+        implementationPatterns: impl?.implementationPatterns ?? [],
+        keywords: impl?.keywords ?? null,
+      });
       break;
     }
 
     case "textDocument/references": {
-      sendResult(writer, id, providers.references?.references ?? []);
+      sendResult(writer, id, providers.references?.referencePatterns ?? []);
       break;
     }
 
     case "textDocument/documentHighlight": {
-      sendResult(writer, id, providers.documentHighlight?.highlights ?? []);
+      sendResult(writer, id, providers.documentHighlight?.highlights ?? {});
       break;
     }
 
@@ -109,77 +119,128 @@ export function handleRequest(
     }
 
     case "textDocument/codeAction": {
-      sendResult(writer, id, providers.codeActions?.actions ?? []);
+      const ca = providers.codeActions;
+      sendResult(writer, id, {
+        codeActions: ca?.codeActions ?? [],
+        providedCodeActionKinds: ca?.providedCodeActionKinds ?? [],
+      });
       break;
     }
 
     case "textDocument/codeLens": {
-      sendResult(writer, id, providers.codeLens?.lenses ?? []);
+      sendResult(writer, id, providers.codeLens?.codeLensPatterns ?? []);
       break;
     }
 
     case "textDocument/documentLink": {
-      sendResult(writer, id, providers.links?.links ?? []);
+      sendResult(writer, id, providers.links?.linkPatterns ?? []);
       break;
     }
 
     case "textDocument/documentColor": {
-      sendResult(writer, id, providers.color?.colors ?? []);
+      const color = providers.color;
+      sendResult(writer, id, {
+        colorPatterns: color?.colorPatterns ?? [],
+        colorPresentations: color?.colorPresentations ?? [],
+        namedColors: color?.namedColors ?? {},
+      });
       break;
     }
 
     case "textDocument/formatting": {
-      sendResult(writer, id, providers.formatting?.edits ?? []);
+
+      sendResult(writer, id, providers.formatting?.formatting ?? []);
       break;
     }
 
     case "textDocument/rangeFormatting": {
-      sendResult(writer, id, providers.documentRangeFormatting?.edits ?? []);
+      const rf = providers.documentRangeFormatting;
+      sendResult(writer, id, {
+        defaultOptions: rf?.defaultOptions ?? null,
+        rangeFormattingRules: rf?.rangeFormattingRules ?? [],
+        adjustToSyntaxNode: rf?.adjustToSyntaxNode ?? false,
+        supportedRangeTypes: rf?.supportedRangeTypes ?? [],
+      });
       break;
     }
 
     case "textDocument/onTypeFormatting": {
-      sendResult(writer, id, providers.onTypeFormatting?.edits ?? []);
+      const otf = providers.onTypeFormatting;
+      sendResult(writer, id, {
+        autoFormatTriggerCharacters: otf?.autoFormatTriggerCharacters ?? [],
+        formatRules: otf?.formatRules ?? [],
+        indentation: otf?.indentation ?? null,
+      });
       break;
     }
 
     case "textDocument/rename": {
-      sendResult(writer, id, providers.rename?.edits ?? null);
+      const rn = providers.rename;
+      sendResult(writer, id, {
+        wordPattern: rn?.wordPattern ?? null,
+        identifierRules: rn?.identifierRules ?? null,
+        renameValidation: rn?.renameValidation ?? null,
+        prepareRenamePatterns: rn?.prepareRenamePatterns ?? [],
+      });
       break;
     }
 
     case "textDocument/foldingRange": {
-      sendResult(writer, id, providers.foldingRange?.ranges ?? []);
+      sendResult(writer, id, {
+        offSide: providers.foldingRange?.offSide ?? false,
+        markers: providers.foldingRange?.markers ?? null,
+        foldingRules: providers.foldingRange?.foldingRules ?? [],
+      });
       break;
     }
 
     case "textDocument/selectionRange": {
-      sendResult(writer, id, providers.selectionRange?.ranges ?? []);
+      sendResult(writer, id, providers.selectionRange?.selectionRanges ?? null);
       break;
     }
 
     case "textDocument/linkedEditingRange": {
-      sendResult(writer, id, providers.linkedEditingRange?.ranges ?? null);
+      sendResult(writer, id, {
+        wordPattern: providers.linkedEditingRange?.wordPattern ?? null,
+        linkedEditingPatterns: providers.linkedEditingRange?.linkedEditingPatterns ?? [],
+        supported: providers.linkedEditingRange?.supported ?? false,
+      });
       break;
     }
 
     case "textDocument/inlayHint": {
-      sendResult(writer, id, providers.inlayHints?.hints ?? []);
+      const ih = providers.inlayHints;
+      sendResult(writer, id, {
+        inlayHintPatterns: ih?.inlayHintPatterns ?? [],
+        typeInferenceRules: ih?.typeInferenceRules ?? {},
+      });
       break;
     }
 
     case "textDocument/inlineCompletion": {
-      sendResult(writer, id, { items: providers.inlineCompletions?.items ?? [] });
+      sendResult(writer, id, { items: providers.inlineCompletions?.inlineCompletions ?? [] });
       break;
     }
 
     case "textDocument/semanticTokens/full": {
-      sendResult(writer, id, { data: providers.semanticTokens?.data ?? [] });
+      const st = providers.semanticTokens;
+      sendResult(writer, id, {
+        tokenTypes: st?.tokenTypes ?? [],
+        tokenModifiers: st?.tokenModifiers ?? [],
+        tokenLegend: st?.tokenLegend ?? null,
+        semanticRules: st?.semanticRules ?? [],
+      });
       break;
     }
 
     case "textDocument/semanticTokens/range": {
-      sendResult(writer, id, { data: providers.rangeSemanticTokens?.data ?? [] });
+      const rst = providers.rangeSemanticTokens;
+      sendResult(writer, id, {
+        tokenTypes: rst?.tokenTypes ?? [],
+        tokenModifiers: rst?.tokenModifiers ?? [],
+        tokenLegend: rst?.tokenLegend ?? null,
+        rangeTokenRules: rst?.rangeTokenRules ?? [],
+      });
       break;
     }
 

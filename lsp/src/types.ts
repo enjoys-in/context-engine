@@ -1,5 +1,7 @@
 import type { WebSocketMessageReader, WebSocketMessageWriter } from "vscode-ws-jsonrpc";
 
+export * from "./interfaces";
+
 export interface IWebSocket {
   send(content: string): void;
   onMessage(cb: (data: string) => void): void;

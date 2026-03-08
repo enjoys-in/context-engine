@@ -33,6 +33,34 @@ const PROVIDERS = [
   "rangeSemanticTokens",
 ] as const;
 
+// ── Language aliases ─────────────────────────────────────────────────
+// Normalizes common alternative IDs to the canonical manifest ID.
+const LANGUAGE_ALIASES: Record<string, string> = {
+  shellscript: "shell",
+  sh: "shell",
+  bash: "shell",
+  zshell: "zsh",
+  "c++": "cpp",
+  "c#": "csharp",
+  cs: "csharp",
+  ts: "typescript",
+  js: "javascript",
+  py: "python",
+  rb: "ruby",
+  rs: "rust",
+  kt: "kotlin",
+  md: "markdown",
+  yml: "yaml",
+  tf: "hcl",
+  proto: "protobuf",
+  objc: "objective-c",
+};
+
+function resolveLanguageId(id: string): string {
+  const lower = id.toLowerCase();
+  return LANGUAGE_ALIASES[lower] ?? lower;
+}
+
 // ── Manifest index (loaded once) ────────────────────────────────────
 const manifest: Manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf-8"));
 
@@ -62,13 +90,14 @@ export function loadLanguageData(
   connectionId: string,
   languageId: string
 ): LanguageData | null {
+  const resolved = resolveLanguageId(languageId);
   const connCache = connectionCaches.get(connectionId);
-  if (connCache?.has(languageId)) return connCache.get(languageId)!;
+  if (connCache?.has(resolved)) return connCache.get(resolved)!;
 
-  const entry = languageIndex.get(languageId);
+  const entry = languageIndex.get(resolved);
   if (!entry) return null;
 
-  const data: LanguageData = { language: languageId, providers: {} };
+  const data: LanguageData = { language: resolved, providers: {} };
 
   for (const provider of PROVIDERS) {
     const relPath = entry.files[provider];
@@ -82,14 +111,16 @@ export function loadLanguageData(
     }
   }
 
-  connCache?.set(languageId, data);
+  connCache?.set(resolved, data);
   return data;
 }
 
 export function hasLanguage(id: string): boolean {
-  return languageIndex.has(id);
+  return languageIndex.has(resolveLanguageId(id));
 }
 
 export function listLanguages(): string[] {
   return [...languageIndex.keys()];
 }
+
+export { resolveLanguageId };

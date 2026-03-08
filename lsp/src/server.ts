@@ -9,9 +9,12 @@ import {
   loadLanguageData,
   createConnectionCache,
   destroyConnectionCache,
+  resolveLanguageId,
 } from "./dataLoader.ts";
 import { buildCapabilities } from "./capabilities.ts";
 import { handleRequest, handleNotification } from "./handlers.ts";
+import { getServerConfig, isServerAvailable } from "./languageServers.ts";
+import { createLspProxy } from "./lspProxy.ts";
 
 const PORT = parseInt(process.env.PORT || "9257", 10);
 
@@ -33,8 +36,9 @@ const wss = new WebSocketServer({ port: PORT, path: "/lsp" }, () => {
 
 wss.on("connection", (ws, req) => {
   const query = url.parse(req.url || "", true).query;
-  const languageId =
+  const rawLang =
     typeof query.lang === "string" ? query.lang.toLowerCase() : "";
+  const languageId = resolveLanguageId(rawLang);
 
   if (!languageId) {
     ws.close(4000, "Missing ?lang= query parameter");
@@ -49,10 +53,26 @@ wss.on("connection", (ws, req) => {
   const connectionId = crypto.randomUUID();
   console.log(`[${languageId}] client connected (${connectionId})`);
 
+  const socket = wrapSocket(ws);
+
+  // ── Try real LSP server proxy first ─────────────────────────────
+  const serverConfig = getServerConfig(languageId);
+  if (serverConfig && isServerAvailable(serverConfig)) {
+    console.log(`[${languageId}] real LSP server available → proxy mode`);
+    const proxy = createLspProxy(socket, serverConfig, languageId);
+    if (proxy) {
+      ws.on("close", () => {
+        console.log(`[${languageId}] client disconnected (${connectionId})`);
+        proxy.dispose();
+      });
+      return; // all messages handled by forward()
+    }
+    console.log(`[${languageId}] proxy failed, falling back to static data`);
+  }
+
+  // ── Fallback: static context-engine data ────────────────────────
   // Allocate per-connection cache
   createConnectionCache(connectionId);
-
-  const socket = wrapSocket(ws);
   const reader = new WebSocketMessageReader(socket);
   const writer = new WebSocketMessageWriter(socket);
 
