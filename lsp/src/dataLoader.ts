@@ -31,6 +31,7 @@ const PROVIDERS = [
   "documentRangeFormatting",
   "semanticTokens",
   "rangeSemanticTokens",
+  "commands",
 ] as const;
 
 // ── Language aliases ─────────────────────────────────────────────────
@@ -39,7 +40,8 @@ const LANGUAGE_ALIASES: Record<string, string> = {
   shellscript: "shell",
   sh: "shell",
   bash: "shell",
-  zshell: "zsh",
+  zsh: "shell",
+  zshell: "shell",
   "c++": "cpp",
   "c#": "csharp",
   cs: "csharp",

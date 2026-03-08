@@ -30,6 +30,156 @@
       "insertText": "case ${1:\"\\$variable\"} in\n\t${2:pattern1})\n\t\t${3:# commands}\n\t\t;;\n\t${4:pattern2})\n\t\t${5:# commands}\n\t\t;;\n\t*)\n\t\t${6:# default}\n\t\t;;\nesac",
       "description": "Case statement",
       "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*if\\s*$",
+      "insertText": "if [[ ${1:condition} ]]; then\n\t${2:command}\nfi",
+      "description": "If statement",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*if\\s*\\[\\[.*\\]\\];\\s*then\\s*$",
+      "insertText": "\n\t${1:command}\nelse\n\t${2:command}\nfi",
+      "description": "If-else body",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*elif\\s*$",
+      "insertText": "elif [[ ${1:condition} ]]; then\n\t${2:command}",
+      "description": "Elif clause",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*for\\s*$",
+      "insertText": "for ${1:item} in ${2:list}; do\n\t${3:command}\ndone",
+      "description": "For-in loop",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*for\\s*\\(\\(\\s*$",
+      "insertText": "for (( ${1:i}=0; ${1:i}<${2:n}; ${1:i}++ )); do\n\t${3:command}\ndone",
+      "description": "C-style for loop",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*while\\s*$",
+      "insertText": "while [[ ${1:condition} ]]; do\n\t${2:command}\ndone",
+      "description": "While loop",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*while\\s+IFS=\\s*$",
+      "insertText": "while IFS= read -r ${1:line}; do\n\t${2:echo \"$line\"}\ndone < \"${3:file}\"",
+      "description": "Read file line by line",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*until\\s*$",
+      "insertText": "until [[ ${1:condition} ]]; do\n\t${2:command}\ndone",
+      "description": "Until loop",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*case\\s*$",
+      "insertText": "case ${1:\"$variable\"} in\n\t${2:pattern1})\n\t\t${3:command}\n\t\t;;\n\t${4:pattern2})\n\t\t${5:command}\n\t\t;;\n\t*)\n\t\t${6:echo \"Unknown option\"}\n\t\t;;\nesac",
+      "description": "Case statement",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*select\\s*$",
+      "insertText": "select ${1:opt} in ${2:option1 option2 option3}; do\n\tcase \"$${1:opt}\" in\n\t\t${3:option1}) ${4:command} ;;\n\t\t*) echo \"Invalid\" ;;\n\tesac\ndone",
+      "description": "Select menu",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*function\\s+\\w+\\s*$",
+      "insertText": "() {\n\tlocal ${1:arg}=\"$1\"\n\t${2:command}\n}",
+      "description": "Function body",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*\\w+\\(\\)\\s*$",
+      "insertText": "{\n\tlocal ${1:arg}=\"$1\"\n\t${2:command}\n}",
+      "description": "Function body (parens form)",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^#!/usr/bin/env\\s+bash\\s*$",
+      "insertText": "\nset -euo pipefail\nIFS=$'\\\\n\\\\t'\n\n${1:main() \\{\n\t$2\n\\}}\n\nmain \"$@\"",
+      "description": "Strict mode script template",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*trap\\s*$",
+      "insertText": "trap '${1:cleanup}' EXIT ERR INT TERM",
+      "description": "Trap cleanup handler",
+      "completeBracketPairs": false
+    },
+    {
+      "triggerPattern": "^\\s*getopts\\s*$",
+      "insertText": "while getopts \":${1:hv}\" opt; do\n\tcase \"$opt\" in\n\t\th) usage; exit 0 ;;\n\t\tv) echo \"$VERSION\"; exit 0 ;;\n\t\t\\?) echo \"Invalid option: -$OPTARG\" >&2; exit 1 ;;\n\t\t:) echo \"Option -$OPTARG requires an argument\" >&2; exit 1 ;;\n\tesac\ndone\nshift $((OPTIND - 1))",
+      "description": "Getopts argument parsing loop",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*read\\s+-r\\s*$",
+      "insertText": "read -r -p \"${1:Enter value}: \" ${2:variable}",
+      "description": "Read with prompt",
+      "completeBracketPairs": false
+    },
+    {
+      "triggerPattern": "^\\s*(?:local\\s+)?tmpdir=\\s*$",
+      "insertText": "$(mktemp -d)\ntrap 'rm -rf \"$tmpdir\"' EXIT",
+      "description": "Create temp directory with cleanup",
+      "completeBracketPairs": false
+    },
+    {
+      "triggerPattern": "^\\s*log\\s*$",
+      "insertText": "log() {\n\tlocal level=\"$1\"; shift\n\tprintf '[%s] [%s] %s\\n' \"$(date '+%Y-%m-%d %H:%M:%S')\" \"$level\" \"$*\" >&2\n}",
+      "description": "Logging function template",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*die\\s*$",
+      "insertText": "die() { echo \"ERROR: $*\" >&2; exit 1; }",
+      "description": "Die/error function",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*usage\\s*$",
+      "insertText": "usage() {\n\tcat <<-EOF\n\tUsage: $(basename \"$0\") [OPTIONS] ${1:ARGS}\n\n\tOptions:\n\t  -h, --help    Show this help message\n\t  -v, --version Show version\n\t  ${2:-f, --file    Input file}\n\tEOF\n}",
+      "description": "Usage/help function template",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*(?:declare\\s+-[aA]|\\w+=\\()\\s*$",
+      "insertText": "(\n\t${1:\"element1\"}\n\t${2:\"element2\"}\n\t${3:\"element3\"}\n)",
+      "description": "Array initialization",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*(?:if|\\[\\[).*command\\s+-v\\s*$",
+      "insertText": "command -v ${1:cmd} &>/dev/null; then\n\t${2:echo \"$1 is available\"}\nelse\n\techo \"Error: ${1:cmd} is required but not installed.\" >&2\n\texit 1\nfi",
+      "description": "Check if command exists",
+      "completeBracketPairs": true
+    },
+    {
+      "triggerPattern": "^\\s*find\\s*$",
+      "insertText": "find ${1:.} -type ${2:f} -name \"${3:*.txt}\" ${4:-exec echo {} \\;}",
+      "description": "Find command template",
+      "completeBracketPairs": false
+    },
+    {
+      "triggerPattern": "^\\s*(?:cat|echo).*<<\\s*$",
+      "insertText": "EOF\n${1:content}\nEOF",
+      "description": "Here-document body",
+      "completeBracketPairs": false
+    },
+    {
+      "triggerPattern": "^\\s*mapfile\\s*$",
+      "insertText": "mapfile -t ${1:lines} < \"${2:file}\"",
+      "description": "Read file into array",
+      "completeBracketPairs": false
     }
   ]
 }

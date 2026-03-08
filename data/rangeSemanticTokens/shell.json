@@ -1,16 +1,68 @@
 {
   "language": "shell",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenTypes": [
+    "namespace",
+    "type",
+    "class",
+    "enum",
+    "interface",
+    "struct",
+    "typeParameter",
+    "parameter",
+    "variable",
+    "property",
+    "enumMember",
+    "event",
+    "function",
+    "method",
+    "macro",
+    "keyword",
+    "modifier",
+    "comment",
+    "string",
+    "number",
+    "regexp",
+    "operator",
+    "decorator"
+  ],
+  "tokenModifiers": [
+    "declaration",
+    "definition",
+    "readonly",
+    "static",
+    "deprecated",
+    "abstract",
+    "async",
+    "modification",
+    "documentation",
+    "defaultLibrary"
+  ],
   "tokenLegend": {
-    "tokenTypes": ["variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+    "tokenTypes": [
+      "variable",
+      "parameter",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "modification"
+    ]
   },
   "rangeTokenRules": [
     {
       "type": "function",
       "pattern": "\\bfunction\\s+[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(\\)",
-      "modifiers": ["declaration"],
+      "modifiers": [
+        "declaration"
+      ],
       "description": "Function declarations",
       "rangeScope": "declaration"
     },
@@ -24,7 +76,9 @@
     {
       "type": "variable",
       "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*=",
-      "modifiers": ["declaration"],
+      "modifiers": [
+        "declaration"
+      ],
       "description": "Variable assignments",
       "rangeScope": "statement"
     },
@@ -62,8 +116,132 @@
       "modifiers": [],
       "description": "Case statement blocks",
       "rangeScope": "block"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b\\w+\\s*\\(\\)\\s*\\{[\\s\\S]*?\\}",
+      "modifiers": [
+        "definition"
+      ],
+      "description": "Function body definitions",
+      "rangeScope": "block"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{[^}]+\\}|\\$[A-Za-z_][A-Za-z0-9_]*",
+      "modifiers": [],
+      "description": "Variable expansion expressions",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bif\\b[\\s\\S]*?\\bfi\\b",
+      "modifiers": [],
+      "description": "If/fi conditional blocks",
+      "rangeScope": "block"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bwhile\\b[\\s\\S]*?\\bdone\\b",
+      "modifiers": [],
+      "description": "While loop blocks",
+      "rangeScope": "block"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bfor\\b[\\s\\S]*?\\bdone\\b",
+      "modifiers": [],
+      "description": "For loop blocks",
+      "rangeScope": "block"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\bcase\\b[\\s\\S]*?\\besac\\b",
+      "modifiers": [],
+      "description": "Case/esac switch blocks",
+      "rangeScope": "block"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\b[A-Za-z_][A-Za-z0-9_]*=",
+      "modifiers": [
+        "declaration"
+      ],
+      "description": "Variable assignment statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\breadonly\\s+\\w+=",
+      "modifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Readonly variable declarations",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "string",
+      "pattern": "\\$\\([^)]+\\)|`[^`]+`",
+      "modifiers": [],
+      "description": "Command substitution expressions",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "comment",
+      "pattern": "#.*$",
+      "modifiers": [],
+      "description": "Line comments",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "string",
+      "pattern": "<<-?\\s*'?\\w+'?[\\s\\S]*?^\\w+$",
+      "modifiers": [],
+      "description": "Here-document strings",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\b(local|typeset|declare|integer|float)\\s+[a-zA-Z_][a-zA-Z0-9_]*",
+      "modifiers": [
+        "declaration"
+      ],
+      "description": "Typed variable declarations",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(autoload|zmodload|compdef|zstyle|bindkey)\\b",
+      "modifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Zsh builtin command statements",
+      "rangeScope": "statement"
+    },
+    {
+      "type": "operator",
+      "pattern": "\\(#[a-zA-Z]\\)",
+      "modifiers": [],
+      "description": "Glob qualifier expressions",
+      "rangeScope": "expression"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*(#|%|/|:|\\^|\\+)[^}]*\\}",
+      "modifiers": [],
+      "description": "Parameter expansion expressions",
+      "rangeScope": "expression"
     }
   ],
-  "supportedRangeScopes": ["statement", "block", "expression", "declaration"],
-  "multilineTokens": ["comment", "string"]
+  "supportedRangeScopes": [
+    "statement",
+    "block",
+    "expression",
+    "declaration"
+  ],
+  "multilineTokens": [
+    "comment",
+    "string"
+  ]
 }

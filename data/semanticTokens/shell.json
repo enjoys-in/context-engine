@@ -1,16 +1,68 @@
 {
   "language": "shell",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
+  "tokenTypes": [
+    "namespace",
+    "type",
+    "class",
+    "enum",
+    "interface",
+    "struct",
+    "typeParameter",
+    "parameter",
+    "variable",
+    "property",
+    "enumMember",
+    "event",
+    "function",
+    "method",
+    "macro",
+    "keyword",
+    "modifier",
+    "comment",
+    "string",
+    "number",
+    "regexp",
+    "operator",
+    "decorator"
+  ],
+  "tokenModifiers": [
+    "declaration",
+    "definition",
+    "readonly",
+    "static",
+    "deprecated",
+    "abstract",
+    "async",
+    "modification",
+    "documentation",
+    "defaultLibrary"
+  ],
   "tokenLegend": {
-    "tokenTypes": ["variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+    "tokenTypes": [
+      "variable",
+      "parameter",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "modification"
+    ]
   },
   "semanticRules": [
     {
       "type": "function",
       "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b|([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(\\s*\\)\\s*\\{",
-      "modifiers": ["declaration"],
+      "modifiers": [
+        "declaration"
+      ],
       "description": "Function declarations with function keyword or name() syntax"
     },
     {
@@ -28,19 +80,26 @@
     {
       "type": "variable",
       "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)=",
-      "modifiers": ["declaration"],
+      "modifiers": [
+        "declaration"
+      ],
       "description": "Variable assignments"
     },
     {
       "type": "function",
       "pattern": "\\b(echo|printf|cd|test|read|export|source|exec|eval|trap|wait|kill|exit|return|shift|unset|set)\\b",
-      "modifiers": ["defaultLibrary"],
+      "modifiers": [
+        "defaultLibrary"
+      ],
       "description": "Shell built-in commands"
     },
     {
       "type": "variable",
       "pattern": "\\$(\\?|\\$|!|#|@|\\*|-|0|[1-9])",
-      "modifiers": ["readonly", "defaultLibrary"],
+      "modifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
       "description": "Special shell variables ($?, $$, $!, $#, $@, $*)"
     },
     {
@@ -60,6 +119,120 @@
       "pattern": "#[^\\n]*",
       "modifiers": [],
       "description": "Line comments starting with #"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(\\s*\\)",
+      "modifiers": [
+        "declaration"
+      ],
+      "description": "Function declarations (name() { ... })"
+    },
+    {
+      "type": "function",
+      "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "modifiers": [
+        "declaration"
+      ],
+      "description": "Function declarations using function keyword"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*(:[+-][^}]*)?\\}",
+      "modifiers": [],
+      "description": "Variable expansions with parameter substitution (${VAR}, ${VAR:-default})"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
+      "modifiers": [],
+      "description": "Simple variable references ($VAR)"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(echo|read|printf|test|eval|exec|source|export|declare|typeset)\\b",
+      "modifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shell built-in commands"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(local|readonly|declare|export)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "modifiers": [
+        "declaration"
+      ],
+      "description": "Variable declaration keywords with local/readonly/export"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{?[#!@*?$0-9]\\}?",
+      "modifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Special shell variables ($?, $#, $@, $*, $$, $!)"
+    },
+    {
+      "type": "operator",
+      "pattern": "(\\|\\||&&|;;|<<|>>|>&|<&|\\|&)",
+      "modifiers": [],
+      "description": "Shell operators (pipe, redirect, logical)"
+    },
+    {
+      "type": "string",
+      "pattern": "\\$\\([^)]+\\)",
+      "modifiers": [],
+      "description": "Command substitution expressions"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)([:#%/=^,@][^}]*)?\\}",
+      "modifiers": [],
+      "description": "Variable expansion with parameter substitution"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(autoload|zmodload|zstyle|zle|bindkey|compdef|compadd|compctl|zformat|zparseopts|zstat)\\b",
+      "modifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Zsh-specific builtins including autoload and zstyle"
+    },
+    {
+      "type": "function",
+      "pattern": "\\b(echo|print|printf|cd|pushd|popd|export|source|eval|exec|trap|wait|kill|exit|return|shift|unset|set|setopt|unsetopt|typeset|local|integer|float|declare|readonly|hash|unhash|whence|where|which)\\b",
+      "modifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shell builtins and zsh extensions"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\b(if|then|else|elif|fi|for|while|until|do|done|case|esac|in|select|repeat|foreach|end|coproc)\\b",
+      "modifiers": [],
+      "description": "Control flow keywords including zsh-specific ones"
+    },
+    {
+      "type": "variable",
+      "pattern": "\\$(\\?|\\$|!|#|@|\\*|-|0|[1-9]|REPLY|reply|MATCH|match|MBEGIN|MEND|ZSH_VERSION|HISTFILE|HISTSIZE|SAVEHIST|ZDOTDIR|FPATH|fpath|path|PATH)",
+      "modifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Special variables including zsh-specific ones"
+    },
+    {
+      "type": "operator",
+      "pattern": "(\\(\\#|\\(\\(|\\)\\)|\\[\\[|\\]\\]|\\|\\||&&|;;|;\\||&!|&\\||>>|<<|<>|>!|>&|<&)",
+      "modifiers": [],
+      "description": "Zsh operators and redirections"
+    },
+    {
+      "type": "keyword",
+      "pattern": "\\(\\*\\)|\\(@\\)|\\(\\.|\\(\\^|\\(/|\\(f|\\(\\+|\\(-|\\(r|\\(w|\\(x|\\(L|\\(N|\\(D|\\(om|\\(on",
+      "modifiers": [],
+      "description": "Glob qualifiers for filename generation"
     }
   ]
 }

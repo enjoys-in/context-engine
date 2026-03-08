@@ -8,6 +8,102 @@
       "position": "after_value",
       "paddingLeft": true,
       "description": "Show inferred types for shell variable assignments"
+    },
+    {
+      "pattern": "(?:local|declare)\\s+(?:-\\w+\\s+)*(\\w+)\\s*=\\s*(.+)",
+      "kind": 1,
+      "label": ": {inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show inferred type for variable assignments"
+    },
+    {
+      "pattern": "(\\w+)\\s+(\\$\\{?[^}\\s]+\\}?(?:\\s+\\$\\{?[^}\\s]+\\}?)*)",
+      "kind": 2,
+      "label": "{param_name}:",
+      "position": "before_each_arg",
+      "paddingRight": true,
+      "description": "Show parameter names at call sites for known functions"
+    },
+    {
+      "pattern": "declare\\s+-([aAilurnx]+)\\s+(\\w+)",
+      "kind": 1,
+      "label": ": {attribute_description}",
+      "position": "after_capture_2",
+      "paddingLeft": true,
+      "description": "Show attribute description for declare flags"
+    },
+    {
+      "pattern": "\\$\\{(\\w+):?[-+=?]",
+      "kind": 1,
+      "label": "expansion: {expansion_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show parameter expansion type"
+    },
+    {
+      "pattern": "exit\\s+(\\d+)",
+      "kind": 1,
+      "label": ": {exit_meaning}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show meaning of exit status code"
+    },
+    {
+      "pattern": "trap\\s+['\"][^'\"]+['\"]\\s+(\\w+)",
+      "kind": 1,
+      "label": ": signal {signal_number}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show signal number for trap signal name"
+    },
+    {
+      "pattern": "\\$\\(\\((.+)\\)\\)",
+      "kind": 1,
+      "label": "= {result}",
+      "position": "after_match",
+      "paddingLeft": true,
+      "description": "Show arithmetic result for constant expressions"
+    },
+    {
+      "pattern": "chmod\\s+(\\d{3,4})\\s+",
+      "kind": 1,
+      "label": ": {permission_string}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show symbolic permission for numeric chmod"
+    },
+    {
+      "pattern": "umask\\s+(\\d{3,4})",
+      "kind": 1,
+      "label": ": effective {effective_perms}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show effective permissions for umask value"
+    },
+    {
+      "pattern": "\\breturn\\s+(\\d+)",
+      "kind": 1,
+      "label": ": {return_meaning}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show meaning of return status code"
+    },
+    {
+      "pattern": "\\bkill\\s+-(?:s\\s+)?(\\d+|[A-Z]+)\\s+",
+      "kind": 1,
+      "label": ": {signal_description}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show signal description"
+    },
+    {
+      "pattern": "\\btest\\s+(-[a-zA-Z])\\s+",
+      "kind": 1,
+      "label": ": {test_description}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show test operator meaning"
     }
   ],
   "typeInferenceRules": {
@@ -30,6 +126,98 @@
     "path_literal": {
       "pattern": "(/[\\w.-]+)+",
       "type": "path"
+    },
+    "command_substitution": {
+      "pattern": "^\\$\\(.*\\)$",
+      "type": "string (from command)"
+    },
+    "arithmetic": {
+      "pattern": "^\\$\\(\\(.*\\)\\)$",
+      "type": "integer"
+    },
+    "boolean_pattern": {
+      "pattern": "^(true|false|0|1)$",
+      "type": "boolean (exit status)"
+    },
+    "variable_reference": {
+      "pattern": "^\\$\\{?\\w+\\}?$",
+      "type": "string (variable)"
+    },
+    "process_substitution": {
+      "pattern": "^<\\(.*\\)$|^>\\(.*\\)$",
+      "type": "file descriptor"
+    },
+    "heredoc": {
+      "pattern": "^<<-?\\s*\\w+",
+      "type": "string (heredoc)"
+    },
+    "null_literal": {
+      "pattern": "\\\\b(null)\\\\b",
+      "type": "null"
     }
+  },
+  "attributeDescriptions": {
+    "a": "indexed array",
+    "A": "associative array",
+    "i": "integer",
+    "l": "lowercase",
+    "u": "uppercase",
+    "r": "readonly",
+    "x": "exported",
+    "n": "nameref",
+    "t": "trace"
+  },
+  "exitStatusMeanings": {
+    "0": "success",
+    "1": "general error",
+    "2": "misuse of builtin",
+    "126": "not executable",
+    "127": "command not found",
+    "128": "invalid exit argument",
+    "130": "killed by SIGINT (Ctrl+C)",
+    "137": "killed by SIGKILL",
+    "143": "killed by SIGTERM"
+  },
+  "signalDescriptions": {
+    "1": "HUP - hangup / reload",
+    "2": "INT - interrupt (Ctrl+C)",
+    "3": "QUIT - core dump",
+    "9": "KILL - force kill (uncatchable)",
+    "13": "PIPE - broken pipe",
+    "15": "TERM - graceful termination",
+    "17": "CHLD - child status change",
+    "18": "CONT - continue stopped process",
+    "19": "STOP - stop (uncatchable)",
+    "20": "TSTP - terminal stop (Ctrl+Z)",
+    "SIGHUP": "hangup / reload",
+    "SIGINT": "interrupt (Ctrl+C)",
+    "SIGQUIT": "quit with core dump",
+    "SIGKILL": "force kill (uncatchable)",
+    "SIGTERM": "graceful termination",
+    "SIGSTOP": "stop (uncatchable)",
+    "SIGCONT": "continue stopped process",
+    "SIGTSTP": "terminal stop (Ctrl+Z)",
+    "EXIT": "shell exit (pseudo-signal)",
+    "ERR": "command failure (with set -e)",
+    "DEBUG": "before each command",
+    "RETURN": "after function/source return"
+  },
+  "testOperatorDescriptions": {
+    "-f": "is regular file",
+    "-d": "is directory",
+    "-e": "exists (any type)",
+    "-s": "exists and non-empty",
+    "-r": "is readable",
+    "-w": "is writable",
+    "-x": "is executable",
+    "-L": "is symlink",
+    "-h": "is symlink",
+    "-p": "is named pipe",
+    "-S": "is socket",
+    "-b": "is block device",
+    "-c": "is character device",
+    "-z": "string is empty",
+    "-n": "string is non-empty",
+    "-t": "fd is open terminal"
   }
 }

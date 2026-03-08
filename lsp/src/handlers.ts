@@ -59,7 +59,7 @@ export function handleRequest(
 
     case "textDocument/hover": {
       const word = extractWord(params);
-      const entry = providers.hover?.hovers?.[word] ?? null;
+      const entry = providers.hover?.hovers ?? null;
       sendResult(writer, id, entry);
       break;
     }
