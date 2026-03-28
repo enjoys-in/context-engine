@@ -1,6 +1,6 @@
 {
   "name": "wrangler",
-  "description": "Cloudflare Workers CLI",
+  "description": "Cloudflare Wrangler CLI — build and deploy Cloudflare Workers",
   "category": "cloud",
   "platforms": [
     "linux",
@@ -16,59 +16,94 @@
   "subcommands": [
     {
       "name": "init",
-      "description": "Create a new project",
+      "description": "Initialize a Worker project",
       "examples": [
-        "wrangler init my-worker"
+        "wrangler init",
+        "wrangler init my-worker",
+        "wrangler init my-worker --type typescript"
       ]
     },
     {
       "name": "dev",
       "description": "Start local dev server",
       "examples": [
-        "wrangler dev"
+        "wrangler dev",
+        "wrangler dev --local",
+        "wrangler dev --port 8787",
+        "wrangler dev src/index.ts"
       ]
     },
     {
       "name": "deploy",
-      "description": "Deploy to Cloudflare",
+      "description": "Deploy Worker",
       "examples": [
-        "wrangler deploy"
+        "wrangler deploy",
+        "wrangler deploy --dry-run",
+        "wrangler deploy --env staging",
+        "wrangler deploy --minify"
       ]
     },
     {
       "name": "publish",
-      "description": "Publish worker (alias for deploy)",
+      "description": "Publish Worker (alias for deploy)",
       "examples": [
         "wrangler publish"
       ]
     },
     {
       "name": "tail",
-      "description": "Stream worker logs",
+      "description": "Tail Worker logs",
       "examples": [
-        "wrangler tail"
+        "wrangler tail",
+        "wrangler tail my-worker",
+        "wrangler tail --format json"
       ]
     },
     {
-      "name": "secret put",
-      "description": "Set a secret",
+      "name": "secret",
+      "description": "Manage Worker secrets",
       "examples": [
-        "wrangler secret put MY_SECRET"
+        "wrangler secret put MY_SECRET",
+        "wrangler secret list",
+        "wrangler secret delete MY_SECRET"
       ]
     },
     {
-      "name": "kv",
-      "description": "Manage KV storage",
+      "name": "kv:namespace",
+      "description": "Manage KV namespaces",
       "examples": [
-        "wrangler kv namespace list",
-        "wrangler kv key put --namespace-id=xxx key value"
+        "wrangler kv:namespace list",
+        "wrangler kv:namespace create MY_KV",
+        "wrangler kv:namespace delete --namespace-id xxx"
+      ]
+    },
+    {
+      "name": "kv:key",
+      "description": "Manage KV keys",
+      "examples": [
+        "wrangler kv:key list --namespace-id xxx",
+        "wrangler kv:key put --namespace-id xxx my-key my-value",
+        "wrangler kv:key get --namespace-id xxx my-key",
+        "wrangler kv:key delete --namespace-id xxx my-key"
+      ]
+    },
+    {
+      "name": "kv:bulk",
+      "description": "Bulk KV operations",
+      "examples": [
+        "wrangler kv:bulk put --namespace-id xxx data.json",
+        "wrangler kv:bulk delete --namespace-id xxx keys.json"
       ]
     },
     {
       "name": "r2",
       "description": "Manage R2 storage",
       "examples": [
-        "wrangler r2 bucket list"
+        "wrangler r2 bucket list",
+        "wrangler r2 bucket create my-bucket",
+        "wrangler r2 bucket delete my-bucket",
+        "wrangler r2 object get my-bucket/key",
+        "wrangler r2 object put my-bucket/key --file ./file.txt"
       ]
     },
     {
@@ -76,14 +111,30 @@
       "description": "Manage D1 databases",
       "examples": [
         "wrangler d1 list",
-        "wrangler d1 execute mydb --command 'SELECT * FROM users'"
+        "wrangler d1 create my-db",
+        "wrangler d1 execute my-db --command 'SELECT * FROM users'",
+        "wrangler d1 execute my-db --file schema.sql",
+        "wrangler d1 migrations create my-db create-users",
+        "wrangler d1 migrations apply my-db"
       ]
     },
     {
       "name": "pages",
-      "description": "Manage Pages projects",
+      "description": "Manage Cloudflare Pages",
       "examples": [
-        "wrangler pages deploy dist"
+        "wrangler pages project list",
+        "wrangler pages project create my-project",
+        "wrangler pages deploy ./dist",
+        "wrangler pages deployment list --project-name my-project"
+      ]
+    },
+    {
+      "name": "queues",
+      "description": "Manage Queues",
+      "examples": [
+        "wrangler queues list",
+        "wrangler queues create my-queue",
+        "wrangler queues delete my-queue"
       ]
     },
     {
@@ -92,18 +143,61 @@
       "examples": [
         "wrangler login"
       ]
+    },
+    {
+      "name": "whoami",
+      "description": "Show authenticated user",
+      "examples": [
+        "wrangler whoami"
+      ]
+    },
+    {
+      "name": "types",
+      "description": "Generate TypeScript types",
+      "examples": [
+        "wrangler types"
+      ]
+    },
+    {
+      "name": "generate",
+      "description": "Generate a Worker from template",
+      "examples": [
+        "wrangler generate my-worker https://github.com/cloudflare/worker-template"
+      ]
+    },
+    {
+      "name": "vectorize",
+      "description": "Manage Vectorize indexes",
+      "examples": [
+        "wrangler vectorize create my-index --dimensions 768 --metric cosine",
+        "wrangler vectorize list",
+        "wrangler vectorize delete my-index"
+      ]
+    },
+    {
+      "name": "ai",
+      "description": "Manage Workers AI",
+      "examples": [
+        "wrangler ai models list"
+      ]
     }
   ],
   "globalOptions": [
     {
-      "name": "-c",
-      "description": "Config file",
-      "type": "file"
+      "name": "--config",
+      "short": "-c",
+      "description": "Config file path",
+      "type": "string"
     },
     {
       "name": "--env",
       "short": "-e",
       "description": "Environment",
+      "type": "string"
+    },
+    {
+      "name": "--compatibility-date",
+      "description": "Compatibility date",
       "type": "string"
     }
   ],
@@ -112,13 +206,19 @@
     "wrangler dev",
     "wrangler deploy",
     "wrangler tail",
-    "wrangler pages deploy dist",
-    "wrangler d1 list"
+    "wrangler secret put MY_SECRET",
+    "wrangler kv:namespace create MY_KV",
+    "wrangler r2 bucket list",
+    "wrangler d1 create my-db",
+    "wrangler d1 execute my-db --file schema.sql",
+    "wrangler pages deploy ./dist",
+    "wrangler login",
+    "wrangler whoami"
   ],
   "relatedCommands": [
-    "serverless",
-    "miniflare",
-    "npm",
-    "vercel"
+    "cloudflared",
+    "netlify",
+    "vercel",
+    "firebase"
   ]
 }

@@ -1,12 +1,12 @@
 # @enjoys/context-engine
 
-Comprehensive Monaco Editor language intelligence engine with **94 languages**, **26 providers**, and **412 CLI command files (395 unique)** — completions, hover docs, definitions, code actions, code lens, document symbols, formatting, signature help, semantic tokens, inline completions, and more, all as pre-built JSON data with zero backend required.
+Comprehensive Monaco Editor language intelligence engine with **94 languages**, **26 providers**, and **464 CLI command files (447 unique)** — completions, hover docs, definitions, code actions, code lens, document symbols, formatting, signature help, semantic tokens, inline completions, and more, all as pre-built JSON data with zero backend required.
 
 ## Why Context Engine?
 
 Traditional LSP (Language Server Protocol) setups require a backend server running a separate language server process for every language you want to support. Each language server needs its own binary installed — Go, Rust, Python, TypeScript, and so on. At scale, this makes the backend **heavy**, memory-hungry, and CPU-intensive. Supporting all languages can easily consume **1 GB+** of disk space and significant runtime resources just to keep those servers alive.
 
-Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 412 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
+Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 464 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
 
 > **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, code actions, formatting, symbols, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
 
@@ -23,7 +23,7 @@ data/                        # 2,444 JSON files — 94 languages × 26 providers
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
-├── commands/                # 412 CLI tool definitions (git, docker, kubectl, ...)
+├── commands/                # 464 CLI tool definitions (git, docker, kubectl, ...)
 ├── completion/              # Monaco CompletionItem[] with snippets
 ├── declaration/             # Go-to-declaration data
 ├── definition/              # Definitions (signatures, descriptions, types)
@@ -670,12 +670,12 @@ Each language has up to 26 provider files — completions, hover, definitions, c
 | **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
 | **Other** | Crontab, Protobuf, Doctest |
 
-## Covered Commands (412 files, 395 unique)
+## Covered Commands (464 files, 447 unique)
 
 | Category | Tools |
 |----------|-------|
-| **Cloud CLIs & APIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, stripe, twilio, sfdx, cdk, sam, serverless, eksctl, wrangler, func |
-| **Containers & Orchestration** | docker, docker-compose, dockerfile, kubectl, helm, minikube, k9s, podman, buildah, skopeo, kind, kustomize, argocd, istioctl, crane, ko |
+| **Cloud CLIs & APIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, stripe, twilio, sfdx, cdk, sam, serverless, eksctl, wrangler, func, heroku, oci, ibmcloud, aliyun, openstack, civo, scw, vultr, hcloud, upcloud, aws-copilot, amplify, eb, s3cmd, chamber, gsutil, bq, az-devops, ecs-cli, lightsail, rclone, mc |
+| **Containers & Orchestration** | docker, docker-compose, dockerfile, kubectl, helm, minikube, k9s, podman, buildah, skopeo, kind, kustomize, argocd, istioctl, crane, ko, rancher, linkerd, flux, tkn, crossplane, argo, velero, kubectx, kubens, stern, k3s, k3d, helmfile, kubeconform, popeye, kube-score, skaffold, tilt, telepresence, devspace, okteto, garden, cilium, calicoctl, cmctl, kn, kamel |
 | **Version Control & Git Workflow** | git, gh, glab, svn, hg, git-lfs, husky, commitlint, semantic-release, conventional-commits, pre-commit |
 | **Node.js Ecosystem** | node, npm, npx, yarn, pnpm, bun, deno, eslint, prettier, tsc, turbo, nx, vite, next, nest |
 | **JS Build Tools** | webpack, esbuild, rollup, swc, babel, storybook, lerna, changeset, concurrently |
@@ -696,8 +696,8 @@ Each language has up to 26 provider files — completions, hover, definitions, c
 | **DevOps & Infrastructure** | terraform, terragrunt, pulumi, packer, vault, consul, nomad, ansible, vagrant |
 | **DevOps Quality** | shellcheck, hadolint, act, semgrep, checkov, tflint |
 | **Web Servers** | nginx, caddy, httpd, apachectl |
-| **Networking** | curl, wget, rsync, ssh, ssh-keygen, ip, ss, ping, dig, nslookup, traceroute, tracert, netstat, ifconfig, route, hostname, nc, socat, nmap, tcpdump, wireshark |
-| **Security** | openssl, certbot, snyk, trivy, sonar-scanner, gpg, age, sops, cosign, syft, grype |
+| **Networking** | curl, wget, rsync, ssh, ssh-keygen, ip, ss, ping, dig, nslookup, traceroute, tracert, netstat, ifconfig, route, hostname, nc, socat, nmap, tcpdump, wireshark, cloudflared |
+| **Security** | openssl, certbot, snyk, trivy, sonar-scanner, gpg, age, sops, cosign, syft, grype, doppler, infisical |
 | **System & Monitoring** | systemctl, journalctl, systemd-analyze, systemd, pm2, tmux, screen, htop, btop, top, ps, linux, crontab, kill, killall, df, du, free, lsof, mount, umount, env, watch, dmesg, strace, nohup, at, cron, hostname, prometheus, grafana-cli |
 | **Linux Coreutils** | ls, cp, mv, rm, cat, find, tar, chmod, chown, cd, sudo, scp, unzip, zip, ufw, iptables, nft, mkdir, touch, echo, head, tail, wc, sort, uniq, cut, diff, patch, ln, xargs, tee, which, whoami, id |
 | **Build Tools** | make, makefile, cmake, bazel, just, gradle |

@@ -1,6 +1,6 @@
 {
   "name": "argocd",
-  "description": "Declarative GitOps continuous delivery for Kubernetes",
+  "description": "Argo CD CLI for declarative GitOps continuous delivery on Kubernetes",
   "category": "containers",
   "platforms": [
     "linux",
@@ -15,95 +15,204 @@
   ],
   "subcommands": [
     {
-      "name": "app create",
-      "description": "Create an application",
-      "examples": [
-        "argocd app create myapp --repo https://github.com/org/repo --path k8s --dest-server https://kubernetes.default.svc"
-      ]
-    },
-    {
-      "name": "app get",
-      "description": "Get application details",
-      "examples": [
-        "argocd app get myapp"
-      ]
-    },
-    {
-      "name": "app sync",
-      "description": "Sync application",
-      "examples": [
-        "argocd app sync myapp"
-      ]
-    },
-    {
-      "name": "app list",
-      "description": "List applications",
-      "examples": [
-        "argocd app list"
-      ]
-    },
-    {
-      "name": "app delete",
-      "description": "Delete application",
-      "examples": [
-        "argocd app delete myapp"
-      ]
-    },
-    {
-      "name": "app diff",
-      "description": "Show diff against live state",
-      "examples": [
-        "argocd app diff myapp"
-      ]
-    },
-    {
       "name": "login",
-      "description": "Login to ArgoCD server",
+      "description": "Login to Argo CD server",
       "examples": [
-        "argocd login argocd.example.com"
+        "argocd login argocd.example.com",
+        "argocd login argocd.example.com --username admin --password secret",
+        "argocd login argocd.example.com --sso",
+        "argocd login argocd.example.com --insecure"
       ]
     },
     {
-      "name": "repo add",
-      "description": "Add a Git repository",
+      "name": "app",
+      "description": "Manage applications",
       "examples": [
-        "argocd repo add https://github.com/org/repo"
+        "argocd app list",
+        "argocd app create my-app --repo https://github.com/org/repo.git --path k8s --dest-server https://kubernetes.default.svc --dest-namespace default",
+        "argocd app get my-app",
+        "argocd app sync my-app",
+        "argocd app sync my-app --prune",
+        "argocd app diff my-app",
+        "argocd app history my-app",
+        "argocd app rollback my-app 1",
+        "argocd app set my-app --values values-prod.yaml",
+        "argocd app wait my-app",
+        "argocd app delete my-app",
+        "argocd app logs my-app",
+        "argocd app manifests my-app",
+        "argocd app terminate-op my-app",
+        "argocd app resources my-app"
       ]
     },
     {
-      "name": "cluster add",
-      "description": "Add a cluster",
+      "name": "proj",
+      "description": "Manage projects",
       "examples": [
-        "argocd cluster add my-cluster"
+        "argocd proj list",
+        "argocd proj create my-project",
+        "argocd proj get my-project",
+        "argocd proj add-source my-project https://github.com/org/repo.git",
+        "argocd proj add-destination my-project https://kubernetes.default.svc default",
+        "argocd proj delete my-project"
+      ]
+    },
+    {
+      "name": "repo",
+      "description": "Manage repository connections",
+      "examples": [
+        "argocd repo add https://github.com/org/repo.git",
+        "argocd repo add https://github.com/org/repo.git --ssh-private-key-path ~/.ssh/id_rsa",
+        "argocd repo list",
+        "argocd repo rm https://github.com/org/repo.git"
+      ]
+    },
+    {
+      "name": "cluster",
+      "description": "Manage cluster connections",
+      "examples": [
+        "argocd cluster add my-context",
+        "argocd cluster list",
+        "argocd cluster get https://kubernetes.default.svc",
+        "argocd cluster rm https://1.2.3.4"
+      ]
+    },
+    {
+      "name": "account",
+      "description": "Manage accounts",
+      "examples": [
+        "argocd account list",
+        "argocd account get --account admin",
+        "argocd account update-password",
+        "argocd account generate-token --account my-account",
+        "argocd account can-i sync applications '*'"
+      ]
+    },
+    {
+      "name": "cert",
+      "description": "Manage repository certificates",
+      "examples": [
+        "argocd cert add-tls example.com --from server.crt",
+        "argocd cert list",
+        "argocd cert rm example.com"
+      ]
+    },
+    {
+      "name": "gpg",
+      "description": "Manage GnuPG keys",
+      "examples": [
+        "argocd gpg add --from pubkey.gpg",
+        "argocd gpg list",
+        "argocd gpg rm KEYID"
+      ]
+    },
+    {
+      "name": "repocreds",
+      "description": "Manage repository credentials",
+      "examples": [
+        "argocd repocreds add https://github.com/org --username user --password token",
+        "argocd repocreds list"
+      ]
+    },
+    {
+      "name": "appset",
+      "description": "Manage ApplicationSets",
+      "examples": [
+        "argocd appset list",
+        "argocd appset create appset.yaml",
+        "argocd appset get my-appset",
+        "argocd appset delete my-appset"
+      ]
+    },
+    {
+      "name": "admin",
+      "description": "Admin tools",
+      "examples": [
+        "argocd admin cluster kubeconfig",
+        "argocd admin dashboard",
+        "argocd admin settings validate"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Logout",
+      "examples": [
+        "argocd logout argocd.example.com"
+      ]
+    },
+    {
+      "name": "context",
+      "description": "Manage CLI contexts",
+      "examples": [
+        "argocd context",
+        "argocd context argocd.example.com"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show version",
+      "examples": [
+        "argocd version",
+        "argocd version --client"
       ]
     }
   ],
   "globalOptions": [
     {
       "name": "--server",
-      "description": "ArgoCD server address",
+      "description": "Argo CD server address",
+      "type": "string"
+    },
+    {
+      "name": "--auth-token",
+      "description": "Auth token",
       "type": "string"
     },
     {
       "name": "--grpc-web",
-      "description": "Use gRPC-web protocol"
+      "description": "Use gRPC-web"
     },
     {
       "name": "--insecure",
-      "description": "Skip TLS verification"
+      "description": "Skip TLS verify"
+    },
+    {
+      "name": "--plaintext",
+      "description": "Use plaintext connection"
+    },
+    {
+      "name": "--port-forward",
+      "description": "Port-forward to ArgoCD"
+    },
+    {
+      "name": "--port-forward-namespace",
+      "description": "Namespace for port-forward",
+      "type": "string"
+    },
+    {
+      "name": "--header",
+      "description": "Additional headers",
+      "type": "string"
     }
   ],
   "examples": [
     "argocd login argocd.example.com",
     "argocd app list",
-    "argocd app sync myapp",
-    "argocd app get myapp",
-    "argocd app create myapp --repo url --path k8s --dest-server svc"
+    "argocd app create my-app --repo https://github.com/org/repo.git --path deploy --dest-server https://kubernetes.default.svc",
+    "argocd app sync my-app",
+    "argocd app get my-app",
+    "argocd repo add https://github.com/org/repo.git",
+    "argocd cluster add my-context",
+    "argocd account update-password",
+    "argocd proj list",
+    "argocd appset list",
+    "argocd version"
   ],
   "relatedCommands": [
     "kubectl",
     "helm",
+    "flux",
     "kustomize",
-    "flux"
+    "git"
   ]
 }

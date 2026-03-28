@@ -1,7 +1,7 @@
 {
   "name": "minikube",
-  "description": "Local Kubernetes engine",
-  "category": "Containers / Kubernetes",
+  "description": "minikube — local Kubernetes cluster for development",
+  "category": "containers",
   "platforms": [
     "linux",
     "macos",
@@ -10,51 +10,255 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
       "name": "start",
-      "description": "Starts a local Kubernetes cluster"
+      "description": "Start a local cluster",
+      "examples": [
+        "minikube start",
+        "minikube start --driver=docker",
+        "minikube start --cpus=4 --memory=8192",
+        "minikube start --kubernetes-version=v1.27.0",
+        "minikube start --nodes=3",
+        "minikube start --container-runtime=containerd",
+        "minikube start -p my-cluster"
+      ]
     },
     {
       "name": "stop",
-      "description": "Stops a running local Kubernetes cluster"
+      "description": "Stop the cluster",
+      "examples": [
+        "minikube stop",
+        "minikube stop -p my-cluster"
+      ]
+    },
+    {
+      "name": "delete",
+      "description": "Delete the cluster",
+      "examples": [
+        "minikube delete",
+        "minikube delete --all",
+        "minikube delete -p my-cluster",
+        "minikube delete --purge"
+      ]
     },
     {
       "name": "status",
-      "description": "Gets the status of a local Kubernetes cluster"
+      "description": "Show cluster status",
+      "examples": [
+        "minikube status",
+        "minikube status -p my-cluster"
+      ]
     },
     {
       "name": "dashboard",
-      "description": "Access the Kubernetes dashboard running within the minikube cluster"
-    }
-  ],
-  "globalOptions": [],
-  "examples": [
-    {
-      "command": "minikube start",
-      "description": "Start a cluster"
+      "description": "Open Kubernetes dashboard",
+      "examples": [
+        "minikube dashboard",
+        "minikube dashboard --url"
+      ]
     },
     {
-      "command": "minikube status",
-      "description": "Check cluster status"
+      "name": "service",
+      "description": "Open a service URL",
+      "examples": [
+        "minikube service my-service",
+        "minikube service my-service --url",
+        "minikube service list"
+      ]
+    },
+    {
+      "name": "tunnel",
+      "description": "Create network tunnel for LoadBalancers",
+      "examples": [
+        "minikube tunnel",
+        "minikube tunnel --cleanup"
+      ]
+    },
+    {
+      "name": "addons",
+      "description": "Manage addons",
+      "examples": [
+        "minikube addons list",
+        "minikube addons enable ingress",
+        "minikube addons enable metrics-server",
+        "minikube addons enable dashboard",
+        "minikube addons disable ingress"
+      ]
+    },
+    {
+      "name": "ssh",
+      "description": "SSH into the node",
+      "examples": [
+        "minikube ssh",
+        "minikube ssh -- ls /"
+      ]
+    },
+    {
+      "name": "kubectl",
+      "description": "Run kubectl",
+      "examples": [
+        "minikube kubectl -- get pods",
+        "minikube kubectl -- apply -f manifest.yaml"
+      ]
+    },
+    {
+      "name": "docker-env",
+      "description": "Configure Docker env for minikube",
+      "examples": [
+        "eval $(minikube docker-env)",
+        "minikube docker-env"
+      ]
+    },
+    {
+      "name": "image",
+      "description": "Manage images",
+      "examples": [
+        "minikube image load my-image:latest",
+        "minikube image build -t my-image .",
+        "minikube image ls"
+      ]
+    },
+    {
+      "name": "cp",
+      "description": "Copy files into minikube",
+      "examples": [
+        "minikube cp file.txt /home/docker/file.txt"
+      ]
+    },
+    {
+      "name": "mount",
+      "description": "Mount host directory",
+      "examples": [
+        "minikube mount /host/path:/vm/path"
+      ]
+    },
+    {
+      "name": "node",
+      "description": "Manage nodes",
+      "examples": [
+        "minikube node list",
+        "minikube node add",
+        "minikube node delete node-name"
+      ]
+    },
+    {
+      "name": "profile",
+      "description": "Manage profiles",
+      "examples": [
+        "minikube profile list",
+        "minikube profile my-cluster"
+      ]
+    },
+    {
+      "name": "config",
+      "description": "Manage config settings",
+      "examples": [
+        "minikube config set cpus 4",
+        "minikube config set memory 8192",
+        "minikube config view"
+      ]
+    },
+    {
+      "name": "logs",
+      "description": "View cluster logs",
+      "examples": [
+        "minikube logs",
+        "minikube logs --follow"
+      ]
+    },
+    {
+      "name": "ip",
+      "description": "Get cluster IP",
+      "examples": [
+        "minikube ip"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Print version",
+      "examples": [
+        "minikube version"
+      ]
+    },
+    {
+      "name": "update-check",
+      "description": "Check for updates",
+      "examples": [
+        "minikube update-check"
+      ]
     }
+  ],
+  "globalOptions": [
+    {
+      "name": "--driver",
+      "description": "Driver (docker, virtualbox, hyperv, qemu, ssh)",
+      "type": "string"
+    },
+    {
+      "name": "--cpus",
+      "description": "Number of CPUs",
+      "type": "number"
+    },
+    {
+      "name": "--memory",
+      "description": "Memory in MB",
+      "type": "number"
+    },
+    {
+      "name": "--disk-size",
+      "description": "Disk size",
+      "type": "string"
+    },
+    {
+      "name": "--kubernetes-version",
+      "description": "K8s version",
+      "type": "string"
+    },
+    {
+      "name": "--container-runtime",
+      "description": "Runtime (docker, containerd, cri-o)",
+      "type": "string"
+    },
+    {
+      "name": "--profile",
+      "short": "-p",
+      "description": "Profile name",
+      "type": "string"
+    },
+    {
+      "name": "--nodes",
+      "description": "Number of nodes",
+      "type": "number"
+    },
+    {
+      "name": "--addons",
+      "description": "Addons to enable",
+      "type": "string"
+    }
+  ],
+  "examples": [
+    "minikube start",
+    "minikube start --driver=docker --cpus=4 --memory=8192",
+    "minikube status",
+    "minikube dashboard",
+    "minikube service my-service --url",
+    "minikube tunnel",
+    "minikube addons enable ingress",
+    "minikube image load my-image:latest",
+    "eval $(minikube docker-env)",
+    "minikube ssh",
+    "minikube stop",
+    "minikube delete --all"
   ],
   "relatedCommands": [
     "kubectl",
+    "k3d",
+    "kind",
     "docker",
     "helm"
-  ],
-  "contextEngine": {
-    "detectors": [
-      {
-        "name": "status",
-        "description": "Minikube Status",
-        "command": "minikube status 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 30
-      }
-    ]
-  }
+  ]
 }

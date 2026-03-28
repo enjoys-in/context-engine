@@ -18,11 +18,11 @@ function assert(condition, msg) {
 console.log("\n@enjoys/context-engine tests\n");
 
 // count
-assert(engine.count() === 395, `count() === 395 (got ${engine.count()})`);
+assert(engine.count() === 447, `count() === 447 (got ${engine.count()})`);
 
 // listCommandNames
 const names = engine.listCommandNames();
-assert(Array.isArray(names) && names.length === 395, "listCommandNames() returns 395 names");
+assert(Array.isArray(names) && names.length === 447, "listCommandNames() returns 447 names");
 assert(names.includes("git"), "includes git");
 assert(names.includes("docker"), "includes docker");
 assert(names.includes("kubectl"), "includes kubectl");
@@ -73,7 +73,7 @@ assert(p.endsWith("git.json"), "resolveCommandPath ends with git.json");
 
 // clearCache
 engine.clearCache();
-assert(engine.count() === 395, "count() still 395 after clearCache");
+assert(engine.count() === 447, "count() still 447 after clearCache");
 
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

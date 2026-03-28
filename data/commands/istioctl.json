@@ -1,6 +1,6 @@
 {
   "name": "istioctl",
-  "description": "Istio service mesh CLI",
+  "description": "Istio CLI for installing and debugging the Istio service mesh",
   "category": "containers",
   "platforms": [
     "linux",
@@ -18,48 +18,33 @@
       "name": "install",
       "description": "Install Istio",
       "examples": [
-        "istioctl install --set profile=demo"
+        "istioctl install",
+        "istioctl install --set profile=demo",
+        "istioctl install --set profile=minimal",
+        "istioctl install -f custom-operator.yaml"
       ]
     },
     {
-      "name": "analyze",
-      "description": "Analyze Istio configuration",
+      "name": "manifest",
+      "description": "Generate or diff manifests",
       "examples": [
-        "istioctl analyze"
+        "istioctl manifest generate",
+        "istioctl manifest generate --set profile=demo > istio.yaml",
+        "istioctl manifest diff a.yaml b.yaml"
       ]
     },
     {
-      "name": "proxy-status",
-      "description": "Show proxy sync status",
+      "name": "profile",
+      "description": "Manage installation profiles",
       "examples": [
-        "istioctl proxy-status"
-      ]
-    },
-    {
-      "name": "proxy-config",
-      "description": "Show proxy configuration",
-      "examples": [
-        "istioctl proxy-config clusters myapp-pod"
-      ]
-    },
-    {
-      "name": "dashboard",
-      "description": "Open web dashboards",
-      "examples": [
-        "istioctl dashboard kiali",
-        "istioctl dashboard grafana"
-      ]
-    },
-    {
-      "name": "kube-inject",
-      "description": "Inject Envoy sidecar",
-      "examples": [
-        "istioctl kube-inject -f deployment.yaml | kubectl apply -f -"
+        "istioctl profile list",
+        "istioctl profile dump demo",
+        "istioctl profile diff demo default"
       ]
     },
     {
       "name": "verify-install",
-      "description": "Verify Istio installation",
+      "description": "Verify installation",
       "examples": [
         "istioctl verify-install"
       ]
@@ -68,7 +53,111 @@
       "name": "uninstall",
       "description": "Uninstall Istio",
       "examples": [
-        "istioctl uninstall --purge"
+        "istioctl uninstall --purge",
+        "istioctl uninstall --revision canary"
+      ]
+    },
+    {
+      "name": "upgrade",
+      "description": "Upgrade Istio",
+      "examples": [
+        "istioctl upgrade"
+      ]
+    },
+    {
+      "name": "analyze",
+      "description": "Analyze mesh config for issues",
+      "examples": [
+        "istioctl analyze",
+        "istioctl analyze -n my-ns",
+        "istioctl analyze -A",
+        "istioctl analyze my-manifest.yaml"
+      ]
+    },
+    {
+      "name": "proxy-config",
+      "description": "Inspect Envoy proxy config",
+      "examples": [
+        "istioctl proxy-config cluster my-pod",
+        "istioctl proxy-config route my-pod",
+        "istioctl proxy-config listener my-pod",
+        "istioctl proxy-config endpoint my-pod",
+        "istioctl proxy-config bootstrap my-pod",
+        "istioctl proxy-config secret my-pod",
+        "istioctl proxy-config log my-pod --level debug"
+      ]
+    },
+    {
+      "name": "proxy-status",
+      "description": "Show proxy sync status",
+      "examples": [
+        "istioctl proxy-status",
+        "istioctl proxy-status my-pod"
+      ]
+    },
+    {
+      "name": "dashboard",
+      "description": "Open web dashboards",
+      "examples": [
+        "istioctl dashboard kiali",
+        "istioctl dashboard grafana",
+        "istioctl dashboard jaeger",
+        "istioctl dashboard prometheus",
+        "istioctl dashboard envoy my-pod",
+        "istioctl dashboard controlz istiod-xxx"
+      ]
+    },
+    {
+      "name": "kube-inject",
+      "description": "Inject sidecar into manifests",
+      "examples": [
+        "istioctl kube-inject -f deployment.yaml | kubectl apply -f -",
+        "kubectl get deploy my-deploy -o yaml | istioctl kube-inject -f - | kubectl apply -f -"
+      ]
+    },
+    {
+      "name": "experimental",
+      "description": "Experimental commands",
+      "examples": [
+        "istioctl experimental waypoint generate",
+        "istioctl experimental waypoint apply"
+      ]
+    },
+    {
+      "name": "tag",
+      "description": "Manage revision tags",
+      "examples": [
+        "istioctl tag set prod --revision 1-17",
+        "istioctl tag list"
+      ]
+    },
+    {
+      "name": "remote-clusters",
+      "description": "List remote clusters",
+      "examples": [
+        "istioctl remote-clusters"
+      ]
+    },
+    {
+      "name": "bug-report",
+      "description": "Generate debug report",
+      "examples": [
+        "istioctl bug-report"
+      ]
+    },
+    {
+      "name": "admin",
+      "description": "Admin utilities",
+      "examples": [
+        "istioctl admin log --level debug"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show version",
+      "examples": [
+        "istioctl version",
+        "istioctl version --remote"
       ]
     }
   ],
@@ -79,27 +168,44 @@
       "type": "string"
     },
     {
-      "name": "-n",
+      "name": "--kubeconfig",
+      "description": "Kubeconfig path",
+      "type": "string"
+    },
+    {
+      "name": "--namespace",
+      "short": "-n",
       "description": "Namespace",
       "type": "string"
     },
     {
       "name": "--istioNamespace",
+      "short": "-i",
       "description": "Istio system namespace",
+      "type": "string"
+    },
+    {
+      "name": "--revision",
+      "description": "Istio revision",
       "type": "string"
     }
   ],
   "examples": [
     "istioctl install --set profile=demo",
     "istioctl analyze",
+    "istioctl proxy-config route my-pod",
     "istioctl proxy-status",
     "istioctl dashboard kiali",
-    "istioctl verify-install"
+    "istioctl kube-inject -f deployment.yaml | kubectl apply -f -",
+    "istioctl manifest generate --set profile=demo",
+    "istioctl profile list",
+    "istioctl verify-install",
+    "istioctl version"
   ],
   "relatedCommands": [
     "kubectl",
     "helm",
-    "argocd",
-    "linkerd"
+    "linkerd",
+    "envoy"
   ]
 }

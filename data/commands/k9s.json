@@ -1,7 +1,7 @@
 {
   "name": "k9s",
-  "description": "Kubernetes CLI To Manage Your Clusters In Style",
-  "category": "Containers / Kubernetes",
+  "description": "K9s — terminal UI for managing Kubernetes clusters",
+  "category": "containers",
   "platforms": [
     "linux",
     "macos",
@@ -10,53 +10,160 @@
   "shells": [
     "bash",
     "zsh",
+    "fish",
     "powershell"
   ],
   "subcommands": [
     {
+      "name": "(default)",
+      "description": "Launch interactive cluster UI",
+      "examples": [
+        "k9s",
+        "k9s -n my-namespace",
+        "k9s --context my-context"
+      ]
+    },
+    {
+      "name": "-c / --command",
+      "description": "Jump to specific resource view",
+      "examples": [
+        "k9s -c pod",
+        "k9s -c deploy",
+        "k9s -c svc",
+        "k9s -c ns",
+        "k9s -c node",
+        "k9s -c sts",
+        "k9s -c job",
+        "k9s -c cj",
+        "k9s -c cm",
+        "k9s -c secret",
+        "k9s -c ingress",
+        "k9s -c pv"
+      ]
+    },
+    {
+      "name": "--readonly",
+      "description": "Launch in read-only mode",
+      "examples": [
+        "k9s --readonly"
+      ]
+    },
+    {
+      "name": "--all-namespaces",
+      "description": "Launch watching all namespaces",
+      "examples": [
+        "k9s -A"
+      ]
+    },
+    {
+      "name": "--headless",
+      "description": "Run without header/footer",
+      "examples": [
+        "k9s --headless"
+      ]
+    },
+    {
+      "name": "--write",
+      "description": "Log output to file",
+      "examples": [
+        "k9s --write /tmp/k9s.log"
+      ]
+    },
+    {
       "name": "info",
-      "description": "Print configuration info"
+      "description": "Print cluster info",
+      "examples": [
+        "k9s info"
+      ]
     },
     {
       "name": "version",
-      "description": "Print version info"
+      "description": "Print version",
+      "examples": [
+        "k9s version"
+      ]
+    },
+    {
+      "name": "help",
+      "description": "Print help",
+      "examples": [
+        "k9s help"
+      ]
     }
   ],
   "globalOptions": [
     {
-      "name": "-n",
-      "description": "Namespace",
-      "takesValue": true
+      "name": "--namespace",
+      "short": "-n",
+      "description": "Target namespace",
+      "type": "string"
     },
     {
-      "name": "-c",
-      "description": "Context",
-      "takesValue": true
+      "name": "--context",
+      "description": "Kubernetes context",
+      "type": "string"
+    },
+    {
+      "name": "--kubeconfig",
+      "description": "Kubeconfig path",
+      "type": "string"
+    },
+    {
+      "name": "--command",
+      "short": "-c",
+      "description": "Resource view to open",
+      "type": "string"
+    },
+    {
+      "name": "--readonly",
+      "description": "Read-only mode"
+    },
+    {
+      "name": "--all-namespaces",
+      "short": "-A",
+      "description": "All namespaces"
+    },
+    {
+      "name": "--headless",
+      "description": "No header/footer"
+    },
+    {
+      "name": "--write",
+      "description": "Log file path",
+      "type": "string"
+    },
+    {
+      "name": "--crumbsless",
+      "description": "Hide breadcrumbs"
+    },
+    {
+      "name": "--logoless",
+      "description": "Hide logo"
+    },
+    {
+      "name": "--refresh",
+      "short": "-r",
+      "description": "Refresh rate",
+      "type": "number"
     }
   ],
   "examples": [
-    {
-      "command": "k9s",
-      "description": "Start K9s dashboard"
-    },
-    {
-      "command": "k9s -n default",
-      "description": "Start K9s in default namespace"
-    }
+    "k9s",
+    "k9s -n production",
+    "k9s --context staging",
+    "k9s -c pod",
+    "k9s -c deploy",
+    "k9s -A",
+    "k9s --readonly",
+    "k9s -c svc -n default",
+    "k9s info",
+    "k9s version"
   ],
   "relatedCommands": [
     "kubectl",
+    "kubectx",
+    "kubens",
+    "stern",
     "helm"
-  ],
-  "contextEngine": {
-    "detectors": [
-      {
-        "name": "clusters",
-        "description": "Available Clusters",
-        "command": "kubectl config get-contexts -o name 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 300
-      }
-    ]
-  }
+  ]
 }

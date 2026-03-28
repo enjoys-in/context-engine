@@ -1,38 +1,237 @@
 {
   "name": "doctl",
-  "description": "DigitalOcean command-line interface for managing infrastructure",
-  "category": "Cloud CLIs",
-  "platforms": ["linux", "macos", "windows"],
-  "shells": ["bash", "zsh", "powershell", "fish"],
+  "description": "DigitalOcean CLI for managing infrastructure and services",
+  "category": "cloud",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell"
+  ],
   "subcommands": [
     {
       "name": "compute",
-      "description": "Manage compute resources (droplets, snapshots, images)",
+      "description": "Manage compute resources (droplets, volumes, etc.)",
       "subcommands": [
         {
           "name": "droplet",
-          "description": "Manage droplets",
+          "description": "Manage Droplets",
           "subcommands": [
-            { "name": "create", "description": "Create a droplet", "args": [{ "name": "name", "description": "Droplet name", "required": true }], "options": [{ "name": "--size", "description": "Droplet size slug", "takesValue": true }, { "name": "--image", "description": "Image slug or ID", "takesValue": true }, { "name": "--region", "description": "Region slug", "takesValue": true }, { "name": "--ssh-keys", "description": "SSH key IDs or fingerprints", "takesValue": true }, { "name": "--tag-name", "description": "Tag to apply", "takesValue": true }, { "name": "--user-data", "description": "User data script", "takesValue": true }, { "name": "--vpc-uuid", "description": "VPC UUID", "takesValue": true }] },
-            { "name": "list", "description": "List droplets", "options": [{ "name": "--format", "description": "Output columns", "takesValue": true }, { "name": "--tag-name", "description": "Filter by tag", "takesValue": true }, { "name": "--region", "description": "Filter by region", "takesValue": true }] },
-            { "name": "get", "description": "Get droplet details", "args": [{ "name": "id", "description": "Droplet ID", "required": true }] },
-            { "name": "delete", "description": "Delete a droplet", "args": [{ "name": "id", "description": "Droplet ID", "required": true }], "options": [{ "name": "--force", "shorthand": "-f", "description": "Delete without confirmation" }] },
-            { "name": "actions", "description": "List actions for a droplet", "args": [{ "name": "id", "description": "Droplet ID", "required": true }] }
+            {
+              "name": "create",
+              "description": "Create a Droplet",
+              "examples": [
+                "doctl compute droplet create my-droplet --image ubuntu-22-04-x64 --size s-1vcpu-1gb --region nyc1",
+                "doctl compute droplet create web --image ubuntu-22-04-x64 --size s-2vcpu-4gb --region sfo3 --ssh-keys 12345 --user-data-file cloud-init.yaml"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List Droplets",
+              "examples": [
+                "doctl compute droplet list",
+                "doctl compute droplet list --format ID,Name,PublicIPv4"
+              ]
+            },
+            {
+              "name": "get",
+              "description": "Get Droplet details",
+              "examples": [
+                "doctl compute droplet get 12345"
+              ]
+            },
+            {
+              "name": "delete",
+              "description": "Delete Droplet",
+              "examples": [
+                "doctl compute droplet delete 12345 --force"
+              ]
+            },
+            {
+              "name": "actions",
+              "description": "Droplet actions",
+              "examples": [
+                "doctl compute droplet-action power-off 12345",
+                "doctl compute droplet-action power-on 12345",
+                "doctl compute droplet-action reboot 12345",
+                "doctl compute droplet-action snapshot 12345 --snapshot-name my-snap"
+              ]
+            }
           ]
-        },
-        {
-          "name": "ssh",
-          "description": "SSH into a droplet",
-          "args": [{ "name": "droplet", "description": "Droplet ID or name", "required": true }],
-          "options": [{ "name": "--ssh-user", "description": "SSH user", "takesValue": true }, { "name": "--ssh-key-path", "description": "Path to SSH key", "takesValue": true }]
         },
         {
           "name": "volume",
           "description": "Manage block storage volumes",
           "subcommands": [
-            { "name": "create", "description": "Create a volume", "args": [{ "name": "name", "description": "Volume name", "required": true }], "options": [{ "name": "--region", "description": "Region", "takesValue": true }, { "name": "--size", "description": "Size in GiB", "takesValue": true }] },
-            { "name": "list", "description": "List volumes" },
-            { "name": "delete", "description": "Delete a volume", "args": [{ "name": "id", "description": "Volume ID", "required": true }] }
+            {
+              "name": "create",
+              "description": "Create volume",
+              "examples": [
+                "doctl compute volume create my-vol --region nyc1 --size 100GiB"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List volumes",
+              "examples": [
+                "doctl compute volume list"
+              ]
+            },
+            {
+              "name": "delete",
+              "description": "Delete volume",
+              "examples": [
+                "doctl compute volume delete vol-id --force"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "load-balancer",
+          "description": "Manage load balancers",
+          "subcommands": [
+            {
+              "name": "create",
+              "description": "Create LB",
+              "examples": [
+                "doctl compute load-balancer create --name my-lb --region nyc1 --forwarding-rules entry_protocol:http,entry_port:80,target_protocol:http,target_port:8080 --droplet-ids 12345"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List LBs",
+              "examples": [
+                "doctl compute load-balancer list"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "firewall",
+          "description": "Manage firewalls",
+          "subcommands": [
+            {
+              "name": "create",
+              "description": "Create firewall",
+              "examples": [
+                "doctl compute firewall create --name web-fw --inbound-rules 'protocol:tcp,ports:80,address:0.0.0.0/0'"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List firewalls",
+              "examples": [
+                "doctl compute firewall list"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "domain",
+          "description": "Manage domains",
+          "subcommands": [
+            {
+              "name": "create",
+              "description": "Create domain",
+              "examples": [
+                "doctl compute domain create example.com"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List domains",
+              "examples": [
+                "doctl compute domain list"
+              ]
+            },
+            {
+              "name": "records",
+              "description": "Manage records",
+              "examples": [
+                "doctl compute domain records list example.com",
+                "doctl compute domain records create example.com --record-type A --record-name www --record-data 1.2.3.4"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ssh",
+          "description": "SSH into Droplet",
+          "examples": [
+            "doctl compute ssh my-droplet",
+            "doctl compute ssh 12345"
+          ]
+        },
+        {
+          "name": "image",
+          "description": "Manage images",
+          "subcommands": [
+            {
+              "name": "list",
+              "description": "List images",
+              "examples": [
+                "doctl compute image list",
+                "doctl compute image list --public"
+              ]
+            },
+            {
+              "name": "list-distribution",
+              "description": "List distro images",
+              "examples": [
+                "doctl compute image list-distribution"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "region",
+          "description": "List regions",
+          "subcommands": [
+            {
+              "name": "list",
+              "description": "List",
+              "examples": [
+                "doctl compute region list"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "List sizes",
+          "subcommands": [
+            {
+              "name": "list",
+              "description": "List",
+              "examples": [
+                "doctl compute size list"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "snapshot",
+          "description": "Manage snapshots",
+          "subcommands": [
+            {
+              "name": "list",
+              "description": "List snapshots",
+              "examples": [
+                "doctl compute snapshot list"
+              ]
+            },
+            {
+              "name": "delete",
+              "description": "Delete snapshot",
+              "examples": [
+                "doctl compute snapshot delete snap-id"
+              ]
+            }
           ]
         }
       ]
@@ -41,116 +240,271 @@
       "name": "kubernetes",
       "description": "Manage Kubernetes clusters",
       "subcommands": [
-        { "name": "cluster", "description": "Manage clusters", "subcommands": [
-          { "name": "create", "description": "Create cluster", "args": [{ "name": "name", "description": "Cluster name", "required": true }], "options": [{ "name": "--region", "description": "Region", "takesValue": true }, { "name": "--version", "description": "K8s version", "takesValue": true }, { "name": "--count", "description": "Node count", "takesValue": true }, { "name": "--size", "description": "Node size", "takesValue": true }] },
-          { "name": "list", "description": "List clusters" },
-          { "name": "delete", "description": "Delete cluster", "args": [{ "name": "id", "description": "Cluster ID", "required": true }] },
-          { "name": "kubeconfig", "description": "Manage kubeconfig", "subcommands": [{ "name": "save", "description": "Save kubeconfig", "args": [{ "name": "id", "description": "Cluster ID", "required": true }] }] }
-        ]}
+        {
+          "name": "cluster",
+          "description": "Cluster operations",
+          "subcommands": [
+            {
+              "name": "create",
+              "description": "Create cluster",
+              "examples": [
+                "doctl kubernetes cluster create my-cluster --region nyc1 --node-pool 'name=default;size=s-2vcpu-4gb;count=3'"
+              ]
+            },
+            {
+              "name": "list",
+              "description": "List clusters",
+              "examples": [
+                "doctl kubernetes cluster list"
+              ]
+            },
+            {
+              "name": "kubeconfig",
+              "description": "Get kubeconfig",
+              "examples": [
+                "doctl kubernetes cluster kubeconfig save my-cluster"
+              ]
+            },
+            {
+              "name": "delete",
+              "description": "Delete cluster",
+              "examples": [
+                "doctl kubernetes cluster delete my-cluster --force"
+              ]
+            },
+            {
+              "name": "node-pool",
+              "description": "Manage node pools",
+              "examples": [
+                "doctl kubernetes cluster node-pool list my-cluster",
+                "doctl kubernetes cluster node-pool create my-cluster --name gpu-pool --size g-2vcpu-8gb --count 2"
+              ]
+            }
+          ]
+        }
       ]
     },
     {
       "name": "databases",
       "description": "Manage managed databases",
       "subcommands": [
-        { "name": "create", "description": "Create a database cluster", "args": [{ "name": "name", "description": "Database name", "required": true }], "options": [{ "name": "--engine", "description": "Database engine (pg, mysql, redis, mongodb)", "takesValue": true }, { "name": "--region", "description": "Region", "takesValue": true }, { "name": "--size", "description": "Node size", "takesValue": true }] },
-        { "name": "list", "description": "List database clusters" },
-        { "name": "delete", "description": "Delete a database cluster", "args": [{ "name": "id", "description": "Database ID", "required": true }] }
+        {
+          "name": "create",
+          "description": "Create database cluster",
+          "examples": [
+            "doctl databases create my-db --engine pg --region nyc1 --size db-s-1vcpu-1gb --num-nodes 1"
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List database clusters",
+          "examples": [
+            "doctl databases list"
+          ]
+        },
+        {
+          "name": "connection",
+          "description": "Get connection details",
+          "examples": [
+            "doctl databases connection my-db"
+          ]
+        },
+        {
+          "name": "delete",
+          "description": "Delete database",
+          "examples": [
+            "doctl databases delete my-db --force"
+          ]
+        }
       ]
     },
     {
       "name": "apps",
       "description": "Manage App Platform apps",
       "subcommands": [
-        { "name": "create", "description": "Create an app", "options": [{ "name": "--spec", "description": "Path to app spec file", "takesValue": true }] },
-        { "name": "list", "description": "List apps" },
-        { "name": "get", "description": "Get app details", "args": [{ "name": "id", "description": "App ID", "required": true }] },
-        { "name": "delete", "description": "Delete an app", "args": [{ "name": "id", "description": "App ID", "required": true }] },
-        { "name": "logs", "description": "Get app logs", "args": [{ "name": "id", "description": "App ID", "required": true }] }
+        {
+          "name": "create",
+          "description": "Create app",
+          "examples": [
+            "doctl apps create --spec app.yaml"
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List apps",
+          "examples": [
+            "doctl apps list"
+          ]
+        },
+        {
+          "name": "get",
+          "description": "Get app",
+          "examples": [
+            "doctl apps get app-id"
+          ]
+        },
+        {
+          "name": "update",
+          "description": "Update app",
+          "examples": [
+            "doctl apps update app-id --spec app.yaml"
+          ]
+        },
+        {
+          "name": "create-deployment",
+          "description": "Deploy",
+          "examples": [
+            "doctl apps create-deployment app-id"
+          ]
+        },
+        {
+          "name": "logs",
+          "description": "View logs",
+          "examples": [
+            "doctl apps logs app-id --follow"
+          ]
+        },
+        {
+          "name": "delete",
+          "description": "Delete app",
+          "examples": [
+            "doctl apps delete app-id --force"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "registry",
+      "description": "Manage container registry",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create registry",
+          "examples": [
+            "doctl registry create my-registry"
+          ]
+        },
+        {
+          "name": "login",
+          "description": "Docker login",
+          "examples": [
+            "doctl registry login"
+          ]
+        },
+        {
+          "name": "repository",
+          "description": "Manage repos",
+          "examples": [
+            "doctl registry repository list-v2"
+          ]
+        },
+        {
+          "name": "garbage-collection",
+          "description": "Run GC",
+          "examples": [
+            "doctl registry garbage-collection start --include-untagged-manifests"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "serverless",
+      "description": "Manage serverless functions",
+      "subcommands": [
+        {
+          "name": "deploy",
+          "description": "Deploy",
+          "examples": [
+            "doctl serverless deploy ."
+          ]
+        },
+        {
+          "name": "watch",
+          "description": "Watch for changes",
+          "examples": [
+            "doctl serverless watch ."
+          ]
+        },
+        {
+          "name": "functions",
+          "description": "Manage functions",
+          "examples": [
+            "doctl serverless functions list",
+            "doctl serverless functions invoke my-fn"
+          ]
+        }
       ]
     },
     {
       "name": "auth",
       "description": "Manage authentication",
-      "subcommands": [
-        { "name": "init", "description": "Initialize authentication" },
-        { "name": "list", "description": "List authenticated contexts" },
-        { "name": "switch", "description": "Switch between contexts", "args": [{ "name": "name", "description": "Context name", "required": true }] }
+      "examples": [
+        "doctl auth init",
+        "doctl auth switch --context my-ctx",
+        "doctl auth list"
       ]
     },
     {
       "name": "account",
-      "description": "Display account information",
-      "subcommands": [
-        { "name": "get", "description": "Get account details" },
-        { "name": "ratelimit", "description": "Show API rate limit" }
+      "description": "Account info",
+      "examples": [
+        "doctl account get"
       ]
     }
   ],
   "globalOptions": [
-    { "name": "--access-token", "shorthand": "-t", "description": "API access token", "takesValue": true },
-    { "name": "--context", "description": "Authentication context name", "takesValue": true },
-    { "name": "--output", "shorthand": "-o", "description": "Output format (json, text)", "takesValue": true },
-    { "name": "--trace", "description": "Enable trace output" },
-    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+    {
+      "name": "--access-token",
+      "short": "-t",
+      "description": "API token",
+      "type": "string"
+    },
+    {
+      "name": "--context",
+      "description": "Auth context",
+      "type": "string"
+    },
+    {
+      "name": "--output",
+      "short": "-o",
+      "description": "Output format (json, text)",
+      "type": "string"
+    },
+    {
+      "name": "--no-header",
+      "description": "Omit table headers"
+    },
+    {
+      "name": "--format",
+      "description": "Columns to display",
+      "type": "string"
+    },
+    {
+      "name": "--trace",
+      "description": "Trace API calls"
+    }
   ],
   "examples": [
-    { "command": "doctl compute droplet create my-droplet --size s-1vcpu-1gb --image ubuntu-22-04-x64 --region nyc1", "description": "Create a basic droplet" },
-    { "command": "doctl compute droplet list --format ID,Name,PublicIPv4,Status", "description": "List droplets with specific columns" },
-    { "command": "doctl kubernetes cluster kubeconfig save my-cluster", "description": "Save kubeconfig for a cluster" },
-    { "command": "doctl apps create --spec .do/app.yaml", "description": "Create app from spec file" }
+    "doctl compute droplet create my-droplet --image ubuntu-22-04-x64 --size s-1vcpu-1gb --region nyc1",
+    "doctl compute droplet list",
+    "doctl compute ssh my-droplet",
+    "doctl kubernetes cluster create my-k8s --region nyc1",
+    "doctl kubernetes cluster kubeconfig save my-k8s",
+    "doctl apps create --spec app.yaml",
+    "doctl databases create my-db --engine pg --region nyc1",
+    "doctl registry login",
+    "doctl compute domain records list example.com",
+    "doctl auth init",
+    "doctl compute firewall create --name my-fw",
+    "doctl account get",
+    "doctl compute image list --public",
+    "doctl serverless deploy .",
+    "doctl apps logs app-id --follow"
   ],
-  "relatedCommands": ["aws", "gcloud", "az"],
-  "contextEngine": {
-    "detectors": [
-      {
-        "name": "account",
-        "description": "Current authenticated account",
-        "command": "doctl account get --format Email,Status --no-header 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 300,
-        "requiresCmd": "doctl"
-      },
-      {
-        "name": "droplets",
-        "description": "List running droplets",
-        "command": "doctl compute droplet list --format ID,Name,Region,Status --no-header 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 60,
-        "requiresCmd": "doctl"
-      },
-      {
-        "name": "regions",
-        "description": "Available regions",
-        "command": "doctl compute region list --format Slug,Name --no-header 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 3600,
-        "requiresCmd": "doctl"
-      },
-      {
-        "name": "databases",
-        "description": "List managed databases",
-        "command": "doctl databases list --format ID,Name,Engine,Region,Status --no-header 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 120,
-        "requiresCmd": "doctl"
-      },
-      {
-        "name": "apps",
-        "description": "List App Platform apps",
-        "command": "doctl apps list --format ID,Spec.Name --no-header 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 120,
-        "requiresCmd": "doctl"
-      },
-      {
-        "name": "kubernetes_clusters",
-        "description": "List Kubernetes clusters",
-        "command": "doctl kubernetes cluster list --format ID,Name,Region,Status --no-header 2>/dev/null",
-        "parser": "lines",
-        "cacheFor": 120,
-        "requiresCmd": "doctl"
-      }
-    ]
-  }
+  "relatedCommands": [
+    "kubectl",
+    "docker",
+    "ssh",
+    "terraform"
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "skopeo",
-  "description": "Container image management tool — copy, inspect, sign images",
+  "description": "skopeo — perform operations on container images and registries",
   "category": "containers",
   "platforms": [
     "linux",
@@ -14,37 +14,87 @@
   "subcommands": [
     {
       "name": "copy",
-      "description": "Copy images between registries",
+      "description": "Copy images between registries/transports",
       "examples": [
-        "skopeo copy docker://src docker://dest"
+        "skopeo copy docker://docker.io/library/nginx:latest docker://my-registry.com/nginx:latest",
+        "skopeo copy docker://registry.example.com/img:v1 dir:/tmp/img",
+        "skopeo copy oci:./my-image:latest docker://registry.example.com/my-image:latest",
+        "skopeo copy docker://src oci-archive:./archive.tar",
+        "skopeo copy --all docker://src docker://dst"
       ]
     },
     {
       "name": "inspect",
       "description": "Inspect image metadata",
       "examples": [
-        "skopeo inspect docker://docker.io/library/nginx"
-      ]
-    },
-    {
-      "name": "list-tags",
-      "description": "List tags for a repository",
-      "examples": [
-        "skopeo list-tags docker://docker.io/library/nginx"
+        "skopeo inspect docker://docker.io/library/alpine:latest",
+        "skopeo inspect --raw docker://docker.io/library/nginx:latest",
+        "skopeo inspect --config docker://docker.io/library/node:18",
+        "skopeo inspect dir:/tmp/img",
+        "skopeo inspect oci:./my-image"
       ]
     },
     {
       "name": "delete",
-      "description": "Delete an image from a registry",
+      "description": "Delete image from registry",
       "examples": [
-        "skopeo delete docker://registry/image:tag"
+        "skopeo delete docker://registry.example.com/my-image:old",
+        "skopeo delete docker://my-registry.com/temp:latest"
+      ]
+    },
+    {
+      "name": "list-tags",
+      "description": "List tags for an image",
+      "examples": [
+        "skopeo list-tags docker://docker.io/library/nginx",
+        "skopeo list-tags docker://registry.example.com/my-app",
+        "skopeo list-tags docker://ghcr.io/my-org/my-app"
       ]
     },
     {
       "name": "sync",
-      "description": "Sync images between registries",
+      "description": "Sync images",
       "examples": [
-        "skopeo sync --src docker --dest dir docker.io/library/nginx /tmp/nginx"
+        "skopeo sync --src docker --dest dir docker.io/library/nginx /tmp/nginx-sync",
+        "skopeo sync --src yaml --dest docker sync.yaml my-registry.com"
+      ]
+    },
+    {
+      "name": "login",
+      "description": "Login to registry",
+      "examples": [
+        "skopeo login registry.example.com",
+        "skopeo login docker.io -u username -p password",
+        "skopeo login --get-login registry.example.com"
+      ]
+    },
+    {
+      "name": "logout",
+      "description": "Logout from registry",
+      "examples": [
+        "skopeo logout registry.example.com",
+        "skopeo logout --all"
+      ]
+    },
+    {
+      "name": "manifest-digest",
+      "description": "Compute manifest digest",
+      "examples": [
+        "skopeo manifest-digest manifest.json"
+      ]
+    },
+    {
+      "name": "standalone-sign",
+      "description": "Sign image manifest",
+      "examples": [
+        "skopeo standalone-sign manifest.json registry.example.com/my-image key-fingerprint"
+      ]
+    },
+    {
+      "name": "standalone-verify",
+      "description": "Verify image signature",
+      "examples": [
+        "skopeo standalone-verify manifest.json registry.example.com/my-image key-fingerprint signature"
       ]
     }
   ],
@@ -61,19 +111,50 @@
     },
     {
       "name": "--insecure-policy",
-      "description": "Skip policy checks"
+      "description": "Allow insecure operations"
+    },
+    {
+      "name": "--authfile",
+      "description": "Auth file path",
+      "type": "string"
+    },
+    {
+      "name": "--tls-verify",
+      "description": "Require HTTPS and verify certs",
+      "type": "boolean"
+    },
+    {
+      "name": "--debug",
+      "description": "Enable debug logging"
+    },
+    {
+      "name": "--policy",
+      "description": "Policy file",
+      "type": "string"
+    },
+    {
+      "name": "--all",
+      "short": "-a",
+      "description": "Process all platforms"
     }
   ],
   "examples": [
-    "skopeo inspect docker://docker.io/library/nginx",
-    "skopeo copy docker://src docker://dest",
-    "skopeo list-tags docker://docker.io/library/node",
-    "skopeo sync --src docker --dest dir ubuntu /tmp/ubuntu"
+    "skopeo copy docker://docker.io/library/nginx:latest docker://my-registry.com/nginx:latest",
+    "skopeo inspect docker://docker.io/library/alpine:latest",
+    "skopeo list-tags docker://docker.io/library/nginx",
+    "skopeo delete docker://registry.example.com/my-image:old",
+    "skopeo sync --src docker --dest dir docker.io/library/nginx /tmp/",
+    "skopeo login registry.example.com",
+    "skopeo copy --all docker://src docker://dst",
+    "skopeo inspect --config docker://docker.io/library/node:18",
+    "skopeo logout --all",
+    "skopeo manifest-digest manifest.json"
   ],
   "relatedCommands": [
-    "podman",
-    "buildah",
     "docker",
-    "crane"
+    "podman",
+    "crane",
+    "buildah",
+    "crictl"
   ]
 }

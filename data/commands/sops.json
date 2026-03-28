@@ -1,6 +1,6 @@
 {
   "name": "sops",
-  "description": "Secrets OPerationS — encrypt/decrypt secrets in config files",
+  "description": "Mozilla SOPS — encrypt/decrypt secrets in files",
   "category": "security",
   "platforms": [
     "linux",
@@ -13,28 +13,99 @@
     "fish",
     "powershell"
   ],
-  "subcommands": [],
+  "subcommands": [
+    {
+      "name": "(encrypt)",
+      "description": "Encrypt a file",
+      "examples": [
+        "sops -e secrets.yaml > secrets.enc.yaml",
+        "sops --encrypt --in-place secrets.yaml",
+        "sops -e --kms 'arn:aws:kms:us-east-1:123:key/abc' secrets.yaml",
+        "sops -e --gcp-kms 'projects/my-proj/locations/global/keyRings/kr/cryptoKeys/key' secrets.yaml",
+        "sops -e --age 'age1xxx...' secrets.yaml",
+        "sops -e --pgp 'FP1,FP2' secrets.yaml"
+      ]
+    },
+    {
+      "name": "(decrypt)",
+      "description": "Decrypt a file",
+      "examples": [
+        "sops -d secrets.enc.yaml",
+        "sops -d --output secrets.yaml secrets.enc.yaml",
+        "sops --decrypt --in-place secrets.enc.yaml",
+        "sops -d --extract '[\"key\"]' secrets.enc.yaml"
+      ]
+    },
+    {
+      "name": "(edit)",
+      "description": "Edit encrypted file",
+      "examples": [
+        "sops secrets.enc.yaml",
+        "EDITOR=vim sops secrets.enc.yaml"
+      ]
+    },
+    {
+      "name": "updatekeys",
+      "description": "Update encryption keys",
+      "examples": [
+        "sops updatekeys secrets.enc.yaml"
+      ]
+    },
+    {
+      "name": "rotate",
+      "description": "Rotate data encryption key",
+      "examples": [
+        "sops -r secrets.enc.yaml",
+        "sops --rotate --in-place secrets.enc.yaml"
+      ]
+    },
+    {
+      "name": "groups",
+      "description": "Manage key groups",
+      "examples": [
+        "sops groups add --file secrets.enc.yaml --pgp 'FP'",
+        "sops groups delete --file secrets.enc.yaml --shamir-secret-sharing-threshold 2"
+      ]
+    },
+    {
+      "name": "publish",
+      "description": "Publish encrypted file to a store",
+      "examples": [
+        "sops publish secrets.enc.yaml"
+      ]
+    },
+    {
+      "name": "filestatus",
+      "description": "Show file encryption status",
+      "examples": [
+        "sops filestatus secrets.enc.yaml"
+      ]
+    }
+  ],
   "globalOptions": [
     {
-      "name": "-e",
-      "description": "Encrypt file"
+      "name": "--encrypt",
+      "short": "-e",
+      "description": "Encrypt mode"
     },
     {
-      "name": "-d",
-      "description": "Decrypt file"
+      "name": "--decrypt",
+      "short": "-d",
+      "description": "Decrypt mode"
     },
     {
-      "name": "-i",
-      "description": "In-place edit"
+      "name": "--rotate",
+      "short": "-r",
+      "description": "Rotate data key"
     },
     {
-      "name": "--age",
-      "description": "Age recipient for encryption",
-      "type": "string"
+      "name": "--in-place",
+      "short": "-i",
+      "description": "Modify file in-place"
     },
     {
-      "name": "--pgp",
-      "description": "PGP fingerprint",
+      "name": "--output",
+      "description": "Output file path",
       "type": "string"
     },
     {
@@ -53,33 +124,50 @@
       "type": "string"
     },
     {
-      "name": "--encrypted-regex",
-      "description": "Only encrypt matching keys",
+      "name": "--age",
+      "description": "age public key(s)",
+      "type": "string"
+    },
+    {
+      "name": "--pgp",
+      "description": "PGP fingerprint(s)",
       "type": "string"
     },
     {
       "name": "--input-type",
-      "description": "Input format (yaml, json, dotenv, binary)",
+      "description": "Input type (yaml, json, env, binary)",
       "type": "string"
     },
     {
       "name": "--output-type",
-      "description": "Output format",
+      "description": "Output type (yaml, json, env, binary)",
+      "type": "string"
+    },
+    {
+      "name": "--extract",
+      "description": "Extract specific key path",
+      "type": "string"
+    },
+    {
+      "name": "--config",
+      "description": ".sops.yaml config path",
       "type": "string"
     }
   ],
   "examples": [
-    "sops secrets.yaml",
-    "sops -e secrets.yaml",
+    "sops -e secrets.yaml > secrets.enc.yaml",
     "sops -d secrets.enc.yaml",
-    "sops -e -i secrets.yaml",
-    "sops --age age1... secrets.yaml",
-    "sops -d --output-type json secrets.yaml"
+    "sops secrets.enc.yaml",
+    "sops -e --age 'age1xxx' secrets.yaml",
+    "sops -e --kms 'arn:aws:kms:...' secrets.yaml",
+    "sops -d --extract '[\"db\"][\"password\"]' secrets.enc.yaml",
+    "sops --rotate --in-place secrets.enc.yaml"
   ],
   "relatedCommands": [
+    "vault",
+    "chamber",
     "age",
     "gpg",
-    "vault",
-    "aws-kms"
+    "sealed-secrets"
   ]
 }

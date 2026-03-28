@@ -1,6 +1,6 @@
 {
   "name": "kustomize",
-  "description": "Template-free Kubernetes configuration customization",
+  "description": "Kustomize — customize Kubernetes YAML configurations",
   "category": "containers",
   "platforms": [
     "linux",
@@ -16,55 +16,120 @@
   "subcommands": [
     {
       "name": "build",
-      "description": "Build kustomization",
+      "description": "Build kustomization target",
       "examples": [
         "kustomize build .",
-        "kustomize build overlays/production"
+        "kustomize build ./overlays/production",
+        "kustomize build . | kubectl apply -f -",
+        "kustomize build --enable-helm .",
+        "kustomize build --load-restrictor LoadRestrictionsNone ."
       ]
     },
     {
       "name": "edit",
-      "description": "Edit kustomization",
+      "description": "Edit kustomization file",
       "examples": [
-        "kustomize edit add resource deploy.yaml",
-        "kustomize edit set image myapp=myapp:v2"
+        "kustomize edit add resource deployment.yaml",
+        "kustomize edit add configmap my-cm --from-literal=key=value",
+        "kustomize edit set namespace production",
+        "kustomize edit set image my-image=my-image:v2",
+        "kustomize edit add patch --path patch.yaml",
+        "kustomize edit set nameprefix prod-",
+        "kustomize edit add label app:myapp",
+        "kustomize edit add annotation team:backend",
+        "kustomize edit remove resource old.yaml"
       ]
     },
     {
       "name": "create",
-      "description": "Create a new kustomization",
+      "description": "Create kustomization file",
       "examples": [
+        "kustomize create",
+        "kustomize create --resources deployment.yaml,service.yaml",
         "kustomize create --autodetect"
+      ]
+    },
+    {
+      "name": "cfg",
+      "description": "Config function commands",
+      "examples": [
+        "kustomize cfg tree .",
+        "kustomize cfg grep 'kind=Deployment' .",
+        "kustomize cfg cat .",
+        "kustomize cfg count .",
+        "kustomize cfg fmt ."
+      ]
+    },
+    {
+      "name": "fn",
+      "description": "Function commands",
+      "examples": [
+        "kustomize fn run .",
+        "kustomize fn source .",
+        "kustomize fn sink .",
+        "kustomize fn wrap ."
+      ]
+    },
+    {
+      "name": "localize",
+      "description": "Localize remote references",
+      "examples": [
+        "kustomize localize . ./localized"
+      ]
+    },
+    {
+      "name": "completion",
+      "description": "Generate shell completion",
+      "examples": [
+        "source <(kustomize completion bash)"
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Print version",
+      "examples": [
+        "kustomize version"
       ]
     }
   ],
   "globalOptions": [
     {
       "name": "--enable-helm",
-      "description": "Enable Helm chart processing"
+      "description": "Enable Helm chart inflation"
     },
     {
       "name": "--load-restrictor",
-      "description": "Load restrictor policy",
+      "description": "Load restrictions",
       "type": "string"
     },
     {
-      "name": "-o",
-      "description": "Output directory",
+      "name": "--reorder",
+      "description": "Reorder output (legacy, none)",
+      "type": "string"
+    },
+    {
+      "name": "--output",
+      "short": "-o",
+      "description": "Output to file",
       "type": "string"
     }
   ],
   "examples": [
     "kustomize build .",
-    "kustomize build . | kubectl apply -f -",
-    "kustomize edit set image app=app:v2",
-    "kustomize build overlays/prod",
-    "kustomize create --autodetect"
+    "kustomize build ./overlays/production | kubectl apply -f -",
+    "kustomize edit set image my-image=my-image:v2",
+    "kustomize edit set namespace production",
+    "kustomize edit add resource deployment.yaml",
+    "kustomize create --autodetect",
+    "kubectl apply -k .",
+    "kustomize build --enable-helm .",
+    "kustomize cfg tree .",
+    "kustomize version"
   ],
   "relatedCommands": [
     "kubectl",
     "helm",
-    "argocd",
-    "kind"
+    "flux",
+    "argocd"
   ]
 }
