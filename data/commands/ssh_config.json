@@ -1,35 +1,36 @@
 {
   "name": "ssh",
-  "description": "SSH Config command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "SSH client — secure remote shell and tunneling",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": "-T git@github.com",
-      "description": "Test SSH connection",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-i key host",
-      "description": "Connect with key",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-L port:host:port user@host",
-      "description": "Port forwarding",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "-T git@github.com", "description": "Test SSH connection without allocating TTY", "args": ["host"], "options": [] },
+    { "name": "-i key host", "description": "Connect using a specific identity file", "args": ["key", "host"], "options": [] },
+    { "name": "-L port:host:port user@host", "description": "Local port forwarding (tunnel remote port to local)", "args": ["binding"], "options": [] },
+    { "name": "-R port:host:port user@host", "description": "Remote port forwarding (tunnel local port to remote)", "args": ["binding"], "options": [] },
+    { "name": "-D port user@host", "description": "Dynamic SOCKS proxy via SSH tunnel", "args": ["port", "host"], "options": [] },
+    { "name": "-J jumphost user@destination", "description": "Connect via jump/bastion host", "args": ["jumphost", "destination"], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-i", "description": "Identity file (private key) for authentication" },
+    { "name": "-p", "description": "Port to connect to on remote host" },
+    { "name": "-L", "description": "Local port forwarding" },
+    { "name": "-R", "description": "Remote port forwarding" },
+    { "name": "-D", "description": "Dynamic SOCKS proxy" },
+    { "name": "-J", "description": "Jump host (ProxyJump)" },
+    { "name": "-N", "description": "Do not execute remote command (for tunnels)" },
+    { "name": "-F", "description": "Specify alternative SSH config file" },
+    { "name": "-o", "description": "Set SSH option (e.g., StrictHostKeyChecking=no)" },
+    { "name": "-v / -vv / -vvv", "description": "Increase verbosity for debugging" }
+  ],
+  "examples": [
+    "ssh -T git@github.com",
+    "ssh -i ~/.ssh/mykey user@server.example.com",
+    "ssh -L 8080:localhost:80 user@remote-server",
+    "ssh -J bastion user@internal-server",
+    "ssh -D 1080 user@proxy-server",
+    "ssh -o StrictHostKeyChecking=no user@host"
+  ],
+  "relatedCommands": ["ssh-keygen", "scp", "rsync", "sftp"]
 }

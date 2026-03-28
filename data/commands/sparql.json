@@ -1,16 +1,30 @@
 {
   "name": "sparql",
-  "description": "SPARQL command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "description": "SPARQL query tools for RDF/linked data (Apache Jena, Blazegraph, rdflib)",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
+  "subcommands": [
+    { "name": "query", "description": "Execute a SPARQL query against an endpoint or local file", "args": ["query"], "options": ["--service", "--data", "--output"] },
+    { "name": "update", "description": "Execute a SPARQL UPDATE operation", "args": ["update"], "options": ["--service", "--data"] },
+    { "name": "validate", "description": "Validate RDF data using SHACL shapes", "args": ["data", "shapes"], "options": ["--format"] },
+    { "name": "load", "description": "Load RDF data into a triplestore", "args": ["file"], "options": ["--graph", "--format"] },
+    { "name": "export", "description": "Export triplestore data to file", "args": [], "options": ["--graph", "--format", "--output"] },
+    { "name": "server", "description": "Start SPARQL endpoint server (Fuseki)", "args": [], "options": ["--port", "--dataset"] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "--service", "description": "SPARQL endpoint URL" },
+    { "name": "--data", "description": "Path to local RDF data file" },
+    { "name": "--output", "description": "Output format (json, xml, csv, tsv, turtle)" },
+    { "name": "--timeout", "description": "Query timeout in milliseconds" },
+    { "name": "--graph", "description": "Named graph URI" }
   ],
-  "subcommands": []
+  "examples": [
+    "rsparql --service http://dbpedia.org/sparql --query 'SELECT ?s WHERE { ?s a dbo:Country } LIMIT 10'",
+    "arq --data data.ttl --query query.rq",
+    "fuseki-server --mem /dataset --port 3030",
+    "riot --validate data.ttl",
+    "s-update --service http://localhost:3030/ds/update --update insert.ru"
+  ],
+  "relatedCommands": ["sql", "graphql", "curl", "jq"]
 }

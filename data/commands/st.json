@@ -1,16 +1,28 @@
 {
   "name": "st",
-  "description": "Structured Text command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "description": "Structured Text — IEC 61131-3 PLC programming tools (CODESYS, OpenPLC, matiec)",
+  "category": "language",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
+  "subcommands": [
+    { "name": "compile", "description": "Compile Structured Text to PLC bytecode", "args": ["file.st"], "options": ["--target", "--output"] },
+    { "name": "check", "description": "Syntax-check Structured Text source files", "args": ["file.st"], "options": ["--strict"] },
+    { "name": "simulate", "description": "Run PLC simulation with Structured Text program", "args": ["file.st"], "options": ["--cycle-time", "--duration"] },
+    { "name": "download", "description": "Download compiled program to PLC controller", "args": ["file"], "options": ["--target-ip", "--protocol"] },
+    { "name": "generate", "description": "Generate C code from Structured Text using matiec", "args": ["file.st"], "options": ["-I", "-T"] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "--target", "description": "Target PLC platform" },
+    { "name": "--output", "description": "Output file or directory" },
+    { "name": "-I", "description": "Include directory for library files" },
+    { "name": "-T", "description": "Build output directory for matiec" },
+    { "name": "--verbose", "description": "Enable verbose compilation output" }
   ],
-  "subcommands": []
+  "examples": [
+    "iec2c -I lib/ -T build/ program.st",
+    "matiec program.st -o output.c",
+    "openplc_editor program.st",
+    "codesys --build project.project --compile"
+  ],
+  "relatedCommands": ["gcc", "make", "systemverilog"]
 }

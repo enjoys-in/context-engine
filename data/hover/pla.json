@@ -4,35 +4,294 @@
     "module": {
       "contents": [
         {
-          "value": "**module** — PLA keyword."
+          "value": "```verilog\nmodule counter (\n    input wire clk,\n    input wire rst,\n    output reg [7:0] count\n);\n```\n**module** is the primary design unit in Verilog/PLA. Contains ports, internal logic, and behavioral descriptions."
         }
       ]
     },
     "input": {
       "contents": [
         {
-          "value": "**input** — PLA keyword."
+          "value": "```verilog\ninput wire clk;\ninput wire [7:0] data_in;\ninput wire enable, reset;\n```\n**input** declares input ports. Ports connect the module to external signals. Default type is `wire`."
         }
       ]
     },
     "output": {
       "contents": [
         {
-          "value": "**output** — PLA keyword."
+          "value": "```verilog\noutput reg [7:0] data_out;\noutput wire valid;\n```\n**output** declares output ports. Use `reg` if driven from an `always` block, `wire` for continuous assignments."
         }
       ]
     },
     "wire": {
       "contents": [
         {
-          "value": "**wire** — PLA keyword."
+          "value": "```verilog\nwire [7:0] bus;\nwire select;\nwire [3:0] nibble = data[3:0];\n```\n**wire** represents a physical connection. Cannot store values — continuously driven by assign or module output."
         }
       ]
     },
     "reg": {
       "contents": [
         {
-          "value": "**reg** — PLA keyword."
+          "value": "```verilog\nreg [7:0] counter;\nreg flag;\nreg [31:0] memory [0:255];\n```\n**reg** stores a value in procedural blocks. Despite the name, does not always synthesize to a flip-flop."
+        }
+      ]
+    },
+    "assign": {
+      "contents": [
+        {
+          "value": "```verilog\nassign out = a & b;\nassign sum = a ^ b ^ carry_in;\nassign {cout, sum} = a + b + cin;\n```\n**assign** creates continuous (combinational) assignments to wires. The RHS is continuously evaluated."
+        }
+      ]
+    },
+    "always": {
+      "contents": [
+        {
+          "value": "```verilog\nalways @(posedge clk or posedge rst) begin\n    if (rst)\n        count <= 8'b0;\n    else\n        count <= count + 1;\nend\n\nalways @(*) begin\n    out = a & b;\nend\n```\n**always** block executes when sensitivity list events occur. `@(posedge clk)` for sequential, `@(*)` for combinational."
+        }
+      ]
+    },
+    "initial": {
+      "contents": [
+        {
+          "value": "```verilog\ninitial begin\n    clk = 0;\n    rst = 1;\n    #10 rst = 0;\n    #100 $finish;\nend\n```\n**initial** block runs once at simulation start. Used in testbenches for stimulus generation. Not synthesizable."
+        }
+      ]
+    },
+    "if_else": {
+      "contents": [
+        {
+          "value": "```verilog\nif (enable) begin\n    data_out <= data_in;\nend else if (load) begin\n    data_out <= preset;\nend else begin\n    data_out <= 8'b0;\nend\n```\n**if/else** conditional statements within `always` blocks. Synthesizes to multiplexers or priority logic."
+        }
+      ]
+    },
+    "case": {
+      "contents": [
+        {
+          "value": "```verilog\ncase (opcode)\n    4'b0000: result = a + b;\n    4'b0001: result = a - b;\n    4'b0010: result = a & b;\n    default: result = 8'b0;\nendcase\n```\n**case** statement selects among multiple values. `casex` treats X/Z as don't care. `casez` treats Z as don't care."
+        }
+      ]
+    },
+    "for_loop": {
+      "contents": [
+        {
+          "value": "```verilog\ninteger i;\nfor (i = 0; i < 8; i = i + 1) begin\n    mem[i] = 8'b0;\nend\n\ngenvar j;\ngenerate\n    for (j = 0; j < 4; j = j + 1) begin : gen_block\n        assign out[j] = in[j] & enable;\n    end\nendgenerate\n```\n**for** loops iterate a fixed number of times. Must be unrollable for synthesis. `genvar` for generate loops."
+        }
+      ]
+    },
+    "begin_end": {
+      "contents": [
+        {
+          "value": "```verilog\nalways @(posedge clk) begin\n    a <= b;\n    c <= d;\nend\n\nalways @(posedge clk) begin : named_block\n    reg temp;\n    temp = a;\nend\n```\n**begin/end** groups multiple statements into a block. Named blocks (`begin : name`) can declare local variables."
+        }
+      ]
+    },
+    "and_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nand g1(out, a, b);\nand #5 g2(out, a, b, c);  // with delay\n```\n**and** gate primitive. Outputs 1 only when all inputs are 1. Optional delay specification."
+        }
+      ]
+    },
+    "or_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nor g1(out, a, b);\nor #3 g2(out, a, b, c, d);  // multi-input\n```\n**or** gate primitive. Outputs 1 when any input is 1."
+        }
+      ]
+    },
+    "not_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nnot g1(out, in);\nnot #2 (out1, in), (out2, in);  // multiple outputs\n```\n**not** (inverter) gate primitive. Outputs the logical complement of the input."
+        }
+      ]
+    },
+    "nand_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nnand g1(out, a, b);\n```\n**nand** gate primitive. Outputs 0 only when all inputs are 1. Universal gate — can implement any logic function."
+        }
+      ]
+    },
+    "nor_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nnor g1(out, a, b);\n```\n**nor** gate primitive. Outputs 1 only when all inputs are 0. Also a universal gate."
+        }
+      ]
+    },
+    "xor_gate": {
+      "contents": [
+        {
+          "value": "```verilog\nxor g1(out, a, b);\nassign parity = ^data;  // reduction XOR\n```\n**xor** gate primitive. Outputs 1 when inputs differ. Reduction XOR (`^`) computes parity."
+        }
+      ]
+    },
+    "buf": {
+      "contents": [
+        {
+          "value": "```verilog\nbuf g1(out, in);\nbufif1 g2(out, in, enable);  // tri-state\nbufif0 g3(out, in, enable);\n```\n**buf** is a non-inverting buffer. `bufif1`/`bufif0` are tri-state buffers controlled by enable."
+        }
+      ]
+    },
+    "inout": {
+      "contents": [
+        {
+          "value": "```verilog\ninout wire [7:0] data_bus;\n\nassign data_bus = (drive) ? data_out : 8'bz;\nassign data_in = data_bus;\n```\n**inout** declares bidirectional ports. Drive with data or high-impedance `z`. Used for shared buses."
+        }
+      ]
+    },
+    "parameter": {
+      "contents": [
+        {
+          "value": "```verilog\nparameter WIDTH = 8;\nparameter DEPTH = 256;\n\nmodule fifo #(\n    parameter DATA_W = 8,\n    parameter ADDR_W = 4\n) (...);\n\nfifo #(.DATA_W(16), .ADDR_W(8)) my_fifo(...);\n```\n**parameter** defines compile-time constants. Override with `#()` at instantiation for parameterized designs."
+        }
+      ]
+    },
+    "localparam": {
+      "contents": [
+        {
+          "value": "```verilog\nlocalparam IDLE  = 2'b00;\nlocalparam RUN   = 2'b01;\nlocalparam DONE  = 2'b10;\nlocalparam TOTAL = WIDTH * DEPTH;\n```\n**localparam** defines constants that cannot be overridden. Use for internal derived values and state encodings."
+        }
+      ]
+    },
+    "generate": {
+      "contents": [
+        {
+          "value": "```verilog\ngenvar i;\ngenerate\n    for (i = 0; i < N; i = i + 1) begin : stage\n        adder u_add(.a(a[i]), .b(b[i]), .sum(s[i]));\n    end\nendgenerate\n```\n**generate** creates parameterized, replicated hardware structures. Supports `for`, `if`, and `case`."
+        }
+      ]
+    },
+    "task": {
+      "contents": [
+        {
+          "value": "```verilog\ntask automatic send_byte;\n    input [7:0] data;\n    begin\n        @(posedge clk);\n        tx_data <= data;\n        tx_valid <= 1;\n        @(posedge clk);\n        tx_valid <= 0;\n    end\nendtask\n```\n**task** defines reusable procedural code. Can contain timing controls and multiple statements. `automatic` for re-entrant tasks."
+        }
+      ]
+    },
+    "function": {
+      "contents": [
+        {
+          "value": "```verilog\nfunction [7:0] add_sat;\n    input [7:0] a, b;\n    reg [8:0] temp;\n    begin\n        temp = a + b;\n        add_sat = (temp[8]) ? 8'hFF : temp[7:0];\n    end\nendfunction\n```\n**function** returns a single value. Must be combinational (no timing controls). Used for calculations."
+        }
+      ]
+    },
+    "display": {
+      "contents": [
+        {
+          "value": "```verilog\n$display(\"Value = %d, Hex = %h\", val, val);\n$display(\"Time = %0t\", $time);\n$display(\"Binary = %b\", data);\n```\n**$display** prints formatted text to console with newline. Format: `%d` decimal, `%h` hex, `%b` binary, `%s` string, `%t` time."
+        }
+      ]
+    },
+    "monitor": {
+      "contents": [
+        {
+          "value": "```verilog\ninitial begin\n    $monitor(\"Time=%0t clk=%b rst=%b count=%d\",\n             $time, clk, rst, count);\nend\n```\n**$monitor** prints whenever any listed signal changes. Only one active monitor at a time. Use `$monitoroff`/`$monitoron`."
+        }
+      ]
+    },
+    "finish": {
+      "contents": [
+        {
+          "value": "```verilog\ninitial begin\n    #1000 $finish;\nend\n\ninitial begin\n    if (error_count > 10) $stop;  // pause simulation\nend\n```\n**$finish** ends simulation. **$stop** pauses and enters interactive mode. Both used in testbenches."
+        }
+      ]
+    },
+    "time_val": {
+      "contents": [
+        {
+          "value": "```verilog\n$time      // returns current simulation time (64-bit)\n$stime     // 32-bit time\n$realtime  // real-valued time\n```\n**$time** returns the current simulation time. Used with `$display` and `$monitor` for debugging."
+        }
+      ]
+    },
+    "dumpvars": {
+      "contents": [
+        {
+          "value": "```verilog\ninitial begin\n    $dumpfile(\"wave.vcd\");\n    $dumpvars(0, testbench);  // dump all signals\n    $dumpvars(1, uut);       // depth=1\nend\n```\n**$dumpvars** generates VCD waveform output. Depth 0 = all hierarchy. View with GTKWave or similar."
+        }
+      ]
+    },
+    "timescale": {
+      "contents": [
+        {
+          "value": "```verilog\n`timescale 1ns / 1ps\n// time_unit / time_precision\n// #10 means 10ns delay\n// precision is 1ps (3 decimal digits)\n```\n**`timescale** sets simulation time unit and precision. Applies to all modules that follow until the next `timescale."
+        }
+      ]
+    },
+    "define_macro": {
+      "contents": [
+        {
+          "value": "```verilog\n`define DATA_WIDTH 32\n`define MAX(a,b) ((a)>(b)?(a):(b))\n\nwire [`DATA_WIDTH-1:0] bus;\nassign result = `MAX(x, y);\n```\n**`define** creates text macros. Referenced with backtick. Supports parameterized macros."
+        }
+      ]
+    },
+    "ifdef": {
+      "contents": [
+        {
+          "value": "```verilog\n`ifdef SIMULATION\n    initial $display(\"Sim mode\");\n`elsif SYNTHESIS\n    // synthesis-only code\n`else\n    // default code\n`endif\n```\n**`ifdef/`ifndef** conditional compilation. Control code inclusion based on defined macros."
+        }
+      ]
+    },
+    "include": {
+      "contents": [
+        {
+          "value": "```verilog\n`include \"defines.vh\"\n`include \"interfaces.sv\"\n```\n**`include** inserts the contents of another file. Use for shared definitions, parameters, and interfaces."
+        }
+      ]
+    },
+    "concatenation": {
+      "contents": [
+        {
+          "value": "```verilog\nassign bus = {a, b, c};           // concatenation\nassign word = {4{nibble}};        // replication: 4 copies\nassign result = {sign, {7{1'b0}}, mantissa};\n```\n**Concatenation** `{}` joins signals. **Replication** `{n{expr}}` repeats n times."
+        }
+      ]
+    },
+    "blocking_nonblocking": {
+      "contents": [
+        {
+          "value": "```verilog\n// Blocking (=): sequential execution, combinational logic\nalways @(*) begin\n    temp = a & b;\n    out = temp | c;\nend\n\n// Non-blocking (<=): concurrent, sequential logic\nalways @(posedge clk) begin\n    q1 <= d;\n    q2 <= q1;\nend\n```\n**Blocking `=`** executes sequentially (combinational). **Non-blocking `<=`** updates concurrently (sequential/flip-flops)."
+        }
+      ]
+    },
+    "number_format": {
+      "contents": [
+        {
+          "value": "```verilog\n8'b1010_0011   // 8-bit binary\n8'hA3          // 8-bit hex\n8'd163         // 8-bit decimal\n16'o377        // 16-bit octal\n4'bx           // 4-bit unknown\n4'bz           // 4-bit high-impedance\n```\n**Number literals** format: `<size>'<base><value>`. Underscore `_` improves readability."
+        }
+      ]
+    },
+    "integer": {
+      "contents": [
+        {
+          "value": "```verilog\ninteger i;\nreal voltage;\ntime sim_time;\n\ninteger count = 0;\n```\n**integer** is a 32-bit signed type for loop variables and calculations. **real** for floating-point. **time** for simulation time."
+        }
+      ]
+    },
+    "posedge_negedge": {
+      "contents": [
+        {
+          "value": "```verilog\nalways @(posedge clk)   // rising edge\nalways @(negedge clk)   // falling edge\nalways @(posedge clk or negedge rst_n)  // async reset\n```\n**posedge/negedge** detect signal transitions. Used in sensitivity lists for edge-triggered behavior."
+        }
+      ]
+    },
+    "defparam": {
+      "contents": [
+        {
+          "value": "```verilog\ndefparam u_fifo.WIDTH = 16;\ndefparam u_fifo.DEPTH = 1024;\n```\n**defparam** overrides parameters by hierarchical path. Deprecated — prefer `#()` parameter override."
+        }
+      ]
+    },
+    "sensitivity_list": {
+      "contents": [
+        {
+          "value": "```verilog\nalways @(a or b or sel)   // explicit list\nalways @(*)               // all inputs (Verilog-2001)\nalways_comb               // SystemVerilog combinational\nalways_ff @(posedge clk)  // SystemVerilog sequential\n```\n**Sensitivity list** controls when `always` blocks execute. `@(*)` automatically includes all read signals."
+        }
+      ]
+    },
+    "instantiation": {
+      "contents": [
+        {
+          "value": "```verilog\n// Named port connection:\nadder #(.WIDTH(8)) u_add (\n    .a(operand_a),\n    .b(operand_b),\n    .sum(result),\n    .cout(carry)\n);\n\n// Positional:\nadder u_add2(a, b, sum, cout);\n```\n**Module instantiation** creates an instance. Named ports (`.port(signal)`) preferred over positional."
         }
       ]
     }

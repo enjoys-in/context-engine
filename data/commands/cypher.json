@@ -1,35 +1,31 @@
 {
   "name": "cypher-shell",
-  "description": "Cypher command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "Cypher Shell — Neo4j graph database command-line client",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": "-u neo4j -p pass",
-      "description": "Connect to Neo4j",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "--format plain",
-      "description": "Plain text output",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-f script.cypher",
-      "description": "Execute script file",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "-u neo4j -p pass", "description": "Connect to Neo4j with credentials", "args": [], "options": [] },
+    { "name": "--format plain", "description": "Output results in plain text format", "args": [], "options": [] },
+    { "name": "-f script.cypher", "description": "Execute Cypher script from file", "args": ["file"], "options": [] },
+    { "name": "--database neo4j", "description": "Connect to a specific database", "args": ["database"], "options": [] },
+    { "name": "-a bolt://host:7687", "description": "Connect to specific server address", "args": ["address"], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-u / --username", "description": "Neo4j username" },
+    { "name": "-p / --password", "description": "Neo4j password" },
+    { "name": "-a / --address", "description": "Server address (bolt://host:port)" },
+    { "name": "--database", "description": "Target database name" },
+    { "name": "--format", "description": "Output format (auto, verbose, plain)" },
+    { "name": "--encryption", "description": "Connection encryption (true, false, default)" },
+    { "name": "-f / --file", "description": "Cypher script file to execute" }
+  ],
+  "examples": [
+    "cypher-shell -u neo4j -p password",
+    "cypher-shell -u neo4j -p password -f import.cypher",
+    "echo 'MATCH (n) RETURN count(n);' | cypher-shell -u neo4j -p password",
+    "cypher-shell -a bolt://localhost:7687 --database mydb",
+    "cypher-shell --format plain -u neo4j -p password <<< 'MATCH (n:Person) RETURN n.name LIMIT 10;'"
+  ],
+  "relatedCommands": ["sql", "mongosh", "redis-cli", "psql"]
 }

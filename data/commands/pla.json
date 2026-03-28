@@ -1,16 +1,28 @@
 {
   "name": "pla",
-  "description": "PLA command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "description": "PLA — Programmable Logic Array tools and synthesis",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
+  "subcommands": [
+    { "name": "minimize", "description": "Minimize PLA logic using Espresso algorithm", "args": ["input.pla"], "options": ["-o", "--method"] },
+    { "name": "simulate", "description": "Simulate PLA truth table with input vectors", "args": ["input.pla"], "options": ["--inputs", "--verbose"] },
+    { "name": "convert", "description": "Convert between PLA, BLIF, and Verilog formats", "args": ["input"], "options": ["-f", "-t"] },
+    { "name": "verify", "description": "Verify PLA against reference truth table", "args": ["design.pla", "reference.pla"], "options": [] },
+    { "name": "stats", "description": "Show PLA statistics (inputs, outputs, product terms)", "args": ["input.pla"], "options": [] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "-o", "description": "Output file path" },
+    { "name": "--method", "description": "Minimization method (espresso, exact, heuristic)" },
+    { "name": "--verbose", "description": "Show detailed processing information" },
+    { "name": "-f", "description": "Input format (pla, blif, truth-table)" },
+    { "name": "-t", "description": "Output target format" }
   ],
-  "subcommands": []
+  "examples": [
+    "espresso input.pla > output.pla",
+    "espresso -Dexact input.pla",
+    "abc -c 'read_pla design.pla; print_stats'",
+    "espresso -oeqntott input.pla"
+  ],
+  "relatedCommands": ["systemverilog", "abc", "yosys"]
 }

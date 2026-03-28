@@ -1,23 +1,32 @@
 {
   "name": "psql",
-  "description": "Redshift SQL command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "Amazon Redshift — cloud data warehouse accessed via psql client",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": "-h cluster.redshift.amazonaws.com -U user -d db -p 5439",
-      "description": "Connect to Redshift",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "-h cluster.redshift.amazonaws.com -U user -d db -p 5439", "description": "Connect to Redshift cluster", "args": ["host", "user", "db"], "options": [] },
+    { "name": "-c \"SELECT ...\" -h host -U user -d db", "description": "Execute a single SQL query", "args": ["query"], "options": [] },
+    { "name": "-f script.sql -h host -U user -d db", "description": "Execute SQL script file", "args": ["file"], "options": [] },
+    { "name": "--csv -c \"SELECT ...\" -h host", "description": "Output results in CSV format", "args": ["query"], "options": [] },
+    { "name": "-l -h host -U user", "description": "List available databases", "args": [], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-h / --host", "description": "Redshift cluster endpoint hostname" },
+    { "name": "-p / --port", "description": "Port number (default: 5439)" },
+    { "name": "-U / --username", "description": "Database username" },
+    { "name": "-d / --dbname", "description": "Target database name" },
+    { "name": "-c / --command", "description": "Execute a single SQL command" },
+    { "name": "-f / --file", "description": "Execute SQL from file" },
+    { "name": "--csv", "description": "Output in CSV format" },
+    { "name": "-o / --output", "description": "Write output to file" }
+  ],
+  "examples": [
+    "psql -h mycluster.abc123.us-east-1.redshift.amazonaws.com -U admin -d mydb -p 5439",
+    "psql -h cluster.redshift.amazonaws.com -U user -d db -c 'SELECT * FROM sales LIMIT 10;'",
+    "COPY sales FROM 's3://mybucket/data/' IAM_ROLE 'arn:aws:iam::role/RedshiftRole' CSV;",
+    "UNLOAD ('SELECT * FROM sales') TO 's3://mybucket/export/' IAM_ROLE 'arn:aws:iam::role/RedshiftRole';",
+    "aws redshift describe-clusters --query 'Clusters[*].Endpoint'"
+  ],
+  "relatedCommands": ["psql", "aws", "sql", "pgsql"]
 }

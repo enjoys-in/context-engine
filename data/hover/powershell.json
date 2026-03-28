@@ -4,49 +4,294 @@
     "function": {
       "contents": [
         {
-          "value": "```powershell\nfunction Get-Greeting {\n    param(\n        [Parameter(Mandatory)]\n        [string]$Name\n    )\n    \"Hello, $Name!\"\n}\n```\n**function** defines a reusable command. Use PascalCase with Verb-Noun naming. `param()` declares parameters."
+          "value": "```powershell\nfunction Get-Greeting {\n    param(\n        [Parameter(Mandatory)]\n        [string]$Name\n    )\n    \"Hello, $Name!\"\n}\n```\n**function** defines a reusable command. Use Verb-Noun naming. `param()` declares parameters."
         }
       ]
     },
     "pipeline": {
       "contents": [
         {
-          "value": "```powershell\nGet-Process |\n    Where-Object { $_.CPU -gt 10 } |\n    Sort-Object CPU -Descending |\n    Select-Object -First 5 Name, CPU\n```\n**Pipeline** passes full .NET objects between commands (not just text like Unix pipes). Each `|` feeds output to the next command's input."
+          "value": "```powershell\nGet-Process |\n    Where-Object { $_.CPU -gt 10 } |\n    Sort-Object CPU -Descending |\n    Select-Object -First 5 Name, CPU\n```\n**Pipeline** passes full .NET objects between commands (not just text)."
         }
       ]
     },
     "comparison": {
       "contents": [
         {
-          "value": "```powershell\n$a -eq $b      # equal\n$a -ne $b      # not equal\n$a -gt $b      # greater than\n$a -lt $b      # less than\n$a -like '*.txt'   # wildcard match\n$a -match '^[0-9]' # regex match\n$a -contains $b    # collection contains\n```\n**Comparison operators** - PowerShell uses `-eq`, `-gt`, etc. instead of `==`, `>`. Case-insensitive by default; add `c` prefix for case-sensitive (`-ceq`)."
+          "value": "```powershell\n$a -eq $b       # equal\n$a -ne $b       # not equal\n$a -gt $b       # greater than\n$a -lt $b       # less than\n$a -like '*.txt'    # wildcard match\n$a -match '^[0-9]'  # regex match\n$a -contains $b     # collection contains\n```\n**Comparison operators** use `-eq`, `-gt`, etc. Case-insensitive by default; prefix `c` for case-sensitive."
         }
       ]
     },
     "variables": {
       "contents": [
         {
-          "value": "```powershell\n$name = \"World\"          # string\n$count = 42              # integer\n$items = @(1, 2, 3)     # array\n$hash = @{ a = 1 }      # hashtable\n$env:PATH                # environment variable\n$_                       # current pipeline object\n```\n**Variables** start with `$`. PowerShell is dynamically typed. `$env:` accesses environment variables."
+          "value": "```powershell\n$name = 'World'          # string\n$count = 42              # integer\n$items = @(1, 2, 3)     # array\n$hash = @{ a = 1 }      # hashtable\n$env:PATH                # environment variable\n$_                       # current pipeline object\n```\n**Variables** start with `$`. PowerShell is dynamically typed."
         }
       ]
     },
     "Get-Service": {
       "contents": [
         {
-          "value": "```powershell\nGet-Service | Where-Object Status -eq 'Running'\nGet-Service -Name 'nginx'\nRestart-Service -Name 'nginx' -Force\nStop-Service -Name 'IISAdmin'\n```\n**Service cmdlets** manage Windows services. Get, Start, Stop, Restart, Set, and New are available."
+          "value": "```powershell\nGet-Service | Where-Object Status -eq 'Running'\nRestart-Service -Name 'nginx' -Force\n```\n**Service cmdlets** manage Windows services: Get, Start, Stop, Restart, Set."
         }
       ]
     },
     "error_handling": {
       "contents": [
         {
-          "value": "```powershell\ntry {\n    Get-Item \"nonexistent\" -ErrorAction Stop\n} catch {\n    Write-Error \"Failed: $($_.Exception.Message)\"\n} finally {\n    # cleanup\n}\n```\n**try/catch** handles terminating errors. Use `-ErrorAction Stop` to convert non-terminating errors."
+          "value": "```powershell\ntry {\n    Get-Item 'nonexistent' -ErrorAction Stop\n} catch {\n    Write-Error \"Failed: $($_.Exception.Message)\"\n} finally {\n    # cleanup\n}\n```\n**try/catch** handles terminating errors. Use `-ErrorAction Stop` to convert non-terminating errors."
         }
       ]
     },
     "splatting": {
       "contents": [
         {
-          "value": "```powershell\n$params = @{\n    Path = 'C:\\logs'\n    Filter = '*.log'\n    Recurse = $true\n}\nGet-ChildItem @params\n```\n**Splatting** passes a hashtable of parameters using `@` instead of `$`. Cleaner than long single-line commands."
+          "value": "```powershell\n$params = @{\n    Path = 'C:\\logs'\n    Filter = '*.log'\n    Recurse = $true\n}\nGet-ChildItem @params\n```\n**Splatting** passes a hashtable of parameters using `@` instead of `$`."
+        }
+      ]
+    },
+    "Get-ChildItem": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-ChildItem -Path . -Recurse -Filter *.ps1\nGet-ChildItem C:\\Users -Directory\nGet-ChildItem -File | Measure-Object -Property Length -Sum\n```\n**Get-ChildItem** (alias: `ls`, `dir`, `gci`) lists directory contents. `-Recurse` for subdirectories."
+        }
+      ]
+    },
+    "Select-Object": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Select-Object -First 5 Name, CPU\nGet-Process | Select-Object -Property Name, @{N='MB';E={$_.WorkingSet/1MB}}\n```\n**Select-Object** picks properties and limits results. Supports calculated properties with `@{N=;E=}`."
+        }
+      ]
+    },
+    "Where-Object": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Where-Object { $_.CPU -gt 10 }\nGet-Process | Where-Object Name -like 'chrome*'\nGet-Service | Where-Object Status -eq 'Running'\n```\n**Where-Object** (alias: `where`, `?`) filters pipeline objects by condition."
+        }
+      ]
+    },
+    "ForEach-Object": {
+      "contents": [
+        {
+          "value": "```powershell\n1..10 | ForEach-Object { $_ * 2 }\nGet-ChildItem *.txt | ForEach-Object { $_.Name.ToUpper() }\n```\n**ForEach-Object** (alias: `%`) executes a block for each pipeline object. `$_` is the current object."
+        }
+      ]
+    },
+    "Sort-Object": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Sort-Object CPU -Descending\nGet-ChildItem | Sort-Object Length\n```\n**Sort-Object** (alias: `sort`) orders pipeline objects by property values."
+        }
+      ]
+    },
+    "Group-Object": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Group-Object ProcessName\nGet-ChildItem | Group-Object Extension | Sort-Object Count -Descending\n```\n**Group-Object** groups objects by a property value. Returns Name, Count, and Group."
+        }
+      ]
+    },
+    "Measure-Object": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-ChildItem | Measure-Object -Property Length -Sum -Average\n1..100 | Measure-Object -Sum\n```\n**Measure-Object** computes statistics: Count, Sum, Average, Minimum, Maximum."
+        }
+      ]
+    },
+    "string_ops": {
+      "contents": [
+        {
+          "value": "```powershell\n\"Hello $name\"              # variable expansion\n\"Value: $($obj.Prop)\"     # expression expansion\n'Literal $no_expand'       # single quotes: no expansion\n@\"\nHere-string with $vars\n\"@\n```\n**String interpolation** — Double quotes expand variables, single quotes don't. `$()` for expressions."
+        }
+      ]
+    },
+    "hashtable": {
+      "contents": [
+        {
+          "value": "```powershell\n$hash = @{\n    Name = 'John'\n    Age  = 30\n}\n$hash['Name']\n$hash.Age\n$hash.Keys\n$hash.ContainsKey('Name')\n```\n**Hashtables** are key-value collections. Access with `[]` or dot notation. Ordered with `[ordered]@{}`."
+        }
+      ]
+    },
+    "array": {
+      "contents": [
+        {
+          "value": "```powershell\n$arr = @(1, 2, 3)\n$arr += 4\n$arr[0]           # first element\n$arr[-1]          # last element\n$arr[1..3]        # slice\n$arr.Count\n```\n**Arrays** use `@()`. `+=` creates a new array (inefficient for large additions; use ArrayList)."
+        }
+      ]
+    },
+    "if_else": {
+      "contents": [
+        {
+          "value": "```powershell\nif ($condition) {\n    'true'\n} elseif ($other) {\n    'other'\n} else {\n    'false'\n}\n\n# Ternary (PS 7+):\n$result = $condition ? 'yes' : 'no'\n```\n**if/elseif/else** conditional execution. PowerShell 7+ supports ternary operator."
+        }
+      ]
+    },
+    "switch": {
+      "contents": [
+        {
+          "value": "```powershell\nswitch ($value) {\n    'A' { 'Alpha' }\n    'B' { 'Beta' }\n    { $_ -gt 10 } { 'Large number' }\n    default { 'Unknown' }\n}\n\nswitch -Regex ($text) {\n    '^Error' { 'Error found' }\n}\n```\n**switch** matches values, scriptblocks, or regex patterns. Supports `-Regex`, `-Wildcard`, `-File`."
+        }
+      ]
+    },
+    "foreach": {
+      "contents": [
+        {
+          "value": "```powershell\nforeach ($item in $collection) {\n    Write-Host $item\n}\n\n# With index:\nfor ($i = 0; $i -lt $arr.Count; $i++) {\n    Write-Host \"$i: $($arr[$i])\"\n}\n```\n**foreach** statement iterates over collections. Faster than `ForEach-Object` for in-memory data."
+        }
+      ]
+    },
+    "while_do": {
+      "contents": [
+        {
+          "value": "```powershell\nwhile ($i -lt 10) {\n    $i++\n}\n\ndo {\n    $input = Read-Host 'Enter value'\n} while ($input -ne 'quit')\n```\n**while/do-while** loops. `do-while` guarantees at least one execution."
+        }
+      ]
+    },
+    "CmdletBinding": {
+      "contents": [
+        {
+          "value": "```powershell\nfunction Get-Data {\n    [CmdletBinding()]\n    param(\n        [Parameter(Mandatory, ValueFromPipeline)]\n        [string[]]$Name,\n        [switch]$Detailed\n    )\n    process {\n        foreach ($n in $Name) { }\n    }\n}\n```\n**[CmdletBinding()]** makes a function act like a cmdlet with -Verbose, -Debug, pipeline support, etc."
+        }
+      ]
+    },
+    "Parameter": {
+      "contents": [
+        {
+          "value": "```powershell\nparam(\n    [Parameter(Mandatory, Position=0)]\n    [ValidateNotNullOrEmpty()]\n    [string]$Name,\n\n    [Parameter()]\n    [ValidateSet('Dev','Staging','Prod')]\n    [string]$Environment = 'Dev'\n)\n```\n**[Parameter()]** attributes control behavior: `Mandatory`, `Position`, `ValueFromPipeline`, `HelpMessage`."
+        }
+      ]
+    },
+    "ValidateSet": {
+      "contents": [
+        {
+          "value": "```powershell\nparam(\n    [ValidateSet('Error','Warning','Info')]\n    [string]$Level,\n\n    [ValidateRange(1,100)]\n    [int]$Percent,\n\n    [ValidatePattern('^\\d{3}-\\d{4}$')]\n    [string]$Phone\n)\n```\n**Validation attributes** — `ValidateSet`, `ValidateRange`, `ValidatePattern`, `ValidateScript`, `ValidateNotNull`."
+        }
+      ]
+    },
+    "Import-Module": {
+      "contents": [
+        {
+          "value": "```powershell\nImport-Module ActiveDirectory\nImport-Module Az.Accounts\nGet-Command -Module ActiveDirectory\n```\n**Import-Module** loads a PowerShell module. Modules provide cmdlets, functions, and variables."
+        }
+      ]
+    },
+    "Get-Help": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Help Get-Process\nGet-Help Get-Process -Full\nGet-Help Get-Process -Examples\nGet-Help about_Operators\n```\n**Get-Help** displays documentation. `-Full` for complete docs, `-Examples` for usage examples."
+        }
+      ]
+    },
+    "Get-Member": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Get-Member\n'hello' | Get-Member -MemberType Method\n@{} | Get-Member\n```\n**Get-Member** shows properties and methods of objects. Essential for discovering what you can do with pipeline output."
+        }
+      ]
+    },
+    "Out-File": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Process | Out-File processes.txt\nGet-Process | Export-Csv processes.csv -NoTypeInformation\nGet-Process | ConvertTo-Json | Set-Content data.json\n```\n**Output cmdlets** — `Out-File` for text, `Export-Csv` for CSV, `ConvertTo-Json` for JSON."
+        }
+      ]
+    },
+    "Invoke-RestMethod": {
+      "contents": [
+        {
+          "value": "```powershell\n$response = Invoke-RestMethod -Uri 'https://api.example.com/data'\n\n$body = @{ name = 'test' } | ConvertTo-Json\nInvoke-RestMethod -Uri $url -Method Post -Body $body -ContentType 'application/json'\n```\n**Invoke-RestMethod** makes HTTP API calls. Auto-parses JSON responses into PowerShell objects."
+        }
+      ]
+    },
+    "Invoke-WebRequest": {
+      "contents": [
+        {
+          "value": "```powershell\n$page = Invoke-WebRequest -Uri 'https://example.com'\n$page.StatusCode\n$page.Content\n$page.Links\n```\n**Invoke-WebRequest** (alias: `iwr`) fetches web pages. Returns status, headers, content, and parsed links."
+        }
+      ]
+    },
+    "Get-Content": {
+      "contents": [
+        {
+          "value": "```powershell\nGet-Content file.txt\nGet-Content file.txt -Tail 10\nGet-Content file.txt -Wait    # like tail -f\n$data = Get-Content data.json | ConvertFrom-Json\n```\n**Get-Content** (alias: `cat`, `gc`) reads file contents. `-Tail` for last N lines, `-Wait` for live monitoring."
+        }
+      ]
+    },
+    "Set-Content": {
+      "contents": [
+        {
+          "value": "```powershell\n'Hello World' | Set-Content file.txt\n$data | ConvertTo-Json | Set-Content data.json -Encoding UTF8\n'Append this' | Add-Content log.txt\n```\n**Set-Content** writes to files (overwrites). **Add-Content** appends. Specify `-Encoding` for UTF-8."
+        }
+      ]
+    },
+    "Test-Path": {
+      "contents": [
+        {
+          "value": "```powershell\nif (Test-Path $path) { 'Exists' }\nTest-Path $file -PathType Leaf    # file\nTest-Path $dir -PathType Container # directory\n```\n**Test-Path** checks if a path exists. `-PathType Leaf` for files, `Container` for directories."
+        }
+      ]
+    },
+    "New-Item": {
+      "contents": [
+        {
+          "value": "```powershell\nNew-Item -Path file.txt -ItemType File\nNew-Item -Path mydir -ItemType Directory\nNew-Item -Path link -ItemType SymbolicLink -Target target\n```\n**New-Item** creates files, directories, and symbolic links."
+        }
+      ]
+    },
+    "Copy-Item": {
+      "contents": [
+        {
+          "value": "```powershell\nCopy-Item source.txt dest.txt\nCopy-Item -Path ./src -Destination ./backup -Recurse\n```\n**Copy-Item** copies files and directories. `-Recurse` for directory trees."
+        }
+      ]
+    },
+    "Remove-Item": {
+      "contents": [
+        {
+          "value": "```powershell\nRemove-Item file.txt\nRemove-Item -Path ./temp -Recurse -Force\n```\n**Remove-Item** (alias: `rm`, `del`) deletes files/dirs. `-Recurse -Force` for non-empty directories."
+        }
+      ]
+    },
+    "Select-String": {
+      "contents": [
+        {
+          "value": "```powershell\nSelect-String -Path *.log -Pattern 'error'\nGet-Content file.txt | Select-String -Pattern '\\d{3}-\\d{4}'\n```\n**Select-String** (alias: `sls`) searches text with regex. Like grep for PowerShell."
+        }
+      ]
+    },
+    "ConvertTo-Json": {
+      "contents": [
+        {
+          "value": "```powershell\n$obj | ConvertTo-Json -Depth 10\n$json | ConvertFrom-Json\n\n$data = @{ name = 'test'; items = @(1,2,3) }\n$data | ConvertTo-Json\n```\n**ConvertTo-Json / ConvertFrom-Json** serialize and deserialize JSON. Set `-Depth` for nested objects."
+        }
+      ]
+    },
+    "Start-Job": {
+      "contents": [
+        {
+          "value": "```powershell\n$job = Start-Job -ScriptBlock { Get-Process }\nWait-Job $job\nReceive-Job $job\nRemove-Job $job\n\n# Or parallel (PS 7+):\n1..10 | ForEach-Object -Parallel { $_ * 2 }\n```\n**Start-Job** runs commands in background. PS 7+ has `ForEach-Object -Parallel` for parallel execution."
+        }
+      ]
+    },
+    "PSCustomObject": {
+      "contents": [
+        {
+          "value": "```powershell\n$obj = [PSCustomObject]@{\n    Name = 'Server01'\n    IP   = '10.0.0.1'\n    Status = 'Running'\n}\n$obj.Name\n```\n**[PSCustomObject]** creates custom objects. Commonly used for structured output from functions."
+        }
+      ]
+    },
+    "class": {
+      "contents": [
+        {
+          "value": "```powershell\nclass Person {\n    [string]$Name\n    [int]$Age\n\n    [string] Greet() {\n        return \"Hello, I'm $($this.Name)\"\n    }\n}\n$p = [Person]@{ Name = 'John'; Age = 30 }\n```\n**class** (PS 5+) defines a .NET class. Supports constructors, methods, inheritance."
+        }
+      ]
+    },
+    "modules_path": {
+      "contents": [
+        {
+          "value": "```powershell\n# Module paths:\n$env:PSModulePath -split ';'\n\n# Install from gallery:\nInstall-Module -Name Az -Scope CurrentUser\nFind-Module -Name *Azure*\n```\n**Module management** — Install-Module from PowerShell Gallery. Modules auto-load from PSModulePath."
         }
       ]
     }

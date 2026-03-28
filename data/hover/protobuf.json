@@ -1,45 +1,290 @@
 {
   "language": "protobuf",
   "hovers": {
+    "syntax": {
+      "contents": [
+        {
+          "value": "```protobuf\nsyntax = \"proto3\";\n```\n**syntax** declares the protobuf version. Use `proto3` for modern projects. `proto2` has required fields and different defaults."
+        }
+      ]
+    },
     "message": {
       "contents": [
         {
-          "value": "```protobuf\nmessage User {\n  string name = 1;\n  int32 age = 2;\n  repeated string tags = 3;\n  map<string, string> metadata = 4;\n  optional string bio = 5;\n}\n```\n**message** defines structured data. Field numbers (1, 2, etc.) are used in binary encoding - never reuse deleted numbers."
+          "value": "```protobuf\nmessage User {\n  string name = 1;\n  int32 age = 2;\n  repeated string tags = 3;\n  map<string, string> metadata = 4;\n  optional string bio = 5;\n}\n```\n**message** defines structured data. Field numbers identify fields in binary encoding — never reuse deleted numbers."
         }
       ]
     },
     "service": {
       "contents": [
         {
-          "value": "```protobuf\nservice UserService {\n  rpc GetUser(GetUserRequest) returns (User);\n  rpc ListUsers(ListUsersRequest) returns (stream User);  // server stream\n  rpc Upload(stream Chunk) returns (UploadResponse);      // client stream\n  rpc Chat(stream Msg) returns (stream Msg);              // bidirectional\n}\n```\n**service** defines gRPC endpoints. Four patterns: unary, server streaming, client streaming, bidirectional."
+          "value": "```protobuf\nservice UserService {\n  rpc GetUser(GetUserRequest) returns (User);\n  rpc ListUsers(ListUsersRequest) returns (stream User);\n  rpc Upload(stream Chunk) returns (UploadResponse);\n  rpc Chat(stream Msg) returns (stream Msg);\n}\n```\n**service** defines gRPC endpoints. Four patterns: unary, server streaming, client streaming, bidirectional."
+        }
+      ]
+    },
+    "rpc": {
+      "contents": [
+        {
+          "value": "```protobuf\nrpc GetUser(GetUserRequest) returns (User);\nrpc ListUsers(Empty) returns (stream User);\n```\n**rpc** defines a remote procedure call within a service. Input and output are message types. `stream` enables streaming."
         }
       ]
     },
     "enum": {
       "contents": [
         {
-          "value": "```protobuf\nenum Status {\n  STATUS_UNSPECIFIED = 0;  // must have 0 value\n  STATUS_ACTIVE = 1;\n  STATUS_INACTIVE = 2;\n}\n```\n**enum** defines named constants. The zero value is required and should be UNSPECIFIED. Use the type name as prefix convention."
+          "value": "```protobuf\nenum Status {\n  STATUS_UNSPECIFIED = 0;\n  STATUS_ACTIVE = 1;\n  STATUS_INACTIVE = 2;\n}\n```\n**enum** defines named constants. Zero value is required and should be UNSPECIFIED. Use type name as prefix."
+        }
+      ]
+    },
+    "oneof": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage SearchResult {\n  oneof result {\n    User user = 1;\n    Group group = 2;\n    string error = 3;\n  }\n}\n```\n**oneof** enforces that at most one field in the group is set. Setting one clears the others. Saves memory."
+        }
+      ]
+    },
+    "repeated": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage User {\n  repeated string tags = 1;\n  repeated Address addresses = 2;\n}\n```\n**repeated** marks a field as a list (zero or more elements). Order is preserved. Can contain scalars or messages."
+        }
+      ]
+    },
+    "map": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Config {\n  map<string, string> properties = 1;\n  map<int32, Feature> features = 2;\n}\n```\n**map** defines key-value pairs. Keys must be integral or string types. Values can be any type except another map."
+        }
+      ]
+    },
+    "optional": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage User {\n  optional string nickname = 1;\n  optional int32 age = 2;\n}\n```\n**optional** (proto3) enables presence tracking. Without it, default values are indistinguishable from unset fields."
+        }
+      ]
+    },
+    "reserved": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Example {\n  reserved 5, 10 to 12;\n  reserved \"old_field\", \"legacy\";\n}\n```\n**reserved** prevents reuse of deleted field numbers or names. Protects against data corruption from old messages."
+        }
+      ]
+    },
+    "import": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/timestamp.proto\";\nimport \"other/messages.proto\";\nimport public \"shared/types.proto\";\n```\n**import** includes definitions from other .proto files. `import public` re-exports the imported definitions."
+        }
+      ]
+    },
+    "package": {
+      "contents": [
+        {
+          "value": "```protobuf\npackage mycompany.myproject.v1;\n```\n**package** namespaces messages to avoid naming conflicts. Maps to language-specific packages (Java package, C++ namespace)."
+        }
+      ]
+    },
+    "option": {
+      "contents": [
+        {
+          "value": "```protobuf\noption java_package = \"com.example.proto\";\noption go_package = \"github.com/user/repo/pb\";\noption java_multiple_files = true;\n```\n**option** configures code generation. Language-specific options control package names, output structure, etc."
         }
       ]
     },
     "field_numbers": {
       "contents": [
         {
-          "value": "```protobuf\nmessage Example {\n  string name = 1;   // 1-15: one byte (use for frequent fields)\n  int32 count = 2;   // 16-2047: two bytes\n  // 19000-19999: reserved by protobuf\n  \n  reserved 5, 10 to 12;          // reserve deleted field numbers\n  reserved \"old_field_name\";     // reserve deleted field names\n}\n```\n**Field numbers** identify fields in the binary format. Use 1-15 for frequently-used fields (more efficient encoding). Never reuse numbers."
+          "value": "```protobuf\nmessage Example {\n  string name = 1;   // 1-15: one byte (frequent fields)\n  int32 count = 16;  // 16-2047: two bytes\n  // 19000-19999: reserved by protobuf\n}\n```\n**Field numbers** identify fields in binary format. Use 1-15 for frequent fields (more efficient). Never reuse numbers."
         }
       ]
     },
     "well_known_types": {
       "contents": [
         {
-          "value": "```protobuf\nimport \"google/protobuf/timestamp.proto\";\nimport \"google/protobuf/duration.proto\";\nimport \"google/protobuf/empty.proto\";\nimport \"google/protobuf/wrappers.proto\";\nimport \"google/protobuf/any.proto\";\nimport \"google/protobuf/struct.proto\";\n```\n**Well-known types** are pre-defined utility messages. Timestamp for dates, Empty for no-data responses, wrappers for nullable scalars."
+          "value": "```protobuf\nimport \"google/protobuf/timestamp.proto\";\nimport \"google/protobuf/duration.proto\";\nimport \"google/protobuf/empty.proto\";\nimport \"google/protobuf/wrappers.proto\";\nimport \"google/protobuf/any.proto\";\nimport \"google/protobuf/struct.proto\";\n```\n**Well-known types** are standard utility messages. Timestamp for dates, Empty for void, wrappers for nullable scalars."
         }
       ]
     },
     "scalar_types": {
       "contents": [
         {
-          "value": "```protobuf\n// Numeric:\ndouble, float           // floating point\nint32, int64            // variable-length signed\nuint32, uint64          // variable-length unsigned\nsint32, sint64          // efficient for negatives\nfixed32, fixed64        // fixed-length unsigned\nsfixed32, sfixed64      // fixed-length signed\n\n// Other:\nbool                    // true/false\nstring                  // UTF-8 text\nbytes                   // raw bytes\n```\n**Scalar types** - choose based on value range and encoding efficiency."
+          "value": "```protobuf\n// Numeric: double, float, int32, int64, uint32, uint64\n//          sint32, sint64 (efficient for negatives)\n//          fixed32, fixed64, sfixed32, sfixed64\n// Other: bool, string, bytes\n```\n**Scalar types** — choose based on value range and encoding efficiency."
+        }
+      ]
+    },
+    "Timestamp": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Event {\n  string name = 1;\n  google.protobuf.Timestamp created_at = 2;\n}\n```\n**Timestamp** represents a point in time with seconds and nanoseconds since Unix epoch."
+        }
+      ]
+    },
+    "Duration": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/duration.proto\";\n\nmessage Config {\n  google.protobuf.Duration timeout = 1;\n}\n```\n**Duration** represents a signed length of time with seconds and nanoseconds."
+        }
+      ]
+    },
+    "Any": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/any.proto\";\n\nmessage Response {\n  google.protobuf.Any data = 1;\n}\n```\n**Any** wraps an arbitrary message with a type URL. Use for polymorphic fields when the type isn't known at compile time."
+        }
+      ]
+    },
+    "Empty": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/empty.proto\";\n\nservice MyService {\n  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty);\n}\n```\n**Empty** represents a message with no fields. Use for RPCs with no meaningful request/response."
+        }
+      ]
+    },
+    "Struct": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/struct.proto\";\n\nmessage Config {\n  google.protobuf.Struct metadata = 1;  // arbitrary JSON-like data\n}\n```\n**Struct** represents untyped JSON-like data. Use when the schema is dynamic or unknown at compile time."
+        }
+      ]
+    },
+    "FieldMask": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/field_mask.proto\";\n\nmessage UpdateUserRequest {\n  User user = 1;\n  google.protobuf.FieldMask update_mask = 2;\n}\n```\n**FieldMask** specifies which fields to update in a partial update request. Standard pattern for PATCH operations."
+        }
+      ]
+    },
+    "Wrapper": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/wrappers.proto\";\n\nmessage Config {\n  google.protobuf.Int32Value max_retries = 1;\n  google.protobuf.StringValue label = 2;\n}\n```\n**Wrapper types** (Int32Value, StringValue, etc.) provide nullable scalars. Absent wrapper = null, present = has value."
+        }
+      ]
+    },
+    "double": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Point {\n  double latitude = 1;\n  double longitude = 2;\n}\n```\n**double** is a 64-bit IEEE 754 floating point number. Use for precise decimal values."
+        }
+      ]
+    },
+    "float": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Sensor {\n  float temperature = 1;\n}\n```\n**float** is a 32-bit IEEE 754 floating point. Less precise than double but uses less space."
+        }
+      ]
+    },
+    "int32": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Item {\n  int32 quantity = 1;\n}\n```\n**int32** is a variable-length signed 32-bit integer. Inefficient for negative numbers — use `sint32` for those."
+        }
+      ]
+    },
+    "int64": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage File {\n  int64 size_bytes = 1;\n}\n```\n**int64** is a variable-length signed 64-bit integer. Use for large values like file sizes or timestamps."
+        }
+      ]
+    },
+    "uint32": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Config {\n  uint32 port = 1;\n}\n```\n**uint32** is a variable-length unsigned 32-bit integer. Use for values that are always non-negative."
+        }
+      ]
+    },
+    "bool": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Feature {\n  bool enabled = 1;\n}\n```\n**bool** represents true/false. Default value is false in proto3."
+        }
+      ]
+    },
+    "string": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage User {\n  string name = 1;\n  string email = 2;\n}\n```\n**string** must be valid UTF-8 encoded text. Use `bytes` for arbitrary binary data."
+        }
+      ]
+    },
+    "bytes": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage File {\n  bytes content = 1;\n}\n```\n**bytes** holds arbitrary binary data. No UTF-8 requirement. Use for file contents, hashes, etc."
+        }
+      ]
+    },
+    "stream": {
+      "contents": [
+        {
+          "value": "```protobuf\nservice Chat {\n  rpc Send(stream Message) returns (stream Message);\n}\n```\n**stream** enables streaming in RPCs. Can be on request (client streaming), response (server streaming), or both (bidirectional)."
+        }
+      ]
+    },
+    "extend": {
+      "contents": [
+        {
+          "value": "```protobuf\n// Proto2 only:\nextend google.protobuf.MethodOptions {\n  optional string auth_level = 50000;\n}\n```\n**extend** adds custom fields to existing messages (proto2). In proto3, use custom options with extensions."
+        }
+      ]
+    },
+    "deprecated": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage User {\n  string name = 1;\n  string old_email = 2 [deprecated = true];\n  string email = 3;\n}\n```\n**[deprecated = true]** marks a field as deprecated. Generates deprecation warnings in client code."
+        }
+      ]
+    },
+    "json_name": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage User {\n  string user_name = 1 [json_name = \"userName\"];\n}\n```\n**[json_name]** overrides the JSON field name. By default, proto field names use camelCase in JSON."
+        }
+      ]
+    },
+    "default_values": {
+      "contents": [
+        {
+          "value": "```protobuf\n// Proto3 default values:\n// string: \"\"    int32: 0    bool: false\n// enum: first value (0)\n// message: null  repeated: empty list\n// bytes: empty bytes\n```\n**Default values** in proto3 are always zero/empty. There's no way to distinguish \"not set\" from default without `optional`."
+        }
+      ]
+    },
+    "nested_message": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Order {\n  message LineItem {\n    string product = 1;\n    int32 quantity = 2;\n  }\n  repeated LineItem items = 1;\n}\n```\n**Nested messages** are defined inside another message. Referenced as `Order.LineItem` from outside."
+        }
+      ]
+    },
+    "encoding": {
+      "contents": [
+        {
+          "value": "```protobuf\n// Wire types:\n// 0: Varint (int32, int64, uint32, uint64, sint32, sint64, bool, enum)\n// 1: 64-bit (fixed64, sfixed64, double)\n// 2: Length-delimited (string, bytes, messages, repeated)\n// 5: 32-bit (fixed32, sfixed32, float)\n```\n**Wire format** uses 5 wire types for binary encoding. Varint encoding makes small numbers compact."
+        }
+      ]
+    },
+    "sint32": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Delta {\n  sint32 offset = 1;\n}\n```\n**sint32** uses ZigZag encoding, making negative values much more compact than `int32`. Use when values are frequently negative."
+        }
+      ]
+    },
+    "fixed64": {
+      "contents": [
+        {
+          "value": "```protobuf\nmessage Hash {\n  fixed64 value = 1;\n}\n```\n**fixed64** is always 8 bytes. More efficient than `int64` when values are frequently > 2^56."
+        }
+      ]
+    },
+    "option_custom": {
+      "contents": [
+        {
+          "value": "```protobuf\nimport \"google/protobuf/descriptor.proto\";\n\nextend google.protobuf.FieldOptions {\n  optional bool sensitive = 50000;\n}\n\nmessage User {\n  string password = 1 [(sensitive) = true];\n}\n```\n**Custom options** extend built-in options for fields, messages, services, etc. Use high field numbers (50000+)."
         }
       ]
     }

@@ -4,35 +4,350 @@
     "SET": {
       "contents": [
         {
-          "value": "**SET** — Redis keyword."
+          "value": "```redis\nSET key value [EX seconds] [PX milliseconds] [NX|XX] [KEEPTTL]\n```\n**SET** stores a string value at the given key. `EX` sets expiry in seconds, `PX` in milliseconds. `NX` sets only if key does not exist, `XX` only if it already exists. Returns OK on success."
         }
       ]
     },
     "GET": {
       "contents": [
         {
-          "value": "**GET** — Redis keyword."
+          "value": "```redis\nGET key\n```\n**GET** retrieves the string value of a key. Returns the value or `nil` if the key does not exist. Only works with string values."
         }
       ]
     },
     "DEL": {
       "contents": [
         {
-          "value": "**DEL** — Redis keyword."
+          "value": "```redis\nDEL key [key ...]\n```\n**DEL** removes one or more keys and their associated values. Returns the number of keys removed. Blocking operation — for large datasets consider `UNLINK`."
         }
       ]
     },
     "EXISTS": {
       "contents": [
         {
-          "value": "**EXISTS** — Redis keyword."
+          "value": "```redis\nEXISTS key [key ...]\n```\n**EXISTS** checks if one or more keys exist. Returns the count of existing keys."
         }
       ]
     },
     "EXPIRE": {
       "contents": [
         {
-          "value": "**EXPIRE** — Redis keyword."
+          "value": "```redis\nEXPIRE key seconds [NX|XX|GT|LT]\n```\n**EXPIRE** sets a timeout on a key in seconds. After expiry the key is automatically deleted. Returns 1 if set, 0 if key doesn't exist."
+        }
+      ]
+    },
+    "TTL": {
+      "contents": [
+        {
+          "value": "```redis\nTTL key\n```\n**TTL** returns the remaining time-to-live of a key in seconds. Returns `-1` if no expiry, `-2` if key does not exist."
+        }
+      ]
+    },
+    "PTTL": {
+      "contents": [
+        {
+          "value": "```redis\nPTTL key\n```\n**PTTL** returns the remaining time-to-live in milliseconds. Returns `-1` if no expiry, `-2` if key does not exist."
+        }
+      ]
+    },
+    "MSET": {
+      "contents": [
+        {
+          "value": "```redis\nMSET key1 value1 key2 value2 [key value ...]\n```\n**MSET** sets multiple keys to multiple values atomically. Always succeeds. Use `MSETNX` to set only if none of the keys exist."
+        }
+      ]
+    },
+    "MGET": {
+      "contents": [
+        {
+          "value": "```redis\nMGET key1 key2 [key ...]\n```\n**MGET** returns the values of all specified keys. For missing keys, `nil` is returned in that position."
+        }
+      ]
+    },
+    "INCR": {
+      "contents": [
+        {
+          "value": "```redis\nINCR key\n```\n**INCR** atomically increments the integer value of a key by 1. If the key doesn't exist, it's set to 0 before incrementing. Errors if value is not an integer."
+        }
+      ]
+    },
+    "INCRBY": {
+      "contents": [
+        {
+          "value": "```redis\nINCRBY key increment\n```\n**INCRBY** atomically increments the integer value by the given amount. Supports negative values for decrementing."
+        }
+      ]
+    },
+    "DECR": {
+      "contents": [
+        {
+          "value": "```redis\nDECR key\n```\n**DECR** atomically decrements the integer value of a key by 1."
+        }
+      ]
+    },
+    "APPEND": {
+      "contents": [
+        {
+          "value": "```redis\nAPPEND key value\n```\n**APPEND** appends a value to the end of a string key. Creates the key if it doesn't exist. Returns the new string length."
+        }
+      ]
+    },
+    "HSET": {
+      "contents": [
+        {
+          "value": "```redis\nHSET key field value [field value ...]\n```\n**HSET** sets one or more field-value pairs in a hash. Creates the hash if it doesn't exist. Returns the number of new fields added."
+        }
+      ]
+    },
+    "HGET": {
+      "contents": [
+        {
+          "value": "```redis\nHGET key field\n```\n**HGET** returns the value of a field in a hash. Returns `nil` if the field or key doesn't exist."
+        }
+      ]
+    },
+    "HGETALL": {
+      "contents": [
+        {
+          "value": "```redis\nHGETALL key\n```\n**HGETALL** returns all fields and values of a hash. Caution: expensive on large hashes — use `HSCAN` instead."
+        }
+      ]
+    },
+    "HDEL": {
+      "contents": [
+        {
+          "value": "```redis\nHDEL key field [field ...]\n```\n**HDEL** deletes one or more fields from a hash. Returns the number of fields removed."
+        }
+      ]
+    },
+    "HEXISTS": {
+      "contents": [
+        {
+          "value": "```redis\nHEXISTS key field\n```\n**HEXISTS** checks if a field exists in a hash. Returns 1 if present, 0 otherwise."
+        }
+      ]
+    },
+    "HINCRBY": {
+      "contents": [
+        {
+          "value": "```redis\nHINCRBY key field increment\n```\n**HINCRBY** atomically increments a hash field's integer value. Creates the field with 0 if it doesn't exist."
+        }
+      ]
+    },
+    "LPUSH": {
+      "contents": [
+        {
+          "value": "```redis\nLPUSH key element [element ...]\n```\n**LPUSH** inserts elements at the head (left) of a list. Creates the list if it doesn't exist. Returns the new list length."
+        }
+      ]
+    },
+    "RPUSH": {
+      "contents": [
+        {
+          "value": "```redis\nRPUSH key element [element ...]\n```\n**RPUSH** inserts elements at the tail (right) of a list. Returns the new length."
+        }
+      ]
+    },
+    "LPOP": {
+      "contents": [
+        {
+          "value": "```redis\nLPOP key [count]\n```\n**LPOP** removes and returns the first element(s) from a list. Returns `nil` if empty."
+        }
+      ]
+    },
+    "RPOP": {
+      "contents": [
+        {
+          "value": "```redis\nRPOP key [count]\n```\n**RPOP** removes and returns the last element(s) from a list."
+        }
+      ]
+    },
+    "LRANGE": {
+      "contents": [
+        {
+          "value": "```redis\nLRANGE key start stop\n```\n**LRANGE** returns a range of elements from a list. `LRANGE key 0 -1` returns the entire list."
+        }
+      ]
+    },
+    "LLEN": {
+      "contents": [
+        {
+          "value": "```redis\nLLEN key\n```\n**LLEN** returns the length of a list. Returns 0 if the key doesn't exist."
+        }
+      ]
+    },
+    "SADD": {
+      "contents": [
+        {
+          "value": "```redis\nSADD key member [member ...]\n```\n**SADD** adds members to a set. Ignores duplicates. Returns the number of new members added."
+        }
+      ]
+    },
+    "SMEMBERS": {
+      "contents": [
+        {
+          "value": "```redis\nSMEMBERS key\n```\n**SMEMBERS** returns all members of a set. Use `SSCAN` for large sets."
+        }
+      ]
+    },
+    "SISMEMBER": {
+      "contents": [
+        {
+          "value": "```redis\nSISMEMBER key member\n```\n**SISMEMBER** checks if a member exists in a set. Returns 1 if present, 0 otherwise. O(1)."
+        }
+      ]
+    },
+    "SREM": {
+      "contents": [
+        {
+          "value": "```redis\nSREM key member [member ...]\n```\n**SREM** removes members from a set. Returns the number removed."
+        }
+      ]
+    },
+    "ZADD": {
+      "contents": [
+        {
+          "value": "```redis\nZADD key [NX|XX] [GT|LT] [CH] score member [score member ...]\n```\n**ZADD** adds members with scores to a sorted set. `NX` only adds new, `XX` only updates existing, `CH` returns changed count."
+        }
+      ]
+    },
+    "ZRANGE": {
+      "contents": [
+        {
+          "value": "```redis\nZRANGE key min max [BYSCORE|BYLEX] [REV] [LIMIT offset count] [WITHSCORES]\n```\n**ZRANGE** returns members from a sorted set by index, score, or lex range. `WITHSCORES` includes scores."
+        }
+      ]
+    },
+    "ZRANK": {
+      "contents": [
+        {
+          "value": "```redis\nZRANK key member\n```\n**ZRANK** returns the 0-based rank of a member ordered by score (low to high). Returns `nil` if not found."
+        }
+      ]
+    },
+    "SUBSCRIBE": {
+      "contents": [
+        {
+          "value": "```redis\nSUBSCRIBE channel [channel ...]\n```\n**SUBSCRIBE** listens for messages on channels. The client enters subscriber mode and can only use SUBSCRIBE/UNSUBSCRIBE/PING."
+        }
+      ]
+    },
+    "PUBLISH": {
+      "contents": [
+        {
+          "value": "```redis\nPUBLISH channel message\n```\n**PUBLISH** sends a message to all subscribers of a channel. Returns the number of clients that received it."
+        }
+      ]
+    },
+    "PSUBSCRIBE": {
+      "contents": [
+        {
+          "value": "```redis\nPSUBSCRIBE pattern [pattern ...]\n```\n**PSUBSCRIBE** subscribes to channels matching a glob pattern. `*` matches any sequence, `?` one character."
+        }
+      ]
+    },
+    "KEYS": {
+      "contents": [
+        {
+          "value": "```redis\nKEYS pattern\n```\n**KEYS** returns all keys matching a glob pattern. **Warning:** blocks the server on large datasets. Use `SCAN` in production."
+        }
+      ]
+    },
+    "SCAN": {
+      "contents": [
+        {
+          "value": "```redis\nSCAN cursor [MATCH pattern] [COUNT count] [TYPE type]\n```\n**SCAN** iterates keys incrementally. Cursor 0 means complete. Non-blocking alternative to `KEYS`."
+        }
+      ]
+    },
+    "TYPE": {
+      "contents": [
+        {
+          "value": "```redis\nTYPE key\n```\n**TYPE** returns the data type: `string`, `list`, `set`, `zset`, `hash`, `stream`, or `none`."
+        }
+      ]
+    },
+    "PERSIST": {
+      "contents": [
+        {
+          "value": "```redis\nPERSIST key\n```\n**PERSIST** removes the expiration from a key. Returns 1 if removed, 0 if key has no expiry or doesn't exist."
+        }
+      ]
+    },
+    "RENAME": {
+      "contents": [
+        {
+          "value": "```redis\nRENAME key newkey\n```\n**RENAME** renames a key. Overwrites `newkey` if it exists. Use `RENAMENX` to rename only if newkey doesn't exist."
+        }
+      ]
+    },
+    "UNLINK": {
+      "contents": [
+        {
+          "value": "```redis\nUNLINK key [key ...]\n```\n**UNLINK** removes keys asynchronously in a background thread. Non-blocking alternative to `DEL`."
+        }
+      ]
+    },
+    "MULTI": {
+      "contents": [
+        {
+          "value": "```redis\nMULTI\nSET key1 val1\nSET key2 val2\nEXEC\n```\n**MULTI** starts a transaction. Commands are queued until `EXEC`. `DISCARD` cancels."
+        }
+      ]
+    },
+    "EXEC": {
+      "contents": [
+        {
+          "value": "```redis\nEXEC\n```\n**EXEC** executes all queued commands after `MULTI` atomically. Returns `nil` if `WATCH` detected changes."
+        }
+      ]
+    },
+    "WATCH": {
+      "contents": [
+        {
+          "value": "```redis\nWATCH key [key ...]\n```\n**WATCH** implements optimistic locking. If any watched key changes before `EXEC`, the transaction aborts."
+        }
+      ]
+    },
+    "XADD": {
+      "contents": [
+        {
+          "value": "```redis\nXADD key [MAXLEN|MINID [=|~] threshold] * field value [field value ...]\n```\n**XADD** appends an entry to a stream. `*` auto-generates the ID. `MAXLEN ~` trims approximately."
+        }
+      ]
+    },
+    "XREAD": {
+      "contents": [
+        {
+          "value": "```redis\nXREAD [COUNT count] [BLOCK milliseconds] STREAMS key [key ...] id [id ...]\n```\n**XREAD** reads entries from streams. `BLOCK 0` waits indefinitely. Use `$` to read only new entries."
+        }
+      ]
+    },
+    "INFO": {
+      "contents": [
+        {
+          "value": "```redis\nINFO [section]\n```\n**INFO** returns server information. Sections: `server`, `clients`, `memory`, `stats`, `replication`, `cpu`, `keyspace`, `all`."
+        }
+      ]
+    },
+    "CONFIG": {
+      "contents": [
+        {
+          "value": "```redis\nCONFIG GET parameter\nCONFIG SET parameter value\n```\n**CONFIG** reads or modifies server configuration at runtime. Use `CONFIG REWRITE` to persist changes."
+        }
+      ]
+    },
+    "SELECT": {
+      "contents": [
+        {
+          "value": "```redis\nSELECT index\n```\n**SELECT** switches to a different database (0-15 by default). Database 0 is the default."
+        }
+      ]
+    },
+    "FLUSHDB": {
+      "contents": [
+        {
+          "value": "```redis\nFLUSHDB [ASYNC|SYNC]\n```\n**FLUSHDB** deletes all keys in the current database. `ASYNC` performs deletion in background. **Destructive.**"
         }
       ]
     }

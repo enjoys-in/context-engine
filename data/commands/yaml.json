@@ -1,35 +1,34 @@
 {
   "name": "yq",
-  "description": "YAML command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "yq — YAML/JSON/XML processor (like jq for YAML)",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": ".key file.yaml",
-      "description": "Extract key",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-i \".key = val\" file.yaml",
-      "description": "Update in-place",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "eval \".\" file.yaml",
-      "description": "Pretty print",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": ".key file.yaml", "description": "Extract a value by key path", "args": ["expression", "file"], "options": [] },
+    { "name": "-i '.key = val' file.yaml", "description": "Update a value in-place", "args": ["expression", "file"], "options": [] },
+    { "name": "eval '.' file.yaml", "description": "Pretty-print YAML file", "args": ["expression", "file"], "options": [] },
+    { "name": "eval-all 'select(.kind==\"Deployment\")' *.yaml", "description": "Filter across multiple YAML files", "args": ["expression", "files"], "options": [] },
+    { "name": "-o json file.yaml", "description": "Convert YAML to JSON", "args": ["file"], "options": [] },
+    { "name": "-P file.json", "description": "Convert JSON to YAML (pretty print)", "args": ["file"], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-i / --inplace", "description": "Edit file in-place" },
+    { "name": "-o / --output-format", "description": "Output format: yaml, json, xml, tsv, csv, props" },
+    { "name": "-P / --prettyPrint", "description": "Pretty print output" },
+    { "name": "-C / --colors", "description": "Force color output" },
+    { "name": "-N / --no-doc", "description": "Remove document separators (---)" },
+    { "name": "-e / --expression", "description": "yq expression to evaluate" },
+    { "name": "--front-matter", "description": "Process YAML front matter in files" },
+    { "name": "--indent", "description": "Set indentation level (default: 2)" }
+  ],
+  "examples": [
+    "yq '.metadata.name' deployment.yaml",
+    "yq -i '.spec.replicas = 3' deployment.yaml",
+    "yq -o json config.yaml > config.json",
+    "yq eval-all 'select(.kind == \"Service\")' *.yaml",
+    "yq '. *= load(\"overrides.yaml\")' base.yaml",
+    "cat values.yaml | yq '.image.tag'"
+  ],
+  "relatedCommands": ["jq", "toml", "ini", "kubectl"]
 }

@@ -1,88 +1,133 @@
 {
   "language": "react",
-  "rename": {
-    "wordPattern": "[a-zA-Z_$][a-zA-Z0-9_$]*",
-    "prepareProvider": true,
-    "validation": {
-      "identifierPattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*$",
-      "minLength": 1,
-      "maxLength": 256,
-      "reservedWords": [
-        "break", "case", "catch", "continue", "debugger", "default", "delete", "do",
-        "else", "finally", "for", "function", "if", "in", "instanceof", "new",
-        "return", "switch", "this", "throw", "try", "typeof", "var", "void",
-        "while", "with", "class", "const", "enum", "export", "extends", "import",
-        "super", "implements", "interface", "let", "package", "private", "protected",
-        "public", "static", "yield", "await", "async", "of", "null", "undefined",
-        "true", "false", "NaN", "Infinity"
-      ]
-    },
-    "renamePatterns": [
-      {
-        "name": "ComponentRename",
-        "pattern": "(?:export\\s+)?(?:default\\s+)?(?:function|const|class)\\s+([A-Z][a-zA-Z0-9]*)\\s*",
-        "captureGroup": 1,
-        "scope": "file",
-        "description": "Rename a React component and update all usages",
-        "validationRules": {
-          "mustStartWith": "[A-Z]",
-          "reason": "React components must start with an uppercase letter."
-        }
-      },
-      {
-        "name": "HookRename",
-        "pattern": "(?:export\\s+)?(?:function|const)\\s+(use[A-Z][a-zA-Z0-9]*)\\s*(?:=|\\()",
-        "captureGroup": 1,
-        "scope": "file",
-        "description": "Rename a custom hook and update all call sites",
-        "validationRules": {
-          "mustStartWith": "use[A-Z]",
-          "reason": "Custom hooks must start with 'use' followed by an uppercase letter."
-        }
-      },
-      {
-        "name": "ContextRename",
-        "pattern": "(?:export\\s+)?const\\s+(\\w+Context)\\s*=\\s*(?:React\\.)?createContext",
-        "captureGroup": 1,
-        "scope": "file",
-        "description": "Rename a context and update providers and consumers",
-        "validationRules": {
-          "mustEndWith": "Context",
-          "reason": "Context names conventionally end with 'Context'."
-        }
-      },
-      {
-        "name": "PropRename",
-        "pattern": "(?:interface|type)\\s+(\\w+Props)\\s*",
-        "captureGroup": 1,
-        "scope": "file",
-        "description": "Rename a props interface/type"
-      },
-      {
-        "name": "StateVariableRename",
-        "pattern": "const\\s+\\[(\\w+),\\s*set\\w+\\]\\s*=\\s*useState",
-        "captureGroup": 1,
-        "scope": "function",
-        "description": "Rename a state variable and its setter"
-      },
-      {
-        "name": "RefRename",
-        "pattern": "const\\s+(\\w+)\\s*=\\s*useRef",
-        "captureGroup": 1,
-        "scope": "function",
-        "description": "Rename a ref variable"
-      },
-      {
-        "name": "HOCRename",
-        "pattern": "(?:export\\s+)?(?:function|const)\\s+(with[A-Z][a-zA-Z0-9]*)\\s*",
-        "captureGroup": 1,
-        "scope": "file",
-        "description": "Rename a Higher-Order Component",
-        "validationRules": {
-          "mustStartWith": "with[A-Z]",
-          "reason": "HOCs conventionally start with 'with'."
-        }
-      }
+  "wordPattern": "[a-zA-Z_$][a-zA-Z0-9_$]*",
+  "identifierRules": {
+    "start": "[a-zA-Z_$]",
+    "continue": "[a-zA-Z0-9_$]",
+    "forbidden": [
+      "break",
+      "case",
+      "catch",
+      "continue",
+      "debugger",
+      "default",
+      "delete",
+      "do",
+      "else",
+      "finally",
+      "for",
+      "function",
+      "if",
+      "in",
+      "instanceof",
+      "new",
+      "return",
+      "switch",
+      "this",
+      "throw",
+      "try",
+      "typeof",
+      "var",
+      "void",
+      "while",
+      "with",
+      "class",
+      "const",
+      "enum",
+      "export",
+      "extends",
+      "import",
+      "super",
+      "implements",
+      "interface",
+      "let",
+      "package",
+      "private",
+      "protected",
+      "public",
+      "static",
+      "yield",
+      "await",
+      "async",
+      "of",
+      "null",
+      "undefined",
+      "true",
+      "false",
+      "NaN",
+      "Infinity"
     ]
-  }
+  },
+  "renameValidation": {
+    "allowEmpty": false,
+    "maxLength": 256,
+    "pattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*$"
+  },
+  "prepareRenamePatterns": [
+    {
+      "name": "ComponentRename",
+      "pattern": "(?:export\\s+)?(?:default\\s+)?(?:function|const|class)\\s+([A-Z][a-zA-Z0-9]*)\\s*",
+      "captureGroup": 1,
+      "scope": "file",
+      "description": "Rename a React component and update all usages",
+      "validationRules": {
+        "mustStartWith": "[A-Z]",
+        "reason": "React components must start with an uppercase letter."
+      }
+    },
+    {
+      "name": "HookRename",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+(use[A-Z][a-zA-Z0-9]*)\\s*(?:=|\\()",
+      "captureGroup": 1,
+      "scope": "file",
+      "description": "Rename a custom hook and update all call sites",
+      "validationRules": {
+        "mustStartWith": "use[A-Z]",
+        "reason": "Custom hooks must start with 'use' followed by an uppercase letter."
+      }
+    },
+    {
+      "name": "ContextRename",
+      "pattern": "(?:export\\s+)?const\\s+(\\w+Context)\\s*=\\s*(?:React\\.)?createContext",
+      "captureGroup": 1,
+      "scope": "file",
+      "description": "Rename a context and update providers and consumers",
+      "validationRules": {
+        "mustEndWith": "Context",
+        "reason": "Context names conventionally end with 'Context'."
+      }
+    },
+    {
+      "name": "PropRename",
+      "pattern": "(?:interface|type)\\s+(\\w+Props)\\s*",
+      "captureGroup": 1,
+      "scope": "file",
+      "description": "Rename a props interface/type"
+    },
+    {
+      "name": "StateVariableRename",
+      "pattern": "const\\s+\\[(\\w+),\\s*set\\w+\\]\\s*=\\s*useState",
+      "captureGroup": 1,
+      "scope": "function",
+      "description": "Rename a state variable and its setter"
+    },
+    {
+      "name": "RefRename",
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useRef",
+      "captureGroup": 1,
+      "scope": "function",
+      "description": "Rename a ref variable"
+    },
+    {
+      "name": "HOCRename",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+(with[A-Z][a-zA-Z0-9]*)\\s*",
+      "captureGroup": 1,
+      "scope": "file",
+      "description": "Rename a Higher-Order Component",
+      "validationRules": {
+        "mustStartWith": "with[A-Z]",
+        "reason": "HOCs conventionally start with 'with'."
+      }
+    }
+  ]
 }

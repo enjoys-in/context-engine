@@ -1,16 +1,28 @@
 {
   "name": "dax",
-  "description": "DAX command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "description": "DAX — Data Analysis Expressions tools for Power BI and SSAS",
+  "category": "tool",
+  "platforms": ["windows", "linux", "macos"],
+  "shells": ["powershell", "bash", "zsh"],
+  "subcommands": [
+    { "name": "format", "description": "Format DAX expressions using DAX Formatter", "args": ["expression"], "options": ["--short", "--long"] },
+    { "name": "analyze", "description": "Analyze DAX model using DAX Studio", "args": ["connection"], "options": ["--query", "--output"] },
+    { "name": "query", "description": "Execute DAX query against tabular model", "args": ["query"], "options": ["--server", "--database"] },
+    { "name": "export", "description": "Export DAX query results to file", "args": ["query"], "options": ["--format", "--output"] },
+    { "name": "benchmark", "description": "Benchmark DAX query performance", "args": ["query"], "options": ["--iterations", "--cold-cache"] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "--server", "description": "Analysis Services server connection string" },
+    { "name": "--database", "description": "Target database name" },
+    { "name": "--output", "description": "Output file path" },
+    { "name": "--format", "description": "Output format (csv, json, xlsx)" },
+    { "name": "--timeout", "description": "Query timeout in seconds" }
   ],
-  "subcommands": []
+  "examples": [
+    "daxstudio.exe -c \"Data Source=localhost\\SSAS\"",
+    "EVALUATE SUMMARIZECOLUMNS(Sales[Region], \"Total\", SUM(Sales[Amount]))",
+    "tabular-editor model.bim --script analyze.csx",
+    "pbi-tools extract report.pbix --output ./extracted"
+  ],
+  "relatedCommands": ["powerquery", "sql", "powershell"]
 }

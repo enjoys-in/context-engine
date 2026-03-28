@@ -3,10 +3,10 @@
   "completions": [
     {
       "label": "[section]",
-      "kind": 15,
+      "kind": 28,
       "detail": "Section header",
       "documentation": {
-        "value": "Define a new section. All key-value pairs below belong to this section until the next section header."
+        "value": "Define a new INI section."
       },
       "insertText": "[${1:section}]\n${2:key} = ${3:value}",
       "insertTextRules": 4,
@@ -14,10 +14,10 @@
     },
     {
       "label": "key = value",
-      "kind": 15,
+      "kind": 28,
       "detail": "Key-value pair",
       "documentation": {
-        "value": "A configuration key-value pair. Values can be strings, numbers, or booleans."
+        "value": "Configuration key-value pair."
       },
       "insertText": "${1:key} = ${2:value}",
       "insertTextRules": 4,
@@ -25,10 +25,10 @@
     },
     {
       "label": "; comment",
-      "kind": 15,
-      "detail": "Comment (semicolon)",
+      "kind": 28,
+      "detail": "Semicolon comment",
       "documentation": {
-        "value": "A comment line starting with semicolon."
+        "value": "Comment with semicolon."
       },
       "insertText": "; ${1:comment}",
       "insertTextRules": 4,
@@ -36,102 +36,872 @@
     },
     {
       "label": "# comment",
-      "kind": 15,
-      "detail": "Comment (hash)",
+      "kind": 28,
+      "detail": "Hash comment",
       "documentation": {
-        "value": "A comment line starting with hash."
+        "value": "Comment with hash."
       },
       "insertText": "# ${1:comment}",
       "insertTextRules": 4,
-      "sortText": "00_comment2"
+      "sortText": "00_comment"
     },
     {
       "label": "[DEFAULT]",
-      "kind": 15,
+      "kind": 28,
       "detail": "Default section",
       "documentation": {
-        "value": "The DEFAULT section provides fallback values for all other sections."
+        "value": "Fallback values for all sections."
       },
       "insertText": "[DEFAULT]\n${1:key} = ${2:value}",
       "insertTextRules": 4,
-      "sortText": "01_default"
+      "sortText": "01_section"
+    },
+    {
+      "label": "multiline",
+      "kind": 28,
+      "detail": "Multi-line value",
+      "documentation": {
+        "value": "Continuation with indentation."
+      },
+      "insertText": "${1:key} = ${2:first line}\n    ${3:continuation}",
+      "insertTextRules": 4,
+      "sortText": "01_multi"
+    },
+    {
+      "label": "interpolation",
+      "kind": 28,
+      "detail": "Variable interpolation",
+      "documentation": {
+        "value": "Reference another key (Python configparser)."
+      },
+      "insertText": "${1:key} = %(${2:other_key})s${3:suffix}",
+      "insertTextRules": 4,
+      "sortText": "01_interp"
     },
     {
       "label": "[mysqld]",
-      "kind": 15,
-      "detail": "MySQL server section",
+      "kind": 28,
+      "detail": "MySQL server config",
       "documentation": {
         "value": "MySQL server configuration section (my.cnf)."
       },
       "insertText": "[mysqld]\nport = ${1:3306}\nbind-address = ${2:127.0.0.1}\nmax_connections = ${3:151}\ninnodb_buffer_pool_size = ${4:128M}",
       "insertTextRules": 4,
-      "sortText": "02_mysqld"
+      "sortText": "02_mysql"
+    },
+    {
+      "label": "[mysqld_safe]",
+      "kind": 28,
+      "detail": "MySQL safe config",
+      "documentation": {
+        "value": "MySQL safe mode config."
+      },
+      "insertText": "[mysqld_safe]\nlog-error = /var/log/mysqld.log\npid-file = /var/run/mysqld/mysqld.pid",
+      "insertTextRules": 4,
+      "sortText": "02_mysql"
+    },
+    {
+      "label": "[client]",
+      "kind": 28,
+      "detail": "MySQL client config",
+      "documentation": {
+        "value": "MySQL client defaults."
+      },
+      "insertText": "[client]\nport = ${1:3306}\nsocket = /var/lib/mysql/mysql.sock\ndefault-character-set = utf8mb4",
+      "insertTextRules": 4,
+      "sortText": "02_mysql"
     },
     {
       "label": "[php]",
-      "kind": 15,
-      "detail": "PHP section (php.ini)",
+      "kind": 28,
+      "detail": "PHP configuration",
       "documentation": {
-        "value": "PHP configuration section."
+        "value": "PHP config section (php.ini)."
       },
       "insertText": "[PHP]\nengine = On\nmemory_limit = ${1:128M}\nupload_max_filesize = ${2:2M}\npost_max_size = ${3:8M}\nmax_execution_time = ${4:30}",
       "insertTextRules": 4,
       "sortText": "02_php"
     },
     {
+      "label": "[Date]",
+      "kind": 28,
+      "detail": "PHP date config",
+      "documentation": {
+        "value": "PHP date/time config."
+      },
+      "insertText": "[Date]\ndate.timezone = ${1:UTC}",
+      "insertTextRules": 4,
+      "sortText": "02_php"
+    },
+    {
+      "label": "[Session]",
+      "kind": 28,
+      "detail": "PHP session",
+      "documentation": {
+        "value": "PHP session config."
+      },
+      "insertText": "[Session]\nsession.save_handler = files\nsession.save_path = \"${1:/tmp}\"\nsession.gc_maxlifetime = ${2:1440}",
+      "insertTextRules": 4,
+      "sortText": "02_php"
+    },
+    {
+      "label": "[opcache]",
+      "kind": 28,
+      "detail": "PHP OPcache",
+      "documentation": {
+        "value": "PHP OPcache config."
+      },
+      "insertText": "[opcache]\nopcache.enable = 1\nopcache.memory_consumption = ${1:128}\nopcache.max_accelerated_files = ${2:10000}\nopcache.revalidate_freq = ${3:2}",
+      "insertTextRules": 4,
+      "sortText": "02_php"
+    },
+    {
       "label": "[supervisord]",
-      "kind": 15,
+      "kind": 28,
       "detail": "Supervisord config",
       "documentation": {
-        "value": "Supervisor daemon configuration section."
+        "value": "Supervisor daemon config."
       },
       "insertText": "[supervisord]\nlogfile = /var/log/supervisord.log\npidfile = /var/run/supervisord.pid\nchildlogdir = /var/log/supervisor",
       "insertTextRules": 4,
-      "sortText": "02_supervisord"
+      "sortText": "02_supervisor"
     },
     {
       "label": "[program:name]",
-      "kind": 15,
-      "detail": "Supervisor program block",
+      "kind": 28,
+      "detail": "Supervisor program",
       "documentation": {
-        "value": "Define a supervised program in supervisord.conf."
+        "value": "Supervised program block."
       },
       "insertText": "[program:${1:myapp}]\ncommand = ${2:/usr/bin/python app.py}\ndirectory = ${3:/opt/app}\nautostart = true\nautorestart = true\nstdout_logfile = /var/log/${1:myapp}.log",
       "insertTextRules": 4,
-      "sortText": "02_program"
+      "sortText": "02_supervisor"
+    },
+    {
+      "label": "[group:name]",
+      "kind": 28,
+      "detail": "Supervisor group",
+      "documentation": {
+        "value": "Supervisor process group."
+      },
+      "insertText": "[group:${1:mygroup}]\nprograms = ${2:app1,app2}",
+      "insertTextRules": 4,
+      "sortText": "02_supervisor"
+    },
+    {
+      "label": "[inet_http_server]",
+      "kind": 28,
+      "detail": "Supervisor HTTP",
+      "documentation": {
+        "value": "Supervisor web interface."
+      },
+      "insertText": "[inet_http_server]\nport = ${1:9001}\nusername = ${2:admin}\npassword = ${3:password}",
+      "insertTextRules": 4,
+      "sortText": "02_supervisor"
     },
     {
       "label": "[uwsgi]",
-      "kind": 15,
-      "detail": "uWSGI section",
+      "kind": 28,
+      "detail": "uWSGI config",
       "documentation": {
-        "value": "uWSGI application server configuration."
+        "value": "uWSGI application server."
       },
       "insertText": "[uwsgi]\nmodule = ${1:wsgi}:${2:app}\nmaster = true\nprocesses = ${3:4}\nsocket = ${4:0.0.0.0:8000}\nvacuum = true",
       "insertTextRules": 4,
       "sortText": "02_uwsgi"
     },
     {
-      "label": "multiline value",
-      "kind": 15,
-      "detail": "Multi-line value",
+      "label": "[gunicorn]",
+      "kind": 28,
+      "detail": "Gunicorn config",
       "documentation": {
-        "value": "Continue a value on the next line by indenting with whitespace."
+        "value": "Gunicorn config section."
       },
-      "insertText": "${1:key} = ${2:first line}\n  ${3:continuation}",
+      "insertText": "[gunicorn]\nbind = ${1:0.0.0.0:8000}\nworkers = ${2:4}\nworker-class = ${3:sync}\ntimeout = ${4:30}",
       "insertTextRules": 4,
-      "sortText": "03_multiline"
+      "sortText": "02_gunicorn"
     },
     {
-      "label": "interpolation",
-      "kind": 15,
-      "detail": "Variable interpolation",
+      "label": "[user]",
+      "kind": 28,
+      "detail": "Git user config",
       "documentation": {
-        "value": "Reference another key value using %(name)s syntax (Python ConfigParser)."
+        "value": "Git user configuration."
       },
-      "insertText": "${1:key} = %(${2:other_key})s",
+      "insertText": "[user]\n    name = ${1:Your Name}\n    email = ${2:your@email.com}",
       "insertTextRules": 4,
-      "sortText": "03_interp"
+      "sortText": "02_git"
+    },
+    {
+      "label": "[core]",
+      "kind": 28,
+      "detail": "Git core config",
+      "documentation": {
+        "value": "Git core settings."
+      },
+      "insertText": "[core]\n    editor = ${1:vim}\n    autocrlf = ${2:input}\n    whitespace = fix",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[alias]",
+      "kind": 28,
+      "detail": "Git aliases",
+      "documentation": {
+        "value": "Git command aliases."
+      },
+      "insertText": "[alias]\n    co = checkout\n    br = branch\n    ci = commit\n    st = status\n    lg = log --oneline --graph",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[push]",
+      "kind": 28,
+      "detail": "Git push config",
+      "documentation": {
+        "value": "Git push defaults."
+      },
+      "insertText": "[push]\n    default = ${1:current}\n    autoSetupRemote = true",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[pull]",
+      "kind": 28,
+      "detail": "Git pull config",
+      "documentation": {
+        "value": "Git pull defaults."
+      },
+      "insertText": "[pull]\n    rebase = ${1:true}",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[remote \"origin\"]",
+      "kind": 28,
+      "detail": "Git remote",
+      "documentation": {
+        "value": "Git remote origin."
+      },
+      "insertText": "[remote \"origin\"]\n    url = ${1:git@github.com:user/repo.git}\n    fetch = +refs/heads/*:refs/remotes/origin/*",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[branch \"main\"]",
+      "kind": 28,
+      "detail": "Git branch config",
+      "documentation": {
+        "value": "Git branch tracking."
+      },
+      "insertText": "[branch \"${1:main}\"]\n    remote = origin\n    merge = refs/heads/${1:main}",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[Unit]",
+      "kind": 28,
+      "detail": "Systemd unit",
+      "documentation": {
+        "value": "Systemd unit section."
+      },
+      "insertText": "[Unit]\nDescription = ${1:My Service}\nAfter = ${2:network.target}",
+      "insertTextRules": 4,
+      "sortText": "02_systemd"
+    },
+    {
+      "label": "[Service]",
+      "kind": 28,
+      "detail": "Systemd service",
+      "documentation": {
+        "value": "Systemd service section."
+      },
+      "insertText": "[Service]\nType = ${1:simple}\nExecStart = ${2:/usr/bin/myapp}\nRestart = ${3:on-failure}\nUser = ${4:nobody}\nWorkingDirectory = ${5:/opt/app}",
+      "insertTextRules": 4,
+      "sortText": "02_systemd"
+    },
+    {
+      "label": "[Install]",
+      "kind": 28,
+      "detail": "Systemd install",
+      "documentation": {
+        "value": "Systemd install section."
+      },
+      "insertText": "[Install]\nWantedBy = ${1:multi-user.target}",
+      "insertTextRules": 4,
+      "sortText": "02_systemd"
+    },
+    {
+      "label": "[Timer]",
+      "kind": 28,
+      "detail": "Systemd timer",
+      "documentation": {
+        "value": "Systemd timer section."
+      },
+      "insertText": "[Timer]\nOnCalendar = ${1:daily}\nPersistent = true\n\n[Install]\nWantedBy = timers.target",
+      "insertTextRules": 4,
+      "sortText": "02_systemd"
+    },
+    {
+      "label": "[Desktop Entry]",
+      "kind": 28,
+      "detail": "Desktop entry",
+      "documentation": {
+        "value": "XDG desktop entry."
+      },
+      "insertText": "[Desktop Entry]\nType = Application\nName = ${1:My App}\nExec = ${2:/usr/bin/myapp}\nIcon = ${3:myapp}\nCategories = ${4:Utility};",
+      "insertTextRules": 4,
+      "sortText": "02_desktop"
+    },
+    {
+      "label": "[global]",
+      "kind": 28,
+      "detail": "Pip config",
+      "documentation": {
+        "value": "Pip global config."
+      },
+      "insertText": "[global]\nindex-url = ${1:https://pypi.org/simple}\ntrusted-host = ${2:pypi.org}",
+      "insertTextRules": 4,
+      "sortText": "02_pip"
+    },
+    {
+      "label": "[tool:pytest]",
+      "kind": 28,
+      "detail": "Pytest config",
+      "documentation": {
+        "value": "Pytest configuration (setup.cfg)."
+      },
+      "insertText": "[tool:pytest]\ntestpaths = ${1:tests}\naddopts = ${2:-v --tb=short}",
+      "insertTextRules": 4,
+      "sortText": "02_pytest"
+    },
+    {
+      "label": "[flake8]",
+      "kind": 28,
+      "detail": "Flake8 config",
+      "documentation": {
+        "value": "Flake8 linter config."
+      },
+      "insertText": "[flake8]\nmax-line-length = ${1:120}\nexclude = ${2:.git,__pycache__,build}\nignore = ${3:E501,W503}",
+      "insertTextRules": 4,
+      "sortText": "02_flake8"
+    },
+    {
+      "label": "[mypy]",
+      "kind": 28,
+      "detail": "Mypy config",
+      "documentation": {
+        "value": "Mypy type checker config."
+      },
+      "insertText": "[mypy]\npython_version = ${1:3.11}\nwarn_return_any = True\nwarn_unused_configs = True\ndisallow_untyped_defs = True",
+      "insertTextRules": 4,
+      "sortText": "02_mypy"
+    },
+    {
+      "label": "[isort]",
+      "kind": 28,
+      "detail": "Isort config",
+      "documentation": {
+        "value": "Import sorter config."
+      },
+      "insertText": "[isort]\nprofile = ${1:black}\nmulti_line_output = 3\ninclude_trailing_comma = True\nline_length = ${2:88}",
+      "insertTextRules": 4,
+      "sortText": "02_isort"
+    },
+    {
+      "label": "[coverage:run]",
+      "kind": 28,
+      "detail": "Coverage run",
+      "documentation": {
+        "value": "Coverage.py run config."
+      },
+      "insertText": "[coverage:run]\nsource = ${1:src}\nomit = ${2:tests/*}",
+      "insertTextRules": 4,
+      "sortText": "02_coverage"
+    },
+    {
+      "label": "[coverage:report]",
+      "kind": 28,
+      "detail": "Coverage report",
+      "documentation": {
+        "value": "Coverage report config."
+      },
+      "insertText": "[coverage:report]\nshow_missing = True\nfail_under = ${1:80}",
+      "insertTextRules": 4,
+      "sortText": "02_coverage"
+    },
+    {
+      "label": "[tox]",
+      "kind": 28,
+      "detail": "Tox config",
+      "documentation": {
+        "value": "Tox testing config."
+      },
+      "insertText": "[tox]\nenvlist = ${1:py39,py310,py311}",
+      "insertTextRules": 4,
+      "sortText": "02_tox"
+    },
+    {
+      "label": "[testenv]",
+      "kind": 28,
+      "detail": "Tox test env",
+      "documentation": {
+        "value": "Tox test environment."
+      },
+      "insertText": "[testenv]\ndeps = pytest\ncommands = pytest ${1:tests/}",
+      "insertTextRules": 4,
+      "sortText": "02_tox"
+    },
+    {
+      "label": "[editorconfig]",
+      "kind": 28,
+      "detail": "EditorConfig root",
+      "documentation": {
+        "value": "EditorConfig root."
+      },
+      "insertText": "root = true\n\n[*]\nindent_style = ${1:space}\nindent_size = ${2:4}\nend_of_line = ${3:lf}\ncharset = utf-8\ntrim_trailing_whitespace = true\ninsert_final_newline = true",
+      "insertTextRules": 4,
+      "sortText": "02_editor"
+    },
+    {
+      "label": "[*.py]",
+      "kind": 28,
+      "detail": "EditorConfig Python",
+      "documentation": {
+        "value": "EditorConfig for Python files."
+      },
+      "insertText": "[*.py]\nindent_size = 4\nmax_line_length = ${1:120}",
+      "insertTextRules": 4,
+      "sortText": "02_editor"
+    },
+    {
+      "label": "[*.js]",
+      "kind": 28,
+      "detail": "EditorConfig JS",
+      "documentation": {
+        "value": "EditorConfig for JS files."
+      },
+      "insertText": "[*.js]\nindent_size = 2",
+      "insertTextRules": 4,
+      "sortText": "02_editor"
+    },
+    {
+      "label": "[*.md]",
+      "kind": 28,
+      "detail": "EditorConfig Markdown",
+      "documentation": {
+        "value": "EditorConfig for Markdown."
+      },
+      "insertText": "[*.md]\ntrim_trailing_whitespace = false",
+      "insertTextRules": 4,
+      "sortText": "02_editor"
+    },
+    {
+      "label": "[boot]",
+      "kind": 28,
+      "detail": "Boot config",
+      "documentation": {
+        "value": "Boot loader section."
+      },
+      "insertText": "[boot loader]\ntimeout = ${1:30}\ndefault = ${2:multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS}",
+      "insertTextRules": 4,
+      "sortText": "02_win"
+    },
+    {
+      "label": "[sshd_config]",
+      "kind": 28,
+      "detail": "SSHD pattern",
+      "documentation": {
+        "value": "Common sshd_config-style settings."
+      },
+      "insertText": "Port ${1:22}\nPermitRootLogin ${2:no}\nPasswordAuthentication ${3:no}\nPubkeyAuthentication yes",
+      "insertTextRules": 4,
+      "sortText": "02_ssh"
+    },
+    {
+      "label": "[sources]",
+      "kind": 28,
+      "detail": "APT sources",
+      "documentation": {
+        "value": "APT sources list pattern."
+      },
+      "insertText": "Types: deb\nURIs: ${1:http://archive.ubuntu.com/ubuntu}\nSuites: ${2:jammy}\nComponents: ${3:main restricted}",
+      "insertTextRules": 4,
+      "sortText": "02_apt"
+    },
+    {
+      "label": "[docker]",
+      "kind": 28,
+      "detail": "Docker daemon",
+      "documentation": {
+        "value": "Docker daemon.json-style config."
+      },
+      "insertText": "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --storage-driver=${1:overlay2}",
+      "insertTextRules": 4,
+      "sortText": "02_docker"
+    },
+    {
+      "label": "[global] (samba)",
+      "kind": 28,
+      "detail": "Samba global",
+      "documentation": {
+        "value": "Samba global config."
+      },
+      "insertText": "[global]\n   workgroup = ${1:WORKGROUP}\n   server string = ${2:Samba Server}\n   security = ${3:user}",
+      "insertTextRules": 4,
+      "sortText": "02_samba"
+    },
+    {
+      "label": "[share]",
+      "kind": 28,
+      "detail": "Samba share",
+      "documentation": {
+        "value": "Samba file share."
+      },
+      "insertText": "[${1:myshare}]\n   path = ${2:/srv/samba/share}\n   browseable = yes\n   read only = ${3:no}\n   valid users = ${4:@smbgroup}",
+      "insertTextRules": 4,
+      "sortText": "02_samba"
+    },
+    {
+      "label": "[defaults] (ansible)",
+      "kind": 28,
+      "detail": "Ansible defaults",
+      "documentation": {
+        "value": "Ansible config defaults."
+      },
+      "insertText": "[defaults]\ninventory = ${1:./inventory}\nremote_user = ${2:ubuntu}\nhost_key_checking = False\nretry_files_enabled = False",
+      "insertTextRules": 4,
+      "sortText": "02_ansible"
+    },
+    {
+      "label": "[privilege_escalation]",
+      "kind": 28,
+      "detail": "Ansible sudo",
+      "documentation": {
+        "value": "Ansible privilege escalation."
+      },
+      "insertText": "[privilege_escalation]\nbecome = True\nbecome_method = sudo\nbecome_user = root\nbecome_ask_pass = False",
+      "insertTextRules": 4,
+      "sortText": "02_ansible"
+    },
+    {
+      "label": "[alembic]",
+      "kind": 28,
+      "detail": "Alembic config",
+      "documentation": {
+        "value": "Alembic migration config."
+      },
+      "insertText": "[alembic]\nscript_location = ${1:alembic}\nsqlalchemy.url = ${2:postgresql://user:pass@localhost/db}",
+      "insertTextRules": 4,
+      "sortText": "02_alembic"
+    },
+    {
+      "label": "[babel]",
+      "kind": 28,
+      "detail": "Babel extraction",
+      "documentation": {
+        "value": "Babel message extraction config."
+      },
+      "insertText": "[python: ${1:**.py}]\n[jinja2: ${2:**/templates/**.html}]\nencoding = utf-8",
+      "insertTextRules": 4,
+      "sortText": "02_babel"
+    },
+    {
+      "label": "[loggers]",
+      "kind": 28,
+      "detail": "Python logging",
+      "documentation": {
+        "value": "Python logging config."
+      },
+      "insertText": "[loggers]\nkeys = root,${1:myapp}\n\n[handlers]\nkeys = console\n\n[formatters]\nkeys = standard",
+      "insertTextRules": 4,
+      "sortText": "02_logging"
+    },
+    {
+      "label": "[handler_console]",
+      "kind": 28,
+      "detail": "Log handler",
+      "documentation": {
+        "value": "Console log handler."
+      },
+      "insertText": "[handler_console]\nclass = StreamHandler\nlevel = ${1:DEBUG}\nformatter = standard\nargs = (sys.stdout,)",
+      "insertTextRules": 4,
+      "sortText": "02_logging"
+    },
+    {
+      "label": "[ui]",
+      "kind": 28,
+      "detail": "Mercurial UI",
+      "documentation": {
+        "value": "Mercurial user interface config."
+      },
+      "insertText": "[ui]\nusername = ${1:Your Name <email@example.com>}\neditor = ${2:vim}",
+      "insertTextRules": 4,
+      "sortText": "02_hg"
+    },
+    {
+      "label": "[npmrc]",
+      "kind": 28,
+      "detail": "NPM config",
+      "documentation": {
+        "value": "NPM configuration pattern."
+      },
+      "insertText": "registry = ${1:https://registry.npmjs.org/}\nsave-exact = true\nengine-strict = true",
+      "insertTextRules": 4,
+      "sortText": "02_npm"
+    },
+    {
+      "label": "[postgresql]",
+      "kind": 28,
+      "detail": "PostgreSQL config",
+      "documentation": {
+        "value": "PostgreSQL server config."
+      },
+      "insertText": "listen_addresses = ${1:localhost}\nport = ${2:5432}\nmax_connections = ${3:100}\nshared_buffers = ${4:128MB}",
+      "insertTextRules": 4,
+      "sortText": "02_pg"
+    },
+    {
+      "label": "[redis]",
+      "kind": 28,
+      "detail": "Redis config",
+      "documentation": {
+        "value": "Redis server config pattern."
+      },
+      "insertText": "bind ${1:127.0.0.1}\nport ${2:6379}\nmaxmemory ${3:256mb}\nmaxmemory-policy ${4:allkeys-lru}",
+      "insertTextRules": 4,
+      "sortText": "02_redis"
+    },
+    {
+      "label": "boolean true",
+      "kind": 28,
+      "detail": "Boolean true value",
+      "documentation": {
+        "value": "Boolean true value."
+      },
+      "insertText": "${1:key} = true",
+      "insertTextRules": 4,
+      "sortText": "01_bool"
+    },
+    {
+      "label": "boolean false",
+      "kind": 28,
+      "detail": "Boolean false value",
+      "documentation": {
+        "value": "Boolean false value."
+      },
+      "insertText": "${1:key} = false",
+      "insertTextRules": 4,
+      "sortText": "01_bool"
+    },
+    {
+      "label": "numeric value",
+      "kind": 28,
+      "detail": "Numeric value",
+      "documentation": {
+        "value": "Numeric configuration value."
+      },
+      "insertText": "${1:key} = ${2:0}",
+      "insertTextRules": 4,
+      "sortText": "01_num"
+    },
+    {
+      "label": "path value",
+      "kind": 28,
+      "detail": "File path value",
+      "documentation": {
+        "value": "File path configuration value."
+      },
+      "insertText": "${1:key} = ${2:/path/to/file}",
+      "insertTextRules": 4,
+      "sortText": "01_path"
+    },
+    {
+      "label": "list value",
+      "kind": 28,
+      "detail": "Comma-separated list",
+      "documentation": {
+        "value": "List of values."
+      },
+      "insertText": "${1:key} = ${2:val1,val2,val3}",
+      "insertTextRules": 4,
+      "sortText": "01_list"
+    },
+    {
+      "label": "[metadata]",
+      "kind": 28,
+      "detail": "Metadata section",
+      "documentation": {
+        "value": "Package metadata section."
+      },
+      "insertText": "[metadata]\nname = ${1:mypackage}\nversion = ${2:1.0.0}\nauthor = ${3:Author Name}\nauthor_email = ${4:author@example.com}\ndescription = ${5:A short description}",
+      "insertTextRules": 4,
+      "sortText": "02_meta"
+    },
+    {
+      "label": "[options]",
+      "kind": 28,
+      "detail": "Options section",
+      "documentation": {
+        "value": "Setup options section."
+      },
+      "insertText": "[options]\npackages = find:\npython_requires = >=${1:3.8}\ninstall_requires =\n    ${2:requests>=2.25}",
+      "insertTextRules": 4,
+      "sortText": "02_options"
+    },
+    {
+      "label": "[options.extras_require]",
+      "kind": 28,
+      "detail": "Extras require",
+      "documentation": {
+        "value": "Optional dependencies."
+      },
+      "insertText": "[options.extras_require]\ndev =\n    pytest\n    flake8\n    black",
+      "insertTextRules": 4,
+      "sortText": "02_options"
+    },
+    {
+      "label": "[bdist_wheel]",
+      "kind": 28,
+      "detail": "Wheel config",
+      "documentation": {
+        "value": "Wheel build config."
+      },
+      "insertText": "[bdist_wheel]\nuniversal = ${1:0}",
+      "insertTextRules": 4,
+      "sortText": "02_wheel"
+    },
+    {
+      "label": "INI template",
+      "kind": 28,
+      "detail": "Full INI file template",
+      "documentation": {
+        "value": "Complete INI config template."
+      },
+      "insertText": "# Configuration File\n\n[DEFAULT]\nlog_level = ${1:info}\n\n[${2:section1}]\n${3:key1} = ${4:value1}\n${5:key2} = ${6:value2}\n\n[${7:section2}]\n${8:key} = ${9:value}",
+      "insertTextRules": 4,
+      "sortText": "03_template"
+    },
+    {
+      "label": "setup.cfg template",
+      "kind": 28,
+      "detail": "Python setup.cfg",
+      "documentation": {
+        "value": "Python setup.cfg template."
+      },
+      "insertText": "[metadata]\nname = ${1:mypackage}\nversion = ${2:0.1.0}\n\n[options]\npackages = find:\npython_requires = >=3.8\n\n[tool:pytest]\ntestpaths = tests\n\n[flake8]\nmax-line-length = 120",
+      "insertTextRules": 4,
+      "sortText": "03_template"
+    },
+    {
+      "label": "[wsl]",
+      "kind": 28,
+      "detail": "WSL config",
+      "documentation": {
+        "value": "WSL configuration (wsl.conf)."
+      },
+      "insertText": "[wsl2]\nmemory = ${1:4GB}\nprocessors = ${2:2}\nswap = ${3:0}",
+      "insertTextRules": 4,
+      "sortText": "02_wsl"
+    },
+    {
+      "label": "[network]",
+      "kind": 28,
+      "detail": "WSL network",
+      "documentation": {
+        "value": "WSL network config."
+      },
+      "insertText": "[network]\ngenerateHosts = true\ngenerateResolvConf = true",
+      "insertTextRules": 4,
+      "sortText": "02_wsl"
+    },
+    {
+      "label": "[automount]",
+      "kind": 28,
+      "detail": "WSL automount",
+      "documentation": {
+        "value": "WSL automount config."
+      },
+      "insertText": "[automount]\nenabled = true\nroot = /mnt/\noptions = \"metadata\"",
+      "insertTextRules": 4,
+      "sortText": "02_wsl"
+    },
+    {
+      "label": "[diff]",
+      "kind": 28,
+      "detail": "Git diff config",
+      "documentation": {
+        "value": "Git diff tool config."
+      },
+      "insertText": "[diff]\n    tool = ${1:vimdiff}",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[merge]",
+      "kind": 28,
+      "detail": "Git merge config",
+      "documentation": {
+        "value": "Git merge config."
+      },
+      "insertText": "[merge]\n    tool = ${1:vimdiff}\n    conflictstyle = diff3",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[http]",
+      "kind": 28,
+      "detail": "Git HTTP config",
+      "documentation": {
+        "value": "Git HTTP proxy config."
+      },
+      "insertText": "[http]\n    proxy = ${1:http://proxy:8080}",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[filter \"lfs\"]",
+      "kind": 28,
+      "detail": "Git LFS",
+      "documentation": {
+        "value": "Git LFS filter config."
+      },
+      "insertText": "[filter \"lfs\"]\n    clean = git-lfs clean -- %f\n    smudge = git-lfs smudge -- %f\n    process = git-lfs filter-process\n    required = true",
+      "insertTextRules": 4,
+      "sortText": "02_git"
+    },
+    {
+      "label": "[connection]",
+      "kind": 28,
+      "detail": "DB connection",
+      "documentation": {
+        "value": "Database connection section."
+      },
+      "insertText": "[connection]\nhost = ${1:localhost}\nport = ${2:5432}\ndatabase = ${3:mydb}\nuser = ${4:admin}\npassword = ${5:secret}",
+      "insertTextRules": 4,
+      "sortText": "02_db"
+    },
+    {
+      "label": "[logging]",
+      "kind": 28,
+      "detail": "Logging section",
+      "documentation": {
+        "value": "Logging configuration."
+      },
+      "insertText": "[logging]\nlevel = ${1:INFO}\nformat = %(asctime)s %(levelname)s %(message)s\nfile = ${2:/var/log/app.log}",
+      "insertTextRules": 4,
+      "sortText": "02_log"
+    },
+    {
+      "label": "[email]",
+      "kind": 28,
+      "detail": "Email config",
+      "documentation": {
+        "value": "Email/SMTP configuration."
+      },
+      "insertText": "[email]\nsmtp_host = ${1:smtp.gmail.com}\nsmtp_port = ${2:587}\nuse_tls = true\nuser = ${3:user@example.com}",
+      "insertTextRules": 4,
+      "sortText": "02_email"
     }
   ]
 }

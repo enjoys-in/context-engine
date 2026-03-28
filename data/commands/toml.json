@@ -1,16 +1,30 @@
 {
   "name": "toml",
-  "description": "TOML command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "description": "TOML file manipulation and validation tools (taplo, toml-cli, dasel)",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
+  "subcommands": [
+    { "name": "format", "description": "Format TOML files with taplo", "args": ["files"], "options": ["--config", "--check"] },
+    { "name": "lint", "description": "Lint TOML files for schema compliance", "args": ["files"], "options": ["--schema"] },
+    { "name": "get", "description": "Get a value from a TOML file by key path", "args": ["file", "key"], "options": [] },
+    { "name": "set", "description": "Set a value in a TOML file", "args": ["file", "key", "value"], "options": ["--type"] },
+    { "name": "validate", "description": "Validate TOML file syntax", "args": ["file"], "options": ["--schema"] },
+    { "name": "convert", "description": "Convert TOML to JSON or YAML", "args": ["file"], "options": ["--to"] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "--config", "description": "Path to taplo configuration file" },
+    { "name": "--schema", "description": "JSON Schema URL or path for validation" },
+    { "name": "--check", "description": "Check formatting without writing changes" },
+    { "name": "--output", "description": "Output file path" },
+    { "name": "--colors", "description": "Enable or disable colored output" }
   ],
-  "subcommands": []
+  "examples": [
+    "taplo format Cargo.toml",
+    "taplo lint pyproject.toml --schema https://json.schemastore.org/pyproject",
+    "taplo format --check '**/*.toml'",
+    "toml get Cargo.toml package.version",
+    "dasel -f config.toml '.database.port'"
+  ],
+  "relatedCommands": ["yaml", "json", "ini", "jq"]
 }

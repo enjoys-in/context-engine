@@ -4,42 +4,287 @@
     "format": {
       "contents": [
         {
-          "value": "```\n# .---------------- minute (0-59)\n# |  .------------- hour (0-23)\n# |  |  .---------- day of month (1-31)\n# |  |  |  .------- month (1-12 or jan-dec)\n# |  |  |  |  .---- day of week (0-7 or sun-sat)\n# |  |  |  |  |\n  *  *  *  *  *  command\n```\n**Cron expression** has 5 time fields followed by the command. Fields support `*`, ranges (`1-5`), lists (`1,3,5`), and steps (`*/5`)."
+          "value": "```cron\n# .---- minute (0-59)\n# |  .---- hour (0-23)\n# |  |  .---- day of month (1-31)\n# |  |  |  .---- month (1-12 or jan-dec)\n# |  |  |  |  .---- day of week (0-7 or sun-sat)\n# |  |  |  |  |\n  *  *  *  *  *  command\n```\n**Cron expression** has 5 time fields plus a command. Supports `*`, ranges, lists, and steps."
         }
       ]
     },
     "examples": {
       "contents": [
         {
-          "value": "```cron\n*/5 * * * *     # every 5 minutes\n0 */2 * * *     # every 2 hours\n0 9 * * 1-5     # weekdays at 9 AM\n0 0 1 * *       # monthly (1st at midnight)\n0 0 * * 0       # weekly (Sunday midnight)\n30 2 * * *      # daily at 2:30 AM\n```\n**Common schedules** - The most frequently used cron patterns for server tasks."
+          "value": "```cron\n*/5 * * * *     # every 5 minutes\n0 */2 * * *     # every 2 hours\n0 9 * * 1-5     # weekdays at 9 AM\n0 0 1 * *       # monthly (1st at midnight)\n0 0 * * 0       # weekly (Sunday midnight)\n30 2 * * *      # daily at 2:30 AM\n```\n**Common schedules** — the most frequently used cron patterns."
         }
       ]
     },
     "special": {
       "contents": [
         {
-          "value": "```cron\n@reboot   command    # run once at startup\n@hourly   command    # 0 * * * *\n@daily    command    # 0 0 * * *\n@weekly   command    # 0 0 * * 0\n@monthly  command    # 0 0 1 * *\n@yearly   command    # 0 0 1 1 *\n```\n**Special strings** are shortcuts for common schedules. `@reboot` is particularly useful for startup tasks."
+          "value": "```cron\n@reboot   command    # run once at startup\n@hourly   command    # 0 * * * *\n@daily    command    # 0 0 * * *\n@weekly   command    # 0 0 * * 0\n@monthly  command    # 0 0 1 * *\n@yearly   command    # 0 0 1 1 *\n```\n**Special strings** are shortcuts for common schedules."
         }
       ]
     },
     "logging": {
       "contents": [
         {
-          "value": "```cron\n# Log stdout and stderr to file:\n0 2 * * * /opt/backup.sh >> /var/log/backup.log 2>&1\n\n# Silence output:\n0 * * * * /opt/check.sh > /dev/null 2>&1\n\n# Email output:\nMAILTO=admin@example.com\n```\n**Logging** - Redirect output to files. Without redirection, cron emails output to MAILTO."
+          "value": "```cron\n# Log stdout and stderr:\n0 2 * * * /opt/backup.sh >> /var/log/backup.log 2>&1\n\n# Silence output:\n0 * * * * /opt/check.sh > /dev/null 2>&1\n\n# Email output:\nMAILTO=admin@example.com\n```\n**Logging** — Redirect output to files. Without redirection, cron emails output to MAILTO."
         }
       ]
     },
     "PATH": {
       "contents": [
         {
-          "value": "```cron\n# Cron has minimal PATH by default!\n# Always set PATH or use absolute paths:\nPATH=/usr/local/bin:/usr/bin:/bin\n\n# Or use absolute command paths:\n0 * * * * /usr/local/bin/node /opt/app/task.js\n```\n**PATH** - Cron's default PATH is minimal. Commands that work in your shell may fail in cron without setting PATH."
+          "value": "```cron\n# Cron has minimal PATH!\nPATH=/usr/local/bin:/usr/bin:/bin\n\n# Or use absolute paths:\n0 * * * * /usr/local/bin/node /opt/app/task.js\n```\n**PATH** — Cron's default PATH is minimal. Set PATH or use absolute command paths."
         }
       ]
     },
     "flock": {
       "contents": [
         {
-          "value": "```cron\n# Prevent overlapping runs:\n*/5 * * * * flock -n /tmp/myjob.lock /opt/slow-task.sh\n\n# With timeout:\n*/5 * * * * flock -w 10 /tmp/myjob.lock /opt/task.sh\n```\n**flock** prevents concurrent execution. Use `-n` to skip if locked, `-w N` to wait up to N seconds."
+          "value": "```cron\n# Prevent overlapping runs:\n*/5 * * * * flock -n /tmp/myjob.lock /opt/slow-task.sh\n\n# With timeout:\n*/5 * * * * flock -w 10 /tmp/myjob.lock /opt/task.sh\n```\n**flock** prevents concurrent execution. `-n` to skip if locked, `-w N` to wait."
+        }
+      ]
+    },
+    "minute": {
+      "contents": [
+        {
+          "value": "```cron\n# Minute field (0-59):\n0       # at minute 0 (top of hour)\n*/5     # every 5 minutes\n5,10,15 # at minutes 5, 10, and 15\n0-30    # every minute from 0 to 30\n```\n**Minute** is the first field (0-59). Determines which minute(s) of the hour the job runs."
+        }
+      ]
+    },
+    "hour": {
+      "contents": [
+        {
+          "value": "```cron\n# Hour field (0-23):\n0       # midnight\n9       # 9 AM\n*/6     # every 6 hours\n9-17    # 9 AM to 5 PM\n```\n**Hour** is the second field (0-23). Uses 24-hour format."
+        }
+      ]
+    },
+    "day_of_month": {
+      "contents": [
+        {
+          "value": "```cron\n# Day of month field (1-31):\n1       # first of month\n15      # 15th\n1,15    # 1st and 15th\n```\n**Day of month** is the third field (1-31). If month has fewer days, job won't run on invalid dates."
+        }
+      ]
+    },
+    "month": {
+      "contents": [
+        {
+          "value": "```cron\n# Month field (1-12 or jan-dec):\n1       # January\n*/3     # every 3 months\n6-8     # June through August\njan,jul # January and July\n```\n**Month** is the fourth field (1-12 or names). Names are case-insensitive."
+        }
+      ]
+    },
+    "day_of_week": {
+      "contents": [
+        {
+          "value": "```cron\n# Day of week (0-7 or sun-sat, 0 and 7 = Sunday):\n0       # Sunday\n1-5     # Monday through Friday\n6,0     # weekends\nmon,wed,fri\n```\n**Day of week** is the fifth field. Both 0 and 7 represent Sunday."
+        }
+      ]
+    },
+    "asterisk": {
+      "contents": [
+        {
+          "value": "```cron\n* * * * *   # every minute\n```\n**Asterisk** `*` matches every possible value for that field."
+        }
+      ]
+    },
+    "step": {
+      "contents": [
+        {
+          "value": "```cron\n*/5 * * * *    # every 5 minutes\n0 */2 * * *    # every 2 hours\n* * */3 * *    # every 3 days\n```\n**Step values** `*/N` run every N units. Can combine with ranges: `1-30/5` = 1,6,11,16,21,26."
+        }
+      ]
+    },
+    "range": {
+      "contents": [
+        {
+          "value": "```cron\n0 9-17 * * *   # every hour 9 AM to 5 PM\n0 0 * * 1-5    # weekdays at midnight\n```\n**Ranges** `N-M` match all values from N to M inclusive."
+        }
+      ]
+    },
+    "list": {
+      "contents": [
+        {
+          "value": "```cron\n0 0 1,15 * *     # 1st and 15th\n0 9 * * mon,wed  # Monday and Wednesday\n```\n**Lists** `A,B,C` match specific values. Combine with ranges: `1-5,10,15`."
+        }
+      ]
+    },
+    "MAILTO": {
+      "contents": [
+        {
+          "value": "```cron\nMAILTO=admin@example.com\n# Multiple recipients:\nMAILTO=admin@example.com,ops@example.com\n# Disable email:\nMAILTO=\"\"\n```\n**MAILTO** sets the email recipient for job output. Empty string disables email."
+        }
+      ]
+    },
+    "SHELL": {
+      "contents": [
+        {
+          "value": "```cron\nSHELL=/bin/bash\n# or\nSHELL=/bin/sh\n```\n**SHELL** sets the shell used to run commands. Default is `/bin/sh`. Set to `/bin/bash` for bash features."
+        }
+      ]
+    },
+    "HOME": {
+      "contents": [
+        {
+          "value": "```cron\nHOME=/opt/app\n0 * * * * ./run.sh\n```\n**HOME** sets the working directory for cron jobs. Affects relative paths in commands."
+        }
+      ]
+    },
+    "crontab_commands": {
+      "contents": [
+        {
+          "value": "```bash\ncrontab -e      # edit your crontab\ncrontab -l      # list your crontab\ncrontab -r      # remove your crontab\ncrontab -u user -l  # list another user's crontab\n```\n**crontab commands** manage per-user cron schedules."
+        }
+      ]
+    },
+    "system_crontab": {
+      "contents": [
+        {
+          "value": "```cron\n# /etc/crontab has an extra USER field:\n* * * * * root /usr/local/bin/check.sh\n0 2 * * * www-data /opt/cleanup.sh\n```\n**System crontab** (`/etc/crontab`) includes a username field between the time spec and command."
+        }
+      ]
+    },
+    "cron_d": {
+      "contents": [
+        {
+          "value": "```bash\n# Drop-in files: /etc/cron.d/myapp\n# Same format as /etc/crontab (with user field)\n0 * * * * appuser /opt/myapp/hourly.sh\n```\n**/etc/cron.d/** directory holds per-application cron files. Same format as system crontab."
+        }
+      ]
+    },
+    "cron_directories": {
+      "contents": [
+        {
+          "value": "```bash\n/etc/cron.hourly/   # scripts run hourly\n/etc/cron.daily/    # scripts run daily\n/etc/cron.weekly/   # scripts run weekly\n/etc/cron.monthly/  # scripts run monthly\n```\n**Periodic directories** run scripts at fixed intervals. Place executable scripts (no extension) in these dirs."
+        }
+      ]
+    },
+    "environment": {
+      "contents": [
+        {
+          "value": "```cron\n# Set variables at the top:\nPATH=/usr/local/bin:/usr/bin:/bin\nSHELL=/bin/bash\nMAILTO=admin@example.com\nHOME=/opt/app\n\n0 * * * * ./my-script.sh\n```\n**Environment variables** set at the top of crontab apply to all jobs below. Only simple `KEY=value` syntax."
+        }
+      ]
+    },
+    "anacron": {
+      "contents": [
+        {
+          "value": "```bash\n# /etc/anacrontab:\n# period  delay  identifier  command\n1         5      daily-task  /opt/daily.sh\n7         10     weekly-task /opt/weekly.sh\n```\n**anacron** runs missed jobs after system wake/boot. Useful for laptops and machines that aren't always on."
+        }
+      ]
+    },
+    "two_am_problem": {
+      "contents": [
+        {
+          "value": "```cron\n# DST problem: 2 AM may occur twice or not at all\n# Safer: use UTC in crontab\nTZ=UTC\n0 7 * * * /opt/task.sh  # 7 AM UTC\n```\n**DST/timezone** — Jobs at 2-3 AM may be skipped or run twice during DST changes. Use UTC to avoid this."
+        }
+      ]
+    },
+    "random_delay": {
+      "contents": [
+        {
+          "value": "```cron\n# Add random delay to avoid thundering herd:\n*/5 * * * * sleep $((RANDOM % 60)) && /opt/task.sh\n\n# Or use systemd timer RandomizedDelaySec\n```\n**Random delay** prevents many servers from hitting a service simultaneously."
+        }
+      ]
+    },
+    "timeout": {
+      "contents": [
+        {
+          "value": "```cron\n# Kill job if it runs too long:\n0 2 * * * timeout 3600 /opt/long-task.sh\n\n# timeout with signal:\n0 2 * * * timeout --signal=SIGKILL 3600 /opt/task.sh\n```\n**timeout** kills a cron job if it exceeds the specified duration. Prevents jobs from running indefinitely."
+        }
+      ]
+    },
+    "nice": {
+      "contents": [
+        {
+          "value": "```cron\n# Run with lower priority:\n0 2 * * * nice -n 19 /opt/heavy-task.sh\n\n# Also limit I/O:\n0 2 * * * ionice -c 3 nice -n 19 /opt/task.sh\n```\n**nice/ionice** reduce CPU and I/O priority for resource-intensive cron jobs."
+        }
+      ]
+    },
+    "chronic": {
+      "contents": [
+        {
+          "value": "```cron\n# chronic: only show output on error\n*/5 * * * * chronic /opt/check.sh\n\n# From moreutils package\n```\n**chronic** (from moreutils) suppresses output unless the command fails. Eliminates noisy success emails."
+        }
+      ]
+    },
+    "backup_pattern": {
+      "contents": [
+        {
+          "value": "```cron\n# Daily backup at 2 AM\n0 2 * * * /opt/backup.sh daily\n# Weekly backup Sunday at 3 AM\n0 3 * * 0 /opt/backup.sh weekly\n# Monthly backup 1st at 4 AM\n0 4 1 * * /opt/backup.sh monthly\n```\n**Backup pattern** — stagger daily, weekly, and monthly backups at different times."
+        }
+      ]
+    },
+    "logrotate": {
+      "contents": [
+        {
+          "value": "```cron\n# Rotate logs daily at midnight:\n0 0 * * * /usr/sbin/logrotate /etc/logrotate.conf\n\n# Or rely on system cron.daily\n```\n**Log rotation** is commonly scheduled via cron to prevent log files from filling disk."
+        }
+      ]
+    },
+    "certbot": {
+      "contents": [
+        {
+          "value": "```cron\n# Renew Let's Encrypt certificates twice daily:\n0 0,12 * * * certbot renew --quiet\n```\n**certbot renewal** — Check twice daily. Certbot only renews if expiry is within 30 days."
+        }
+      ]
+    },
+    "health_check": {
+      "contents": [
+        {
+          "value": "```cron\n# Check service health every minute:\n* * * * * curl -sf http://localhost:3000/health || systemctl restart myapp\n```\n**Health checks** use cron to monitor services and auto-restart on failure."
+        }
+      ]
+    },
+    "at_vs_cron": {
+      "contents": [
+        {
+          "value": "```bash\n# cron: recurring schedule\n0 9 * * * /opt/daily.sh\n\n# at: one-time execution\nat 9:00 AM tomorrow <<< '/opt/once.sh'\n```\n**cron vs at** — `cron` for recurring jobs, `at` for one-time scheduled tasks."
+        }
+      ]
+    },
+    "monitoring": {
+      "contents": [
+        {
+          "value": "```cron\n# Heartbeat monitoring with healthchecks.io:\n*/5 * * * * /opt/task.sh && curl -fsS --retry 3 https://hc-ping.com/uuid > /dev/null\n```\n**Monitoring** — Ping a health check URL after each run to detect failed or missed jobs."
+        }
+      ]
+    },
+    "cron_alternatives": {
+      "contents": [
+        {
+          "value": "```bash\n# systemd timer (modern Linux alternative):\n# /etc/systemd/system/mytask.timer\n# [Timer]\n# OnCalendar=*-*-* 02:00:00\n# Persistent=true\n```\n**systemd timers** are the modern alternative to cron on systemd-based systems. Support better logging and dependencies."
+        }
+      ]
+    },
+    "day_conflict": {
+      "contents": [
+        {
+          "value": "```cron\n# Day of month AND day of week: OR logic!\n0 0 1 * 5   # runs on 1st AND every Friday\n# NOT: 1st if it's a Friday\n```\n**Day conflict** — When both day-of-month and day-of-week are specified, the job runs when EITHER matches (OR logic)."
+        }
+      ]
+    },
+    "database_backup": {
+      "contents": [
+        {
+          "value": "```cron\n# PostgreSQL backup:\n0 2 * * * pg_dump -U postgres mydb | gzip > /backup/mydb_$(date +\\%Y\\%m\\%d).sql.gz\n\n# MySQL backup:\n0 2 * * * mysqldump -u root mydb | gzip > /backup/mydb_$(date +\\%Y\\%m\\%d).sql.gz\n```\n**Database backups** — Use `pg_dump`/`mysqldump` with gzip compression. Note: escape `%` as `\\%` in crontab."
+        }
+      ]
+    },
+    "percent_escape": {
+      "contents": [
+        {
+          "value": "```cron\n# % has special meaning in crontab (newline/stdin)\n# Must escape with backslash:\n0 2 * * * echo $(date +\\%Y-\\%m-\\%d) >> /var/log/date.log\n\n# Unescaped % splits command:\n0 * * * * /cmd%stdin data   # sends 'stdin data' as input\n```\n**Percent sign** `%` in crontab means newline and stdin. Always escape as `\\%` in date formats."
+        }
+      ]
+    },
+    "cleanup": {
+      "contents": [
+        {
+          "value": "```cron\n# Delete files older than 30 days:\n0 3 * * * find /tmp -type f -mtime +30 -delete\n\n# Delete old log files:\n0 3 * * * find /var/log/app -name '*.log' -mtime +7 -delete\n```\n**Cleanup jobs** use `find -mtime -delete` to remove old files. Always test the find command first."
+        }
+      ]
+    },
+    "user_permissions": {
+      "contents": [
+        {
+          "value": "```bash\n# Edit root's crontab:\nsudo crontab -e\n\n# Restrict cron access:\n# /etc/cron.allow - only listed users can use cron\n# /etc/cron.deny  - listed users are denied cron\n```\n**Permissions** — `/etc/cron.allow` and `/etc/cron.deny` control who can use crontab."
         }
       ]
     }

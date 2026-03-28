@@ -4,42 +4,287 @@
     "variables": {
       "contents": [
         {
-          "value": "```perl\nmy $scalar = \"hello\";     # single value\nmy @array  = (1, 2, 3);   # ordered list\nmy %hash   = (a => 1);    # key-value pairs\n\n$array[0]     # array element\n$hash{key}    # hash value\nscalar @array # array length\n```\n**Variable types** - `$` scalar, `@` array, `%` hash. Sigils change based on access context."
+          "value": "```perl\nmy $scalar = \"hello\";     # single value\nmy @array  = (1, 2, 3);   # ordered list\nmy %hash   = (a => 1);    # key-value pairs\n$array[0]     # array element\n$hash{key}    # hash value\n```\n**Variable types** — `$` scalar, `@` array, `%` hash. Sigils change based on access context."
         }
       ]
     },
     "regex": {
       "contents": [
         {
-          "value": "```perl\n$str =~ /pattern/;         # match\n$str =~ s/old/new/g;       # substitute\n$str =~ tr/a-z/A-Z/;       # transliterate\nif ($str =~ /^(\\w+)/) {\n    print \"$1\\n\";          # capture group\n}\n```\n**Regex** is Perl's superpower. `=~` binds, `!~` negates. Captures in `$1`, `$2`, etc."
+          "value": "```perl\n$str =~ /pattern/;         # match\n$str =~ s/old/new/g;       # substitute\n$str =~ tr/a-z/A-Z/;       # transliterate\nif ($str =~ /^(\\w+)/) {\n    print \"$1\\n\";\n}\n```\n**Regex** is Perl's superpower. `=~` binds, `!~` negates. Captures in `$1`, `$2`, etc."
         }
       ]
     },
     "file_io": {
       "contents": [
         {
-          "value": "```perl\nopen(my $fh, '<', 'file.txt') or die $!;\nwhile (<$fh>) {        # read line by line\n    chomp;\n    print \"$_\\n\";\n}\nclose($fh);\n```\n**File I/O** uses three-arg open. `<` read, `>` write, `>>` append. `<$fh>` reads line by line. `$_` is default variable."
+          "value": "```perl\nopen(my $fh, '<', 'file.txt') or die $!;\nwhile (<$fh>) {\n    chomp;\n    print \"$_\\n\";\n}\nclose($fh);\n```\n**File I/O** uses three-arg open. `<` read, `>` write, `>>` append. `<$fh>` reads line by line."
         }
       ]
     },
     "one_liners": {
       "contents": [
         {
-          "value": "```bash\n# Replace text in file:\nperl -pi -e 's/old/new/g' file.txt\n\n# Print matching lines (like grep):\nperl -ne 'print if /pattern/' file.txt\n\n# Sum numbers:\nperl -ane '$s+=$F[0]; END{print $s}' data.txt\n\n# In-place edit with backup:\nperl -pi.bak -e 's/foo/bar/g' *.conf\n```\n**One-liners** - Perl's -n/-p flags make it a powerful command-line text processor. -i for in-place editing."
+          "value": "```bash\nperl -pi -e 's/old/new/g' file.txt\nperl -ne 'print if /pattern/' file.txt\nperl -ane '$s+=$F[0]; END{print $s}' data.txt\n```\n**One-liners** — `-n` loops, `-p` loops with print, `-i` in-place edit, `-a` autosplit."
         }
       ]
     },
     "special_vars": {
       "contents": [
         {
-          "value": "```perl\n$_    # default variable\n@_    # subroutine arguments\n$!    # system error message\n$@    # eval error\n$/    # input record separator\n$\\    # output record separator\n$0    # program name\n```\n**Special variables** - Perl has many built-in variables. `$_` is the most common - default for many functions."
+          "value": "```perl\n$_    # default variable\n@_    # subroutine arguments\n$!    # system error message\n$@    # eval error\n$/    # input record separator\n$0    # program name\n```\n**Special variables** — `$_` is default for many functions."
         }
       ]
     },
     "strict": {
       "contents": [
         {
-          "value": "```perl\nuse strict;    # require declarations, no barewords\nuse warnings;  # runtime + compile warnings\n\n# Always start scripts with both:\n#!/usr/bin/perl\nuse strict;\nuse warnings;\n```\n**strict** and **warnings** should always be enabled. They catch common bugs like typos in variable names."
+          "value": "```perl\nuse strict;\nuse warnings;\n```\n**strict** and **warnings** should always be enabled. They catch typos and common bugs."
+        }
+      ]
+    },
+    "my": {
+      "contents": [
+        {
+          "value": "```perl\nmy $x = 10;\nmy @list = (1, 2, 3);\nmy %map = (key => 'val');\n```\n**my** declares a lexically scoped variable. Always preferred over package globals."
+        }
+      ]
+    },
+    "our": {
+      "contents": [
+        {
+          "value": "```perl\nour $VERSION = '1.0';\nour @EXPORT = qw(func1 func2);\n```\n**our** declares a package global variable. Visible across the package. Use sparingly."
+        }
+      ]
+    },
+    "local": {
+      "contents": [
+        {
+          "value": "```perl\nlocal $/ = undef;  # slurp mode\nmy $content = <$fh>;\n```\n**local** temporarily overrides a global variable. Value is restored when scope exits. Use for `$/`, `$\\`, etc."
+        }
+      ]
+    },
+    "sub": {
+      "contents": [
+        {
+          "value": "```perl\nsub greet {\n    my ($name) = @_;\n    return \"Hello, $name!\";\n}\nmy $result = greet('World');\n```\n**sub** defines a subroutine. Arguments in `@_`. Use `my` to unpack. Returns last expression or explicit `return`."
+        }
+      ]
+    },
+    "chomp": {
+      "contents": [
+        {
+          "value": "```perl\nchomp(my $line = <STDIN>);\nchomp(@lines);\n```\n**chomp** removes the trailing newline from a string. Safe to call multiple times. Returns number of chars removed."
+        }
+      ]
+    },
+    "chop": {
+      "contents": [
+        {
+          "value": "```perl\nchop($string);\n```\n**chop** removes the last character regardless of what it is. Use `chomp` to remove only newlines."
+        }
+      ]
+    },
+    "split": {
+      "contents": [
+        {
+          "value": "```perl\nmy @fields = split(/,/, $line);\nmy @words = split(' ', $text);\nmy ($user, $pass) = split(/:/, $entry, 2);\n```\n**split** divides a string by a pattern. Third arg limits the number of fields."
+        }
+      ]
+    },
+    "join": {
+      "contents": [
+        {
+          "value": "```perl\nmy $csv = join(',', @fields);\nmy $path = join('/', @parts);\n```\n**join** concatenates list elements with a separator string."
+        }
+      ]
+    },
+    "push": {
+      "contents": [
+        {
+          "value": "```perl\npush @array, $value;\npush @array, @more_values;\n```\n**push** appends elements to the end of an array. Returns the new array length."
+        }
+      ]
+    },
+    "pop": {
+      "contents": [
+        {
+          "value": "```perl\nmy $last = pop @array;\n```\n**pop** removes and returns the last element of an array."
+        }
+      ]
+    },
+    "shift": {
+      "contents": [
+        {
+          "value": "```perl\nmy $first = shift @array;\nmy $arg = shift;  # shifts @_ in sub\n```\n**shift** removes and returns the first element. In subs, `shift` without args shifts `@_`."
+        }
+      ]
+    },
+    "unshift": {
+      "contents": [
+        {
+          "value": "```perl\nunshift @array, $value;\n```\n**unshift** prepends elements to the beginning of an array."
+        }
+      ]
+    },
+    "map": {
+      "contents": [
+        {
+          "value": "```perl\nmy @doubled = map { $_ * 2 } @numbers;\nmy @upper = map { uc($_) } @strings;\n```\n**map** transforms each element of a list. Returns a new list. The block receives `$_`."
+        }
+      ]
+    },
+    "grep": {
+      "contents": [
+        {
+          "value": "```perl\nmy @evens = grep { $_ % 2 == 0 } @numbers;\nmy @matches = grep { /pattern/ } @lines;\n```\n**grep** filters a list. Returns elements where the block evaluates to true."
+        }
+      ]
+    },
+    "sort": {
+      "contents": [
+        {
+          "value": "```perl\nmy @sorted = sort @array;\nmy @num = sort { $a <=> $b } @numbers;\nmy @rev = sort { $b cmp $a } @strings;\n```\n**sort** orders a list. `<=>` for numeric, `cmp` for string comparison. `$a`/`$b` are special sort variables."
+        }
+      ]
+    },
+    "chomp_line": {
+      "contents": [
+        {
+          "value": "```perl\nwhile (my $line = <$fh>) {\n    chomp $line;\n    # process\n}\n```\n**Diamond operator** `<>` reads one line at a time. Returns `undef` at EOF. `<STDIN>` reads from standard input."
+        }
+      ]
+    },
+    "die": {
+      "contents": [
+        {
+          "value": "```perl\nopen(my $fh, '<', $file) or die \"Cannot open $file: $!\";\ndie \"Something went wrong\" unless $condition;\n```\n**die** throws an exception. Usually paired with `or` for error handling. `$!` contains the system error."
+        }
+      ]
+    },
+    "warn": {
+      "contents": [
+        {
+          "value": "```perl\nwarn \"This is a warning\\n\";\n```\n**warn** prints a message to STDERR without terminating. Adds file and line number if no trailing newline."
+        }
+      ]
+    },
+    "eval": {
+      "contents": [
+        {
+          "value": "```perl\neval {\n    # risky code\n    1;\n} or do {\n    my $err = $@;\n    warn \"Caught: $err\";\n};\n```\n**eval** block catches exceptions. Check `$@` for error. The block form is preferred over string eval."
+        }
+      ]
+    },
+    "ref": {
+      "contents": [
+        {
+          "value": "```perl\nmy $aref = [1, 2, 3];       # array ref\nmy $href = {a => 1, b => 2}; # hash ref\nmy $type = ref($aref);       # 'ARRAY'\n@{$aref}    # dereference array\n%{$href}    # dereference hash\n```\n**References** — `\\` creates references, `${}`, `@{}`, `%{}` dereference. `ref()` returns the type."
+        }
+      ]
+    },
+    "bless": {
+      "contents": [
+        {
+          "value": "```perl\npackage Dog;\nsub new {\n    my ($class, %args) = @_;\n    return bless \\%args, $class;\n}\nsub bark { print \"Woof!\\n\" }\n```\n**bless** associates a reference with a class (package). This is Perl's OOP mechanism."
+        }
+      ]
+    },
+    "use": {
+      "contents": [
+        {
+          "value": "```perl\nuse strict;\nuse warnings;\nuse File::Basename;\nuse List::Util qw(sum max min);\n```\n**use** loads a module at compile time. `qw()` imports specific functions. Equivalent to `BEGIN { require Module; Module->import(...) }`."
+        }
+      ]
+    },
+    "require": {
+      "contents": [
+        {
+          "value": "```perl\nrequire 'config.pl';\nrequire Module::Name;\n```\n**require** loads a file or module at runtime. Unlike `use`, it doesn't call `import()`."
+        }
+      ]
+    },
+    "package": {
+      "contents": [
+        {
+          "value": "```perl\npackage MyApp::Utils;\nuse Exporter 'import';\nour @EXPORT_OK = qw(helper_func);\n```\n**package** declares a namespace. Use `Exporter` to make functions importable by other code."
+        }
+      ]
+    },
+    "qw": {
+      "contents": [
+        {
+          "value": "```perl\nmy @list = qw(apple banana cherry);\nuse POSIX qw(floor ceil);\n```\n**qw()** creates a list of strings split on whitespace. No commas or quotes needed."
+        }
+      ]
+    },
+    "print": {
+      "contents": [
+        {
+          "value": "```perl\nprint \"Hello, World!\\n\";\nprint $fh \"data\\n\";\nprint STDERR \"error\\n\";\n```\n**print** outputs to a filehandle (default STDOUT). No parentheses needed. Does not add newline."
+        }
+      ]
+    },
+    "say": {
+      "contents": [
+        {
+          "value": "```perl\nuse feature 'say';\nsay \"Hello, World!\";\nsay $fh \"data\";\n```\n**say** is like `print` but automatically adds a newline. Requires `use feature 'say'` or `use v5.10`."
+        }
+      ]
+    },
+    "printf": {
+      "contents": [
+        {
+          "value": "```perl\nprintf \"%-20s %5d %8.2f\\n\", $name, $age, $score;\nsprintf(\"%.2f\", $value);\n```\n**printf** formatted output. `sprintf` returns the string instead of printing."
+        }
+      ]
+    },
+    "chomp_vs_chop": {
+      "contents": [
+        {
+          "value": "```perl\nchomp $str;  # remove trailing \\n only\nchop $str;   # remove last char (any)\n```\n**chomp** vs **chop** — `chomp` is usually what you want; it only removes the input record separator."
+        }
+      ]
+    },
+    "exists": {
+      "contents": [
+        {
+          "value": "```perl\nif (exists $hash{key}) { ... }\nif (exists $array[5]) { ... }\n```\n**exists** checks if a hash key or array index has been defined. Doesn't trigger autovivification."
+        }
+      ]
+    },
+    "delete": {
+      "contents": [
+        {
+          "value": "```perl\ndelete $hash{key};\ndelete $array[3];\n```\n**delete** removes a key from a hash or an element from an array."
+        }
+      ]
+    },
+    "defined": {
+      "contents": [
+        {
+          "value": "```perl\nif (defined $value) { ... }\nmy $name = $input // 'default';\n```\n**defined** checks if a value is not `undef`. `//` (defined-or) provides a default for undefined values."
+        }
+      ]
+    },
+    "foreach": {
+      "contents": [
+        {
+          "value": "```perl\nforeach my $item (@list) {\n    print \"$item\\n\";\n}\n\nfor my $i (0 .. $#array) {\n    print \"$i: $array[$i]\\n\";\n}\n```\n**foreach** iterates over a list. `for` and `foreach` are interchangeable. `$#array` is the last index."
+        }
+      ]
+    },
+    "while": {
+      "contents": [
+        {
+          "value": "```perl\nwhile (<$fh>) {\n    chomp;\n    process($_);\n}\n\nwhile (my ($k, $v) = each %hash) {\n    print \"$k => $v\\n\";\n}\n```\n**while** loops. Commonly used with filehandle reads and `each` for hash iteration."
+        }
+      ]
+    },
+    "unless": {
+      "contents": [
+        {
+          "value": "```perl\nunless ($condition) {\n    print \"Not true\\n\";\n}\ndie \"Error\" unless $ok;\n```\n**unless** is the opposite of `if`. Executes when the condition is false. Avoid `unless ... else`."
         }
       ]
     }

@@ -1,29 +1,31 @@
 {
   "name": "vlog",
-  "description": "SystemVerilog command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "SystemVerilog — HDL compiler and simulation tools (ModelSim/QuestaSim, Verilator, Icarus)",
+  "category": "language",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": "file.sv",
-      "description": "Compile SystemVerilog",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-sv file.sv",
-      "description": "Force SystemVerilog mode",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "file.sv", "description": "Compile SystemVerilog file", "args": ["file"], "options": [] },
+    { "name": "-sv file.sv", "description": "Force SystemVerilog language mode", "args": ["file"], "options": [] },
+    { "name": "-lint file.sv", "description": "Run lint checks on SystemVerilog", "args": ["file"], "options": [] },
+    { "name": "+incdir+path file.sv", "description": "Compile with include directory", "args": ["path", "file"], "options": [] },
+    { "name": "-work library file.sv", "description": "Compile into a named library", "args": ["library", "file"], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-sv", "description": "Enable SystemVerilog features" },
+    { "name": "+incdir+<path>", "description": "Add include search directory" },
+    { "name": "+define+<macro>", "description": "Define a preprocessor macro" },
+    { "name": "-work", "description": "Target library for compilation" },
+    { "name": "-lint", "description": "Enable lint-style warnings" },
+    { "name": "-timescale", "description": "Set default timescale" },
+    { "name": "-Wall", "description": "Enable all warnings (Verilator)" }
+  ],
+  "examples": [
+    "vlog -sv design.sv testbench.sv",
+    "verilator --lint-only -Wall design.sv",
+    "iverilog -g2012 -o sim design.sv testbench.sv && vvp sim",
+    "vlog +incdir+./rtl -sv top.sv && vsim work.top",
+    "verilator --cc --exe --build design.sv sim_main.cpp"
+  ],
+  "relatedCommands": ["make", "gtkwave", "pla", "mips"]
 }

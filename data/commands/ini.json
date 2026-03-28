@@ -1,16 +1,30 @@
 {
-  "name": "ini",
-  "description": "INI command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
+  "name": "crudini",
+  "description": "INI file manipulation tools (crudini, ini-parser)",
+  "category": "tool",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
+  "subcommands": [
+    { "name": "--get", "description": "Get a value from an INI file", "args": ["file", "section", "key"], "options": [] },
+    { "name": "--set", "description": "Set a value in an INI file", "args": ["file", "section", "key", "value"], "options": [] },
+    { "name": "--del", "description": "Delete a key or section from an INI file", "args": ["file", "section", "key"], "options": [] },
+    { "name": "--merge", "description": "Merge INI data from stdin into file", "args": ["file"], "options": [] },
+    { "name": "--get --format=lines", "description": "Get all keys in a section as lines", "args": ["file", "section"], "options": [] },
+    { "name": "--existing", "description": "Only update existing keys (fail if missing)", "args": ["file"], "options": [] }
   ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
+  "globalOptions": [
+    { "name": "--existing", "description": "Fail if the section or key does not exist" },
+    { "name": "--format", "description": "Output format: sh, lines, or ini" },
+    { "name": "--output", "description": "Write output to file instead of modifying in-place" },
+    { "name": "--verbose", "description": "Show details of changes" },
+    { "name": "--list", "description": "Treat values as comma-separated lists" }
   ],
-  "subcommands": []
+  "examples": [
+    "crudini --get config.ini database host",
+    "crudini --set config.ini database port 5432",
+    "crudini --del config.ini deprecated_section",
+    "crudini --get --format=lines config.ini database",
+    "crudini --merge config.ini < overrides.ini"
+  ],
+  "relatedCommands": ["toml", "yaml", "jq", "sed"]
 }

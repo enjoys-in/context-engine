@@ -4,42 +4,287 @@
     "fields": {
       "contents": [
         {
-          "value": "```awk\n# input: \"John 30 Engineer\"\n#   $0 = \"John 30 Engineer\"  (whole line)\n#   $1 = \"John\"              (1st field)\n#   $2 = \"30\"                (2nd field)\n#   $NF = \"Engineer\"         (last field)\n#   NF = 3                   (field count)\n```\n**Fields** - Awk splits each line into fields by FS (default: whitespace). Access with `$1`, `$2`, etc."
+          "value": "```awk\n# input: \"John 30 Engineer\"\n#   $0 = \"John 30 Engineer\"  (whole line)\n#   $1 = \"John\"              (1st field)\n#   $NF = \"Engineer\"         (last field)\n#   NF = 3                   (field count)\n```\n**Fields** — Awk splits lines by FS (default: whitespace). Access with `$1`, `$2`, etc."
         }
       ]
     },
     "pattern_action": {
       "contents": [
         {
-          "value": "```awk\n/error/  { print }          # regex match\n$3 > 100 { print $1, $3 }   # field condition\nNR == 1  { print \"Header:\", $0 }\nNR > 1   { sum += $2 }       # skip header\nEND      { print sum }       # final output\n```\n**pattern { action }** is the fundamental awk structure. If pattern matches, action executes. Omit pattern to match all lines."
+          "value": "```awk\n/error/  { print }          # regex match\n$3 > 100 { print $1, $3 }   # field condition\nNR == 1  { print \"Header:\", $0 }\nEND      { print sum }       # final output\n```\n**pattern { action }** is the fundamental awk structure."
         }
       ]
     },
     "arrays": {
       "contents": [
         {
-          "value": "```awk\n# Associative arrays (like hash maps)\n{ count[$1]++ }            # count occurrences\n{ total[$1] += $2 }        # sum by group\nEND {\n  for (k in count)\n    print k, count[k]\n}\n\n# Check existence:\nif (\"key\" in arr) ...\ndelete arr[\"key\"]\n```\n**Arrays** are associative (string-indexed). No declaration needed. Use `for (k in arr)` to iterate."
+          "value": "```awk\n{ count[$1]++ }\n{ total[$1] += $2 }\nEND {\n  for (k in count)\n    print k, count[k]\n}\nif (\"key\" in arr) ...\ndelete arr[\"key\"]\n```\n**Arrays** are associative (hash maps). No declaration needed."
         }
       ]
     },
     "one_liners": {
       "contents": [
         {
-          "value": "```bash\n# Print 2nd column:\nawk '{print $2}' file.txt\n\n# Sum column:\nawk '{s+=$1} END{print s}' data.txt\n\n# CSV with header skip:\nawk -F, 'NR>1 {print $1}' data.csv\n\n# Unique values:\nawk '!seen[$0]++' file.txt\n\n# Replace text:\nawk '{gsub(/old/,\"new\")}1' file.txt\n```\n**One-liners** - awk excels as a command-line data processor. `-F` sets field separator."
+          "value": "```bash\nawk '{print $2}' file.txt            # print 2nd column\nawk '{s+=$1} END{print s}' data.txt  # sum column\nawk -F, 'NR>1 {print $1}' data.csv   # CSV skip header\nawk '!seen[$0]++' file.txt           # unique lines\n```\n**One-liners** — awk excels as a command-line data processor."
         }
       ]
     },
     "printf": {
       "contents": [
         {
-          "value": "```awk\nprintf \"%-20s %5d %8.2f\\n\", $1, $2, $3\n\n# Format specifiers:\n# %s   string      %-20s  left-aligned, 20 wide\n# %d   integer     %5d    right-aligned, 5 wide\n# %f   float       %8.2f  8 wide, 2 decimal\n# %x   hex         %o     octal\n```\n**printf** provides C-style formatted output. Unlike print, it does NOT add a newline automatically."
+          "value": "```awk\nprintf \"%-20s %5d %8.2f\\n\", $1, $2, $3\n# %s string  %d integer  %f float\n# %x hex     %o octal    %e scientific\n```\n**printf** provides C-style formatted output. No automatic newline."
         }
       ]
     },
     "built_in_vars": {
       "contents": [
         {
-          "value": "```awk\nNR     # total record (line) number\nFNR    # record number in current file\nNF     # number of fields in current line\nFS     # input field separator (default: space)\nOFS    # output field separator (default: space)\nRS     # input record separator (default: newline)\nORS    # output record separator (default: newline)\nFILENAME  # current input filename\n```\n**Built-in variables** control how awk reads and writes data."
+          "value": "```awk\nNR       # total record (line) number\nFNR      # record number in current file\nNF       # number of fields in current line\nFS       # input field separator (default: space)\nOFS      # output field separator\nRS       # input record separator (default: newline)\nORS      # output record separator\nFILENAME # current input filename\n```\n**Built-in variables** control how awk reads and writes data."
+        }
+      ]
+    },
+    "BEGIN": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN {\n  FS = \",\"\n  OFS = \"\\t\"\n  print \"Name\\tAge\\tCity\"\n}\n{ print $1, $2, $3 }\n```\n**BEGIN** runs once before any input is processed. Use for initialization and headers."
+        }
+      ]
+    },
+    "END": {
+      "contents": [
+        {
+          "value": "```awk\n{ sum += $1; count++ }\nEND {\n  print \"Total:\", sum\n  print \"Average:\", sum/count\n}\n```\n**END** runs once after all input is processed. Use for summaries and final output."
+        }
+      ]
+    },
+    "FS": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN { FS = \",\" }     # CSV\nBEGIN { FS = \"\\t\" }    # TSV\nBEGIN { FS = \":\" }     # /etc/passwd\n# Or from command line:\n# awk -F, '{print $1}' file.csv\n```\n**FS** (field separator) controls how lines are split into fields. Default is whitespace."
+        }
+      ]
+    },
+    "OFS": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN { OFS = \",\" }\n{ print $1, $2, $3 }   # output: field1,field2,field3\n\n# Force recalculation:\n{ $1 = $1; print }     # rebuild $0 with OFS\n```\n**OFS** (output field separator) is used between fields in print. Set `$1=$1` to rebuild `$0`."
+        }
+      ]
+    },
+    "RS": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN { RS = \"\" }    # paragraph mode (blank line separates records)\nBEGIN { RS = \";\" }   # semicolon-separated records\n```\n**RS** (record separator) controls how input is split into records. Default is newline."
+        }
+      ]
+    },
+    "NR": {
+      "contents": [
+        {
+          "value": "```awk\n{ print NR, $0 }         # line numbers\nNR == 5 { print }        # print 5th line\nNR >= 10 && NR <= 20     # lines 10-20\nEND { print NR, \"lines\" }\n```\n**NR** is the total number of records (lines) read so far across all files."
+        }
+      ]
+    },
+    "FNR": {
+      "contents": [
+        {
+          "value": "```awk\n# FNR resets for each file, NR doesn't:\nFNR == 1 { print \"--- New file:\", FILENAME }\n{ print FNR, $0 }\n```\n**FNR** is the record number in the current file. Resets to 1 for each new input file."
+        }
+      ]
+    },
+    "NF": {
+      "contents": [
+        {
+          "value": "```awk\n{ print NF }              # count fields per line\nNF > 0 { print }          # skip blank lines\n{ print $NF }             # print last field\n{ print $(NF-1) }         # print second-to-last\n```\n**NF** is the number of fields in the current record. `$NF` accesses the last field."
+        }
+      ]
+    },
+    "FILENAME": {
+      "contents": [
+        {
+          "value": "```awk\n{ print FILENAME, NR, $0 }\n```\n**FILENAME** is the name of the current input file."
+        }
+      ]
+    },
+    "getline": {
+      "contents": [
+        {
+          "value": "```awk\n# Read next line:\ngetline line\n\n# Read from file:\ngetline line < \"file.txt\"\n\n# Read from command:\n\"date\" | getline today\nclose(\"date\")\n```\n**getline** reads the next line. Can read from current input, a file, or a command pipe."
+        }
+      ]
+    },
+    "gsub": {
+      "contents": [
+        {
+          "value": "```awk\n{ gsub(/old/, \"new\") }       # replace all in $0\n{ gsub(/,/, \"\\t\", $0) }      # CSV to TSV\nn = gsub(/pattern/, \"rep\")   # returns replacement count\n```\n**gsub** globally substitutes pattern matches. Modifies the target in place. Returns count."
+        }
+      ]
+    },
+    "sub": {
+      "contents": [
+        {
+          "value": "```awk\n{ sub(/^[ \\t]+/, \"\") }     # trim leading whitespace\n{ sub(/pattern/, \"rep\") }  # replace first match only\n```\n**sub** substitutes the first occurrence only. Use `gsub` for all occurrences."
+        }
+      ]
+    },
+    "match": {
+      "contents": [
+        {
+          "value": "```awk\nif (match($0, /[0-9]+/)) {\n    print substr($0, RSTART, RLENGTH)\n}\n```\n**match** finds a regex in a string. Sets `RSTART` and `RLENGTH`. Returns position or 0."
+        }
+      ]
+    },
+    "substr": {
+      "contents": [
+        {
+          "value": "```awk\nsubstr($0, 1, 10)     # first 10 characters\nsubstr($0, 5)         # from position 5 to end\n```\n**substr(string, start, length)** extracts a substring. Position is 1-based."
+        }
+      ]
+    },
+    "split": {
+      "contents": [
+        {
+          "value": "```awk\nn = split($0, arr, \":\")\nfor (i = 1; i <= n; i++)\n    print arr[i]\n```\n**split(string, array, separator)** splits a string into an array. Returns the number of elements."
+        }
+      ]
+    },
+    "length": {
+      "contents": [
+        {
+          "value": "```awk\nlength($0)             # string length\nlength(arr)            # array size (gawk)\n```\n**length** returns the number of characters in a string or elements in an array (gawk)."
+        }
+      ]
+    },
+    "tolower": {
+      "contents": [
+        {
+          "value": "```awk\n{ print tolower($0) }\n{ print toupper($1) }\n```\n**tolower/toupper** convert strings to lower/upper case."
+        }
+      ]
+    },
+    "sprintf": {
+      "contents": [
+        {
+          "value": "```awk\nresult = sprintf(\"%.2f\", $1 * 1.08)\nformatted = sprintf(\"%04d\", NR)\n```\n**sprintf** returns a formatted string (like printf but doesn't print)."
+        }
+      ]
+    },
+    "system": {
+      "contents": [
+        {
+          "value": "```awk\n{ system(\"mkdir -p \" $1) }\nsystem(\"echo done\")\n```\n**system(command)** executes a shell command. Returns the exit status."
+        }
+      ]
+    },
+    "pipe": {
+      "contents": [
+        {
+          "value": "```awk\n{ print $0 | \"sort\" }\n{ print $0 | \"sort -u > output.txt\" }\nEND { close(\"sort\") }\n```\n**Pipe** sends output to a command. Always `close()` pipes to flush output."
+        }
+      ]
+    },
+    "print_to_file": {
+      "contents": [
+        {
+          "value": "```awk\n{ print $0 > \"output.txt\" }     # overwrite\n{ print $0 >> \"append.txt\" }    # append\n{ print $1 > ($2 \".txt\") }      # dynamic filename\n```\n**Output redirection** — `>` overwrites, `>>` appends. Close files when done."
+        }
+      ]
+    },
+    "ternary": {
+      "contents": [
+        {
+          "value": "```awk\n{ print ($1 > 0 ? \"positive\" : \"non-positive\") }\n{ max = ($1 > $2 ? $1 : $2) }\n```\n**Ternary operator** `condition ? true_val : false_val` for inline conditionals."
+        }
+      ]
+    },
+    "string_concat": {
+      "contents": [
+        {
+          "value": "```awk\n{ result = $1 \" \" $2 }       # space concatenation\n{ name = first \"_\" last }    # with separator\n{ s = s $0 \"\\n\" }            # accumulate lines\n```\n**String concatenation** is done by juxtaposition (placing strings next to each other)."
+        }
+      ]
+    },
+    "regex_match": {
+      "contents": [
+        {
+          "value": "```awk\n$0 ~ /pattern/  { print }     # line matches\n$1 !~ /^[0-9]/  { print }     # field doesn't match\n/^#/            { next }      # skip comments\n```\n**Regex operators** — `~` matches, `!~` doesn't match. Bare `/regex/` matches against `$0`."
+        }
+      ]
+    },
+    "next": {
+      "contents": [
+        {
+          "value": "```awk\n/^#/ { next }          # skip comment lines\nNR == 1 { next }       # skip header\n{ process($0) }\n```\n**next** skips to the next input line, bypassing remaining rules for the current line."
+        }
+      ]
+    },
+    "exit": {
+      "contents": [
+        {
+          "value": "```awk\nNR == 100 { exit }          # stop after 100 lines\n/STOP/ { exit 1 }           # exit with error code\nEND { print \"done\" }        # END still runs after exit\n```\n**exit** stops processing input. Optional status code. END block still executes."
+        }
+      ]
+    },
+    "function": {
+      "contents": [
+        {
+          "value": "```awk\nfunction max(a, b) {\n    return (a > b ? a : b)\n}\n\nfunction trim(s) {\n    gsub(/^[ \\t]+|[ \\t]+$/, \"\", s)\n    return s\n}\n\n{ print max($1, $2) }\n```\n**function** defines user functions. Parameters are local. Extra params after actual args are local variables."
+        }
+      ]
+    },
+    "ARGV": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN {\n  print \"Program:\", ARGV[0]\n  print \"Files:\", ARGC - 1\n  for (i = 1; i < ARGC; i++)\n    print ARGV[i]\n}\n```\n**ARGV/ARGC** — command-line arguments. ARGV[0] is `awk`, subsequent entries are input files."
+        }
+      ]
+    },
+    "multiple_files": {
+      "contents": [
+        {
+          "value": "```bash\n# Process multiple files:\nawk '{print FILENAME, FNR, $0}' file1.txt file2.txt\n\n# Join two files (like paste):\nawk 'FNR==NR {a[FNR]=$0; next} {print a[FNR], $0}' file1 file2\n```\n**Multiple files** — FNR resets per file, NR keeps counting. `FNR==NR` trick processes first file only."
+        }
+      ]
+    },
+    "csv_parsing": {
+      "contents": [
+        {
+          "value": "```awk\n# Simple CSV:\nBEGIN { FS = \",\" }\n{ print $1, $3 }\n\n# Quoted CSV (gawk with FPAT):\nBEGIN { FPAT = \"([^,]*)|\\\"([^\\\"]*)\\\"\" }\n{ print $1, $2 }\n```\n**CSV parsing** — Simple with `-F,` but quoted fields need FPAT (gawk) or a proper CSV parser."
+        }
+      ]
+    },
+    "OFMT": {
+      "contents": [
+        {
+          "value": "```awk\nBEGIN { OFMT = \"%.2f\" }\n{ print $1 + 0 }   # outputs with 2 decimal places\n```\n**OFMT** controls the output format for numbers converted to strings. Default is `%.6g`."
+        }
+      ]
+    },
+    "SUBSEP": {
+      "contents": [
+        {
+          "value": "```awk\n{ count[$1, $2]++ }   # multi-dimensional array key\nfor (key in count) {\n    split(key, parts, SUBSEP)\n    print parts[1], parts[2], count[key]\n}\n```\n**SUBSEP** (subscript separator, `\\034`) joins multi-dimensional array indices. Split with `SUBSEP` to recover keys."
+        }
+      ]
+    },
+    "delete_array": {
+      "contents": [
+        {
+          "value": "```awk\ndelete arr[\"key\"]       # delete one element\ndelete arr              # delete entire array (gawk)\n\nfor (k in arr) delete arr[k]  # portable delete all\n```\n**delete** removes array elements. `delete arr` clears entire array (gawk extension)."
+        }
+      ]
+    },
+    "ERRNO": {
+      "contents": [
+        {
+          "value": "```awk\nif ((getline line < \"file.txt\") < 0)\n    print \"Error:\", ERRNO\n```\n**ERRNO** (gawk) contains the error message when I/O operations fail."
+        }
+      ]
+    },
+    "gawk_extensions": {
+      "contents": [
+        {
+          "value": "```awk\n# gawk-specific features:\n@include \"library.awk\"       # include files\nBEGINFILE { print FILENAME }  # per-file begin\nENDFILE { print FNR, \"lines\" } # per-file end\nswitch ($1) { case /pat/: ...; default: ... }\n```\n**gawk extensions** add includes, BEGINFILE/ENDFILE, switch/case, and more."
         }
       ]
     }

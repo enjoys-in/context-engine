@@ -1,35 +1,31 @@
 {
   "name": "ecl",
-  "description": "ECL command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "ECL — HPCC Systems Enterprise Control Language CLI",
+  "category": "language",
+  "platforms": ["linux", "macos", "windows"],
+  "shells": ["bash", "zsh", "powershell"],
   "subcommands": [
-    {
-      "name": "run",
-      "description": "Run an ECL program",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "publish",
-      "description": "Publish ECL query",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "deploy",
-      "description": "Deploy ECL workunit",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "run", "description": "Run an ECL program on a cluster", "args": ["file.ecl"], "options": ["--target", "--cluster"] },
+    { "name": "publish", "description": "Publish ECL query to a Roxie cluster", "args": ["file.ecl"], "options": ["--name", "--cluster"] },
+    { "name": "deploy", "description": "Deploy ECL workunit to target cluster", "args": ["wuid"], "options": ["--cluster"] },
+    { "name": "compile", "description": "Compile ECL code without running", "args": ["file.ecl"], "options": ["--target"] },
+    { "name": "status", "description": "Check status of a workunit", "args": ["wuid"], "options": [] },
+    { "name": "results", "description": "Retrieve results from a completed workunit", "args": ["wuid"], "options": ["--format"] }
+  ],
+  "globalOptions": [
+    { "name": "--server", "description": "HPCC server address" },
+    { "name": "--port", "description": "Server port number" },
+    { "name": "--username", "description": "Authentication username" },
+    { "name": "--password", "description": "Authentication password" },
+    { "name": "--cluster", "description": "Target cluster name (thor, roxie, hthor)" },
+    { "name": "--target", "description": "Target environment" }
+  ],
+  "examples": [
+    "ecl run --target thor myquery.ecl",
+    "ecl publish --cluster roxie --name MyQuery myquery.ecl",
+    "ecl status W20240101-000001",
+    "ecl results W20240101-000001 --format csv",
+    "eclcc -o output.so myquery.ecl"
+  ],
+  "relatedCommands": ["sql", "sparql", "hive"]
 }

@@ -1,10 +1,285 @@
 {
   "language": "apex",
   "hovers": {
-    "class": { "contents": [{ "value": "```apex\npublic class AccountService {\n    public Account getById(Id accountId) {\n        return [SELECT Id, Name FROM Account WHERE Id = :accountId];\n    }\n}\n```\n**class** declares an Apex class. Use access modifiers: `public`, `private`, `global`, `protected`." }] },
-    "trigger": { "contents": [{ "value": "```apex\ntrigger AccountTrigger on Account (before insert, after update) {\n    AccountTriggerHandler.handle(Trigger.new, Trigger.oldMap);\n}\n```\n**trigger** fires on DML events. Best practice: delegate to handler class." }] },
-    "SOQL": { "contents": [{ "value": "```apex\nList<Account> accts = [\n    SELECT Id, Name, Industry\n    FROM Account\n    WHERE CreatedDate = TODAY\n    LIMIT 100\n];\n```\n**SOQL** (Salesforce Object Query Language) queries Salesforce data. Use bind variables with `:var`." }] },
-    "System.debug": { "contents": [{ "value": "```apex\nSystem.debug('Value: ' + myVar);\nSystem.debug(LoggingLevel.ERROR, 'Critical issue');\n```\n**System.debug()** writes to the execution debug log." }] },
-    "Test": { "contents": [{ "value": "```apex\n@isTest\nprivate class MyTest {\n    @isTest\n    static void testMethod() {\n        Test.startTest();\n        // code under test\n        Test.stopTest();\n        System.assertEquals(expected, actual);\n    }\n}\n```\n**@isTest** marks test classes/methods. Use `Test.startTest()`/`Test.stopTest()` for governor limits." }] }
+    "class": {
+      "contents": [
+        {
+          "value": "```apex\npublic class AccountService {\n    public Account getById(Id accountId) {\n        return [SELECT Id, Name FROM Account WHERE Id = :accountId];\n    }\n}\n```\n**class** declares an Apex class. Access modifiers: `public`, `private`, `global`, `protected`. Use `with sharing` for security."
+        }
+      ]
+    },
+    "trigger": {
+      "contents": [
+        {
+          "value": "```apex\ntrigger AccountTrigger on Account (before insert, after update) {\n    AccountTriggerHandler.handle(Trigger.new, Trigger.oldMap);\n}\n```\n**trigger** fires on DML events. Best practice: delegate to handler class."
+        }
+      ]
+    },
+    "SOQL": {
+      "contents": [
+        {
+          "value": "```apex\nList<Account> accts = [\n    SELECT Id, Name, Industry,\n           (SELECT Id, Amount FROM Opportunities)\n    FROM Account\n    WHERE CreatedDate = TODAY\n    LIMIT 100\n];\n```\n**SOQL** queries Salesforce data. Supports relationships, aggregates, bind variables (`:var`), date literals."
+        }
+      ]
+    },
+    "SOSL": {
+      "contents": [
+        {
+          "value": "```apex\nList<List<SObject>> results = [FIND 'Acme*' IN ALL FIELDS\n    RETURNING Account(Name, Industry),\n             Contact(FirstName, LastName)\n    LIMIT 20\n];\n```\n**SOSL** performs full-text searches across multiple objects. Returns a list of lists."
+        }
+      ]
+    },
+    "DML": {
+      "contents": [
+        {
+          "value": "```apex\ninsert newAccount;\nupdate existingAccount;\nupsert records ExternalId__c;\ndelete oldRecords;\nundelete recoveredRecords;\n```\n**DML** statements modify data. Use `Database.insert(records, false)` for partial success."
+        }
+      ]
+    },
+    "System.debug": {
+      "contents": [
+        {
+          "value": "```apex\nSystem.debug('Value: ' + myVar);\nSystem.debug(LoggingLevel.ERROR, 'Critical issue');\n```\n**System.debug()** writes to the debug log. Levels: `ERROR`, `WARN`, `INFO`, `DEBUG`, `FINE`, `FINER`, `FINEST`."
+        }
+      ]
+    },
+    "Test": {
+      "contents": [
+        {
+          "value": "```apex\n@isTest\nprivate class AccountServiceTest {\n    @TestSetup\n    static void setup() {\n        insert new Account(Name = 'Test');\n    }\n    @isTest\n    static void testGetById() {\n        Test.startTest();\n        // test code\n        Test.stopTest();\n        System.assertEquals(expected, actual);\n    }\n}\n```\n**@isTest** marks test classes/methods. Minimum 75% code coverage for deployment."
+        }
+      ]
+    },
+    "interface": {
+      "contents": [
+        {
+          "value": "```apex\npublic interface Schedulable {\n    void execute(SchedulableContext ctx);\n}\npublic class MyJob implements Schedulable {\n    public void execute(SchedulableContext ctx) { }\n}\n```\n**interface** defines a contract. Common: `Schedulable`, `Batchable`, `Queueable`."
+        }
+      ]
+    },
+    "enum": {
+      "contents": [
+        {
+          "value": "```apex\npublic enum Season { SPRING, SUMMER, AUTUMN, WINTER }\nSeason s = Season.SUMMER;\nString name = s.name();\n```\n**enum** defines a fixed set of constants with `name()`, `ordinal()`, `values()` methods."
+        }
+      ]
+    },
+    "List": {
+      "contents": [
+        {
+          "value": "```apex\nList<String> names = new List<String>{'Alice', 'Bob'};\nnames.add('Charlie');\nnames.size();\nnames.contains('Bob');\n```\n**List** is an ordered collection. Equivalent to `String[]` array notation."
+        }
+      ]
+    },
+    "Map": {
+      "contents": [
+        {
+          "value": "```apex\nMap<Id, Account> accountMap = new Map<Id, Account>(\n    [SELECT Id, Name FROM Account]\n);\nAccount a = accountMap.get(someId);\n```\n**Map** stores key-value pairs. Can be initialized from SOQL. Methods: `get()`, `put()`, `keySet()`, `values()`."
+        }
+      ]
+    },
+    "Set": {
+      "contents": [
+        {
+          "value": "```apex\nSet<Id> accountIds = new Set<Id>();\naccountIds.add(record.AccountId);\naccountIds.contains(someId);\n```\n**Set** stores unique, unordered elements. Useful for deduplication."
+        }
+      ]
+    },
+    "Trigger.new": {
+      "contents": [
+        {
+          "value": "```apex\nList<Account> newRecords = Trigger.new;\nMap<Id, Account> oldMap = Trigger.oldMap;\nBoolean isBefore = Trigger.isBefore;\nBoolean isInsert = Trigger.isInsert;\n```\n**Trigger context variables** provide access to records being processed."
+        }
+      ]
+    },
+    "Database.insert": {
+      "contents": [
+        {
+          "value": "```apex\nDatabase.SaveResult[] results = Database.insert(records, false);\nfor (Database.SaveResult sr : results) {\n    if (!sr.isSuccess()) {\n        for (Database.Error err : sr.getErrors())\n            System.debug(err.getMessage());\n    }\n}\n```\n**Database methods** allow partial success with `allOrNone = false`."
+        }
+      ]
+    },
+    "Batchable": {
+      "contents": [
+        {
+          "value": "```apex\npublic class MyBatch implements Database.Batchable<SObject> {\n    public Database.QueryLocator start(Database.BatchableContext bc) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext bc, List<Account> scope) { }\n    public void finish(Database.BatchableContext bc) { }\n}\n```\n**Database.Batchable** processes large data sets in chunks (default 200)."
+        }
+      ]
+    },
+    "Queueable": {
+      "contents": [
+        {
+          "value": "```apex\npublic class MyQueueable implements Queueable {\n    public void execute(QueueableContext ctx) {\n        // async work, can chain jobs\n    }\n}\nId jobId = System.enqueueJob(new MyQueueable());\n```\n**Queueable** runs asynchronous jobs. Supports non-primitive parameters and chaining."
+        }
+      ]
+    },
+    "future": {
+      "contents": [
+        {
+          "value": "```apex\n@future(callout=true)\npublic static void makeCallout(Set<Id> recordIds) {\n    // async execution with callouts\n}\n```\n**@future** runs methods asynchronously. Parameters must be primitives. Use `callout=true` for HTTP."
+        }
+      ]
+    },
+    "Schedulable": {
+      "contents": [
+        {
+          "value": "```apex\npublic class MySchedule implements Schedulable {\n    public void execute(SchedulableContext ctx) {\n        Database.executeBatch(new MyBatch());\n    }\n}\n// System.schedule('Nightly', '0 0 1 * * ?', new MySchedule());\n```\n**Schedulable** runs code on a cron schedule."
+        }
+      ]
+    },
+    "AuraEnabled": {
+      "contents": [
+        {
+          "value": "```apex\n@AuraEnabled(cacheable=true)\npublic static List<Account> getAccounts() {\n    return [SELECT Id, Name FROM Account LIMIT 50];\n}\n```\n**@AuraEnabled** exposes methods to Lightning Web Components. `cacheable=true` enables caching."
+        }
+      ]
+    },
+    "HttpCallout": {
+      "contents": [
+        {
+          "value": "```apex\nHttpRequest req = new HttpRequest();\nreq.setEndpoint('https://api.example.com/data');\nreq.setMethod('GET');\nreq.setHeader('Authorization', 'Bearer ' + token);\nHttp http = new Http();\nHttpResponse res = http.send(req);\n```\n**HTTP Callouts** make external API requests. Endpoint must be in Remote Site Settings."
+        }
+      ]
+    },
+    "JSON": {
+      "contents": [
+        {
+          "value": "```apex\nString jsonStr = JSON.serialize(myObject);\nAccount a = (Account) JSON.deserialize(jsonStr, Account.class);\nMap<String, Object> raw = (Map<String, Object>)\n    JSON.deserializeUntyped(jsonStr);\n```\n**JSON** class provides serialization and deserialization."
+        }
+      ]
+    },
+    "with sharing": {
+      "contents": [
+        {
+          "value": "```apex\npublic with sharing class SecureService { }\npublic without sharing class AdminService { }\npublic inherited sharing class FlexService { }\n```\n**with sharing** enforces record-level security. `without sharing` bypasses it. `inherited sharing` inherits caller context."
+        }
+      ]
+    },
+    "governor_limits": {
+      "contents": [
+        {
+          "value": "```apex\n// Key limits per transaction:\n// SOQL queries: 100 (sync), 200 (async)\n// DML statements: 150\n// Records retrieved: 50,000\n// CPU time: 10,000ms (sync)\nSystem.debug(Limits.getQueries() + '/' + Limits.getLimitQueries());\n```\n**Governor limits** enforce multi-tenant resource sharing. Use `Limits` class to monitor."
+        }
+      ]
+    },
+    "try_catch": {
+      "contents": [
+        {
+          "value": "```apex\ntry {\n    insert newRecord;\n} catch (DmlException e) {\n    System.debug('DML error: ' + e.getMessage());\n} catch (Exception e) {\n    System.debug(e.getTypeName() + ': ' + e.getMessage());\n} finally {\n    // cleanup\n}\n```\n**try/catch/finally** handles exceptions. Common: `DmlException`, `QueryException`, `NullPointerException`."
+        }
+      ]
+    },
+    "Id": {
+      "contents": [
+        {
+          "value": "```apex\nId accountId = '001000000000001';\nSObjectType objType = accountId.getSObjectType();\n```\n**Id** is the 15/18-character Salesforce record identifier. `getSObjectType()` returns the object type."
+        }
+      ]
+    },
+    "String": {
+      "contents": [
+        {
+          "value": "```apex\nString s = 'Hello';\ns.contains('ell');\ns.toUpperCase();\nString.isBlank(s);\nString.format('{0} {1}', new List<String>{'Hi', 'World'});\n```\n**String** methods for text manipulation. Strings are immutable."
+        }
+      ]
+    },
+    "Date": {
+      "contents": [
+        {
+          "value": "```apex\nDate today = Date.today();\nDate future = today.addDays(30);\nInteger diff = today.daysBetween(future);\n```\n**Date** represents a date without time. Methods: `addDays()`, `addMonths()`, `daysBetween()`."
+        }
+      ]
+    },
+    "DateTime": {
+      "contents": [
+        {
+          "value": "```apex\nDatetime now = Datetime.now();\nString formatted = now.format('yyyy-MM-dd HH:mm:ss');\nLong epoch = now.getTime();\n```\n**Datetime** includes date and time. `format()` uses Java SimpleDateFormat patterns."
+        }
+      ]
+    },
+    "Decimal": {
+      "contents": [
+        {
+          "value": "```apex\nDecimal price = 19.99;\nDecimal rounded = price.setScale(2, RoundingMode.HALF_UP);\n```\n**Decimal** is arbitrary-precision. Preferred for currency. Use `setScale()` for rounding."
+        }
+      ]
+    },
+    "SObject": {
+      "contents": [
+        {
+          "value": "```apex\nSObject record = new Account(Name = 'Test');\nrecord.put('Industry', 'Tech');\nString name = (String) record.get('Name');\n```\n**SObject** is the base type for all Salesforce objects. `get()`/`put()` for dynamic field access."
+        }
+      ]
+    },
+    "Schema": {
+      "contents": [
+        {
+          "value": "```apex\nSchema.DescribeSObjectResult descr = Account.SObjectType.getDescribe();\nMap<String, Schema.SObjectField> fields = descr.fields.getMap();\n```\n**Schema** provides metadata about objects and fields. Use for dynamic Apex and security checks."
+        }
+      ]
+    },
+    "UserInfo": {
+      "contents": [
+        {
+          "value": "```apex\nId userId = UserInfo.getUserId();\nString userName = UserInfo.getUserName();\nId orgId = UserInfo.getOrganizationId();\n```\n**UserInfo** provides info about the current user and org."
+        }
+      ]
+    },
+    "assert": {
+      "contents": [
+        {
+          "value": "```apex\nSystem.assertEquals(expected, actual, 'Values should match');\nSystem.assertNotEquals(null, result);\nSystem.assert(list.size() > 0);\n```\n**Assert methods** verify expected behavior in tests. Optional message aids debugging."
+        }
+      ]
+    },
+    "TestSetup": {
+      "contents": [
+        {
+          "value": "```apex\n@TestSetup\nstatic void makeData() {\n    insert new Account(Name = 'Test Account');\n}\n```\n**@TestSetup** creates test data once for all methods in the class. Each method gets its own copy."
+        }
+      ]
+    },
+    "Test.startTest": {
+      "contents": [
+        {
+          "value": "```apex\nTest.startTest();\n// fresh governor limits\nTest.stopTest(); // forces async to complete\n```\n**Test.startTest()/stopTest()** resets governor limits and forces async operations to complete."
+        }
+      ]
+    },
+    "HttpCalloutMock": {
+      "contents": [
+        {
+          "value": "```apex\n@isTest\nprivate class MyMock implements HttpCalloutMock {\n    public HttpResponse respond(HttpRequest req) {\n        HttpResponse res = new HttpResponse();\n        res.setStatusCode(200);\n        res.setBody('{\"status\":\"ok\"}');\n        return res;\n    }\n}\n// Test.setMock(HttpCalloutMock.class, new MyMock());\n```\n**HttpCalloutMock** provides fake HTTP responses in tests."
+        }
+      ]
+    },
+    "Custom_Metadata": {
+      "contents": [
+        {
+          "value": "```apex\nList<My_Setting__mdt> settings = My_Setting__mdt.getAll().values();\nMy_Setting__mdt s = My_Setting__mdt.getInstance('Default');\n```\n**Custom Metadata Types** (`__mdt`) store deployable configuration. Queries don't cost SOQL limits."
+        }
+      ]
+    },
+    "Platform_Event": {
+      "contents": [
+        {
+          "value": "```apex\nMy_Event__e evt = new My_Event__e(Message__c = 'Hello');\nEventBus.publish(evt);\n```\n**Platform Events** (`__e`) enable event-driven architecture. Publishers and subscribers are decoupled."
+        }
+      ]
+    },
+    "Invocable": {
+      "contents": [
+        {
+          "value": "```apex\npublic class MyInvocable {\n    @InvocableMethod(label='Process Records')\n    public static List<String> process(List<Request> requests) {\n        return new List<String>{'Success'};\n    }\n    public class Request {\n        @InvocableVariable(required=true)\n        public Id recordId;\n    }\n}\n```\n**@InvocableMethod** exposes Apex to Flows and Process Builder."
+        }
+      ]
+    },
+    "for_loop": {
+      "contents": [
+        {
+          "value": "```apex\n// SOQL for loop (200 records at a time, memory-efficient)\nfor (Account a : [SELECT Id, Name FROM Account]) {\n    a.Name = a.Name.toUpperCase();\n}\n```\n**SOQL for loops** batch records in chunks of 200 to avoid heap limits."
+        }
+      ]
+    }
   }
 }

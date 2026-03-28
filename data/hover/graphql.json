@@ -4,42 +4,287 @@
     "type": {
       "contents": [
         {
-          "value": "```graphql\ntype User {\n  id: ID!\n  name: String!\n  email: String\n  posts: [Post!]!\n  role: Role!\n  createdAt: DateTime!\n}\n```\n**type** defines an object with fields. `!` means non-null, `[Type]` means list. Fields can have arguments."
+          "value": "```graphql\ntype User {\n  id: ID!\n  name: String!\n  email: String\n  posts: [Post!]!\n  role: Role!\n}\n```\n**type** defines an object with fields. `!` means non-null, `[Type]` means list."
         }
       ]
     },
     "query": {
       "contents": [
         {
-          "value": "```graphql\n# Schema definition:\ntype Query {\n  user(id: ID!): User\n  users(limit: Int = 10): [User!]!\n}\n\n# Client query:\nquery GetUser($id: ID!) {\n  user(id: $id) {\n    name\n    email\n    posts { title }\n  }\n}\n```\n**Query** is the read-only entry point. Variables prefixed with `$` are passed separately from the query."
+          "value": "```graphql\ntype Query {\n  user(id: ID!): User\n  users(limit: Int = 10): [User!]!\n}\n\nquery GetUser($id: ID!) {\n  user(id: $id) { name email }\n}\n```\n**Query** is the read-only entry point. Variables prefixed with `$` are passed separately."
         }
       ]
     },
     "mutation": {
       "contents": [
         {
-          "value": "```graphql\nmutation CreateUser($input: CreateUserInput!) {\n  createUser(input: $input) {\n    id\n    name\n  }\n}\n\n# Variables:\n# { \"input\": { \"name\": \"John\", \"email\": \"john@example.com\" } }\n```\n**Mutation** modifies server data. Use input types for complex arguments. Returns the modified data."
+          "value": "```graphql\nmutation CreateUser($input: CreateUserInput!) {\n  createUser(input: $input) {\n    id\n    name\n  }\n}\n```\n**Mutation** modifies server data. Use input types for complex arguments."
+        }
+      ]
+    },
+    "subscription": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Subscription {\n  messageAdded(channelId: ID!): Message!\n  userStatusChanged: UserStatus!\n}\n\nsubscription OnMessage($channelId: ID!) {\n  messageAdded(channelId: $channelId) {\n    text\n    sender { name }\n  }\n}\n```\n**Subscription** receives real-time updates via WebSocket. Server pushes data when events occur."
         }
       ]
     },
     "fragment": {
       "contents": [
         {
-          "value": "```graphql\nfragment UserFields on User {\n  id\n  name\n  email\n}\n\nquery {\n  user(id: \"1\") { ...UserFields }\n  admin: user(id: \"2\") { ...UserFields }\n}\n```\n**fragment** avoids field duplication. Spread with `...FragmentName`. Inline fragments: `... on Type { }`."
+          "value": "```graphql\nfragment UserFields on User {\n  id\n  name\n  email\n}\n\nquery {\n  user(id: \"1\") { ...UserFields }\n  admin: user(id: \"2\") { ...UserFields }\n}\n```\n**fragment** avoids field duplication. Spread with `...FragmentName`."
         }
       ]
     },
     "directives": {
       "contents": [
         {
-          "value": "```graphql\n# Built-in directives:\nfield @deprecated(reason: \"Use newField\")\nfield @skip(if: $condition)\nfield @include(if: $condition)\n\n# Custom directive:\ndirective @auth(requires: Role = ADMIN) on FIELD_DEFINITION\n\ntype Mutation {\n  deleteUser(id: ID!): Boolean! @auth(requires: ADMIN)\n}\n```\n**Directives** add metadata. Built-in: `@deprecated`, `@skip`, `@include`. Custom directives extend functionality."
+          "value": "```graphql\nfield @deprecated(reason: \"Use newField\")\nfield @skip(if: $condition)\nfield @include(if: $condition)\n\ndirective @auth(requires: Role = ADMIN) on FIELD_DEFINITION\n```\n**Directives** add metadata. Built-in: `@deprecated`, `@skip`, `@include`. Custom directives extend functionality."
         }
       ]
     },
     "scalars": {
       "contents": [
         {
-          "value": "```graphql\n# Built-in scalars:\nID       # unique identifier (serialized as String)\nString   # UTF-8 text\nInt      # 32-bit signed integer\nFloat    # double-precision float\nBoolean  # true/false\n\n# Custom scalars:\nscalar DateTime\nscalar JSON\nscalar Upload\n```\n**Scalars** are leaf types. Custom scalars need resolver implementation on the server side."
+          "value": "```graphql\n# Built-in:\nID       # unique identifier\nString   # UTF-8 text\nInt      # 32-bit signed integer\nFloat    # double-precision float\nBoolean  # true/false\n\nscalar DateTime\nscalar JSON\n```\n**Scalars** are leaf types. Custom scalars need resolver implementation."
+        }
+      ]
+    },
+    "input": {
+      "contents": [
+        {
+          "value": "```graphql\ninput CreateUserInput {\n  name: String!\n  email: String!\n  role: Role = USER\n}\n\nmutation {\n  createUser(input: { name: \"John\", email: \"j@e.com\" }) { id }\n}\n```\n**input** types are used for mutation arguments. Can only contain scalars, enums, and other input types."
+        }
+      ]
+    },
+    "interface": {
+      "contents": [
+        {
+          "value": "```graphql\ninterface Node {\n  id: ID!\n}\n\ntype User implements Node {\n  id: ID!\n  name: String!\n}\n\ntype Post implements Node {\n  id: ID!\n  title: String!\n}\n```\n**interface** defines shared fields. Types that implement an interface must include all its fields."
+        }
+      ]
+    },
+    "union": {
+      "contents": [
+        {
+          "value": "```graphql\nunion SearchResult = User | Post | Comment\n\nquery {\n  search(term: \"hello\") {\n    ... on User { name }\n    ... on Post { title }\n    ... on Comment { text }\n  }\n}\n```\n**union** represents one of several types. Use inline fragments `... on Type` to select fields."
+        }
+      ]
+    },
+    "enum": {
+      "contents": [
+        {
+          "value": "```graphql\nenum Role {\n  ADMIN\n  USER\n  MODERATOR\n}\n\nenum SortOrder {\n  ASC\n  DESC\n}\n```\n**enum** defines a set of allowed values. Enums are serialized as strings."
+        }
+      ]
+    },
+    "schema": {
+      "contents": [
+        {
+          "value": "```graphql\nschema {\n  query: Query\n  mutation: Mutation\n  subscription: Subscription\n}\n```\n**schema** defines the root operation types. Optional if using the default names `Query`, `Mutation`, `Subscription`."
+        }
+      ]
+    },
+    "extend": {
+      "contents": [
+        {
+          "value": "```graphql\nextend type Query {\n  posts: [Post!]!\n}\n\nextend type User {\n  posts: [Post!]!\n}\n```\n**extend** adds fields to an existing type. Useful for modular schema design and federation."
+        }
+      ]
+    },
+    "implements": {
+      "contents": [
+        {
+          "value": "```graphql\ninterface Timestamped {\n  createdAt: DateTime!\n  updatedAt: DateTime!\n}\n\ntype Post implements Node & Timestamped {\n  id: ID!\n  createdAt: DateTime!\n  updatedAt: DateTime!\n}\n```\n**implements** declares that a type fulfills one or more interfaces. Use `&` for multiple."
+        }
+      ]
+    },
+    "arguments": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Query {\n  users(\n    limit: Int = 10\n    offset: Int = 0\n    filter: UserFilter\n    sortBy: SortField = NAME\n  ): [User!]!\n}\n```\n**Arguments** can have default values and be of any input type. Every field can have arguments."
+        }
+      ]
+    },
+    "variables": {
+      "contents": [
+        {
+          "value": "```graphql\nquery GetUser($id: ID!, $includeEmail: Boolean = false) {\n  user(id: $id) {\n    name\n    email @include(if: $includeEmail)\n  }\n}\n\n# Variables: { \"id\": \"123\", \"includeEmail\": true }\n```\n**Variables** pass dynamic values. Declared with `$name: Type` in the operation, passed as JSON."
+        }
+      ]
+    },
+    "aliases": {
+      "contents": [
+        {
+          "value": "```graphql\nquery {\n  admin: user(id: \"1\") { name }\n  viewer: user(id: \"2\") { name }\n}\n```\n**Aliases** rename result fields. Required when querying the same field with different arguments."
+        }
+      ]
+    },
+    "inline_fragment": {
+      "contents": [
+        {
+          "value": "```graphql\nquery {\n  node(id: \"123\") {\n    id\n    ... on User { name email }\n    ... on Post { title body }\n  }\n}\n```\n**Inline fragments** `... on Type` select fields based on the concrete type. Used with unions and interfaces."
+        }
+      ]
+    },
+    "deprecated": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  id: ID!\n  username: String @deprecated(reason: \"Use 'name' instead\")\n  name: String!\n}\n```\n**@deprecated** marks a field or enum value as deprecated. Reason is shown in introspection and tooling."
+        }
+      ]
+    },
+    "skip": {
+      "contents": [
+        {
+          "value": "```graphql\nquery GetUser($skipEmail: Boolean!) {\n  user(id: \"1\") {\n    name\n    email @skip(if: $skipEmail)\n  }\n}\n```\n**@skip** excludes a field when the condition is true. Opposite of `@include`."
+        }
+      ]
+    },
+    "include": {
+      "contents": [
+        {
+          "value": "```graphql\nquery GetUser($withPosts: Boolean!) {\n  user(id: \"1\") {\n    name\n    posts @include(if: $withPosts) { title }\n  }\n}\n```\n**@include** includes a field only when the condition is true."
+        }
+      ]
+    },
+    "non_null": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  id: ID!           # non-null scalar\n  posts: [Post!]!   # non-null list of non-null posts\n  tags: [String]     # nullable list of nullable strings\n}\n```\n**Non-null** `!` means the field never returns null. `[Type!]!` = non-null list with non-null items."
+        }
+      ]
+    },
+    "pagination": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Query {\n  users(first: Int, after: String): UserConnection!\n}\n\ntype UserConnection {\n  edges: [UserEdge!]!\n  pageInfo: PageInfo!\n}\n\ntype UserEdge {\n  node: User!\n  cursor: String!\n}\n\ntype PageInfo {\n  hasNextPage: Boolean!\n  endCursor: String\n}\n```\n**Relay-style pagination** uses connections, edges, and cursors. The standard pattern for paginated queries."
+        }
+      ]
+    },
+    "introspection": {
+      "contents": [
+        {
+          "value": "```graphql\nquery {\n  __schema {\n    types { name kind }\n  }\n  __type(name: \"User\") {\n    fields { name type { name } }\n  }\n}\n```\n**Introspection** queries the schema itself. `__schema` returns all types, `__type` returns details of one type."
+        }
+      ]
+    },
+    "resolver": {
+      "contents": [
+        {
+          "value": "```javascript\nconst resolvers = {\n  Query: {\n    user: (parent, args, context) => {\n      return context.db.users.findById(args.id);\n    }\n  },\n  User: {\n    posts: (user, args, context) => {\n      return context.db.posts.findByUserId(user.id);\n    }\n  }\n}\n```\n**Resolvers** are functions that fetch data for each field. Signature: `(parent, args, context, info)`."
+        }
+      ]
+    },
+    "context": {
+      "contents": [
+        {
+          "value": "```javascript\nconst server = new ApolloServer({\n  typeDefs,\n  resolvers,\n  context: ({ req }) => ({\n    user: getUser(req.headers.authorization),\n    db: database\n  })\n});\n```\n**Context** is shared across all resolvers in a request. Use for auth, database connections, and data loaders."
+        }
+      ]
+    },
+    "DataLoader": {
+      "contents": [
+        {
+          "value": "```javascript\nconst userLoader = new DataLoader(async (ids) => {\n  const users = await db.users.findByIds(ids);\n  return ids.map(id => users.find(u => u.id === id));\n});\n\n// In resolver:\nuser: (parent) => userLoader.load(parent.userId)\n```\n**DataLoader** batches and caches database requests to solve the N+1 query problem."
+        }
+      ]
+    },
+    "operation_name": {
+      "contents": [
+        {
+          "value": "```graphql\nquery GetUserProfile {\n  user(id: \"1\") { name }\n}\n\nmutation UpdateUser {\n  updateUser(id: \"1\", name: \"John\") { id }\n}\n```\n**Operation names** identify queries in logs and dev tools. Required when a document has multiple operations."
+        }
+      ]
+    },
+    "field_arguments": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  profilePicture(size: Int = 100, format: ImageFormat = JPG): String!\n  friends(first: Int!, after: String): FriendConnection!\n}\n```\n**Field arguments** allow callers to customize field resolution. Support default values."
+        }
+      ]
+    },
+    "custom_directive": {
+      "contents": [
+        {
+          "value": "```graphql\ndirective @auth(requires: Role = ADMIN) on FIELD_DEFINITION\ndirective @cacheControl(maxAge: Int) on FIELD_DEFINITION\ndirective @deprecated(reason: String) on FIELD_DEFINITION | ENUM_VALUE\n```\n**Custom directives** extend schema behavior. Locations: `FIELD_DEFINITION`, `OBJECT`, `ARGUMENT_DEFINITION`, etc."
+        }
+      ]
+    },
+    "federation": {
+      "contents": [
+        {
+          "value": "```graphql\n# Service A\ntype User @key(fields: \"id\") {\n  id: ID!\n  name: String!\n}\n\n# Service B\nextend type User @key(fields: \"id\") {\n  id: ID! @external\n  orders: [Order!]!\n}\n```\n**Federation** splits a schema across multiple services. `@key` defines entity identifiers. Use Apollo Federation."
+        }
+      ]
+    },
+    "nullable": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Query {\n  user(id: ID!): User          # may return null if not found\n  users: [User!]!              # never null, items never null\n  search(term: String): [Result] # nullable list, nullable items\n}\n```\n**Nullability** — without `!`, fields can return null. Design nullability based on error handling strategy."
+        }
+      ]
+    },
+    "ID": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  id: ID!\n}\n\nquery {\n  user(id: \"abc123\") { name }\n}\n```\n**ID** is a unique identifier serialized as a String. Not meant for display. Arguments accepting IDs coerce strings and integers."
+        }
+      ]
+    },
+    "String": {
+      "contents": [
+        {
+          "value": "```graphql\ntype User {\n  name: String!\n  bio: String\n}\n```\n**String** is a UTF-8 character sequence. One of the five built-in scalar types."
+        }
+      ]
+    },
+    "Int": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Post {\n  viewCount: Int!\n}\n```\n**Int** is a signed 32-bit integer. For larger values, use a custom scalar like `BigInt`."
+        }
+      ]
+    },
+    "Float": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Product {\n  price: Float!\n}\n```\n**Float** is a signed double-precision floating-point value."
+        }
+      ]
+    },
+    "Boolean": {
+      "contents": [
+        {
+          "value": "```graphql\ntype Feature {\n  enabled: Boolean!\n}\n```\n**Boolean** represents `true` or `false`."
+        }
+      ]
+    },
+    "description": {
+      "contents": [
+        {
+          "value": "```graphql\n\"\"\"A registered user of the platform.\"\"\"\ntype User {\n  \"The unique identifier.\"\n  id: ID!\n  \"The user's display name.\"\n  name: String!\n}\n```\n**Descriptions** are doc strings using `\"\"\"block\"\"\"` or `\"inline\"` quotes. Shown in introspection and tooling."
+        }
+      ]
+    },
+    "input_list": {
+      "contents": [
+        {
+          "value": "```graphql\ninput FilterInput {\n  status: [Status!]\n  tags: [String!]\n  dateRange: DateRangeInput\n}\n\nquery {\n  posts(filter: { status: [PUBLISHED, DRAFT], tags: [\"tech\"] }) {\n    title\n  }\n}\n```\n**Input with lists** allows passing arrays of values for filtering and batch operations."
+        }
+      ]
+    },
+    "error_handling": {
+      "contents": [
+        {
+          "value": "```json\n{\n  \"data\": { \"user\": null },\n  \"errors\": [\n    {\n      \"message\": \"User not found\",\n      \"path\": [\"user\"],\n      \"extensions\": { \"code\": \"NOT_FOUND\" }\n    }\n  ]\n}\n```\n**Error responses** include both `data` and `errors`. Partial data is returned when possible. Use `extensions` for error codes."
+        }
+      ]
+    },
+    "batch_query": {
+      "contents": [
+        {
+          "value": "```graphql\nquery BatchQuery {\n  user1: user(id: \"1\") { name }\n  user2: user(id: \"2\") { name }\n  recentPosts: posts(limit: 5) { title }\n}\n```\n**Batching** — Multiple queries in a single request reduces round trips. Aliases distinguish repeated fields."
         }
       ]
     }

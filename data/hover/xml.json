@@ -11,49 +11,273 @@
     "attribute": {
       "contents": [
         {
-          "value": "```xml\n<item id=\"123\" type=\"book\">\n```\n**Attributes** provide metadata about elements. Values must always be quoted (single or double). Attribute names must be unique per element."
+          "value": "```xml\n<item id=\"123\" type=\"book\" available=\"true\">\n```\n**Attributes** provide metadata. Values must always be quoted. Names must be unique per element."
         }
       ]
     },
     "namespace": {
       "contents": [
         {
-          "value": "```xml\n<root xmlns:app=\"http://example.com/app\">\n  <app:config>value</app:config>\n</root>\n```\n**Namespaces** qualify element/attribute names with a URI to avoid conflicts between different XML vocabularies."
+          "value": "```xml\n<root xmlns:app=\"http://example.com/app\"\n      xmlns:db=\"http://example.com/db\">\n  <app:config>value</app:config>\n  <db:table>users</db:table>\n</root>\n```\n**Namespaces** qualify names with a URI to avoid conflicts between vocabularies."
         }
       ]
     },
     "CDATA": {
       "contents": [
         {
-          "value": "```xml\n<script><![CDATA[\n  if (a < b && c > d) { ... }\n]]></script>\n```\n**CDATA** sections are not parsed by the XML parser. Useful for embedding code or text with special characters like `<`, `>`, `&`."
+          "value": "```xml\n<script><![CDATA[\n  if (a < b && c > d) { doSomething(); }\n]]></script>\n```\n**CDATA** sections are not parsed by the XML parser. Useful for code or text with `<`, `>`, `&`."
         }
       ]
     },
     "comment": {
       "contents": [
         {
-          "value": "```xml\n<!-- This is a comment -->\n<!-- TODO: fix this section -->\n```\n**Comments** are ignored by XML parsers. Cannot contain `--` within the comment body."
+          "value": "```xml\n<!-- This is a comment -->\n<!-- TODO: fix this section -->\n```\n**Comments** are ignored by parsers. Cannot contain `--` within the body."
         }
       ]
     },
     "declaration": {
       "contents": [
         {
-          "value": "```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n```\n**XML declaration** specifies version and encoding. Must appear at the very beginning of the document (before any whitespace)."
+          "value": "```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n```\n**XML declaration** specifies version and encoding. Must be the very first thing in the document."
         }
       ]
     },
     "XPath": {
       "contents": [
         {
-          "value": "```xpath\n/root/child          select child elements\n//element            select anywhere in doc\n.//node[@attr]       relative with predicate\ntext()               get text content\n```\n**XPath** is a query language for navigating XML documents and selecting nodes."
+          "value": "```xpath\n/root/child            # direct child\n//element              # anywhere in document\n.//node[@attr]         # relative with attribute\n//book[price>30]       # with predicate\ntext()                 # text content\n//item[last()]         # last item\n//item[position()<=3]  # first 3 items\n```\n**XPath** navigates and queries XML documents."
         }
       ]
     },
     "entity": {
       "contents": [
         {
-          "value": "```xml\n&lt;    <\n&gt;    >\n&amp;   &\n&quot;  \"\n&apos;  '\n```\n**Predefined entities** represent special characters that cannot appear literally in XML content."
+          "value": "```xml\n&lt;    <\n&gt;    >\n&amp;   &\n&quot;  \"\n&apos;  '\n&#169;  (c)  numeric entity\n&#x00A9; (c) hex entity\n```\n**Entities** represent special characters. Five predefined, plus numeric/hex references."
+        }
+      ]
+    },
+    "DTD": {
+      "contents": [
+        {
+          "value": "```xml\n<!DOCTYPE note [\n  <!ELEMENT note (to,from,body)>\n  <!ELEMENT to (#PCDATA)>\n  <!ELEMENT from (#PCDATA)>\n  <!ELEMENT body (#PCDATA)>\n  <!ATTLIST note priority CDATA \"normal\">\n]>\n```\n**DTD** (Document Type Definition) defines the structure and allowed elements of an XML document."
+        }
+      ]
+    },
+    "XSD": {
+      "contents": [
+        {
+          "value": "```xml\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n  <xs:element name=\"person\">\n    <xs:complexType>\n      <xs:sequence>\n        <xs:element name=\"name\" type=\"xs:string\"/>\n        <xs:element name=\"age\" type=\"xs:integer\"/>\n      </xs:sequence>\n    </xs:complexType>\n  </xs:element>\n</xs:schema>\n```\n**XSD** (XML Schema Definition) validates XML structure with data types. More powerful than DTD."
+        }
+      ]
+    },
+    "XSLT": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:stylesheet version=\"1.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n  <xsl:template match=\"/\">\n    <html>\n      <body>\n        <xsl:for-each select=\"catalog/book\">\n          <p><xsl:value-of select=\"title\"/></p>\n        </xsl:for-each>\n      </body>\n    </html>\n  </xsl:template>\n</xsl:stylesheet>\n```\n**XSLT** transforms XML into other formats (HTML, text, different XML)."
+        }
+      ]
+    },
+    "processing_instruction": {
+      "contents": [
+        {
+          "value": "```xml\n<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>\n<?xml-model href=\"schema.xsd\"?>\n```\n**Processing instructions** `<?target data?>` provide instructions to the application processing the XML."
+        }
+      ]
+    },
+    "well_formed": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- Well-formed XML rules: -->\n<!-- 1. Single root element -->\n<!-- 2. Tags properly nested and closed -->\n<!-- 3. Attribute values quoted -->\n<!-- 4. Case-sensitive tags -->\n<!-- 5. Special chars escaped -->\n```\n**Well-formed** XML follows syntax rules. All XML must be well-formed; valid XML also conforms to a schema."
+        }
+      ]
+    },
+    "self_closing": {
+      "contents": [
+        {
+          "value": "```xml\n<br/>\n<img src=\"photo.jpg\" alt=\"Photo\"/>\n<input type=\"text\" name=\"field\"/>\n```\n**Self-closing tags** use `/>` for elements with no content. Equivalent to `<br></br>`."
+        }
+      ]
+    },
+    "default_namespace": {
+      "contents": [
+        {
+          "value": "```xml\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n  <head><title>Page</title></head>\n  <body>Content</body>\n</html>\n```\n**Default namespace** `xmlns=\"...\"` applies to the element and all descendants without a prefix."
+        }
+      ]
+    },
+    "xmlns": {
+      "contents": [
+        {
+          "value": "```xml\nxmlns=\"http://default.namespace\"\nxmlns:prefix=\"http://custom.namespace\"\n```\n**xmlns** declares a namespace binding. Default (no prefix) or prefixed (e.g., `xmlns:xsl`)."
+        }
+      ]
+    },
+    "root_element": {
+      "contents": [
+        {
+          "value": "```xml\n<?xml version=\"1.0\"?>\n<catalog>\n  <book id=\"1\">\n    <title>XML Developer Guide</title>\n  </book>\n</catalog>\n```\n**Root element** — Every XML document must have exactly one root element that contains all others."
+        }
+      ]
+    },
+    "mixed_content": {
+      "contents": [
+        {
+          "value": "```xml\n<paragraph>\n  This is <bold>mixed</bold> content with\n  <link href=\"#\">inline elements</link>.\n</paragraph>\n```\n**Mixed content** means an element contains both text and child elements. Common in document-oriented XML."
+        }
+      ]
+    },
+    "encoding": {
+      "contents": [
+        {
+          "value": "```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n```\n**Encoding** — UTF-8 is the default and recommended. Specify in the XML declaration if different."
+        }
+      ]
+    },
+    "PCDATA": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- PCDATA = Parsed Character Data -->\n<name>John &amp; Jane</name>\n<!-- Entities are parsed/expanded -->\n\n<!-- CDATA = Unparsed character data -->\n<code><![CDATA[a < b && c > d]]></code>\n```\n**PCDATA** is parsed text where entities are expanded. CDATA is unparsed literal text."
+        }
+      ]
+    },
+    "SAX": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- SAX (Simple API for XML) -->\n<!-- Event-driven, streaming parser -->\n<!-- Low memory: processes one element at a time -->\n<!-- Events: startElement, endElement, characters -->\n<!-- Best for: large files, one-pass processing -->\n```\n**SAX** is an event-driven XML parser. Reads sequentially with low memory usage. Ideal for large files."
+        }
+      ]
+    },
+    "DOM": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- DOM (Document Object Model) -->\n<!-- Loads entire document into memory as a tree -->\n<!-- Allows random access and modification -->\n<!-- Higher memory usage -->\n<!-- Best for: small/medium files, complex queries -->\n```\n**DOM** parser loads the complete XML tree into memory. Supports random access and manipulation."
+        }
+      ]
+    },
+    "RSS": {
+      "contents": [
+        {
+          "value": "```xml\n<rss version=\"2.0\">\n  <channel>\n    <title>My Blog</title>\n    <link>https://example.com</link>\n    <item>\n      <title>Post Title</title>\n      <description>Summary</description>\n      <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>\n    </item>\n  </channel>\n</rss>\n```\n**RSS** (Really Simple Syndication) is an XML format for content feeds."
+        }
+      ]
+    },
+    "Atom": {
+      "contents": [
+        {
+          "value": "```xml\n<feed xmlns=\"http://www.w3.org/2005/Atom\">\n  <title>My Feed</title>\n  <entry>\n    <title>Entry Title</title>\n    <link href=\"https://example.com/post\"/>\n    <updated>2024-01-01T00:00:00Z</updated>\n    <content type=\"html\">Content here</content>\n  </entry>\n</feed>\n```\n**Atom** is a modern XML feed format. More strictly defined than RSS."
+        }
+      ]
+    },
+    "SVG": {
+      "contents": [
+        {
+          "value": "```xml\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\">\n  <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\"/>\n  <text x=\"50\" y=\"55\" text-anchor=\"middle\">Hi</text>\n</svg>\n```\n**SVG** (Scalable Vector Graphics) is an XML-based format for vector images."
+        }
+      ]
+    },
+    "SOAP": {
+      "contents": [
+        {
+          "value": "```xml\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Header/>\n  <soap:Body>\n    <GetPrice xmlns=\"http://example.com\">\n      <Item>Apple</Item>\n    </GetPrice>\n  </soap:Body>\n</soap:Envelope>\n```\n**SOAP** is an XML protocol for web services. Uses Envelope, Header, Body structure."
+        }
+      ]
+    },
+    "sitemap": {
+      "contents": [
+        {
+          "value": "```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://example.com/</loc>\n    <lastmod>2024-01-01</lastmod>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n```\n**Sitemap** XML helps search engines discover and index website pages."
+        }
+      ]
+    },
+    "pom": {
+      "contents": [
+        {
+          "value": "```xml\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\">\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.example</groupId>\n  <artifactId>my-app</artifactId>\n  <version>1.0.0</version>\n  <dependencies>\n    <dependency>\n      <groupId>junit</groupId>\n      <artifactId>junit</artifactId>\n      <version>4.13</version>\n    </dependency>\n  </dependencies>\n</project>\n```\n**POM** (pom.xml) is Maven's project configuration. Defines dependencies, plugins, and build settings."
+        }
+      ]
+    },
+    "web_xml": {
+      "contents": [
+        {
+          "value": "```xml\n<web-app xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\" version=\"4.0\">\n  <servlet>\n    <servlet-name>MyServlet</servlet-name>\n    <servlet-class>com.example.MyServlet</servlet-class>\n  </servlet>\n  <servlet-mapping>\n    <servlet-name>MyServlet</servlet-name>\n    <url-pattern>/api/*</url-pattern>\n  </servlet-mapping>\n</web-app>\n```\n**web.xml** is the Java web application deployment descriptor."
+        }
+      ]
+    },
+    "android_manifest": {
+      "contents": [
+        {
+          "value": "```xml\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.example.myapp\">\n  <application android:label=\"My App\">\n    <activity android:name=\".MainActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n  </application>\n</manifest>\n```\n**AndroidManifest.xml** declares app components, permissions, and metadata."
+        }
+      ]
+    },
+    "csproj": {
+      "contents": [
+        {
+          "value": "```xml\n<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n  <PropertyGroup>\n    <TargetFramework>net8.0</TargetFramework>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Newtonsoft.Json\" Version=\"13.0.3\" />\n  </ItemGroup>\n</Project>\n```\n**.csproj** is the MSBuild project file for .NET applications. Defines framework, dependencies, and build settings."
+        }
+      ]
+    },
+    "xml_ns_types": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- XSD data types: -->\n<xs:element name=\"name\" type=\"xs:string\"/>\n<xs:element name=\"age\" type=\"xs:integer\"/>\n<xs:element name=\"price\" type=\"xs:decimal\"/>\n<xs:element name=\"active\" type=\"xs:boolean\"/>\n<xs:element name=\"created\" type=\"xs:dateTime\"/>\n<xs:element name=\"id\" type=\"xs:ID\"/>\n```\n**XSD types** — `xs:string`, `xs:integer`, `xs:decimal`, `xs:boolean`, `xs:dateTime`, `xs:ID`, and many more."
+        }
+      ]
+    },
+    "xpath_axes": {
+      "contents": [
+        {
+          "value": "```xpath\nchild::book          # direct children\nparent::*            # parent element\nancestor::catalog    # all ancestors\ndescendant::title    # all descendants\nfollowing-sibling::* # following siblings  \npreceding::*         # all preceding nodes\nattribute::id        # attributes (or @id)\nself::node()         # current node\n```\n**XPath axes** specify the direction and scope of node selection in the document tree."
+        }
+      ]
+    },
+    "xpath_functions": {
+      "contents": [
+        {
+          "value": "```xpath\ncount(//book)            # count nodes\nsum(//price)             # sum numeric values\nstring-length(title)     # string length\nconcat(first, ' ', last) # concatenate\ncontains(title, 'XML')   # substring check\nnormalize-space(text())  # trim whitespace\nnot(@hidden)             # boolean negation\n```\n**XPath functions** perform calculations and string operations on XML data."
+        }
+      ]
+    },
+    "xsl_value_of": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:value-of select=\"title\"/>\n<xsl:value-of select=\"@id\"/>\n<xsl:value-of select=\"count(item)\"/>\n```\n**xsl:value-of** outputs the text value of an XPath expression in XSLT transformations."
+        }
+      ]
+    },
+    "xsl_for_each": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:for-each select=\"catalog/book\">\n  <xsl:sort select=\"price\" data-type=\"number\"/>\n  <p><xsl:value-of select=\"title\"/></p>\n</xsl:for-each>\n```\n**xsl:for-each** iterates over a node set. Can include `xsl:sort` for ordering."
+        }
+      ]
+    },
+    "xsl_if": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:if test=\"price > 30\">\n  <span class=\"expensive\">$<xsl:value-of select=\"price\"/></span>\n</xsl:if>\n```\n**xsl:if** conditional output. No else — use `xsl:choose` for if-else logic."
+        }
+      ]
+    },
+    "xsl_choose": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:choose>\n  <xsl:when test=\"@type='fiction'\">Novel</xsl:when>\n  <xsl:when test=\"@type='tech'\">Technical</xsl:when>\n  <xsl:otherwise>Other</xsl:otherwise>\n</xsl:choose>\n```\n**xsl:choose/when/otherwise** provides if-else-if-else logic in XSLT."
+        }
+      ]
+    },
+    "xsl_template": {
+      "contents": [
+        {
+          "value": "```xml\n<xsl:template match=\"book\">\n  <div class=\"book\">\n    <h2><xsl:value-of select=\"title\"/></h2>\n    <xsl:apply-templates select=\"author\"/>\n  </div>\n</xsl:template>\n```\n**xsl:template** defines a transformation rule. `match` selects input nodes, content defines output."
+        }
+      ]
+    },
+    "xml_validation": {
+      "contents": [
+        {
+          "value": "```xml\n<!-- Schema reference in XML: -->\n<root xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n      xsi:noNamespaceSchemaLocation=\"schema.xsd\">\n\n<!-- Or with namespace: -->\n<root xmlns=\"http://example.com\"\n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n      xsi:schemaLocation=\"http://example.com schema.xsd\">\n```\n**Schema association** — Reference an XSD from within the XML document for validation."
         }
       ]
     }

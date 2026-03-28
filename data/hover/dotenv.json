@@ -4,7 +4,7 @@
     "variable": {
       "contents": [
         {
-          "value": "```bash\nKEY=value\nDATABASE_URL=postgres://localhost/mydb\nPORT=3000\n```\n**Environment variables** are key-value pairs. No spaces around `=`. Values are strings by default. Apps parse types themselves."
+          "value": "```bash\nKEY=value\nDATABASE_URL=postgres://localhost/mydb\nPORT=3000\n```\n**Environment variables** are key-value pairs. No spaces around `=`. Values are strings by default."
         }
       ]
     },
@@ -18,7 +18,21 @@
     "quoted": {
       "contents": [
         {
-          "value": "```bash\nSINGLE='literal $value'\nDOUBLE=\"expanded ${VAR}\"\nUNQUOTED=no-spaces-allowed\n```\n**Quoting** rules: Single quotes are literal. Double quotes allow variable expansion. Unquoted values end at whitespace/newline."
+          "value": "```bash\nSINGLE='literal $value'\nDOUBLE=\"expanded ${VAR}\"\nUNQUOTED=no-spaces-allowed\n```\n**Quoting** — Single quotes are literal. Double quotes expand variables. Unquoted values end at whitespace."
+        }
+      ]
+    },
+    "interpolation": {
+      "contents": [
+        {
+          "value": "```bash\nBASE_URL=https://api.example.com\nAPI_URL=${BASE_URL}/v1\nFULL_URL=${API_URL}/users\n```\n**Variable interpolation** uses `${VAR}` inside double-quoted or unquoted values. Not all dotenv libraries support this."
+        }
+      ]
+    },
+    "multiline": {
+      "contents": [
+        {
+          "value": "```bash\nPRIVATE_KEY=\"-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA...\n-----END RSA PRIVATE KEY-----\"\n```\n**Multiline values** use double quotes. Newlines inside quotes are preserved."
         }
       ]
     },
@@ -32,14 +46,238 @@
     "security": {
       "contents": [
         {
-          "value": "```bash\n# .gitignore:\n.env\n.env.local\n.env.*.local\n\n# .env.example (commit this):\nDATABASE_URL=\nAPI_KEY=\nSECRET_KEY=\n```\n**Security** - Never commit `.env` files with secrets. Use `.env.example` as a template for required variables."
+          "value": "```bash\n# .gitignore:\n.env\n.env.local\n.env.*.local\n\n# .env.example (commit this):\nDATABASE_URL=\nAPI_KEY=\n```\n**Security** — Never commit `.env` files with secrets. Use `.env.example` as a template."
         }
       ]
     },
     "loading": {
       "contents": [
         {
-          "value": "```bash\n# Load order (typical):\n# 1. .env              (shared defaults)\n# 2. .env.local        (local overrides)\n# 3. .env.development  (environment-specific)\n# 4. .env.development.local\n```\n**Loading priority** varies by framework. Later files override earlier ones. System env vars usually take highest priority."
+          "value": "```bash\n# Load order (typical):\n# 1. .env              (shared defaults)\n# 2. .env.local        (local overrides)\n# 3. .env.development  (environment-specific)\n# 4. .env.development.local\n```\n**Loading priority** varies by framework. System env vars usually take highest priority."
+        }
+      ]
+    },
+    "PORT": {
+      "contents": [
+        {
+          "value": "```bash\nPORT=3000\n```\n**PORT** specifies the network port for the application server. Common default: 3000 (Node), 8000 (Python), 8080 (Java)."
+        }
+      ]
+    },
+    "NODE_ENV": {
+      "contents": [
+        {
+          "value": "```bash\nNODE_ENV=development\nNODE_ENV=production\nNODE_ENV=test\n```\n**NODE_ENV** controls the Node.js runtime mode. `production` enables optimizations and disables dev tools."
+        }
+      ]
+    },
+    "API_KEY": {
+      "contents": [
+        {
+          "value": "```bash\nAPI_KEY=sk_live_abc123def456\nSTRIPE_SECRET_KEY=sk_test_...\n```\n**API_KEY** stores third-party service credentials. Never commit to version control."
+        }
+      ]
+    },
+    "SECRET_KEY": {
+      "contents": [
+        {
+          "value": "```bash\nSECRET_KEY=your-256-bit-secret\nJWT_SECRET=randomly-generated-string\n```\n**SECRET_KEY** is used for cryptographic signing (sessions, JWTs). Generate with a secure random method."
+        }
+      ]
+    },
+    "DEBUG": {
+      "contents": [
+        {
+          "value": "```bash\nDEBUG=true\nDEBUG=app:*,http\nDEBUG=false\n```\n**DEBUG** enables debug mode. Some frameworks use boolean, others use namespace patterns (e.g., Express debug module)."
+        }
+      ]
+    },
+    "LOG_LEVEL": {
+      "contents": [
+        {
+          "value": "```bash\nLOG_LEVEL=debug\nLOG_LEVEL=info\nLOG_LEVEL=warn\nLOG_LEVEL=error\n```\n**LOG_LEVEL** controls logging verbosity. Common levels: `debug`, `info`, `warn`, `error`, `fatal`."
+        }
+      ]
+    },
+    "HOST": {
+      "contents": [
+        {
+          "value": "```bash\nHOST=0.0.0.0\nHOST=localhost\nHOST=127.0.0.1\n```\n**HOST** specifies the network interface to bind. `0.0.0.0` listens on all interfaces, `localhost` only local."
+        }
+      ]
+    },
+    "REDIS_URL": {
+      "contents": [
+        {
+          "value": "```bash\nREDIS_URL=redis://localhost:6379\nREDIS_URL=redis://:password@host:6379/0\nREDIS_URL=rediss://host:6380  # TLS\n```\n**REDIS_URL** connection string for Redis. `rediss://` for TLS connections."
+        }
+      ]
+    },
+    "SMTP": {
+      "contents": [
+        {
+          "value": "```bash\nSMTP_HOST=smtp.gmail.com\nSMTP_PORT=587\nSMTP_USER=user@gmail.com\nSMTP_PASS=app-password\nSMTP_FROM=noreply@example.com\n```\n**SMTP** variables configure email sending. Use app-specific passwords, not account passwords."
+        }
+      ]
+    },
+    "AWS": {
+      "contents": [
+        {
+          "value": "```bash\nAWS_ACCESS_KEY_ID=AKIA...\nAWS_SECRET_ACCESS_KEY=...\nAWS_DEFAULT_REGION=us-east-1\nAWS_S3_BUCKET=my-bucket\n```\n**AWS** environment variables are recognized by the AWS SDK automatically. IAM roles are preferred for production."
+        }
+      ]
+    },
+    "CORS": {
+      "contents": [
+        {
+          "value": "```bash\nCORS_ORIGIN=https://example.com\nCORS_ORIGINS=https://example.com,https://app.example.com\nCORS_CREDENTIALS=true\n```\n**CORS** settings control Cross-Origin Resource Sharing. Comma-separated for multiple origins."
+        }
+      ]
+    },
+    "ALLOWED_HOSTS": {
+      "contents": [
+        {
+          "value": "```bash\nALLOWED_HOSTS=example.com,www.example.com\nALLOWED_HOSTS=*\n```\n**ALLOWED_HOSTS** (Django/similar) restricts which hostnames the server responds to. `*` allows all (insecure in production)."
+        }
+      ]
+    },
+    "TZ": {
+      "contents": [
+        {
+          "value": "```bash\nTZ=UTC\nTZ=America/New_York\nTZ=Europe/London\n```\n**TZ** sets the timezone. Use IANA timezone names. `UTC` is recommended for servers."
+        }
+      ]
+    },
+    "LANG": {
+      "contents": [
+        {
+          "value": "```bash\nLANG=en_US.UTF-8\n```\n**LANG** sets the locale for language and character encoding."
+        }
+      ]
+    },
+    "BASE_URL": {
+      "contents": [
+        {
+          "value": "```bash\nBASE_URL=https://api.example.com\nNEXT_PUBLIC_BASE_URL=https://example.com\nVITE_API_URL=https://api.example.com\n```\n**BASE_URL** is the root URL for the application. Prefix conventions: `NEXT_PUBLIC_` (Next.js), `VITE_` (Vite) for client-side exposure."
+        }
+      ]
+    },
+    "NEXT_PUBLIC": {
+      "contents": [
+        {
+          "value": "```bash\n# Exposed to browser (Next.js):\nNEXT_PUBLIC_API_URL=https://api.example.com\nNEXT_PUBLIC_GA_ID=G-XXXXXXX\n\n# Server-only (not exposed):\nDATABASE_URL=postgresql://...\n```\n**NEXT_PUBLIC_** prefix exposes variables to the browser in Next.js. Without prefix, variables are server-only."
+        }
+      ]
+    },
+    "VITE_prefix": {
+      "contents": [
+        {
+          "value": "```bash\n# Exposed to browser (Vite):\nVITE_API_URL=https://api.example.com\nVITE_APP_TITLE=My App\n\n# Server-only:\nDB_PASSWORD=secret\n```\n**VITE_** prefix exposes variables to the browser in Vite projects via `import.meta.env.VITE_*`."
+        }
+      ]
+    },
+    "REACT_APP": {
+      "contents": [
+        {
+          "value": "```bash\n# Create React App:\nREACT_APP_API_URL=https://api.example.com\nREACT_APP_VERSION=$npm_package_version\n```\n**REACT_APP_** prefix exposes variables in Create React App via `process.env.REACT_APP_*`."
+        }
+      ]
+    },
+    "empty_value": {
+      "contents": [
+        {
+          "value": "```bash\nVAR=          # empty string\nVAR=\"\"        # empty string (explicit)\n# VAR         # not set (commented)\n```\n**Empty values** — An empty value (`=` with nothing after) is different from an unset variable."
+        }
+      ]
+    },
+    "escape": {
+      "contents": [
+        {
+          "value": "```bash\nQUOTE_VAR=\"value with \\\"quotes\\\"\"\nNEWLINE_VAR=\"line1\\nline2\"\nDOLLAR_VAR='price is $5'\n```\n**Escape sequences** — Use `\\\"` for quotes in double-quoted values. Single quotes prevent all interpretation."
+        }
+      ]
+    },
+    "export": {
+      "contents": [
+        {
+          "value": "```bash\nexport DATABASE_URL=postgres://localhost/mydb\nexport API_KEY=abc123\n```\n**export** prefix is optional and ignored by most dotenv libraries. Included for shell compatibility."
+        }
+      ]
+    },
+    "dotenv_cli": {
+      "contents": [
+        {
+          "value": "```bash\n# Load .env and run command:\ndotenv run -- npm start\nnpx dotenv -e .env.local -- node app.js\nenv $(cat .env | xargs) node app.js\n```\n**dotenv CLI** loads .env files before executing a command. Useful for tools that don't load .env natively."
+        }
+      ]
+    },
+    "docker": {
+      "contents": [
+        {
+          "value": "```bash\n# docker-compose.yml:\n# env_file:\n#   - .env\n#   - .env.local\n\n# docker run --env-file .env myimage\n```\n**Docker** can load .env files directly via `--env-file` flag or `env_file` in compose."
+        }
+      ]
+    },
+    "override": {
+      "contents": [
+        {
+          "value": "```bash\n# System environment variables override .env:\n# export PORT=8080  (takes precedence)\n# .env: PORT=3000   (only used if not already set)\n```\n**Override behavior** — Most dotenv libraries don't replace existing env vars. System vars take precedence."
+        }
+      ]
+    },
+    "vault": {
+      "contents": [
+        {
+          "value": "```bash\n# Instead of .env files in production, use:\n# - HashiCorp Vault\n# - AWS Secrets Manager\n# - Azure Key Vault\n# - GCP Secret Manager\n# - 1Password CLI\nDATABASE_URL=op://vault/db/url  # 1Password reference\n```\n**Secret management** — In production, use dedicated secret managers instead of .env files."
+        }
+      ]
+    },
+    "encoding": {
+      "contents": [
+        {
+          "value": "```bash\n# .env files should be UTF-8 encoded\n# Most parsers expect Unix-style line endings (LF)\n# Windows CRLF is usually handled but can cause issues\n```\n**Encoding** — Use UTF-8 with LF line endings for maximum compatibility."
+        }
+      ]
+    },
+    "CI_CD": {
+      "contents": [
+        {
+          "value": "```bash\n# CI/CD variables (set in pipeline settings):\nCI=true\nCI_COMMIT_SHA=abc123\nGITHUB_TOKEN=ghp_...\nNPM_TOKEN=npm_...\n```\n**CI/CD variables** are set by the pipeline environment, not .env files. Never store CI secrets in .env."
+        }
+      ]
+    },
+    "SENTRY_DSN": {
+      "contents": [
+        {
+          "value": "```bash\nSENTRY_DSN=https://abc@sentry.io/123\n```\n**SENTRY_DSN** configures error tracking with Sentry. The DSN (Data Source Name) identifies your project."
+        }
+      ]
+    },
+    "GOOGLE_OAUTH": {
+      "contents": [
+        {
+          "value": "```bash\nGOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com\nGOOGLE_CLIENT_SECRET=GOCSPX-...\nGOOGLE_CALLBACK_URL=http://localhost:3000/auth/callback\n```\n**OAuth credentials** for Google authentication. Keep client secret out of version control."
+        }
+      ]
+    },
+    "MONGO_URI": {
+      "contents": [
+        {
+          "value": "```bash\nMONGO_URI=mongodb://localhost:27017/mydb\nMONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/mydb\n```\n**MONGO_URI** connection string for MongoDB. `mongodb+srv://` for Atlas cloud clusters."
+        }
+      ]
+    },
+    "S3_ENDPOINT": {
+      "contents": [
+        {
+          "value": "```bash\nS3_BUCKET=my-bucket\nS3_REGION=us-east-1\nS3_ENDPOINT=https://s3.us-east-1.amazonaws.com\n```\n**S3 configuration** for file storage. Custom endpoint allows using S3-compatible services (MinIO, R2)."
+        }
+      ]
+    },
+    "SESSION_SECRET": {
+      "contents": [
+        {
+          "value": "```bash\nSESSION_SECRET=random-32-char-string-here\nCOOKIE_DOMAIN=.example.com\nCOOKIE_SECURE=true\n```\n**Session configuration** for server-side sessions. SECRET should be cryptographically random."
         }
       ]
     }

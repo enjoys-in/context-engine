@@ -3,10 +3,10 @@
   "completions": [
     {
       "label": "Host block",
-      "kind": 15,
-      "detail": "SSH host configuration",
+      "kind": 28,
+      "detail": "SSH host config",
       "documentation": {
-        "value": "Configure settings for a specific host or pattern."
+        "value": "Configure settings for a specific host."
       },
       "insertText": "Host ${1:myserver}\n    HostName ${2:192.168.1.100}\n    User ${3:root}\n    Port ${4:22}\n    IdentityFile ${5:~/.ssh/id_rsa}",
       "insertTextRules": 4,
@@ -14,146 +14,894 @@
     },
     {
       "label": "Host *",
-      "kind": 15,
+      "kind": 28,
       "detail": "Global defaults",
       "documentation": {
-        "value": "Set default options for all hosts."
+        "value": "Default options for all hosts."
       },
       "insertText": "Host *\n    ServerAliveInterval 60\n    ServerAliveCountMax 3\n    AddKeysToAgent yes",
       "insertTextRules": 4,
-      "sortText": "00_hostall"
+      "sortText": "00_host"
+    },
+    {
+      "label": "Host jump pattern",
+      "kind": 28,
+      "detail": "Jump host pattern",
+      "documentation": {
+        "value": "Multi-hop SSH config with bastion."
+      },
+      "insertText": "Host ${1:internal}\n    HostName ${2:10.0.0.5}\n    User ${3:admin}\n    ProxyJump ${4:bastion}",
+      "insertTextRules": 4,
+      "sortText": "00_host"
+    },
+    {
+      "label": "Host wildcard",
+      "kind": 28,
+      "detail": "Wildcard host",
+      "documentation": {
+        "value": "Pattern-matched host group."
+      },
+      "insertText": "Host ${1:*.example.com}\n    User ${2:deploy}\n    IdentityFile ~/.ssh/${3:deploy_key}",
+      "insertTextRules": 4,
+      "sortText": "00_host"
     },
     {
       "label": "HostName",
       "kind": 14,
       "detail": "Real hostname/IP",
       "documentation": {
-        "value": "The actual hostname or IP address to connect to."
+        "value": "The actual hostname or IP to connect to."
       },
       "insertText": "HostName ${1:example.com}",
       "insertTextRules": 4,
-      "sortText": "01_hostname"
+      "sortText": "01_dir"
     },
     {
       "label": "User",
       "kind": 14,
       "detail": "Login user",
       "documentation": {
-        "value": "The username to log in as."
+        "value": "Username to log in as."
       },
       "insertText": "User ${1:root}",
       "insertTextRules": 4,
-      "sortText": "01_user"
+      "sortText": "01_dir"
     },
     {
       "label": "Port",
       "kind": 14,
       "detail": "SSH port",
       "documentation": {
-        "value": "The port number to connect on."
+        "value": "Port number to connect on."
       },
       "insertText": "Port ${1:22}",
       "insertTextRules": 4,
-      "sortText": "01_port"
+      "sortText": "01_dir"
     },
     {
       "label": "IdentityFile",
       "kind": 14,
       "detail": "Private key path",
       "documentation": {
-        "value": "Path to the private key file for authentication."
+        "value": "Path to private key file."
       },
       "insertText": "IdentityFile ${1:~/.ssh/id_ed25519}",
       "insertTextRules": 4,
-      "sortText": "01_identity"
+      "sortText": "01_dir"
+    },
+    {
+      "label": "IdentitiesOnly",
+      "kind": 14,
+      "detail": "Only use specified keys",
+      "documentation": {
+        "value": "Only use explicitly configured identity files."
+      },
+      "insertText": "IdentitiesOnly ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "01_dir"
     },
     {
       "label": "ProxyJump",
       "kind": 14,
-      "detail": "Jump host (bastion)",
+      "detail": "Jump host",
       "documentation": {
-        "value": "Connect through a jump/bastion host."
+        "value": "Connect through a bastion/jump host."
       },
       "insertText": "ProxyJump ${1:bastion}",
       "insertTextRules": 4,
-      "sortText": "02_proxyjump"
+      "sortText": "02_proxy"
+    },
+    {
+      "label": "ProxyCommand",
+      "kind": 14,
+      "detail": "Proxy command",
+      "documentation": {
+        "value": "Command to connect to server."
+      },
+      "insertText": "ProxyCommand ssh -W %h:%p ${1:bastion}",
+      "insertTextRules": 4,
+      "sortText": "02_proxy"
     },
     {
       "label": "LocalForward",
       "kind": 14,
-      "detail": "Port forward (local)",
+      "detail": "Local port forward",
       "documentation": {
-        "value": "Forward a local port to a remote destination."
+        "value": "Forward local port to remote."
       },
       "insertText": "LocalForward ${1:8080} ${2:localhost}:${3:80}",
       "insertTextRules": 4,
-      "sortText": "02_localfwd"
+      "sortText": "02_fwd"
     },
     {
       "label": "RemoteForward",
       "kind": 14,
-      "detail": "Port forward (remote)",
+      "detail": "Remote port forward",
       "documentation": {
-        "value": "Forward a remote port to a local destination."
+        "value": "Forward remote port to local."
       },
       "insertText": "RemoteForward ${1:9090} ${2:localhost}:${3:3000}",
       "insertTextRules": 4,
-      "sortText": "02_remotefwd"
+      "sortText": "02_fwd"
     },
     {
       "label": "DynamicForward",
       "kind": 14,
       "detail": "SOCKS proxy",
       "documentation": {
-        "value": "Set up a SOCKS proxy on a local port."
+        "value": "SOCKS proxy on local port."
       },
       "insertText": "DynamicForward ${1:1080}",
       "insertTextRules": 4,
-      "sortText": "02_dynamicfwd"
+      "sortText": "02_fwd"
     },
     {
       "label": "ForwardAgent",
       "kind": 14,
       "detail": "Agent forwarding",
       "documentation": {
-        "value": "Forward the SSH agent to the remote host."
+        "value": "Forward SSH agent to remote."
       },
-      "insertText": "ForwardAgent yes",
+      "insertText": "ForwardAgent ${1:yes}",
       "insertTextRules": 4,
-      "sortText": "03_fwdagent"
+      "sortText": "02_fwd"
+    },
+    {
+      "label": "ForwardX11",
+      "kind": 14,
+      "detail": "X11 forwarding",
+      "documentation": {
+        "value": "Enable X11 forwarding."
+      },
+      "insertText": "ForwardX11 ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "02_fwd"
+    },
+    {
+      "label": "ForwardX11Trusted",
+      "kind": 14,
+      "detail": "Trusted X11",
+      "documentation": {
+        "value": "Trusted X11 forwarding."
+      },
+      "insertText": "ForwardX11Trusted ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "02_fwd"
     },
     {
       "label": "ServerAliveInterval",
       "kind": 14,
-      "detail": "Keep-alive interval",
+      "detail": "Keepalive interval",
       "documentation": {
-        "value": "Send a keep-alive packet every N seconds."
+        "value": "Seconds between keepalive messages."
       },
       "insertText": "ServerAliveInterval ${1:60}",
       "insertTextRules": 4,
       "sortText": "03_alive"
     },
     {
+      "label": "ServerAliveCountMax",
+      "kind": 14,
+      "detail": "Keepalive count",
+      "documentation": {
+        "value": "Max keepalive messages before disconnect."
+      },
+      "insertText": "ServerAliveCountMax ${1:3}",
+      "insertTextRules": 4,
+      "sortText": "03_alive"
+    },
+    {
+      "label": "TCPKeepAlive",
+      "kind": 14,
+      "detail": "TCP keepalive",
+      "documentation": {
+        "value": "Enable TCP keepalive."
+      },
+      "insertText": "TCPKeepAlive ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "03_alive"
+    },
+    {
+      "label": "ConnectionAttempts",
+      "kind": 14,
+      "detail": "Connection attempts",
+      "documentation": {
+        "value": "Number of connection attempts."
+      },
+      "insertText": "ConnectionAttempts ${1:3}",
+      "insertTextRules": 4,
+      "sortText": "03_conn"
+    },
+    {
+      "label": "ConnectTimeout",
+      "kind": 14,
+      "detail": "Connection timeout",
+      "documentation": {
+        "value": "Timeout in seconds for connection."
+      },
+      "insertText": "ConnectTimeout ${1:10}",
+      "insertTextRules": 4,
+      "sortText": "03_conn"
+    },
+    {
+      "label": "AddKeysToAgent",
+      "kind": 14,
+      "detail": "Add keys to agent",
+      "documentation": {
+        "value": "Automatically add keys to ssh-agent."
+      },
+      "insertText": "AddKeysToAgent ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "03_key"
+    },
+    {
+      "label": "UseKeychain",
+      "kind": 14,
+      "detail": "macOS keychain",
+      "documentation": {
+        "value": "Store passphrase in macOS keychain."
+      },
+      "insertText": "UseKeychain ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "03_key"
+    },
+    {
+      "label": "PreferredAuthentications",
+      "kind": 14,
+      "detail": "Auth methods",
+      "documentation": {
+        "value": "Preferred authentication methods."
+      },
+      "insertText": "PreferredAuthentications ${1:publickey,keyboard-interactive,password}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "PubkeyAuthentication",
+      "kind": 14,
+      "detail": "Pubkey auth",
+      "documentation": {
+        "value": "Enable public key authentication."
+      },
+      "insertText": "PubkeyAuthentication ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "PasswordAuthentication",
+      "kind": 14,
+      "detail": "Password auth",
+      "documentation": {
+        "value": "Enable password authentication."
+      },
+      "insertText": "PasswordAuthentication ${1:no}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "KbdInteractiveAuthentication",
+      "kind": 14,
+      "detail": "Keyboard auth",
+      "documentation": {
+        "value": "Keyboard-interactive authentication."
+      },
+      "insertText": "KbdInteractiveAuthentication ${1:no}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "ChallengeResponseAuthentication",
+      "kind": 14,
+      "detail": "Challenge auth",
+      "documentation": {
+        "value": "Challenge-response authentication."
+      },
+      "insertText": "ChallengeResponseAuthentication ${1:no}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "GSSAPIAuthentication",
+      "kind": 14,
+      "detail": "GSSAPI auth",
+      "documentation": {
+        "value": "GSSAPI/Kerberos authentication."
+      },
+      "insertText": "GSSAPIAuthentication ${1:no}",
+      "insertTextRules": 4,
+      "sortText": "03_auth"
+    },
+    {
+      "label": "Compression",
+      "kind": 14,
+      "detail": "Compression",
+      "documentation": {
+        "value": "Enable compression."
+      },
+      "insertText": "Compression ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "LogLevel",
+      "kind": 14,
+      "detail": "Log level",
+      "documentation": {
+        "value": "Logging verbosity."
+      },
+      "insertText": "LogLevel ${1:INFO}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
       "label": "StrictHostKeyChecking",
       "kind": 14,
-      "detail": "Host key checking",
+      "detail": "Host key check",
       "documentation": {
-        "value": "Control host key verification behavior."
+        "value": "Strict host key checking policy."
       },
       "insertText": "StrictHostKeyChecking ${1:ask}",
       "insertTextRules": 4,
-      "sortText": "03_strict"
+      "sortText": "04_opt"
     },
     {
-      "label": "bastion/jump host",
-      "kind": 15,
-      "detail": "Bastion host setup",
+      "label": "UserKnownHostsFile",
+      "kind": 14,
+      "detail": "Known hosts file",
       "documentation": {
-        "value": "Configure access through a bastion/jump host."
+        "value": "Path to known_hosts file."
       },
-      "insertText": "Host ${1:bastion}\n    HostName ${2:bastion.example.com}\n    User ${3:admin}\n    IdentityFile ~/.ssh/id_ed25519\n\nHost ${4:internal-server}\n    HostName ${5:10.0.1.50}\n    User ${6:deploy}\n    ProxyJump ${1:bastion}",
+      "insertText": "UserKnownHostsFile ${1:~/.ssh/known_hosts}",
       "insertTextRules": 4,
-      "sortText": "04_bastion"
+      "sortText": "04_opt"
+    },
+    {
+      "label": "GlobalKnownHostsFile",
+      "kind": 14,
+      "detail": "Global known hosts",
+      "documentation": {
+        "value": "System-wide known_hosts file."
+      },
+      "insertText": "GlobalKnownHostsFile ${1:/etc/ssh/ssh_known_hosts}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "HashKnownHosts",
+      "kind": 14,
+      "detail": "Hash known hosts",
+      "documentation": {
+        "value": "Hash hostnames in known_hosts."
+      },
+      "insertText": "HashKnownHosts ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "BatchMode",
+      "kind": 14,
+      "detail": "Batch mode",
+      "documentation": {
+        "value": "Disable password/passphrase prompting."
+      },
+      "insertText": "BatchMode ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "VisualHostKey",
+      "kind": 14,
+      "detail": "Visual host key",
+      "documentation": {
+        "value": "Display ASCII art host key."
+      },
+      "insertText": "VisualHostKey ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "Ciphers",
+      "kind": 14,
+      "detail": "Ciphers",
+      "documentation": {
+        "value": "Allowed ciphers."
+      },
+      "insertText": "Ciphers ${1:chacha20-poly1305@openssh.com,aes256-gcm@openssh.com}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "MACs",
+      "kind": 14,
+      "detail": "MACs",
+      "documentation": {
+        "value": "Allowed MAC algorithms."
+      },
+      "insertText": "MACs ${1:hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "KexAlgorithms",
+      "kind": 14,
+      "detail": "Key exchange",
+      "documentation": {
+        "value": "Key exchange algorithms."
+      },
+      "insertText": "KexAlgorithms ${1:curve25519-sha256,diffie-hellman-group16-sha512}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "HostKeyAlgorithms",
+      "kind": 14,
+      "detail": "Host key algos",
+      "documentation": {
+        "value": "Host key algorithms."
+      },
+      "insertText": "HostKeyAlgorithms ${1:ssh-ed25519,rsa-sha2-512}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "PubkeyAcceptedAlgorithms",
+      "kind": 14,
+      "detail": "Pubkey algos",
+      "documentation": {
+        "value": "Accepted public key algorithms."
+      },
+      "insertText": "PubkeyAcceptedAlgorithms ${1:ssh-ed25519,rsa-sha2-512}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "RekeyLimit",
+      "kind": 14,
+      "detail": "Rekey limit",
+      "documentation": {
+        "value": "Data/time limit before rekeying."
+      },
+      "insertText": "RekeyLimit ${1:1G} ${2:1h}",
+      "insertTextRules": 4,
+      "sortText": "04_crypto"
+    },
+    {
+      "label": "RequestTTY",
+      "kind": 14,
+      "detail": "Request TTY",
+      "documentation": {
+        "value": "Request pseudo-terminal allocation."
+      },
+      "insertText": "RequestTTY ${1:auto}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "RemoteCommand",
+      "kind": 14,
+      "detail": "Remote command",
+      "documentation": {
+        "value": "Command to execute on remote."
+      },
+      "insertText": "RemoteCommand ${1:command}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "SendEnv",
+      "kind": 14,
+      "detail": "Send environment",
+      "documentation": {
+        "value": "Send local environment variables."
+      },
+      "insertText": "SendEnv ${1:LANG LC_*}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "SetEnv",
+      "kind": 14,
+      "detail": "Set environment",
+      "documentation": {
+        "value": "Set environment on remote."
+      },
+      "insertText": "SetEnv ${1:VAR}=${2:value}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "PermitLocalCommand",
+      "kind": 14,
+      "detail": "Allow local cmd",
+      "documentation": {
+        "value": "Allow local command execution."
+      },
+      "insertText": "PermitLocalCommand ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "LocalCommand",
+      "kind": 14,
+      "detail": "Local command",
+      "documentation": {
+        "value": "Command to run locally after connect."
+      },
+      "insertText": "LocalCommand ${1:echo \"Connected to %h\"}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "Match",
+      "kind": 14,
+      "detail": "Match block",
+      "documentation": {
+        "value": "Conditional configuration block."
+      },
+      "insertText": "Match host ${1:*.example.com}\n    ${2:User deploy}",
+      "insertTextRules": 4,
+      "sortText": "04_match"
+    },
+    {
+      "label": "Include",
+      "kind": 14,
+      "detail": "Include file",
+      "documentation": {
+        "value": "Include another config file."
+      },
+      "insertText": "Include ${1:~/.ssh/config.d/*}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "CanonicalizeHostname",
+      "kind": 14,
+      "detail": "Canonicalize",
+      "documentation": {
+        "value": "Canonicalize hostname."
+      },
+      "insertText": "CanonicalizeHostname ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "CanonicalDomains",
+      "kind": 14,
+      "detail": "Canonical domains",
+      "documentation": {
+        "value": "Domains for canonicalization."
+      },
+      "insertText": "CanonicalDomains ${1:example.com}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "ControlMaster",
+      "kind": 14,
+      "detail": "Control master",
+      "documentation": {
+        "value": "Enable SSH multiplexing."
+      },
+      "insertText": "ControlMaster ${1:auto}",
+      "insertTextRules": 4,
+      "sortText": "05_mux"
+    },
+    {
+      "label": "ControlPath",
+      "kind": 14,
+      "detail": "Control path",
+      "documentation": {
+        "value": "Socket path for multiplexing."
+      },
+      "insertText": "ControlPath ${1:~/.ssh/sockets/%r@%h-%p}",
+      "insertTextRules": 4,
+      "sortText": "05_mux"
+    },
+    {
+      "label": "ControlPersist",
+      "kind": 14,
+      "detail": "Control persist",
+      "documentation": {
+        "value": "Keep master connection alive."
+      },
+      "insertText": "ControlPersist ${1:600}",
+      "insertTextRules": 4,
+      "sortText": "05_mux"
+    },
+    {
+      "label": "ExitOnForwardFailure",
+      "kind": 14,
+      "detail": "Forward fail",
+      "documentation": {
+        "value": "Exit if port forwarding fails."
+      },
+      "insertText": "ExitOnForwardFailure ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "NumberOfPasswordPrompts",
+      "kind": 14,
+      "detail": "Password prompts",
+      "documentation": {
+        "value": "Max password prompts."
+      },
+      "insertText": "NumberOfPasswordPrompts ${1:3}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "UpdateHostKeys",
+      "kind": 14,
+      "detail": "Update host keys",
+      "documentation": {
+        "value": "Accept updated host keys."
+      },
+      "insertText": "UpdateHostKeys ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "AddressFamily",
+      "kind": 14,
+      "detail": "Address family",
+      "documentation": {
+        "value": "IP address family preference."
+      },
+      "insertText": "AddressFamily ${1:inet}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "BindAddress",
+      "kind": 14,
+      "detail": "Bind address",
+      "documentation": {
+        "value": "Local address to bind to."
+      },
+      "insertText": "BindAddress ${1:0.0.0.0}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "BindInterface",
+      "kind": 14,
+      "detail": "Bind interface",
+      "documentation": {
+        "value": "Local network interface to bind to."
+      },
+      "insertText": "BindInterface ${1:eth0}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "EscapeChar",
+      "kind": 14,
+      "detail": "Escape char",
+      "documentation": {
+        "value": "Escape character for session."
+      },
+      "insertText": "EscapeChar ${1:~}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "IPQoS",
+      "kind": 14,
+      "detail": "IP QoS",
+      "documentation": {
+        "value": "IP quality of service."
+      },
+      "insertText": "IPQoS ${1:lowdelay} ${2:throughput}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "NoHostAuthenticationForLocalhost",
+      "kind": 14,
+      "detail": "Skip localhost auth",
+      "documentation": {
+        "value": "Skip host auth for localhost."
+      },
+      "insertText": "NoHostAuthenticationForLocalhost ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "StreamLocalBindMask",
+      "kind": 14,
+      "detail": "Socket permissions",
+      "documentation": {
+        "value": "Unix socket file permissions."
+      },
+      "insertText": "StreamLocalBindMask ${1:0177}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "StreamLocalBindUnlink",
+      "kind": 14,
+      "detail": "Socket cleanup",
+      "documentation": {
+        "value": "Remove old socket before creating."
+      },
+      "insertText": "StreamLocalBindUnlink ${1:yes}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "Tag",
+      "kind": 14,
+      "detail": "Tag",
+      "documentation": {
+        "value": "Apply a tag to this host."
+      },
+      "insertText": "Tag ${1:production}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "GitHub SSH",
+      "kind": 28,
+      "detail": "GitHub SSH config",
+      "documentation": {
+        "value": "GitHub SSH configuration."
+      },
+      "insertText": "Host github.com\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/${1:id_ed25519}\n    IdentitiesOnly yes",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "GitLab SSH",
+      "kind": 28,
+      "detail": "GitLab SSH config",
+      "documentation": {
+        "value": "GitLab SSH configuration."
+      },
+      "insertText": "Host gitlab.com\n    HostName gitlab.com\n    User git\n    IdentityFile ~/.ssh/${1:id_ed25519}\n    IdentitiesOnly yes",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "AWS EC2",
+      "kind": 28,
+      "detail": "AWS EC2 host",
+      "documentation": {
+        "value": "AWS EC2 instance SSH config."
+      },
+      "insertText": "Host ${1:aws-server}\n    HostName ${2:ec2-xx-xx-xx-xx.compute.amazonaws.com}\n    User ${3:ec2-user}\n    IdentityFile ~/.ssh/${4:aws-key.pem}",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "Multiplexing",
+      "kind": 28,
+      "detail": "SSH multiplexing",
+      "documentation": {
+        "value": "Enable connection multiplexing."
+      },
+      "insertText": "Host *\n    ControlMaster auto\n    ControlPath ~/.ssh/sockets/%r@%h-%p\n    ControlPersist 600",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "Hardened config",
+      "kind": 28,
+      "detail": "Hardened SSH",
+      "documentation": {
+        "value": "Security-hardened SSH config."
+      },
+      "insertText": "Host *\n    PasswordAuthentication no\n    PubkeyAuthentication yes\n    IdentitiesOnly yes\n    HashKnownHosts yes\n    StrictHostKeyChecking ask\n    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com\n    MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com\n    KexAlgorithms curve25519-sha256,diffie-hellman-group16-sha512",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "Tunnel",
+      "kind": 28,
+      "detail": "SSH tunnel",
+      "documentation": {
+        "value": "SSH tunnel configuration."
+      },
+      "insertText": "Host ${1:tunnel}\n    HostName ${2:remote.example.com}\n    User ${3:admin}\n    LocalForward ${4:5432} ${5:localhost}:${4:5432}\n    ExitOnForwardFailure yes\n    ServerAliveInterval 30",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
+    },
+    {
+      "label": "Full template",
+      "kind": 28,
+      "detail": "Complete SSH config",
+      "documentation": {
+        "value": "Full SSH config template."
+      },
+      "insertText": "# Global defaults\nHost *\n    AddKeysToAgent yes\n    IdentitiesOnly yes\n    ServerAliveInterval 60\n    ServerAliveCountMax 3\n\n# ${1:Server Name}\nHost ${2:alias}\n    HostName ${3:host.example.com}\n    User ${4:user}\n    Port ${5:22}\n    IdentityFile ~/.ssh/${6:id_ed25519}",
+      "insertTextRules": 4,
+      "sortText": "07_tpl"
+    },
+    {
+      "label": "FingerprintHash",
+      "kind": 14,
+      "detail": "Fingerprint hash",
+      "documentation": {
+        "value": "Hash algorithm for fingerprints."
+      },
+      "insertText": "FingerprintHash ${1:sha256}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "GatewayPorts",
+      "kind": 14,
+      "detail": "Gateway ports",
+      "documentation": {
+        "value": "Allow remote hosts to connect to forwarded ports."
+      },
+      "insertText": "GatewayPorts ${1:no}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "CertificateFile",
+      "kind": 14,
+      "detail": "Certificate file",
+      "documentation": {
+        "value": "Path to user certificate."
+      },
+      "insertText": "CertificateFile ${1:~/.ssh/id_ed25519-cert.pub}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "PKCS11Provider",
+      "kind": 14,
+      "detail": "PKCS11 provider",
+      "documentation": {
+        "value": "PKCS#11 shared library for keys."
+      },
+      "insertText": "PKCS11Provider ${1:/usr/lib/opensc-pkcs11.so}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "SecurityKeyProvider",
+      "kind": 14,
+      "detail": "Security key",
+      "documentation": {
+        "value": "FIDO security key provider."
+      },
+      "insertText": "SecurityKeyProvider ${1:internal}",
+      "insertTextRules": 4,
+      "sortText": "04_opt"
+    },
+    {
+      "label": "VS Code Remote",
+      "kind": 28,
+      "detail": "VS Code Remote SSH",
+      "documentation": {
+        "value": "Config for VS Code Remote SSH."
+      },
+      "insertText": "Host ${1:dev-server}\n    HostName ${2:server.example.com}\n    User ${3:dev}\n    IdentityFile ~/.ssh/${4:id_ed25519}\n    ForwardAgent yes\n    ServerAliveInterval 60",
+      "insertTextRules": 4,
+      "sortText": "06_tpl"
     }
   ]
 }

@@ -1,29 +1,31 @@
 {
   "name": "patscc",
-  "description": "ATS/Postiats command-line tool",
-  "category": "development",
-  "platforms": [
-    "linux",
-    "macos",
-    "windows"
-  ],
-  "shells": [
-    "bash",
-    "zsh",
-    "powershell"
-  ],
+  "description": "ATS/Postiats — Applied Type System compiler with dependent types",
+  "category": "language",
+  "platforms": ["linux", "macos"],
+  "shells": ["bash", "zsh"],
   "subcommands": [
-    {
-      "name": "file.dats",
-      "description": "Compile ATS file",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-o output file.dats",
-      "description": "Compile to named output",
-      "args": [],
-      "options": []
-    }
-  ]
+    { "name": "file.dats", "description": "Compile an ATS dynamic file", "args": ["file"], "options": [] },
+    { "name": "-o output file.dats", "description": "Compile with named output executable", "args": ["output", "file"], "options": [] },
+    { "name": "-tcats file.dats", "description": "Type-check only without compiling to C", "args": ["file"], "options": [] },
+    { "name": "-ccats file.dats", "description": "Compile to C without generating executable", "args": ["file"], "options": [] },
+    { "name": "file.dats -DATS_MEMALLOC_LIBC", "description": "Compile with libc memory allocation", "args": ["file"], "options": [] }
+  ],
+  "globalOptions": [
+    { "name": "-o", "description": "Set output file name" },
+    { "name": "-tcats", "description": "Type-check only" },
+    { "name": "-ccats", "description": "Compile to C only" },
+    { "name": "-DATS", "description": "Define an ATS compile-time symbol" },
+    { "name": "-IATS", "description": "Add ATS include search path" },
+    { "name": "-cleanaft", "description": "Clean generated C files after compilation" },
+    { "name": "-atsccomp", "description": "Specify the C compiler to use" }
+  ],
+  "examples": [
+    "patscc -o hello hello.dats",
+    "patscc -tcats mylib.dats",
+    "patscc -DATS_MEMALLOC_LIBC -o app main.dats utils.dats",
+    "patscc -ccats module.dats",
+    "patsopt --dynamic file.dats"
+  ],
+  "relatedCommands": ["gcc", "make", "c"]
 }
