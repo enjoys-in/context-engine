@@ -1,14 +1,14 @@
 # @enjoys/context-engine
 
-Comprehensive CLI command context engine with **190 tools** and **35 languages** — completions, definitions, hovers, subcommands, options, examples, and runtime context detectors for intelligent terminal autocomplete in Monaco Editor.
+Comprehensive Monaco Editor language intelligence engine with **94 languages**, **26 providers**, and **256 CLI commands** — completions, hover docs, definitions, code actions, code lens, document symbols, formatting, signature help, semantic tokens, inline completions, and more, all as pre-built JSON data with zero backend required.
 
 ## Why Context Engine?
 
 Traditional LSP (Language Server Protocol) setups require a backend server running a separate language server process for every language you want to support. Each language server needs its own binary installed — Go, Rust, Python, TypeScript, and so on. At scale, this makes the backend **heavy**, memory-hungry, and CPU-intensive. Supporting all languages can easily consume **1 GB+** of disk space and significant runtime resources just to keep those servers alive.
 
-Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** loaded directly via API — completions, hover docs, definitions, and 190 CLI command definitions — all in a single package under **~100 MB**. No language binaries to install. No background processes to manage. No backend required for intelligence.
+Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 256 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
 
-> **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, inline definitions, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
+> **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, code actions, formatting, symbols, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
 
 ## Install
 
@@ -19,16 +19,34 @@ npm install @enjoys/context-engine
 ## What's Inside
 
 ```
-data/
-├── commands/        # 190 CLI tool definitions (git, docker, kubectl, nginx, systemctl, ...)
-│   └── *.json       # subcommands, options, examples, context detectors
-├── completion/      # 35 languages — Monaco completions (snippets, insertText)
-│   └── *.json       # ready-to-use CompletionItem[] for Monaco
-├── definition/      # 89 languages — definitions (signatures, descriptions)
-│   └── *.json       # keyword → { signature, description, type }
-├── hover/           # 35 languages — hover documentation
-│   └── *.json       # keyword → { contents: [{ value }] }
-└── manifest.json    # Language registry with file mappings
+data/                        # 2,444 JSON files — 94 languages × 26 providers + 256 commands
+├── codeActions/             # Quick-fix and refactoring actions
+├── codeLens/                # Inline actionable annotations (references, tests)
+├── color/                   # Color picker and decorator support
+├── commands/                # 256 CLI tool definitions (git, docker, kubectl, ...)
+├── completion/              # Monaco CompletionItem[] with snippets
+├── declaration/             # Go-to-declaration data
+├── definition/              # Definitions (signatures, descriptions, types)
+├── documentHighlight/       # Symbol highlight on selection
+├── documentRangeFormatting/ # Format-selection rules
+├── documentSymbol/          # Outline / symbol tree patterns
+├── foldingRange/            # Code folding regions
+├── formatting/              # Full-document formatting rules
+├── hover/                   # Hover documentation (IMarkdownString[])
+├── implementation/          # Go-to-implementation data
+├── inlayHints/              # Inline parameter/type hints
+├── inlineCompletions/       # Ghost-text inline completions
+├── linkedEditingRange/      # Linked editing (e.g. HTML tag pairs)
+├── links/                   # Clickable document link patterns
+├── onTypeFormatting/        # Format-as-you-type rules
+├── rangeSemanticTokens/     # Range-scoped semantic tokens
+├── references/              # Find-all-references patterns
+├── rename/                  # Symbol rename validation and patterns
+├── selectionRange/          # Smart selection expansion
+├── semanticTokens/          # Full semantic tokenization
+├── signatureHelp/           # Function signature tooltips
+├── typeDefinition/          # Go-to-type-definition data
+└── manifest.json            # Language registry with file mappings
 ```
 
 ---
@@ -160,7 +178,7 @@ function getDefinitionInfo(keyword) {
 ```js
 import manifest from '@enjoys/context-engine/data/manifest.json';
 
-// Dynamically register all 35 languages
+// Dynamically register all 94 languages
 for (const lang of manifest.languages) {
   const completionData = await import(`@enjoys/context-engine/${lang.files.completion}`);
   const hoverData = await import(`@enjoys/context-engine/${lang.files.hover}`);
@@ -205,6 +223,97 @@ for (const lang of manifest.languages) {
     },
   });
 }
+```
+
+### Register Additional Providers
+
+```js
+import codeActionsData from '@enjoys/context-engine/data/codeActions/typescript.json';
+import codeLensData from '@enjoys/context-engine/data/codeLens/typescript.json';
+import symbolData from '@enjoys/context-engine/data/documentSymbol/typescript.json';
+import highlightData from '@enjoys/context-engine/data/documentHighlight/typescript.json';
+import signatureData from '@enjoys/context-engine/data/signatureHelp/typescript.json';
+
+// ── Code Actions (Quick Fix, Refactor) ──
+monaco.languages.registerCodeActionProvider('typescript', {
+  provideCodeActions(model, range, context) {
+    return {
+      actions: codeActionsData.codeActions.map((a) => ({
+        title: a.title,
+        kind: a.kind,
+        diagnostics: [],
+        isPreferred: a.isPreferred || false,
+      })),
+      dispose() {},
+    };
+  },
+});
+
+// ── Code Lens (References, Run Test) ──
+monaco.languages.registerCodeLensProvider('typescript', {
+  provideCodeLenses(model) {
+    const lenses = [];
+    const text = model.getValue();
+    for (const pattern of codeLensData.codeLensPatterns) {
+      const regex = new RegExp(pattern.pattern, 'gm');
+      let match;
+      while ((match = regex.exec(text))) {
+        const line = model.getPositionAt(match.index).lineNumber;
+        lenses.push({
+          range: new monaco.Range(line, 1, line, 1),
+          command: { id: pattern.commandId, title: pattern.title },
+        });
+      }
+    }
+    return { lenses, dispose() {} };
+  },
+});
+
+// ── Document Symbols (Outline) ──
+monaco.languages.registerDocumentSymbolProvider('typescript', {
+  provideDocumentSymbols(model) {
+    const symbols = [];
+    const text = model.getValue();
+    for (const sp of symbolData.symbolPatterns) {
+      const regex = new RegExp(sp.pattern, 'gm');
+      let match;
+      while ((match = regex.exec(text))) {
+        const pos = model.getPositionAt(match.index);
+        const name = match[sp.captureGroup || 1] || match[0];
+        symbols.push({
+          name,
+          kind: sp.kind,
+          range: new monaco.Range(pos.lineNumber, 1, pos.lineNumber, model.getLineMaxColumn(pos.lineNumber)),
+          selectionRange: new monaco.Range(pos.lineNumber, pos.column, pos.lineNumber, pos.column + name.length),
+        });
+      }
+    }
+    return symbols;
+  },
+});
+
+// ── Signature Help ──
+monaco.languages.registerSignatureHelpProvider('typescript', {
+  signatureHelpTriggerCharacters: signatureData.triggerCharacters || ['(', ','],
+  provideSignatureHelp(model, position) {
+    const word = model.getWordAtPosition(position);
+    if (!word || !signatureData.signatures) return null;
+    const sig = signatureData.signatures[word.word];
+    if (!sig) return null;
+    return {
+      value: {
+        signatures: [{
+          label: sig.label,
+          parameters: (sig.params || []).map((p) => ({ label: p.label, documentation: p.documentation })),
+          documentation: sig.documentation,
+        }],
+        activeSignature: 0,
+        activeParameter: 0,
+      },
+      dispose() {},
+    };
+  },
+});
 ```
 
 ---
@@ -312,7 +421,7 @@ getCategories();
 ### `count()`
 
 ```js
-count(); // 190
+count(); // 256
 ```
 
 ### `resolveCommandPath(name)` / `dataDir`
@@ -464,8 +573,8 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 }
 ```
 
-`kind` values: `15` = Snippet, `5` = Field, `14` = Keyword, `9` = Function, `12` = Value, `6` = Variable  
-`insertTextRules`: `4` = InsertAsSnippet (supports `${1:placeholder}` tab stops)
+`kind` values (CompletionItemKind): `0` = Method, `1` = Function, `2` = Constructor, `3` = Field, `4` = Variable, `5` = Class, `6` = Struct, `7` = Interface, `8` = Module, `9` = Property, `10` = Event, `11` = Operator, `12` = Unit, `13` = Value, `14` = Constant, `15` = Enum, `16` = EnumMember, `17` = Keyword, `18` = Text, `19` = Color, `20` = File, `21` = Reference, `22` = Customcolor, `23` = Folder, `24` = TypeParameter, `25` = User, `26` = Issue, `27` = Tool, `28` = Snippet  
+`insertTextRules`: `0` = None, `1` = KeepWhitespace, `4` = InsertAsSnippet (supports `${1:placeholder}` tab stops)
 
 ### Definition Item (`data/definition/*.json`)
 
@@ -538,40 +647,58 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 
 ---
 
-## Supported Languages (35)
+## Supported Languages (94)
+
+Each language has up to 26 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
 
 | Category | Languages |
 |----------|-----------|
-| **Systems** | C, C++, Rust, Go |
-| **Web** | JavaScript, TypeScript, HTML, PHP, Ruby, Python, Java, C#, Lua, Perl |
-| **Config** | Nginx, Systemd, Dockerfile, YAML, TOML, JSON, XML, INI, Dotenv, SSH Config, Crontab, HCL, Makefile |
-| **Shell** | Bash, Zsh, PowerShell, Awk |
-| **Data** | SQL, GraphQL, Protobuf |
-| **Docs** | Markdown |
+| **Web** | JavaScript, TypeScript, HTML, CSS, Less, SCSS, React, Angular, Next.js, Nest.js, Tailwind CSS |
+| **UI / Templating** | Liquid, Twig, FreeMarker2, Razor, shadcn, MDX |
+| **Systems** | C, C++, Rust, Go, Swift, Objective-C |
+| **JVM** | Java, Kotlin, Scala, Clojure |
+| **.NET** | C#, VB, Q# |
+| **Scripting** | Python, Ruby, Perl, Lua, PHP, Elixir, CoffeeScript, R |
+| **Shell** | Shell/Bash, PowerShell, AWK, Azure CLI |
+| **Functional** | Scheme, Julia, CameLIGO, PascaLIGO, Dart |
+| **Database / Query** | SQL, MySQL, PostgreSQL, Redshift, Redis, redis-cli, Cypher, SPARQL |
+| **Config / Infrastructure** | Dockerfile, Docker Compose, YAML, TOML, JSON, XML, INI, Dotenv, SSH Config, HCL, Makefile, Nginx, systemd, Caddy |
+| **Docs / Markup** | Markdown, MDX, reStructuredText |
+| **Data / BI** | MSDAX, Power Query, GraphQL |
+| **Blockchain** | Solidity, Lexon, Bicep |
+| **Hardware / Low-Level** | MIPS, SystemVerilog, WGSL, Structured Text |
+| **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
+| **Other** | Crontab, Protobuf, Doctest |
 
-## Covered Commands (190)
+## Covered Commands (256)
 
 | Category | Tools |
 |----------|-------|
-| **Cloud CLIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, atlas |
+| **Cloud CLIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, sfdx |
 | **Container & Orchestration** | docker, docker-compose, kubectl, helm, minikube, k9s |
 | **Version Control** | git, gh, glab, svn, hg |
 | **Node.js Ecosystem** | node, npm, npx, yarn, pnpm, bun, deno, turbo, nx, vite, next, nest, nuxt, vue, expo, tsc, eslint, prettier |
+| **Frontend Frameworks** | react, angular, nextjs, nestjs, shadcn, tailwindcss |
 | **Python Ecosystem** | python, pip, pipx, poetry, pipenv, conda, pytest, uvicorn, gunicorn, django-admin, flask, alembic, locust |
 | **Rust & Go** | cargo, rustup, wasm-pack, go, gofmt, golangci-lint, air |
-| **Java/JVM** | java, gradle, mvn |
-| **PHP** | php, composer, artisan |
-| **Ruby** | gem, bundle, rails, pod, fastlane |
-| **Database** | psql, pg_dump, pg_restore, mysql, mongosh, redis-cli, sqlite3, cockroach, influx, clickhouse-client, dbmate, liquibase, flyway, drizzle-kit, prisma |
+| **Java/JVM** | java, gradle, mvn, kotlin, scala, clojure |
+| **PHP** | php, composer, artisan, symfony, wp |
+| **Ruby** | gem, bundle, rails, pod, fastlane, rspec, rake |
+| **Mobile** | adb, dart, flutter, expo, react-native, xcodebuild, fastlane |
+| **Database** | psql, pg_dump, pg_restore, mysql, mongosh, redis-cli, sqlite3, cockroach, influx, clickhouse-client |
+| **Database ORMs/Migrations** | prisma, drizzle-kit, typeorm, sequelize, alembic, dbmate, flyway, liquibase, atlas |
 | **DevOps & Infrastructure** | terraform, terragrunt, pulumi, packer, vault, consul, nomad, ansible |
 | **Web Servers** | nginx, caddy, httpd, apachectl |
-| **System** | systemctl, journalctl, systemd-analyze, zsh, pm2, tmux, htop, btop, nvim |
-| **Build Tools** | make, cmake, bazel, just, bat |
-| **Linux Core** | ls, cp, mv, rm, cat, grep, find, sed, awk, tar, chmod, chown, ps, sudo, ssh, ssh-keygen, rsync, curl, wget, cd, scp, linux |
-| **Network & Security** | nmap, tcpdump, wireshark, openssl, certbot, ufw, iptables, nft |
+| **System & Monitoring** | systemctl, journalctl, systemd-analyze, pm2, tmux, screen, htop, btop, top, ps |
+| **Build Tools** | make, cmake, bazel, just, bat, gradle |
+| **Linux Core** | ls, cp, mv, rm, cat, grep, find, sed, awk, tar, chmod, chown, sudo, ssh, ssh-keygen, rsync, curl, wget, cd, scp, unzip, zip |
+| **Network & Security** | nmap, tcpdump, wireshark, openssl, certbot, ufw, iptables, nft, snyk, trivy, sonar-scanner |
 | **Package Managers** | apt, apt-get, yum, dnf, pacman, brew, choco, winget, pipx |
 | **Testing** | jest, vitest, mocha, playwright, cypress, k6, locust |
-| **CI/CD** | stripe, adb |
+| **Text Processing** | awk, cat, grep, sed, jq, yq, fd, fzf, rg |
+| **Text Editors** | nvim, vim |
+| **Languages** | gcc, g++, clang, swift, tclsh, perl, ruby, lua, python, Rscript, julia |
+| **CI/CD & APIs** | stripe, twilio, adb |
 
 ## Context Engine
 
@@ -593,25 +720,38 @@ const ctx = getContextEngine('systemctl');
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
 
-## Upcoming Monaco Provider Support
+## All 26 Monaco Provider Types — Shipped
 
-The following Monaco providers are planned for future releases, bringing Context Engine closer to full LSP-level intelligence — all without a backend:
+Every provider below is fully implemented for all 94 languages with spec-compliant JSON data:
 
-| Provider | Status |
-|----------|--------|
-| `registerCodeActionProvider` | 🔜 Planned |
-| `registerDocumentHighlightProvider` | 🔜 Planned |
-| `registerDocumentSymbolProvider` | 🔜 Planned |
-| `registerLinkProvider` | 🔜 Planned |
-| `registerTypeDefinitionProvider` | 🔜 Planned |
-| `registerReferenceProvider` | 🔜 Planned |
-| `registerImplementationProvider` | 🔜 Planned |
-| `registerInlineCompletionsProvider` | 🔜 Planned |
-| `registerDocumentFormattingEditProvider` | 🔜 Planned |
-| `registerCodeLensProvider` | 🔜 Planned |
-| `registerColorProvider` | 🔜 Planned |
-| `registerDeclarationProvider` | 🔜 Planned |
-| `registerInlayHintsProvider` | 🔜 Planned |
+| Provider | Registration Method | Data Key |
+|----------|-------------------|----------|
+| Completion | `registerCompletionItemProvider` | `completions[]` |
+| Hover | `registerHoverProvider` | `hovers{}` |
+| Definition | `registerDefinitionProvider` | `definitions{}` |
+| Code Actions | `registerCodeActionProvider` | `codeActions[]` |
+| Code Lens | `registerCodeLensProvider` | `codeLensPatterns[]` |
+| Color | `registerColorProvider` | `colorPatterns[]` |
+| Declaration | `registerDeclarationProvider` | `declarations{}` |
+| Document Highlight | `registerDocumentHighlightProvider` | `highlights{}` |
+| Document Symbol | `registerDocumentSymbolProvider` | `symbolPatterns[]` |
+| Document Range Formatting | `registerDocumentRangeFormattingEditProvider` | `formatting{}` |
+| Folding Range | `registerFoldingRangeProvider` | `foldingRules[]` |
+| Formatting | `registerDocumentFormattingEditProvider` | `formatting{}` |
+| Implementation | `registerImplementationProvider` | `implementations{}` |
+| Inlay Hints | `registerInlayHintsProvider` | `inlayHints[]` |
+| Inline Completions | `registerInlineCompletionsProvider` | `inlineCompletions[]` |
+| Linked Editing Range | `registerLinkedEditingRangeProvider` | `linkedEditingPatterns[]` |
+| Links | `registerLinkProvider` | `linkPatterns[]` |
+| On-Type Formatting | `registerOnTypeFormattingEditProvider` | `formatting{}` |
+| Range Semantic Tokens | `registerDocumentRangeSemanticTokensProvider` | `tokenTypes[]` |
+| References | `registerReferenceProvider` | `referencePatterns[]` |
+| Rename | `registerRenameProvider` | `renameValidation{}` |
+| Selection Range | `registerSelectionRangeProvider` | `selectionRanges{}` |
+| Semantic Tokens | `registerDocumentSemanticTokensProvider` | `tokenTypes[]` |
+| Signature Help | `registerSignatureHelpProvider` | `signatures{}` |
+| Type Definition | `registerTypeDefinitionProvider` | `typeDefinitions{}` |
+| Commands (CLI) | Custom API | `subcommands[]`, `globalOptions[]` |
 
 ## License
 
