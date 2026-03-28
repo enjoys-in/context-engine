@@ -1,58 +1,8 @@
 {
+  "language": "dockerfile",
   "name": "dockerfile",
   "description": "Dockerfile — instructions to build Docker container images",
   "category": "containerization",
-  "platforms": ["linux", "macos", "windows"],
-  "shells": ["bash", "zsh", "fish", "powershell"],
-  "subcommands": [
-    { "name": "FROM", "description": "Set the base image for the build stage", "args": ["image:tag"], "options": ["AS"] },
-    { "name": "RUN", "description": "Execute a command during the image build", "args": ["command"], "options": ["--mount", "--network", "--security"] },
-    { "name": "CMD", "description": "Set default command for the container", "args": ["command"], "options": [] },
-    { "name": "ENTRYPOINT", "description": "Set the main executable for the container", "args": ["executable"], "options": [] },
-    { "name": "COPY", "description": "Copy files from build context into image", "args": ["src", "dest"], "options": ["--from", "--chown", "--chmod"] },
-    { "name": "ADD", "description": "Copy files/URLs/archives into image with extraction", "args": ["src", "dest"], "options": ["--chown", "--chmod"] },
-    { "name": "WORKDIR", "description": "Set the working directory for subsequent instructions", "args": ["path"], "options": [] },
-    { "name": "ENV", "description": "Set environment variable in the image", "args": ["KEY=VALUE"], "options": [] },
-    { "name": "EXPOSE", "description": "Declare the port the container listens on", "args": ["port"], "options": [] },
-    { "name": "ARG", "description": "Define a build-time variable", "args": ["name=default"], "options": [] },
-    { "name": "HEALTHCHECK", "description": "Define a health check command for the container", "args": ["CMD command"], "options": ["--interval", "--timeout", "--retries", "--start-period"] },
-    { "name": "USER", "description": "Set the user for subsequent instructions and runtime", "args": ["user:group"], "options": [] },
-    { "name": "VOLUME", "description": "Create a mount point for external volumes", "args": ["path"], "options": [] },
-    { "name": "LABEL", "description": "Add metadata to the image", "args": ["key=value"], "options": [] },
-    { "name": "SHELL", "description": "Override the default shell for RUN commands", "args": ["executable"], "options": [] },
-    { "name": "STOPSIGNAL", "description": "Set the system call signal for container exit", "args": ["signal"], "options": [] }
-  ],
-  "globalOptions": [
-    { "name": "--platform", "description": "Set target platform for the build (e.g., linux/amd64)" },
-    { "name": "--mount=type=cache", "description": "Mount a cache directory during RUN to speed up builds" },
-    { "name": "--mount=type=secret", "description": "Mount a secret file during RUN without baking into image" },
-    { "name": "--from=stage", "description": "Copy files from a named build stage" },
-    { "name": "--chown=user:group", "description": "Set ownership of copied files" },
-    { "name": "--chmod=permissions", "description": "Set file permissions on copied files" }
-  ],
-  "examples": [
-    "FROM node:20-alpine",
-    "FROM python:3.12-slim AS builder",
-    "WORKDIR /app",
-    "COPY package*.json ./",
-    "COPY . .",
-    "RUN npm ci --production",
-    "RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*",
-    "ENV NODE_ENV=production",
-    "EXPOSE 3000",
-    "CMD [\"node\", \"server.js\"]",
-    "ENTRYPOINT [\"python\", \"app.py\"]",
-    "ARG BUILD_VERSION=latest",
-    "LABEL maintainer=\"dev@example.com\"",
-    "HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:3000/health || exit 1",
-    "USER node",
-    "VOLUME /data",
-    "ADD https://example.com/file.tar.gz /tmp/",
-    "SHELL [\"/bin/bash\", \"-c\"]",
-    "STOPSIGNAL SIGTERM",
-    "# Multi-stage: FROM builder AS final"
-  ],
-  "relatedCommands": ["docker", "docker-compose", "podman", "buildah"],
   "contextEngine": {
     "detectors": [
       {
@@ -86,5 +36,234 @@
         "cacheFor": 60
       }
     ]
-  }
+  },
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell"
+  ],
+  "globalOptions": [
+    {
+      "name": "--platform",
+      "description": "Set target platform for the build (e.g., linux/amd64)"
+    },
+    {
+      "name": "--mount=type=cache",
+      "description": "Mount a cache directory during RUN to speed up builds"
+    },
+    {
+      "name": "--mount=type=secret",
+      "description": "Mount a secret file during RUN without baking into image"
+    },
+    {
+      "name": "--from=stage",
+      "description": "Copy files from a named build stage"
+    },
+    {
+      "name": "--chown=user:group",
+      "description": "Set ownership of copied files"
+    },
+    {
+      "name": "--chmod=permissions",
+      "description": "Set file permissions on copied files"
+    },
+    {
+      "name": "--help",
+      "description": "Show help information",
+      "alias": "-h"
+    },
+    {
+      "name": "--version",
+      "description": "Show version number",
+      "alias": "-v"
+    },
+    {
+      "name": "--verbose",
+      "description": "Enable verbose/detailed output"
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "FROM",
+      "description": "Set the base image for the build stage",
+      "args": [
+        "image:tag"
+      ],
+      "options": [
+        "AS"
+      ]
+    },
+    {
+      "name": "RUN",
+      "description": "Execute a command during the image build",
+      "args": [
+        "command"
+      ],
+      "options": [
+        "--mount",
+        "--network",
+        "--security"
+      ]
+    },
+    {
+      "name": "CMD",
+      "description": "Set default command for the container",
+      "args": [
+        "command"
+      ],
+      "options": []
+    },
+    {
+      "name": "ENTRYPOINT",
+      "description": "Set the main executable for the container",
+      "args": [
+        "executable"
+      ],
+      "options": []
+    },
+    {
+      "name": "COPY",
+      "description": "Copy files from build context into image",
+      "args": [
+        "src",
+        "dest"
+      ],
+      "options": [
+        "--from",
+        "--chown",
+        "--chmod"
+      ]
+    },
+    {
+      "name": "ADD",
+      "description": "Copy files/URLs/archives into image with extraction",
+      "args": [
+        "src",
+        "dest"
+      ],
+      "options": [
+        "--chown",
+        "--chmod"
+      ]
+    },
+    {
+      "name": "WORKDIR",
+      "description": "Set the working directory for subsequent instructions",
+      "args": [
+        "path"
+      ],
+      "options": []
+    },
+    {
+      "name": "ENV",
+      "description": "Set environment variable in the image",
+      "args": [
+        "KEY=VALUE"
+      ],
+      "options": []
+    },
+    {
+      "name": "EXPOSE",
+      "description": "Declare the port the container listens on",
+      "args": [
+        "port"
+      ],
+      "options": []
+    },
+    {
+      "name": "ARG",
+      "description": "Define a build-time variable",
+      "args": [
+        "name=default"
+      ],
+      "options": []
+    },
+    {
+      "name": "HEALTHCHECK",
+      "description": "Define a health check command for the container",
+      "args": [
+        "CMD command"
+      ],
+      "options": [
+        "--interval",
+        "--timeout",
+        "--retries",
+        "--start-period"
+      ]
+    },
+    {
+      "name": "USER",
+      "description": "Set the user for subsequent instructions and runtime",
+      "args": [
+        "user:group"
+      ],
+      "options": []
+    },
+    {
+      "name": "VOLUME",
+      "description": "Create a mount point for external volumes",
+      "args": [
+        "path"
+      ],
+      "options": []
+    },
+    {
+      "name": "LABEL",
+      "description": "Add metadata to the image",
+      "args": [
+        "key=value"
+      ],
+      "options": []
+    },
+    {
+      "name": "SHELL",
+      "description": "Override the default shell for RUN commands",
+      "args": [
+        "executable"
+      ],
+      "options": []
+    },
+    {
+      "name": "STOPSIGNAL",
+      "description": "Set the system call signal for container exit",
+      "args": [
+        "signal"
+      ],
+      "options": []
+    }
+  ],
+  "examples": [
+    "FROM node:20-alpine",
+    "FROM python:3.12-slim AS builder",
+    "WORKDIR /app",
+    "COPY package*.json ./",
+    "COPY . .",
+    "RUN npm ci --production",
+    "RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*",
+    "ENV NODE_ENV=production",
+    "EXPOSE 3000",
+    "CMD [\"node\", \"server.js\"]",
+    "ENTRYPOINT [\"python\", \"app.py\"]",
+    "ARG BUILD_VERSION=latest",
+    "LABEL maintainer=\"dev@example.com\"",
+    "HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:3000/health || exit 1",
+    "USER node",
+    "VOLUME /data",
+    "ADD https://example.com/file.tar.gz /tmp/",
+    "SHELL [\"/bin/bash\", \"-c\"]",
+    "STOPSIGNAL SIGTERM",
+    "# Multi-stage: FROM builder AS final"
+  ],
+  "relatedCommands": [
+    "docker",
+    "docker-compose",
+    "podman",
+    "buildah"
+  ]
 }

@@ -3,6 +3,74 @@
   "name": "sh",
   "description": "Shell Script command-line tool",
   "category": "development",
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "zsh_version",
+        "description": "Installed zsh version",
+        "command": "zsh --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "current_shell",
+        "description": "Current user shell",
+        "command": "echo $SHELL",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "zshrc_exists",
+        "description": "Check if .zshrc exists",
+        "command": "test -f ~/.zshrc && echo 'yes' || echo 'no'",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "oh_my_zsh",
+        "description": "Check if Oh My Zsh is installed",
+        "command": "test -d ~/.oh-my-zsh && echo 'installed' || echo 'not installed'",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "zsh_theme",
+        "description": "Current ZSH_THEME",
+        "command": "grep '^ZSH_THEME=' ~/.zshrc 2>/dev/null | head -1 | cut -d'\"' -f2",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "zsh_plugins",
+        "description": "Configured Oh My Zsh plugins",
+        "command": "grep -A20 '^plugins=(' ~/.zshrc 2>/dev/null | sed -n '/^plugins=(/,/)/p' | tr -d '()' | sed 's/plugins=//' | tr '\\n' ' '",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "fpath_dirs",
+        "description": "Number of fpath directories",
+        "command": "zsh -c 'echo ${#fpath}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "zsh"
+      },
+      {
+        "name": "aliases_count",
+        "description": "Number of defined aliases",
+        "command": "zsh -ic 'alias | wc -l' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "zsh"
+      }
+    ]
+  },
   "platforms": [
     "linux",
     "macos",
@@ -13,176 +81,6 @@
     "zsh",
     "powershell",
     "fish"
-  ],
-  "subcommands": [
-    {
-      "name": "-c 'command'",
-      "description": "Execute command string",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "script.sh",
-      "description": "Execute script",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-x script.sh",
-      "description": "Debug mode",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "-n script.sh",
-      "description": "Syntax check",
-      "args": [],
-      "options": []
-    },
-    {
-      "name": "run",
-      "description": "Execute a shell script file",
-      "args": [
-        {
-          "name": "<script>",
-          "type": "file",
-          "required": true,
-          "description": "Shell script to execute"
-        }
-      ],
-      "examples": [
-        "bash script.sh",
-        "bash deploy.sh --env production"
-      ]
-    },
-    {
-      "name": "login",
-      "description": "Start a login shell",
-      "args": [],
-      "examples": [
-        "bash --login",
-        "bash -l"
-      ]
-    }
-  ],
-  "globalOptions": [
-    {
-      "name": "--version",
-      "description": "Display version information and exit"
-    },
-    {
-      "name": "--help",
-      "description": "Display usage information and exit"
-    },
-    {
-      "name": "-c",
-      "description": "Execute commands from the following string argument",
-      "type": "string"
-    },
-    {
-      "name": "-i",
-      "description": "Start an interactive shell"
-    },
-    {
-      "name": "-l",
-      "description": "Act as if invoked as a login shell (same as --login)"
-    },
-    {
-      "name": "--login",
-      "description": "Act as if invoked as a login shell"
-    },
-    {
-      "name": "-r",
-      "description": "Start a restricted shell"
-    },
-    {
-      "name": "--restricted",
-      "description": "Start a restricted shell"
-    },
-    {
-      "name": "-s",
-      "description": "Read commands from standard input"
-    },
-    {
-      "name": "-D",
-      "description": "Print double-quoted strings preceded by $ (for localization)"
-    },
-    {
-      "name": "--dump-strings",
-      "description": "Same as -D"
-    },
-    {
-      "name": "-e",
-      "description": "Exit immediately if a command exits with non-zero status (set -e)"
-    },
-    {
-      "name": "-u",
-      "description": "Treat unset variables as an error (set -u)"
-    },
-    {
-      "name": "-x",
-      "description": "Print each command before executing it (set -x)"
-    },
-    {
-      "name": "-v",
-      "description": "Print shell input lines as they are read (set -v)"
-    },
-    {
-      "name": "-n",
-      "description": "Read commands but do not execute them (syntax check)"
-    },
-    {
-      "name": "-p",
-      "description": "Start in privileged mode"
-    },
-    {
-      "name": "--posix",
-      "description": "Change behavior to match the POSIX standard"
-    },
-    {
-      "name": "--norc",
-      "description": "Do not read the ~/.bashrc initialization file"
-    },
-    {
-      "name": "--noprofile",
-      "description": "Do not read /etc/profile or any personal profile files"
-    },
-    {
-      "name": "--rcfile",
-      "description": "Execute commands from specified file instead of ~/.bashrc",
-      "type": "file"
-    },
-    {
-      "name": "--init-file",
-      "description": "Same as --rcfile",
-      "type": "file"
-    },
-    {
-      "name": "-O",
-      "description": "Enable a shell option (shopt)",
-      "type": "string"
-    },
-    {
-      "name": "+O",
-      "description": "Disable a shell option (shopt)",
-      "type": "string"
-    },
-    {
-      "name": "--debugger",
-      "description": "Run the debugger profile before the shell starts"
-    },
-    {
-      "name": "--dump-po-strings",
-      "description": "Same as -D but output in GNU gettext PO format"
-    },
-    {
-      "name": "--verbose",
-      "description": "Same as -v"
-    },
-    {
-      "name": "--noediting",
-      "description": "Do not use the GNU Readline library for command-line editing"
-    }
   ],
   "builtinCommands": [
     {
@@ -477,6 +375,176 @@
       ]
     }
   ],
+  "globalOptions": [
+    {
+      "name": "--version",
+      "description": "Display version information and exit"
+    },
+    {
+      "name": "--help",
+      "description": "Display usage information and exit"
+    },
+    {
+      "name": "-c",
+      "description": "Execute commands from the following string argument",
+      "type": "string"
+    },
+    {
+      "name": "-i",
+      "description": "Start an interactive shell"
+    },
+    {
+      "name": "-l",
+      "description": "Act as if invoked as a login shell (same as --login)"
+    },
+    {
+      "name": "--login",
+      "description": "Act as if invoked as a login shell"
+    },
+    {
+      "name": "-r",
+      "description": "Start a restricted shell"
+    },
+    {
+      "name": "--restricted",
+      "description": "Start a restricted shell"
+    },
+    {
+      "name": "-s",
+      "description": "Read commands from standard input"
+    },
+    {
+      "name": "-D",
+      "description": "Print double-quoted strings preceded by $ (for localization)"
+    },
+    {
+      "name": "--dump-strings",
+      "description": "Same as -D"
+    },
+    {
+      "name": "-e",
+      "description": "Exit immediately if a command exits with non-zero status (set -e)"
+    },
+    {
+      "name": "-u",
+      "description": "Treat unset variables as an error (set -u)"
+    },
+    {
+      "name": "-x",
+      "description": "Print each command before executing it (set -x)"
+    },
+    {
+      "name": "-v",
+      "description": "Print shell input lines as they are read (set -v)"
+    },
+    {
+      "name": "-n",
+      "description": "Read commands but do not execute them (syntax check)"
+    },
+    {
+      "name": "-p",
+      "description": "Start in privileged mode"
+    },
+    {
+      "name": "--posix",
+      "description": "Change behavior to match the POSIX standard"
+    },
+    {
+      "name": "--norc",
+      "description": "Do not read the ~/.bashrc initialization file"
+    },
+    {
+      "name": "--noprofile",
+      "description": "Do not read /etc/profile or any personal profile files"
+    },
+    {
+      "name": "--rcfile",
+      "description": "Execute commands from specified file instead of ~/.bashrc",
+      "type": "file"
+    },
+    {
+      "name": "--init-file",
+      "description": "Same as --rcfile",
+      "type": "file"
+    },
+    {
+      "name": "-O",
+      "description": "Enable a shell option (shopt)",
+      "type": "string"
+    },
+    {
+      "name": "+O",
+      "description": "Disable a shell option (shopt)",
+      "type": "string"
+    },
+    {
+      "name": "--debugger",
+      "description": "Run the debugger profile before the shell starts"
+    },
+    {
+      "name": "--dump-po-strings",
+      "description": "Same as -D but output in GNU gettext PO format"
+    },
+    {
+      "name": "--verbose",
+      "description": "Same as -v"
+    },
+    {
+      "name": "--noediting",
+      "description": "Do not use the GNU Readline library for command-line editing"
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "-c 'command'",
+      "description": "Execute command string",
+      "args": [],
+      "options": []
+    },
+    {
+      "name": "script.sh",
+      "description": "Execute script",
+      "args": [],
+      "options": []
+    },
+    {
+      "name": "-x script.sh",
+      "description": "Debug mode",
+      "args": [],
+      "options": []
+    },
+    {
+      "name": "-n script.sh",
+      "description": "Syntax check",
+      "args": [],
+      "options": []
+    },
+    {
+      "name": "run",
+      "description": "Execute a shell script file",
+      "args": [
+        {
+          "name": "<script>",
+          "type": "file",
+          "required": true,
+          "description": "Shell script to execute"
+        }
+      ],
+      "examples": [
+        "bash script.sh",
+        "bash deploy.sh --env production"
+      ]
+    },
+    {
+      "name": "login",
+      "description": "Start a login shell",
+      "args": [],
+      "examples": [
+        "bash --login",
+        "bash -l"
+      ]
+    }
+  ],
   "examples": [
     "bash script.sh",
     "bash -c 'echo Hello World'",
@@ -499,73 +567,5 @@
     "tcsh",
     "env",
     "source"
-  ],
-  "contextEngine": {
-    "detectors": [
-      {
-        "name": "zsh_version",
-        "description": "Installed zsh version",
-        "command": "zsh --version 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 3600,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "current_shell",
-        "description": "Current user shell",
-        "command": "echo $SHELL",
-        "parser": "text",
-        "cacheFor": 3600,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "zshrc_exists",
-        "description": "Check if .zshrc exists",
-        "command": "test -f ~/.zshrc && echo 'yes' || echo 'no'",
-        "parser": "text",
-        "cacheFor": 60,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "oh_my_zsh",
-        "description": "Check if Oh My Zsh is installed",
-        "command": "test -d ~/.oh-my-zsh && echo 'installed' || echo 'not installed'",
-        "parser": "text",
-        "cacheFor": 300,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "zsh_theme",
-        "description": "Current ZSH_THEME",
-        "command": "grep '^ZSH_THEME=' ~/.zshrc 2>/dev/null | head -1 | cut -d'\"' -f2",
-        "parser": "text",
-        "cacheFor": 120,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "zsh_plugins",
-        "description": "Configured Oh My Zsh plugins",
-        "command": "grep -A20 '^plugins=(' ~/.zshrc 2>/dev/null | sed -n '/^plugins=(/,/)/p' | tr -d '()' | sed 's/plugins=//' | tr '\\n' ' '",
-        "parser": "text",
-        "cacheFor": 120,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "fpath_dirs",
-        "description": "Number of fpath directories",
-        "command": "zsh -c 'echo ${#fpath}' 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 300,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "aliases_count",
-        "description": "Number of defined aliases",
-        "command": "zsh -ic 'alias | wc -l' 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 60,
-        "requiresCmd": "zsh"
-      }
-    ]
-  }
+  ]
 }

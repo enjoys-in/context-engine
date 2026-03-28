@@ -1,29 +1,165 @@
 {
   "language": "dart",
   "inlayHintPatterns": [
-    {"pattern": "(?:var|final)\\s+(\\w+)\\s*=\\s*(.+)", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show inferred type for var/final variable assignments"},
-    {"pattern": "(\\w+)\\s*\\(([^)]+)\\)", "kind": 2, "label": "{param_name}:", "position": "before_each_arg", "paddingRight": true, "description": "Show parameter names at call sites"},
-    {"pattern": "(?:var|final)\\s+(\\w+)\\s+in\\s+", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show inferred element type in for-in loops"},
-    {"pattern": "=>\\s+(.+);", "kind": 1, "label": "-> {inferred_type}", "position": "after_arrow", "paddingLeft": true, "description": "Show return type for expression-body functions"},
-    {"pattern": "\\(\\s*(\\w+)\\s*\\)\\s*=>", "kind": 1, "label": ": {inferred_type}", "position": "after_param", "paddingLeft": true, "description": "Show inferred closure parameter types"},
-    {"pattern": "\\.(\\w+)\\s*\\(([^)]+)\\)", "kind": 2, "label": "{param_name}:", "position": "before_each_arg", "paddingRight": true, "description": "Show parameter names at method call sites"},
-    {"pattern": "late\\s+(?:final\\s+)?(\\w+)\\s*;", "kind": 1, "label": ": {inferred_type}", "position": "after_capture_1", "paddingLeft": true, "description": "Show type for late variables without explicit type"}
+    {
+      "pattern": "(?:var|final)\\s+(\\w+)\\s*=\\s*(.+)",
+      "kind": 1,
+      "label": ": {inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show inferred type for var/final variable assignments"
+    },
+    {
+      "pattern": "(\\w+)\\s*\\(([^)]+)\\)",
+      "kind": 2,
+      "label": "{param_name}:",
+      "position": "before_each_arg",
+      "paddingRight": true,
+      "description": "Show parameter names at call sites"
+    },
+    {
+      "pattern": "(?:var|final)\\s+(\\w+)\\s+in\\s+",
+      "kind": 1,
+      "label": ": {inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show inferred element type in for-in loops"
+    },
+    {
+      "pattern": "=>\\s+(.+);",
+      "kind": 1,
+      "label": "-> {inferred_type}",
+      "position": "after_arrow",
+      "paddingLeft": true,
+      "description": "Show return type for expression-body functions"
+    },
+    {
+      "pattern": "\\(\\s*(\\w+)\\s*\\)\\s*=>",
+      "kind": 1,
+      "label": ": {inferred_type}",
+      "position": "after_param",
+      "paddingLeft": true,
+      "description": "Show inferred closure parameter types"
+    },
+    {
+      "pattern": "\\.(\\w+)\\s*\\(([^)]+)\\)",
+      "kind": 2,
+      "label": "{param_name}:",
+      "position": "before_each_arg",
+      "paddingRight": true,
+      "description": "Show parameter names at method call sites"
+    },
+    {
+      "pattern": "late\\s+(?:final\\s+)?(\\w+)\\s*;",
+      "kind": 1,
+      "label": ": {inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Show type for late variables without explicit type"
+    },
+    {
+      "kind": "parameter",
+      "description": "Parameter name hints",
+      "pattern": "(\\w+)\\s*\\(([^)]+)\\)",
+      "display": "parameterName:",
+      "position": "before"
+    },
+    {
+      "kind": "type",
+      "description": "Inferred type hints",
+      "pattern": "(?:let|var|val|const|auto)\\s+(\\w+)\\s*=",
+      "display": ": inferredType",
+      "position": "after"
+    },
+    {
+      "kind": "type",
+      "description": "Return type hints",
+      "pattern": "(?:function|def|fn|func|fun)\\s+\\w+\\s*\\([^)]*\\)\\s*(?:=>|->|:)?",
+      "display": "-> returnType",
+      "position": "after"
+    },
+    {
+      "kind": "enum",
+      "description": "Enum member value hints",
+      "pattern": "(?:enum|const)\\s+\\w+",
+      "display": "= value",
+      "position": "after"
+    },
+    {
+      "kind": "type",
+      "description": "Chained method result type",
+      "pattern": "\\.(\\w+)\\(",
+      "display": ": resultType",
+      "position": "after"
+    },
+    {
+      "kind": "type",
+      "description": "Destructuring type hints",
+      "pattern": "(?:const|let|var)\\s*[{\\[]",
+      "display": ": type",
+      "position": "inline"
+    }
   ],
   "typeInferenceRules": {
-    "string_literal": {"pattern": "'[^']*'|\"[^\"]*\"", "type": "String"},
-    "multiline_string": {"pattern": "'''[\\s\\S]*?'''|\"\"\"[\\s\\S]*?\"\"\"", "type": "String"},
-    "int_literal": {"pattern": "\\b\\d+\\b(?!\\.)", "type": "int"},
-    "double_literal": {"pattern": "\\b\\d+\\.\\d+\\b", "type": "double"},
-    "boolean_literal": {"pattern": "\\b(true|false)\\b", "type": "bool"},
-    "null_literal": {"pattern": "\\bnull\\b", "type": "Null"},
-    "list_literal": {"pattern": "\\[", "type": "List<T>"},
-    "const_list": {"pattern": "const\\s*\\[", "type": "List<T>"},
-    "map_literal": {"pattern": "\\{\\s*\\w+\\s*:", "type": "Map<K, V>"},
-    "set_literal": {"pattern": "\\{\\s*[^:]+\\s*\\}", "type": "Set<T>"},
-    "record_literal": {"pattern": "\\(\\s*\\w+\\s*,", "type": "(T1, T2)"},
-    "future_expression": {"pattern": "\\bawait\\s+", "type": "Future<T>"},
-    "stream_expression": {"pattern": "\\byield\\s+", "type": "Stream<T>"},
-    "constructor_call": {"pattern": "\\b[A-Z]\\w*\\s*\\(", "type": "{constructor_class}"},
-    "cascade": {"pattern": "\\.\\.", "type": "{cascade_target}"}
+    "string_literal": {
+      "pattern": "'[^']*'|\"[^\"]*\"",
+      "type": "String"
+    },
+    "multiline_string": {
+      "pattern": "'''[\\s\\S]*?'''|\"\"\"[\\s\\S]*?\"\"\"",
+      "type": "String"
+    },
+    "int_literal": {
+      "pattern": "\\b\\d+\\b(?!\\.)",
+      "type": "int"
+    },
+    "double_literal": {
+      "pattern": "\\b\\d+\\.\\d+\\b",
+      "type": "double"
+    },
+    "boolean_literal": {
+      "pattern": "\\b(true|false)\\b",
+      "type": "bool"
+    },
+    "null_literal": {
+      "pattern": "\\bnull\\b",
+      "type": "Null"
+    },
+    "list_literal": {
+      "pattern": "\\[",
+      "type": "List<T>"
+    },
+    "const_list": {
+      "pattern": "const\\s*\\[",
+      "type": "List<T>"
+    },
+    "map_literal": {
+      "pattern": "\\{\\s*\\w+\\s*:",
+      "type": "Map<K, V>"
+    },
+    "set_literal": {
+      "pattern": "\\{\\s*[^:]+\\s*\\}",
+      "type": "Set<T>"
+    },
+    "record_literal": {
+      "pattern": "\\(\\s*\\w+\\s*,",
+      "type": "(T1, T2)"
+    },
+    "future_expression": {
+      "pattern": "\\bawait\\s+",
+      "type": "Future<T>"
+    },
+    "stream_expression": {
+      "pattern": "\\byield\\s+",
+      "type": "Stream<T>"
+    },
+    "constructor_call": {
+      "pattern": "\\b[A-Z]\\w*\\s*\\(",
+      "type": "{constructor_class}"
+    },
+    "cascade": {
+      "pattern": "\\.\\.",
+      "type": "{cascade_target}"
+    }
   }
 }

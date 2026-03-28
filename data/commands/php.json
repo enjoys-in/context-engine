@@ -1,7 +1,33 @@
 {
+  "language": "php",
   "name": "php",
   "description": "PHP command line interface",
   "category": "language",
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "PHP Version",
+        "command": "php -v | head -n 1 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "ini",
+        "description": "Loaded Configuration File",
+        "command": "php --ini | grep 'Loaded Configuration File' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "scripts",
+        "description": "PHP Scripts in current directory",
+        "command": "ls *.php 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 30
+      }
+    ]
+  },
   "platforms": [
     "linux",
     "macos",
@@ -13,7 +39,6 @@
     "fish",
     "powershell"
   ],
-  "subcommands": [],
   "globalOptions": [
     {
       "name": "--interactive",
@@ -115,8 +140,38 @@
       "name": "--rz",
       "description": "Show information about Zend extension <name>.",
       "type": "string"
+    },
+    {
+      "name": "--help",
+      "description": "Show help information",
+      "alias": "-h"
+    },
+    {
+      "name": "--verbose",
+      "description": "Enable verbose/detailed output"
+    },
+    {
+      "name": "--quiet",
+      "description": "Suppress non-error output",
+      "alias": "-q"
+    },
+    {
+      "name": "--debug",
+      "description": "Enable debug mode for troubleshooting"
+    },
+    {
+      "name": "--config",
+      "description": "Specify configuration file path",
+      "valueHint": "path"
+    },
+    {
+      "name": "--output",
+      "description": "Specify output directory or file",
+      "valueHint": "path",
+      "alias": "-o"
     }
   ],
+  "subcommands": [],
   "examples": [
     "php -v",
     "php -m",
@@ -128,30 +183,5 @@
   "relatedCommands": [
     "composer",
     "artisan"
-  ],
-  "contextEngine": {
-    "detectors": [
-      {
-        "name": "version",
-        "description": "PHP Version",
-        "command": "php -v | head -n 1 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 3600
-      },
-      {
-        "name": "ini",
-        "description": "Loaded Configuration File",
-        "command": "php --ini | grep 'Loaded Configuration File' 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 3600
-      },
-      {
-        "name": "scripts",
-        "description": "PHP Scripts in current directory",
-        "command": "ls *.php 2>/dev/null | head -10",
-        "parser": "lines",
-        "cacheFor": 30
-      }
-    ]
-  }
+  ]
 }
