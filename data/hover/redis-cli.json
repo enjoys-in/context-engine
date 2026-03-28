@@ -904,185 +904,1265 @@
         }
       ]
     },
-    "ACL CAT": "## ACL CAT\n\n```redis\nACL CAT [category]\n```\n\nList all ACL categories or commands in a category.\n\n```redis\n> ACL CAT\n1) \"read\"\n2) \"write\"\n3) \"set\"\n...\n\n> ACL CAT read\n1) \"GET\"\n2) \"MGET\"\n...\n```",
-    "ACL DELUSER": "## ACL DELUSER\n\n```redis\nACL DELUSER username [username ...]\n```\n\nDelete ACL users. Cannot delete the `default` user.\n\n```redis\n> ACL DELUSER tempuser\nOK\n```",
-    "ACL GENPASS": "## ACL GENPASS\n\n```redis\nACL GENPASS [bits]\n```\n\nGenerate a secure password for ACL users.\n\n```redis\n> ACL GENPASS\n\"1a2b3c4d5e6f...\"\n\n> ACL GENPASS 128\n\"a1b2c3d4e5f6a7b8...\"\n```",
-    "ACL GETUSER": "## ACL GETUSER\n\n```redis\nACL GETUSER username\n```\n\nGet ACL rules for a specific user.\n\n```redis\n> ACL GETUSER default\n1) \"flags\"\n2) 1) \"on\"\n3) \"passwords\"\n...\n```",
-    "CLIENT KILL": "## CLIENT KILL\n\n```redis\nCLIENT KILL [ID id] [ADDR ip:port] [LADDR ip:port] [USER username]\n```\n\nClose client connections matching filters.\n\n```redis\n> CLIENT KILL ID 42\n(integer) 1\n\n> CLIENT KILL ADDR 192.168.1.100:52340\n(integer) 1\n```",
-    "CLIENT SETNAME": "## CLIENT SETNAME\n\n```redis\nCLIENT SETNAME connection-name\n```\n\nSet a name for the current connection (visible in CLIENT LIST).\n\n```redis\n> CLIENT SETNAME worker-1\nOK\n```",
-    "CLUSTER ADDSLOTS": "## CLUSTER ADDSLOTS\n\n```redis\nCLUSTER ADDSLOTS slot [slot ...]\n```\n\nAssign hash slots to the current node.\n\n```redis\n> CLUSTER ADDSLOTS 0 1 2 3 4 5\nOK\n```",
-    "DEBUG OBJECT": "## DEBUG OBJECT\n\n```redis\nDEBUG OBJECT key\n```\n\nGet debugging information about a key's internal encoding.\n\n```redis\n> DEBUG OBJECT mykey\nValue at:0x... refcount:1 encoding:embstr serializedlength:3 lru:... lru_seconds_idle:0\n```",
-    "BITFIELD": "## BITFIELD\n\n```redis\nBITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]\n```\n\nPerform arbitrary bitfield integer operations on strings.\n\n```redis\n# Set 8-bit unsigned counter at bit offset 0\n> BITFIELD mykey SET u8 0 200\n1) (integer) 0\n\n# Increment by 50 with saturation overflow\n> BITFIELD mykey OVERFLOW SAT INCRBY u8 0 50\n1) (integer) 250\n```",
-    "BITPOS": "## BITPOS\n\n```redis\nBITPOS key bit [start [end [BYTE|BIT]]]\n```\n\nFind first bit set to 0 or 1.\n\n```redis\n> SET mykey \"\\xff\\xf0\\x00\"\nOK\n> BITPOS mykey 0  -- first 0 bit\n(integer) 12\n> BITPOS mykey 1  -- first 1 bit\n(integer) 0\n```",
-    "BLMOVE": "## BLMOVE\n\n```redis\nBLMOVE source destination LEFT|RIGHT LEFT|RIGHT timeout\n```\n\nBlocking version of LMOVE. Pop from source list and push to destination.\n\n```redis\n> BLMOVE mylist newlist LEFT RIGHT 0\n\"element\"\n```",
-    "OBJECT FREQ": "## OBJECT FREQ\n\n```redis\nOBJECT FREQ key\n```\n\nReturn the access frequency for LFU eviction policy.\n\n```redis\n> OBJECT FREQ mykey\n(integer) 5\n```\n\nOnly useful with `maxmemory-policy` set to an LFU variant.",
-    "OBJECT IDLETIME": "## OBJECT IDLETIME\n\n```redis\nOBJECT IDLETIME key\n```\n\nReturn seconds since the key was last accessed.\n\n```redis\n> OBJECT IDLETIME mykey\n(integer) 120\n```",
-    "OBJECT REFCOUNT": "## OBJECT REFCOUNT\n\n```redis\nOBJECT REFCOUNT key\n```\n\nReturn the reference count of the object (for debugging).\n\n```redis\n> OBJECT REFCOUNT mykey\n(integer) 1\n```",
-    "MEMORY DOCTOR": "## MEMORY DOCTOR\n\n```redis\nMEMORY DOCTOR\n```\n\nReturn memory problems report.\n\n```redis\n> MEMORY DOCTOR\n\"Sam, I have no memory problems\"\n```",
-    "LATENCY LATEST": "## LATENCY LATEST\n\n```redis\nLATENCY LATEST\n```\n\nReturn latest latency samples for all events.\n\n```redis\n> LATENCY LATEST\n1) 1) \"command\"\n   2) (integer) 1695000000\n   3) (integer) 15\n   4) (integer) 20\n```",
-    "LATENCY HISTORY": "## LATENCY HISTORY\n\n```redis\nLATENCY HISTORY event\n```\n\nReturn latency history for a specific event.\n\n```redis\n> LATENCY HISTORY command\n1) 1) (integer) 1695000000\n   2) (integer) 15\n2) 1) (integer) 1695000001\n   2) (integer) 12\n```",
-    "FUNCTION CALL": "## FCALL / FCALL_RO\n\n```redis\nFCALL function numkeys [key ...] [arg ...]\nFCALL_RO function numkeys [key ...] [arg ...]\n```\n\nCall a previously loaded Redis Function.\n\n```redis\n> FCALL myfunc 1 mykey\n\"value\"\n```",
-    "FUNCTION LIST": "## FUNCTION LIST\n\n```redis\nFUNCTION LIST [LIBRARYNAME pattern] [WITHCODE]\n```\n\nList loaded function libraries.\n\n```redis\n> FUNCTION LIST\n1) 1) \"library_name\"\n   2) \"mylib\"\n   3) \"functions\"\n   4) 1) 1) \"name\"\n         2) \"myfunc\"\n```",
-    "WAITAOF": "## WAITAOF\n\n```redis\nWAITAOF numlocal numreplicas timeout\n```\n\nWait for AOF fsync on local and replicas. Returns number of local fsyncs and replicas that acknowledged.\n\n```redis\n> WAITAOF 1 0 5000  -- wait for local fsync, 5s timeout\n1) (integer) 1\n2) (integer) 0\n```",
-    "GETSET": "## GETSET\n\n```redis\nGETSET key value\n```\n\nAtomically set key to value and return the old value. Deprecated in favor of SET with GET option.\n\n**Group:** Strings",
-    "MSETNX": "## MSETNX\n\n```redis\nMSETNX key value [key value ...]\n```\n\nSet multiple keys only if none of them exist. Atomic — all or nothing.\n\n**Group:** Strings",
-    "PSETEX": "## PSETEX\n\n```redis\nPSETEX key milliseconds value\n```\n\nSet key to value with expiration in milliseconds.\n\n**Group:** Strings",
-    "SETRANGE": "## SETRANGE\n\n```redis\nSETRANGE key offset value\n```\n\nOverwrite part of the string at key starting at offset.\n\n**Group:** Strings",
-    "DECRBY": "## DECRBY\n\n```redis\nDECRBY key decrement\n```\n\nAtomically decrement the integer value of key by the given amount.\n\n**Group:** Strings",
-    "SUBSTR": "## SUBSTR\n\n```redis\nSUBSTR key start end\n```\n\nReturns a substring. Deprecated alias for GETRANGE.\n\n**Group:** Strings",
-    "HKEYS": "## HKEYS\n\n```redis\nHKEYS key\n```\n\nReturns all field names in a hash.\n\n**Group:** Hashes",
-    "HVALS": "## HVALS\n\n```redis\nHVALS key\n```\n\nReturns all values in a hash.\n\n**Group:** Hashes",
-    "HINCRBYFLOAT": "## HINCRBYFLOAT\n\n```redis\nHINCRBYFLOAT key field increment\n```\n\nIncrement the float value of a hash field.\n\n**Group:** Hashes",
-    "HSETNX": "## HSETNX\n\n```redis\nHSETNX key field value\n```\n\nSet hash field only if it does not exist.\n\n**Group:** Hashes",
-    "LSET": "## LSET\n\n```redis\nLSET key index element\n```\n\nSet the element at index in a list.\n\n**Group:** Lists",
-    "LREM": "## LREM\n\n```redis\nLREM key count element\n```\n\nRemove count occurrences of element. count>0: head to tail; count<0: tail to head; 0: all.\n\n**Group:** Lists",
-    "LTRIM": "## LTRIM\n\n```redis\nLTRIM key start stop\n```\n\nTrim list to the specified range.\n\n**Group:** Lists",
-    "RPOPLPUSH": "## RPOPLPUSH\n\n```redis\nRPOPLPUSH source destination\n```\n\nPop from tail of source and push to head of destination. Deprecated — use LMOVE.\n\n**Group:** Lists",
-    "LMPOP": "## LMPOP\n\n```redis\nLMPOP numkeys key [key ...] LEFT|RIGHT [COUNT count]\n```\n\nPop from first non-empty list. Redis 7.0+.\n\n**Group:** Lists",
-    "BLMPOP": "## BLMPOP\n\n```redis\nBLMPOP timeout numkeys key [key ...] LEFT|RIGHT [COUNT count]\n```\n\nBlocking version of LMPOP. Redis 7.0+.\n\n**Group:** Lists",
-    "LPUSHX": "## LPUSHX\n\n```redis\nLPUSHX key element [element ...]\n```\n\nPush to head only if list exists.\n\n**Group:** Lists",
-    "RPUSHX": "## RPUSHX\n\n```redis\nRPUSHX key element [element ...]\n```\n\nPush to tail only if list exists.\n\n**Group:** Lists",
-    "SMISMEMBER": "## SMISMEMBER\n\n```redis\nSMISMEMBER key member [member ...]\n```\n\nCheck multiple members. Returns array of 1/0. Redis 6.2+.\n\n**Group:** Sets",
-    "SRANDMEMBER": "## SRANDMEMBER\n\n```redis\nSRANDMEMBER key [count]\n```\n\nGet random member(s) without removing.\n\n**Group:** Sets",
-    "SUNIONSTORE": "## SUNIONSTORE\n\n```redis\nSUNIONSTORE destination key [key ...]\n```\n\nStore the union of sets.\n\n**Group:** Sets",
-    "SINTERSTORE": "## SINTERSTORE\n\n```redis\nSINTERSTORE destination key [key ...]\n```\n\nStore the intersection of sets.\n\n**Group:** Sets",
-    "SDIFFSTORE": "## SDIFFSTORE\n\n```redis\nSDIFFSTORE destination key [key ...]\n```\n\nStore the difference of sets.\n\n**Group:** Sets",
-    "SSCAN": "## SSCAN\n\n```redis\nSSCAN key cursor [MATCH pattern] [COUNT count]\n```\n\nIncrementally iterate set members.\n\n**Group:** Sets",
-    "ZREM": "## ZREM\n\n```redis\nZREM key member [member ...]\n```\n\nRemove members from a sorted set.\n\n**Group:** Sorted Sets",
-    "ZMSCORE": "## ZMSCORE\n\n```redis\nZMSCORE key member [member ...]\n```\n\nGet scores of multiple members. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZREVRANK": "## ZREVRANK\n\n```redis\nZREVRANK key member [WITHSCORE]\n```\n\nGet the rank of a member (0-based, descending).\n\n**Group:** Sorted Sets",
-    "ZLEXCOUNT": "## ZLEXCOUNT\n\n```redis\nZLEXCOUNT key min max\n```\n\nCount members in a lex range when all scores are equal.\n\n**Group:** Sorted Sets",
-    "ZRANGEBYSCORE": "## ZRANGEBYSCORE\n\n```redis\nZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]\n```\n\nReturn members with scores in range. Deprecated — use ZRANGE BYSCORE.\n\n**Group:** Sorted Sets",
-    "ZRANGEBYLEX": "## ZRANGEBYLEX\n\n```redis\nZRANGEBYLEX key min max [LIMIT offset count]\n```\n\nReturn members in a lex range. Deprecated — use ZRANGE BYLEX.\n\n**Group:** Sorted Sets",
-    "ZREVRANGE": "## ZREVRANGE\n\n```redis\nZREVRANGE key start stop [WITHSCORES]\n```\n\nReturn members in reverse rank order. Deprecated — use ZRANGE REV.\n\n**Group:** Sorted Sets",
-    "ZREVRANGEBYSCORE": "## ZREVRANGEBYSCORE\n\n```redis\nZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]\n```\n\nReturn members with scores in range, descending. Deprecated.\n\n**Group:** Sorted Sets",
-    "ZUNION": "## ZUNION\n\n```redis\nZUNION numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]\n```\n\nReturn union without storing. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZINTER": "## ZINTER\n\n```redis\nZINTER numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]\n```\n\nReturn intersection without storing. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZDIFFSTORE": "## ZDIFFSTORE\n\n```redis\nZDIFFSTORE dest numkeys key [key ...]\n```\n\nStore difference of sorted sets. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZDIFF": "## ZDIFF\n\n```redis\nZDIFF numkeys key [key ...] [WITHSCORES]\n```\n\nReturn difference without storing. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZRANDMEMBER": "## ZRANDMEMBER\n\n```redis\nZRANDMEMBER key [count [WITHSCORES]]\n```\n\nReturn random member(s). Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "BZPOPMIN": "## BZPOPMIN\n\n```redis\nBZPOPMIN key [key ...] timeout\n```\n\nBlocking pop of member with lowest score.\n\n**Group:** Sorted Sets",
-    "BZPOPMAX": "## BZPOPMAX\n\n```redis\nBZPOPMAX key [key ...] timeout\n```\n\nBlocking pop of member with highest score.\n\n**Group:** Sorted Sets",
-    "ZMPOP": "## ZMPOP\n\n```redis\nZMPOP numkeys key [key ...] MIN|MAX [COUNT count]\n```\n\nPop from first non-empty sorted set. Redis 7.0+.\n\n**Group:** Sorted Sets",
-    "BZMPOP": "## BZMPOP\n\n```redis\nBZMPOP timeout numkeys key [key ...] MIN|MAX [COUNT count]\n```\n\nBlocking version of ZMPOP. Redis 7.0+.\n\n**Group:** Sorted Sets",
-    "ZRANGESTORE": "## ZRANGESTORE\n\n```redis\nZRANGESTORE dst src min max [BYSCORE|BYLEX] [REV] [LIMIT offset count]\n```\n\nStore specified range from sorted set. Redis 6.2+.\n\n**Group:** Sorted Sets",
-    "ZSCAN": "## ZSCAN\n\n```redis\nZSCAN key cursor [MATCH pattern] [COUNT count]\n```\n\nIncrementally iterate sorted set members and scores.\n\n**Group:** Sorted Sets",
-    "RENAMENX": "## RENAMENX\n\n```redis\nRENAMENX key newkey\n```\n\nRename key only if newkey does not exist.\n\n**Group:** Generic",
-    "PEXPIRE": "## PEXPIRE\n\n```redis\nPEXPIRE key milliseconds [NX|XX|GT|LT]\n```\n\nSet TTL on key in milliseconds.\n\n**Group:** Generic",
-    "EXPIREAT": "## EXPIREAT\n\n```redis\nEXPIREAT key unix-time-seconds [NX|XX|GT|LT]\n```\n\nSet key to expire at a Unix timestamp (seconds).\n\n**Group:** Generic",
-    "PEXPIREAT": "## PEXPIREAT\n\n```redis\nPEXPIREAT key unix-time-milliseconds [NX|XX|GT|LT]\n```\n\nSet key to expire at a Unix timestamp (milliseconds).\n\n**Group:** Generic",
-    "EXPIRETIME": "## EXPIRETIME\n\n```redis\nEXPIRETIME key\n```\n\nReturns the absolute Unix timestamp at which the key will expire. Redis 7.0+.\n\n**Group:** Generic",
-    "PEXPIRETIME": "## PEXPIRETIME\n\n```redis\nPEXPIRETIME key\n```\n\nReturns the absolute Unix timestamp (ms) at which the key will expire. Redis 7.0+.\n\n**Group:** Generic",
-    "SORT_RO": "## SORT_RO\n\n```redis\nSORT_RO key [BY pattern] [LIMIT offset count] [GET pattern ...] [ASC|DESC] [ALPHA]\n```\n\nRead-only variant of SORT. Redis 7.0+.\n\n**Group:** Generic",
-    "MOVE": "## MOVE\n\n```redis\nMOVE key db\n```\n\nMove key to another database.\n\n**Group:** Generic",
-    "TOUCH": "## TOUCH\n\n```redis\nTOUCH key [key ...]\n```\n\nAlter the last access time of key(s).\n\n**Group:** Generic",
-    "WAIT": "## WAIT\n\n```redis\nWAIT numreplicas timeout\n```\n\nBlock until writes are acknowledged by N replicas or timeout.\n\n**Group:** Generic",
-    "BITFIELD_RO": "## BITFIELD_RO\n\n```redis\nBITFIELD_RO key GET type offset [GET type offset ...]\n```\n\nRead-only variant of BITFIELD. Redis 6.0+.\n\n**Group:** Bitmaps",
-    "XRANGE": "## XRANGE\n\n```redis\nXRANGE key start end [COUNT count]\n```\n\nReturn entries in a range. Use - and + for min/max IDs.\n\n**Group:** Streams",
-    "XREVRANGE": "## XREVRANGE\n\n```redis\nXREVRANGE key end start [COUNT count]\n```\n\nReturn entries in reverse order.\n\n**Group:** Streams",
-    "XGROUP DESTROY": "## XGROUP DESTROY\n\n```redis\nXGROUP DESTROY key group\n```\n\nDestroy a consumer group.\n\n**Group:** Streams",
-    "XGROUP DELCONSUMER": "## XGROUP DELCONSUMER\n\n```redis\nXGROUP DELCONSUMER key group consumer\n```\n\nRemove a consumer from a group.\n\n**Group:** Streams",
-    "XGROUP SETID": "## XGROUP SETID\n\n```redis\nXGROUP SETID key group id|$ [ENTRIESREAD n]\n```\n\nSet the last delivered ID of a consumer group.\n\n**Group:** Streams",
-    "XINFO GROUPS": "## XINFO GROUPS\n\n```redis\nXINFO GROUPS key\n```\n\nList consumer groups for a stream.\n\n**Group:** Streams",
-    "XINFO CONSUMERS": "## XINFO CONSUMERS\n\n```redis\nXINFO CONSUMERS key group\n```\n\nList consumers in a consumer group.\n\n**Group:** Streams",
-    "XDEL": "## XDEL\n\n```redis\nXDEL key id [id ...]\n```\n\nDelete specific entries from a stream by ID.\n\n**Group:** Streams",
-    "XSETID": "## XSETID\n\n```redis\nXSETID key last-id [ENTRIESADDED n] [MAXDELETEDID id]\n```\n\nSet the last entry ID of a stream.\n\n**Group:** Streams",
-    "UNSUBSCRIBE": "## UNSUBSCRIBE\n\n```redis\nUNSUBSCRIBE [channel ...]\n```\n\nStop listening from channels.\n\n**Group:** Pub/Sub",
-    "PUNSUBSCRIBE": "## PUNSUBSCRIBE\n\n```redis\nPUNSUBSCRIBE [pattern ...]\n```\n\nStop listening from pattern channels.\n\n**Group:** Pub/Sub",
-    "PUBSUB CHANNELS": "## PUBSUB CHANNELS\n\n```redis\nPUBSUB CHANNELS [pattern]\n```\n\nList active channels. Optionally filter by pattern.\n\n**Group:** Pub/Sub",
-    "PUBSUB NUMSUB": "## PUBSUB NUMSUB\n\n```redis\nPUBSUB NUMSUB [channel ...]\n```\n\nGet subscriber counts for channels.\n\n**Group:** Pub/Sub",
-    "PUBSUB NUMPAT": "## PUBSUB NUMPAT\n\n```redis\nPUBSUB NUMPAT\n```\n\nGet the count of unique pattern subscriptions.\n\n**Group:** Pub/Sub",
-    "SSUBSCRIBE": "## SSUBSCRIBE\n\n```redis\nSSUBSCRIBE channel [channel ...]\n```\n\nSubscribe to shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub",
-    "SUNSUBSCRIBE": "## SUNSUBSCRIBE\n\n```redis\nSUNSUBSCRIBE [channel ...]\n```\n\nUnsubscribe from shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub",
-    "SPUBLISH": "## SPUBLISH\n\n```redis\nSPUBLISH channel message\n```\n\nPublish to a shard channel. Redis 7.0+.\n\n**Group:** Pub/Sub",
-    "PUBSUB SHARDCHANNELS": "## PUBSUB SHARDCHANNELS\n\n```redis\nPUBSUB SHARDCHANNELS [pattern]\n```\n\nList active shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub",
-    "PUBSUB SHARDNUMSUB": "## PUBSUB SHARDNUMSUB\n\n```redis\nPUBSUB SHARDNUMSUB [channel ...]\n```\n\nGet shard channel subscriber counts. Redis 7.0+.\n\n**Group:** Pub/Sub",
-    "UNWATCH": "## UNWATCH\n\n```redis\nUNWATCH\n```\n\nForget all watched keys.\n\n**Group:** Transactions",
-    "EVALRO": "## EVALRO\n\n```redis\nEVALRO script numkeys [key ...] [arg ...]\n```\n\nExecute Lua script in read-only mode. Redis 7.0+.\n\n**Group:** Scripting",
-    "EVALSHA_RO": "## EVALSHA_RO\n\n```redis\nEVALSHA_RO sha1 numkeys [key ...] [arg ...]\n```\n\nExecute cached script in read-only mode. Redis 7.0+.\n\n**Group:** Scripting",
-    "SCRIPT LOAD": "## SCRIPT LOAD\n\n```redis\nSCRIPT LOAD script\n```\n\nLoad a Lua script into the script cache. Returns SHA1 hash.\n\n**Group:** Scripting",
-    "SCRIPT EXISTS": "## SCRIPT EXISTS\n\n```redis\nSCRIPT EXISTS sha1 [sha1 ...]\n```\n\nCheck if scripts exist in the script cache.\n\n**Group:** Scripting",
-    "SCRIPT FLUSH": "## SCRIPT FLUSH\n\n```redis\nSCRIPT FLUSH [ASYNC|SYNC]\n```\n\nRemove all scripts from the script cache.\n\n**Group:** Scripting",
-    "SCRIPT KILL": "## SCRIPT KILL\n\n```redis\nSCRIPT KILL\n```\n\nKill the currently executing Lua script.\n\n**Group:** Scripting",
-    "FCALL_RO": "## FCALL_RO\n\n```redis\nFCALL_RO function numkeys [key ...] [arg ...]\n```\n\nCall a function in read-only mode. Redis 7.0+.\n\n**Group:** Scripting",
-    "FUNCTION DUMP": "## FUNCTION DUMP\n\n```redis\nFUNCTION DUMP\n```\n\nSerialize all loaded functions. Redis 7.0+.\n\n**Group:** Scripting",
-    "FUNCTION RESTORE": "## FUNCTION RESTORE\n\n```redis\nFUNCTION RESTORE serialized-data [FLUSH|APPEND|REPLACE]\n```\n\nRestore functions from FUNCTION DUMP. Redis 7.0+.\n\n**Group:** Scripting",
-    "FUNCTION FLUSH": "## FUNCTION FLUSH\n\n```redis\nFUNCTION FLUSH [ASYNC|SYNC]\n```\n\nDelete all loaded functions. Redis 7.0+.\n\n**Group:** Scripting",
-    "FUNCTION DELETE": "## FUNCTION DELETE\n\n```redis\nFUNCTION DELETE library-name\n```\n\nDelete a function library. Redis 7.0+.\n\n**Group:** Scripting",
-    "FUNCTION STATS": "## FUNCTION STATS\n\n```redis\nFUNCTION STATS\n```\n\nGet function execution statistics. Redis 7.0+.\n\n**Group:** Scripting",
-    "GEOHASH": "## GEOHASH\n\n```redis\nGEOHASH key member [member ...]\n```\n\nReturn Geohash strings representing positions.\n\n**Group:** Geo",
-    "GEOPOS": "## GEOPOS\n\n```redis\nGEOPOS key member [member ...]\n```\n\nReturn longitude/latitude of members.\n\n**Group:** Geo",
-    "GEOSEARCHSTORE": "## GEOSEARCHSTORE\n\n```redis\nGEOSEARCHSTORE dest src FROMMEMBER member|FROMLONLAT lon lat BYRADIUS ...|BYBOX ... [ASC|DESC] [COUNT n] [STOREDIST]\n```\n\nStore GEOSEARCH results. Redis 6.2+.\n\n**Group:** Geo",
-    "GEORADIUS": "## GEORADIUS\n\n```redis\nGEORADIUS key longitude latitude radius M|KM|FT|MI [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT n] [ASC|DESC] [STORE key] [STOREDIST key]\n```\n\nQuery by radius from coordinates. Deprecated — use GEOSEARCH.\n\n**Group:** Geo",
-    "GEORADIUSBYMEMBER": "## GEORADIUSBYMEMBER\n\n```redis\nGEORADIUSBYMEMBER key member radius M|KM|FT|MI ...\n```\n\nQuery by radius from a member. Deprecated — use GEOSEARCH.\n\n**Group:** Geo",
-    "CONFIG RESETSTAT": "## CONFIG RESETSTAT\n\n```redis\nCONFIG RESETSTAT\n```\n\nReset the statistics returned by INFO.\n\n**Group:** Server",
-    "CONFIG REWRITE": "## CONFIG REWRITE\n\n```redis\nCONFIG REWRITE\n```\n\nRewrite the redis.conf file with current in-memory configuration.\n\n**Group:** Server",
-    "BGREWRITEAOF": "## BGREWRITEAOF\n\n```redis\nBGREWRITEAOF\n```\n\nTrigger an asynchronous AOF rewrite.\n\n**Group:** Server",
-    "SAVE": "## SAVE\n\n```redis\nSAVE\n```\n\nSynchronously save the dataset to disk. BLOCKS the server.\n\n**Group:** Server",
-    "LASTSAVE": "## LASTSAVE\n\n```redis\nLASTSAVE\n```\n\nReturn the Unix timestamp of the last successful RDB save.\n\n**Group:** Server",
-    "SHUTDOWN": "## SHUTDOWN\n\n```redis\nSHUTDOWN [NOSAVE|SAVE] [NOW] [FORCE]\n```\n\nSynchronously save (unless NOSAVE) and shut down the server.\n\n**Group:** Server",
-    "SLOWLOG LEN": "## SLOWLOG LEN\n\n```redis\nSLOWLOG LEN\n```\n\nGet the number of entries in the slow log.\n\n**Group:** Server",
-    "SLOWLOG RESET": "## SLOWLOG RESET\n\n```redis\nSLOWLOG RESET\n```\n\nReset the slow log.\n\n**Group:** Server",
-    "TIME": "## TIME\n\n```redis\nTIME\n```\n\nReturn the current server time as [unix-seconds, microseconds].\n\n**Group:** Server",
-    "CLIENT ID": "## CLIENT ID\n\n```redis\nCLIENT ID\n```\n\nReturn the ID of the current connection.\n\n**Group:** Server",
-    "CLIENT GETNAME": "## CLIENT GETNAME\n\n```redis\nCLIENT GETNAME\n```\n\nGet the name of the current connection.\n\n**Group:** Server",
-    "CLIENT PAUSE": "## CLIENT PAUSE\n\n```redis\nCLIENT PAUSE timeout [WRITE|ALL]\n```\n\nPause all clients for timeout milliseconds.\n\n**Group:** Server",
-    "CLIENT UNPAUSE": "## CLIENT UNPAUSE\n\n```redis\nCLIENT UNPAUSE\n```\n\nResume client processing after CLIENT PAUSE.\n\n**Group:** Server",
-    "CLIENT NO-EVICT": "## CLIENT NO-EVICT\n\n```redis\nCLIENT NO-EVICT ON|OFF\n```\n\nExempt current connection from client eviction. Redis 7.0+.\n\n**Group:** Server",
-    "CLIENT NO-TOUCH": "## CLIENT NO-TOUCH\n\n```redis\nCLIENT NO-TOUCH ON|OFF\n```\n\nDon't update key access time for current connection. Redis 7.2+.\n\n**Group:** Server",
-    "ECHO": "## ECHO\n\n```redis\nECHO message\n```\n\nEcho the given message back.\n\n**Group:** Server",
-    "SWAPDB": "## SWAPDB\n\n```redis\nSWAPDB db1 db2\n```\n\nSwap two Redis databases atomically.\n\n**Group:** Server",
-    "MEMORY STATS": "## MEMORY STATS\n\n```redis\nMEMORY STATS\n```\n\nGet detailed memory statistics.\n\n**Group:** Server",
-    "MEMORY PURGE": "## MEMORY PURGE\n\n```redis\nMEMORY PURGE\n```\n\nAsk allocator to release memory.\n\n**Group:** Server",
-    "MEMORY MALLOC-STATS": "## MEMORY MALLOC-STATS\n\n```redis\nMEMORY MALLOC-STATS\n```\n\nShow internal allocator statistics.\n\n**Group:** Server",
-    "LATENCY RESET": "## LATENCY RESET\n\n```redis\nLATENCY RESET [event ...]\n```\n\nReset latency data for events.\n\n**Group:** Server",
-    "LATENCY GRAPH": "## LATENCY GRAPH\n\n```redis\nLATENCY GRAPH event\n```\n\nRender an ASCII art latency graph for an event.\n\n**Group:** Server",
-    "COMMAND COUNT": "## COMMAND COUNT\n\n```redis\nCOMMAND COUNT\n```\n\nGet total number of commands supported by the server.\n\n**Group:** Server",
-    "COMMAND LIST": "## COMMAND LIST\n\n```redis\nCOMMAND LIST [MODULE module] [ACLCAT cat] [PATTERN pattern]\n```\n\nList all command names.\n\n**Group:** Server",
-    "COMMAND INFO": "## COMMAND INFO\n\n```redis\nCOMMAND INFO [command ...]\n```\n\nGet details about specific commands.\n\n**Group:** Server",
-    "COMMAND GETKEYS": "## COMMAND GETKEYS\n\n```redis\nCOMMAND GETKEYS command [arg ...]\n```\n\nExtract keys from a full command.\n\n**Group:** Server",
-    "COMMAND DOCS": "## COMMAND DOCS\n\n```redis\nCOMMAND DOCS [command ...]\n```\n\nGet documentation for commands. Redis 7.0+.\n\n**Group:** Server",
-    "ACL LIST": "## ACL LIST\n\n```redis\nACL LIST\n```\n\nList all users and their ACL rules.\n\n**Group:** ACL",
-    "ACL USERS": "## ACL USERS\n\n```redis\nACL USERS\n```\n\nList all configured usernames.\n\n**Group:** ACL",
-    "ACL WHOAMI": "## ACL WHOAMI\n\n```redis\nACL WHOAMI\n```\n\nReturn the username of the current connection.\n\n**Group:** ACL",
-    "ACL LOG": "## ACL LOG\n\n```redis\nACL LOG [count|RESET]\n```\n\nShow recent security events (failed auth, denied commands).\n\n**Group:** ACL",
-    "ACL SAVE": "## ACL SAVE\n\n```redis\nACL SAVE\n```\n\nSave the current ACL rules to the configured ACL file.\n\n**Group:** ACL",
-    "ACL LOAD": "## ACL LOAD\n\n```redis\nACL LOAD\n```\n\nLoad ACL rules from the configured ACL file.\n\n**Group:** ACL",
-    "CLUSTER MYID": "## CLUSTER MYID\n\n```redis\nCLUSTER MYID\n```\n\nReturn the node's cluster ID.\n\n**Group:** Cluster",
-    "CLUSTER SLOTS": "## CLUSTER SLOTS\n\n```redis\nCLUSTER SLOTS\n```\n\nGet mapping of hash slots to nodes. Deprecated — use CLUSTER SHARDS.\n\n**Group:** Cluster",
-    "CLUSTER SHARDS": "## CLUSTER SHARDS\n\n```redis\nCLUSTER SHARDS\n```\n\nGet detailed shard information. Redis 7.0+.\n\n**Group:** Cluster",
-    "CLUSTER MEET": "## CLUSTER MEET\n\n```redis\nCLUSTER MEET ip port\n```\n\nAdd a node to the cluster.\n\n**Group:** Cluster",
-    "CLUSTER FORGET": "## CLUSTER FORGET\n\n```redis\nCLUSTER FORGET node-id\n```\n\nRemove a node from the cluster's known nodes.\n\n**Group:** Cluster",
-    "CLUSTER REPLICATE": "## CLUSTER REPLICATE\n\n```redis\nCLUSTER REPLICATE node-id\n```\n\nMake current node a replica of the specified master.\n\n**Group:** Cluster",
-    "CLUSTER RESET": "## CLUSTER RESET\n\n```redis\nCLUSTER RESET [HARD|SOFT]\n```\n\nReset the cluster configuration of the node.\n\n**Group:** Cluster",
-    "CLUSTER DELSLOTS": "## CLUSTER DELSLOTS\n\n```redis\nCLUSTER DELSLOTS slot [slot ...]\n```\n\nRemove hash slots from this node.\n\n**Group:** Cluster",
-    "CLUSTER SETSLOT": "## CLUSTER SETSLOT\n\n```redis\nCLUSTER SETSLOT slot IMPORTING|MIGRATING|NODE|STABLE [node-id]\n```\n\nBind, migrate, or stabilize a hash slot.\n\n**Group:** Cluster",
-    "CLUSTER COUNTKEYSINSLOT": "## CLUSTER COUNTKEYSINSLOT\n\n```redis\nCLUSTER COUNTKEYSINSLOT slot\n```\n\nCount keys in a specific hash slot.\n\n**Group:** Cluster",
-    "CLUSTER GETKEYSINSLOT": "## CLUSTER GETKEYSINSLOT\n\n```redis\nCLUSTER GETKEYSINSLOT slot count\n```\n\nReturn keys assigned to a hash slot.\n\n**Group:** Cluster",
-    "CLUSTER KEYSLOT": "## CLUSTER KEYSLOT\n\n```redis\nCLUSTER KEYSLOT key\n```\n\nReturn the hash slot number for a key.\n\n**Group:** Cluster",
-    "CLUSTER LINKS": "## CLUSTER LINKS\n\n```redis\nCLUSTER LINKS\n```\n\nList cluster bus connections. Redis 7.0+.\n\n**Group:** Cluster",
-    "CLUSTER FLUSHSLOTS": "## CLUSTER FLUSHSLOTS\n\n```redis\nCLUSTER FLUSHSLOTS\n```\n\nDelete all slot assignments from this node.\n\n**Group:** Cluster",
-    "CLUSTER SAVECONFIG": "## CLUSTER SAVECONFIG\n\n```redis\nCLUSTER SAVECONFIG\n```\n\nSave the cluster configuration to nodes.conf.\n\n**Group:** Cluster",
-    "READONLY": "## READONLY\n\n```redis\nREADONLY\n```\n\nEnable read queries on a cluster replica. Allows reading from replicas.\n\n**Group:** Cluster",
-    "READWRITE": "## READWRITE\n\n```redis\nREADWRITE\n```\n\nDisable READONLY mode. Replica rejects read queries.\n\n**Group:** Cluster",
-    "SLAVEOF": "## SLAVEOF\n\n```redis\nSLAVEOF host port | SLAVEOF NO ONE\n```\n\nLegacy alias for REPLICAOF.\n\n**Group:** Replication",
-    "FAILOVER": "## FAILOVER\n\n```redis\nFAILOVER [TO host port [FORCE]] [ABORT] [TIMEOUT ms]\n```\n\nCoordinated failover to a replica. Redis 6.2+.\n\n**Group:** Replication",
-    "MODULE LOAD": "## MODULE LOAD\n\n```redis\nMODULE LOAD path [arg ...]\n```\n\nLoad a Redis module from a shared library.\n\n**Group:** Modules",
-    "MODULE LIST": "## MODULE LIST\n\n```redis\nMODULE LIST\n```\n\nList all loaded modules.\n\n**Group:** Modules",
-    "MODULE UNLOAD": "## MODULE UNLOAD\n\n```redis\nMODULE UNLOAD name\n```\n\nUnload a loaded Redis module.\n\n**Group:** Modules",
-    "MODULE LOADEX": "## MODULE LOADEX\n\n```redis\nMODULE LOADEX path [CONFIG name value ...] [ARGS arg ...]\n```\n\nLoad module with configuration. Redis 7.0+.\n\n**Group:** Modules",
-    "MIGRATE": "## MIGRATE\n\n```redis\nMIGRATE host port key|\"\" db timeout [COPY] [REPLACE] [AUTH password] [AUTH2 username password] [KEYS key ...]\n```\n\nAtomically transfer a key to another Redis instance.\n\n**Group:** Generic",
-    "RESET": "## RESET\n\n```redis\nRESET\n```\n\nReset the connection state to default.\n\n**Group:** Connection",
-    "QUIT": "## QUIT\n\n```redis\nQUIT\n```\n\nClose the connection. Client should close after receiving OK.\n\n**Group:** Connection",
-    "HELLO": "## HELLO\n\n```redis\nHELLO [protover [AUTH username password] [SETNAME clientname]]\n```\n\nSwitch RESP protocol version (2 or 3). Redis 6.0+.\n\n**Group:** Connection",
-    "string": "## string\n\n```redis\nRedis String\n```\n\nThe most basic Redis data type. A string value can be at most 512 MB. Used for caching, counters, sessions, and general key-value storage.\n\n**Group:** Data Types",
-    "list": "## list\n\n```redis\nRedis List\n```\n\nOrdered collection of strings. Implemented as linked list. Supports push/pop from both ends. Used for queues, stacks, and recent-items lists.\n\n**Group:** Data Types",
-    "set": "## set\n\n```redis\nRedis Set\n```\n\nUnordered collection of unique strings. Supports add, remove, membership test, and set operations (union, intersection, difference).\n\n**Group:** Data Types",
-    "zset": "## zset\n\n```redis\nRedis Sorted Set\n```\n\nSet of unique strings ordered by a floating-point score. Supports range queries by score or rank. Used for leaderboards, rate limiters, priority queues.\n\n**Group:** Data Types",
-    "hash": "## hash\n\n```redis\nRedis Hash\n```\n\nMap of field-value pairs. Memory-efficient for representing objects. Each hash can store over 4 billion field-value pairs.\n\n**Group:** Data Types",
-    "stream": "## stream\n\n```redis\nRedis Stream\n```\n\nAppend-only log data structure. Supports consumer groups for reliable message processing. Used for event sourcing, message queues, activity feeds.\n\n**Group:** Data Types",
-    "hyperloglog": "## hyperloglog\n\n```redis\nRedis HyperLogLog\n```\n\nProbabilistic data structure for approximate cardinality counting. Uses ~12 KB regardless of set size. 0.81% standard error.\n\n**Group:** Data Types",
-    "bitmap": "## bitmap\n\n```redis\nRedis Bitmap\n```\n\nString type interpreted as an array of bits. Space-efficient for storing boolean information across a large key space.\n\n**Group:** Data Types",
-    "geospatial": "## geospatial\n\n```redis\nRedis Geospatial Index\n```\n\nSorted set with geohash-encoded coordinates. Supports radius/box queries, distance calculations. Built on sorted sets internally.\n\n**Group:** Data Types"
+    "ACL CAT": {
+      "contents": [
+        {
+          "value": "## ACL CAT\n\n```redis\nACL CAT [category]\n```\n\nList all ACL categories or commands in a category.\n\n```redis\n> ACL CAT\n1) \"read\"\n2) \"write\"\n3) \"set\"\n...\n\n> ACL CAT read\n1) \"GET\"\n2) \"MGET\"\n...\n```"
+        }
+      ]
+    },
+    "ACL DELUSER": {
+      "contents": [
+        {
+          "value": "## ACL DELUSER\n\n```redis\nACL DELUSER username [username ...]\n```\n\nDelete ACL users. Cannot delete the `default` user.\n\n```redis\n> ACL DELUSER tempuser\nOK\n```"
+        }
+      ]
+    },
+    "ACL GENPASS": {
+      "contents": [
+        {
+          "value": "## ACL GENPASS\n\n```redis\nACL GENPASS [bits]\n```\n\nGenerate a secure password for ACL users.\n\n```redis\n> ACL GENPASS\n\"1a2b3c4d5e6f...\"\n\n> ACL GENPASS 128\n\"a1b2c3d4e5f6a7b8...\"\n```"
+        }
+      ]
+    },
+    "ACL GETUSER": {
+      "contents": [
+        {
+          "value": "## ACL GETUSER\n\n```redis\nACL GETUSER username\n```\n\nGet ACL rules for a specific user.\n\n```redis\n> ACL GETUSER default\n1) \"flags\"\n2) 1) \"on\"\n3) \"passwords\"\n...\n```"
+        }
+      ]
+    },
+    "CLIENT KILL": {
+      "contents": [
+        {
+          "value": "## CLIENT KILL\n\n```redis\nCLIENT KILL [ID id] [ADDR ip:port] [LADDR ip:port] [USER username]\n```\n\nClose client connections matching filters.\n\n```redis\n> CLIENT KILL ID 42\n(integer) 1\n\n> CLIENT KILL ADDR 192.168.1.100:52340\n(integer) 1\n```"
+        }
+      ]
+    },
+    "CLIENT SETNAME": {
+      "contents": [
+        {
+          "value": "## CLIENT SETNAME\n\n```redis\nCLIENT SETNAME connection-name\n```\n\nSet a name for the current connection (visible in CLIENT LIST).\n\n```redis\n> CLIENT SETNAME worker-1\nOK\n```"
+        }
+      ]
+    },
+    "CLUSTER ADDSLOTS": {
+      "contents": [
+        {
+          "value": "## CLUSTER ADDSLOTS\n\n```redis\nCLUSTER ADDSLOTS slot [slot ...]\n```\n\nAssign hash slots to the current node.\n\n```redis\n> CLUSTER ADDSLOTS 0 1 2 3 4 5\nOK\n```"
+        }
+      ]
+    },
+    "DEBUG OBJECT": {
+      "contents": [
+        {
+          "value": "## DEBUG OBJECT\n\n```redis\nDEBUG OBJECT key\n```\n\nGet debugging information about a key's internal encoding.\n\n```redis\n> DEBUG OBJECT mykey\nValue at:0x... refcount:1 encoding:embstr serializedlength:3 lru:... lru_seconds_idle:0\n```"
+        }
+      ]
+    },
+    "BITFIELD": {
+      "contents": [
+        {
+          "value": "## BITFIELD\n\n```redis\nBITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]\n```\n\nPerform arbitrary bitfield integer operations on strings.\n\n```redis\n# Set 8-bit unsigned counter at bit offset 0\n> BITFIELD mykey SET u8 0 200\n1) (integer) 0\n\n# Increment by 50 with saturation overflow\n> BITFIELD mykey OVERFLOW SAT INCRBY u8 0 50\n1) (integer) 250\n```"
+        }
+      ]
+    },
+    "BITPOS": {
+      "contents": [
+        {
+          "value": "## BITPOS\n\n```redis\nBITPOS key bit [start [end [BYTE|BIT]]]\n```\n\nFind first bit set to 0 or 1.\n\n```redis\n> SET mykey \"\\xff\\xf0\\x00\"\nOK\n> BITPOS mykey 0  -- first 0 bit\n(integer) 12\n> BITPOS mykey 1  -- first 1 bit\n(integer) 0\n```"
+        }
+      ]
+    },
+    "BLMOVE": {
+      "contents": [
+        {
+          "value": "## BLMOVE\n\n```redis\nBLMOVE source destination LEFT|RIGHT LEFT|RIGHT timeout\n```\n\nBlocking version of LMOVE. Pop from source list and push to destination.\n\n```redis\n> BLMOVE mylist newlist LEFT RIGHT 0\n\"element\"\n```"
+        }
+      ]
+    },
+    "OBJECT FREQ": {
+      "contents": [
+        {
+          "value": "## OBJECT FREQ\n\n```redis\nOBJECT FREQ key\n```\n\nReturn the access frequency for LFU eviction policy.\n\n```redis\n> OBJECT FREQ mykey\n(integer) 5\n```\n\nOnly useful with `maxmemory-policy` set to an LFU variant."
+        }
+      ]
+    },
+    "OBJECT IDLETIME": {
+      "contents": [
+        {
+          "value": "## OBJECT IDLETIME\n\n```redis\nOBJECT IDLETIME key\n```\n\nReturn seconds since the key was last accessed.\n\n```redis\n> OBJECT IDLETIME mykey\n(integer) 120\n```"
+        }
+      ]
+    },
+    "OBJECT REFCOUNT": {
+      "contents": [
+        {
+          "value": "## OBJECT REFCOUNT\n\n```redis\nOBJECT REFCOUNT key\n```\n\nReturn the reference count of the object (for debugging).\n\n```redis\n> OBJECT REFCOUNT mykey\n(integer) 1\n```"
+        }
+      ]
+    },
+    "MEMORY DOCTOR": {
+      "contents": [
+        {
+          "value": "## MEMORY DOCTOR\n\n```redis\nMEMORY DOCTOR\n```\n\nReturn memory problems report.\n\n```redis\n> MEMORY DOCTOR\n\"Sam, I have no memory problems\"\n```"
+        }
+      ]
+    },
+    "LATENCY LATEST": {
+      "contents": [
+        {
+          "value": "## LATENCY LATEST\n\n```redis\nLATENCY LATEST\n```\n\nReturn latest latency samples for all events.\n\n```redis\n> LATENCY LATEST\n1) 1) \"command\"\n   2) (integer) 1695000000\n   3) (integer) 15\n   4) (integer) 20\n```"
+        }
+      ]
+    },
+    "LATENCY HISTORY": {
+      "contents": [
+        {
+          "value": "## LATENCY HISTORY\n\n```redis\nLATENCY HISTORY event\n```\n\nReturn latency history for a specific event.\n\n```redis\n> LATENCY HISTORY command\n1) 1) (integer) 1695000000\n   2) (integer) 15\n2) 1) (integer) 1695000001\n   2) (integer) 12\n```"
+        }
+      ]
+    },
+    "FUNCTION CALL": {
+      "contents": [
+        {
+          "value": "## FCALL / FCALL_RO\n\n```redis\nFCALL function numkeys [key ...] [arg ...]\nFCALL_RO function numkeys [key ...] [arg ...]\n```\n\nCall a previously loaded Redis Function.\n\n```redis\n> FCALL myfunc 1 mykey\n\"value\"\n```"
+        }
+      ]
+    },
+    "FUNCTION LIST": {
+      "contents": [
+        {
+          "value": "## FUNCTION LIST\n\n```redis\nFUNCTION LIST [LIBRARYNAME pattern] [WITHCODE]\n```\n\nList loaded function libraries.\n\n```redis\n> FUNCTION LIST\n1) 1) \"library_name\"\n   2) \"mylib\"\n   3) \"functions\"\n   4) 1) 1) \"name\"\n         2) \"myfunc\"\n```"
+        }
+      ]
+    },
+    "WAITAOF": {
+      "contents": [
+        {
+          "value": "## WAITAOF\n\n```redis\nWAITAOF numlocal numreplicas timeout\n```\n\nWait for AOF fsync on local and replicas. Returns number of local fsyncs and replicas that acknowledged.\n\n```redis\n> WAITAOF 1 0 5000  -- wait for local fsync, 5s timeout\n1) (integer) 1\n2) (integer) 0\n```"
+        }
+      ]
+    },
+    "GETSET": {
+      "contents": [
+        {
+          "value": "## GETSET\n\n```redis\nGETSET key value\n```\n\nAtomically set key to value and return the old value. Deprecated in favor of SET with GET option.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "MSETNX": {
+      "contents": [
+        {
+          "value": "## MSETNX\n\n```redis\nMSETNX key value [key value ...]\n```\n\nSet multiple keys only if none of them exist. Atomic — all or nothing.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "PSETEX": {
+      "contents": [
+        {
+          "value": "## PSETEX\n\n```redis\nPSETEX key milliseconds value\n```\n\nSet key to value with expiration in milliseconds.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "SETRANGE": {
+      "contents": [
+        {
+          "value": "## SETRANGE\n\n```redis\nSETRANGE key offset value\n```\n\nOverwrite part of the string at key starting at offset.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "DECRBY": {
+      "contents": [
+        {
+          "value": "## DECRBY\n\n```redis\nDECRBY key decrement\n```\n\nAtomically decrement the integer value of key by the given amount.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "SUBSTR": {
+      "contents": [
+        {
+          "value": "## SUBSTR\n\n```redis\nSUBSTR key start end\n```\n\nReturns a substring. Deprecated alias for GETRANGE.\n\n**Group:** Strings"
+        }
+      ]
+    },
+    "HKEYS": {
+      "contents": [
+        {
+          "value": "## HKEYS\n\n```redis\nHKEYS key\n```\n\nReturns all field names in a hash.\n\n**Group:** Hashes"
+        }
+      ]
+    },
+    "HVALS": {
+      "contents": [
+        {
+          "value": "## HVALS\n\n```redis\nHVALS key\n```\n\nReturns all values in a hash.\n\n**Group:** Hashes"
+        }
+      ]
+    },
+    "HINCRBYFLOAT": {
+      "contents": [
+        {
+          "value": "## HINCRBYFLOAT\n\n```redis\nHINCRBYFLOAT key field increment\n```\n\nIncrement the float value of a hash field.\n\n**Group:** Hashes"
+        }
+      ]
+    },
+    "HSETNX": {
+      "contents": [
+        {
+          "value": "## HSETNX\n\n```redis\nHSETNX key field value\n```\n\nSet hash field only if it does not exist.\n\n**Group:** Hashes"
+        }
+      ]
+    },
+    "LSET": {
+      "contents": [
+        {
+          "value": "## LSET\n\n```redis\nLSET key index element\n```\n\nSet the element at index in a list.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "LREM": {
+      "contents": [
+        {
+          "value": "## LREM\n\n```redis\nLREM key count element\n```\n\nRemove count occurrences of element. count>0: head to tail; count<0: tail to head; 0: all.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "LTRIM": {
+      "contents": [
+        {
+          "value": "## LTRIM\n\n```redis\nLTRIM key start stop\n```\n\nTrim list to the specified range.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "RPOPLPUSH": {
+      "contents": [
+        {
+          "value": "## RPOPLPUSH\n\n```redis\nRPOPLPUSH source destination\n```\n\nPop from tail of source and push to head of destination. Deprecated — use LMOVE.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "LMPOP": {
+      "contents": [
+        {
+          "value": "## LMPOP\n\n```redis\nLMPOP numkeys key [key ...] LEFT|RIGHT [COUNT count]\n```\n\nPop from first non-empty list. Redis 7.0+.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "BLMPOP": {
+      "contents": [
+        {
+          "value": "## BLMPOP\n\n```redis\nBLMPOP timeout numkeys key [key ...] LEFT|RIGHT [COUNT count]\n```\n\nBlocking version of LMPOP. Redis 7.0+.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "LPUSHX": {
+      "contents": [
+        {
+          "value": "## LPUSHX\n\n```redis\nLPUSHX key element [element ...]\n```\n\nPush to head only if list exists.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "RPUSHX": {
+      "contents": [
+        {
+          "value": "## RPUSHX\n\n```redis\nRPUSHX key element [element ...]\n```\n\nPush to tail only if list exists.\n\n**Group:** Lists"
+        }
+      ]
+    },
+    "SMISMEMBER": {
+      "contents": [
+        {
+          "value": "## SMISMEMBER\n\n```redis\nSMISMEMBER key member [member ...]\n```\n\nCheck multiple members. Returns array of 1/0. Redis 6.2+.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "SRANDMEMBER": {
+      "contents": [
+        {
+          "value": "## SRANDMEMBER\n\n```redis\nSRANDMEMBER key [count]\n```\n\nGet random member(s) without removing.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "SUNIONSTORE": {
+      "contents": [
+        {
+          "value": "## SUNIONSTORE\n\n```redis\nSUNIONSTORE destination key [key ...]\n```\n\nStore the union of sets.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "SINTERSTORE": {
+      "contents": [
+        {
+          "value": "## SINTERSTORE\n\n```redis\nSINTERSTORE destination key [key ...]\n```\n\nStore the intersection of sets.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "SDIFFSTORE": {
+      "contents": [
+        {
+          "value": "## SDIFFSTORE\n\n```redis\nSDIFFSTORE destination key [key ...]\n```\n\nStore the difference of sets.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "SSCAN": {
+      "contents": [
+        {
+          "value": "## SSCAN\n\n```redis\nSSCAN key cursor [MATCH pattern] [COUNT count]\n```\n\nIncrementally iterate set members.\n\n**Group:** Sets"
+        }
+      ]
+    },
+    "ZREM": {
+      "contents": [
+        {
+          "value": "## ZREM\n\n```redis\nZREM key member [member ...]\n```\n\nRemove members from a sorted set.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZMSCORE": {
+      "contents": [
+        {
+          "value": "## ZMSCORE\n\n```redis\nZMSCORE key member [member ...]\n```\n\nGet scores of multiple members. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZREVRANK": {
+      "contents": [
+        {
+          "value": "## ZREVRANK\n\n```redis\nZREVRANK key member [WITHSCORE]\n```\n\nGet the rank of a member (0-based, descending).\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZLEXCOUNT": {
+      "contents": [
+        {
+          "value": "## ZLEXCOUNT\n\n```redis\nZLEXCOUNT key min max\n```\n\nCount members in a lex range when all scores are equal.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZRANGEBYSCORE": {
+      "contents": [
+        {
+          "value": "## ZRANGEBYSCORE\n\n```redis\nZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]\n```\n\nReturn members with scores in range. Deprecated — use ZRANGE BYSCORE.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZRANGEBYLEX": {
+      "contents": [
+        {
+          "value": "## ZRANGEBYLEX\n\n```redis\nZRANGEBYLEX key min max [LIMIT offset count]\n```\n\nReturn members in a lex range. Deprecated — use ZRANGE BYLEX.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZREVRANGE": {
+      "contents": [
+        {
+          "value": "## ZREVRANGE\n\n```redis\nZREVRANGE key start stop [WITHSCORES]\n```\n\nReturn members in reverse rank order. Deprecated — use ZRANGE REV.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZREVRANGEBYSCORE": {
+      "contents": [
+        {
+          "value": "## ZREVRANGEBYSCORE\n\n```redis\nZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]\n```\n\nReturn members with scores in range, descending. Deprecated.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZUNION": {
+      "contents": [
+        {
+          "value": "## ZUNION\n\n```redis\nZUNION numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]\n```\n\nReturn union without storing. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZINTER": {
+      "contents": [
+        {
+          "value": "## ZINTER\n\n```redis\nZINTER numkeys key [key ...] [WEIGHTS w ...] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]\n```\n\nReturn intersection without storing. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZDIFFSTORE": {
+      "contents": [
+        {
+          "value": "## ZDIFFSTORE\n\n```redis\nZDIFFSTORE dest numkeys key [key ...]\n```\n\nStore difference of sorted sets. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZDIFF": {
+      "contents": [
+        {
+          "value": "## ZDIFF\n\n```redis\nZDIFF numkeys key [key ...] [WITHSCORES]\n```\n\nReturn difference without storing. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZRANDMEMBER": {
+      "contents": [
+        {
+          "value": "## ZRANDMEMBER\n\n```redis\nZRANDMEMBER key [count [WITHSCORES]]\n```\n\nReturn random member(s). Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "BZPOPMIN": {
+      "contents": [
+        {
+          "value": "## BZPOPMIN\n\n```redis\nBZPOPMIN key [key ...] timeout\n```\n\nBlocking pop of member with lowest score.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "BZPOPMAX": {
+      "contents": [
+        {
+          "value": "## BZPOPMAX\n\n```redis\nBZPOPMAX key [key ...] timeout\n```\n\nBlocking pop of member with highest score.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZMPOP": {
+      "contents": [
+        {
+          "value": "## ZMPOP\n\n```redis\nZMPOP numkeys key [key ...] MIN|MAX [COUNT count]\n```\n\nPop from first non-empty sorted set. Redis 7.0+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "BZMPOP": {
+      "contents": [
+        {
+          "value": "## BZMPOP\n\n```redis\nBZMPOP timeout numkeys key [key ...] MIN|MAX [COUNT count]\n```\n\nBlocking version of ZMPOP. Redis 7.0+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZRANGESTORE": {
+      "contents": [
+        {
+          "value": "## ZRANGESTORE\n\n```redis\nZRANGESTORE dst src min max [BYSCORE|BYLEX] [REV] [LIMIT offset count]\n```\n\nStore specified range from sorted set. Redis 6.2+.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "ZSCAN": {
+      "contents": [
+        {
+          "value": "## ZSCAN\n\n```redis\nZSCAN key cursor [MATCH pattern] [COUNT count]\n```\n\nIncrementally iterate sorted set members and scores.\n\n**Group:** Sorted Sets"
+        }
+      ]
+    },
+    "RENAMENX": {
+      "contents": [
+        {
+          "value": "## RENAMENX\n\n```redis\nRENAMENX key newkey\n```\n\nRename key only if newkey does not exist.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "PEXPIRE": {
+      "contents": [
+        {
+          "value": "## PEXPIRE\n\n```redis\nPEXPIRE key milliseconds [NX|XX|GT|LT]\n```\n\nSet TTL on key in milliseconds.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "EXPIREAT": {
+      "contents": [
+        {
+          "value": "## EXPIREAT\n\n```redis\nEXPIREAT key unix-time-seconds [NX|XX|GT|LT]\n```\n\nSet key to expire at a Unix timestamp (seconds).\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "PEXPIREAT": {
+      "contents": [
+        {
+          "value": "## PEXPIREAT\n\n```redis\nPEXPIREAT key unix-time-milliseconds [NX|XX|GT|LT]\n```\n\nSet key to expire at a Unix timestamp (milliseconds).\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "EXPIRETIME": {
+      "contents": [
+        {
+          "value": "## EXPIRETIME\n\n```redis\nEXPIRETIME key\n```\n\nReturns the absolute Unix timestamp at which the key will expire. Redis 7.0+.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "PEXPIRETIME": {
+      "contents": [
+        {
+          "value": "## PEXPIRETIME\n\n```redis\nPEXPIRETIME key\n```\n\nReturns the absolute Unix timestamp (ms) at which the key will expire. Redis 7.0+.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "SORT_RO": {
+      "contents": [
+        {
+          "value": "## SORT_RO\n\n```redis\nSORT_RO key [BY pattern] [LIMIT offset count] [GET pattern ...] [ASC|DESC] [ALPHA]\n```\n\nRead-only variant of SORT. Redis 7.0+.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "MOVE": {
+      "contents": [
+        {
+          "value": "## MOVE\n\n```redis\nMOVE key db\n```\n\nMove key to another database.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "TOUCH": {
+      "contents": [
+        {
+          "value": "## TOUCH\n\n```redis\nTOUCH key [key ...]\n```\n\nAlter the last access time of key(s).\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "WAIT": {
+      "contents": [
+        {
+          "value": "## WAIT\n\n```redis\nWAIT numreplicas timeout\n```\n\nBlock until writes are acknowledged by N replicas or timeout.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "BITFIELD_RO": {
+      "contents": [
+        {
+          "value": "## BITFIELD_RO\n\n```redis\nBITFIELD_RO key GET type offset [GET type offset ...]\n```\n\nRead-only variant of BITFIELD. Redis 6.0+.\n\n**Group:** Bitmaps"
+        }
+      ]
+    },
+    "XRANGE": {
+      "contents": [
+        {
+          "value": "## XRANGE\n\n```redis\nXRANGE key start end [COUNT count]\n```\n\nReturn entries in a range. Use - and + for min/max IDs.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XREVRANGE": {
+      "contents": [
+        {
+          "value": "## XREVRANGE\n\n```redis\nXREVRANGE key end start [COUNT count]\n```\n\nReturn entries in reverse order.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XGROUP DESTROY": {
+      "contents": [
+        {
+          "value": "## XGROUP DESTROY\n\n```redis\nXGROUP DESTROY key group\n```\n\nDestroy a consumer group.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XGROUP DELCONSUMER": {
+      "contents": [
+        {
+          "value": "## XGROUP DELCONSUMER\n\n```redis\nXGROUP DELCONSUMER key group consumer\n```\n\nRemove a consumer from a group.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XGROUP SETID": {
+      "contents": [
+        {
+          "value": "## XGROUP SETID\n\n```redis\nXGROUP SETID key group id|$ [ENTRIESREAD n]\n```\n\nSet the last delivered ID of a consumer group.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XINFO GROUPS": {
+      "contents": [
+        {
+          "value": "## XINFO GROUPS\n\n```redis\nXINFO GROUPS key\n```\n\nList consumer groups for a stream.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XINFO CONSUMERS": {
+      "contents": [
+        {
+          "value": "## XINFO CONSUMERS\n\n```redis\nXINFO CONSUMERS key group\n```\n\nList consumers in a consumer group.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XDEL": {
+      "contents": [
+        {
+          "value": "## XDEL\n\n```redis\nXDEL key id [id ...]\n```\n\nDelete specific entries from a stream by ID.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "XSETID": {
+      "contents": [
+        {
+          "value": "## XSETID\n\n```redis\nXSETID key last-id [ENTRIESADDED n] [MAXDELETEDID id]\n```\n\nSet the last entry ID of a stream.\n\n**Group:** Streams"
+        }
+      ]
+    },
+    "UNSUBSCRIBE": {
+      "contents": [
+        {
+          "value": "## UNSUBSCRIBE\n\n```redis\nUNSUBSCRIBE [channel ...]\n```\n\nStop listening from channels.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUNSUBSCRIBE": {
+      "contents": [
+        {
+          "value": "## PUNSUBSCRIBE\n\n```redis\nPUNSUBSCRIBE [pattern ...]\n```\n\nStop listening from pattern channels.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUBSUB CHANNELS": {
+      "contents": [
+        {
+          "value": "## PUBSUB CHANNELS\n\n```redis\nPUBSUB CHANNELS [pattern]\n```\n\nList active channels. Optionally filter by pattern.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUBSUB NUMSUB": {
+      "contents": [
+        {
+          "value": "## PUBSUB NUMSUB\n\n```redis\nPUBSUB NUMSUB [channel ...]\n```\n\nGet subscriber counts for channels.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUBSUB NUMPAT": {
+      "contents": [
+        {
+          "value": "## PUBSUB NUMPAT\n\n```redis\nPUBSUB NUMPAT\n```\n\nGet the count of unique pattern subscriptions.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "SSUBSCRIBE": {
+      "contents": [
+        {
+          "value": "## SSUBSCRIBE\n\n```redis\nSSUBSCRIBE channel [channel ...]\n```\n\nSubscribe to shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "SUNSUBSCRIBE": {
+      "contents": [
+        {
+          "value": "## SUNSUBSCRIBE\n\n```redis\nSUNSUBSCRIBE [channel ...]\n```\n\nUnsubscribe from shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "SPUBLISH": {
+      "contents": [
+        {
+          "value": "## SPUBLISH\n\n```redis\nSPUBLISH channel message\n```\n\nPublish to a shard channel. Redis 7.0+.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUBSUB SHARDCHANNELS": {
+      "contents": [
+        {
+          "value": "## PUBSUB SHARDCHANNELS\n\n```redis\nPUBSUB SHARDCHANNELS [pattern]\n```\n\nList active shard channels. Redis 7.0+.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "PUBSUB SHARDNUMSUB": {
+      "contents": [
+        {
+          "value": "## PUBSUB SHARDNUMSUB\n\n```redis\nPUBSUB SHARDNUMSUB [channel ...]\n```\n\nGet shard channel subscriber counts. Redis 7.0+.\n\n**Group:** Pub/Sub"
+        }
+      ]
+    },
+    "UNWATCH": {
+      "contents": [
+        {
+          "value": "## UNWATCH\n\n```redis\nUNWATCH\n```\n\nForget all watched keys.\n\n**Group:** Transactions"
+        }
+      ]
+    },
+    "EVALRO": {
+      "contents": [
+        {
+          "value": "## EVALRO\n\n```redis\nEVALRO script numkeys [key ...] [arg ...]\n```\n\nExecute Lua script in read-only mode. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "EVALSHA_RO": {
+      "contents": [
+        {
+          "value": "## EVALSHA_RO\n\n```redis\nEVALSHA_RO sha1 numkeys [key ...] [arg ...]\n```\n\nExecute cached script in read-only mode. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "SCRIPT LOAD": {
+      "contents": [
+        {
+          "value": "## SCRIPT LOAD\n\n```redis\nSCRIPT LOAD script\n```\n\nLoad a Lua script into the script cache. Returns SHA1 hash.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "SCRIPT EXISTS": {
+      "contents": [
+        {
+          "value": "## SCRIPT EXISTS\n\n```redis\nSCRIPT EXISTS sha1 [sha1 ...]\n```\n\nCheck if scripts exist in the script cache.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "SCRIPT FLUSH": {
+      "contents": [
+        {
+          "value": "## SCRIPT FLUSH\n\n```redis\nSCRIPT FLUSH [ASYNC|SYNC]\n```\n\nRemove all scripts from the script cache.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "SCRIPT KILL": {
+      "contents": [
+        {
+          "value": "## SCRIPT KILL\n\n```redis\nSCRIPT KILL\n```\n\nKill the currently executing Lua script.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FCALL_RO": {
+      "contents": [
+        {
+          "value": "## FCALL_RO\n\n```redis\nFCALL_RO function numkeys [key ...] [arg ...]\n```\n\nCall a function in read-only mode. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FUNCTION DUMP": {
+      "contents": [
+        {
+          "value": "## FUNCTION DUMP\n\n```redis\nFUNCTION DUMP\n```\n\nSerialize all loaded functions. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FUNCTION RESTORE": {
+      "contents": [
+        {
+          "value": "## FUNCTION RESTORE\n\n```redis\nFUNCTION RESTORE serialized-data [FLUSH|APPEND|REPLACE]\n```\n\nRestore functions from FUNCTION DUMP. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FUNCTION FLUSH": {
+      "contents": [
+        {
+          "value": "## FUNCTION FLUSH\n\n```redis\nFUNCTION FLUSH [ASYNC|SYNC]\n```\n\nDelete all loaded functions. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FUNCTION DELETE": {
+      "contents": [
+        {
+          "value": "## FUNCTION DELETE\n\n```redis\nFUNCTION DELETE library-name\n```\n\nDelete a function library. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "FUNCTION STATS": {
+      "contents": [
+        {
+          "value": "## FUNCTION STATS\n\n```redis\nFUNCTION STATS\n```\n\nGet function execution statistics. Redis 7.0+.\n\n**Group:** Scripting"
+        }
+      ]
+    },
+    "GEOHASH": {
+      "contents": [
+        {
+          "value": "## GEOHASH\n\n```redis\nGEOHASH key member [member ...]\n```\n\nReturn Geohash strings representing positions.\n\n**Group:** Geo"
+        }
+      ]
+    },
+    "GEOPOS": {
+      "contents": [
+        {
+          "value": "## GEOPOS\n\n```redis\nGEOPOS key member [member ...]\n```\n\nReturn longitude/latitude of members.\n\n**Group:** Geo"
+        }
+      ]
+    },
+    "GEOSEARCHSTORE": {
+      "contents": [
+        {
+          "value": "## GEOSEARCHSTORE\n\n```redis\nGEOSEARCHSTORE dest src FROMMEMBER member|FROMLONLAT lon lat BYRADIUS ...|BYBOX ... [ASC|DESC] [COUNT n] [STOREDIST]\n```\n\nStore GEOSEARCH results. Redis 6.2+.\n\n**Group:** Geo"
+        }
+      ]
+    },
+    "GEORADIUS": {
+      "contents": [
+        {
+          "value": "## GEORADIUS\n\n```redis\nGEORADIUS key longitude latitude radius M|KM|FT|MI [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT n] [ASC|DESC] [STORE key] [STOREDIST key]\n```\n\nQuery by radius from coordinates. Deprecated — use GEOSEARCH.\n\n**Group:** Geo"
+        }
+      ]
+    },
+    "GEORADIUSBYMEMBER": {
+      "contents": [
+        {
+          "value": "## GEORADIUSBYMEMBER\n\n```redis\nGEORADIUSBYMEMBER key member radius M|KM|FT|MI ...\n```\n\nQuery by radius from a member. Deprecated — use GEOSEARCH.\n\n**Group:** Geo"
+        }
+      ]
+    },
+    "CONFIG RESETSTAT": {
+      "contents": [
+        {
+          "value": "## CONFIG RESETSTAT\n\n```redis\nCONFIG RESETSTAT\n```\n\nReset the statistics returned by INFO.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CONFIG REWRITE": {
+      "contents": [
+        {
+          "value": "## CONFIG REWRITE\n\n```redis\nCONFIG REWRITE\n```\n\nRewrite the redis.conf file with current in-memory configuration.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "BGREWRITEAOF": {
+      "contents": [
+        {
+          "value": "## BGREWRITEAOF\n\n```redis\nBGREWRITEAOF\n```\n\nTrigger an asynchronous AOF rewrite.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "SAVE": {
+      "contents": [
+        {
+          "value": "## SAVE\n\n```redis\nSAVE\n```\n\nSynchronously save the dataset to disk. BLOCKS the server.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "LASTSAVE": {
+      "contents": [
+        {
+          "value": "## LASTSAVE\n\n```redis\nLASTSAVE\n```\n\nReturn the Unix timestamp of the last successful RDB save.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "SHUTDOWN": {
+      "contents": [
+        {
+          "value": "## SHUTDOWN\n\n```redis\nSHUTDOWN [NOSAVE|SAVE] [NOW] [FORCE]\n```\n\nSynchronously save (unless NOSAVE) and shut down the server.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "SLOWLOG LEN": {
+      "contents": [
+        {
+          "value": "## SLOWLOG LEN\n\n```redis\nSLOWLOG LEN\n```\n\nGet the number of entries in the slow log.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "SLOWLOG RESET": {
+      "contents": [
+        {
+          "value": "## SLOWLOG RESET\n\n```redis\nSLOWLOG RESET\n```\n\nReset the slow log.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "TIME": {
+      "contents": [
+        {
+          "value": "## TIME\n\n```redis\nTIME\n```\n\nReturn the current server time as [unix-seconds, microseconds].\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT ID": {
+      "contents": [
+        {
+          "value": "## CLIENT ID\n\n```redis\nCLIENT ID\n```\n\nReturn the ID of the current connection.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT GETNAME": {
+      "contents": [
+        {
+          "value": "## CLIENT GETNAME\n\n```redis\nCLIENT GETNAME\n```\n\nGet the name of the current connection.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT PAUSE": {
+      "contents": [
+        {
+          "value": "## CLIENT PAUSE\n\n```redis\nCLIENT PAUSE timeout [WRITE|ALL]\n```\n\nPause all clients for timeout milliseconds.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT UNPAUSE": {
+      "contents": [
+        {
+          "value": "## CLIENT UNPAUSE\n\n```redis\nCLIENT UNPAUSE\n```\n\nResume client processing after CLIENT PAUSE.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT NO-EVICT": {
+      "contents": [
+        {
+          "value": "## CLIENT NO-EVICT\n\n```redis\nCLIENT NO-EVICT ON|OFF\n```\n\nExempt current connection from client eviction. Redis 7.0+.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "CLIENT NO-TOUCH": {
+      "contents": [
+        {
+          "value": "## CLIENT NO-TOUCH\n\n```redis\nCLIENT NO-TOUCH ON|OFF\n```\n\nDon't update key access time for current connection. Redis 7.2+.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "ECHO": {
+      "contents": [
+        {
+          "value": "## ECHO\n\n```redis\nECHO message\n```\n\nEcho the given message back.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "SWAPDB": {
+      "contents": [
+        {
+          "value": "## SWAPDB\n\n```redis\nSWAPDB db1 db2\n```\n\nSwap two Redis databases atomically.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "MEMORY STATS": {
+      "contents": [
+        {
+          "value": "## MEMORY STATS\n\n```redis\nMEMORY STATS\n```\n\nGet detailed memory statistics.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "MEMORY PURGE": {
+      "contents": [
+        {
+          "value": "## MEMORY PURGE\n\n```redis\nMEMORY PURGE\n```\n\nAsk allocator to release memory.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "MEMORY MALLOC-STATS": {
+      "contents": [
+        {
+          "value": "## MEMORY MALLOC-STATS\n\n```redis\nMEMORY MALLOC-STATS\n```\n\nShow internal allocator statistics.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "LATENCY RESET": {
+      "contents": [
+        {
+          "value": "## LATENCY RESET\n\n```redis\nLATENCY RESET [event ...]\n```\n\nReset latency data for events.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "LATENCY GRAPH": {
+      "contents": [
+        {
+          "value": "## LATENCY GRAPH\n\n```redis\nLATENCY GRAPH event\n```\n\nRender an ASCII art latency graph for an event.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "COMMAND COUNT": {
+      "contents": [
+        {
+          "value": "## COMMAND COUNT\n\n```redis\nCOMMAND COUNT\n```\n\nGet total number of commands supported by the server.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "COMMAND LIST": {
+      "contents": [
+        {
+          "value": "## COMMAND LIST\n\n```redis\nCOMMAND LIST [MODULE module] [ACLCAT cat] [PATTERN pattern]\n```\n\nList all command names.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "COMMAND INFO": {
+      "contents": [
+        {
+          "value": "## COMMAND INFO\n\n```redis\nCOMMAND INFO [command ...]\n```\n\nGet details about specific commands.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "COMMAND GETKEYS": {
+      "contents": [
+        {
+          "value": "## COMMAND GETKEYS\n\n```redis\nCOMMAND GETKEYS command [arg ...]\n```\n\nExtract keys from a full command.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "COMMAND DOCS": {
+      "contents": [
+        {
+          "value": "## COMMAND DOCS\n\n```redis\nCOMMAND DOCS [command ...]\n```\n\nGet documentation for commands. Redis 7.0+.\n\n**Group:** Server"
+        }
+      ]
+    },
+    "ACL LIST": {
+      "contents": [
+        {
+          "value": "## ACL LIST\n\n```redis\nACL LIST\n```\n\nList all users and their ACL rules.\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "ACL USERS": {
+      "contents": [
+        {
+          "value": "## ACL USERS\n\n```redis\nACL USERS\n```\n\nList all configured usernames.\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "ACL WHOAMI": {
+      "contents": [
+        {
+          "value": "## ACL WHOAMI\n\n```redis\nACL WHOAMI\n```\n\nReturn the username of the current connection.\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "ACL LOG": {
+      "contents": [
+        {
+          "value": "## ACL LOG\n\n```redis\nACL LOG [count|RESET]\n```\n\nShow recent security events (failed auth, denied commands).\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "ACL SAVE": {
+      "contents": [
+        {
+          "value": "## ACL SAVE\n\n```redis\nACL SAVE\n```\n\nSave the current ACL rules to the configured ACL file.\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "ACL LOAD": {
+      "contents": [
+        {
+          "value": "## ACL LOAD\n\n```redis\nACL LOAD\n```\n\nLoad ACL rules from the configured ACL file.\n\n**Group:** ACL"
+        }
+      ]
+    },
+    "CLUSTER MYID": {
+      "contents": [
+        {
+          "value": "## CLUSTER MYID\n\n```redis\nCLUSTER MYID\n```\n\nReturn the node's cluster ID.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER SLOTS": {
+      "contents": [
+        {
+          "value": "## CLUSTER SLOTS\n\n```redis\nCLUSTER SLOTS\n```\n\nGet mapping of hash slots to nodes. Deprecated — use CLUSTER SHARDS.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER SHARDS": {
+      "contents": [
+        {
+          "value": "## CLUSTER SHARDS\n\n```redis\nCLUSTER SHARDS\n```\n\nGet detailed shard information. Redis 7.0+.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER MEET": {
+      "contents": [
+        {
+          "value": "## CLUSTER MEET\n\n```redis\nCLUSTER MEET ip port\n```\n\nAdd a node to the cluster.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER FORGET": {
+      "contents": [
+        {
+          "value": "## CLUSTER FORGET\n\n```redis\nCLUSTER FORGET node-id\n```\n\nRemove a node from the cluster's known nodes.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER REPLICATE": {
+      "contents": [
+        {
+          "value": "## CLUSTER REPLICATE\n\n```redis\nCLUSTER REPLICATE node-id\n```\n\nMake current node a replica of the specified master.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER RESET": {
+      "contents": [
+        {
+          "value": "## CLUSTER RESET\n\n```redis\nCLUSTER RESET [HARD|SOFT]\n```\n\nReset the cluster configuration of the node.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER DELSLOTS": {
+      "contents": [
+        {
+          "value": "## CLUSTER DELSLOTS\n\n```redis\nCLUSTER DELSLOTS slot [slot ...]\n```\n\nRemove hash slots from this node.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER SETSLOT": {
+      "contents": [
+        {
+          "value": "## CLUSTER SETSLOT\n\n```redis\nCLUSTER SETSLOT slot IMPORTING|MIGRATING|NODE|STABLE [node-id]\n```\n\nBind, migrate, or stabilize a hash slot.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER COUNTKEYSINSLOT": {
+      "contents": [
+        {
+          "value": "## CLUSTER COUNTKEYSINSLOT\n\n```redis\nCLUSTER COUNTKEYSINSLOT slot\n```\n\nCount keys in a specific hash slot.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER GETKEYSINSLOT": {
+      "contents": [
+        {
+          "value": "## CLUSTER GETKEYSINSLOT\n\n```redis\nCLUSTER GETKEYSINSLOT slot count\n```\n\nReturn keys assigned to a hash slot.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER KEYSLOT": {
+      "contents": [
+        {
+          "value": "## CLUSTER KEYSLOT\n\n```redis\nCLUSTER KEYSLOT key\n```\n\nReturn the hash slot number for a key.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER LINKS": {
+      "contents": [
+        {
+          "value": "## CLUSTER LINKS\n\n```redis\nCLUSTER LINKS\n```\n\nList cluster bus connections. Redis 7.0+.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER FLUSHSLOTS": {
+      "contents": [
+        {
+          "value": "## CLUSTER FLUSHSLOTS\n\n```redis\nCLUSTER FLUSHSLOTS\n```\n\nDelete all slot assignments from this node.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "CLUSTER SAVECONFIG": {
+      "contents": [
+        {
+          "value": "## CLUSTER SAVECONFIG\n\n```redis\nCLUSTER SAVECONFIG\n```\n\nSave the cluster configuration to nodes.conf.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "READONLY": {
+      "contents": [
+        {
+          "value": "## READONLY\n\n```redis\nREADONLY\n```\n\nEnable read queries on a cluster replica. Allows reading from replicas.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "READWRITE": {
+      "contents": [
+        {
+          "value": "## READWRITE\n\n```redis\nREADWRITE\n```\n\nDisable READONLY mode. Replica rejects read queries.\n\n**Group:** Cluster"
+        }
+      ]
+    },
+    "SLAVEOF": {
+      "contents": [
+        {
+          "value": "## SLAVEOF\n\n```redis\nSLAVEOF host port | SLAVEOF NO ONE\n```\n\nLegacy alias for REPLICAOF.\n\n**Group:** Replication"
+        }
+      ]
+    },
+    "FAILOVER": {
+      "contents": [
+        {
+          "value": "## FAILOVER\n\n```redis\nFAILOVER [TO host port [FORCE]] [ABORT] [TIMEOUT ms]\n```\n\nCoordinated failover to a replica. Redis 6.2+.\n\n**Group:** Replication"
+        }
+      ]
+    },
+    "MODULE LOAD": {
+      "contents": [
+        {
+          "value": "## MODULE LOAD\n\n```redis\nMODULE LOAD path [arg ...]\n```\n\nLoad a Redis module from a shared library.\n\n**Group:** Modules"
+        }
+      ]
+    },
+    "MODULE LIST": {
+      "contents": [
+        {
+          "value": "## MODULE LIST\n\n```redis\nMODULE LIST\n```\n\nList all loaded modules.\n\n**Group:** Modules"
+        }
+      ]
+    },
+    "MODULE UNLOAD": {
+      "contents": [
+        {
+          "value": "## MODULE UNLOAD\n\n```redis\nMODULE UNLOAD name\n```\n\nUnload a loaded Redis module.\n\n**Group:** Modules"
+        }
+      ]
+    },
+    "MODULE LOADEX": {
+      "contents": [
+        {
+          "value": "## MODULE LOADEX\n\n```redis\nMODULE LOADEX path [CONFIG name value ...] [ARGS arg ...]\n```\n\nLoad module with configuration. Redis 7.0+.\n\n**Group:** Modules"
+        }
+      ]
+    },
+    "MIGRATE": {
+      "contents": [
+        {
+          "value": "## MIGRATE\n\n```redis\nMIGRATE host port key|\"\" db timeout [COPY] [REPLACE] [AUTH password] [AUTH2 username password] [KEYS key ...]\n```\n\nAtomically transfer a key to another Redis instance.\n\n**Group:** Generic"
+        }
+      ]
+    },
+    "RESET": {
+      "contents": [
+        {
+          "value": "## RESET\n\n```redis\nRESET\n```\n\nReset the connection state to default.\n\n**Group:** Connection"
+        }
+      ]
+    },
+    "QUIT": {
+      "contents": [
+        {
+          "value": "## QUIT\n\n```redis\nQUIT\n```\n\nClose the connection. Client should close after receiving OK.\n\n**Group:** Connection"
+        }
+      ]
+    },
+    "HELLO": {
+      "contents": [
+        {
+          "value": "## HELLO\n\n```redis\nHELLO [protover [AUTH username password] [SETNAME clientname]]\n```\n\nSwitch RESP protocol version (2 or 3). Redis 6.0+.\n\n**Group:** Connection"
+        }
+      ]
+    },
+    "string": {
+      "contents": [
+        {
+          "value": "## string\n\n```redis\nRedis String\n```\n\nThe most basic Redis data type. A string value can be at most 512 MB. Used for caching, counters, sessions, and general key-value storage.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "list": {
+      "contents": [
+        {
+          "value": "## list\n\n```redis\nRedis List\n```\n\nOrdered collection of strings. Implemented as linked list. Supports push/pop from both ends. Used for queues, stacks, and recent-items lists.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "set": {
+      "contents": [
+        {
+          "value": "## set\n\n```redis\nRedis Set\n```\n\nUnordered collection of unique strings. Supports add, remove, membership test, and set operations (union, intersection, difference).\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "zset": {
+      "contents": [
+        {
+          "value": "## zset\n\n```redis\nRedis Sorted Set\n```\n\nSet of unique strings ordered by a floating-point score. Supports range queries by score or rank. Used for leaderboards, rate limiters, priority queues.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "hash": {
+      "contents": [
+        {
+          "value": "## hash\n\n```redis\nRedis Hash\n```\n\nMap of field-value pairs. Memory-efficient for representing objects. Each hash can store over 4 billion field-value pairs.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "stream": {
+      "contents": [
+        {
+          "value": "## stream\n\n```redis\nRedis Stream\n```\n\nAppend-only log data structure. Supports consumer groups for reliable message processing. Used for event sourcing, message queues, activity feeds.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "hyperloglog": {
+      "contents": [
+        {
+          "value": "## hyperloglog\n\n```redis\nRedis HyperLogLog\n```\n\nProbabilistic data structure for approximate cardinality counting. Uses ~12 KB regardless of set size. 0.81% standard error.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "bitmap": {
+      "contents": [
+        {
+          "value": "## bitmap\n\n```redis\nRedis Bitmap\n```\n\nString type interpreted as an array of bits. Space-efficient for storing boolean information across a large key space.\n\n**Group:** Data Types"
+        }
+      ]
+    },
+    "geospatial": {
+      "contents": [
+        {
+          "value": "## geospatial\n\n```redis\nRedis Geospatial Index\n```\n\nSorted set with geohash-encoded coordinates. Supports radius/box queries, distance calculations. Built on sorted sets internally.\n\n**Group:** Data Types"
+        }
+      ]
+    }
   }
 }

@@ -883,76 +883,496 @@
         }
       ]
     },
-    "debug.getinfo": "```lua\ndebug.getinfo([thread,] f [, what])\n```\n\n**debug.getinfo** — Returns a table with information about a function.\n\n`f` can be a function or stack level (1 = calling function). `what` selects fields:\n- `'n'` — name, namewhat\n- `'S'` — source, short_src, what, linedefined, lastlinedefined\n- `'l'` — currentline\n- `'u'` — nups, nparams, isvararg\n- `'t'` — istailcall\n- `'L'` — activelines table\n\n```lua\nlocal info = debug.getinfo(1, 'Sln')\nprint(info.source, info.currentline, info.name)\n```",
-    "debug.traceback": "```lua\ndebug.traceback([thread,] [message [, level]])\n```\n\n**debug.traceback** — Returns a string with a traceback of the call stack.\n\nUseful in error handlers (xpcall).\n\n```lua\nlocal ok, err = xpcall(riskyFunc, debug.traceback)\nif not ok then print(err) end\n```",
-    "debug.sethook": "```lua\ndebug.sethook([thread,] hook, mask [, count])\n```\n\n**debug.sethook** — Sets a hook function. `mask` characters:\n- `'c'` — call hook\n- `'r'` — return hook\n- `'l'` — line hook\n\n`count` fires hook every N instructions.\n\n```lua\ndebug.sethook(function(event, line)\n  print(event, line)\nend, 'l') -- fires on every line\n\ndebug.sethook() -- remove hook\n```",
-    "debug.gethook": "```lua\ndebug.gethook([thread])\n```\n\n**debug.gethook** — Returns the current hook function, mask string, and count.\n\n```lua\nlocal hook, mask, count = debug.gethook()\nprint(mask) -- e.g. 'l'\n```",
-    "debug.getlocal": "```lua\ndebug.getlocal([thread,] f, local)\n```\n\n**debug.getlocal** — Returns name and value of local variable.\n\n`f` is stack level, `local` is variable index (1-based).\n\n```lua\nlocal x, y = 10, 20\nprint(debug.getlocal(1, 1)) -- 'x', 10\nprint(debug.getlocal(1, 2)) -- 'y', 20\n```",
-    "debug.setlocal": "```lua\ndebug.setlocal([thread,] level, local, value)\n```\n\n**debug.setlocal** — Sets the value of a local variable at the given stack level.\n\nReturns the variable name, or nil if index is out of range.\n\n```lua\nlocal x = 10\ndebug.setlocal(1, 1, 42)\nprint(x) -- 42\n```",
-    "debug.getupvalue": "```lua\ndebug.getupvalue(f, up)\n```\n\n**debug.getupvalue** — Returns name and value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\nprint(debug.getupvalue(f, 1)) -- 'x', 10\n```",
-    "debug.setupvalue": "```lua\ndebug.setupvalue(f, up, value)\n```\n\n**debug.setupvalue** — Sets the value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\ndebug.setupvalue(f, 1, 42)\nprint(f()) -- 42\n```",
-    "debug.getmetatable": "```lua\ndebug.getmetatable(value)\n```\n\n**debug.getmetatable** — Returns the metatable of the given value, bypassing `__metatable` metamethod.\n\nUnlike `getmetatable()`, this always returns the real metatable.\n\n```lua\nlocal mt = {__metatable = 'hidden'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'hidden'\nprint(debug.getmetatable(t)) -- the actual mt table\n```",
-    "debug.setmetatable": "```lua\ndebug.setmetatable(value, table)\n```\n\n**debug.setmetatable** — Sets the metatable on any value (not just tables).\n\nCan set metatables on strings, numbers, etc.\n\n```lua\ndebug.setmetatable(0, {__tostring = function(n) return 'num:'..n end})\nprint(tostring(42)) -- num:42\n```",
-    "debug.getuservalue": "```lua\ndebug.getuservalue(u, n)\n```\n\n**debug.getuservalue** — Returns the n-th user value associated with userdata `u`.\n\nIn Lua 5.4, userdata can have multiple user values. Returns value and boolean.\n\n```lua\nlocal val, exists = debug.getuservalue(ud, 1)\n```",
-    "debug.setuservalue": "```lua\ndebug.setuservalue(u, value, n)\n```\n\n**debug.setuservalue** — Sets the n-th user value of userdata `u` to `value`.\n\n```lua\ndebug.setuservalue(ud, mytable, 1)\n```",
-    "debug.getregistry": "```lua\ndebug.getregistry()\n```\n\n**debug.getregistry** — Returns the Lua registry table, used internally to store references.\n\n```lua\nlocal reg = debug.getregistry()\nfor k, v in pairs(reg) do print(k, v) end\n```",
-    "debug.upvalueid": "```lua\ndebug.upvalueid(f, n)\n```\n\n**debug.upvalueid** — Returns a unique identifier (light userdata) for upvalue `n` of function `f`. (5.2+)\n\nUseful to check if two closures share the same upvalue.\n\n```lua\nlocal x = 1\nlocal f = function() return x end\nlocal g = function() return x end\nprint(debug.upvalueid(f,1) == debug.upvalueid(g,1)) -- true\n```",
-    "debug.upvaluejoin": "```lua\ndebug.upvaluejoin(f1, n1, f2, n2)\n```\n\n**debug.upvaluejoin** — Makes upvalue `n1` of `f1` refer to the same variable as upvalue `n2` of `f2`. (5.2+)\n\n```lua\nlocal a, b = 1, 2\nlocal f = function() return a end\nlocal g = function() return b end\ndebug.upvaluejoin(f, 1, g, 1)\nprint(f()) -- 2 (now shares b)\n```",
-    "package.path": "```lua\npackage.path\n```\n\n**package.path** — The search path used by `require` to find Lua modules.\n\nUses `?` as placeholder for module name. Paths separated by `;`.\n\n```lua\nprint(package.path)\n-- ./?.lua;/usr/local/share/lua/5.4/?.lua;...\n\n-- Add custom path\npackage.path = './libs/?.lua;' .. package.path\n```\n\n**Tip:** Set via `LUA_PATH` environment variable.",
-    "package.cpath": "```lua\npackage.cpath\n```\n\n**package.cpath** — The search path for C modules (shared libraries).\n\n```lua\nprint(package.cpath)\n-- ./?.so;/usr/local/lib/lua/5.4/?.so;...\n\npackage.cpath = './libs/?.so;' .. package.cpath\n```\n\n**Tip:** Set via `LUA_CPATH` environment variable.",
-    "package.loaded": "```lua\npackage.loaded\n```\n\n**package.loaded** — Table controlling which modules are loaded. `require` checks here first.\n\n```lua\n-- Check if loaded\nif package.loaded['socket'] then print('yes') end\n\n-- Force re-require\npackage.loaded['mymod'] = nil\nlocal mod = require('mymod') -- reloads\n```",
-    "package.preload": "```lua\npackage.preload\n```\n\n**package.preload** — Table of module loaders. Checked before file search.\n\n```lua\npackage.preload['mylib'] = function(modname)\n  return {\n    greet = function() print('Hello from ' .. modname) end\n  }\nend\n\nlocal mylib = require('mylib')\nmylib.greet()\n```",
-    "package.searchers": "```lua\npackage.searchers\n```\n\n**package.searchers** — Ordered table of searcher functions used by `require`.\n\nDefault searchers:\n1. `package.preload` table\n2. Lua file searcher (uses `package.path`)\n3. C library searcher (uses `package.cpath`)\n4. All-in-one C loader\n\n```lua\n-- Add custom searcher at position 2\ntable.insert(package.searchers, 2, function(name)\n  -- return loader function or error string\nend)\n```",
-    "package.searchpath": "```lua\npackage.searchpath(name, path [, sep [, rep]])\n```\n\n**package.searchpath** — Searches for a file in the given path.\n\nReplaces `.` in `name` with `sep` (default `.`), then `?` in `path` with result.\n\n```lua\nlocal file, err = package.searchpath('socket.core', package.cpath)\nprint(file) -- /usr/local/lib/lua/5.4/socket/core.so\n\nif not file then print(err) end -- lists all tried paths\n```",
-    "package.config": "```lua\npackage.config\n```\n\n**package.config** — A string with compile-time configuration:\n- Line 1: directory separator (`/` or `\\`)\n- Line 2: path separator (`;`)\n- Line 3: substitution marker (`?`)\n- Line 4: Windows \"dir\" marker\n- Line 5: ignore mark for searchers\n\n```lua\nlocal sep = package.config:sub(1,1)\nprint(sep) -- '/' on Unix, '\\\\' on Windows\n```",
-    "utf8.char": "```lua\nutf8.char(···)\n```\n\n**utf8.char** — Returns a UTF-8 string from one or more codepoints.\n\nSimilar to `string.char` but for Unicode.\n\n```lua\nprint(utf8.char(72, 233, 108, 108, 244)) -- Héllô\nprint(utf8.char(0x1F600)) -- 😀\n```",
-    "utf8.codepoint": "```lua\nutf8.codepoint(s [, i [, j]])\n```\n\n**utf8.codepoint** — Returns codepoints of all characters in `s[i..j]`.\n\nDefault: `i=1, j=i`.\n\n```lua\nlocal s = 'café'\nprint(utf8.codepoint(s, 4)) -- 233 (é)\nprint(utf8.codepoint(s, 1, -1)) -- 99 97 102 233\n```",
-    "utf8.codes": "```lua\nutf8.codes(s)\n```\n\n**utf8.codes** — Iterator for UTF-8 codepoints.\n\nReturns position (byte) and codepoint for each character.\n\n```lua\nfor pos, code in utf8.codes('héllo') do\n  print(pos, code, utf8.char(code))\nend\n-- 1  104  h\n-- 2  233  é\n-- 4  108  l\n-- 5  108  l\n-- 6  111  o\n```",
-    "utf8.len": "```lua\nutf8.len(s [, i [, j]])\n```\n\n**utf8.len** — Returns the number of UTF-8 characters in `s[i..j]`.\n\nReturns nil + position if invalid UTF-8 found.\n\n```lua\nlocal s = 'café'\nprint(#s) -- 5 (bytes)\nprint(utf8.len(s)) -- 4 (characters)\n\nlocal n, err = utf8.len('\\xFF')\nif not n then print('invalid at byte', err) end\n```",
-    "utf8.offset": "```lua\nutf8.offset(s, n [, i])\n```\n\n**utf8.offset** — Returns byte position of the n-th character.\n\n- Positive `n`: count forward from position `i` (default 1)\n- Negative `n`: count backward\n- `n=0`: start of character at byte `i`\n\n```lua\nlocal s = 'héllo'\nprint(utf8.offset(s, 3)) -- 4 (3rd char 'l' starts at byte 4)\nprint(string.sub(s, utf8.offset(s, 2))) -- éllo\n```",
-    "utf8.charpattern": "```lua\nutf8.charpattern\n```\n\n**utf8.charpattern** — Pattern (string) matching exactly one UTF-8 character.\n\nValue: `[\\0-\\x7F\\xC2-\\xFD][\\x80-\\xBF]*`\n\n```lua\n-- Iterate over UTF-8 characters\nfor c in string.gmatch('héllo', utf8.charpattern) do\n  print(c)\nend\n-- h é l l o\n\n-- Count characters\nlocal count = select(2, string.gsub('café', utf8.charpattern, ''))\n```",
-    "math.asin": "```lua\nmath.asin(x)\n```\n\n**math.asin** — Returns the arc sine of `x` (in radians). Result in [-π/2, π/2].\n\n```lua\nprint(math.asin(1)) -- 1.5707... (π/2)\nprint(math.asin(0)) -- 0.0\n```",
-    "math.acos": "```lua\nmath.acos(x)\n```\n\n**math.acos** — Returns the arc cosine of `x` (in radians). Result in [0, π].\n\n```lua\nprint(math.acos(1)) -- 0.0\nprint(math.acos(0)) -- 1.5707... (π/2)\n```",
-    "math.atan": "```lua\nmath.atan(y [, x])\n```\n\n**math.atan** — Returns the arc tangent of `y/x` (in radians). Uses signs to determine quadrant.\n\nIn Lua 5.3+, replaces both `math.atan` and `math.atan2`.\n\n```lua\nprint(math.atan(1)) -- 0.7853... (π/4)\nprint(math.atan(1, 0)) -- 1.5707... (π/2)\n```",
-    "math.fmod": "```lua\nmath.fmod(x, y)\n```\n\n**math.fmod** — Returns the remainder of `x/y` that rounds towards zero.\n\nDiffers from `%` operator for negative numbers.\n\n```lua\nprint(math.fmod(7, 3)) -- 1.0\nprint(math.fmod(-7, 3)) -- -1.0 (% would give 2)\n```",
-    "math.randomseed": "```lua\nmath.randomseed([x [, y]])\n```\n\n**math.randomseed** — Sets the seed for the pseudo-random generator.\n\nIn Lua 5.4, calling with no args uses a system-dependent seed.\n\n```lua\nmath.randomseed(os.time()) -- Lua 5.1-5.3\nmath.randomseed() -- Lua 5.4 (auto-seed)\nprint(math.random(1, 100))\n```",
-    "math.tointeger": "```lua\nmath.tointeger(x)\n```\n\n**math.tointeger** — Converts float `x` to integer if it has an exact integer value. Returns nil otherwise. (5.3+)\n\n```lua\nprint(math.tointeger(5.0)) -- 5\nprint(math.tointeger(5.5)) -- nil\nprint(math.tointeger(2^53)) -- 9007199254740992\n```",
-    "math.type": "```lua\nmath.type(x)\n```\n\n**math.type** — Returns `\"integer\"`, `\"float\"`, or false if not a number. (5.3+)\n\n```lua\nprint(math.type(1)) -- 'integer'\nprint(math.type(1.0)) -- 'float'\nprint(math.type('x')) -- false\n```",
-    "math.maxinteger": "```lua\nmath.maxinteger\n```\n\n**math.maxinteger** — Maximum value for an integer. (5.3+)\n\n```lua\nprint(math.maxinteger) -- 9223372036854775807 (2^63 - 1)\n```",
-    "math.mininteger": "```lua\nmath.mininteger\n```\n\n**math.mininteger** — Minimum value for an integer. (5.3+)\n\n```lua\nprint(math.mininteger) -- -9223372036854775808 (-2^63)\n```",
-    "io.input": "```lua\nio.input([file])\n```\n\n**io.input** — Sets `file` as the default input, or returns current default input.\n\n```lua\nio.input('data.txt')\nlocal line = io.read('l')\nio.input():close()\nio.input(io.stdin) -- restore\n```",
-    "io.output": "```lua\nio.output([file])\n```\n\n**io.output** — Sets `file` as the default output, or returns current default output.\n\n```lua\nio.output('out.txt')\nio.write('hello\\n')\nio.output():close()\nio.output(io.stdout) -- restore\n```",
-    "io.flush": "```lua\nio.flush()\n```\n\n**io.flush** — Flushes the default output file buffer.\n\n```lua\nio.write('progress: 50%')\nio.flush() -- ensure it's written immediately\n```",
-    "io.tmpfile": "```lua\nio.tmpfile()\n```\n\n**io.tmpfile** — Returns a handle for a temporary file (opened in update mode). Automatically removed on program exit.\n\n```lua\nlocal tmp = io.tmpfile()\ntmp:write('temp data')\ntmp:seek('set')\nprint(tmp:read('*a')) -- temp data\ntmp:close()\n```",
-    "io.type": "```lua\nio.type(obj)\n```\n\n**io.type** — Returns `\"file\"` for open handles, `\"closed file\"` for closed handles, or nil otherwise.\n\n```lua\nlocal f = io.open('test.txt', 'r')\nprint(io.type(f)) -- 'file'\nf:close()\nprint(io.type(f)) -- 'closed file'\nprint(io.type(42)) -- nil\n```",
-    "io.popen": "```lua\nio.popen(prog [, mode])\n```\n\n**io.popen** — Starts `prog` in a separated process and returns a file handle.\n\n`mode`: `'r'` (read stdout, default) or `'w'` (write to stdin).\n\n```lua\nlocal f = io.popen('ls -la', 'r')\nlocal output = f:read('*a')\nf:close()\nprint(output)\n```\n\n**Warning:** Not available on all platforms. Check return of `io.popen`.",
-    "io.stdin": "```lua\nio.stdin\n```\n\n**io.stdin** — Standard input file handle.\n\n```lua\nio.write('Enter name: ')\nlocal name = io.stdin:read('l')\n```",
-    "io.stdout": "```lua\nio.stdout\n```\n\n**io.stdout** — Standard output file handle.\n\n```lua\nio.stdout:write('hello\\n')\nio.stdout:flush()\n```",
-    "io.stderr": "```lua\nio.stderr\n```\n\n**io.stderr** — Standard error file handle.\n\n```lua\nio.stderr:write('Error: something went wrong\\n')\n```",
-    "os.difftime": "```lua\nos.difftime(t2, t1)\n```\n\n**os.difftime** — Returns the difference in seconds between times `t2` and `t1`.\n\n```lua\nlocal start = os.time()\n-- ... work ...\nlocal elapsed = os.difftime(os.time(), start)\nprint(elapsed .. ' seconds')\n```",
-    "os.remove": "```lua\nos.remove(filename)\n```\n\n**os.remove** — Deletes the file or empty directory.\n\nReturns true on success, or nil + error message.\n\n```lua\nlocal ok, err = os.remove('temp.txt')\nif not ok then print('Failed:', err) end\n```",
-    "os.rename": "```lua\nos.rename(oldname, newname)\n```\n\n**os.rename** — Renames/moves a file or directory.\n\n```lua\nlocal ok, err = os.rename('old.txt', 'new.txt')\nif not ok then print('Failed:', err) end\n```",
-    "os.tmpname": "```lua\nos.tmpname()\n```\n\n**os.tmpname** — Returns a string with a temporary file name.\n\n**Warning:** The file is not created; use `io.open` to create it. On some systems this may be insecure.\n\n```lua\nlocal tmp = os.tmpname()\nlocal f = io.open(tmp, 'w')\nf:write('data')\nf:close()\nos.remove(tmp)\n```",
-    "os.setlocale": "```lua\nos.setlocale(locale [, category])\n```\n\n**os.setlocale** — Sets the program locale. Pass nil to query current.\n\nCategories: `'all'`, `'collate'`, `'ctype'`, `'monetary'`, `'numeric'`, `'time'`.\n\n```lua\nos.setlocale('C') -- standard locale\nos.setlocale('') -- system default\nprint(os.setlocale(nil)) -- query current\n```",
-    "coroutine.isyieldable": "```lua\ncoroutine.isyieldable()\n```\n\n**coroutine.isyieldable** — Returns true if the running coroutine can yield.\n\nFalse for the main thread and C functions.\n\n```lua\nprint(coroutine.isyieldable()) -- false (main thread)\n\nlocal co = coroutine.create(function()\n  print(coroutine.isyieldable()) -- true\nend)\ncoroutine.resume(co)\n```",
-    "coroutine.running": "```lua\ncoroutine.running()\n```\n\n**coroutine.running** — Returns the running coroutine and a boolean (true if main thread).\n\n```lua\nlocal co, is_main = coroutine.running()\nprint(is_main) -- true in main thread\n\nlocal co2 = coroutine.create(function()\n  local me, main = coroutine.running()\n  print(main) -- false\nend)\ncoroutine.resume(co2)\n```",
-    "coroutine.close": "```lua\ncoroutine.close(co)\n```\n\n**coroutine.close** — Closes coroutine `co`, running any pending to-be-closed variables. (5.4+)\n\nCan only close suspended or dead coroutines.\n\n```lua\nlocal co = coroutine.create(function()\n  local f <close> = io.open('temp.txt', 'w')\n  coroutine.yield()\n  f:write('done')\nend)\ncoroutine.resume(co)\ncoroutine.close(co) -- f gets closed via __close\n```",
-    "__add": "```lua\n__add(a, b)\n```\n\n**__add** — Addition metamethod. Called for `a + b` when `a` or `b` has this metamethod.\n\n```lua\nlocal Vec = {}\nVec.__index = Vec\nVec.__add = function(a, b)\n  return setmetatable({x=a.x+b.x, y=a.y+b.y}, Vec)\nend\n\nlocal v = setmetatable({x=1,y=2}, Vec) + setmetatable({x=3,y=4}, Vec)\nprint(v.x, v.y) -- 4  6\n```",
-    "__sub": "```lua\n__sub(a, b)\n```\n\n**__sub** — Subtraction metamethod. Called for `a - b`.\n\n```lua\nmt.__sub = function(a, b)\n  return setmetatable({x=a.x-b.x, y=a.y-b.y}, mt)\nend\n```",
-    "__mul": "```lua\n__mul(a, b)\n```\n\n**__mul** — Multiplication metamethod. Called for `a * b`.\n\nOne operand can be a scalar.\n\n```lua\nmt.__mul = function(a, b)\n  if type(a) == 'number' then return setmetatable({x=a*b.x, y=a*b.y}, mt) end\n  if type(b) == 'number' then return setmetatable({x=a.x*b, y=a.y*b}, mt) end\n  return a.x*b.x + a.y*b.y -- dot product\nend\n```",
-    "__div": "```lua\n__div(a, b)\n```\n\n**__div** — Division metamethod. Called for `a / b`.\n\n```lua\nmt.__div = function(a, b)\n  if type(b) == 'number' then\n    return setmetatable({x=a.x/b, y=a.y/b}, mt)\n  end\nend\n```",
-    "__mod": "```lua\n__mod(a, b)\n```\n\n**__mod** — Modulo metamethod. Called for `a % b`.\n\n```lua\nmt.__mod = function(a, b)\n  return setmetatable({x=a.x%b, y=a.y%b}, mt)\nend\n```",
-    "__pow": "```lua\n__pow(a, b)\n```\n\n**__pow** — Exponentiation metamethod. Called for `a ^ b`.\n\n```lua\nmt.__pow = function(a, n)\n  return setmetatable({x=a.x^n, y=a.y^n}, mt)\nend\n```",
-    "__unm": "```lua\n__unm(a)\n```\n\n**__unm** — Unary minus metamethod. Called for `-a`.\n\n```lua\nmt.__unm = function(a)\n  return setmetatable({x=-a.x, y=-a.y}, mt)\nend\n\nlocal v = setmetatable({x=1,y=2}, mt)\nlocal neg = -v -- {x=-1, y=-2}\n```",
-    "__eq": "```lua\n__eq(a, b)\n```\n\n**__eq** — Equality metamethod. Called for `a == b` when both share the same metamethod.\n\n```lua\nmt.__eq = function(a, b)\n  return a.x == b.x and a.y == b.y\nend\n```\n\n**Note:** Only called when both operands have the same `__eq` metamethod.",
-    "__lt": "```lua\n__lt(a, b)\n```\n\n**__lt** — Less-than metamethod. Called for `a < b`.\n\n```lua\nmt.__lt = function(a, b)\n  return (a.x^2 + a.y^2) < (b.x^2 + b.y^2)\nend\n```",
-    "__le": "```lua\n__le(a, b)\n```\n\n**__le** — Less-than-or-equal metamethod. Called for `a <= b`.\n\nIn Lua 5.4, if absent, Lua tries `not (b < a)`.\n\n```lua\nmt.__le = function(a, b)\n  return (a.x^2 + a.y^2) <= (b.x^2 + b.y^2)\nend\n```",
-    "__concat": "```lua\n__concat(a, b)\n```\n\n**__concat** — Concatenation metamethod. Called for `a .. b`.\n\n```lua\nmt.__concat = function(a, b)\n  if type(a) == 'string' then return a .. tostring(b) end\n  if type(b) == 'string' then return tostring(a) .. b end\n  return tostring(a) .. tostring(b)\nend\n```",
-    "__len": "```lua\n__len(a)\n```\n\n**__len** — Length metamethod. Called for `#a`.\n\n```lua\nmt.__len = function(a)\n  return math.sqrt(a.x^2 + a.y^2) -- vector magnitude\nend\n\nlocal v = setmetatable({x=3, y=4}, mt)\nprint(#v) -- 5.0\n```",
-    "__close": "```lua\n__close(obj, err)\n```\n\n**__close** — To-be-closed metamethod (Lua 5.4). Called when a `<close>` variable goes out of scope.\n\n`err` is the error object if exiting due to an error, or nil.\n\n```lua\nlocal mt = {__close = function(self, err)\n  print('closing', err)\n  self.handle:close()\nend}\n\nlocal obj <close> = setmetatable({handle=io.open('f.txt')}, mt)\n-- handle closed automatically when obj goes out of scope\n```",
-    "__metatable": "```lua\n__metatable = value\n```\n\n**__metatable** — Protects the metatable. When set, `getmetatable()` returns this value instead of the real metatable, and `setmetatable()` raises an error.\n\n```lua\nlocal mt = {__metatable = 'read-only'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'read-only'\nsetmetatable(t, {}) -- error: cannot change protected metatable\n```\n\n**Tip:** Use `debug.getmetatable()` to bypass this protection.",
-    "__mode": "```lua\n__mode = 'k' | 'v' | 'kv'\n```\n\n**__mode** — Weak table mode. Keys/values with this metamethod won't prevent garbage collection.\n\n- `'k'` — weak keys\n- `'v'` — weak values  \n- `'kv'` — both weak\n\n```lua\nlocal cache = setmetatable({}, {__mode = 'v'})\ncache[1] = {data = 'will be collected'}\ncollectgarbage()\nprint(cache[1]) -- nil (collected)\n```",
-    "string.packsize": "```lua\nstring.packsize(fmt)\n```\n\n**string.packsize** — Returns the size of a string resulting from `string.pack` with the given format. (5.3+)\n\nOnly works with fixed-size formats (not `s` or `z`).\n\n```lua\nprint(string.packsize('i4')) -- 4\nprint(string.packsize('i4i4')) -- 8\nprint(string.packsize('Bd')) -- 9 (1 byte + 8 double)\n```",
+    "debug.getinfo": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getinfo([thread,] f [, what])\n```\n\n**debug.getinfo** — Returns a table with information about a function.\n\n`f` can be a function or stack level (1 = calling function). `what` selects fields:\n- `'n'` — name, namewhat\n- `'S'` — source, short_src, what, linedefined, lastlinedefined\n- `'l'` — currentline\n- `'u'` — nups, nparams, isvararg\n- `'t'` — istailcall\n- `'L'` — activelines table\n\n```lua\nlocal info = debug.getinfo(1, 'Sln')\nprint(info.source, info.currentline, info.name)\n```"
+        }
+      ]
+    },
+    "debug.traceback": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.traceback([thread,] [message [, level]])\n```\n\n**debug.traceback** — Returns a string with a traceback of the call stack.\n\nUseful in error handlers (xpcall).\n\n```lua\nlocal ok, err = xpcall(riskyFunc, debug.traceback)\nif not ok then print(err) end\n```"
+        }
+      ]
+    },
+    "debug.sethook": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.sethook([thread,] hook, mask [, count])\n```\n\n**debug.sethook** — Sets a hook function. `mask` characters:\n- `'c'` — call hook\n- `'r'` — return hook\n- `'l'` — line hook\n\n`count` fires hook every N instructions.\n\n```lua\ndebug.sethook(function(event, line)\n  print(event, line)\nend, 'l') -- fires on every line\n\ndebug.sethook() -- remove hook\n```"
+        }
+      ]
+    },
+    "debug.gethook": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.gethook([thread])\n```\n\n**debug.gethook** — Returns the current hook function, mask string, and count.\n\n```lua\nlocal hook, mask, count = debug.gethook()\nprint(mask) -- e.g. 'l'\n```"
+        }
+      ]
+    },
+    "debug.getlocal": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getlocal([thread,] f, local)\n```\n\n**debug.getlocal** — Returns name and value of local variable.\n\n`f` is stack level, `local` is variable index (1-based).\n\n```lua\nlocal x, y = 10, 20\nprint(debug.getlocal(1, 1)) -- 'x', 10\nprint(debug.getlocal(1, 2)) -- 'y', 20\n```"
+        }
+      ]
+    },
+    "debug.setlocal": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.setlocal([thread,] level, local, value)\n```\n\n**debug.setlocal** — Sets the value of a local variable at the given stack level.\n\nReturns the variable name, or nil if index is out of range.\n\n```lua\nlocal x = 10\ndebug.setlocal(1, 1, 42)\nprint(x) -- 42\n```"
+        }
+      ]
+    },
+    "debug.getupvalue": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getupvalue(f, up)\n```\n\n**debug.getupvalue** — Returns name and value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\nprint(debug.getupvalue(f, 1)) -- 'x', 10\n```"
+        }
+      ]
+    },
+    "debug.setupvalue": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.setupvalue(f, up, value)\n```\n\n**debug.setupvalue** — Sets the value of upvalue `up` of function `f`.\n\n```lua\nlocal x = 10\nlocal f = function() return x end\ndebug.setupvalue(f, 1, 42)\nprint(f()) -- 42\n```"
+        }
+      ]
+    },
+    "debug.getmetatable": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getmetatable(value)\n```\n\n**debug.getmetatable** — Returns the metatable of the given value, bypassing `__metatable` metamethod.\n\nUnlike `getmetatable()`, this always returns the real metatable.\n\n```lua\nlocal mt = {__metatable = 'hidden'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'hidden'\nprint(debug.getmetatable(t)) -- the actual mt table\n```"
+        }
+      ]
+    },
+    "debug.setmetatable": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.setmetatable(value, table)\n```\n\n**debug.setmetatable** — Sets the metatable on any value (not just tables).\n\nCan set metatables on strings, numbers, etc.\n\n```lua\ndebug.setmetatable(0, {__tostring = function(n) return 'num:'..n end})\nprint(tostring(42)) -- num:42\n```"
+        }
+      ]
+    },
+    "debug.getuservalue": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getuservalue(u, n)\n```\n\n**debug.getuservalue** — Returns the n-th user value associated with userdata `u`.\n\nIn Lua 5.4, userdata can have multiple user values. Returns value and boolean.\n\n```lua\nlocal val, exists = debug.getuservalue(ud, 1)\n```"
+        }
+      ]
+    },
+    "debug.setuservalue": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.setuservalue(u, value, n)\n```\n\n**debug.setuservalue** — Sets the n-th user value of userdata `u` to `value`.\n\n```lua\ndebug.setuservalue(ud, mytable, 1)\n```"
+        }
+      ]
+    },
+    "debug.getregistry": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.getregistry()\n```\n\n**debug.getregistry** — Returns the Lua registry table, used internally to store references.\n\n```lua\nlocal reg = debug.getregistry()\nfor k, v in pairs(reg) do print(k, v) end\n```"
+        }
+      ]
+    },
+    "debug.upvalueid": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.upvalueid(f, n)\n```\n\n**debug.upvalueid** — Returns a unique identifier (light userdata) for upvalue `n` of function `f`. (5.2+)\n\nUseful to check if two closures share the same upvalue.\n\n```lua\nlocal x = 1\nlocal f = function() return x end\nlocal g = function() return x end\nprint(debug.upvalueid(f,1) == debug.upvalueid(g,1)) -- true\n```"
+        }
+      ]
+    },
+    "debug.upvaluejoin": {
+      "contents": [
+        {
+          "value": "```lua\ndebug.upvaluejoin(f1, n1, f2, n2)\n```\n\n**debug.upvaluejoin** — Makes upvalue `n1` of `f1` refer to the same variable as upvalue `n2` of `f2`. (5.2+)\n\n```lua\nlocal a, b = 1, 2\nlocal f = function() return a end\nlocal g = function() return b end\ndebug.upvaluejoin(f, 1, g, 1)\nprint(f()) -- 2 (now shares b)\n```"
+        }
+      ]
+    },
+    "package.path": {
+      "contents": [
+        {
+          "value": "```lua\npackage.path\n```\n\n**package.path** — The search path used by `require` to find Lua modules.\n\nUses `?` as placeholder for module name. Paths separated by `;`.\n\n```lua\nprint(package.path)\n-- ./?.lua;/usr/local/share/lua/5.4/?.lua;...\n\n-- Add custom path\npackage.path = './libs/?.lua;' .. package.path\n```\n\n**Tip:** Set via `LUA_PATH` environment variable."
+        }
+      ]
+    },
+    "package.cpath": {
+      "contents": [
+        {
+          "value": "```lua\npackage.cpath\n```\n\n**package.cpath** — The search path for C modules (shared libraries).\n\n```lua\nprint(package.cpath)\n-- ./?.so;/usr/local/lib/lua/5.4/?.so;...\n\npackage.cpath = './libs/?.so;' .. package.cpath\n```\n\n**Tip:** Set via `LUA_CPATH` environment variable."
+        }
+      ]
+    },
+    "package.loaded": {
+      "contents": [
+        {
+          "value": "```lua\npackage.loaded\n```\n\n**package.loaded** — Table controlling which modules are loaded. `require` checks here first.\n\n```lua\n-- Check if loaded\nif package.loaded['socket'] then print('yes') end\n\n-- Force re-require\npackage.loaded['mymod'] = nil\nlocal mod = require('mymod') -- reloads\n```"
+        }
+      ]
+    },
+    "package.preload": {
+      "contents": [
+        {
+          "value": "```lua\npackage.preload\n```\n\n**package.preload** — Table of module loaders. Checked before file search.\n\n```lua\npackage.preload['mylib'] = function(modname)\n  return {\n    greet = function() print('Hello from ' .. modname) end\n  }\nend\n\nlocal mylib = require('mylib')\nmylib.greet()\n```"
+        }
+      ]
+    },
+    "package.searchers": {
+      "contents": [
+        {
+          "value": "```lua\npackage.searchers\n```\n\n**package.searchers** — Ordered table of searcher functions used by `require`.\n\nDefault searchers:\n1. `package.preload` table\n2. Lua file searcher (uses `package.path`)\n3. C library searcher (uses `package.cpath`)\n4. All-in-one C loader\n\n```lua\n-- Add custom searcher at position 2\ntable.insert(package.searchers, 2, function(name)\n  -- return loader function or error string\nend)\n```"
+        }
+      ]
+    },
+    "package.searchpath": {
+      "contents": [
+        {
+          "value": "```lua\npackage.searchpath(name, path [, sep [, rep]])\n```\n\n**package.searchpath** — Searches for a file in the given path.\n\nReplaces `.` in `name` with `sep` (default `.`), then `?` in `path` with result.\n\n```lua\nlocal file, err = package.searchpath('socket.core', package.cpath)\nprint(file) -- /usr/local/lib/lua/5.4/socket/core.so\n\nif not file then print(err) end -- lists all tried paths\n```"
+        }
+      ]
+    },
+    "package.config": {
+      "contents": [
+        {
+          "value": "```lua\npackage.config\n```\n\n**package.config** — A string with compile-time configuration:\n- Line 1: directory separator (`/` or `\\`)\n- Line 2: path separator (`;`)\n- Line 3: substitution marker (`?`)\n- Line 4: Windows \"dir\" marker\n- Line 5: ignore mark for searchers\n\n```lua\nlocal sep = package.config:sub(1,1)\nprint(sep) -- '/' on Unix, '\\\\' on Windows\n```"
+        }
+      ]
+    },
+    "utf8.char": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.char(···)\n```\n\n**utf8.char** — Returns a UTF-8 string from one or more codepoints.\n\nSimilar to `string.char` but for Unicode.\n\n```lua\nprint(utf8.char(72, 233, 108, 108, 244)) -- Héllô\nprint(utf8.char(0x1F600)) -- 😀\n```"
+        }
+      ]
+    },
+    "utf8.codepoint": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.codepoint(s [, i [, j]])\n```\n\n**utf8.codepoint** — Returns codepoints of all characters in `s[i..j]`.\n\nDefault: `i=1, j=i`.\n\n```lua\nlocal s = 'café'\nprint(utf8.codepoint(s, 4)) -- 233 (é)\nprint(utf8.codepoint(s, 1, -1)) -- 99 97 102 233\n```"
+        }
+      ]
+    },
+    "utf8.codes": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.codes(s)\n```\n\n**utf8.codes** — Iterator for UTF-8 codepoints.\n\nReturns position (byte) and codepoint for each character.\n\n```lua\nfor pos, code in utf8.codes('héllo') do\n  print(pos, code, utf8.char(code))\nend\n-- 1  104  h\n-- 2  233  é\n-- 4  108  l\n-- 5  108  l\n-- 6  111  o\n```"
+        }
+      ]
+    },
+    "utf8.len": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.len(s [, i [, j]])\n```\n\n**utf8.len** — Returns the number of UTF-8 characters in `s[i..j]`.\n\nReturns nil + position if invalid UTF-8 found.\n\n```lua\nlocal s = 'café'\nprint(#s) -- 5 (bytes)\nprint(utf8.len(s)) -- 4 (characters)\n\nlocal n, err = utf8.len('\\xFF')\nif not n then print('invalid at byte', err) end\n```"
+        }
+      ]
+    },
+    "utf8.offset": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.offset(s, n [, i])\n```\n\n**utf8.offset** — Returns byte position of the n-th character.\n\n- Positive `n`: count forward from position `i` (default 1)\n- Negative `n`: count backward\n- `n=0`: start of character at byte `i`\n\n```lua\nlocal s = 'héllo'\nprint(utf8.offset(s, 3)) -- 4 (3rd char 'l' starts at byte 4)\nprint(string.sub(s, utf8.offset(s, 2))) -- éllo\n```"
+        }
+      ]
+    },
+    "utf8.charpattern": {
+      "contents": [
+        {
+          "value": "```lua\nutf8.charpattern\n```\n\n**utf8.charpattern** — Pattern (string) matching exactly one UTF-8 character.\n\nValue: `[\\0-\\x7F\\xC2-\\xFD][\\x80-\\xBF]*`\n\n```lua\n-- Iterate over UTF-8 characters\nfor c in string.gmatch('héllo', utf8.charpattern) do\n  print(c)\nend\n-- h é l l o\n\n-- Count characters\nlocal count = select(2, string.gsub('café', utf8.charpattern, ''))\n```"
+        }
+      ]
+    },
+    "math.asin": {
+      "contents": [
+        {
+          "value": "```lua\nmath.asin(x)\n```\n\n**math.asin** — Returns the arc sine of `x` (in radians). Result in [-π/2, π/2].\n\n```lua\nprint(math.asin(1)) -- 1.5707... (π/2)\nprint(math.asin(0)) -- 0.0\n```"
+        }
+      ]
+    },
+    "math.acos": {
+      "contents": [
+        {
+          "value": "```lua\nmath.acos(x)\n```\n\n**math.acos** — Returns the arc cosine of `x` (in radians). Result in [0, π].\n\n```lua\nprint(math.acos(1)) -- 0.0\nprint(math.acos(0)) -- 1.5707... (π/2)\n```"
+        }
+      ]
+    },
+    "math.atan": {
+      "contents": [
+        {
+          "value": "```lua\nmath.atan(y [, x])\n```\n\n**math.atan** — Returns the arc tangent of `y/x` (in radians). Uses signs to determine quadrant.\n\nIn Lua 5.3+, replaces both `math.atan` and `math.atan2`.\n\n```lua\nprint(math.atan(1)) -- 0.7853... (π/4)\nprint(math.atan(1, 0)) -- 1.5707... (π/2)\n```"
+        }
+      ]
+    },
+    "math.fmod": {
+      "contents": [
+        {
+          "value": "```lua\nmath.fmod(x, y)\n```\n\n**math.fmod** — Returns the remainder of `x/y` that rounds towards zero.\n\nDiffers from `%` operator for negative numbers.\n\n```lua\nprint(math.fmod(7, 3)) -- 1.0\nprint(math.fmod(-7, 3)) -- -1.0 (% would give 2)\n```"
+        }
+      ]
+    },
+    "math.randomseed": {
+      "contents": [
+        {
+          "value": "```lua\nmath.randomseed([x [, y]])\n```\n\n**math.randomseed** — Sets the seed for the pseudo-random generator.\n\nIn Lua 5.4, calling with no args uses a system-dependent seed.\n\n```lua\nmath.randomseed(os.time()) -- Lua 5.1-5.3\nmath.randomseed() -- Lua 5.4 (auto-seed)\nprint(math.random(1, 100))\n```"
+        }
+      ]
+    },
+    "math.tointeger": {
+      "contents": [
+        {
+          "value": "```lua\nmath.tointeger(x)\n```\n\n**math.tointeger** — Converts float `x` to integer if it has an exact integer value. Returns nil otherwise. (5.3+)\n\n```lua\nprint(math.tointeger(5.0)) -- 5\nprint(math.tointeger(5.5)) -- nil\nprint(math.tointeger(2^53)) -- 9007199254740992\n```"
+        }
+      ]
+    },
+    "math.type": {
+      "contents": [
+        {
+          "value": "```lua\nmath.type(x)\n```\n\n**math.type** — Returns `\"integer\"`, `\"float\"`, or false if not a number. (5.3+)\n\n```lua\nprint(math.type(1)) -- 'integer'\nprint(math.type(1.0)) -- 'float'\nprint(math.type('x')) -- false\n```"
+        }
+      ]
+    },
+    "math.maxinteger": {
+      "contents": [
+        {
+          "value": "```lua\nmath.maxinteger\n```\n\n**math.maxinteger** — Maximum value for an integer. (5.3+)\n\n```lua\nprint(math.maxinteger) -- 9223372036854775807 (2^63 - 1)\n```"
+        }
+      ]
+    },
+    "math.mininteger": {
+      "contents": [
+        {
+          "value": "```lua\nmath.mininteger\n```\n\n**math.mininteger** — Minimum value for an integer. (5.3+)\n\n```lua\nprint(math.mininteger) -- -9223372036854775808 (-2^63)\n```"
+        }
+      ]
+    },
+    "io.input": {
+      "contents": [
+        {
+          "value": "```lua\nio.input([file])\n```\n\n**io.input** — Sets `file` as the default input, or returns current default input.\n\n```lua\nio.input('data.txt')\nlocal line = io.read('l')\nio.input():close()\nio.input(io.stdin) -- restore\n```"
+        }
+      ]
+    },
+    "io.output": {
+      "contents": [
+        {
+          "value": "```lua\nio.output([file])\n```\n\n**io.output** — Sets `file` as the default output, or returns current default output.\n\n```lua\nio.output('out.txt')\nio.write('hello\\n')\nio.output():close()\nio.output(io.stdout) -- restore\n```"
+        }
+      ]
+    },
+    "io.flush": {
+      "contents": [
+        {
+          "value": "```lua\nio.flush()\n```\n\n**io.flush** — Flushes the default output file buffer.\n\n```lua\nio.write('progress: 50%')\nio.flush() -- ensure it's written immediately\n```"
+        }
+      ]
+    },
+    "io.tmpfile": {
+      "contents": [
+        {
+          "value": "```lua\nio.tmpfile()\n```\n\n**io.tmpfile** — Returns a handle for a temporary file (opened in update mode). Automatically removed on program exit.\n\n```lua\nlocal tmp = io.tmpfile()\ntmp:write('temp data')\ntmp:seek('set')\nprint(tmp:read('*a')) -- temp data\ntmp:close()\n```"
+        }
+      ]
+    },
+    "io.type": {
+      "contents": [
+        {
+          "value": "```lua\nio.type(obj)\n```\n\n**io.type** — Returns `\"file\"` for open handles, `\"closed file\"` for closed handles, or nil otherwise.\n\n```lua\nlocal f = io.open('test.txt', 'r')\nprint(io.type(f)) -- 'file'\nf:close()\nprint(io.type(f)) -- 'closed file'\nprint(io.type(42)) -- nil\n```"
+        }
+      ]
+    },
+    "io.popen": {
+      "contents": [
+        {
+          "value": "```lua\nio.popen(prog [, mode])\n```\n\n**io.popen** — Starts `prog` in a separated process and returns a file handle.\n\n`mode`: `'r'` (read stdout, default) or `'w'` (write to stdin).\n\n```lua\nlocal f = io.popen('ls -la', 'r')\nlocal output = f:read('*a')\nf:close()\nprint(output)\n```\n\n**Warning:** Not available on all platforms. Check return of `io.popen`."
+        }
+      ]
+    },
+    "io.stdin": {
+      "contents": [
+        {
+          "value": "```lua\nio.stdin\n```\n\n**io.stdin** — Standard input file handle.\n\n```lua\nio.write('Enter name: ')\nlocal name = io.stdin:read('l')\n```"
+        }
+      ]
+    },
+    "io.stdout": {
+      "contents": [
+        {
+          "value": "```lua\nio.stdout\n```\n\n**io.stdout** — Standard output file handle.\n\n```lua\nio.stdout:write('hello\\n')\nio.stdout:flush()\n```"
+        }
+      ]
+    },
+    "io.stderr": {
+      "contents": [
+        {
+          "value": "```lua\nio.stderr\n```\n\n**io.stderr** — Standard error file handle.\n\n```lua\nio.stderr:write('Error: something went wrong\\n')\n```"
+        }
+      ]
+    },
+    "os.difftime": {
+      "contents": [
+        {
+          "value": "```lua\nos.difftime(t2, t1)\n```\n\n**os.difftime** — Returns the difference in seconds between times `t2` and `t1`.\n\n```lua\nlocal start = os.time()\n-- ... work ...\nlocal elapsed = os.difftime(os.time(), start)\nprint(elapsed .. ' seconds')\n```"
+        }
+      ]
+    },
+    "os.remove": {
+      "contents": [
+        {
+          "value": "```lua\nos.remove(filename)\n```\n\n**os.remove** — Deletes the file or empty directory.\n\nReturns true on success, or nil + error message.\n\n```lua\nlocal ok, err = os.remove('temp.txt')\nif not ok then print('Failed:', err) end\n```"
+        }
+      ]
+    },
+    "os.rename": {
+      "contents": [
+        {
+          "value": "```lua\nos.rename(oldname, newname)\n```\n\n**os.rename** — Renames/moves a file or directory.\n\n```lua\nlocal ok, err = os.rename('old.txt', 'new.txt')\nif not ok then print('Failed:', err) end\n```"
+        }
+      ]
+    },
+    "os.tmpname": {
+      "contents": [
+        {
+          "value": "```lua\nos.tmpname()\n```\n\n**os.tmpname** — Returns a string with a temporary file name.\n\n**Warning:** The file is not created; use `io.open` to create it. On some systems this may be insecure.\n\n```lua\nlocal tmp = os.tmpname()\nlocal f = io.open(tmp, 'w')\nf:write('data')\nf:close()\nos.remove(tmp)\n```"
+        }
+      ]
+    },
+    "os.setlocale": {
+      "contents": [
+        {
+          "value": "```lua\nos.setlocale(locale [, category])\n```\n\n**os.setlocale** — Sets the program locale. Pass nil to query current.\n\nCategories: `'all'`, `'collate'`, `'ctype'`, `'monetary'`, `'numeric'`, `'time'`.\n\n```lua\nos.setlocale('C') -- standard locale\nos.setlocale('') -- system default\nprint(os.setlocale(nil)) -- query current\n```"
+        }
+      ]
+    },
+    "coroutine.isyieldable": {
+      "contents": [
+        {
+          "value": "```lua\ncoroutine.isyieldable()\n```\n\n**coroutine.isyieldable** — Returns true if the running coroutine can yield.\n\nFalse for the main thread and C functions.\n\n```lua\nprint(coroutine.isyieldable()) -- false (main thread)\n\nlocal co = coroutine.create(function()\n  print(coroutine.isyieldable()) -- true\nend)\ncoroutine.resume(co)\n```"
+        }
+      ]
+    },
+    "coroutine.running": {
+      "contents": [
+        {
+          "value": "```lua\ncoroutine.running()\n```\n\n**coroutine.running** — Returns the running coroutine and a boolean (true if main thread).\n\n```lua\nlocal co, is_main = coroutine.running()\nprint(is_main) -- true in main thread\n\nlocal co2 = coroutine.create(function()\n  local me, main = coroutine.running()\n  print(main) -- false\nend)\ncoroutine.resume(co2)\n```"
+        }
+      ]
+    },
+    "coroutine.close": {
+      "contents": [
+        {
+          "value": "```lua\ncoroutine.close(co)\n```\n\n**coroutine.close** — Closes coroutine `co`, running any pending to-be-closed variables. (5.4+)\n\nCan only close suspended or dead coroutines.\n\n```lua\nlocal co = coroutine.create(function()\n  local f <close> = io.open('temp.txt', 'w')\n  coroutine.yield()\n  f:write('done')\nend)\ncoroutine.resume(co)\ncoroutine.close(co) -- f gets closed via __close\n```"
+        }
+      ]
+    },
+    "__add": {
+      "contents": [
+        {
+          "value": "```lua\n__add(a, b)\n```\n\n**__add** — Addition metamethod. Called for `a + b` when `a` or `b` has this metamethod.\n\n```lua\nlocal Vec = {}\nVec.__index = Vec\nVec.__add = function(a, b)\n  return setmetatable({x=a.x+b.x, y=a.y+b.y}, Vec)\nend\n\nlocal v = setmetatable({x=1,y=2}, Vec) + setmetatable({x=3,y=4}, Vec)\nprint(v.x, v.y) -- 4  6\n```"
+        }
+      ]
+    },
+    "__sub": {
+      "contents": [
+        {
+          "value": "```lua\n__sub(a, b)\n```\n\n**__sub** — Subtraction metamethod. Called for `a - b`.\n\n```lua\nmt.__sub = function(a, b)\n  return setmetatable({x=a.x-b.x, y=a.y-b.y}, mt)\nend\n```"
+        }
+      ]
+    },
+    "__mul": {
+      "contents": [
+        {
+          "value": "```lua\n__mul(a, b)\n```\n\n**__mul** — Multiplication metamethod. Called for `a * b`.\n\nOne operand can be a scalar.\n\n```lua\nmt.__mul = function(a, b)\n  if type(a) == 'number' then return setmetatable({x=a*b.x, y=a*b.y}, mt) end\n  if type(b) == 'number' then return setmetatable({x=a.x*b, y=a.y*b}, mt) end\n  return a.x*b.x + a.y*b.y -- dot product\nend\n```"
+        }
+      ]
+    },
+    "__div": {
+      "contents": [
+        {
+          "value": "```lua\n__div(a, b)\n```\n\n**__div** — Division metamethod. Called for `a / b`.\n\n```lua\nmt.__div = function(a, b)\n  if type(b) == 'number' then\n    return setmetatable({x=a.x/b, y=a.y/b}, mt)\n  end\nend\n```"
+        }
+      ]
+    },
+    "__mod": {
+      "contents": [
+        {
+          "value": "```lua\n__mod(a, b)\n```\n\n**__mod** — Modulo metamethod. Called for `a % b`.\n\n```lua\nmt.__mod = function(a, b)\n  return setmetatable({x=a.x%b, y=a.y%b}, mt)\nend\n```"
+        }
+      ]
+    },
+    "__pow": {
+      "contents": [
+        {
+          "value": "```lua\n__pow(a, b)\n```\n\n**__pow** — Exponentiation metamethod. Called for `a ^ b`.\n\n```lua\nmt.__pow = function(a, n)\n  return setmetatable({x=a.x^n, y=a.y^n}, mt)\nend\n```"
+        }
+      ]
+    },
+    "__unm": {
+      "contents": [
+        {
+          "value": "```lua\n__unm(a)\n```\n\n**__unm** — Unary minus metamethod. Called for `-a`.\n\n```lua\nmt.__unm = function(a)\n  return setmetatable({x=-a.x, y=-a.y}, mt)\nend\n\nlocal v = setmetatable({x=1,y=2}, mt)\nlocal neg = -v -- {x=-1, y=-2}\n```"
+        }
+      ]
+    },
+    "__eq": {
+      "contents": [
+        {
+          "value": "```lua\n__eq(a, b)\n```\n\n**__eq** — Equality metamethod. Called for `a == b` when both share the same metamethod.\n\n```lua\nmt.__eq = function(a, b)\n  return a.x == b.x and a.y == b.y\nend\n```\n\n**Note:** Only called when both operands have the same `__eq` metamethod."
+        }
+      ]
+    },
+    "__lt": {
+      "contents": [
+        {
+          "value": "```lua\n__lt(a, b)\n```\n\n**__lt** — Less-than metamethod. Called for `a < b`.\n\n```lua\nmt.__lt = function(a, b)\n  return (a.x^2 + a.y^2) < (b.x^2 + b.y^2)\nend\n```"
+        }
+      ]
+    },
+    "__le": {
+      "contents": [
+        {
+          "value": "```lua\n__le(a, b)\n```\n\n**__le** — Less-than-or-equal metamethod. Called for `a <= b`.\n\nIn Lua 5.4, if absent, Lua tries `not (b < a)`.\n\n```lua\nmt.__le = function(a, b)\n  return (a.x^2 + a.y^2) <= (b.x^2 + b.y^2)\nend\n```"
+        }
+      ]
+    },
+    "__concat": {
+      "contents": [
+        {
+          "value": "```lua\n__concat(a, b)\n```\n\n**__concat** — Concatenation metamethod. Called for `a .. b`.\n\n```lua\nmt.__concat = function(a, b)\n  if type(a) == 'string' then return a .. tostring(b) end\n  if type(b) == 'string' then return tostring(a) .. b end\n  return tostring(a) .. tostring(b)\nend\n```"
+        }
+      ]
+    },
+    "__len": {
+      "contents": [
+        {
+          "value": "```lua\n__len(a)\n```\n\n**__len** — Length metamethod. Called for `#a`.\n\n```lua\nmt.__len = function(a)\n  return math.sqrt(a.x^2 + a.y^2) -- vector magnitude\nend\n\nlocal v = setmetatable({x=3, y=4}, mt)\nprint(#v) -- 5.0\n```"
+        }
+      ]
+    },
+    "__close": {
+      "contents": [
+        {
+          "value": "```lua\n__close(obj, err)\n```\n\n**__close** — To-be-closed metamethod (Lua 5.4). Called when a `<close>` variable goes out of scope.\n\n`err` is the error object if exiting due to an error, or nil.\n\n```lua\nlocal mt = {__close = function(self, err)\n  print('closing', err)\n  self.handle:close()\nend}\n\nlocal obj <close> = setmetatable({handle=io.open('f.txt')}, mt)\n-- handle closed automatically when obj goes out of scope\n```"
+        }
+      ]
+    },
+    "__metatable": {
+      "contents": [
+        {
+          "value": "```lua\n__metatable = value\n```\n\n**__metatable** — Protects the metatable. When set, `getmetatable()` returns this value instead of the real metatable, and `setmetatable()` raises an error.\n\n```lua\nlocal mt = {__metatable = 'read-only'}\nlocal t = setmetatable({}, mt)\nprint(getmetatable(t)) -- 'read-only'\nsetmetatable(t, {}) -- error: cannot change protected metatable\n```\n\n**Tip:** Use `debug.getmetatable()` to bypass this protection."
+        }
+      ]
+    },
+    "__mode": {
+      "contents": [
+        {
+          "value": "```lua\n__mode = 'k' | 'v' | 'kv'\n```\n\n**__mode** — Weak table mode. Keys/values with this metamethod won't prevent garbage collection.\n\n- `'k'` — weak keys\n- `'v'` — weak values  \n- `'kv'` — both weak\n\n```lua\nlocal cache = setmetatable({}, {__mode = 'v'})\ncache[1] = {data = 'will be collected'}\ncollectgarbage()\nprint(cache[1]) -- nil (collected)\n```"
+        }
+      ]
+    },
+    "string.packsize": {
+      "contents": [
+        {
+          "value": "```lua\nstring.packsize(fmt)\n```\n\n**string.packsize** — Returns the size of a string resulting from `string.pack` with the given format. (5.3+)\n\nOnly works with fixed-size formats (not `s` or `z`).\n\n```lua\nprint(string.packsize('i4')) -- 4\nprint(string.packsize('i4i4')) -- 8\nprint(string.packsize('Bd')) -- 9 (1 byte + 8 double)\n```"
+        }
+      ]
+    },
     "loadstring": {
       "contents": [
         {

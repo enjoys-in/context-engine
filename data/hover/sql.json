@@ -400,28 +400,160 @@
         }
       ]
     },
-    "LIKE": "## LIKE\n\n```sql\nexpression LIKE pattern [ESCAPE escape_char]\nexpression ILIKE pattern  -- case-insensitive (PostgreSQL)\n```\n\nPattern matching with wildcards:\n- `%` — matches any sequence of characters\n- `_` — matches any single character\n\n```sql\n-- Starts with 'John'\nSELECT * FROM users WHERE name LIKE 'John%';\n\n-- Contains 'admin'\nSELECT * FROM users WHERE email LIKE '%admin%';\n\n-- Exactly 3 characters\nSELECT * FROM codes WHERE code LIKE '___';\n\n-- Escape literal %\nSELECT * FROM data WHERE value LIKE '100\\%%' ESCAPE '\\\\';\n\n-- Case-insensitive (PostgreSQL)\nSELECT * FROM users WHERE name ILIKE '%john%';\n```\n\n**Performance tip:** Leading `%` prevents index usage. Consider `pg_trgm` extension for fast `LIKE '%pattern%'`.",
-    "BETWEEN": "## BETWEEN\n\n```sql\nexpression BETWEEN low AND high\nexpression NOT BETWEEN low AND high\n```\n\nInclusive range test. Equivalent to `expr >= low AND expr <= high`.\n\n```sql\n-- Numeric range\nSELECT * FROM products WHERE price BETWEEN 10 AND 50;\n\n-- Date range\nSELECT * FROM orders\nWHERE created_at BETWEEN '2024-01-01' AND '2024-12-31';\n\n-- NOT BETWEEN\nSELECT * FROM users WHERE age NOT BETWEEN 18 AND 65;\n```\n\n**Note:** BETWEEN is inclusive on both ends. For timestamps, be careful with end boundary.",
-    "IN": "## IN\n\n```sql\nexpression IN (value1, value2, ...)\nexpression IN (subquery)\nexpression NOT IN (values)\n```\n\nTest membership in a set.\n\n```sql\n-- Literal values\nSELECT * FROM users WHERE role IN ('admin', 'editor', 'mod');\n\n-- Subquery\nSELECT * FROM products WHERE category_id IN (\n    SELECT id FROM categories WHERE active = true\n);\n\n-- NOT IN\nSELECT * FROM orders WHERE status NOT IN ('cancelled', 'refunded');\n```\n\n**Warning:** `NOT IN` with NULLs returns unexpected results. Prefer `NOT EXISTS` when subquery may contain NULLs.",
-    "EXISTS": "## EXISTS\n\n```sql\nEXISTS (subquery)\nNOT EXISTS (subquery)\n```\n\nReturns TRUE if subquery produces any rows.\n\n```sql\n-- Find users with orders\nSELECT * FROM users u\nWHERE EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n\n-- Find users without orders\nSELECT * FROM users u\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n```\n\n**Performance:** EXISTS stops scanning as soon as one row is found. Often faster than `IN` for large datasets.",
-    "data_types": "## SQL Data Types\n\n| Type | Description | Example |\n|------|-------------|---------|\n| `INTEGER` / `INT` | 32-bit signed integer | `age INTEGER` |\n| `BIGINT` | 64-bit integer | `id BIGINT` |\n| `SMALLINT` | 16-bit integer | `quantity SMALLINT` |\n| `SERIAL` | Auto-increment integer | `id SERIAL PRIMARY KEY` |\n| `NUMERIC(p,s)` | Exact decimal | `price NUMERIC(10,2)` |\n| `REAL` / `FLOAT4` | 32-bit floating point | `score REAL` |\n| `DOUBLE PRECISION` | 64-bit floating point | `value DOUBLE PRECISION` |\n| `VARCHAR(n)` | Variable-length string | `name VARCHAR(100)` |\n| `TEXT` | Unlimited string | `bio TEXT` |\n| `CHAR(n)` | Fixed-length string | `code CHAR(3)` |\n| `BOOLEAN` | true/false | `active BOOLEAN` |\n| `DATE` | Date only | `birthday DATE` |\n| `TIME` | Time only | `start_time TIME` |\n| `TIMESTAMP` | Date + time | `created_at TIMESTAMP` |\n| `TIMESTAMPTZ` | With timezone | `event_at TIMESTAMPTZ` |\n| `INTERVAL` | Time duration | `duration INTERVAL` |\n| `UUID` | UUID v4 | `id UUID` |\n| `JSONB` | Binary JSON | `data JSONB` |\n| `BYTEA` | Binary data | `file BYTEA` |\n| `ARRAY` | Array of any type | `tags TEXT[]` |",
-    "constraints": "## Constraints\n\n```sql\nCREATE TABLE example (\n    id      SERIAL PRIMARY KEY,\n    email   VARCHAR(255) NOT NULL UNIQUE,\n    age     INTEGER CHECK (age >= 0 AND age < 200),\n    role    VARCHAR(20) DEFAULT 'user',\n    dept_id INTEGER REFERENCES departments(id) ON DELETE SET NULL,\n    \n    -- Table-level constraints\n    CONSTRAINT valid_email CHECK (email LIKE '%@%'),\n    CONSTRAINT unique_per_dept UNIQUE (email, dept_id)\n);\n```\n\n| Constraint | Description |\n|-----------|-------------|\n| `PRIMARY KEY` | Unique + NOT NULL, one per table |\n| `FOREIGN KEY` | References another table |\n| `UNIQUE` | All values must be distinct |\n| `NOT NULL` | Prevents NULL |\n| `CHECK` | Custom boolean condition |\n| `DEFAULT` | Value when not specified |\n| `EXCLUDE` | Exclusion constraint (PostgreSQL) |\n\n**ON DELETE actions:** `CASCADE`, `SET NULL`, `SET DEFAULT`, `RESTRICT`, `NO ACTION`",
-    "ABS": "## ABS\n\n```sql\nABS(number) → number\n```\n\nReturns absolute (non-negative) value.\n\n```sql\nSELECT ABS(-42);      -- 42\nSELECT ABS(price - cost) AS margin FROM products;\n```",
-    "CEIL": "## CEIL / CEILING\n\n```sql\nCEIL(number) → integer\n```\n\nRound up to nearest integer.\n\n```sql\nSELECT CEIL(4.2);   -- 5\nSELECT CEIL(-4.8);  -- -4\n```",
-    "FLOOR": "## FLOOR\n\n```sql\nFLOOR(number) → integer\n```\n\nRound down to nearest integer.\n\n```sql\nSELECT FLOOR(4.8);   -- 4\nSELECT FLOOR(-4.2);  -- -5\n```",
-    "ROUND": "## ROUND\n\n```sql\nROUND(number [, decimal_places]) → number\n```\n\nRound to specified decimal places (default 0).\n\n```sql\nSELECT ROUND(3.14159);     -- 3\nSELECT ROUND(3.14159, 2);  -- 3.14\nSELECT ROUND(1234, -2);    -- 1200\n```",
-    "POWER": "## POWER\n\n```sql\nPOWER(base, exponent) → number\n```\n\nRaise number to a power.\n\n```sql\nSELECT POWER(2, 10);  -- 1024\nSELECT POWER(27, 1.0/3);  -- 3 (cube root)\n```",
-    "SQRT": "## SQRT\n\n```sql\nSQRT(number) → number\n```\n\nSquare root.\n\n```sql\nSELECT SQRT(144);  -- 12\n```",
-    "MOD": "## MOD\n\n```sql\nMOD(dividend, divisor) → number\n-- or: dividend % divisor\n```\n\nRemainder of integer division.\n\n```sql\nSELECT MOD(10, 3);  -- 1\nSELECT 10 % 3;      -- 1 (operator form)\n```",
-    "UPPER": "## UPPER / LOWER\n\n```sql\nUPPER(string) → text\nLOWER(string) → text\n```\n\n```sql\nSELECT UPPER('hello');  -- 'HELLO'\nSELECT LOWER('HELLO');  -- 'hello'\n```",
-    "LENGTH": "## LENGTH\n\n```sql\nLENGTH(string) → integer\nCHAR_LENGTH(string) → integer  -- SQL standard\n```\n\nReturn string length.\n\n```sql\nSELECT LENGTH('hello');  -- 5\n```",
-    "POSITION": "## POSITION\n\n```sql\nPOSITION(substring IN string) → integer\n-- or: STRPOS(string, substring)\n```\n\nFind position of substring (1-based, 0 if not found).\n\n```sql\nSELECT POSITION('world' IN 'hello world');  -- 7\n```",
-    "LPAD": "## LPAD / RPAD\n\n```sql\nLPAD(string, length [, fill]) → text\nRPAD(string, length [, fill]) → text\n```\n\nPad string to specified length.\n\n```sql\nSELECT LPAD('42', 5, '0');   -- '00042'\nSELECT RPAD('hi', 5, '.');   -- 'hi...'\n```",
-    "SPLIT_PART": "## SPLIT_PART\n\n```sql\nSPLIT_PART(string, delimiter, position) → text\n```\n\nSplit string and return nth part.\n\n```sql\nSELECT SPLIT_PART('a.b.c', '.', 2);  -- 'b'\nSELECT SPLIT_PART('john@example.com', '@', 1);  -- 'john'\n```",
-    "Window functions": "## Window Functions\n\n```sql\nfunction() OVER (\n    [PARTITION BY column]\n    [ORDER BY column [ASC|DESC]]\n    [frame_clause]\n)\n```\n\n**Ranking:**\n```sql\nSELECT name, salary,\n    ROW_NUMBER() OVER (ORDER BY salary DESC) as row_num,\n    RANK()       OVER (ORDER BY salary DESC) as rank,\n    DENSE_RANK() OVER (ORDER BY salary DESC) as dense_rank,\n    NTILE(4)     OVER (ORDER BY salary DESC) as quartile\nFROM employees;\n```\n\n**Value access:**\n```sql\nSELECT date, value,\n    LAG(value, 1)  OVER (ORDER BY date) as prev_value,\n    LEAD(value, 1) OVER (ORDER BY date) as next_value,\n    FIRST_VALUE(value) OVER (ORDER BY date) as first,\n    LAST_VALUE(value)  OVER (ORDER BY date\n        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as last\nFROM metrics;\n```\n\n**Frame clause:**\n- `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (default)\n- `ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING`\n- `RANGE BETWEEN INTERVAL '7 days' PRECEDING AND CURRENT ROW`",
-    "MAX": "## MAX / MIN\n\n```sql\nMAX(expression) → same type\nMIN(expression) → same type\n```\n\nReturn maximum/minimum value.\n\n```sql\nSELECT MAX(salary), MIN(salary) FROM employees;\nSELECT department, MAX(salary) FROM employees GROUP BY department;\n```",
-    "ARRAY_AGG": "## ARRAY_AGG\n\n```sql\nARRAY_AGG(expression [ORDER BY ...]) → array\n```\n\nCollect values into an array.\n\n```sql\nSELECT department,\n    ARRAY_AGG(name ORDER BY name) as member_array\nFROM employees\nGROUP BY department;\n```",
-    "GENERATE_SERIES": "## generate_series\n\n```sql\ngenerate_series(start, stop [, step])\n```\n\nGenerate a series of values (PostgreSQL).\n\n```sql\n-- Numbers\nSELECT generate_series(1, 10);\nSELECT generate_series(0, 100, 10);  -- 0, 10, 20, ...\n\n-- Dates\nSELECT generate_series(\n    '2024-01-01'::date,\n    '2024-12-31'::date,\n    '1 month'::interval\n);\n\n-- Fill gaps in time series\nSELECT d::date, COALESCE(count, 0)\nFROM generate_series('2024-01-01', '2024-01-31', '1 day') d\nLEFT JOIN daily_counts ON daily_counts.day = d::date;\n```",
+    "LIKE": {
+      "contents": [
+        {
+          "value": "## LIKE\n\n```sql\nexpression LIKE pattern [ESCAPE escape_char]\nexpression ILIKE pattern  -- case-insensitive (PostgreSQL)\n```\n\nPattern matching with wildcards:\n- `%` — matches any sequence of characters\n- `_` — matches any single character\n\n```sql\n-- Starts with 'John'\nSELECT * FROM users WHERE name LIKE 'John%';\n\n-- Contains 'admin'\nSELECT * FROM users WHERE email LIKE '%admin%';\n\n-- Exactly 3 characters\nSELECT * FROM codes WHERE code LIKE '___';\n\n-- Escape literal %\nSELECT * FROM data WHERE value LIKE '100\\%%' ESCAPE '\\\\';\n\n-- Case-insensitive (PostgreSQL)\nSELECT * FROM users WHERE name ILIKE '%john%';\n```\n\n**Performance tip:** Leading `%` prevents index usage. Consider `pg_trgm` extension for fast `LIKE '%pattern%'`."
+        }
+      ]
+    },
+    "BETWEEN": {
+      "contents": [
+        {
+          "value": "## BETWEEN\n\n```sql\nexpression BETWEEN low AND high\nexpression NOT BETWEEN low AND high\n```\n\nInclusive range test. Equivalent to `expr >= low AND expr <= high`.\n\n```sql\n-- Numeric range\nSELECT * FROM products WHERE price BETWEEN 10 AND 50;\n\n-- Date range\nSELECT * FROM orders\nWHERE created_at BETWEEN '2024-01-01' AND '2024-12-31';\n\n-- NOT BETWEEN\nSELECT * FROM users WHERE age NOT BETWEEN 18 AND 65;\n```\n\n**Note:** BETWEEN is inclusive on both ends. For timestamps, be careful with end boundary."
+        }
+      ]
+    },
+    "IN": {
+      "contents": [
+        {
+          "value": "## IN\n\n```sql\nexpression IN (value1, value2, ...)\nexpression IN (subquery)\nexpression NOT IN (values)\n```\n\nTest membership in a set.\n\n```sql\n-- Literal values\nSELECT * FROM users WHERE role IN ('admin', 'editor', 'mod');\n\n-- Subquery\nSELECT * FROM products WHERE category_id IN (\n    SELECT id FROM categories WHERE active = true\n);\n\n-- NOT IN\nSELECT * FROM orders WHERE status NOT IN ('cancelled', 'refunded');\n```\n\n**Warning:** `NOT IN` with NULLs returns unexpected results. Prefer `NOT EXISTS` when subquery may contain NULLs."
+        }
+      ]
+    },
+    "EXISTS": {
+      "contents": [
+        {
+          "value": "## EXISTS\n\n```sql\nEXISTS (subquery)\nNOT EXISTS (subquery)\n```\n\nReturns TRUE if subquery produces any rows.\n\n```sql\n-- Find users with orders\nSELECT * FROM users u\nWHERE EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n\n-- Find users without orders\nSELECT * FROM users u\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o WHERE o.user_id = u.id\n);\n```\n\n**Performance:** EXISTS stops scanning as soon as one row is found. Often faster than `IN` for large datasets."
+        }
+      ]
+    },
+    "data_types": {
+      "contents": [
+        {
+          "value": "## SQL Data Types\n\n| Type | Description | Example |\n|------|-------------|---------|\n| `INTEGER` / `INT` | 32-bit signed integer | `age INTEGER` |\n| `BIGINT` | 64-bit integer | `id BIGINT` |\n| `SMALLINT` | 16-bit integer | `quantity SMALLINT` |\n| `SERIAL` | Auto-increment integer | `id SERIAL PRIMARY KEY` |\n| `NUMERIC(p,s)` | Exact decimal | `price NUMERIC(10,2)` |\n| `REAL` / `FLOAT4` | 32-bit floating point | `score REAL` |\n| `DOUBLE PRECISION` | 64-bit floating point | `value DOUBLE PRECISION` |\n| `VARCHAR(n)` | Variable-length string | `name VARCHAR(100)` |\n| `TEXT` | Unlimited string | `bio TEXT` |\n| `CHAR(n)` | Fixed-length string | `code CHAR(3)` |\n| `BOOLEAN` | true/false | `active BOOLEAN` |\n| `DATE` | Date only | `birthday DATE` |\n| `TIME` | Time only | `start_time TIME` |\n| `TIMESTAMP` | Date + time | `created_at TIMESTAMP` |\n| `TIMESTAMPTZ` | With timezone | `event_at TIMESTAMPTZ` |\n| `INTERVAL` | Time duration | `duration INTERVAL` |\n| `UUID` | UUID v4 | `id UUID` |\n| `JSONB` | Binary JSON | `data JSONB` |\n| `BYTEA` | Binary data | `file BYTEA` |\n| `ARRAY` | Array of any type | `tags TEXT[]` |"
+        }
+      ]
+    },
+    "constraints": {
+      "contents": [
+        {
+          "value": "## Constraints\n\n```sql\nCREATE TABLE example (\n    id      SERIAL PRIMARY KEY,\n    email   VARCHAR(255) NOT NULL UNIQUE,\n    age     INTEGER CHECK (age >= 0 AND age < 200),\n    role    VARCHAR(20) DEFAULT 'user',\n    dept_id INTEGER REFERENCES departments(id) ON DELETE SET NULL,\n    \n    -- Table-level constraints\n    CONSTRAINT valid_email CHECK (email LIKE '%@%'),\n    CONSTRAINT unique_per_dept UNIQUE (email, dept_id)\n);\n```\n\n| Constraint | Description |\n|-----------|-------------|\n| `PRIMARY KEY` | Unique + NOT NULL, one per table |\n| `FOREIGN KEY` | References another table |\n| `UNIQUE` | All values must be distinct |\n| `NOT NULL` | Prevents NULL |\n| `CHECK` | Custom boolean condition |\n| `DEFAULT` | Value when not specified |\n| `EXCLUDE` | Exclusion constraint (PostgreSQL) |\n\n**ON DELETE actions:** `CASCADE`, `SET NULL`, `SET DEFAULT`, `RESTRICT`, `NO ACTION`"
+        }
+      ]
+    },
+    "ABS": {
+      "contents": [
+        {
+          "value": "## ABS\n\n```sql\nABS(number) → number\n```\n\nReturns absolute (non-negative) value.\n\n```sql\nSELECT ABS(-42);      -- 42\nSELECT ABS(price - cost) AS margin FROM products;\n```"
+        }
+      ]
+    },
+    "CEIL": {
+      "contents": [
+        {
+          "value": "## CEIL / CEILING\n\n```sql\nCEIL(number) → integer\n```\n\nRound up to nearest integer.\n\n```sql\nSELECT CEIL(4.2);   -- 5\nSELECT CEIL(-4.8);  -- -4\n```"
+        }
+      ]
+    },
+    "FLOOR": {
+      "contents": [
+        {
+          "value": "## FLOOR\n\n```sql\nFLOOR(number) → integer\n```\n\nRound down to nearest integer.\n\n```sql\nSELECT FLOOR(4.8);   -- 4\nSELECT FLOOR(-4.2);  -- -5\n```"
+        }
+      ]
+    },
+    "ROUND": {
+      "contents": [
+        {
+          "value": "## ROUND\n\n```sql\nROUND(number [, decimal_places]) → number\n```\n\nRound to specified decimal places (default 0).\n\n```sql\nSELECT ROUND(3.14159);     -- 3\nSELECT ROUND(3.14159, 2);  -- 3.14\nSELECT ROUND(1234, -2);    -- 1200\n```"
+        }
+      ]
+    },
+    "POWER": {
+      "contents": [
+        {
+          "value": "## POWER\n\n```sql\nPOWER(base, exponent) → number\n```\n\nRaise number to a power.\n\n```sql\nSELECT POWER(2, 10);  -- 1024\nSELECT POWER(27, 1.0/3);  -- 3 (cube root)\n```"
+        }
+      ]
+    },
+    "SQRT": {
+      "contents": [
+        {
+          "value": "## SQRT\n\n```sql\nSQRT(number) → number\n```\n\nSquare root.\n\n```sql\nSELECT SQRT(144);  -- 12\n```"
+        }
+      ]
+    },
+    "MOD": {
+      "contents": [
+        {
+          "value": "## MOD\n\n```sql\nMOD(dividend, divisor) → number\n-- or: dividend % divisor\n```\n\nRemainder of integer division.\n\n```sql\nSELECT MOD(10, 3);  -- 1\nSELECT 10 % 3;      -- 1 (operator form)\n```"
+        }
+      ]
+    },
+    "UPPER": {
+      "contents": [
+        {
+          "value": "## UPPER / LOWER\n\n```sql\nUPPER(string) → text\nLOWER(string) → text\n```\n\n```sql\nSELECT UPPER('hello');  -- 'HELLO'\nSELECT LOWER('HELLO');  -- 'hello'\n```"
+        }
+      ]
+    },
+    "LENGTH": {
+      "contents": [
+        {
+          "value": "## LENGTH\n\n```sql\nLENGTH(string) → integer\nCHAR_LENGTH(string) → integer  -- SQL standard\n```\n\nReturn string length.\n\n```sql\nSELECT LENGTH('hello');  -- 5\n```"
+        }
+      ]
+    },
+    "POSITION": {
+      "contents": [
+        {
+          "value": "## POSITION\n\n```sql\nPOSITION(substring IN string) → integer\n-- or: STRPOS(string, substring)\n```\n\nFind position of substring (1-based, 0 if not found).\n\n```sql\nSELECT POSITION('world' IN 'hello world');  -- 7\n```"
+        }
+      ]
+    },
+    "LPAD": {
+      "contents": [
+        {
+          "value": "## LPAD / RPAD\n\n```sql\nLPAD(string, length [, fill]) → text\nRPAD(string, length [, fill]) → text\n```\n\nPad string to specified length.\n\n```sql\nSELECT LPAD('42', 5, '0');   -- '00042'\nSELECT RPAD('hi', 5, '.');   -- 'hi...'\n```"
+        }
+      ]
+    },
+    "SPLIT_PART": {
+      "contents": [
+        {
+          "value": "## SPLIT_PART\n\n```sql\nSPLIT_PART(string, delimiter, position) → text\n```\n\nSplit string and return nth part.\n\n```sql\nSELECT SPLIT_PART('a.b.c', '.', 2);  -- 'b'\nSELECT SPLIT_PART('john@example.com', '@', 1);  -- 'john'\n```"
+        }
+      ]
+    },
+    "Window functions": {
+      "contents": [
+        {
+          "value": "## Window Functions\n\n```sql\nfunction() OVER (\n    [PARTITION BY column]\n    [ORDER BY column [ASC|DESC]]\n    [frame_clause]\n)\n```\n\n**Ranking:**\n```sql\nSELECT name, salary,\n    ROW_NUMBER() OVER (ORDER BY salary DESC) as row_num,\n    RANK()       OVER (ORDER BY salary DESC) as rank,\n    DENSE_RANK() OVER (ORDER BY salary DESC) as dense_rank,\n    NTILE(4)     OVER (ORDER BY salary DESC) as quartile\nFROM employees;\n```\n\n**Value access:**\n```sql\nSELECT date, value,\n    LAG(value, 1)  OVER (ORDER BY date) as prev_value,\n    LEAD(value, 1) OVER (ORDER BY date) as next_value,\n    FIRST_VALUE(value) OVER (ORDER BY date) as first,\n    LAST_VALUE(value)  OVER (ORDER BY date\n        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as last\nFROM metrics;\n```\n\n**Frame clause:**\n- `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (default)\n- `ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING`\n- `RANGE BETWEEN INTERVAL '7 days' PRECEDING AND CURRENT ROW`"
+        }
+      ]
+    },
+    "MAX": {
+      "contents": [
+        {
+          "value": "## MAX / MIN\n\n```sql\nMAX(expression) → same type\nMIN(expression) → same type\n```\n\nReturn maximum/minimum value.\n\n```sql\nSELECT MAX(salary), MIN(salary) FROM employees;\nSELECT department, MAX(salary) FROM employees GROUP BY department;\n```"
+        }
+      ]
+    },
+    "ARRAY_AGG": {
+      "contents": [
+        {
+          "value": "## ARRAY_AGG\n\n```sql\nARRAY_AGG(expression [ORDER BY ...]) → array\n```\n\nCollect values into an array.\n\n```sql\nSELECT department,\n    ARRAY_AGG(name ORDER BY name) as member_array\nFROM employees\nGROUP BY department;\n```"
+        }
+      ]
+    },
+    "GENERATE_SERIES": {
+      "contents": [
+        {
+          "value": "## generate_series\n\n```sql\ngenerate_series(start, stop [, step])\n```\n\nGenerate a series of values (PostgreSQL).\n\n```sql\n-- Numbers\nSELECT generate_series(1, 10);\nSELECT generate_series(0, 100, 10);  -- 0, 10, 20, ...\n\n-- Dates\nSELECT generate_series(\n    '2024-01-01'::date,\n    '2024-12-31'::date,\n    '1 month'::interval\n);\n\n-- Fill gaps in time series\nSELECT d::date, COALESCE(count, 0)\nFROM generate_series('2024-01-01', '2024-01-31', '1 day') d\nLEFT JOIN daily_counts ON daily_counts.day = d::date;\n```"
+        }
+      ]
+    },
     "BIGINT": {
       "contents": [
         {

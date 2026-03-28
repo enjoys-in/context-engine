@@ -197,18 +197,90 @@
         }
       ]
     },
-    "forward_auth": "## forward_auth\n\n```caddyfile\nforward_auth [match] <upstreams...> {\n    uri             <path>\n    copy_headers    <header_names...>\n    header_up       <header> <value>\n    header_down     <header> <value>\n}\n```\n\nDelegates authentication to an external service. Sends a subrequest to the specified upstream and:\n- On **2xx response**: copies configured headers to the original request and continues\n- On **non-2xx**: returns the auth service's response to the client\n\n**Example — Authelia/Authentik:**\n```caddyfile\nforward_auth localhost:9091 {\n    uri /api/verify?rd=https://auth.example.com\n    copy_headers Remote-User Remote-Groups Remote-Email\n}\n```\n\n**Example — simple token check:**\n```caddyfile\nforward_auth localhost:5000 {\n    uri /auth/check\n    copy_headers X-User-Id X-User-Role\n    header_up X-Original-URI {uri}\n}\n```",
-    "request_header": "## request_header\n\n```caddyfile\nrequest_header [match] [[+|-]field [value|regexp replacement]]\n```\n\nManipulate incoming request headers before they reach handlers.\n\n```caddyfile\n# Set (overwrite) a header\nrequest_header X-Real-IP {remote_host}\n\n# Add (+) a header value\nrequest_header +X-Forwarded-For {remote_host}\n\n# Delete (-) a header\nrequest_header -Proxy\nrequest_header -X-Powered-By\n\n# Regex replace\nrequest_header Authorization \"Bearer (.*)\" \"Token $1\"\n```",
-    "request_body": "## request_body\n\n```caddyfile\nrequest_body [match] {\n    max_size <size>\n}\n```\n\nConfigures request body handling. Useful for limiting upload sizes.\n\n```caddyfile\n# Limit upload size to 100MB\nrequest_body {\n    max_size 100MB\n}\n\n# Limit only for specific paths\n@uploads path /upload/*\nrequest_body @uploads {\n    max_size 50MB\n}\n```",
-    "global_options": "## Global Options Block\n\n```caddyfile\n{\n    # TLS & ACME\n    email     admin@example.com\n    acme_ca   https://acme-v02.api.letsencrypt.org/directory\n    acme_dns  cloudflare {env.CF_API_TOKEN}\n    local_certs\n    auto_https off|disable_redirects|ignore_loaded_certs\n    on_demand_tls { ask http://localhost/check }\n\n    # Server\n    admin      off|localhost:2019\n    grace_period 10s\n    servers { protocols h1 h2 h3 }\n\n    # Logging\n    log { level INFO }\n\n    # Certificate management\n    pki { ca local { ... } }\n    skip_install_trust\n    ocsp_stapling off\n\n    # Ordering\n    order reverse_proxy before respond\n\n    # Storage\n    storage file_system /data/caddy\n}\n```\n\n**Note:** The global options block must be the **first** item in the Caddyfile and has no key (just `{ }`).",
-    "matchers": "## Named Matchers\n\nMatchers filter which requests a directive applies to.\n\n```caddyfile\n# Define named matcher\n@api {\n    path /api/*\n    method POST PUT DELETE\n}\n\n# Use with directive\nreverse_proxy @api localhost:8080\n\n# Inline (single matcher)\nreverse_proxy /api/* localhost:8080\n```\n\n**Available matchers:**\n| Matcher | Description |\n|---------|-------------|\n| `path` | URI path pattern |\n| `path_regexp` | Regex path matching |\n| `method` | HTTP method |\n| `header` | Request header presence/value |\n| `host` | Hostname |\n| `remote_ip` | Client IP |\n| `protocol` | HTTP/HTTPS |\n| `query` | Query string parameters |\n| `file` | File existence |\n| `expression` | CEL expression |\n| `not` | Negate a matcher |\n\n**Combining matchers** (AND logic within one matcher, OR with multiple `@name`):\n```caddyfile\n@secure {\n    protocol https\n    path /admin/*\n}\n```",
-    "placeholders": "## Placeholders\n\nCaddy provides request/response placeholders for dynamic configuration.\n\n**Common placeholders:**\n| Placeholder | Description |\n|-------------|-------------|\n| `{host}` | Request hostname |\n| `{method}` | HTTP method |\n| `{path}` | URI path |\n| `{query}` | Query string |\n| `{uri}` | Full URI (path + query) |\n| `{remote_host}` | Client IP address |\n| `{upstream_hostport}` | Selected upstream address |\n| `{http.request.header.*}` | Request header value |\n| `{http.response.header.*}` | Response header value |\n| `{http.request.cookie.*}` | Cookie value |\n| `{http.request.tls.version}` | TLS version |\n| `{http.reverse_proxy.upstream.latency}` | Upstream response time |\n| `{env.*}` | Environment variable |\n| `{err.status_code}` | Error status code |\n| `{err.status_text}` | Error status text |\n\n**Shorthand ↔ Full form:**\n- `{host}` = `{http.request.host}`\n- `{path}` = `{http.request.uri.path}`\n- `{method}` = `{http.request.method}`",
-    "intercept": "## intercept\n\n```caddyfile\nintercept {\n    @<name> status <codes...>\n    handle_response [@name] {\n        # replacement response\n    }\n}\n```\n\nIntercept and modify responses from upstream handlers.\n\n```caddyfile\nreverse_proxy localhost:8080 {\n    @error status 500 502 503\n    handle_response @error {\n        respond \"Service temporarily unavailable\" 503\n    }\n}\n```",
-    "on_demand_tls": "## On-Demand TLS\n\nObtain certificates at TLS handshake time instead of in advance.\n\n**In global options:**\n```caddyfile\n{\n    on_demand_tls {\n        ask      http://localhost:5555/check  # verification endpoint\n        interval 2m   # min time between certificate operations\n        burst    5    # max simultaneous certificate operations\n    }\n}\n```\n\n**In site block:**\n```caddyfile\nhttps:// {\n    tls {\n        on_demand\n    }\n    reverse_proxy localhost:8080\n}\n```\n\n**How it works:**\n1. Client connects with SNI hostname\n2. Caddy asks the `ask` endpoint if allowed\n3. If endpoint returns 200, certificate is obtained\n4. Any other status: TLS handshake fails\n\n**Use case:** Multi-tenant SaaS where domains are dynamic.",
-    "snippets": "## Snippets\n\n```caddyfile\n(snippet_name) {\n    # reusable config\n}\n```\n\nDefine reusable blocks of configuration.\n\n```caddyfile\n# Define snippet\n(security_headers) {\n    header {\n        X-Content-Type-Options nosniff\n        X-Frame-Options DENY\n        Referrer-Policy strict-origin-when-cross-origin\n        -Server\n    }\n}\n\n(reverse_proxy_defaults) {\n    header_up X-Real-IP {remote_host}\n    header_up X-Forwarded-Proto {scheme}\n}\n\n# Use snippets\nexample.com {\n    import security_headers\n    reverse_proxy localhost:3000 {\n        import reverse_proxy_defaults\n    }\n}\n```\n\n**Import from file:**\n```caddyfile\nimport /etc/caddy/snippets/*.caddy\n```",
-    "environment_variables": "## Environment Variables\n\nUse environment variables anywhere in the Caddyfile.\n\n```caddyfile\n{$DOMAIN:localhost} {\n    reverse_proxy {$BACKEND:localhost:3000}\n    tls {$TLS_EMAIL}\n}\n```\n\n**Syntax:**\n- `{$VAR}` — fails if not set\n- `{$VAR:default}` — uses default if not set\n- `{env.VAR}` — placeholder form (empty string if not set)\n\n**Common pattern:**\n```caddyfile\n{\n    email {$ACME_EMAIL}\n    acme_dns cloudflare {$CF_API_TOKEN}\n}\n\n{$DOMAIN} {\n    reverse_proxy {$UPSTREAM_HOST}:{$UPSTREAM_PORT:8080}\n}\n```",
-    "site_address": "## Site Addresses\n\nCaddy automatically manages HTTPS for sites.\n\n```caddyfile\n# Automatic HTTPS\nexample.com\n\n# With explicit port\nexample.com:8443\n\n# Multiple addresses\nexample.com, www.example.com\n\n# HTTP only\nhttp://example.com\n\n# All interfaces on port\n:8080\n\n# Wildcard (needs DNS challenge)\n*.example.com\n\n# Localhost (uses internal CA)\nlocalhost\n\n# Network address\n192.168.1.1:443\n```\n\n**Automatic HTTPS behavior:**\n- Public domains → Let's Encrypt / ZeroSSL\n- `localhost` / IP → Internal Caddy CA\n- `http://` prefix → no HTTPS\n- `*.domain` → requires DNS challenge (`acme_dns`)\n- Port `:80` → no HTTPS",
-    "directive_ordering": "## Directive Ordering\n\nCaddy processes directives in a **predefined order**, not file order.\n\n**Default order (simplified):**\n1. `tracing`\n2. `map`, `vars`\n3. `root`\n4. `header`, `request_header`\n5. `redir`\n6. `rewrite`, `uri`\n7. `basicauth`, `forward_auth`\n8. `request_body`\n9. `encode`\n10. `templates`\n11. `reverse_proxy`\n12. `respond`\n13. `abort`\n14. `file_server`\n\n**Override with `route`** (uses file order):\n```caddyfile\nroute {\n    rewrite /old /new\n    reverse_proxy localhost:3000\n}\n```\n\n**Override globally:**\n```caddyfile\n{\n    order forward_auth before basicauth\n    order request_header before reverse_proxy\n}\n```",
+    "forward_auth": {
+      "contents": [
+        {
+          "value": "## forward_auth\n\n```caddyfile\nforward_auth [match] <upstreams...> {\n    uri             <path>\n    copy_headers    <header_names...>\n    header_up       <header> <value>\n    header_down     <header> <value>\n}\n```\n\nDelegates authentication to an external service. Sends a subrequest to the specified upstream and:\n- On **2xx response**: copies configured headers to the original request and continues\n- On **non-2xx**: returns the auth service's response to the client\n\n**Example — Authelia/Authentik:**\n```caddyfile\nforward_auth localhost:9091 {\n    uri /api/verify?rd=https://auth.example.com\n    copy_headers Remote-User Remote-Groups Remote-Email\n}\n```\n\n**Example — simple token check:**\n```caddyfile\nforward_auth localhost:5000 {\n    uri /auth/check\n    copy_headers X-User-Id X-User-Role\n    header_up X-Original-URI {uri}\n}\n```"
+        }
+      ]
+    },
+    "request_header": {
+      "contents": [
+        {
+          "value": "## request_header\n\n```caddyfile\nrequest_header [match] [[+|-]field [value|regexp replacement]]\n```\n\nManipulate incoming request headers before they reach handlers.\n\n```caddyfile\n# Set (overwrite) a header\nrequest_header X-Real-IP {remote_host}\n\n# Add (+) a header value\nrequest_header +X-Forwarded-For {remote_host}\n\n# Delete (-) a header\nrequest_header -Proxy\nrequest_header -X-Powered-By\n\n# Regex replace\nrequest_header Authorization \"Bearer (.*)\" \"Token $1\"\n```"
+        }
+      ]
+    },
+    "request_body": {
+      "contents": [
+        {
+          "value": "## request_body\n\n```caddyfile\nrequest_body [match] {\n    max_size <size>\n}\n```\n\nConfigures request body handling. Useful for limiting upload sizes.\n\n```caddyfile\n# Limit upload size to 100MB\nrequest_body {\n    max_size 100MB\n}\n\n# Limit only for specific paths\n@uploads path /upload/*\nrequest_body @uploads {\n    max_size 50MB\n}\n```"
+        }
+      ]
+    },
+    "global_options": {
+      "contents": [
+        {
+          "value": "## Global Options Block\n\n```caddyfile\n{\n    # TLS & ACME\n    email     admin@example.com\n    acme_ca   https://acme-v02.api.letsencrypt.org/directory\n    acme_dns  cloudflare {env.CF_API_TOKEN}\n    local_certs\n    auto_https off|disable_redirects|ignore_loaded_certs\n    on_demand_tls { ask http://localhost/check }\n\n    # Server\n    admin      off|localhost:2019\n    grace_period 10s\n    servers { protocols h1 h2 h3 }\n\n    # Logging\n    log { level INFO }\n\n    # Certificate management\n    pki { ca local { ... } }\n    skip_install_trust\n    ocsp_stapling off\n\n    # Ordering\n    order reverse_proxy before respond\n\n    # Storage\n    storage file_system /data/caddy\n}\n```\n\n**Note:** The global options block must be the **first** item in the Caddyfile and has no key (just `{ }`)."
+        }
+      ]
+    },
+    "matchers": {
+      "contents": [
+        {
+          "value": "## Named Matchers\n\nMatchers filter which requests a directive applies to.\n\n```caddyfile\n# Define named matcher\n@api {\n    path /api/*\n    method POST PUT DELETE\n}\n\n# Use with directive\nreverse_proxy @api localhost:8080\n\n# Inline (single matcher)\nreverse_proxy /api/* localhost:8080\n```\n\n**Available matchers:**\n| Matcher | Description |\n|---------|-------------|\n| `path` | URI path pattern |\n| `path_regexp` | Regex path matching |\n| `method` | HTTP method |\n| `header` | Request header presence/value |\n| `host` | Hostname |\n| `remote_ip` | Client IP |\n| `protocol` | HTTP/HTTPS |\n| `query` | Query string parameters |\n| `file` | File existence |\n| `expression` | CEL expression |\n| `not` | Negate a matcher |\n\n**Combining matchers** (AND logic within one matcher, OR with multiple `@name`):\n```caddyfile\n@secure {\n    protocol https\n    path /admin/*\n}\n```"
+        }
+      ]
+    },
+    "placeholders": {
+      "contents": [
+        {
+          "value": "## Placeholders\n\nCaddy provides request/response placeholders for dynamic configuration.\n\n**Common placeholders:**\n| Placeholder | Description |\n|-------------|-------------|\n| `{host}` | Request hostname |\n| `{method}` | HTTP method |\n| `{path}` | URI path |\n| `{query}` | Query string |\n| `{uri}` | Full URI (path + query) |\n| `{remote_host}` | Client IP address |\n| `{upstream_hostport}` | Selected upstream address |\n| `{http.request.header.*}` | Request header value |\n| `{http.response.header.*}` | Response header value |\n| `{http.request.cookie.*}` | Cookie value |\n| `{http.request.tls.version}` | TLS version |\n| `{http.reverse_proxy.upstream.latency}` | Upstream response time |\n| `{env.*}` | Environment variable |\n| `{err.status_code}` | Error status code |\n| `{err.status_text}` | Error status text |\n\n**Shorthand ↔ Full form:**\n- `{host}` = `{http.request.host}`\n- `{path}` = `{http.request.uri.path}`\n- `{method}` = `{http.request.method}`"
+        }
+      ]
+    },
+    "intercept": {
+      "contents": [
+        {
+          "value": "## intercept\n\n```caddyfile\nintercept {\n    @<name> status <codes...>\n    handle_response [@name] {\n        # replacement response\n    }\n}\n```\n\nIntercept and modify responses from upstream handlers.\n\n```caddyfile\nreverse_proxy localhost:8080 {\n    @error status 500 502 503\n    handle_response @error {\n        respond \"Service temporarily unavailable\" 503\n    }\n}\n```"
+        }
+      ]
+    },
+    "on_demand_tls": {
+      "contents": [
+        {
+          "value": "## On-Demand TLS\n\nObtain certificates at TLS handshake time instead of in advance.\n\n**In global options:**\n```caddyfile\n{\n    on_demand_tls {\n        ask      http://localhost:5555/check  # verification endpoint\n        interval 2m   # min time between certificate operations\n        burst    5    # max simultaneous certificate operations\n    }\n}\n```\n\n**In site block:**\n```caddyfile\nhttps:// {\n    tls {\n        on_demand\n    }\n    reverse_proxy localhost:8080\n}\n```\n\n**How it works:**\n1. Client connects with SNI hostname\n2. Caddy asks the `ask` endpoint if allowed\n3. If endpoint returns 200, certificate is obtained\n4. Any other status: TLS handshake fails\n\n**Use case:** Multi-tenant SaaS where domains are dynamic."
+        }
+      ]
+    },
+    "snippets": {
+      "contents": [
+        {
+          "value": "## Snippets\n\n```caddyfile\n(snippet_name) {\n    # reusable config\n}\n```\n\nDefine reusable blocks of configuration.\n\n```caddyfile\n# Define snippet\n(security_headers) {\n    header {\n        X-Content-Type-Options nosniff\n        X-Frame-Options DENY\n        Referrer-Policy strict-origin-when-cross-origin\n        -Server\n    }\n}\n\n(reverse_proxy_defaults) {\n    header_up X-Real-IP {remote_host}\n    header_up X-Forwarded-Proto {scheme}\n}\n\n# Use snippets\nexample.com {\n    import security_headers\n    reverse_proxy localhost:3000 {\n        import reverse_proxy_defaults\n    }\n}\n```\n\n**Import from file:**\n```caddyfile\nimport /etc/caddy/snippets/*.caddy\n```"
+        }
+      ]
+    },
+    "environment_variables": {
+      "contents": [
+        {
+          "value": "## Environment Variables\n\nUse environment variables anywhere in the Caddyfile.\n\n```caddyfile\n{$DOMAIN:localhost} {\n    reverse_proxy {$BACKEND:localhost:3000}\n    tls {$TLS_EMAIL}\n}\n```\n\n**Syntax:**\n- `{$VAR}` — fails if not set\n- `{$VAR:default}` — uses default if not set\n- `{env.VAR}` — placeholder form (empty string if not set)\n\n**Common pattern:**\n```caddyfile\n{\n    email {$ACME_EMAIL}\n    acme_dns cloudflare {$CF_API_TOKEN}\n}\n\n{$DOMAIN} {\n    reverse_proxy {$UPSTREAM_HOST}:{$UPSTREAM_PORT:8080}\n}\n```"
+        }
+      ]
+    },
+    "site_address": {
+      "contents": [
+        {
+          "value": "## Site Addresses\n\nCaddy automatically manages HTTPS for sites.\n\n```caddyfile\n# Automatic HTTPS\nexample.com\n\n# With explicit port\nexample.com:8443\n\n# Multiple addresses\nexample.com, www.example.com\n\n# HTTP only\nhttp://example.com\n\n# All interfaces on port\n:8080\n\n# Wildcard (needs DNS challenge)\n*.example.com\n\n# Localhost (uses internal CA)\nlocalhost\n\n# Network address\n192.168.1.1:443\n```\n\n**Automatic HTTPS behavior:**\n- Public domains → Let's Encrypt / ZeroSSL\n- `localhost` / IP → Internal Caddy CA\n- `http://` prefix → no HTTPS\n- `*.domain` → requires DNS challenge (`acme_dns`)\n- Port `:80` → no HTTPS"
+        }
+      ]
+    },
+    "directive_ordering": {
+      "contents": [
+        {
+          "value": "## Directive Ordering\n\nCaddy processes directives in a **predefined order**, not file order.\n\n**Default order (simplified):**\n1. `tracing`\n2. `map`, `vars`\n3. `root`\n4. `header`, `request_header`\n5. `redir`\n6. `rewrite`, `uri`\n7. `basicauth`, `forward_auth`\n8. `request_body`\n9. `encode`\n10. `templates`\n11. `reverse_proxy`\n12. `respond`\n13. `abort`\n14. `file_server`\n\n**Override with `route`** (uses file order):\n```caddyfile\nroute {\n    rewrite /old /new\n    reverse_proxy localhost:3000\n}\n```\n\n**Override globally:**\n```caddyfile\n{\n    order forward_auth before basicauth\n    order request_header before reverse_proxy\n}\n```"
+        }
+      ]
+    },
     "acme_ca_option": {
       "contents": [
         {

@@ -267,17 +267,89 @@
         }
       ]
     },
-    "--mount=type=bind": "## --mount=type=bind\n\n```dockerfile\nRUN --mount=type=bind,source=<src>,target=<dest>[,from=<stage>] <command>\n```\n\nBind mount a directory from the build context or another stage.\n\n```dockerfile\n# Mount source code read-only\nRUN --mount=type=bind,target=/src go build -o /app /src/cmd/server\n\n# Mount from another stage\nFROM build AS deps\nRUN --mount=type=bind,from=deps,source=/go/pkg,target=/go/pkg go build\n```\n\n**Key options:**\n- `source` — path in context/stage (default: root)\n- `target` — mount point in container\n- `from` — source stage name\n- `rw` — read-write (default: read-only)",
-    "--mount=type=cache": "## --mount=type=cache\n\n```dockerfile\nRUN --mount=type=cache,target=<path>[,id=<id>][,sharing=shared] <command>\n```\n\nPersistent cache directory across builds. Dramatically speeds up package installs.\n\n```dockerfile\n# Go module cache\nRUN --mount=type=cache,target=/go/pkg/mod \\\n    go build -o /app .\n\n# npm cache\nRUN --mount=type=cache,target=/root/.npm \\\n    npm ci\n\n# pip cache\nRUN --mount=type=cache,target=/root/.cache/pip \\\n    pip install -r requirements.txt\n\n# apt cache\nRUN --mount=type=cache,target=/var/cache/apt \\\n    --mount=type=cache,target=/var/lib/apt \\\n    apt-get update && apt-get install -y curl\n```\n\n**Options:**\n- `id` — unique cache ID (default: target path)\n- `sharing` — `shared` (default), `private`, `locked`",
-    "--mount=type=secret": "## --mount=type=secret\n\n```dockerfile\nRUN --mount=type=secret,id=<id>[,target=<path>] <command>\n```\n\nMount a secret file without baking it into the image layer.\n\n```dockerfile\n# Access secret during build\nRUN --mount=type=secret,id=npmrc,target=/root/.npmrc \\\n    npm ci\n\nRUN --mount=type=secret,id=aws,target=/root/.aws/credentials \\\n    aws s3 cp s3://bucket/file .\n```\n\n**Pass secret at build time:**\n```bash\ndocker build --secret id=npmrc,src=$HOME/.npmrc .\ndocker build --secret id=aws,src=$HOME/.aws/credentials .\n```\n\n**Note:** Secret is never saved in image layers.",
-    "--mount=type=ssh": "## --mount=type=ssh\n\n```dockerfile\nRUN --mount=type=ssh <command>\n```\n\nForward SSH agent to access private repos during build.\n\n```dockerfile\nRUN --mount=type=ssh \\\n    git clone git@github.com:private/repo.git /app\n\nRUN --mount=type=ssh \\\n    pip install git+ssh://git@github.com/private/package.git\n```\n\n**Build with SSH:**\n```bash\ndocker build --ssh default .\n# or specific key:\ndocker build --ssh default=$HOME/.ssh/id_rsa .\n```\n\n**Prerequisite:** `ssh-add` your key before building.",
-    "--mount=type=tmpfs": "## --mount=type=tmpfs\n\n```dockerfile\nRUN --mount=type=tmpfs,target=<path>[,size=<bytes>] <command>\n```\n\nMount a tmpfs (RAM-backed) filesystem.\n\n```dockerfile\nRUN --mount=type=tmpfs,target=/tmp \\\n    compile-something --temp-dir=/tmp\n```\n\nUseful for build steps that need fast temporary storage.",
-    "BUILDARCH": "## BUILDARCH\n\n```dockerfile\nARG BUILDARCH\n```\n\nAutomatic build argument containing the CPU architecture of the build machine.\n\n**Values:** `amd64`, `arm64`, `arm`, `386`, `ppc64le`, `s390x`\n\n```dockerfile\nFROM golang:1.22\nARG BUILDARCH\nRUN echo \"Building on: $BUILDARCH\"\n```\n\n**Related:** `BUILDOS`, `BUILDPLATFORM`, `BUILDVARIANT`",
-    "BUILDOS": "## BUILDOS\n\n```dockerfile\nARG BUILDOS\n```\n\nAutomatic build argument containing the OS of the build machine.\n\n**Values:** `linux`, `windows`, `darwin`\n\n```dockerfile\nARG BUILDOS\nRUN echo \"Build OS: $BUILDOS\"\n```",
-    "BUILDVARIANT": "## BUILDVARIANT\n\n```dockerfile\nARG BUILDVARIANT\n```\n\nAutomatic build argument for the CPU variant (e.g., `v7` for ARMv7).\n\n```dockerfile\nARG BUILDVARIANT\nRUN echo \"Variant: ${BUILDVARIANT:-none}\"\n```",
-    ".dockerignore": "## .dockerignore\n\nFile that controls what gets sent to the Docker daemon as build context.\n\n```\n# .dockerignore\n.git\n.gitignore\nnode_modules\nnpm-debug.log\nDockerfile*\ndocker-compose*\n.dockerignore\n.env\n*.md\n.vscode\n__pycache__\n*.pyc\ndist\nbuild\n.tox\ncoverage\n.nyc_output\n```\n\n**Pattern syntax:**\n- `*` matches any sequence (excluding path separators)\n- `**` matches any number of directories\n- `!` excludes from ignore (re-include)\n- `#` comment line\n\n**Example with exception:**\n```\n*.md\n!README.md\n```\n\n**Why it matters:** Large build contexts slow down builds. Always exclude `node_modules`, `.git`, etc.",
-    "heredoc": "## Heredoc Syntax\n\nInline multi-line content in Dockerfile (BuildKit 1.4+).\n\n**Inline files:**\n```dockerfile\n# syntax=docker/dockerfile:1\nCOPY <<EOF /app/config.json\n{\"port\": 3000}\nEOF\n```\n\n**Multi-line RUN:**\n```dockerfile\nRUN <<EOF\napt-get update\napt-get install -y curl git\nrm -rf /var/lib/apt/lists/*\nEOF\n```\n\n**With interpreter:**\n```dockerfile\nRUN <<EOF python3\nimport os\nprint(os.environ)\nEOF\n```\n\n**Multiple files:**\n```dockerfile\nCOPY <<app.py <<requirements.txt /app/\nfrom flask import Flask\napp = Flask(__name__)\napp.py\nflask>=3.0\nrequirements.txt\n```\n\n**Requires:** `# syntax=docker/dockerfile:1` or BuildKit >= 0.10",
-    "--parents": "## --parents (COPY flag)\n\n```dockerfile\nCOPY --parents <src> <dest>\n```\n\nPreserve the parent directory structure when copying.\n\n```dockerfile\n# Without --parents:\nCOPY src/app/config.json /dest/\n# Result: /dest/config.json\n\n# With --parents:\nCOPY --parents src/app/config.json /dest/\n# Result: /dest/src/app/config.json\n```\n\n**Requires:** BuildKit",
-    "--keep-git-dir": "## --keep-git-dir\n\n```dockerfile\nADD --keep-git-dir=true <git-url> <dest>\n```\n\nKeep the .git directory when adding from a Git repository URL.\n\n```dockerfile\nADD --keep-git-dir=true https://github.com/user/repo.git#main /src\n```\n\nBy default, .git is stripped. Useful when build needs Git metadata (version, commit hash)."
+    "--mount=type=bind": {
+      "contents": [
+        {
+          "value": "## --mount=type=bind\n\n```dockerfile\nRUN --mount=type=bind,source=<src>,target=<dest>[,from=<stage>] <command>\n```\n\nBind mount a directory from the build context or another stage.\n\n```dockerfile\n# Mount source code read-only\nRUN --mount=type=bind,target=/src go build -o /app /src/cmd/server\n\n# Mount from another stage\nFROM build AS deps\nRUN --mount=type=bind,from=deps,source=/go/pkg,target=/go/pkg go build\n```\n\n**Key options:**\n- `source` — path in context/stage (default: root)\n- `target` — mount point in container\n- `from` — source stage name\n- `rw` — read-write (default: read-only)"
+        }
+      ]
+    },
+    "--mount=type=cache": {
+      "contents": [
+        {
+          "value": "## --mount=type=cache\n\n```dockerfile\nRUN --mount=type=cache,target=<path>[,id=<id>][,sharing=shared] <command>\n```\n\nPersistent cache directory across builds. Dramatically speeds up package installs.\n\n```dockerfile\n# Go module cache\nRUN --mount=type=cache,target=/go/pkg/mod \\\n    go build -o /app .\n\n# npm cache\nRUN --mount=type=cache,target=/root/.npm \\\n    npm ci\n\n# pip cache\nRUN --mount=type=cache,target=/root/.cache/pip \\\n    pip install -r requirements.txt\n\n# apt cache\nRUN --mount=type=cache,target=/var/cache/apt \\\n    --mount=type=cache,target=/var/lib/apt \\\n    apt-get update && apt-get install -y curl\n```\n\n**Options:**\n- `id` — unique cache ID (default: target path)\n- `sharing` — `shared` (default), `private`, `locked`"
+        }
+      ]
+    },
+    "--mount=type=secret": {
+      "contents": [
+        {
+          "value": "## --mount=type=secret\n\n```dockerfile\nRUN --mount=type=secret,id=<id>[,target=<path>] <command>\n```\n\nMount a secret file without baking it into the image layer.\n\n```dockerfile\n# Access secret during build\nRUN --mount=type=secret,id=npmrc,target=/root/.npmrc \\\n    npm ci\n\nRUN --mount=type=secret,id=aws,target=/root/.aws/credentials \\\n    aws s3 cp s3://bucket/file .\n```\n\n**Pass secret at build time:**\n```bash\ndocker build --secret id=npmrc,src=$HOME/.npmrc .\ndocker build --secret id=aws,src=$HOME/.aws/credentials .\n```\n\n**Note:** Secret is never saved in image layers."
+        }
+      ]
+    },
+    "--mount=type=ssh": {
+      "contents": [
+        {
+          "value": "## --mount=type=ssh\n\n```dockerfile\nRUN --mount=type=ssh <command>\n```\n\nForward SSH agent to access private repos during build.\n\n```dockerfile\nRUN --mount=type=ssh \\\n    git clone git@github.com:private/repo.git /app\n\nRUN --mount=type=ssh \\\n    pip install git+ssh://git@github.com/private/package.git\n```\n\n**Build with SSH:**\n```bash\ndocker build --ssh default .\n# or specific key:\ndocker build --ssh default=$HOME/.ssh/id_rsa .\n```\n\n**Prerequisite:** `ssh-add` your key before building."
+        }
+      ]
+    },
+    "--mount=type=tmpfs": {
+      "contents": [
+        {
+          "value": "## --mount=type=tmpfs\n\n```dockerfile\nRUN --mount=type=tmpfs,target=<path>[,size=<bytes>] <command>\n```\n\nMount a tmpfs (RAM-backed) filesystem.\n\n```dockerfile\nRUN --mount=type=tmpfs,target=/tmp \\\n    compile-something --temp-dir=/tmp\n```\n\nUseful for build steps that need fast temporary storage."
+        }
+      ]
+    },
+    "BUILDARCH": {
+      "contents": [
+        {
+          "value": "## BUILDARCH\n\n```dockerfile\nARG BUILDARCH\n```\n\nAutomatic build argument containing the CPU architecture of the build machine.\n\n**Values:** `amd64`, `arm64`, `arm`, `386`, `ppc64le`, `s390x`\n\n```dockerfile\nFROM golang:1.22\nARG BUILDARCH\nRUN echo \"Building on: $BUILDARCH\"\n```\n\n**Related:** `BUILDOS`, `BUILDPLATFORM`, `BUILDVARIANT`"
+        }
+      ]
+    },
+    "BUILDOS": {
+      "contents": [
+        {
+          "value": "## BUILDOS\n\n```dockerfile\nARG BUILDOS\n```\n\nAutomatic build argument containing the OS of the build machine.\n\n**Values:** `linux`, `windows`, `darwin`\n\n```dockerfile\nARG BUILDOS\nRUN echo \"Build OS: $BUILDOS\"\n```"
+        }
+      ]
+    },
+    "BUILDVARIANT": {
+      "contents": [
+        {
+          "value": "## BUILDVARIANT\n\n```dockerfile\nARG BUILDVARIANT\n```\n\nAutomatic build argument for the CPU variant (e.g., `v7` for ARMv7).\n\n```dockerfile\nARG BUILDVARIANT\nRUN echo \"Variant: ${BUILDVARIANT:-none}\"\n```"
+        }
+      ]
+    },
+    ".dockerignore": {
+      "contents": [
+        {
+          "value": "## .dockerignore\n\nFile that controls what gets sent to the Docker daemon as build context.\n\n```\n# .dockerignore\n.git\n.gitignore\nnode_modules\nnpm-debug.log\nDockerfile*\ndocker-compose*\n.dockerignore\n.env\n*.md\n.vscode\n__pycache__\n*.pyc\ndist\nbuild\n.tox\ncoverage\n.nyc_output\n```\n\n**Pattern syntax:**\n- `*` matches any sequence (excluding path separators)\n- `**` matches any number of directories\n- `!` excludes from ignore (re-include)\n- `#` comment line\n\n**Example with exception:**\n```\n*.md\n!README.md\n```\n\n**Why it matters:** Large build contexts slow down builds. Always exclude `node_modules`, `.git`, etc."
+        }
+      ]
+    },
+    "heredoc": {
+      "contents": [
+        {
+          "value": "## Heredoc Syntax\n\nInline multi-line content in Dockerfile (BuildKit 1.4+).\n\n**Inline files:**\n```dockerfile\n# syntax=docker/dockerfile:1\nCOPY <<EOF /app/config.json\n{\"port\": 3000}\nEOF\n```\n\n**Multi-line RUN:**\n```dockerfile\nRUN <<EOF\napt-get update\napt-get install -y curl git\nrm -rf /var/lib/apt/lists/*\nEOF\n```\n\n**With interpreter:**\n```dockerfile\nRUN <<EOF python3\nimport os\nprint(os.environ)\nEOF\n```\n\n**Multiple files:**\n```dockerfile\nCOPY <<app.py <<requirements.txt /app/\nfrom flask import Flask\napp = Flask(__name__)\napp.py\nflask>=3.0\nrequirements.txt\n```\n\n**Requires:** `# syntax=docker/dockerfile:1` or BuildKit >= 0.10"
+        }
+      ]
+    },
+    "--parents": {
+      "contents": [
+        {
+          "value": "## --parents (COPY flag)\n\n```dockerfile\nCOPY --parents <src> <dest>\n```\n\nPreserve the parent directory structure when copying.\n\n```dockerfile\n# Without --parents:\nCOPY src/app/config.json /dest/\n# Result: /dest/config.json\n\n# With --parents:\nCOPY --parents src/app/config.json /dest/\n# Result: /dest/src/app/config.json\n```\n\n**Requires:** BuildKit"
+        }
+      ]
+    },
+    "--keep-git-dir": {
+      "contents": [
+        {
+          "value": "## --keep-git-dir\n\n```dockerfile\nADD --keep-git-dir=true <git-url> <dest>\n```\n\nKeep the .git directory when adding from a Git repository URL.\n\n```dockerfile\nADD --keep-git-dir=true https://github.com/user/repo.git#main /src\n```\n\nBy default, .git is stripped. Useful when build needs Git metadata (version, commit hash)."
+        }
+      ]
+    }
   }
 }
