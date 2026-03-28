@@ -1,12 +1,12 @@
 # @enjoys/context-engine
 
-Comprehensive Monaco Editor language intelligence engine with **94 languages**, **26 providers**, and **256 CLI commands** — completions, hover docs, definitions, code actions, code lens, document symbols, formatting, signature help, semantic tokens, inline completions, and more, all as pre-built JSON data with zero backend required.
+Comprehensive Monaco Editor language intelligence engine with **94 languages**, **26 providers**, and **270 CLI commands** — completions, hover docs, definitions, code actions, code lens, document symbols, formatting, signature help, semantic tokens, inline completions, and more, all as pre-built JSON data with zero backend required.
 
 ## Why Context Engine?
 
 Traditional LSP (Language Server Protocol) setups require a backend server running a separate language server process for every language you want to support. Each language server needs its own binary installed — Go, Rust, Python, TypeScript, and so on. At scale, this makes the backend **heavy**, memory-hungry, and CPU-intensive. Supporting all languages can easily consume **1 GB+** of disk space and significant runtime resources just to keep those servers alive.
 
-Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 256 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
+Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 270 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
 
 > **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, code actions, formatting, symbols, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
 
@@ -23,7 +23,7 @@ data/                        # 2,444 JSON files — 94 languages × 26 providers
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
-├── commands/                # 256 CLI tool definitions (git, docker, kubectl, ...)
+├── commands/                # 270 CLI tool definitions (git, docker, kubectl, ...)
 ├── completion/              # Monaco CompletionItem[] with snippets
 ├── declaration/             # Go-to-declaration data
 ├── definition/              # Definitions (signatures, descriptions, types)
@@ -670,35 +670,36 @@ Each language has up to 26 provider files — completions, hover, definitions, c
 | **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
 | **Other** | Crontab, Protobuf, Doctest |
 
-## Covered Commands (256)
+## Covered Commands (270)
 
 | Category | Tools |
 |----------|-------|
-| **Cloud CLIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, sfdx |
-| **Container & Orchestration** | docker, docker-compose, kubectl, helm, minikube, k9s |
+| **Cloud CLIs & APIs** | aws, az, gcloud, doctl, linode-cli, vercel, netlify, firebase, supabase, railway, render, flyctl, cloudflare, aws-vault, auth0, stripe, twilio, apex (Salesforce) |
+| **Containers & Orchestration** | docker, docker-compose, dockerfile, kubectl, helm, minikube, k9s |
 | **Version Control** | git, gh, glab, svn, hg |
-| **Node.js Ecosystem** | node, npm, npx, yarn, pnpm, bun, deno, turbo, nx, vite, next, nest, nuxt, vue, expo, tsc, eslint, prettier |
-| **Frontend Frameworks** | react, angular, nextjs, nestjs, shadcn, tailwindcss |
-| **Python Ecosystem** | python, pip, pipx, poetry, pipenv, conda, pytest, uvicorn, gunicorn, django-admin, flask, alembic, locust |
-| **Rust & Go** | cargo, rustup, wasm-pack, go, gofmt, golangci-lint, air |
+| **Node.js Ecosystem** | node, npm, npx, yarn, pnpm, bun, deno, eslint, prettier, tsc, turbo, nx, vite, next, nest |
+| **Frameworks** | angular, react, nextjs, nestjs, nuxt, vue, shadcn, tailwindcss, rails, artisan |
+| **Python Ecosystem** | python, pip, pipx, poetry, pipenv, conda, pytest, uvicorn, gunicorn, django-admin, flask, locust |
+| **Rust & Go** | rust, cargo, rustup, wasm-pack, go, gofmt, golangci-lint, air |
 | **Java/JVM** | java, gradle, mvn, kotlin, scala, clojure |
 | **PHP** | php, composer, artisan, symfony, wp |
-| **Ruby** | gem, bundle, rails, pod, fastlane, rspec, rake |
+| **Ruby** | ruby, gem, bundle, rails, rake, rspec, pod, fastlane |
 | **Mobile** | adb, dart, flutter, expo, react-native, xcodebuild, fastlane |
-| **Database** | psql, pg_dump, pg_restore, mysql, mongosh, redis-cli, sqlite3, cockroach, influx, clickhouse-client |
+| **Database** | sql, psql, pgsql, pg_dump, pg_restore, mysql, mongosh, redis, redis-cli, sqlite3, cockroach, influx, clickhouse-client, cypher, redshift |
 | **Database ORMs/Migrations** | prisma, drizzle-kit, typeorm, sequelize, alembic, dbmate, flyway, liquibase, atlas |
 | **DevOps & Infrastructure** | terraform, terragrunt, pulumi, packer, vault, consul, nomad, ansible |
 | **Web Servers** | nginx, caddy, httpd, apachectl |
-| **System & Monitoring** | systemctl, journalctl, systemd-analyze, pm2, tmux, screen, htop, btop, top, ps |
-| **Build Tools** | make, cmake, bazel, just, bat, gradle |
-| **Linux Core** | ls, cp, mv, rm, cat, grep, find, sed, awk, tar, chmod, chown, sudo, ssh, ssh-keygen, rsync, curl, wget, cd, scp, unzip, zip |
-| **Network & Security** | nmap, tcpdump, wireshark, openssl, certbot, ufw, iptables, nft, snyk, trivy, sonar-scanner |
-| **Package Managers** | apt, apt-get, yum, dnf, pacman, brew, choco, winget, pipx |
+| **System & Monitoring** | systemctl, journalctl, systemd-analyze, systemd, pm2, tmux, screen, htop, btop, top, ps, linux, crontab, powershell |
+| **Build Tools** | make, makefile, cmake, bazel, just, gradle |
+| **Linux Core** | ls, cp, mv, rm, cat, find, tar, chmod, chown, cd, sudo, scp, unzip, zip, ufw, iptables, nft |
+| **Network & Security** | ssh, ssh-keygen, curl, wget, rsync, nmap, tcpdump, wireshark, openssl, certbot, snyk, trivy, sonar-scanner, ssh_config |
+| **Package Managers** | apt, apt-get, yum, dnf, pacman, brew, choco, winget, pipx, composer, bundle |
 | **Testing** | jest, vitest, mocha, playwright, cypress, k6, locust |
-| **Text Processing** | awk, cat, grep, sed, jq, yq, fd, fzf, rg |
+| **Text Processing & Utilities** | grep, sed, awk, jq, yq, bat, cat, fd, fzf, rg |
 | **Text Editors** | nvim, vim |
-| **Languages** | gcc, g++, clang, swift, tclsh, perl, ruby, lua, python, Rscript, julia |
-| **CI/CD & APIs** | stripe, twilio, adb |
+| **Languages & Compilers** | c (gcc), cpp (g++), javascript, typescript, csharp, objective-c, swift, perl, lua, r, scheme, julia, pascal, tcl, vb, qsharp, elixir, coffee, kotlin, scala, clojure |
+| **Config & Data Tools** | json, xml, yaml, toml, ini, hcl, dotenv, markdown, mdx, restructuredtext, protobuf, graphql, scss, less, css, html, liquid, twig, razor, freemarker2 |
+| **Niche & Specialized** | abap, bicep, azcli, cameligo, pascaligo, ecl, flow9, lexon, m3, mips, msdax, pla, postiats, powerquery, sb, sol, sparql, st, systemverilog, wgsl, doctest |
 
 ## Context Engine
 
