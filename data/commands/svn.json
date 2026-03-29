@@ -1,49 +1,483 @@
 {
   "name": "svn",
   "description": "Apache Subversion - centralized version control system",
-  "category": "Version Control",
-  "platforms": ["linux", "macos", "windows"],
-  "shells": ["bash", "zsh", "powershell", "cmd"],
+  "category": "version-control",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "powershell",
+    "cmd"
+  ],
   "subcommands": [
-    { "name": "checkout", "description": "Check out a working copy from a repository", "args": [{ "name": "url", "description": "Repository URL", "required": true }, { "name": "path", "description": "Local path", "required": false }], "options": [{ "name": "--revision", "shorthand": "-r", "description": "Revision to check out", "takesValue": true }, { "name": "--depth", "description": "Depth (infinity, immediates, files, empty)", "takesValue": true }] },
-    { "name": "update", "description": "Update working copy", "args": [{ "name": "path", "description": "Path to update", "required": false }], "options": [{ "name": "--revision", "shorthand": "-r", "description": "Update to revision", "takesValue": true }] },
-    { "name": "commit", "description": "Commit changes", "args": [{ "name": "path", "description": "Paths to commit", "required": false }], "options": [{ "name": "--message", "shorthand": "-m", "description": "Commit message", "takesValue": true }, { "name": "--file", "shorthand": "-F", "description": "Read message from file", "takesValue": true }] },
-    { "name": "add", "description": "Add files to version control", "args": [{ "name": "path", "description": "Files to add", "required": true }], "options": [{ "name": "--depth", "description": "Depth", "takesValue": true }, { "name": "--force", "description": "Force add" }] },
-    { "name": "delete", "description": "Delete files from version control", "args": [{ "name": "path", "description": "Files to delete", "required": true }], "options": [{ "name": "--force", "description": "Force delete" }, { "name": "--keep-local", "description": "Keep local copy" }] },
-    { "name": "status", "description": "Show working copy status", "args": [{ "name": "path", "description": "Path to check", "required": false }], "options": [{ "name": "--verbose", "shorthand": "-v", "description": "Verbose output" }, { "name": "--show-updates", "shorthand": "-u", "description": "Show updates from server" }] },
-    { "name": "diff", "description": "Show changes", "args": [{ "name": "path", "description": "Path to diff", "required": false }], "options": [{ "name": "--revision", "shorthand": "-r", "description": "Revision range (N:M)", "takesValue": true }, { "name": "--summarize", "description": "Show summary only" }] },
-    { "name": "log", "description": "Show commit logs", "args": [{ "name": "path", "description": "Path to show logs for", "required": false }], "options": [{ "name": "--revision", "shorthand": "-r", "description": "Revision range", "takesValue": true }, { "name": "--limit", "shorthand": "-l", "description": "Max log entries", "takesValue": true }, { "name": "--verbose", "shorthand": "-v", "description": "Show changed paths" }] },
-    { "name": "copy", "description": "Copy files (also used for branching/tagging)", "args": [{ "name": "src", "description": "Source", "required": true }, { "name": "dst", "description": "Destination", "required": true }], "options": [{ "name": "--message", "shorthand": "-m", "description": "Commit message", "takesValue": true }] },
-    { "name": "move", "description": "Move/rename files", "args": [{ "name": "src", "description": "Source", "required": true }, { "name": "dst", "description": "Destination", "required": true }] },
-    { "name": "merge", "description": "Merge changes", "args": [{ "name": "source", "description": "Source URL/path", "required": true }], "options": [{ "name": "--revision", "shorthand": "-r", "description": "Revision range", "takesValue": true }, { "name": "--dry-run", "description": "Preview merge" }, { "name": "--reintegrate", "description": "Reintegrate a branch" }] },
-    { "name": "switch", "description": "Switch working copy to different branch", "args": [{ "name": "url", "description": "Branch URL", "required": true }] },
-    { "name": "revert", "description": "Revert local changes", "args": [{ "name": "path", "description": "Paths to revert", "required": true }], "options": [{ "name": "--recursive", "shorthand": "-R", "description": "Revert recursively" }] },
-    { "name": "resolve", "description": "Resolve conflicts", "args": [{ "name": "path", "description": "Conflicted path", "required": true }], "options": [{ "name": "--accept", "description": "Resolution action (base, working, mine-full, theirs-full)", "takesValue": true }] },
-    { "name": "info", "description": "Show information about working copy or URL", "args": [{ "name": "target", "description": "Path or URL", "required": false }] },
-    { "name": "list", "description": "List repository contents", "args": [{ "name": "url", "description": "Repository URL", "required": false }], "options": [{ "name": "--recursive", "shorthand": "-R", "description": "List recursively" }] },
-    { "name": "blame", "description": "Show line-by-line author info", "args": [{ "name": "file", "description": "File", "required": true }] },
-    { "name": "propset", "description": "Set a property", "args": [{ "name": "propname", "description": "Property name", "required": true }, { "name": "propval", "description": "Property value", "required": true }, { "name": "path", "description": "Target path", "required": true }] },
-    { "name": "propget", "description": "Get a property", "args": [{ "name": "propname", "description": "Property name", "required": true }, { "name": "path", "description": "Target path", "required": true }] },
-    { "name": "export", "description": "Export clean directory tree", "args": [{ "name": "url", "description": "Source URL/path", "required": true }, { "name": "path", "description": "Destination", "required": false }] },
-    { "name": "cleanup", "description": "Clean up working copy" }
+    {
+      "name": "checkout",
+      "description": "Check out a working copy from a repository",
+      "args": [
+        {
+          "name": "url",
+          "description": "Repository URL",
+          "required": true
+        },
+        {
+          "name": "path",
+          "description": "Local path",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--revision",
+          "shorthand": "-r",
+          "description": "Revision to check out",
+          "takesValue": true
+        },
+        {
+          "name": "--depth",
+          "description": "Depth (infinity, immediates, files, empty)",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "update",
+      "description": "Update working copy",
+      "args": [
+        {
+          "name": "path",
+          "description": "Path to update",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--revision",
+          "shorthand": "-r",
+          "description": "Update to revision",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "commit",
+      "description": "Commit changes",
+      "args": [
+        {
+          "name": "path",
+          "description": "Paths to commit",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--message",
+          "shorthand": "-m",
+          "description": "Commit message",
+          "takesValue": true
+        },
+        {
+          "name": "--file",
+          "shorthand": "-F",
+          "description": "Read message from file",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "add",
+      "description": "Add files to version control",
+      "args": [
+        {
+          "name": "path",
+          "description": "Files to add",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--depth",
+          "description": "Depth",
+          "takesValue": true
+        },
+        {
+          "name": "--force",
+          "description": "Force add"
+        }
+      ]
+    },
+    {
+      "name": "delete",
+      "description": "Delete files from version control",
+      "args": [
+        {
+          "name": "path",
+          "description": "Files to delete",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Force delete"
+        },
+        {
+          "name": "--keep-local",
+          "description": "Keep local copy"
+        }
+      ]
+    },
+    {
+      "name": "status",
+      "description": "Show working copy status",
+      "args": [
+        {
+          "name": "path",
+          "description": "Path to check",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "shorthand": "-v",
+          "description": "Verbose output"
+        },
+        {
+          "name": "--show-updates",
+          "shorthand": "-u",
+          "description": "Show updates from server"
+        }
+      ]
+    },
+    {
+      "name": "diff",
+      "description": "Show changes",
+      "args": [
+        {
+          "name": "path",
+          "description": "Path to diff",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--revision",
+          "shorthand": "-r",
+          "description": "Revision range (N:M)",
+          "takesValue": true
+        },
+        {
+          "name": "--summarize",
+          "description": "Show summary only"
+        }
+      ]
+    },
+    {
+      "name": "log",
+      "description": "Show commit logs",
+      "args": [
+        {
+          "name": "path",
+          "description": "Path to show logs for",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--revision",
+          "shorthand": "-r",
+          "description": "Revision range",
+          "takesValue": true
+        },
+        {
+          "name": "--limit",
+          "shorthand": "-l",
+          "description": "Max log entries",
+          "takesValue": true
+        },
+        {
+          "name": "--verbose",
+          "shorthand": "-v",
+          "description": "Show changed paths"
+        }
+      ]
+    },
+    {
+      "name": "copy",
+      "description": "Copy files (also used for branching/tagging)",
+      "args": [
+        {
+          "name": "src",
+          "description": "Source",
+          "required": true
+        },
+        {
+          "name": "dst",
+          "description": "Destination",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--message",
+          "shorthand": "-m",
+          "description": "Commit message",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "move",
+      "description": "Move/rename files",
+      "args": [
+        {
+          "name": "src",
+          "description": "Source",
+          "required": true
+        },
+        {
+          "name": "dst",
+          "description": "Destination",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "merge",
+      "description": "Merge changes",
+      "args": [
+        {
+          "name": "source",
+          "description": "Source URL/path",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--revision",
+          "shorthand": "-r",
+          "description": "Revision range",
+          "takesValue": true
+        },
+        {
+          "name": "--dry-run",
+          "description": "Preview merge"
+        },
+        {
+          "name": "--reintegrate",
+          "description": "Reintegrate a branch"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "description": "Switch working copy to different branch",
+      "args": [
+        {
+          "name": "url",
+          "description": "Branch URL",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "revert",
+      "description": "Revert local changes",
+      "args": [
+        {
+          "name": "path",
+          "description": "Paths to revert",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "shorthand": "-R",
+          "description": "Revert recursively"
+        }
+      ]
+    },
+    {
+      "name": "resolve",
+      "description": "Resolve conflicts",
+      "args": [
+        {
+          "name": "path",
+          "description": "Conflicted path",
+          "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--accept",
+          "description": "Resolution action (base, working, mine-full, theirs-full)",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "info",
+      "description": "Show information about working copy or URL",
+      "args": [
+        {
+          "name": "target",
+          "description": "Path or URL",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "list",
+      "description": "List repository contents",
+      "args": [
+        {
+          "name": "url",
+          "description": "Repository URL",
+          "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "shorthand": "-R",
+          "description": "List recursively"
+        }
+      ]
+    },
+    {
+      "name": "blame",
+      "description": "Show line-by-line author info",
+      "args": [
+        {
+          "name": "file",
+          "description": "File",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "propset",
+      "description": "Set a property",
+      "args": [
+        {
+          "name": "propname",
+          "description": "Property name",
+          "required": true
+        },
+        {
+          "name": "propval",
+          "description": "Property value",
+          "required": true
+        },
+        {
+          "name": "path",
+          "description": "Target path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "propget",
+      "description": "Get a property",
+      "args": [
+        {
+          "name": "propname",
+          "description": "Property name",
+          "required": true
+        },
+        {
+          "name": "path",
+          "description": "Target path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "export",
+      "description": "Export clean directory tree",
+      "args": [
+        {
+          "name": "url",
+          "description": "Source URL/path",
+          "required": true
+        },
+        {
+          "name": "path",
+          "description": "Destination",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "cleanup",
+      "description": "Clean up working copy"
+    }
   ],
   "globalOptions": [
-    { "name": "--username", "description": "Username", "takesValue": true },
-    { "name": "--password", "description": "Password", "takesValue": true },
-    { "name": "--no-auth-cache", "description": "Do not cache credentials" },
-    { "name": "--non-interactive", "description": "No interactive prompts" },
-    { "name": "--quiet", "shorthand": "-q", "description": "Quiet output" },
-    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+    {
+      "name": "--username",
+      "description": "Username",
+      "takesValue": true
+    },
+    {
+      "name": "--password",
+      "description": "Password",
+      "takesValue": true
+    },
+    {
+      "name": "--no-auth-cache",
+      "description": "Do not cache credentials"
+    },
+    {
+      "name": "--non-interactive",
+      "description": "No interactive prompts"
+    },
+    {
+      "name": "--quiet",
+      "shorthand": "-q",
+      "description": "Quiet output"
+    },
+    {
+      "name": "--help",
+      "shorthand": "-h",
+      "description": "Show help"
+    }
   ],
   "examples": [
-    { "command": "svn checkout https://svn.example.com/trunk myproject", "description": "Check out a project" },
-    { "command": "svn commit -m 'Fix bug #123'", "description": "Commit changes with message" },
-    { "command": "svn update", "description": "Update working copy" },
-    { "command": "svn log -l 10", "description": "Show last 10 log entries" },
-    { "command": "svn copy trunk branches/feature-x -m 'Create branch'", "description": "Create a branch" },
-    { "command": "svn diff -r 100:200 file.c", "description": "Diff between revisions" }
+    {
+      "command": "svn checkout https://svn.example.com/trunk myproject",
+      "description": "Check out a project"
+    },
+    {
+      "command": "svn commit -m 'Fix bug #123'",
+      "description": "Commit changes with message"
+    },
+    {
+      "command": "svn update",
+      "description": "Update working copy"
+    },
+    {
+      "command": "svn log -l 10",
+      "description": "Show last 10 log entries"
+    },
+    {
+      "command": "svn copy trunk branches/feature-x -m 'Create branch'",
+      "description": "Create a branch"
+    },
+    {
+      "command": "svn diff -r 100:200 file.c",
+      "description": "Diff between revisions"
+    }
   ],
-  "relatedCommands": ["git", "hg"],
+  "relatedCommands": [
+    "git",
+    "hg"
+  ],
   "contextEngine": {
     "detectors": [
       {

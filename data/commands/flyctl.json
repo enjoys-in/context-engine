@@ -1,99 +1,608 @@
 {
   "name": "flyctl",
   "description": "Fly.io CLI for deploying and managing applications on Fly.io",
-  "category": "Cloud CLIs",
-  "platforms": ["linux", "macos", "windows"],
-  "shells": ["bash", "zsh", "powershell", "fish"],
+  "category": "cloud",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "powershell",
+    "fish"
+  ],
   "subcommands": [
-    { "name": "launch", "description": "Create and configure a new app from source", "options": [{ "name": "--name", "description": "App name", "takesValue": true }, { "name": "--region", "shorthand": "-r", "description": "Region", "takesValue": true }, { "name": "--org", "shorthand": "-o", "description": "Organization", "takesValue": true }, { "name": "--no-deploy", "description": "Skip initial deploy" }, { "name": "--copy-config", "description": "Copy config from existing fly.toml" }] },
-    { "name": "deploy", "description": "Deploy the application", "options": [{ "name": "--image", "shorthand": "-i", "description": "Docker image to deploy", "takesValue": true }, { "name": "--local-only", "description": "Build locally" }, { "name": "--remote-only", "description": "Build remotely" }, { "name": "--region", "shorthand": "-r", "description": "Deploy to specific region", "takesValue": true }, { "name": "--strategy", "description": "Deployment strategy (canary, rolling, bluegreen)", "takesValue": true }, { "name": "--detach", "description": "Don't follow deploy" }] },
-    { "name": "apps", "description": "Manage apps", "subcommands": [
-      { "name": "list", "description": "List apps" },
-      { "name": "create", "description": "Create an app", "args": [{ "name": "name", "description": "App name", "required": false }], "options": [{ "name": "--org", "shorthand": "-o", "description": "Organization", "takesValue": true }] },
-      { "name": "destroy", "description": "Destroy an app", "args": [{ "name": "name", "description": "App name", "required": true }] },
-      { "name": "open", "description": "Open app in browser" },
-      { "name": "restart", "description": "Restart an app" },
-      { "name": "move", "description": "Move an app to another org", "args": [{ "name": "name", "description": "App name", "required": true }] }
-    ]},
-    { "name": "scale", "description": "Scale app resources", "subcommands": [
-      { "name": "count", "description": "Set VM count", "args": [{ "name": "count", "description": "Number of VMs", "required": true }] },
-      { "name": "memory", "description": "Set VM memory", "args": [{ "name": "size", "description": "Memory in MB", "required": true }] },
-      { "name": "vm", "description": "Set VM size", "args": [{ "name": "size", "description": "VM size (shared-cpu-1x, etc)", "required": true }] },
-      { "name": "show", "description": "Show current scale" }
-    ]},
-    { "name": "secrets", "description": "Manage secrets", "subcommands": [
-      { "name": "set", "description": "Set secrets", "args": [{ "name": "key=value", "description": "KEY=VALUE pairs", "required": true }] },
-      { "name": "unset", "description": "Remove secrets", "args": [{ "name": "keys", "description": "Secret names", "required": true }] },
-      { "name": "list", "description": "List secrets" }
-    ]},
-    { "name": "volumes", "description": "Manage volumes", "subcommands": [
-      { "name": "create", "description": "Create a volume", "args": [{ "name": "name", "description": "Volume name", "required": true }], "options": [{ "name": "--size", "shorthand": "-s", "description": "Size in GB", "takesValue": true }, { "name": "--region", "shorthand": "-r", "description": "Region", "takesValue": true }] },
-      { "name": "list", "description": "List volumes" },
-      { "name": "destroy", "description": "Destroy a volume", "args": [{ "name": "id", "description": "Volume ID", "required": true }] }
-    ]},
-    { "name": "postgres", "description": "Manage Postgres databases", "subcommands": [
-      { "name": "create", "description": "Create a Postgres cluster", "options": [{ "name": "--name", "shorthand": "-n", "description": "Cluster name", "takesValue": true }, { "name": "--region", "shorthand": "-r", "description": "Region", "takesValue": true }] },
-      { "name": "list", "description": "List Postgres clusters" },
-      { "name": "connect", "description": "Connect to a Postgres cluster", "args": [{ "name": "name", "description": "Cluster name", "required": true }] },
-      { "name": "attach", "description": "Attach a Postgres to an app", "args": [{ "name": "name", "description": "Postgres app name", "required": true }] }
-    ]},
-    { "name": "redis", "description": "Manage Redis databases", "subcommands": [
-      { "name": "create", "description": "Create a Redis instance" },
-      { "name": "list", "description": "List Redis instances" }
-    ]},
-    { "name": "ssh", "description": "SSH into machines", "subcommands": [
-      { "name": "console", "description": "SSH into a running machine" }
-    ]},
-    { "name": "logs", "description": "View app logs", "options": [{ "name": "--app", "shorthand": "-a", "description": "App name", "takesValue": true }] },
-    { "name": "status", "description": "Show app status", "options": [{ "name": "--all", "description": "Show all instances" }] },
-    { "name": "regions", "description": "List available regions", "subcommands": [
-      { "name": "list", "description": "List all regions" },
-      { "name": "add", "description": "Add regions to app", "args": [{ "name": "regions", "description": "Region codes", "required": true }] },
-      { "name": "remove", "description": "Remove regions", "args": [{ "name": "regions", "description": "Region codes", "required": true }] }
-    ]},
-    { "name": "ips", "description": "Manage IP addresses", "subcommands": [
-      { "name": "list", "description": "List IPs" },
-      { "name": "allocate-v4", "description": "Allocate IPv4" },
-      { "name": "allocate-v6", "description": "Allocate IPv6" },
-      { "name": "release", "description": "Release an IP", "args": [{ "name": "ip", "description": "IP address", "required": true }] }
-    ]},
-    { "name": "certs", "description": "Manage TLS certificates", "subcommands": [
-      { "name": "list", "description": "List certificates" },
-      { "name": "add", "description": "Add a certificate", "args": [{ "name": "hostname", "description": "Hostname", "required": true }] },
-      { "name": "remove", "description": "Remove a certificate", "args": [{ "name": "hostname", "description": "Hostname", "required": true }] }
-    ]},
-    { "name": "auth", "description": "Authentication commands", "subcommands": [
-      { "name": "login", "description": "Log in to Fly.io" },
-      { "name": "logout", "description": "Log out" },
-      { "name": "whoami", "description": "Show current user" },
-      { "name": "token", "description": "Show auth token" }
-    ]},
-    { "name": "proxy", "description": "Proxy to a Fly app", "args": [{ "name": "ports", "description": "Port mapping (local:remote)", "required": true }] },
-    { "name": "machine", "description": "Manage Fly Machines", "subcommands": [
-      { "name": "list", "description": "List machines" },
-      { "name": "run", "description": "Run a machine", "args": [{ "name": "image", "description": "Docker image", "required": true }] },
-      { "name": "start", "description": "Start a machine", "args": [{ "name": "id", "description": "Machine ID", "required": true }] },
-      { "name": "stop", "description": "Stop a machine", "args": [{ "name": "id", "description": "Machine ID", "required": true }] },
-      { "name": "destroy", "description": "Destroy a machine", "args": [{ "name": "id", "description": "Machine ID", "required": true }] }
-    ]}
+    {
+      "name": "launch",
+      "description": "Create and configure a new app from source",
+      "options": [
+        {
+          "name": "--name",
+          "description": "App name",
+          "takesValue": true
+        },
+        {
+          "name": "--region",
+          "shorthand": "-r",
+          "description": "Region",
+          "takesValue": true
+        },
+        {
+          "name": "--org",
+          "shorthand": "-o",
+          "description": "Organization",
+          "takesValue": true
+        },
+        {
+          "name": "--no-deploy",
+          "description": "Skip initial deploy"
+        },
+        {
+          "name": "--copy-config",
+          "description": "Copy config from existing fly.toml"
+        }
+      ]
+    },
+    {
+      "name": "deploy",
+      "description": "Deploy the application",
+      "options": [
+        {
+          "name": "--image",
+          "shorthand": "-i",
+          "description": "Docker image to deploy",
+          "takesValue": true
+        },
+        {
+          "name": "--local-only",
+          "description": "Build locally"
+        },
+        {
+          "name": "--remote-only",
+          "description": "Build remotely"
+        },
+        {
+          "name": "--region",
+          "shorthand": "-r",
+          "description": "Deploy to specific region",
+          "takesValue": true
+        },
+        {
+          "name": "--strategy",
+          "description": "Deployment strategy (canary, rolling, bluegreen)",
+          "takesValue": true
+        },
+        {
+          "name": "--detach",
+          "description": "Don't follow deploy"
+        }
+      ]
+    },
+    {
+      "name": "apps",
+      "description": "Manage apps",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List apps"
+        },
+        {
+          "name": "create",
+          "description": "Create an app",
+          "args": [
+            {
+              "name": "name",
+              "description": "App name",
+              "required": false
+            }
+          ],
+          "options": [
+            {
+              "name": "--org",
+              "shorthand": "-o",
+              "description": "Organization",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "destroy",
+          "description": "Destroy an app",
+          "args": [
+            {
+              "name": "name",
+              "description": "App name",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "open",
+          "description": "Open app in browser"
+        },
+        {
+          "name": "restart",
+          "description": "Restart an app"
+        },
+        {
+          "name": "move",
+          "description": "Move an app to another org",
+          "args": [
+            {
+              "name": "name",
+              "description": "App name",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "scale",
+      "description": "Scale app resources",
+      "subcommands": [
+        {
+          "name": "count",
+          "description": "Set VM count",
+          "args": [
+            {
+              "name": "count",
+              "description": "Number of VMs",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "memory",
+          "description": "Set VM memory",
+          "args": [
+            {
+              "name": "size",
+              "description": "Memory in MB",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "vm",
+          "description": "Set VM size",
+          "args": [
+            {
+              "name": "size",
+              "description": "VM size (shared-cpu-1x, etc)",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "show",
+          "description": "Show current scale"
+        }
+      ]
+    },
+    {
+      "name": "secrets",
+      "description": "Manage secrets",
+      "subcommands": [
+        {
+          "name": "set",
+          "description": "Set secrets",
+          "args": [
+            {
+              "name": "key=value",
+              "description": "KEY=VALUE pairs",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "unset",
+          "description": "Remove secrets",
+          "args": [
+            {
+              "name": "keys",
+              "description": "Secret names",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List secrets"
+        }
+      ]
+    },
+    {
+      "name": "volumes",
+      "description": "Manage volumes",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create a volume",
+          "args": [
+            {
+              "name": "name",
+              "description": "Volume name",
+              "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--size",
+              "shorthand": "-s",
+              "description": "Size in GB",
+              "takesValue": true
+            },
+            {
+              "name": "--region",
+              "shorthand": "-r",
+              "description": "Region",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List volumes"
+        },
+        {
+          "name": "destroy",
+          "description": "Destroy a volume",
+          "args": [
+            {
+              "name": "id",
+              "description": "Volume ID",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "postgres",
+      "description": "Manage Postgres databases",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create a Postgres cluster",
+          "options": [
+            {
+              "name": "--name",
+              "shorthand": "-n",
+              "description": "Cluster name",
+              "takesValue": true
+            },
+            {
+              "name": "--region",
+              "shorthand": "-r",
+              "description": "Region",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List Postgres clusters"
+        },
+        {
+          "name": "connect",
+          "description": "Connect to a Postgres cluster",
+          "args": [
+            {
+              "name": "name",
+              "description": "Cluster name",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "attach",
+          "description": "Attach a Postgres to an app",
+          "args": [
+            {
+              "name": "name",
+              "description": "Postgres app name",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "description": "Manage Redis databases",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create a Redis instance"
+        },
+        {
+          "name": "list",
+          "description": "List Redis instances"
+        }
+      ]
+    },
+    {
+      "name": "ssh",
+      "description": "SSH into machines",
+      "subcommands": [
+        {
+          "name": "console",
+          "description": "SSH into a running machine"
+        }
+      ]
+    },
+    {
+      "name": "logs",
+      "description": "View app logs",
+      "options": [
+        {
+          "name": "--app",
+          "shorthand": "-a",
+          "description": "App name",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "status",
+      "description": "Show app status",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Show all instances"
+        }
+      ]
+    },
+    {
+      "name": "regions",
+      "description": "List available regions",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List all regions"
+        },
+        {
+          "name": "add",
+          "description": "Add regions to app",
+          "args": [
+            {
+              "name": "regions",
+              "description": "Region codes",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "remove",
+          "description": "Remove regions",
+          "args": [
+            {
+              "name": "regions",
+              "description": "Region codes",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ips",
+      "description": "Manage IP addresses",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List IPs"
+        },
+        {
+          "name": "allocate-v4",
+          "description": "Allocate IPv4"
+        },
+        {
+          "name": "allocate-v6",
+          "description": "Allocate IPv6"
+        },
+        {
+          "name": "release",
+          "description": "Release an IP",
+          "args": [
+            {
+              "name": "ip",
+              "description": "IP address",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "certs",
+      "description": "Manage TLS certificates",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List certificates"
+        },
+        {
+          "name": "add",
+          "description": "Add a certificate",
+          "args": [
+            {
+              "name": "hostname",
+              "description": "Hostname",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "remove",
+          "description": "Remove a certificate",
+          "args": [
+            {
+              "name": "hostname",
+              "description": "Hostname",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "description": "Authentication commands",
+      "subcommands": [
+        {
+          "name": "login",
+          "description": "Log in to Fly.io"
+        },
+        {
+          "name": "logout",
+          "description": "Log out"
+        },
+        {
+          "name": "whoami",
+          "description": "Show current user"
+        },
+        {
+          "name": "token",
+          "description": "Show auth token"
+        }
+      ]
+    },
+    {
+      "name": "proxy",
+      "description": "Proxy to a Fly app",
+      "args": [
+        {
+          "name": "ports",
+          "description": "Port mapping (local:remote)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "machine",
+      "description": "Manage Fly Machines",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List machines"
+        },
+        {
+          "name": "run",
+          "description": "Run a machine",
+          "args": [
+            {
+              "name": "image",
+              "description": "Docker image",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "start",
+          "description": "Start a machine",
+          "args": [
+            {
+              "name": "id",
+              "description": "Machine ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "stop",
+          "description": "Stop a machine",
+          "args": [
+            {
+              "name": "id",
+              "description": "Machine ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "destroy",
+          "description": "Destroy a machine",
+          "args": [
+            {
+              "name": "id",
+              "description": "Machine ID",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
   ],
   "globalOptions": [
-    { "name": "--app", "shorthand": "-a", "description": "App name", "takesValue": true },
-    { "name": "--config", "shorthand": "-c", "description": "Path to fly.toml", "takesValue": true },
-    { "name": "--json", "shorthand": "-j", "description": "Output as JSON" },
-    { "name": "--access-token", "shorthand": "-t", "description": "Access token", "takesValue": true },
-    { "name": "--verbose", "shorthand": "-v", "description": "Verbose output" },
-    { "name": "--help", "shorthand": "-h", "description": "Show help" }
+    {
+      "name": "--app",
+      "shorthand": "-a",
+      "description": "App name",
+      "takesValue": true
+    },
+    {
+      "name": "--config",
+      "shorthand": "-c",
+      "description": "Path to fly.toml",
+      "takesValue": true
+    },
+    {
+      "name": "--json",
+      "shorthand": "-j",
+      "description": "Output as JSON"
+    },
+    {
+      "name": "--access-token",
+      "shorthand": "-t",
+      "description": "Access token",
+      "takesValue": true
+    },
+    {
+      "name": "--verbose",
+      "shorthand": "-v",
+      "description": "Verbose output"
+    },
+    {
+      "name": "--help",
+      "shorthand": "-h",
+      "description": "Show help"
+    }
   ],
   "examples": [
-    { "command": "fly launch", "description": "Create and deploy a new app" },
-    { "command": "fly deploy", "description": "Deploy current directory" },
-    { "command": "fly secrets set DATABASE_URL=postgres://...", "description": "Set a secret" },
-    { "command": "fly scale count 3", "description": "Scale to 3 instances" },
-    { "command": "fly logs -a my-app", "description": "View logs for an app" },
-    { "command": "fly postgres create --name my-db --region iad", "description": "Create a Postgres cluster" }
+    {
+      "command": "fly launch",
+      "description": "Create and deploy a new app"
+    },
+    {
+      "command": "fly deploy",
+      "description": "Deploy current directory"
+    },
+    {
+      "command": "fly secrets set DATABASE_URL=postgres://...",
+      "description": "Set a secret"
+    },
+    {
+      "command": "fly scale count 3",
+      "description": "Scale to 3 instances"
+    },
+    {
+      "command": "fly logs -a my-app",
+      "description": "View logs for an app"
+    },
+    {
+      "command": "fly postgres create --name my-db --region iad",
+      "description": "Create a Postgres cluster"
+    }
   ],
-  "relatedCommands": ["railway", "render", "vercel"],
+  "relatedCommands": [
+    "railway",
+    "render",
+    "vercel"
+  ],
   "contextEngine": {
     "detectors": [
       {

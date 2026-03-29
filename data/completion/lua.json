@@ -454,12 +454,12 @@
     },
     {
       "label": "require",
-      "kind": 15,
-      "detail": "Require module",
+      "kind": 1,
+      "detail": "Load and cache a module",
       "documentation": {
-        "value": "Load and cache a module.\n\n```lua\nlocal json = require(\"dkjson\")\n```"
+        "value": "Loads the given module. Checks `package.loaded` first, then uses `package.searchers`.\n\n```lua\nlocal json = require(\"dkjson\")\n```"
       },
-      "insertText": "local ${1:mod} = require(\"${2:modname}\")",
+      "insertText": "require(\"${1:modname}\")",
       "insertTextRules": 4,
       "sortText": "00_require"
     },
@@ -696,23 +696,23 @@
     },
     {
       "label": "error",
-      "kind": 15,
+      "kind": 1,
       "detail": "Raise an error",
       "documentation": {
-        "value": "Terminates the last protected call with the error message.\n\n```lua\nerror(\"something went wrong\", 2)\n```"
+        "value": "Terminates the last protected call with the given message. Level controls error position.\n\n```lua\nerror(\"invalid input\", 2)\n```"
       },
-      "insertText": "error(\"${1:message}\"${2:, ${3:level}})",
+      "insertText": "error(${1:message}${2:, ${3:level}})",
       "insertTextRules": 4,
       "sortText": "00_error"
     },
     {
       "label": "assert",
-      "kind": 15,
+      "kind": 1,
       "detail": "Assert a condition",
       "documentation": {
-        "value": "Raises an error if the value is falsy.\n\n```lua\nlocal f = assert(io.open(filename, \"r\"))\n```"
+        "value": "Raises error if value is false/nil, otherwise returns all arguments.\n\n```lua\nassert(x > 0, \"x must be positive\")\n```"
       },
-      "insertText": "assert(${1:value}, \"${2:assertion failed}\")",
+      "insertText": "assert(${1:v}${2:, ${3:message}})",
       "insertTextRules": 4,
       "sortText": "00_assert"
     },
@@ -1355,17 +1355,6 @@
       "sortText": "00_getmetatable"
     },
     {
-      "label": "require",
-      "kind": 1,
-      "detail": "Load and cache a module",
-      "documentation": {
-        "value": "Loads the given module. Checks `package.loaded` first, then uses `package.searchers`.\n\n```lua\nlocal json = require(\"dkjson\")\n```"
-      },
-      "insertText": "require(\"${1:modname}\")",
-      "insertTextRules": 4,
-      "sortText": "00_require"
-    },
-    {
       "label": "dofile",
       "kind": 1,
       "detail": "Execute a Lua file",
@@ -1397,50 +1386,6 @@
       "insertText": "load(${1:chunk}${2:, ${3:chunkname}${4:, ${5:mode}${6:, ${7:env}}}})",
       "insertTextRules": 4,
       "sortText": "00_load"
-    },
-    {
-      "label": "pcall",
-      "kind": 1,
-      "detail": "Protected call",
-      "documentation": {
-        "value": "Calls function f in protected mode. Returns true + results on success, false + error on failure.\n\n```lua\nlocal ok, result = pcall(myFunc, arg1)\n```"
-      },
-      "insertText": "pcall(${1:f}${2:, ${3:args}})",
-      "insertTextRules": 4,
-      "sortText": "00_pcall"
-    },
-    {
-      "label": "xpcall",
-      "kind": 1,
-      "detail": "Extended protected call",
-      "documentation": {
-        "value": "Like pcall but sets an error handler function.\n\n```lua\nlocal ok, result = xpcall(myFunc, debug.traceback, arg1)\n```"
-      },
-      "insertText": "xpcall(${1:f}, ${2:msgh}${3:, ${4:args}})",
-      "insertTextRules": 4,
-      "sortText": "00_xpcall"
-    },
-    {
-      "label": "error",
-      "kind": 1,
-      "detail": "Raise an error",
-      "documentation": {
-        "value": "Terminates the last protected call with the given message. Level controls error position.\n\n```lua\nerror(\"invalid input\", 2)\n```"
-      },
-      "insertText": "error(${1:message}${2:, ${3:level}})",
-      "insertTextRules": 4,
-      "sortText": "00_error"
-    },
-    {
-      "label": "assert",
-      "kind": 1,
-      "detail": "Assert a condition",
-      "documentation": {
-        "value": "Raises error if value is false/nil, otherwise returns all arguments.\n\n```lua\nassert(x > 0, \"x must be positive\")\n```"
-      },
-      "insertText": "assert(${1:v}${2:, ${3:message}})",
-      "insertTextRules": 4,
-      "sortText": "00_assert"
     },
     {
       "label": "collectgarbage",
@@ -1553,17 +1498,6 @@
       "sortText": "00_kw_for"
     },
     {
-      "label": "function",
-      "kind": 14,
-      "detail": "keyword function",
-      "documentation": {
-        "value": "Lua keyword `function`."
-      },
-      "insertText": "function",
-      "insertTextRules": 4,
-      "sortText": "00_kw_function"
-    },
-    {
       "label": "goto",
       "kind": 14,
       "detail": "keyword goto",
@@ -1575,17 +1509,6 @@
       "sortText": "00_kw_goto"
     },
     {
-      "label": "if",
-      "kind": 14,
-      "detail": "keyword if",
-      "documentation": {
-        "value": "Lua keyword `if`."
-      },
-      "insertText": "if",
-      "insertTextRules": 4,
-      "sortText": "00_kw_if"
-    },
-    {
       "label": "in",
       "kind": 14,
       "detail": "keyword in",
@@ -1595,17 +1518,6 @@
       "insertText": "in",
       "insertTextRules": 4,
       "sortText": "00_kw_in"
-    },
-    {
-      "label": "local",
-      "kind": 14,
-      "detail": "keyword local",
-      "documentation": {
-        "value": "Lua keyword `local`."
-      },
-      "insertText": "local",
-      "insertTextRules": 4,
-      "sortText": "00_kw_local"
     },
     {
       "label": "nil",
@@ -1694,17 +1606,6 @@
       "insertText": "until",
       "insertTextRules": 4,
       "sortText": "00_kw_until"
-    },
-    {
-      "label": "while",
-      "kind": 14,
-      "detail": "keyword while",
-      "documentation": {
-        "value": "Lua keyword `while`."
-      },
-      "insertText": "while",
-      "insertTextRules": 4,
-      "sortText": "00_kw_while"
     },
     {
       "label": "string",

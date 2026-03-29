@@ -1,74 +1,535 @@
 {
   "name": "glab",
   "description": "GitLab CLI for managing GitLab repositories, issues, merge requests, and CI/CD",
-  "category": "Version Control",
-  "platforms": ["linux", "macos", "windows"],
-  "shells": ["bash", "zsh", "powershell", "fish"],
+  "category": "version-control",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "powershell",
+    "fish"
+  ],
   "subcommands": [
-    { "name": "mr", "description": "Manage merge requests", "subcommands": [
-      { "name": "create", "description": "Create a merge request", "options": [{ "name": "--title", "shorthand": "-t", "description": "MR title", "takesValue": true }, { "name": "--description", "shorthand": "-d", "description": "MR description", "takesValue": true }, { "name": "--source-branch", "shorthand": "-s", "description": "Source branch", "takesValue": true }, { "name": "--target-branch", "description": "Target branch", "takesValue": true }, { "name": "--assignee", "shorthand": "-a", "description": "Assignee", "takesValue": true }, { "name": "--label", "shorthand": "-l", "description": "Labels", "takesValue": true }, { "name": "--draft", "description": "Create as draft" }, { "name": "--squash-before-merge", "description": "Squash on merge" }] },
-      { "name": "list", "description": "List merge requests", "options": [{ "name": "--state", "description": "Filter by state (opened, merged, closed)", "takesValue": true }, { "name": "--author", "description": "Filter by author", "takesValue": true }, { "name": "--assignee", "description": "Filter by assignee", "takesValue": true }] },
-      { "name": "view", "description": "View a merge request", "args": [{ "name": "id", "description": "MR ID", "required": true }], "options": [{ "name": "--web", "shorthand": "-w", "description": "Open in browser" }] },
-      { "name": "merge", "description": "Merge a merge request", "args": [{ "name": "id", "description": "MR ID", "required": true }], "options": [{ "name": "--squash", "shorthand": "-s", "description": "Squash commits" }, { "name": "--remove-source-branch", "shorthand": "-d", "description": "Delete source branch" }] },
-      { "name": "close", "description": "Close a merge request", "args": [{ "name": "id", "description": "MR ID", "required": true }] },
-      { "name": "approve", "description": "Approve a merge request", "args": [{ "name": "id", "description": "MR ID", "required": true }] },
-      { "name": "checkout", "description": "Checkout MR branch", "args": [{ "name": "id", "description": "MR ID", "required": true }] },
-      { "name": "diff", "description": "View MR diff", "args": [{ "name": "id", "description": "MR ID", "required": true }] },
-      { "name": "note", "description": "Add a comment to MR", "args": [{ "name": "id", "description": "MR ID", "required": true }], "options": [{ "name": "--message", "shorthand": "-m", "description": "Comment text", "takesValue": true }] }
-    ]},
-    { "name": "issue", "description": "Manage issues", "subcommands": [
-      { "name": "create", "description": "Create an issue", "options": [{ "name": "--title", "shorthand": "-t", "description": "Issue title", "takesValue": true }, { "name": "--description", "shorthand": "-d", "description": "Issue description", "takesValue": true }, { "name": "--label", "shorthand": "-l", "description": "Labels", "takesValue": true }, { "name": "--assignee", "shorthand": "-a", "description": "Assignee", "takesValue": true }] },
-      { "name": "list", "description": "List issues", "options": [{ "name": "--state", "description": "Filter by state", "takesValue": true }, { "name": "--label", "shorthand": "-l", "description": "Filter by label", "takesValue": true }] },
-      { "name": "view", "description": "View an issue", "args": [{ "name": "id", "description": "Issue ID", "required": true }] },
-      { "name": "close", "description": "Close an issue", "args": [{ "name": "id", "description": "Issue ID", "required": true }] },
-      { "name": "reopen", "description": "Reopen an issue", "args": [{ "name": "id", "description": "Issue ID", "required": true }] },
-      { "name": "note", "description": "Add a comment", "args": [{ "name": "id", "description": "Issue ID", "required": true }] }
-    ]},
-    { "name": "ci", "description": "Manage CI/CD pipelines", "subcommands": [
-      { "name": "list", "description": "List pipelines" },
-      { "name": "view", "description": "View a pipeline", "args": [{ "name": "id", "description": "Pipeline ID", "required": false }] },
-      { "name": "run", "description": "Trigger a pipeline", "options": [{ "name": "--branch", "shorthand": "-b", "description": "Branch", "takesValue": true }] },
-      { "name": "retry", "description": "Retry a pipeline", "args": [{ "name": "id", "description": "Pipeline ID", "required": true }] },
-      { "name": "delete", "description": "Delete a pipeline", "args": [{ "name": "id", "description": "Pipeline ID", "required": true }] },
-      { "name": "trace", "description": "Trace a running pipeline" },
-      { "name": "lint", "description": "Lint .gitlab-ci.yml" }
-    ]},
-    { "name": "repo", "description": "Repository commands", "subcommands": [
-      { "name": "clone", "description": "Clone a repository", "args": [{ "name": "repo", "description": "Repository path", "required": true }] },
-      { "name": "fork", "description": "Fork a repository" },
-      { "name": "view", "description": "View repository", "options": [{ "name": "--web", "shorthand": "-w", "description": "Open in browser" }] }
-    ]},
-    { "name": "release", "description": "Manage releases", "subcommands": [
-      { "name": "create", "description": "Create a release", "args": [{ "name": "tag", "description": "Tag name", "required": true }], "options": [{ "name": "--name", "shorthand": "-n", "description": "Release name", "takesValue": true }, { "name": "--notes", "description": "Release notes", "takesValue": true }] },
-      { "name": "list", "description": "List releases" },
-      { "name": "view", "description": "View a release", "args": [{ "name": "tag", "description": "Tag", "required": true }] }
-    ]},
-    { "name": "label", "description": "Manage labels", "subcommands": [
-      { "name": "list", "description": "List labels" },
-      { "name": "create", "description": "Create a label", "options": [{ "name": "--name", "shorthand": "-n", "description": "Label name", "takesValue": true }, { "name": "--color", "description": "Label color", "takesValue": true }] }
-    ]},
-    { "name": "auth", "description": "Manage authentication", "subcommands": [
-      { "name": "login", "description": "Log in to GitLab" },
-      { "name": "status", "description": "Show auth status" }
-    ]},
-    { "name": "ssh-key", "description": "Manage SSH keys", "subcommands": [
-      { "name": "list", "description": "List SSH keys" },
-      { "name": "add", "description": "Add an SSH key" }
-    ]}
+    {
+      "name": "mr",
+      "description": "Manage merge requests",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create a merge request",
+          "options": [
+            {
+              "name": "--title",
+              "shorthand": "-t",
+              "description": "MR title",
+              "takesValue": true
+            },
+            {
+              "name": "--description",
+              "shorthand": "-d",
+              "description": "MR description",
+              "takesValue": true
+            },
+            {
+              "name": "--source-branch",
+              "shorthand": "-s",
+              "description": "Source branch",
+              "takesValue": true
+            },
+            {
+              "name": "--target-branch",
+              "description": "Target branch",
+              "takesValue": true
+            },
+            {
+              "name": "--assignee",
+              "shorthand": "-a",
+              "description": "Assignee",
+              "takesValue": true
+            },
+            {
+              "name": "--label",
+              "shorthand": "-l",
+              "description": "Labels",
+              "takesValue": true
+            },
+            {
+              "name": "--draft",
+              "description": "Create as draft"
+            },
+            {
+              "name": "--squash-before-merge",
+              "description": "Squash on merge"
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List merge requests",
+          "options": [
+            {
+              "name": "--state",
+              "description": "Filter by state (opened, merged, closed)",
+              "takesValue": true
+            },
+            {
+              "name": "--author",
+              "description": "Filter by author",
+              "takesValue": true
+            },
+            {
+              "name": "--assignee",
+              "description": "Filter by assignee",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "view",
+          "description": "View a merge request",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--web",
+              "shorthand": "-w",
+              "description": "Open in browser"
+            }
+          ]
+        },
+        {
+          "name": "merge",
+          "description": "Merge a merge request",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--squash",
+              "shorthand": "-s",
+              "description": "Squash commits"
+            },
+            {
+              "name": "--remove-source-branch",
+              "shorthand": "-d",
+              "description": "Delete source branch"
+            }
+          ]
+        },
+        {
+          "name": "close",
+          "description": "Close a merge request",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "approve",
+          "description": "Approve a merge request",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "checkout",
+          "description": "Checkout MR branch",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "diff",
+          "description": "View MR diff",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "note",
+          "description": "Add a comment to MR",
+          "args": [
+            {
+              "name": "id",
+              "description": "MR ID",
+              "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--message",
+              "shorthand": "-m",
+              "description": "Comment text",
+              "takesValue": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "issue",
+      "description": "Manage issues",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create an issue",
+          "options": [
+            {
+              "name": "--title",
+              "shorthand": "-t",
+              "description": "Issue title",
+              "takesValue": true
+            },
+            {
+              "name": "--description",
+              "shorthand": "-d",
+              "description": "Issue description",
+              "takesValue": true
+            },
+            {
+              "name": "--label",
+              "shorthand": "-l",
+              "description": "Labels",
+              "takesValue": true
+            },
+            {
+              "name": "--assignee",
+              "shorthand": "-a",
+              "description": "Assignee",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List issues",
+          "options": [
+            {
+              "name": "--state",
+              "description": "Filter by state",
+              "takesValue": true
+            },
+            {
+              "name": "--label",
+              "shorthand": "-l",
+              "description": "Filter by label",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "view",
+          "description": "View an issue",
+          "args": [
+            {
+              "name": "id",
+              "description": "Issue ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "close",
+          "description": "Close an issue",
+          "args": [
+            {
+              "name": "id",
+              "description": "Issue ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "reopen",
+          "description": "Reopen an issue",
+          "args": [
+            {
+              "name": "id",
+              "description": "Issue ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "note",
+          "description": "Add a comment",
+          "args": [
+            {
+              "name": "id",
+              "description": "Issue ID",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ci",
+      "description": "Manage CI/CD pipelines",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List pipelines"
+        },
+        {
+          "name": "view",
+          "description": "View a pipeline",
+          "args": [
+            {
+              "name": "id",
+              "description": "Pipeline ID",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "run",
+          "description": "Trigger a pipeline",
+          "options": [
+            {
+              "name": "--branch",
+              "shorthand": "-b",
+              "description": "Branch",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "retry",
+          "description": "Retry a pipeline",
+          "args": [
+            {
+              "name": "id",
+              "description": "Pipeline ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "delete",
+          "description": "Delete a pipeline",
+          "args": [
+            {
+              "name": "id",
+              "description": "Pipeline ID",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "trace",
+          "description": "Trace a running pipeline"
+        },
+        {
+          "name": "lint",
+          "description": "Lint .gitlab-ci.yml"
+        }
+      ]
+    },
+    {
+      "name": "repo",
+      "description": "Repository commands",
+      "subcommands": [
+        {
+          "name": "clone",
+          "description": "Clone a repository",
+          "args": [
+            {
+              "name": "repo",
+              "description": "Repository path",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "fork",
+          "description": "Fork a repository"
+        },
+        {
+          "name": "view",
+          "description": "View repository",
+          "options": [
+            {
+              "name": "--web",
+              "shorthand": "-w",
+              "description": "Open in browser"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "release",
+      "description": "Manage releases",
+      "subcommands": [
+        {
+          "name": "create",
+          "description": "Create a release",
+          "args": [
+            {
+              "name": "tag",
+              "description": "Tag name",
+              "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--name",
+              "shorthand": "-n",
+              "description": "Release name",
+              "takesValue": true
+            },
+            {
+              "name": "--notes",
+              "description": "Release notes",
+              "takesValue": true
+            }
+          ]
+        },
+        {
+          "name": "list",
+          "description": "List releases"
+        },
+        {
+          "name": "view",
+          "description": "View a release",
+          "args": [
+            {
+              "name": "tag",
+              "description": "Tag",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "description": "Manage labels",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List labels"
+        },
+        {
+          "name": "create",
+          "description": "Create a label",
+          "options": [
+            {
+              "name": "--name",
+              "shorthand": "-n",
+              "description": "Label name",
+              "takesValue": true
+            },
+            {
+              "name": "--color",
+              "description": "Label color",
+              "takesValue": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "description": "Manage authentication",
+      "subcommands": [
+        {
+          "name": "login",
+          "description": "Log in to GitLab"
+        },
+        {
+          "name": "status",
+          "description": "Show auth status"
+        }
+      ]
+    },
+    {
+      "name": "ssh-key",
+      "description": "Manage SSH keys",
+      "subcommands": [
+        {
+          "name": "list",
+          "description": "List SSH keys"
+        },
+        {
+          "name": "add",
+          "description": "Add an SSH key"
+        }
+      ]
+    }
   ],
   "globalOptions": [
-    { "name": "--repo", "shorthand": "-R", "description": "Repository (owner/repo)", "takesValue": true },
-    { "name": "--help", "shorthand": "-h", "description": "Show help" },
-    { "name": "--version", "description": "Show version" }
+    {
+      "name": "--repo",
+      "shorthand": "-R",
+      "description": "Repository (owner/repo)",
+      "takesValue": true
+    },
+    {
+      "name": "--help",
+      "shorthand": "-h",
+      "description": "Show help"
+    },
+    {
+      "name": "--version",
+      "description": "Show version"
+    }
   ],
   "examples": [
-    { "command": "glab mr create --title 'Fix bug' --target-branch main", "description": "Create a merge request" },
-    { "command": "glab mr list --state opened", "description": "List open MRs" },
-    { "command": "glab ci view", "description": "View current pipeline" },
-    { "command": "glab issue create -t 'New feature' -l enhancement", "description": "Create an issue" },
-    { "command": "glab ci lint", "description": "Lint .gitlab-ci.yml" }
+    {
+      "command": "glab mr create --title 'Fix bug' --target-branch main",
+      "description": "Create a merge request"
+    },
+    {
+      "command": "glab mr list --state opened",
+      "description": "List open MRs"
+    },
+    {
+      "command": "glab ci view",
+      "description": "View current pipeline"
+    },
+    {
+      "command": "glab issue create -t 'New feature' -l enhancement",
+      "description": "Create an issue"
+    },
+    {
+      "command": "glab ci lint",
+      "description": "Lint .gitlab-ci.yml"
+    }
   ],
-  "relatedCommands": ["git", "gh"],
+  "relatedCommands": [
+    "git",
+    "gh"
+  ],
   "contextEngine": {
     "detectors": [
       {
