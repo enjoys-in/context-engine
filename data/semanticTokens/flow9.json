@@ -1,71 +1,260 @@
 {
   "language": "flow9",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "interface", "typeParameter", "parameter", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "async",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "type",
-      "pattern": "\\b[A-Z][a-zA-Z0-9]*\\b",
-      "modifiers": ["declaration"],
-      "description": "Type declarations starting with uppercase letter"
+      "tokenType": "keyword",
+      "pattern": "\\b(import|export|native|if|else|switch|default|ref|deref|cast|unsafe|require|forbid)\\b",
+      "tokenModifiers": [],
+      "description": "Flow9 core language keywords"
     },
     {
-      "type": "function",
+      "tokenType": "keyword",
+      "pattern": "\\b(with|some|none|isSameStructType)\\b",
+      "tokenModifiers": [],
+      "description": "Flow9 pattern matching and type inspection keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(int|double|string|bool|void|flow)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Flow9 built-in primitive types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(ref|array|Maybe|Some|None|Pair|Triple|Tree|TreeNode|TreeEmpty|List|Cons|EmptyList|Set|DList)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Flow9 built-in composite and container types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Material|Form|Transform|Group|Text|Picture|Tropic|TSelect|TDisplay)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Flow9 built-in UI material and tropic types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=:\\s*)\\b[A-Z][a-zA-Z0-9]*\\b",
+      "tokenModifiers": [],
+      "description": "Type annotations following colon in declarations"
+    },
+    {
+      "tokenType": "struct",
+      "pattern": "\\b[A-Z][a-zA-Z0-9]*(?=\\s*\\()",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Struct constructor calls and definitions (uppercase identifier before parens)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b[A-Z][a-zA-Z0-9]*(?=\\s*::=)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Union type name in type alias declaration (TypeName ::= ...)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b[a-z][a-zA-Z0-9]*\\s*(?=\\([^)]*\\)\\s*->)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Named function definitions with arrow return type"
+    },
+    {
+      "tokenType": "function",
       "pattern": "\\b[a-z][a-zA-Z0-9]*\\s*(?=\\()",
-      "modifiers": ["definition"],
-      "description": "Function definitions followed by parentheses"
+      "tokenModifiers": [],
+      "description": "Function calls (lowercase identifier followed by parentheses)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(import|export|require|forbid|native|if|else|switch|ref|deref)\\b",
-      "modifiers": [],
-      "description": "Flow9 language keywords"
+      "tokenType": "function",
+      "pattern": "(?<=native\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration",
+        "defaultLibrary"
+      ],
+      "description": "Native function binding declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(Material|Form|Transform|Group|Text|Picture)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in material and UI types"
+      "tokenType": "modifier",
+      "pattern": "\\bnative\\b",
+      "tokenModifiers": [],
+      "description": "Native modifier keyword for external bindings"
     },
     {
-      "type": "namespace",
-      "pattern": "(?<=import\\s+)[a-zA-Z_/]+",
-      "modifiers": [],
-      "description": "Import path references"
+      "tokenType": "namespace",
+      "pattern": "(?<=import\\s+)[a-zA-Z_][a-zA-Z0-9_/]*",
+      "tokenModifiers": [],
+      "description": "Module import paths (import path/to/module)"
     },
     {
-      "type": "variable",
-      "pattern": "\\b[a-z][a-zA-Z0-9]*\\b(?!\\s*\\()",
-      "modifiers": [],
-      "description": "Variable references in expressions"
+      "tokenType": "typeParameter",
+      "pattern": "(?<=<\\s*)\\b[A-Z][a-zA-Z0-9]*\\b(?=\\s*[,>])",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Generic type parameters inside angle brackets"
     },
     {
-      "type": "typeParameter",
-      "pattern": "(?<=<\\s*)\\b[A-Z]\\b(?=\\s*>)",
-      "modifiers": ["declaration"],
-      "description": "Generic type parameters in angle brackets"
+      "tokenType": "parameter",
+      "pattern": "\\b[a-z][a-zA-Z0-9]*(?=\\s*:\\s*[A-Z])",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function parameter names followed by type annotation"
     },
     {
-      "type": "operator",
-      "pattern": "(->|\\|>|:=|==|!=|<=|>=|\\\\|\\|)",
-      "modifiers": [],
-      "description": "Flow9 operators including pipe and lambda arrow"
+      "tokenType": "variable",
+      "pattern": "\\b[a-z][a-zA-Z0-9]*(?=\\s*=(?!=))",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Variable definitions in assignment (name = value)"
     },
     {
-      "type": "comment",
-      "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
-      "description": "Single-line and multi-line comments"
+      "tokenType": "property",
+      "pattern": "(?<=\\.)\\b[a-z][a-zA-Z0-9]*\\b",
+      "tokenModifiers": [],
+      "description": "Struct field access via dot notation"
     },
     {
-      "type": "string",
+      "tokenType": "keyword",
+      "pattern": "\\\\[a-z][a-zA-Z0-9]*\\s*(?=->)",
+      "tokenModifiers": [],
+      "description": "Lambda expression parameter with backslash (\\arg -> body)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|>",
+      "tokenModifiers": [],
+      "description": "Pipe operator for function chaining"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "->",
+      "tokenModifiers": [],
+      "description": "Arrow operator in function types and lambda expressions"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "::=",
+      "tokenModifiers": [],
+      "description": "Type definition operator for union types"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ":=",
+      "tokenModifiers": [],
+      "description": "Mutable reference assignment operator"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==|!=|<=|>=|<|>|&&|\\|\\||!)",
+      "tokenModifiers": [],
+      "description": "Comparison and logical operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[+\\-*/%^]",
+      "tokenModifiers": [],
+      "description": "Arithmetic operators"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//.*$",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line block comments"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
-      "description": "String literals in double quotes"
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals with escape sequences"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "0[xX][0-9a-fA-F]+",
+      "tokenModifiers": [],
+      "description": "Hexadecimal integer literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b",
+      "tokenModifiers": [],
+      "description": "Floating-point double literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9]+\\b",
+      "tokenModifiers": [],
+      "description": "Integer numeric literals"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(println|map|filter|fold|iter|concat|length|strlen|substring|s2i|i2s|d2s|s2d|i2d|d2i|toString|makeList|list2array|array2list|getUrlParameter|setKeyValue|lookupTree|setTree|makeTree)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Flow9 standard library functions"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "(?<=\\|\\s*)[A-Z][a-zA-Z0-9]*(?=\\s*(?:\\(|;|\\|))",
+      "tokenModifiers": [],
+      "description": "Union type variant constructors in type definitions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b[a-z][a-zA-Z0-9]*\\b(?!\\s*\\()",
+      "tokenModifiers": [],
+      "description": "General variable references in expressions"
     }
   ]
 }

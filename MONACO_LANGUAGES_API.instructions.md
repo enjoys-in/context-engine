@@ -3,24 +3,8 @@
 > **Source of truth**: All interfaces, enums, and types below are copied verbatim from
 > `node_modules/monaco-editor/monaco.d.ts` (`declare namespace languages` — lines 6516–8680).
 > Do NOT paraphrase or simplify — use these exact shapes when implementing providers.
-## Do It In Chunks
 
-The Monaco API is very large and consists of many interfaces, enums, and types. To avoid overwhelming the agent, we will break the API down into smaller chunks and create TODOs for each chunk. Each chunk will consist of a related set of interfaces, enums, and types. The agent will be responsible for implementing the TODOs for each chunk before moving on to the next chunk. 
-
-Please create TODOs for each type in this chunk. The TODOs should be in the format of "TODO: Implement <type name>".
-
-Create subagents to break down the TODOs into smaller tasks. Each subagent should be responsible for implementing a subset of the TODOs. The subagents should be named "monaco-api-chunk-<number>" where <number> is the number of the chunk.
-
-For example, the first subagent should be named "monaco-api-chunk-1" and should be responsible for implementing the TODOs for the first chunk of interfaces and types.
-
-The ASSISTANT will be given information about the subagents and the TODOs assigned to each subagent. The ASSISTANT can then generate code according to the instructions in a single markdown block.
-
-The ASSISTANT will be given information about the methods, functions, and classes closest to the user's position. If the user's instruction does not explicitly refer to any particular target, the ASSISTANT should infer that the instruction refers to one of the following if applicable.
-
-
-
-
-
+---
 
 ## Table of Contents
 
@@ -2332,46 +2316,179 @@ export enum NewSymbolNameTriggerKind { Invoke = 0, Automatic = 1 }
 
 ---
 
-## 33. Complete Register Function Index
+## 33. Complete API Function Index (Fully Typed Signatures)
 
-| Function | Provider Interface | What it does |
-|---|---|---|
-| `register(language)` | — | Register a language ID |
-| `getLanguages()` | — | Get all registered languages |
-| `getEncodedLanguageId(id)` | — | Get numeric language ID |
-| `onLanguage(id, cb)` | — | Fire when language first needed |
-| `onLanguageEncountered(id, cb)` | — | Fire when language encountered |
-| `setLanguageConfiguration(id, config)` | `LanguageConfiguration` | Set bracket/comment/indent rules |
-| `setMonarchTokensProvider(id, def)` | `IMonarchLanguage` | Set Monarch tokenizer |
-| `setTokensProvider(id, provider)` | `TokensProvider \| EncodedTokensProvider` | Set programmatic tokenizer |
-| `setColorMap(colorMap)` | — | Set global token color map |
-| `registerTokensProviderFactory(id, factory)` | `TokensProviderFactory` | Lazy token provider |
-| `registerCompletionItemProvider(sel, provider)` | `CompletionItemProvider` | IntelliSense suggestions |
-| `registerHoverProvider(sel, provider)` | `HoverProvider<THover>` | Hover tooltips |
-| `registerSignatureHelpProvider(sel, provider)` | `SignatureHelpProvider` | Parameter hints |
-| `registerDefinitionProvider(sel, provider)` | `DefinitionProvider` | Go to Definition |
-| `registerDeclarationProvider(sel, provider)` | `DeclarationProvider` | Go to Declaration |
-| `registerTypeDefinitionProvider(sel, provider)` | `TypeDefinitionProvider` | Go to Type Definition |
-| `registerImplementationProvider(sel, provider)` | `ImplementationProvider` | Go to Implementation |
-| `registerReferenceProvider(sel, provider)` | `ReferenceProvider` | Find All References |
-| `registerDocumentSymbolProvider(sel, provider)` | `DocumentSymbolProvider` | Outline / Breadcrumbs |
-| `registerDocumentHighlightProvider(sel, provider)` | `DocumentHighlightProvider` | Highlight occurrences |
-| `registerLinkedEditingRangeProvider(sel, provider)` | `LinkedEditingRangeProvider` | Linked tag editing |
-| `registerDocumentFormattingEditProvider(sel, provider)` | `DocumentFormattingEditProvider` | Format Document |
-| `registerDocumentRangeFormattingEditProvider(sel, provider)` | `DocumentRangeFormattingEditProvider` | Format Selection |
-| `registerOnTypeFormattingEditProvider(sel, provider)` | `OnTypeFormattingEditProvider` | Format on type |
-| `registerCodeActionProvider(sel, provider, meta?)` | `CodeActionProvider` | Quick fixes / Refactors |
-| `registerCodeLensProvider(sel, provider)` | `CodeLensProvider` | Inline code lenses |
-| `registerLinkProvider(sel, provider)` | `LinkProvider` | Clickable links |
-| `registerColorProvider(sel, provider)` | `DocumentColorProvider` | Color picker |
-| `registerFoldingRangeProvider(sel, provider)` | `FoldingRangeProvider` | Code folding |
-| `registerRenameProvider(sel, provider)` | `RenameProvider` | Rename Symbol (F2) |
-| `registerNewSymbolNameProvider(sel, provider)` | `NewSymbolNamesProvider` | AI rename suggestions |
-| `registerSelectionRangeProvider(sel, provider)` | `SelectionRangeProvider` | Smart selection expand |
-| `registerInlineCompletionsProvider(sel, provider)` | `InlineCompletionsProvider<T>` | Ghost text / AI completions |
-| `registerInlayHintsProvider(sel, provider)` | `InlayHintsProvider` | Inline type hints |
-| `registerDocumentSemanticTokensProvider(sel, provider)` | `DocumentSemanticTokensProvider` | Semantic highlighting |
-| `registerDocumentRangeSemanticTokensProvider(sel, provider)` | `DocumentRangeSemanticTokensProvider` | Range semantic highlighting |
+> Every function below is copied from `declare namespace languages` in `editor.api.d.ts`.
+> All `register*`/`set*` functions return `IDisposable`. All `on*` functions return `IDisposable`.
+
+### 33.1 Language Registration & Query
+
+```typescript
+// Register a language ID (extensions, aliases, filenames, mimetypes)
+register(language: ILanguageExtensionPoint): void;
+
+// Get all registered languages
+getLanguages(): ILanguageExtensionPoint[];
+
+// Get the numeric (encoded) language ID for use in binary token metadata
+getEncodedLanguageId(languageId: string): number;
+```
+
+### 33.2 Language Events
+
+```typescript
+// Fires when a language is associated for the first time with a text model
+onLanguage(languageId: string, callback: () => void): IDisposable;
+
+// Fires when a language is associated with a text model OR encountered during tokenization of another language
+onLanguageEncountered(languageId: string, callback: () => void): IDisposable;
+```
+
+### 33.3 Language Configuration
+
+```typescript
+// Set bracket/comment/indent/folding/autoClosing rules for a language
+setLanguageConfiguration(languageId: string, configuration: LanguageConfiguration): IDisposable;
+```
+
+### 33.4 Tokenization (set* — exclusive with each other, cooperative with semantic tokens)
+
+```typescript
+// Set the tokens provider (manual implementation)
+setTokensProvider(languageId: string, provider: TokensProvider | EncodedTokensProvider | Thenable<TokensProvider | EncodedTokensProvider>): IDisposable;
+
+// Set the tokens provider (Monarch grammar definition)
+setMonarchTokensProvider(languageId: string, languageDef: IMonarchLanguage | Thenable<IMonarchLanguage>): IDisposable;
+
+// Lazy factory for token providers
+registerTokensProviderFactory(languageId: string, factory: TokensProviderFactory): IDisposable;
+
+// Change the global token color map. Supported hex formats: #RRGGBB, #RRGGBBAA, #RGB, #RGBA
+setColorMap(colorMap: string[] | null): void;
+```
+
+### 33.5 All `register*` Provider Functions
+
+```typescript
+// § Completion (IntelliSense suggestions)
+registerCompletionItemProvider(languageSelector: LanguageSelector, provider: CompletionItemProvider): IDisposable;
+
+// § Hover (editor hover tooltips)
+registerHoverProvider(languageSelector: LanguageSelector, provider: HoverProvider): IDisposable;
+
+// § Signature Help (parameter hints)
+registerSignatureHelpProvider(languageSelector: LanguageSelector, provider: SignatureHelpProvider): IDisposable;
+
+// § Definition (go to definition / peek definition)
+registerDefinitionProvider(languageSelector: LanguageSelector, provider: DefinitionProvider): IDisposable;
+
+// § Declaration (go to declaration)
+registerDeclarationProvider(languageSelector: LanguageSelector, provider: DeclarationProvider): IDisposable;
+
+// § Type Definition (go to type definition)
+registerTypeDefinitionProvider(languageSelector: LanguageSelector, provider: TypeDefinitionProvider): IDisposable;
+
+// § Implementation (go to implementation)
+registerImplementationProvider(languageSelector: LanguageSelector, provider: ImplementationProvider): IDisposable;
+
+// § References (find all references)
+registerReferenceProvider(languageSelector: LanguageSelector, provider: ReferenceProvider): IDisposable;
+
+// § Document Symbol (outline / breadcrumbs / go to symbol)
+registerDocumentSymbolProvider(languageSelector: LanguageSelector, provider: DocumentSymbolProvider): IDisposable;
+
+// § Document Highlight (highlight occurrences)
+registerDocumentHighlightProvider(languageSelector: LanguageSelector, provider: DocumentHighlightProvider): IDisposable;
+
+// § Linked Editing Range (linked tag editing)
+registerLinkedEditingRangeProvider(languageSelector: LanguageSelector, provider: LinkedEditingRangeProvider): IDisposable;
+
+// § Document Formatting (format entire document)
+registerDocumentFormattingEditProvider(languageSelector: LanguageSelector, provider: DocumentFormattingEditProvider): IDisposable;
+
+// § Document Range Formatting (format selection)
+registerDocumentRangeFormattingEditProvider(languageSelector: LanguageSelector, provider: DocumentRangeFormattingEditProvider): IDisposable;
+
+// § On Type Formatting (format as user types)
+registerOnTypeFormattingEditProvider(languageSelector: LanguageSelector, provider: OnTypeFormattingEditProvider): IDisposable;
+
+// § Code Action (quick fixes / refactors / source actions)
+registerCodeActionProvider(languageSelector: LanguageSelector, provider: CodeActionProvider, metadata?: CodeActionProviderMetadata): IDisposable;
+
+// § Code Lens (inline code lenses)
+registerCodeLensProvider(languageSelector: LanguageSelector, provider: CodeLensProvider): IDisposable;
+
+// § Link (clickable links in editor)
+registerLinkProvider(languageSelector: LanguageSelector, provider: LinkProvider): IDisposable;
+
+// § Color (color picker / color decorator)
+registerColorProvider(languageSelector: LanguageSelector, provider: DocumentColorProvider): IDisposable;
+
+// § Folding Range (code folding regions)
+registerFoldingRangeProvider(languageSelector: LanguageSelector, provider: FoldingRangeProvider): IDisposable;
+
+// § Rename (rename symbol F2)
+registerRenameProvider(languageSelector: LanguageSelector, provider: RenameProvider): IDisposable;
+
+// § New Symbol Names (AI rename suggestions)
+registerNewSymbolNameProvider(languageSelector: LanguageSelector, provider: NewSymbolNamesProvider): IDisposable;
+
+// § Selection Range (smart selection expand/shrink)
+registerSelectionRangeProvider(languageSelector: LanguageSelector, provider: SelectionRangeProvider): IDisposable;
+
+// § Inline Completions (ghost text / AI completions)
+registerInlineCompletionsProvider(languageSelector: LanguageSelector, provider: InlineCompletionsProvider): IDisposable;
+
+// § Inlay Hints (inline type/parameter hints)
+registerInlayHintsProvider(languageSelector: LanguageSelector, provider: InlayHintsProvider): IDisposable;
+
+// § Document Semantic Tokens (semantic highlighting — cooperates with top-down tokenizers)
+registerDocumentSemanticTokensProvider(languageSelector: LanguageSelector, provider: DocumentSemanticTokensProvider): IDisposable;
+
+// § Document Range Semantic Tokens (range semantic highlighting — cooperates with top-down tokenizers)
+registerDocumentRangeSemanticTokensProvider(languageSelector: LanguageSelector, provider: DocumentRangeSemanticTokensProvider): IDisposable;
+```
+
+### 33.6 Quick-Reference Table
+
+| Category | Function | Provider / Config Type | Purpose |
+|---|---|---|---|
+| **Registration** | `register(language)` | `ILanguageExtensionPoint` | Register a language ID |
+| **Registration** | `getLanguages()` | — | Get all registered languages |
+| **Registration** | `getEncodedLanguageId(languageId)` | — | Get numeric language ID |
+| **Events** | `onLanguage(languageId, callback)` | — | Fire when language first used by a model |
+| **Events** | `onLanguageEncountered(languageId, callback)` | — | Fire when language used or encountered in tokenization |
+| **Configuration** | `setLanguageConfiguration(languageId, configuration)` | `LanguageConfiguration` | Set bracket/comment/indent/folding rules |
+| **Tokenization** | `setTokensProvider(languageId, provider)` | `TokensProvider \| EncodedTokensProvider` | Set manual tokenizer |
+| **Tokenization** | `setMonarchTokensProvider(languageId, languageDef)` | `IMonarchLanguage` | Set Monarch tokenizer |
+| **Tokenization** | `registerTokensProviderFactory(languageId, factory)` | `TokensProviderFactory` | Lazy token provider factory |
+| **Tokenization** | `setColorMap(colorMap)` | `string[] \| null` | Set global token color map |
+| **IntelliSense** | `registerCompletionItemProvider(sel, provider)` | `CompletionItemProvider` | Suggestions / autocomplete |
+| **Hover** | `registerHoverProvider(sel, provider)` | `HoverProvider<THover>` | Hover tooltips |
+| **Signatures** | `registerSignatureHelpProvider(sel, provider)` | `SignatureHelpProvider` | Parameter hints |
+| **Navigation** | `registerDefinitionProvider(sel, provider)` | `DefinitionProvider` | Go to Definition |
+| **Navigation** | `registerDeclarationProvider(sel, provider)` | `DeclarationProvider` | Go to Declaration |
+| **Navigation** | `registerTypeDefinitionProvider(sel, provider)` | `TypeDefinitionProvider` | Go to Type Definition |
+| **Navigation** | `registerImplementationProvider(sel, provider)` | `ImplementationProvider` | Go to Implementation |
+| **Navigation** | `registerReferenceProvider(sel, provider)` | `ReferenceProvider` | Find All References |
+| **Symbols** | `registerDocumentSymbolProvider(sel, provider)` | `DocumentSymbolProvider` | Outline / Breadcrumbs |
+| **Highlight** | `registerDocumentHighlightProvider(sel, provider)` | `DocumentHighlightProvider` | Highlight occurrences |
+| **Editing** | `registerLinkedEditingRangeProvider(sel, provider)` | `LinkedEditingRangeProvider` | Linked tag editing |
+| **Formatting** | `registerDocumentFormattingEditProvider(sel, provider)` | `DocumentFormattingEditProvider` | Format Document |
+| **Formatting** | `registerDocumentRangeFormattingEditProvider(sel, provider)` | `DocumentRangeFormattingEditProvider` | Format Selection |
+| **Formatting** | `registerOnTypeFormattingEditProvider(sel, provider)` | `OnTypeFormattingEditProvider` | Format on type |
+| **Actions** | `registerCodeActionProvider(sel, provider, meta?)` | `CodeActionProvider` | Quick fixes / Refactors |
+| **Lenses** | `registerCodeLensProvider(sel, provider)` | `CodeLensProvider` | Inline code lenses |
+| **Links** | `registerLinkProvider(sel, provider)` | `LinkProvider` | Clickable links |
+| **Color** | `registerColorProvider(sel, provider)` | `DocumentColorProvider` | Color picker |
+| **Folding** | `registerFoldingRangeProvider(sel, provider)` | `FoldingRangeProvider` | Code folding |
+| **Rename** | `registerRenameProvider(sel, provider)` | `RenameProvider` | Rename Symbol (F2) |
+| **Rename** | `registerNewSymbolNameProvider(sel, provider)` | `NewSymbolNamesProvider` | AI rename suggestions |
+| **Selection** | `registerSelectionRangeProvider(sel, provider)` | `SelectionRangeProvider` | Smart selection expand |
+| **AI / Ghost** | `registerInlineCompletionsProvider(sel, provider)` | `InlineCompletionsProvider<T>` | Ghost text / AI completions |
+| **Hints** | `registerInlayHintsProvider(sel, provider)` | `InlayHintsProvider` | Inline type hints |
+| **Semantic** | `registerDocumentSemanticTokensProvider(sel, provider)` | `DocumentSemanticTokensProvider` | Semantic highlighting |
+| **Semantic** | `registerDocumentRangeSemanticTokensProvider(sel, provider)` | `DocumentRangeSemanticTokensProvider` | Range semantic highlighting |
 
 ---
 

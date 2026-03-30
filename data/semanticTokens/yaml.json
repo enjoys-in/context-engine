@@ -1,71 +1,243 @@
 {
   "language": "yaml",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\s*:",
-      "modifiers": ["declaration"],
-      "description": "Mapping key declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Block mapping key declarations"
     },
     {
-      "type": "string",
-      "pattern": "(\"[^\"]*\"|'[^']*')",
-      "modifiers": [],
-      "description": "Quoted string values"
+      "tokenType": "property",
+      "pattern": "(?<=[{,])\\s*([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\s*:",
+      "tokenModifiers": [],
+      "description": "Flow mapping key declarations inside { }"
     },
     {
-      "type": "number",
-      "pattern": ":\\s*([+-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][+-]?[0-9]+)?|0x[0-9a-fA-F]+|0o[0-7]+)\\s*$",
-      "modifiers": [],
-      "description": "Numeric values including hex and octal"
+      "tokenType": "keyword",
+      "pattern": ":\\s*(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO|on|On|ON|off|Off|OFF)\\s*$",
+      "tokenModifiers": [],
+      "description": "YAML boolean values in all accepted forms"
     },
     {
-      "type": "keyword",
-      "pattern": ":\\s*(true|false|yes|no|on|off|null|~)\\s*$",
-      "modifiers": [],
-      "description": "Boolean and null values"
+      "tokenType": "keyword",
+      "pattern": ":\\s*(null|Null|NULL|~)\\s*$",
+      "tokenModifiers": [],
+      "description": "Null representations (null, ~, empty)"
     },
     {
-      "type": "variable",
+      "tokenType": "number",
+      "pattern": ":\\s*([+-]?\\d[\\d_]*)\\s*$",
+      "tokenModifiers": [],
+      "description": "Decimal integer values"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ":\\s*(0x[0-9a-fA-F][0-9a-fA-F_]*)\\s*$",
+      "tokenModifiers": [],
+      "description": "Hexadecimal integer values (0x prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ":\\s*(0o[0-7][0-7_]*)\\s*$",
+      "tokenModifiers": [],
+      "description": "Octal integer values (0o prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ":\\s*([+-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][+-]?[0-9]+)?)\\s*$",
+      "tokenModifiers": [],
+      "description": "Float values including scientific notation"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ":\\s*([+-]?(\\.inf|\\.Inf|\\.INF)|(\\.nan|\\.NaN|\\.NAN))\\s*$",
+      "tokenModifiers": [],
+      "description": "Special float values (.inf, -.inf, .nan)"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "&([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": ["declaration"],
-      "description": "Anchor definitions with &"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Anchor definitions (&anchor_name)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\*([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": ["readonly"],
-      "description": "Alias references with *"
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Alias references (*anchor_name)"
     },
     {
-      "type": "operator",
-      "pattern": "!!([a-zA-Z_][a-zA-Z0-9_:.]*)",
-      "modifiers": [],
-      "description": "Tag declarations with !!"
+      "tokenType": "operator",
+      "pattern": "<<\\s*:",
+      "tokenModifiers": [],
+      "description": "Merge key (<<:) for merging mappings from anchors"
     },
     {
-      "type": "operator",
-      "pattern": "^\\s*(\\||>)[-+]?\\s*$",
-      "modifiers": [],
-      "description": "Block scalar indicators | and >"
+      "tokenType": "type",
+      "pattern": "!!(str|int|float|bool|null|seq|map|set|omap|pairs|binary|timestamp|merge|value|yaml)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Standard YAML secondary tags (!!str, !!int, !!map, !!seq, etc.)"
     },
     {
-      "type": "keyword",
-      "pattern": "^---\\s*$|^\\.\\.\\.\\s*$",
-      "modifiers": [],
-      "description": "Document start (---) and end (...) markers"
+      "tokenType": "type",
+      "pattern": "![a-zA-Z_][a-zA-Z0-9_:./-]*",
+      "tokenModifiers": [],
+      "description": "Custom primary tags (!custom_tag, !include)"
     },
     {
-      "type": "comment",
+      "tokenType": "operator",
+      "pattern": "^\\s*\\|([+-]?[1-9]?|[1-9][+-]?)\\s*$",
+      "tokenModifiers": [],
+      "description": "Literal block scalar indicator (|) with chomp/indent modifiers"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*>([+-]?[1-9]?|[1-9][+-]?)\\s*$",
+      "tokenModifiers": [],
+      "description": "Folded block scalar indicator (>) with chomp/indent modifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^---\\s*$",
+      "tokenModifiers": [],
+      "description": "Document start marker (---)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\.\\.\\.\\s*$",
+      "tokenModifiers": [],
+      "description": "Document end marker (...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^%YAML\\s+[0-9]+\\.[0-9]+\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "YAML version directive (%YAML 1.2)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^%TAG\\s+![a-zA-Z0-9_]*!\\s+\\S+\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Tag directive for shorthand definitions (%TAG !prefix! uri)"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Line comments starting with #"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted strings with escape sequence support"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'([^']|'')*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted strings with '' escape for literal single quotes"
+    },
+    {
+      "tokenType": "string",
+      "pattern": ":\\s*(\\d{4}-\\d{2}-\\d{2}([Tt ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([Zz]|[+-]\\d{2}(:\\d{2})?)?)?)\\s*$",
+      "tokenModifiers": [],
+      "description": "Timestamp values in ISO 8601 format"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*\\?\\s+",
+      "tokenModifiers": [],
+      "description": "Complex mapping key indicator (?)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*-\\s+",
+      "tokenModifiers": [],
+      "description": "Block sequence entry indicator (-)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*\\}|\\$\\{[a-zA-Z_][a-zA-Z0-9_]*:-[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "Environment variable interpolation patterns ${VAR} and ${VAR:-default}"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^\\s*(apiVersion)\\s*:\\s*(v[0-9]+[a-zA-Z0-9/]*|[a-zA-Z]+\\.k8s\\.io/v[0-9]+[a-zA-Z0-9]*)\\s*$",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Kubernetes apiVersion field with API group versions"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "^\\s*(kind)\\s*:\\s*(Deployment|Service|Pod|ConfigMap|Secret|Ingress|StatefulSet|DaemonSet|Job|CronJob|PersistentVolumeClaim|PersistentVolume|Namespace|ServiceAccount|Role|ClusterRole|RoleBinding|ClusterRoleBinding|HorizontalPodAutoscaler|NetworkPolicy|ReplicaSet|LimitRange|ResourceQuota)\\s*$",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Kubernetes resource kind values"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(metadata|spec|status|template|containers|initContainers|volumes|volumeMounts|env|envFrom|ports|resources|requests|limits|selector|matchLabels|matchExpressions|labels|annotations|name|namespace|image|imagePullPolicy|command|args|replicas|strategy|restartPolicy|serviceAccountName|nodeSelector|tolerations|affinity|securityContext|livenessProbe|readinessProbe|startupProbe|lifecycle)\\s*:",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Common Kubernetes spec fields and container configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(configMapKeyRef|secretKeyRef|fieldRef|resourceFieldRef|configMap|secret|emptyDir|hostPath|persistentVolumeClaim|claimName|containerPort|protocol|targetPort|servicePort|path|backend|host|tls|rules|http|paths)\\s*:",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Kubernetes volume, networking, and ingress configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(on|jobs|steps|runs-on|uses|with|env|if|needs|strategy|matrix|secrets|permissions|concurrency|timeout-minutes|outputs|inputs|required|default|description|workflow_dispatch|push|pull_request|schedule|cron)\\s*:",
+      "tokenModifiers": [],
+      "description": "GitHub Actions and CI/CD workflow configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(version|services|build|image|ports|volumes|environment|depends_on|networks|restart|deploy|replicas|healthcheck|logging|driver|command|entrypoint|working_dir|container_name|hostname|extra_hosts|dns|cap_add|cap_drop|privileged|read_only|tmpfs)\\s*:",
+      "tokenModifiers": [],
+      "description": "Docker Compose service configuration keys"
     }
   ]
 }

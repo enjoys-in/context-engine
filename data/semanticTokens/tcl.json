@@ -1,71 +1,214 @@
 {
   "language": "tcl",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "parameter",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "modification"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bproc\\s+([a-zA-Z_:][a-zA-Z0-9_:]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Procedure declarations with proc"
     },
     {
-      "type": "variable",
-      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
-      "description": "Variable references with $ prefix"
+      "tokenType": "variable",
+      "pattern": "\\$\\{?[a-zA-Z_][a-zA-Z0-9_]*(\\([^)]*\\))?\\}?",
+      "tokenModifiers": [],
+      "description": "Variable references with $ prefix including array elements $arr(key) and braced ${var}"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\bset\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Variable assignments with set command"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(upvar|uplevel|global|variable|unset|array|info|rename)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Variable scope and management commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|else|elseif|while|for|foreach|switch|break|continue|return)\\b",
+      "tokenModifiers": [],
+      "description": "Core control flow keywords"
     },
     {
-      "type": "namespace",
-      "pattern": "\\bnamespace\\s+(eval|export|import|current|path|children|ensemble)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\b(catch|try|throw|error|finally|on|trap)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(proc|apply|coroutine|yield|tailcall)\\b",
+      "tokenModifiers": [],
+      "description": "Procedure and coroutine definition keywords"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bnamespace\\s+(eval|export|import|current|path|children|ensemble|delete|exists|inscope|origin|parent|qualifiers|tail|code|which)\\b",
+      "tokenModifiers": ["defaultLibrary"],
       "description": "Namespace subcommands"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(if|else|elseif|while|for|foreach|switch|break|continue|return|catch|try|throw|error)\\b",
-      "modifiers": [],
-      "description": "Control flow keywords"
+      "tokenType": "keyword",
+      "pattern": "\\bpackage\\s+(require|provide|ifneeded|names|present|versions|vcompare|vsatisfies|forget|prefer)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Package management subcommands"
     },
     {
-      "type": "function",
-      "pattern": "\\b(expr|eval|source|exec|open|close|read|puts|gets|format|scan|regexp|regsub|string|list|lindex|lsearch|lsort|llength|lappend|lrange|lreplace|dict|file|glob|clock|after|vwait|update)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Tcl commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(upvar|uplevel|global|variable|unset)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Variable scope management commands"
     },
     {
-      "type": "keyword",
-      "pattern": "\\bpackage\\s+(require|provide|ifneeded)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Package management commands"
+      "tokenType": "function",
+      "pattern": "\\bstring\\s+(length|index|range|match|map|trim|trimleft|trimright|first|last|repeat|replace|reverse|tolower|toupper|totitle|is|compare|equal|cat|wordstart|wordend)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String subcommands for manipulation and comparison"
     },
     {
-      "type": "function",
-      "pattern": "\\binterp\\s+(create|delete|eval|alias|expose|hide|invokehidden)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Interpreter management commands"
+      "tokenType": "function",
+      "pattern": "\\b(append|format|scan|regexp|regsub|subst|binary)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String processing commands: append, format, scan, regex, substitution"
     },
     {
-      "type": "comment",
-      "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Line comments starting with #"
+      "tokenType": "function",
+      "pattern": "\\b(list|lindex|llength|lappend|linsert|lreplace|lsort|lsearch|lrange|lset|lrepeat|lreverse|lmap|lassign|concat|join|split)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "List manipulation commands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(open|close|read|puts|gets|seek|tell|eof|flush|fileevent|fconfigure|fcopy|socket|chan)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "I/O and channel commands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\barray\\s+(set|get|names|exists|size|unset|startsearch|nextelement|donesearch|anymore|statistics)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Array subcommands for Tcl associative arrays"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bdict\\s+(create|get|set|exists|keys|values|for|with|update|replace|remove|append|lappend|incr|info|size|merge|filter|map|unset)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Dict subcommands for dictionary operations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfile\\s+(exists|readable|writable|executable|isdirectory|isfile|type|size|stat|lstat|atime|mtime|copy|rename|delete|mkdir|tempfile|normalize|join|split|dirname|tail|extension|rootname|nativename|pathtype|separator|volumes|channels|owned|link|readlink|attributes)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "File system subcommands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(expr|eval|source|exec|pid|exit)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Core evaluation and execution commands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(clock|after|vwait|update)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Event loop and timing commands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\binfo\\s+(commands|procs|vars|globals|locals|exists|body|args|default|level|frame|cmdcount|complete|hostname|library|loaded|nameofexecutable|patchlevel|script|sharedlibextension|tclversion|cmdtype|errorstack)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Introspection subcommands via info"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\binterp\\s+(create|delete|eval|alias|expose|hide|invokehidden|issafe|marktrusted|slaves|target|share|transfer|limit|recursionlimit|bgerror)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Interpreter management subcommands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(glob|cd|pwd|encoding|msgcat|http|tls|tdbc|sqlite3)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "File globbing, encoding, and common extension packages"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(button|label|entry|text|canvas|frame|toplevel|listbox|scrollbar|menu|menubutton|message|panedwindow|spinbox|scale|checkbutton|radiobutton|ttk::button|ttk::label|ttk::entry|ttk::frame|ttk::combobox|ttk::treeview|ttk::notebook|ttk::progressbar|ttk::separator|ttk::sizegrip|ttk::scrollbar|ttk::panedwindow|ttk::scale|ttk::spinbox|ttk::menubutton|ttk::checkbutton|ttk::radiobutton|ttk::labelframe)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Tk and ttk widget creation commands"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(pack|grid|place|bind|event|winfo|wm|tk|focus|grab|selection|clipboard|bell|destroy|lower|raise|option|font|image|photo|bitmap|tk_messageBox|tk_getOpenFile|tk_getSaveFile|tk_chooseColor|tk_chooseDirectory|tk_dialog|tk_popup)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Tk geometry managers, bindings, window management, and dialog commands"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[([^\\[\\]]*?)\\]",
+      "tokenModifiers": [],
+      "description": "Command substitution in square brackets [cmd]"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "(?:^|;)\\s*#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Line comments starting with # at line start or after semicolon"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals with substitution"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0x[0-9a-fA-F]+|0o[0-7]+|0b[01]+|\\d+(\\.\\d+)?([eE][+-]?\\d+)?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: decimal, hex, octal, binary, and floating-point"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==|!=|<=|>=|&&|\\|\\||<<|>>|\\*\\*|<|>|\\+|-|\\*|/|%|&|\\||\\^|~|!|eq|ne|in|ni)",
+      "tokenModifiers": [],
+      "description": "Arithmetic, comparison, logical, bitwise, and string operators"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\btrace\\s+(add|remove|info|variable|vdelete|vinfo)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Variable and command tracing subcommands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(oo::class|oo::object|oo::define|oo::objdefine|self|my|next|nextto)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "TclOO object-oriented programming commands"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(method|constructor|destructor|mixin|superclass|forward|unexport|export|variable|filter)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "TclOO class definition subcommands for methods and structure"
     }
   ]
 }

@@ -1,65 +1,204 @@
 {
   "language": "caddy",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "function", "variable", "property", "string", "namespace", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "function",
+      "variable",
+      "property",
+      "string",
+      "namespace",
+      "operator",
+      "comment",
+      "number"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "defaultLibrary",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(reverse_proxy|file_server|respond|redir|rewrite|encode|tls|log|header|basicauth|handle|handle_path|route)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Caddy directives"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "@([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Named matchers (@name)"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "^\\s*([a-zA-Z0-9.-]+(?::[0-9]+)?)\\s*\\{",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Site address / host blocks"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\{([a-zA-Z_.][a-zA-Z0-9_.]*)\\}",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Placeholders ({http.request.host}, {args.0})"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(import|snippet)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Snippet and import references"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "\\b(path|host|method|protocol|header|query|remote_ip|not|expression)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Matcher types in matcher blocks"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(php_fastcgi|templates|root|try_files|uri|vars|map|error|abort|skip_log)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Additional Caddy directives"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\\b(gzip|zstd|br)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Encoding format identifiers"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "\\b(to|from|between|except)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Subdirective keywords"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{http\\.request\\.(uri|host|hostport|method|scheme|port|remote\\.host|remote\\.port|header\\.[a-zA-Z0-9_-]+)\\}",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "HTTP request placeholders ({http.request.uri}, {http.request.header.*})"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{\\$[A-Z_][A-Z0-9_]*\\}",
+      "tokenModifiers": [],
+      "description": "Environment variable placeholders ({$ENV_VAR})"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(handle_errors|handle_response)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Error and response handling directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(file|path_regexp|header_regexp|remote_ip|client_ip)\\b",
+      "tokenModifiers": [],
+      "description": "File matcher and advanced matcher types"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(metrics|rate_limit|request_body|tracing|acme_server|push|request_header|response_header)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Metrics, rate limiting, header manipulation, and extended directives"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\(([a-zA-Z_][a-zA-Z0-9_]*)\\)\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named route and snippet definitions ((snippet_name))"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(output|format|level|include|exclude|roll_size|roll_keep|roll_keep_for)\\b",
+      "tokenModifiers": [],
+      "description": "Structured log subdirectives (output, format, level, roll_*)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*\\{\\s*$",
+      "tokenModifiers": [],
+      "description": "Global options block opening brace"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(email|admin|auto_https|on_demand_tls|ocsp_stapling|key_type|storage|grace_period|shutdown_delay|debug|default_bind|order|servers|local_certs|skip_install_trust|acme_ca|acme_dns|acme_eab)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Global options block directives (email, admin, auto_https, storage, etc.)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ":\\d{1,5}\\b",
+      "tokenModifiers": [],
+      "description": "Port numbers in addresses (:80, :443, :8080)"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^\\s*(https?://[a-zA-Z0-9.-]+(?::[0-9]+)?)\\s*\\{?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Site addresses with scheme (https://example.com)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{http\\.response\\.(header\\.[a-zA-Z0-9_-]+|status)\\}",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "HTTP response placeholders ({http.response.header.*}, {http.response.status})"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{http\\.matchers\\.([a-zA-Z0-9_.]+)\\}",
+      "tokenModifiers": [],
+      "description": "Matcher result placeholders"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(header_up|header_down|transport|lb_policy|lb_retries|fail_duration|max_fails|unhealthy_status|unhealthy_latency|health_uri|health_port|health_interval|health_timeout|health_body|flush_interval)\\b",
+      "tokenModifiers": [],
+      "description": "reverse_proxy subdirectives (header_up/down, transport, lb_policy, health checks)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(forward_auth|jwt|authentication)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Authentication directives (forward_auth, jwt)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Comment lines starting with #"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(internal|off|on|disable|insecure_skip_verify)\\b",
+      "tokenModifiers": [],
+      "description": "Common TLS and directive option values"
     }
   ]
 }

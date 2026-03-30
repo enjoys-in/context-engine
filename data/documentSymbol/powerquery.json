@@ -2,74 +2,144 @@
   "language": "powerquery",
   "symbolPatterns": [
     {
-      "name": "Step",
-      "pattern": "^\\s*(\\w+)\\s*=",
+      "name": "Let Expression",
+      "pattern": "(?:^|\\n)\\s*(let)\\b",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "In Expression",
+      "pattern": "(?:^|\\n)\\s*(in)\\b",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Let Step",
+      "pattern": "(?:^|\\n)\\s+(\\w+)\\s*=\\s*(?!.*\\blet\\b)",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
-      "name": "Section",
-      "pattern": "^\\s*section\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "pattern": "(\\w+)\\s*=\\s*",
-      "captureGroup": 1,
-      "kind": 13,
-      "description": "Let step / variable",
-      "name": "Symbol"
-    },
-    {
-      "pattern": "shared\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 12,
-      "description": "Shared function",
-      "name": "Symbol"
-    },
-    {
-      "pattern": "type\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 5,
-      "description": "Type definition",
-      "name": "Type"
-    },
-    {
-      "name": "Function",
-      "pattern": "(?:function|def|fn|func|sub|proc)\\s+(\\w+)",
+      "name": "Each Expression",
+      "pattern": "\\b(each)\\s+",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
+      "name": "Section",
+      "pattern": "(?:^|\\n)\\s*section\\s+(\\w[\\w.]*);",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Shared Declaration",
+      "pattern": "(?:^|\\n)\\s*shared\\s+(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Record Field",
+      "pattern": "\\[\\s*(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "Record Access",
+      "pattern": "\\[([\\w\\s]+)\\]",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "Function Definition",
+      "pattern": "(\\w+)\\s*=\\s*\\(([^)]*)?\\)\\s*(?:as\\s+\\w+\\s*)?=>",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Function Parameters",
+      "pattern": "\\(\\s*(\\w+(?:\\s+as\\s+\\w+)?(?:\\s*,\\s*\\w+(?:\\s+as\\s+\\w+)?)*)\\s*\\)\\s*(?:as\\s+\\w+\\s*)?=>",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Type Declaration",
+      "pattern": "(?:^|\\n)\\s*type\\s+(\\w+)\\s*=",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "As Type Annotation",
+      "pattern": "\\bas\\s+(table|record|list|text|number|logical|date|datetime|datetimezone|duration|time|binary|type|function|action|any|none|null)\\b",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "Table.FromRecords",
+      "pattern": "(Table\\.FromRecords|Table\\.FromColumns|Table\\.FromRows|Table\\.FromList|Table\\.FromValue)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Table Transform",
+      "pattern": "(Table\\.SelectRows|Table\\.AddColumn|Table\\.RemoveColumns|Table\\.RenameColumns|Table\\.TransformColumns|Table\\.TransformColumnTypes|Table\\.Group|Table\\.Join|Table\\.NestedJoin|Table\\.Sort|Table\\.Distinct|Table\\.Pivot|Table\\.Unpivot|Table\\.ExpandTableColumn|Table\\.ExpandRecordColumn|Table\\.Combine|Table\\.FillDown|Table\\.FillUp|Table\\.ReplaceValue|Table\\.Buffer|Table\\.ColumnNames|Table\\.RowCount|Table\\.FirstN|Table\\.LastN|Table\\.Skip)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "#shared Reference",
+      "pattern": "(#shared)\\b",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "#sections Reference",
+      "pattern": "(#sections)\\b",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Try/Otherwise",
+      "pattern": "\\b(try)\\s+.+?\\s+(otherwise)\\b",
       "captureGroup": 1,
       "kind": 13,
       "type": "constant"
     },
     {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
+      "name": "Error Raise",
+      "pattern": "\\b(error)\\s+",
       "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
+      "kind": 13,
+      "type": "constant"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "List Function",
+      "pattern": "(List\\.Generate|List\\.Accumulate|List\\.Transform|List\\.Select|List\\.TransformMany|List\\.Combine|List\\.Distinct|List\\.Sort|List\\.Buffer|List\\.Count|List\\.Sum|List\\.Average|List\\.Min|List\\.Max|List\\.First|List\\.Last)\\s*\\(",
       "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Data Source",
+      "pattern": "(Sql\\.Database|Sql\\.Databases|OData\\.Feed|Web\\.Contents|File\\.Contents|Folder\\.Contents|Excel\\.Workbook|Csv\\.Document|Json\\.Document|Xml\\.Document|SharePoint\\.Contents|AzureStorage\\.Blobs|AzureStorage\\.Tables)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
     }
   ]
 }

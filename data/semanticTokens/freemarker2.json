@@ -1,71 +1,276 @@
 {
   "language": "freemarker2",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "macro", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "property",
+      "function",
+      "macro",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "parameter"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "<#(if|elseif|else|list|items|sep|include|import|assign|local|global|function|macro|return|break|continue|switch|case|default|attempt|recover|visit|recurse|fallback|flush|stop|ftl|setting|nested|compress|escape|noescape|noparse|nt|t|lt|rt)\\b",
-      "modifiers": [],
-      "description": "FreeMarker directives like <#if>, <#list>, <#macro>"
+      "tokenType": "keyword",
+      "pattern": "<#(if|elseif|else)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional directives <#if>, <#elseif>, <#else>"
     },
     {
-      "type": "function",
-      "pattern": "\\?[a-z_]+",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in functions like ?string, ?size, ?has_content"
+      "tokenType": "keyword",
+      "pattern": "</#(if|list|items|macro|function|switch|attempt|compress|escape|noescape|autoesc|noautoesc|assign|local|global|outputformat)>",
+      "tokenModifiers": [],
+      "description": "Closing directive tags"
     },
     {
-      "type": "variable",
-      "pattern": "\\$\\{[^}]+\\}",
-      "modifiers": [],
-      "description": "Variable interpolation expressions ${...}"
+      "tokenType": "keyword",
+      "pattern": "<#(list|items|sep|break|continue)\\b",
+      "tokenModifiers": [],
+      "description": "Iteration directives <#list>, <#items>, <#sep>"
     },
     {
-      "type": "macro",
-      "pattern": "(?<=<#macro\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Macro name declarations"
+      "tokenType": "keyword",
+      "pattern": "<#(switch|case|default)\\b",
+      "tokenModifiers": [],
+      "description": "Switch/case selection directives"
     },
     {
-      "type": "macro",
-      "pattern": "<@[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "User-defined directive (macro) invocations"
+      "tokenType": "keyword",
+      "pattern": "<#(assign|local|global)\\b",
+      "tokenModifiers": [],
+      "description": "Variable assignment directives"
     },
     {
-      "type": "property",
-      "pattern": "(?<=\\.)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Property access on objects via dot notation"
+      "tokenType": "keyword",
+      "pattern": "<#(include|import)\\b",
+      "tokenModifiers": [],
+      "description": "Template inclusion and namespace import directives"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
+      "pattern": "<#(macro|function|return|nested)\\b",
+      "tokenModifiers": [],
+      "description": "Macro and function definition directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<#(attempt|recover)\\b",
+      "tokenModifiers": [],
+      "description": "Error handling directives <#attempt>/<#recover>"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<#(visit|recurse|fallback)\\b",
+      "tokenModifiers": [],
+      "description": "Node tree traversal directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<#(flush|stop|ftl|setting)\\b",
+      "tokenModifiers": [],
+      "description": "Output control and engine configuration directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<#(t|lt|rt|nt|noparse|compress)\\b",
+      "tokenModifiers": [],
+      "description": "Whitespace handling and raw output directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<#(escape|noescape|autoesc|noautoesc|outputformat)\\b",
+      "tokenModifiers": [],
+      "description": "Auto-escaping and output format control directives"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "\\b(as|using|in|true|false)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "FreeMarker expression keywords"
     },
     {
-      "type": "comment",
+      "tokenType": "macro",
+      "pattern": "<#macro\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Macro name declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "<#function\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "User-defined function name declarations"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "<@[a-zA-Z_][a-zA-Z0-9_.]*",
+      "tokenModifiers": [],
+      "description": "User-defined directive (macro) invocations"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{[^}]+\\}",
+      "tokenModifiers": [],
+      "description": "Variable interpolation expressions ${...}"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "<#import\\s+['\"][^'\"]+['\"]\\s+as\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Namespace alias declarations via <#import ... as name>"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(string|number|date|time|datetime|boolean|c)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Type conversion built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(size|length|has_content|is_string|is_number|is_boolean|is_date|is_hash|is_sequence|is_method|is_macro|is_node)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Type-checking and introspection built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(html|xml|xhtml|url|json_string|js_string)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Output encoding and escaping built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(upper_case|lower_case|cap_first|uncap_first|trim|word_list|left_pad|right_pad)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String case and formatting built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(contains|index_of|last_index_of|replace|matches|starts_with|ends_with|split|keep_before|keep_after|remove_beginning|remove_ending)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String search and manipulation built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(first|last|reverse|sort|sort_by|chunk|join|seq_contains|seq_index_of|seq_last_index_of|min|max|size)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Sequence (list) built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(keys|values|map|filter|take_while|drop_while)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Hash and higher-order collection built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\?(then|switch|ensure_starts_with|ensure_ends_with|number_to_date|number_to_time|number_to_datetime|byte|short|int|long|float|double|floor|ceiling|round|abs)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Conditional, numeric cast, and math built-in functions"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Property/subvariable access via dot notation"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\.(data_model|globals|locals|main|namespace|now|output_encoding|current_template_name|lang|locale|version|error|auto_esc|output_format|url_escaping_charset)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Special FreeMarker variables (.globals, .now, .namespace, etc.)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\?\\?|!(?!=))",
+      "tokenModifiers": [],
+      "description": "Missing value test (??) and default value (!) operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==|!=|<=|>=|<|>|&&|\\|\\||\\+|-|\\*|/|%)",
+      "tokenModifiers": [],
+      "description": "Comparison, logical, and arithmetic operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\.\\.",
+      "tokenModifiers": [],
+      "description": "Range operator for numeric sequences (0..10)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(lt|lte|gt|gte)\\b",
+      "tokenModifiers": [],
+      "description": "Comparison operator alternatives for use in HTML-safe contexts"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "<#--[\\s\\S]*?-->",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [],
       "description": "FreeMarker comments <#-- ... -->"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in single or double quotes"
     },
     {
-      "type": "operator",
-      "pattern": "(\\?\\?|!|\\+|==|!=|<|>|<=|>=|&&|\\|\\||\\.\\.)",
-      "modifiers": [],
-      "description": "FreeMarker operators including null-safe ?? and range .."
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Integer and decimal numeric literals"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "(?<=<#macro\\s+\\w+\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Macro parameter declarations"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "(?<=<#function\\s+\\w+\\s*\\()[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function parameter declarations"
     }
   ]
 }

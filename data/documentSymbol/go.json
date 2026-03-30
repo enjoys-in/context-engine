@@ -3,73 +3,129 @@
   "symbolPatterns": [
     {
       "name": "Function",
-      "pattern": "^\\\\s*func\\\\s+(?:\\\\([^)]*\\\\)\\\\s+)?(\\\\w+)",
+      "pattern": "^func\\\\s+([A-Za-z_]\\\\w*)\\\\s*\\\\(",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "Type",
-      "pattern": "^\\\\s*type\\\\s+(\\\\w+)",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Const",
-      "pattern": "^\\\\s*(\\\\w+)\\\\s*=",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Var",
-      "pattern": "^\\\\s*var\\\\s+(\\\\w+)",
-      "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "MethodWithReceiver",
+      "pattern": "^func\\\\s+\\\\([^)]*\\\\b\\\\w+\\\\s+\\\\*?\\\\w+\\\\)\\\\s+(\\\\w+)\\\\s*\\\\(",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "StructType",
+      "pattern": "^type\\\\s+(\\\\w+)\\\\s+struct\\\\s*\\\\{",
       "captureGroup": 1,
-      "kind": 25,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "InterfaceType",
+      "pattern": "^type\\\\s+(\\\\w+)\\\\s+interface\\\\s*\\\\{",
+      "captureGroup": 1,
+      "kind": 10,
+      "type": "interface"
+    },
+    {
+      "name": "TypeDefinition",
+      "pattern": "^type\\\\s+(\\\\w+)\\\\s+(?!struct\\\\b|interface\\\\b|=\\\\s)([A-Za-z_]\\\\w*(?:\\\\.\\\\w+)?(?:\\\\[.*?\\\\])?)",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "typeDefinition"
+    },
+    {
+      "name": "TypeAlias",
+      "pattern": "^type\\\\s+(\\\\w+)\\\\s*=\\\\s*\\\\S+",
+      "captureGroup": 1,
+      "kind": 4,
       "type": "typeAlias"
     },
     {
-      "name": "Event",
-      "pattern": "(?:event|on\\w+)\\s+(\\w+)",
+      "name": "ConstSingle",
+      "pattern": "^const\\\\s+(\\\\w+)\\\\s*(?:\\\\w+)?\\\\s*=",
       "captureGroup": 1,
-      "kind": 23,
-      "type": "event"
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "ConstBlock",
+      "pattern": "^const\\\\s*\\\\(",
+      "captureGroup": 0,
+      "kind": 13,
+      "type": "constantBlock"
+    },
+    {
+      "name": "VarSingle",
+      "pattern": "^var\\\\s+(\\\\w+)\\\\s+\\\\S+",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "VarBlock",
+      "pattern": "^var\\\\s*\\\\(",
+      "captureGroup": 0,
+      "kind": 12,
+      "type": "variableBlock"
+    },
+    {
+      "name": "PackageDeclaration",
+      "pattern": "^package\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 3,
+      "type": "package"
+    },
+    {
+      "name": "ImportSingle",
+      "pattern": "^import\\\\s+(?:(\\\\w+)\\\\s+)?\"([^\"]+)\"",
+      "captureGroup": 2,
+      "kind": 2,
+      "type": "import"
+    },
+    {
+      "name": "ImportBlock",
+      "pattern": "^import\\\\s*\\\\(",
+      "captureGroup": 0,
+      "kind": 2,
+      "type": "importBlock"
+    },
+    {
+      "name": "InitFunction",
+      "pattern": "^func\\\\s+(init)\\\\s*\\\\(\\\\s*\\\\)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "initFunction"
+    },
+    {
+      "name": "MainFunction",
+      "pattern": "^func\\\\s+(main)\\\\s*\\\\(\\\\s*\\\\)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "mainFunction"
+    },
+    {
+      "name": "ExportedSymbol",
+      "pattern": "^(?:func|type|var|const)\\\\s+(?:\\\\([^)]*\\\\)\\\\s+)?([A-Z]\\\\w*)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "exported"
+    },
+    {
+      "name": "StructField",
+      "pattern": "^\\\\s+(\\\\w+)\\\\s+(?:\\\\*?[A-Za-z_]\\\\w*(?:\\\\.\\\\w+)?(?:\\\\s+`[^`]*`)?)",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "GoDirective",
+      "pattern": "^\\/\\/go:(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "directive"
     }
   ]
 }

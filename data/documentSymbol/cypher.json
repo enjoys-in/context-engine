@@ -2,39 +2,137 @@
   "language": "cypher",
   "symbolPatterns": [
     {
-      "name": "Node Label",
-      "pattern": "^\\s*CREATE\\s+\\([^:]*:(\\w+)",
+      "name": "MATCH",
+      "pattern": "(?:^|\\n)\\s*(MATCH|OPTIONAL\\s+MATCH)\\s+",
       "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Relationship Type",
-      "pattern": "-\\[\\w*:(\\w+)\\]->",
+      "name": "CREATE",
+      "pattern": "(?:^|\\n)\\s*(CREATE)\\s+",
       "captureGroup": 1,
-      "kind": 10,
-      "type": "interface"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Variable",
-      "pattern": "\\((\\w+)\\s*[:{)]",
+      "name": "MERGE",
+      "pattern": "(?:^|\\n)\\s*(MERGE)\\s+",
       "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "RETURN",
+      "pattern": "(?:^|\\n)\\s*(RETURN)\\s+(.+)",
+      "captureGroup": 2,
       "kind": 12,
       "type": "variable"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*:",
+      "name": "WHERE",
+      "pattern": "\\b(WHERE)\\s+(.+)",
+      "captureGroup": 2,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "WITH",
+      "pattern": "(?:^|\\n)\\s*(WITH)\\s+(.+)",
+      "captureGroup": 2,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "SET",
+      "pattern": "(?:^|\\n)\\s*(SET)\\s+(\\w+\\.\\w+)",
+      "captureGroup": 2,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "DELETE",
+      "pattern": "(?:^|\\n)\\s*(DETACH\\s+DELETE|DELETE)\\s+(\\w+)",
+      "captureGroup": 2,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "REMOVE",
+      "pattern": "(?:^|\\n)\\s*(REMOVE)\\s+(\\w+(?:\\.\\w+|:\\w+))",
+      "captureGroup": 2,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "ORDER BY",
+      "pattern": "\\bORDER\\s+BY\\s+(\\S+)",
       "captureGroup": 1,
       "kind": 6,
       "type": "property"
     },
     {
-      "name": "Function Call",
-      "pattern": "(\\w+)\\s*\\(",
+      "name": "SKIP",
+      "pattern": "\\b(SKIP)\\s+\\d+",
       "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "LIMIT",
+      "pattern": "\\b(LIMIT)\\s+\\d+",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "UNION",
+      "pattern": "(?:^|\\n)\\s*(UNION(?:\\s+ALL)?)\\b",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "CALL Procedure",
+      "pattern": "\\bCALL\\s+([\\w.]+)(?:\\s*\\(|\\s+YIELD)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "CREATE INDEX",
+      "pattern": "CREATE\\s+(?:RANGE\\s+|TEXT\\s+|POINT\\s+|FULLTEXT\\s+)?INDEX\\s+(\\w+)?\\s*(?:IF\\s+NOT\\s+EXISTS\\s+)?FOR",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "CREATE CONSTRAINT",
+      "pattern": "CREATE\\s+CONSTRAINT\\s+(\\w+)?\\s*(?:IF\\s+NOT\\s+EXISTS\\s+)?(?:FOR|ON)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Node Pattern",
+      "pattern": "\\(\\s*(?:\\w+)\\s*:(\\w+)(?:\\s*:\\w+)*\\s*(?:\\{|\\))",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "Relationship Pattern",
+      "pattern": "-\\[\\s*\\w*\\s*:(\\w+)\\s*(?:\\*[\\d.]*)?\\s*\\]->?",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "CASE Expression",
+      "pattern": "\\b(CASE)\\s+(?:WHEN|\\w+)",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
     },
     {
       "name": "Parameter",
@@ -44,32 +142,18 @@
       "type": "variable"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "UNWIND",
+      "pattern": "\\bUNWIND\\s+.+\\s+AS\\s+(\\w+)",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 12,
+      "type": "variable"
     },
     {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
+      "name": "FOREACH",
+      "pattern": "\\bFOREACH\\s*\\(\\s*(\\w+)\\s+IN",
       "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
-      "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
+      "kind": 12,
+      "type": "variable"
     }
   ]
 }

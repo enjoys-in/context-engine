@@ -1,77 +1,282 @@
 {
   "language": "perl",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "function", "method", "keyword", "comment", "string", "number", "regexp", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "function",
+      "method",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "modifier",
+      "decorator",
+      "macro",
+      "type"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "modification",
+      "static",
+      "deprecated"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bsub\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Subroutine declarations with sub keyword"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$_|\\$\\d+|\\$[!@\\$%^&*]|\\$\\w+",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Scalar variables including special variables like $_, $!, $1"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "@_|@\\w+|@ARGV|@INC|@ISA",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Array variables including special arrays @_, @ARGV, @INC"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "%ENV|%SIG|%INC|%\\w+",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Hash variables including special hashes %ENV, %SIG"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "\\b(package)\\s+([\\w:]+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Package/namespace declarations"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(use|require|no|package|my|our|local|sub|if|elsif|else|unless|while|until|for|foreach|do|last|next|redo|return|die|warn|print|say|chomp|chop|push|pop|shift|unshift|splice|grep|map|sort|keys|values|exists|delete|defined|undef|bless|ref|tie|untie|BEGIN|END|INIT|DESTROY|new)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Perl keywords and built-in functions"
     },
     {
-      "type": "regexp",
-      "pattern": "(?:m|qr)?/[^/\\n]*/[gimsxce]*|s/[^/\\n]*/[^/\\n]*/[gimsxce]*|tr/[^/\\n]*/[^/\\n]*/[cds]*",
-      "modifiers": [],
-      "description": "Regular expressions, substitutions, and transliterations"
+      "tokenType": "regexp",
+      "pattern": "(?:m|qr)?/[^/\\n]*/[gimsxce]*|s/[^/\\n]*/[^/\\n]*/[gimsxce]*|tr/[^/\\n]*/[^/\\n]*/[cds]*|y/[^/\\n]*/[^/\\n]*/[cds]*",
+      "tokenModifiers": [],
+      "description": "Regular expressions (m//), substitutions (s///), transliterations (tr///, y///)"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "\\b(use|require)\\s+([\\w:]+)",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Module imports with use and require"
     },
     {
-      "type": "method",
+      "tokenType": "method",
       "pattern": "->\\s*(\\w+)",
-      "modifiers": [],
-      "description": "Method calls via arrow operator"
+      "tokenModifiers": [],
+      "description": "Arrow dereference method calls and hash/array access (->)"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#[^\\n]*|^=\\w+[\\s\\S]*?^=cut",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Line comments and POD documentation blocks"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'|qq?\\{[^}]*\\}|qq?\\([^)]*\\)|qq?\\[[^\\]]*\\]",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals with various quoting mechanisms"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(wantarray|scalar)\\b",
+      "tokenModifiers": [],
+      "description": "Context operators for detecting or forcing list/scalar context"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "@\\w+\\[[\\d,\\s$.]+\\]|@\\w+\\{[^}]+\\}",
+      "tokenModifiers": [],
+      "description": "Array slices (@arr[0,1]) and hash slices (@hash{qw(a b)})"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(STDIN|STDOUT|STDERR|ARGV|DATA)\\b|\\$\\w+\\s*(?=\\bwhile\\s*<)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Filehandle names (STDIN, STDOUT, STDERR, ARGV, DATA)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "<<~?['\"]?(\\w+)['\"]?;[\\s\\S]*?^\\1$",
+      "tokenModifiers": [],
+      "description": "Heredoc strings (<<EOF, <<~EOF, <<'EOF')"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "qw\\s*[/({<\\[][^/)}>\\]]*[/)}>\\]]",
+      "tokenModifiers": [],
+      "description": "Quote-words list constructor qw()"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\$|\\$\\?|\\$!|\\$@|\\$;|\\$\\\\|\\$\\/|\\$0|\\$\\[|\\$\\]|\\$\\^W|\\$\\^O",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Special variables ($$, $?, $!, $@, $0, $/, $\\, $^W, $^O)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bsub\\s+\\w+\\s*\\([\\$@%&;*\\\\\\[\\]]*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Subroutine prototypes defining expected argument types"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(has|extends|with|before|after|around|override|augment|inner|super|BUILD|BUILDARGS)\\b",
+      "tokenModifiers": [],
+      "description": "Moose/Moo OO keywords for attributes, roles, and method modifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(try|catch|finally)\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Try::Tiny exception handling blocks (try/catch/finally)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bsub\\s+\\w+\\s*\\(\\s*(?:\\$\\w+(?:\\s*,\\s*\\$\\w+)*)\\s*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Subroutine signatures with named parameters (Perl 5.20+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(CHECK|INIT|UNITCHECK|AUTOLOAD|DEMOLISH)\\b",
+      "tokenModifiers": [],
+      "description": "Named special blocks (CHECK, INIT, UNITCHECK, AUTOLOAD, DEMOLISH)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[@%\\$]\\{\\$\\w+\\}|\\$\\$\\w+|@\\$\\w+|%\\$\\w+|\\\\[\\$@%&]\\w+",
+      "tokenModifiers": [],
+      "description": "Dereferencing syntax: @{$ref}, %{$ref}, $$ref, @$ref, %$ref, and reference creation \\$var"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(my|our|local)\\s+[\\$@%]\\w+",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Lexical variable declarations with my/our/local scope qualifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bbless\\s+[\\$\\\\{}\\w]+\\s*,\\s*[\\$\\w:]+",
+      "tokenModifiers": [],
+      "description": "Object construction via bless $self, $class pattern"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(format)\\s+\\w+\\s*=|\\bwrite\\b",
+      "tokenModifiers": [],
+      "description": "Perl format/write report generation statements"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(tie|untie|tied)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Tie interface functions for binding variables to object classes"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(socket|connect|bind|listen|accept|send|recv|shutdown|setsockopt|getsockopt|getpeername|getsockname)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Socket and network I/O built-in functions"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "-[efrwxoRWXOzdlpSbctugkTBMAC]\\b",
+      "tokenModifiers": [],
+      "description": "File test operators (-e, -f, -d, -r, -w, -x, -s, -z, etc.)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "->\\s*\\w+\\s*(?:\\([^)]*\\))?\\s*->\\s*\\w+",
+      "tokenModifiers": [],
+      "description": "Chained method calls ($obj->method1->method2)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\bsub\\s+\\w+\\s*:\\s*(\\w+(?:\\([^)]*\\))?(?:\\s+\\w+(?:\\([^)]*\\))?)*)",
+      "tokenModifiers": [],
+      "description": "Subroutine attributes (sub name : lvalue : method, :Sealed, etc.)"
+    },
+    {
+      "tokenType": "regexp",
+      "pattern": "\\(\\?<\\w+>",
+      "tokenModifiers": [],
+      "description": "Named capture groups in regular expressions (?<name>...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bstate\\s+[\\$@%]\\w+",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "State variables persisting across subroutine calls (Perl 5.10+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(given|when|default)\\s*[\\({]",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "given/when/default switch construct (Perl 5.10+, experimental/deprecated since 5.38)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "0x[0-9a-fA-F][0-9a-fA-F_]*|0b[01][01_]*|0[0-7][0-7_]*|\\d[\\d_]*(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d+)?",
+      "tokenModifiers": [],
+      "description": "Numeric literals: hex (0xFF), binary (0b1010), octal (0777), decimal with underscores (1_000_000)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(open|close|read|write|seek|tell|truncate|stat|lstat|rename|unlink|mkdir|rmdir|chdir|chmod|chown|glob|opendir|readdir|closedir)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "File and directory I/O built-in functions"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(BEGIN|END|CHECK|INIT|UNITCHECK)\\s*\\{",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Compile-time and runtime phase blocks as modifiers"
     }
   ]
 }

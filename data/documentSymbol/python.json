@@ -3,73 +3,143 @@
   "symbolPatterns": [
     {
       "name": "Function",
-      "pattern": "^\\\\s*(?:async\\\\s+)?def\\\\s+(\\\\w+)",
+      "pattern": "^def\\\\s+(\\\\w+)\\\\s*\\\\(",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Async Function",
+      "pattern": "^async\\\\s+def\\\\s+(\\\\w+)\\\\s*\\\\(",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
       "name": "Class",
-      "pattern": "^\\\\s*class\\\\s+(\\\\w+)",
+      "pattern": "^class\\\\s+(\\\\w+)\\\\s*(?:\\\\(.*?\\\\))?\\\\s*:",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
-      "name": "Variable",
-      "pattern": "^\\\\s*(\\\\w+)\\\\s*(?::\\\\s*\\\\w+\\\\s*)?=",
+      "name": "Method",
+      "pattern": "^\\\\s{4,}def\\\\s+(\\\\w+)\\\\s*\\\\(self[,\\\\s)]",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Static Method",
+      "pattern": "^\\\\s*@staticmethod\\\\s*\\\\n\\\\s+def\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "staticmethod"
+    },
+    {
+      "name": "Class Method",
+      "pattern": "^\\\\s*@classmethod\\\\s*\\\\n\\\\s+def\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "classmethod"
+    },
+    {
+      "name": "Property",
+      "pattern": "^\\\\s*@property\\\\s*\\\\n\\\\s+def\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "Dunder Method",
+      "pattern": "^\\\\s+def\\\\s+(__\\\\w+__)\\\\s*\\\\(",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "dunder"
+    },
+    {
+      "name": "Init Method",
+      "pattern": "^\\\\s+def\\\\s+(__init__)\\\\s*\\\\(self",
+      "captureGroup": 1,
+      "kind": 8,
+      "type": "constructor"
+    },
+    {
+      "name": "Decorator",
+      "pattern": "^\\\\s*@(\\\\w+(?:\\\\.\\\\w+)*)",
+      "captureGroup": 1,
+      "kind": 24,
+      "type": "decorator"
+    },
+    {
+      "name": "Module Variable",
+      "pattern": "^([a-z_]\\\\w*)\\\\s*(?::\\\\s*[\\\\w\\\\[\\\\],\\\\s|]+\\\\s*)?=\\\\s*(?!.*lambda)",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
       "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "pattern": "^([A-Z][A-Z0-9_]+)\\\\s*(?::\\\\s*[\\\\w\\\\[\\\\],\\\\s|]+\\\\s*)?=",
       "captureGroup": 1,
       "kind": 13,
       "type": "constant"
     },
     {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "Import",
+      "pattern": "^import\\\\s+([\\\\w.]+)",
       "captureGroup": 1,
       "kind": 1,
-      "type": "module"
+      "type": "import"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "From Import",
+      "pattern": "^from\\\\s+([\\\\w.]+)\\\\s+import",
       "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
+      "kind": 1,
+      "type": "import"
     },
     {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
-      "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
-    },
-    {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "Type Alias",
+      "pattern": "^(\\\\w+)\\\\s*:\\\\s*TypeAlias\\\\s*=",
       "captureGroup": 1,
       "kind": 25,
       "type": "typeAlias"
     },
     {
-      "name": "Event",
-      "pattern": "(?:event|on\\w+)\\s+(\\w+)",
+      "name": "Named Tuple",
+      "pattern": "^(\\\\w+)\\\\s*=\\\\s*(?:namedtuple|NamedTuple)\\\\s*\\\\(",
       "captureGroup": 1,
-      "kind": 23,
-      "type": "event"
+      "kind": 4,
+      "type": "namedtuple"
+    },
+    {
+      "name": "Dataclass",
+      "pattern": "^@dataclass(?:\\\\(.*?\\\\))?\\\\s*\\\\n\\\\s*class\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "dataclass"
+    },
+    {
+      "name": "Lambda Assignment",
+      "pattern": "^(\\\\w+)\\\\s*=\\\\s*lambda\\\\b",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "lambda"
+    },
+    {
+      "name": "__all__ Declaration",
+      "pattern": "^(__all__)\\\\s*=\\\\s*\\\\[",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "allDeclaration"
+    },
+    {
+      "name": "Global Declaration",
+      "pattern": "^\\\\s+global\\\\s+(\\\\w+)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "global"
     }
   ]
 }

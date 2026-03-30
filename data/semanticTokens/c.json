@@ -1,71 +1,288 @@
 {
   "language": "c",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["function", "variable", "type", "struct", "enum", "enumMember", "macro", "parameter", "keyword", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "function",
+      "variable",
+      "type",
+      "struct",
+      "enum",
+      "enumMember",
+      "macro",
+      "parameter",
+      "keyword",
+      "operator",
+      "property",
+      "comment",
+      "string",
+      "number",
+      "decorator",
+      "modifier"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "defaultLibrary",
+      "modification"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\([^)]*\\)\\s*\\{",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Function definitions"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\btypedef\\s+(?:struct|union|enum)?\\s*\\{?[^}]*\\}?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*;",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Typedef type definitions"
     },
     {
-      "type": "struct",
+      "tokenType": "struct",
       "pattern": "\\bstruct\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Struct declarations"
     },
     {
-      "type": "enum",
+      "tokenType": "enum",
       "pattern": "\\benum\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Enum declarations"
     },
     {
-      "type": "macro",
-      "pattern": "#define\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": ["definition"],
-      "description": "Preprocessor macro definitions (#define)"
+      "tokenType": "macro",
+      "pattern": "#define\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:\\([^)]*\\))?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Preprocessor macro definitions, including function-like macros #define MAX(a,b)"
     },
     {
-      "type": "macro",
-      "pattern": "#(include|ifdef|ifndef|endif|pragma|if|elif|else|undef|error|warning)\\b",
-      "modifiers": [],
-      "description": "Preprocessor directives"
+      "tokenType": "macro",
+      "pattern": "#(include|ifdef|ifndef|endif|pragma|if|elif|else|undef|error|warning|line|defined)\\b",
+      "tokenModifiers": [],
+      "description": "Preprocessor directives (#if, #ifdef, #ifndef, #else, #endif, #pragma, etc.)"
     },
     {
-      "type": "type",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\*+",
-      "modifiers": [],
-      "description": "Pointer type declarations"
+      "tokenType": "type",
+      "pattern": "\\b(int|char|float|double|void|long|short|unsigned|signed|size_t|ptrdiff_t|intptr_t|uintptr_t|int8_t|int16_t|int32_t|int64_t|uint8_t|uint16_t|uint32_t|uint64_t|bool|_Bool|wchar_t|FILE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in types, fixed-width integer types, and standard types"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(static|extern|const|volatile|register|inline|restrict)\\b",
-      "modifiers": [],
-      "description": "Storage class and type qualifiers"
+      "tokenType": "keyword",
+      "pattern": "\\b(static|extern|const|volatile|register|inline|restrict|_Noreturn|_Alignas|_Alignof)\\b",
+      "tokenModifiers": [],
+      "description": "Storage class specifiers and type qualifiers"
     },
     {
-      "type": "function",
-      "pattern": "\\b(malloc|calloc|realloc|free|printf|scanf|strlen|strcpy|memcpy|memset|fopen|fclose)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Standard library functions"
+      "tokenType": "function",
+      "pattern": "\\b(malloc|calloc|realloc|free|printf|fprintf|sprintf|snprintf|scanf|sscanf|strlen|strcpy|strncpy|strcat|strncat|strcmp|strncmp|memcpy|memmove|memset|memcmp|fopen|fclose|fread|fwrite|fgets|fputs|fseek|ftell|rewind|perror|strerror|abort|exit|atexit|qsort|bsearch|atoi|atof|strtol|strtod)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Standard library functions (stdio, stdlib, string, memory)"
     },
     {
-      "type": "type",
-      "pattern": "\\b(int|char|float|double|void|long|short|unsigned|signed|size_t|ptrdiff_t)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in and standard types"
+      "tokenType": "operator",
+      "pattern": "\\*\\s*[a-zA-Z_]|&\\s*[a-zA-Z_]",
+      "tokenModifiers": [],
+      "description": "Pointer dereference (*ptr) and address-of (&var) operators"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*\\[\\s*\\d*\\s*\\]",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Array declarations with size (int arr[10]) or unsized (int arr[])"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bsizeof\\s*\\([^)]*\\)|\\btypeof\\s*\\([^)]*\\)|\\b_Alignof\\s*\\([^)]*\\)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sizeof, typeof, and _Alignof compile-time operators"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(\\s*\\*\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\)\\s*\\([^)]*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function pointer declarations: returnType (*name)(params)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*\\([^)]*,\\s*\\.\\.\\.\\s*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variadic function declarations with ellipsis (type name, ...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(volatile|restrict|_Atomic|_Thread_local)\\b",
+      "tokenModifiers": [],
+      "description": "Volatile, restrict, _Atomic, and _Thread_local qualifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\binline\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Inline function declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bgoto\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b|\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+      "tokenModifiers": [],
+      "description": "Goto statement and label definitions"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b\\w+\\s*:\\s*\\d+\\s*;",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Bit field declarations within structs (unsigned int flag : 1)"
+    },
+    {
+      "tokenType": "struct",
+      "pattern": "\\bunion\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Union declarations and member access"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*(?:\\*\\s*)?\\)\\s*\\{[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "Compound literals: (type){initializer_list}"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\.[a-zA-Z_][a-zA-Z0-9_]*\\s*=",
+      "tokenModifiers": [],
+      "description": "Designated initializers (.field = value) in struct/array initialization"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b_Generic\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "_Generic selection expression for type-generic programming (C11)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b_Static_assert\\s*\\(|\\bstatic_assert\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "_Static_assert / static_assert for compile-time assertions (C11)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Single-line // and multi-line /* */ comments"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\benum\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*\\{[^}]*\\b([A-Z_][A-Z0-9_]*)\\s*(?:=\\s*[^,}]+)?\\s*[,}]",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Enum member definitions inside enum body (enum Color { RED = 0, GREEN, BLUE })"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?:L|u8|u|U)?\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "String literals including wide (L\"\"), UTF-8 (u8\"\"), UTF-16 (u\"\"), and UTF-32 (U\"\") prefixed strings"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[xX][0-9a-fA-F]+(?:[uU]?[lL]{0,2}|[lL]{0,2}[uU]?)\\b|\\b0[bB][01]+(?:[uU]?[lL]{0,2}|[lL]{0,2}[uU]?)\\b|\\b0[0-7]+(?:[uU]?[lL]{0,2}|[lL]{0,2}[uU]?)\\b|\\b[0-9]+(?:\\.[0-9]*)?(?:[eE][+-]?[0-9]+)?[fFlL]?\\b|\\b[0-9]*\\.[0-9]+(?:[eE][+-]?[0-9]+)?[fFlL]?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: hex (0xFF), binary (0b1010), octal (077), float with suffixes (1.0f, 2.0L), integer with suffixes (42u, 100LL, 0xFFul)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#ifndef\\s+([A-Z_][A-Z0-9_]*_H(?:_)?)\\s*\\n\\s*#define\\s+\\1",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Include guard pattern (#ifndef HEADER_H / #define HEADER_H) for header file protection"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\b__attribute__\\s*\\(\\(\\s*(?:packed|aligned|deprecated|unused|weak|format|visibility|constructor|destructor|noreturn|pure|const|malloc|warn_unused_result|nonnull|sentinel|cleanup|section|alias|always_inline|noinline|hot|cold|flatten|used)\\s*(?:\\([^)]*\\))?\\s*\\)\\)",
+      "tokenModifiers": [],
+      "description": "GCC __attribute__ specifiers: __attribute__((packed)), __attribute__((aligned(n))), __attribute__((deprecated)), etc."
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(fork|execl|execlp|execle|execv|execvp|execvpe|wait|waitpid|pipe|pipe2|dup|dup2|mmap|munmap|mprotect|mlock|munlock|brk|sbrk|pthread_create|pthread_join|pthread_mutex_init|pthread_mutex_lock|pthread_mutex_unlock|pthread_mutex_destroy|pthread_cond_init|pthread_cond_wait|pthread_cond_signal|pthread_cond_broadcast|pthread_rwlock_init|pthread_rwlock_rdlock|pthread_rwlock_wrlock|pthread_rwlock_unlock|socket|bind|listen|accept|connect|send|recv|sendto|recvfrom|select|poll|epoll_create|epoll_ctl|epoll_wait|open|close|read|write|lseek|stat|fstat|lstat|chmod|chown|chdir|getcwd|getpid|getppid|getuid|getgid|signal|sigaction|kill|raise|alarm|sleep|usleep|nanosleep|dlopen|dlsym|dlclose|shmget|shmat|shmdt|shmctl|semget|semop|msgget|msgsnd|msgrcv|ioctl|fcntl)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "POSIX/system functions: process control (fork, exec*), memory mapping (mmap), threading (pthread_*), sockets, file I/O, IPC, and signals"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#(?=\\s*[a-zA-Z_])|##",
+      "tokenModifiers": [
+        "modification"
+      ],
+      "description": "Macro stringification (#param) and token pasting (##) operators used in preprocessor macro bodies"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*(?:\\.|->)\\s*[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": [],
+      "description": "Struct/union member access via dot (obj.field) and arrow (ptr->field) operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[^?]+\\?[^:]+:[^;]+",
+      "tokenModifiers": [],
+      "description": "Ternary conditional operator (condition ? expr_true : expr_false) with complex expressions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(constexpr|typeof_unqual|nullptr|true|false|alignas|alignof|thread_local|static_assert|noreturn|_BitInt)\\b",
+      "tokenModifiers": [],
+      "description": "C23 keywords: constexpr, typeof_unqual, nullptr, true/false as keywords, alignas/alignof without underscore, thread_local, _BitInt"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(auto)\\b(?=\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*=)",
+      "tokenModifiers": [],
+      "description": "C23 auto type inference (auto x = expr) for automatic type deduction from initializer"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'(?:[^'\\\\]|\\\\.)'",
+      "tokenModifiers": [],
+      "description": "Character literals including escape sequences ('a', '\\n', '\\x41', '\\0')"
     }
   ]
 }

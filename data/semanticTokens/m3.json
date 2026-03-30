@@ -1,77 +1,206 @@
 {
   "language": "m3",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "interface", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "abstract"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "interface",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "enumMember"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "abstract",
+      "defaultLibrary",
+      "static"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(MODULE|INTERFACE|OBJECT|PROCEDURE|BEGIN|END|RETURN|IF|THEN|ELSIF|ELSE|CASE|FOR|TO|BY|DO|WHILE|REPEAT|UNTIL|LOOP|EXIT|WITH|LOCK|TRY|EXCEPT|FINALLY|RAISE|VAR|CONST|TYPE|IMPORT|FROM|REVEAL|UNSAFE|BRANDED|UNTRACED|ROOT|REFANY|ARRAY|RECORD|SET|SUBRANGE|ENUM|REF|ADDRESS|BOOLEAN|INTEGER|REAL|LONGREAL|EXTENDED|CARDINAL|CHAR|TEXT|MUTEX|THREAD)\\b",
-      "modifiers": [],
-      "description": "Modula-3 language keywords"
-    },
-    {
-      "type": "interface",
-      "pattern": "(?<=INTERFACE\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Interface declarations"
-    },
-    {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "(?<=MODULE\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Module declarations"
+      "tokenModifiers": ["declaration"],
+      "description": "Module name declarations"
     },
     {
-      "type": "type",
-      "pattern": "(?<=OBJECT\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Object type declarations"
+      "tokenType": "interface",
+      "pattern": "(?<=INTERFACE\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Interface name declarations"
     },
     {
-      "type": "function",
-      "pattern": "(?<=PROCEDURE\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Procedure declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(MODULE|INTERFACE|GENERIC|IMPORT|FROM|EXPORT|BEGIN|END)\\b",
+      "tokenModifiers": [],
+      "description": "Module structure keywords"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(REVEAL|UNSAFE|BRANDED|UNTRACED|READONLY|METHODS|OVERRIDES)\\b",
-      "modifiers": [],
-      "description": "Modula-3 modifiers including REVEAL and UNSAFE"
+      "tokenType": "keyword",
+      "pattern": "\\b(IF|THEN|ELSE|ELSIF|CASE|OF|WHILE|DO|FOR|TO|BY|REPEAT|UNTIL|LOOP|EXIT|RETURN|EVAL|WITH)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(TRY|EXCEPT|FINALLY|RAISE)\\b",
-      "modifiers": [],
-      "description": "Exception handling keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(TRY|EXCEPT|FINALLY|RAISE|RAISES|LOCK)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling and thread synchronization keywords"
     },
     {
-      "type": "type",
-      "pattern": "\\b(BOOLEAN|INTEGER|REAL|LONGREAL|EXTENDED|CARDINAL|CHAR|TEXT|MUTEX|THREAD|REFANY|ADDRESS|NULL)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in types"
+      "tokenType": "keyword",
+      "pattern": "\\b(VAR|CONST|TYPE|EXCEPTION|PROCEDURE)\\b",
+      "tokenModifiers": [],
+      "description": "Declaration section keywords"
     },
     {
-      "type": "comment",
+      "tokenType": "function",
+      "pattern": "(?<=PROCEDURE\\s+)[A-Za-z][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Procedure name declarations"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=VAR\\s+)[a-zA-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Variable declarations in VAR blocks"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=CONST\\s+)[a-zA-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration", "readonly"],
+      "description": "Constant declarations in CONST blocks"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(REVEAL|UNSAFE|BRANDED|UNTRACED|READONLY)\\b",
+      "tokenModifiers": [],
+      "description": "Module and type modifiers"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bOBJECT\\b",
+      "tokenModifiers": [],
+      "description": "OBJECT keyword for class-like type definitions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(METHODS|OVERRIDES)\\b",
+      "tokenModifiers": [],
+      "description": "Object method and override section keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(INTEGER|REAL|LONGREAL|EXTENDED|CHAR|BOOLEAN|TEXT|CARDINAL)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in primitive types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(REFANY|ADDRESS|NULL|ROOT|MUTEX)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in reference and system types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(ARRAY|RECORD|SET|SUBRANGE|REF)\\b",
+      "tokenModifiers": [],
+      "description": "Composite and reference type constructors"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(TRUE|FALSE|NIL)\\b",
+      "tokenModifiers": ["readonly", "defaultLibrary"],
+      "description": "Built-in constant values TRUE, FALSE, NIL"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|MAX|MIN|ORD|VAL|NUMBER|FIRST|LAST|TYPECODE|NARROW|ISTYPE|LOOPHOLE|ADR|ADRSIZE|BITSIZE|BYTESIZE)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in functions for arithmetic, ordinals, and type info"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(FLOAT|ROUND|TRUNC|CEILING|FLOOR)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in floating-point conversion functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(INC|DEC|NEW|DISPOSE|SUBARRAY)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in memory and array manipulation procedures"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(OR|AND|NOT|DIV|MOD|IN)\\b",
+      "tokenModifiers": [],
+      "description": "Keyword operators: logical, division, modulo, set membership"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(:=|#|<=|>=|<:|<>|\\.\\.|&|\\+|-|\\*|/|<|>|=|\\^)",
+      "tokenModifiers": [],
+      "description": "Symbol operators: assignment, not-equal, subtype, range, dereference"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)\\s*[a-zA-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Record field and object method access after dot"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "[A-Z][a-zA-Z0-9_]*(?=\\.)",
+      "tokenModifiers": [],
+      "description": "Qualified module name before dot in qualified references"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=TYPE\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Named type declarations in TYPE blocks"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "\\(\\*[\\s\\S]*?\\*\\)",
-      "modifiers": ["documentation"],
-      "description": "Block comments in (* ... *) delimiters"
+      "tokenModifiers": [],
+      "description": "Block comments delimited by (* and *)"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in double quotes"
     },
     {
-      "type": "operator",
-      "pattern": "(:=|#|<=|>=|<:|<>|\\.\\.|&)",
-      "modifiers": [],
-      "description": "Modula-3 operators: assignment, not-equal, subtype, range"
+      "tokenType": "string",
+      "pattern": "'[^']*'",
+      "tokenModifiers": [],
+      "description": "Character literals in single quotes"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+_[0-9a-fA-F]+\\b|\\b\\d+\\.\\d+([DEde][+-]?\\d+)?\\b|\\b\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: based integers (16_FF), floating-point with D/E exponent, and decimal integers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(THREAD)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Thread module keyword for concurrent programming"
     }
   ]
 }

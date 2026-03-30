@@ -1,71 +1,305 @@
 {
   "language": "graphql",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "enum", "interface", "variable", "property", "enumMember", "function", "keyword", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "deprecated"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "deprecated",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(type|input|enum|interface|union|scalar|query|mutation|subscription|fragment|on|extend|schema|implements|directive|repeatable)\\b",
-      "modifiers": [],
-      "description": "GraphQL schema and operation keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(type|input|enum|interface|union|scalar|schema)\\b",
+      "tokenModifiers": [],
+      "description": "Type-system definition keywords"
     },
     {
-      "type": "type",
-      "pattern": "(?<=(?:type|input|interface|union|scalar|enum|implements|on|extend\\s+type)\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Named type declarations for types, inputs, interfaces, unions"
+      "tokenType": "keyword",
+      "pattern": "\\b(query|mutation|subscription)\\b",
+      "tokenModifiers": [],
+      "description": "Operation definition keywords"
     },
     {
-      "type": "property",
-      "pattern": "^\\s*[a-z_][a-zA-Z0-9_]*(?=\\s*[:(])",
-      "modifiers": ["definition"],
-      "description": "Field definitions and field resolvers in type bodies"
+      "tokenType": "keyword",
+      "pattern": "\\b(fragment|on|implements|directive|repeatable)\\b",
+      "tokenModifiers": [],
+      "description": "Fragment, implements, and directive definition keywords"
     },
     {
-      "type": "decorator",
-      "pattern": "@[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Directives like @deprecated, @skip, @include"
+      "tokenType": "keyword",
+      "pattern": "\\bextend\\s+(?:type|input|enum|interface|union|scalar|schema)\\b",
+      "tokenModifiers": [],
+      "description": "Schema extension keywords (extend type, extend input, etc.)"
     },
     {
-      "type": "enum",
+      "tokenType": "modifier",
+      "pattern": "\\b(true|false|null)\\b",
+      "tokenModifiers": [],
+      "description": "Built-in literal values used as defaults or arguments"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=(?:type|input|interface|union|scalar)\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named type declarations (type User, input CreateUserInput, etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=extend\\s+(?:type|input|interface|union|scalar)\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Extended type name in extend definitions"
+    },
+    {
+      "tokenType": "enum",
       "pattern": "(?<=enum\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Enum type declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum type name declaration (enum Status)"
     },
     {
-      "type": "enumMember",
-      "pattern": "^\\s*[A-Z_][A-Z0-9_]*\\s*$",
-      "modifiers": [],
-      "description": "Enum member values in all-caps"
+      "tokenType": "interface",
+      "pattern": "(?<=interface\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Interface type name declaration (interface Node)"
     },
     {
-      "type": "variable",
-      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Query variables prefixed with $"
+      "tokenType": "namespace",
+      "pattern": "(?<=schema\\s*\\{[^}]*)(query|mutation|subscription)\\s*:\\s*[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Root operation type assignments inside schema definition"
     },
     {
-      "type": "type",
+      "tokenType": "function",
+      "pattern": "(?<=(?:query|mutation|subscription)\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named operation definitions (query GetUser, mutation CreatePost)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=fragment\\s+)[A-Z][a-zA-Z0-9_]*(?=\\s+on\\b)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Fragment definition name (fragment UserFields on User)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\.\\.\\.\\s*([A-Z][a-zA-Z0-9_]*)(?!\\s*\\bon\\b)",
+      "tokenModifiers": [],
+      "description": "Named fragment spread reference (...UserFields)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=\\.\\.\\.\\s*on\\s+)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Inline fragment type condition (...on User { })"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*([a-z_][a-zA-Z0-9_]*)\\s*(?=\\(|:|\\{|@)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Field definitions in type/input/interface bodies"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\()\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=:)",
+      "tokenModifiers": [],
+      "description": "Argument names in field definitions and directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*:(?=\\s*(?:\\$|\\d|\"|\\[|true|false|null|[A-Z_]))",
+      "tokenModifiers": [],
+      "description": "Argument names in operation invocations (field(arg: value))"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*:(?=\\s*[a-z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [],
+      "description": "Field alias in selection sets (alias: fieldName)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [],
+      "description": "Directive usage (@auth, @cacheControl, custom directives)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@deprecated",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "Built-in @deprecated directive"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(skip|include)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in conditional directives @skip and @include"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@specifiedBy",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in @specifiedBy directive for custom scalars"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declarations in operation signatures ($userId: ID!)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)(?!\\s*:)",
+      "tokenModifiers": [],
+      "description": "Variable references in field arguments ($userId)"
+    },
+    {
+      "tokenType": "type",
       "pattern": "\\b(String|Int|Float|Boolean|ID)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in scalar types"
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in scalar types (String, Int, Float, Boolean, ID)"
     },
     {
-      "type": "operator",
-      "pattern": "(!|=|\\.\\.\\.|:)",
-      "modifiers": [],
-      "description": "Non-null !, assignment, spread, and colon operators"
+      "tokenType": "class",
+      "pattern": "(?<=:\\s*(?:\\[\\s*)?)([A-Z][a-zA-Z0-9_]*)(?=\\s*[!\\]\\),])",
+      "tokenModifiers": [],
+      "description": "Type references in field return types and argument types"
     },
     {
-      "type": "comment",
-      "pattern": "#.*$|\"\"\"[\\s\\S]*?\"\"\"",
-      "modifiers": ["documentation"],
-      "description": "Single-line comments and description block strings"
+      "tokenType": "operator",
+      "pattern": "!",
+      "tokenModifiers": [],
+      "description": "Non-null type modifier (Type!, [Type!]!)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\[|\\]",
+      "tokenModifiers": [],
+      "description": "List type wrapper brackets ([Type], [Type!])"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "=",
+      "tokenModifiers": [],
+      "description": "Default value assignment and union definition operator"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|",
+      "tokenModifiers": [],
+      "description": "Union member separator pipe (TypeA | TypeB)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "&",
+      "tokenModifiers": [],
+      "description": "Interface conjunction operator (implements A & B)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=implements\\s+)([A-Z][a-zA-Z0-9_]*(?:\\s*&\\s*[A-Z][a-zA-Z0-9_]*)*)",
+      "tokenModifiers": [],
+      "description": "Implemented interface names (implements Node & Entity)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=\\|\\s*)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Union member types after pipe separator"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "^\\s*[A-Z_][A-Z0-9_]*\\s*(?=@|$)",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Enum member values (ACTIVE, INACTIVE, PENDING)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(__schema|__type|__typename|__TypeKind|__Field|__InputValue|__EnumValue|__Directive)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Introspection system types and fields (__schema, __type, __typename)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#.*$",
+      "tokenModifiers": [],
+      "description": "Single-line comments starting with #"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Block string descriptions (triple-quoted documentation)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "String literal values in arguments and defaults"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "-?\\b[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\\b",
+      "tokenModifiers": [],
+      "description": "Integer and float numeric literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"[^\"]*\"(?=\\s*(?:type|input|enum|interface|union|scalar|schema|extend|directive)\\b)",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Single-line description strings preceding definitions"
     }
   ]
 }

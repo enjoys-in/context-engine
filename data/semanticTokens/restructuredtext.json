@@ -1,77 +1,238 @@
 {
   "language": "restructuredtext",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "function", "variable", "property", "comment", "string", "operator", "decorator", "macro"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "documentation"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "function",
+      "variable",
+      "property",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator",
+      "macro",
+      "namespace",
+      "type"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "documentation",
+      "deprecated"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\.\\.\\s+(\\w[\\w-]*)::.*",
-      "modifiers": ["definition"],
-      "description": "Directives like .. directive:: (image, code-block, toctree, etc.)"
-    },
-    {
-      "type": "decorator",
-      "pattern": ":[a-zA-Z][\\w-]*:`[^`]*`",
-      "modifiers": [],
-      "description": "Interpreted text roles :role:`text` (ref, doc, class, func, etc.)"
-    },
-    {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^[=\\-~`'\"^_*+#]+$",
-      "modifiers": ["definition"],
-      "description": "Section heading underline/overline characters"
+      "tokenModifiers": ["definition"],
+      "description": "Section heading underline/overline adornment characters (=, -, ~, etc.)"
     },
     {
-      "type": "variable",
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(image|figure)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Image and figure directives for embedding visual content"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(code-block|code|sourcecode|highlight|literalinclude|parsed-literal)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Code display directives (code-block, literalinclude, parsed-literal)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+toctree\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Table of contents tree directive for document hierarchy"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(note|warning|danger|error|hint|important|tip|caution|attention)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Specific admonition directives (note, warning, danger, tip, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+admonition\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Generic admonition directive with custom title"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(table|csv-table|list-table)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Table directives (table, csv-table, list-table)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(math|raw|container|compound|sidebar|topic|rubric|epigraph|highlights|pull-quote|class|role|default-role|title|contents|replace|unicode|date)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Docutils built-in directives (math, raw, sidebar, topic, rubric, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(automodule|autoclass|autofunction|automethod|autodata|autoattribute|autosummary|module|currentmodule|deprecated|versionadded|versionchanged|seealso|only|index|glossary|productionlist|tabularcolumns)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Sphinx-specific directives (automodule, autoclass, toctree extensions)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(meta|header|footer|target-notes|include|sectnum|section-numbering)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Document metadata and structural directives (meta, header, footer, include)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.\\.\\s+(\\w[\\w-]*)\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Generic catch-all directive syntax .. name::"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": ":(ref|doc|numref|download|any|term|envvar|token|option|program):`[^`]*`",
+      "tokenModifiers": ["readonly"],
+      "description": "Sphinx cross-reference roles (:ref:, :doc:, :numref:, :download:, :term:)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": ":(math|code|samp|command|file|kbd|mailheader|makevar|manpage|mimetype|newsgroup|guilabel|menuselection|abbr):`[^`]*`",
+      "tokenModifiers": [],
+      "description": "Inline markup roles (:math:, :code:, :kbd:, :file:, :guilabel:, etc.)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": ":(class|func|meth|attr|mod|data|const|exc|obj|type|py:class|py:func|py:meth|py:attr|py:mod):`[^`]*`",
+      "tokenModifiers": ["readonly"],
+      "description": "Python domain cross-reference roles (:class:, :func:, :meth:, :attr:)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": ":[a-zA-Z][\\w-]*:`[^`]*`",
+      "tokenModifiers": [],
+      "description": "Generic interpreted text role :role:`content`"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "\\.\\.\\s+\\[\\d+\\]\\s+",
-      "modifiers": ["declaration"],
-      "description": "Footnote definitions .. [1] and auto-numbered .. [#]"
+      "tokenModifiers": ["declaration"],
+      "description": "Numbered footnote definitions .. [1] text"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
+      "pattern": "\\.\\.\\s+\\[#[\\w]*\\]\\s+|\\.\\.\\s+\\[\\*\\]\\s+",
+      "tokenModifiers": ["declaration"],
+      "description": "Auto-numbered and auto-symbol footnote definitions .. [#label] and .. [*]"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "\\[\\d+\\]_|\\[#\\w*\\]_|\\[\\*\\]_",
-      "modifiers": [],
-      "description": "Footnote references [1]_, [#label]_, [*]_"
+      "tokenModifiers": [],
+      "description": "Footnote references [1]_, [#label]_, [*]_ in body text"
     },
     {
-      "type": "function",
-      "pattern": "\\.\\.\\s+_[^:]+:.*|\\.\\.\\s+__:.*",
-      "modifiers": ["declaration"],
-      "description": "Hyperlink targets and anonymous targets"
+      "tokenType": "namespace",
+      "pattern": "\\.\\.\\s+\\[[A-Za-z][A-Za-z0-9_-]*\\]\\s+",
+      "tokenModifiers": ["declaration"],
+      "description": "Citation definitions .. [CIT2002] for bibliographic references"
     },
     {
-      "type": "variable",
-      "pattern": "`[^`]+`_|\\w+_(?=\\s|$|[.,;:!?)])",
-      "modifiers": [],
-      "description": "Hyperlink references `Link Text`_ and simple word_"
+      "tokenType": "namespace",
+      "pattern": "\\[[A-Za-z][A-Za-z0-9_-]*\\]_",
+      "tokenModifiers": [],
+      "description": "Citation references [CIT2002]_ in body text"
     },
     {
-      "type": "macro",
-      "pattern": "\\|\\w[\\w\\s]*\\|",
-      "modifiers": [],
-      "description": "Substitution references |name| and definitions"
+      "tokenType": "function",
+      "pattern": "\\.\\.\\s+_[^:]+:\\s+.+",
+      "tokenModifiers": ["declaration"],
+      "description": "Named hyperlink target definitions .. _Label: URL"
     },
     {
-      "type": "comment",
-      "pattern": "\\.\\.\\s*$|\\.\\.\\s+[^\\[_|]",
-      "modifiers": ["documentation"],
-      "description": "Comments starting with .. followed by blank or non-directive text"
+      "tokenType": "function",
+      "pattern": "`[^`]+`_",
+      "tokenModifiers": [],
+      "description": "Named hyperlink references `Link Text`_ with backtick quoting"
     },
     {
-      "type": "string",
+      "tokenType": "function",
+      "pattern": "\\w+_(?=\\s|$|[.,;:!?)])",
+      "tokenModifiers": [],
+      "description": "Simple one-word hyperlink references word_ without backticks"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\.\\.\\s+__:\\s+.+|`[^`]+`__|\\w+__(?=\\s|$|[.,;:!?)])",
+      "tokenModifiers": [],
+      "description": "Anonymous hyperlink targets .. __: URL and references `text`__ or word__"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "https?://[^\\s>]+|ftp://[^\\s>]+",
+      "tokenModifiers": [],
+      "description": "Standalone inline hyperlinks (auto-linked URLs)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\.\\.\\s+\\|[\\w][\\w\\s]*\\|\\s+\\w+\\s*::",
+      "tokenModifiers": ["definition"],
+      "description": "Substitution definitions .. |name| directive::"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\|[\\w][\\w\\s]*\\|",
+      "tokenModifiers": [],
+      "description": "Substitution references |name| in body text"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^:[A-Za-z][\\w\\s-]*:\\s+",
+      "tokenModifiers": ["definition"],
+      "description": "Field list entries :Field Name: value for metadata and bibliographic fields"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s+:[a-zA-Z][\\w-]*(?:\\s+[^:]*)?:\\s*",
+      "tokenModifiers": [],
+      "description": "Directive option fields (indented :option: value inside directive body)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\.\\.\\s*$|\\.\\.\\s+[^\\[_|\\w]",
+      "tokenModifiers": ["documentation"],
+      "description": "reStructuredText comments starting with .. not followed by directive/target/footnote"
+    },
+    {
+      "tokenType": "string",
       "pattern": "``[^`]+``",
-      "modifiers": [],
-      "description": "Inline literals (code) wrapped in double backticks"
+      "tokenModifiers": [],
+      "description": "Inline literal text (code) wrapped in double backticks"
     },
     {
-      "type": "operator",
-      "pattern": "\\*\\*[^*]+\\*\\*|\\*[^*]+\\*",
-      "modifiers": [],
-      "description": "Strong emphasis **text** and emphasis *text*"
+      "tokenType": "operator",
+      "pattern": "\\*\\*[^*]+\\*\\*",
+      "tokenModifiers": [],
+      "description": "Strong emphasis markup **bold text**"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(?<!\\*)\\*[^*]+\\*(?!\\*)",
+      "tokenModifiers": [],
+      "description": "Emphasis markup *italic text*"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "^>>>\\s+.+",
+      "tokenModifiers": [],
+      "description": "Doctest blocks starting with >>> interactive Python prompt"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*-{4,}\\s*$|^\\s*={4,}\\s*$",
+      "tokenModifiers": [],
+      "description": "Transition markers (horizontal rules) — four or more punctuation characters"
     }
   ]
 }

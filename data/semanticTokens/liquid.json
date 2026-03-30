@@ -1,71 +1,271 @@
 {
   "language": "liquid",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "property",
+      "function",
+      "string",
+      "number",
+      "comment",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\{%[-\\s]*(if|elsif|else|endif|unless|endunless|for|endfor|case|when|endcase|capture|endcapture|assign|include|render|layout|block|endblock|comment|endcomment|raw|endraw|tablerow|endtablerow|increment|decrement|break|continue|cycle|paginate|endpaginate|schema|endschema|style|endstyle|section|javascript|stylesheet)[-\\s]*%\\}",
-      "modifiers": [],
-      "description": "Liquid tag keywords in {% %} blocks"
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(if|elsif|else|endif|unless|endunless|for|endfor|case|when|endcase)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Liquid control flow tags (if/elsif/else/endif, unless, for, case/when)"
     },
     {
-      "type": "variable",
-      "pattern": "\\{\\{\\s*[a-zA-Z_][a-zA-Z0-9_.\\[\\]]*\\s*(?:\\|[^}]+)?\\}\\}",
-      "modifiers": [],
-      "description": "Output expressions in {{ }} with optional filters"
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(assign|capture|endcapture|increment|decrement|cycle)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Variable assignment and counter tags (assign, capture, increment, decrement, cycle)"
     },
     {
-      "type": "function",
-      "pattern": "\\|\\s*[a-z_][a-z0-9_]*",
-      "modifiers": ["defaultLibrary"],
-      "description": "Filter functions after pipe operator"
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(render|include|section|layout)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Template inclusion and rendering tags (render, include, section, layout)"
     },
     {
-      "type": "property",
-      "pattern": "(?<=\\.)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Object property access via dot notation"
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(comment|endcomment|raw|endraw)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Comment and raw content block tags"
     },
     {
-      "type": "variable",
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(tablerow|endtablerow|paginate|endpaginate)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Table row iteration and pagination tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*(form|endform|schema|endschema|style|endstyle|javascript|endjavascript)[-\\s]*",
+      "tokenModifiers": [],
+      "description": "Shopify section tags (form, schema, style, javascript)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(in|and|or|not|contains|blank|empty|nil|true|false)\\b",
+      "tokenModifiers": [],
+      "description": "Liquid expression keywords and boolean literals"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(limit|offset|reversed|cols|break|continue)\\b",
+      "tokenModifiers": [],
+      "description": "Loop parameters and control flow modifiers"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "(?<=assign\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Variable assignments with assign tag"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declarations via assign tag"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(in|and|or|not|contains|blank|empty|nil|true|false|limit|offset|reversed|cols)\\b",
-      "modifiers": [],
-      "description": "Liquid expression keywords and loop parameters"
+      "tokenType": "variable",
+      "pattern": "(?<=capture\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declarations via capture tag"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(forloop|tablerowloop|product|collection|cart|customer|shop|page|article|blog|section|block|template|content_for_header|content_for_layout)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Liquid objects"
+      "tokenType": "variable",
+      "pattern": "\\b(product|collection|cart|customer|page|article|blog|shop|settings|theme|template|request|routes)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Shopify global objects (product, collection, cart, customer, shop, etc.)"
     },
     {
-      "type": "string",
+      "tokenType": "variable",
+      "pattern": "\\b(content_for_header|content_for_layout|all_products|canonical_url|current_page|current_tags|linklists|pages|scripts|search|section)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Shopify global objects (content_for_header, all_products, canonical_url, etc.)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(forloop|tablerowloop)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Built-in loop iteration objects (forloop, tablerowloop)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(forloop|tablerowloop)\\.(index|index0|first|last|length|rindex|rindex0|col|col0|col_first|col_last|row)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Loop variable properties (forloop.index, forloop.first, forloop.last, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)(title|handle|id|url|price|description|content|name|image|images|variants|type|vendor|available|tags|metafields|featured_image)\\b",
+      "tokenModifiers": [],
+      "description": "Common Shopify object properties (title, handle, id, url, price, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(append|prepend|capitalize|downcase|upcase|strip|lstrip|rstrip|strip_html|strip_newlines|truncate|truncatewords)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Liquid string manipulation filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(escape|url_encode|url_decode|newline_to_br|replace|replace_first|remove|remove_first|split|join)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Liquid string encoding and transformation filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(abs|ceil|floor|round|plus|minus|times|divided_by|modulo)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Liquid math filters (abs, ceil, floor, round, plus, minus, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(first|last|size|sort|sort_natural|reverse|uniq|compact|concat|map|where|slice)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Liquid array/collection manipulation filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(date|json|default)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Liquid utility filters (date, json, default)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(money|money_with_currency|money_without_trailing_zeros|money_without_currency)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shopify money formatting filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(asset_url|asset_img_url|img_tag|img_url|file_url|file_img_url|shopify_asset_url|global_asset_url)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shopify asset URL and image filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(link_to|link_to_tag|link_to_add_tag|link_to_remove_tag|link_to_vendor|link_to_type|within|payment_type_img_url)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shopify link and navigation filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(stylesheet_tag|script_tag|image_tag)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shopify HTML tag generation filters"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{\\{\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "Output tag variable references in {{ expression }}"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "==|!=|<=|>=|<>|<|>",
+      "tokenModifiers": [],
+      "description": "Liquid comparison operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|(?=\\s*[a-z_])",
+      "tokenModifiers": [],
+      "description": "Pipe operator for filter chaining"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\{%-|-%\\}|\\{\\{-|-\\}\\}",
+      "tokenModifiers": [],
+      "description": "Whitespace control trim markers (- prefix/suffix)"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in single or double quotes"
     },
     {
-      "type": "comment",
-      "pattern": "\\{%\\s*comment\\s*%\\}[\\s\\S]*?\\{%\\s*endcomment\\s*%\\}",
-      "modifiers": ["documentation"],
-      "description": "Liquid comment blocks"
+      "tokenType": "number",
+      "pattern": "-?\\d+\\.?\\d*",
+      "tokenModifiers": [],
+      "description": "Numeric literals (integer and decimal)"
     },
     {
-      "type": "number",
-      "pattern": "-?\\d+\\.?\\d*",
-      "modifiers": [],
-      "description": "Numeric literal values"
+      "tokenType": "comment",
+      "pattern": "\\{%\\s*comment\\s*%\\}[\\s\\S]*?\\{%\\s*endcomment\\s*%\\}",
+      "tokenModifiers": [],
+      "description": "Liquid comment blocks {% comment %}...{% endcomment %}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\[\\s*(?:\\d+|'[^']*'|\"[^\"]*\")\\s*\\]",
+      "tokenModifiers": [],
+      "description": "Bracket access notation for arrays and hashes"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Dot notation property access on objects"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-\\s]*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "For loop iterator variable declaration (for item in collection)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=for\\s+)[a-zA-Z_][a-zA-Z0-9_]*(?=\\s+in\\b)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Loop iteration variable name in for tags"
     }
   ]
 }

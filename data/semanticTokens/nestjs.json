@@ -1,43 +1,6 @@
 {
   "language": "nestjs",
-  "tokenTypes": [
-    "namespace",
-    "type",
-    "class",
-    "enum",
-    "interface",
-    "struct",
-    "typeParameter",
-    "parameter",
-    "variable",
-    "property",
-    "enumMember",
-    "event",
-    "function",
-    "method",
-    "macro",
-    "keyword",
-    "modifier",
-    "comment",
-    "string",
-    "number",
-    "regexp",
-    "operator",
-    "decorator"
-  ],
-  "tokenModifiers": [
-    "declaration",
-    "definition",
-    "readonly",
-    "static",
-    "deprecated",
-    "async",
-    "modification",
-    "documentation",
-    "defaultLibrary",
-    "abstract"
-  ],
-  "tokenLegend": {
+  "legend": {
     "tokenTypes": [
       "namespace",
       "type",
@@ -78,164 +41,252 @@
   },
   "semanticRules": [
     {
-      "pattern": "\\b(import|export|from|default|as|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|throw|try|catch|finally|new|delete|typeof|instanceof|in|of|void|yield|await|async|class|extends|super|this|static|get|set|implements|abstract|private|protected|public|readonly)\\b",
       "tokenType": "keyword",
+      "pattern": "\\b(import|export|from|default|as|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|throw|try|catch|finally|new|delete|typeof|instanceof|in|of|void|yield|await|async|class|extends|super|this|static|get|set|implements|abstract|private|protected|public|readonly)\\b",
       "tokenModifiers": [],
       "description": "Language keywords"
     },
     {
-      "pattern": "@(Controller|Injectable|Module|Inject|Optional|Global|Catch|UseGuards|UseInterceptors|UsePipes|UseFilters|SetMetadata|Get|Post|Put|Patch|Delete|Head|Options|All|Body|Param|Query|Headers|Req|Res|HttpCode|Header|Redirect|Render|Sse|WebSocketGateway|SubscribeMessage|ConnectedSocket|WebSocketServer|Cron|Interval|Timeout|EventPattern|MessagePattern)\\b",
       "tokenType": "decorator",
+      "pattern": "@(Controller|Injectable|Module|Inject|Optional|Global|Catch|UseGuards|UseInterceptors|UsePipes|UseFilters|SetMetadata|Get|Post|Put|Patch|Delete|Head|Options|All|Body|Param|Query|Headers|Req|Res|HttpCode|Header|Redirect|Render|Sse|WebSocketGateway|SubscribeMessage|ConnectedSocket|WebSocketServer|Cron|Interval|Timeout|EventPattern|MessagePattern)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS decorators"
     },
     {
-      "pattern": "@(ApiTags|ApiOperation|ApiResponse|ApiProperty|ApiBody|ApiBearerAuth|ApiQuery|ApiParam|ApiHeader|ApiExcludeEndpoint|ApiProduces|ApiConsumes)\\b",
       "tokenType": "decorator",
+      "pattern": "@(ApiTags|ApiOperation|ApiResponse|ApiProperty|ApiPropertyOptional|ApiBody|ApiBearerAuth|ApiQuery|ApiParam|ApiHeader|ApiExcludeEndpoint|ApiProduces|ApiConsumes|ApiSecurity|ApiOkResponse|ApiCreatedResponse|ApiBadRequestResponse|ApiNotFoundResponse|ApiUnauthorizedResponse|ApiForbiddenResponse)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
-      "description": "Swagger decorators"
+      "description": "Swagger/OpenAPI decorators"
     },
     {
-      "pattern": "@(Entity|Column|PrimaryGeneratedColumn|PrimaryColumn|CreateDateColumn|UpdateDateColumn|DeleteDateColumn|ManyToOne|OneToMany|ManyToMany|OneToOne|JoinColumn|JoinTable|Index|Unique|BeforeInsert|AfterInsert|BeforeUpdate|AfterUpdate)\\b",
       "tokenType": "decorator",
+      "pattern": "@(Entity|Column|PrimaryGeneratedColumn|PrimaryColumn|CreateDateColumn|UpdateDateColumn|DeleteDateColumn|VersionColumn|ManyToOne|OneToMany|ManyToMany|OneToOne|JoinColumn|JoinTable|Index|Unique|BeforeInsert|AfterInsert|BeforeUpdate|AfterUpdate|BeforeRemove|AfterRemove|Tree|TreeParent|TreeChildren|RelationId)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "TypeORM decorators"
     },
     {
-      "pattern": "@(IsString|IsNumber|IsBoolean|IsEmail|IsNotEmpty|IsOptional|IsArray|IsEnum|IsDate|IsUUID|MinLength|MaxLength|Min|Max|Matches|ValidateNested|Type|Transform)\\b",
       "tokenType": "decorator",
+      "pattern": "@(IsString|IsNumber|IsBoolean|IsEmail|IsNotEmpty|IsOptional|IsArray|IsEnum|IsDate|IsUUID|MinLength|MaxLength|Min|Max|Matches|ValidateNested|Type|Transform)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "class-validator decorators"
     },
     {
-      "pattern": "\\b(NestFactory|ModuleRef|Reflector|DiscoveryService|LazyModuleLoader)\\b",
+      "tokenType": "function",
+      "pattern": "\\b(createParamDecorator|applyDecorators|SetMetadata|Reflector\\.createDecorator)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS custom decorator factory functions"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(CommandHandler|QueryHandler|EventsHandler|Saga)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS CQRS decorators"
+    },
+    {
       "tokenType": "class",
+      "pattern": "\\b(CommandBus|QueryBus|EventBus|AggregateRoot|EventPublisher|ICommand|IQuery|IEvent|ICommandHandler|IQueryHandler|IEventHandler|UnhandledExceptionBus)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS CQRS classes and interfaces"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(Transport\\.(?:TCP|REDIS|NATS|MQTT|GRPC|RMQ|KAFKA)|ClientProxy|ClientProxyFactory|ClientsModule)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS microservice transport and client classes"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(HealthCheckService|HealthIndicator|HealthCheck|HealthCheckResult|HttpHealthIndicator|TypeOrmHealthIndicator|MongooseHealthIndicator|MemoryHealthIndicator|DiskHealthIndicator|MicroserviceHealthIndicator)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS Terminus health check indicators"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(Throttle|SkipThrottle)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS Throttler rate-limiting decorators"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(ThrottlerGuard|ThrottlerModule)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS Throttler guard and module"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(CacheKey|CacheTTL)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS caching decorators"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(CacheInterceptor|CacheModule|CACHE_MANAGER)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS caching interceptor, module, and manager token"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(ConfigService|ConfigModule)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NestJS ConfigService and ConfigModule for configuration management"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(PrismaService|PrismaClient|PrismaModule)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Prisma client and service integration"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(NestFactory|ModuleRef|Reflector|DiscoveryService|LazyModuleLoader)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS core classes"
     },
     {
-      "pattern": "\\b(ConfigModule|TypeOrmModule|MongooseModule|JwtModule|PassportModule|ThrottlerModule|CacheModule|ScheduleModule|BullModule|EventEmitterModule|ServeStaticModule|GraphQLModule)\\b",
       "tokenType": "class",
+      "pattern": "\\b(ConfigModule|TypeOrmModule|MongooseModule|JwtModule|PassportModule|ThrottlerModule|CacheModule|ScheduleModule|BullModule|EventEmitterModule|ServeStaticModule|GraphQLModule)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS modules"
     },
     {
-      "pattern": "\\b(ValidationPipe|ParseIntPipe|ParseBoolPipe|ParseArrayPipe|ParseUUIDPipe|ParseEnumPipe|ParseFloatPipe|DefaultValuePipe)\\b",
       "tokenType": "class",
+      "pattern": "\\b(ValidationPipe|ParseIntPipe|ParseBoolPipe|ParseArrayPipe|ParseUUIDPipe|ParseEnumPipe|ParseFloatPipe|DefaultValuePipe)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS pipes"
     },
     {
-      "pattern": "\\b(HttpException|BadRequestException|UnauthorizedException|ForbiddenException|NotFoundException|ConflictException|InternalServerErrorException|NotImplementedException|BadGatewayException|ServiceUnavailableException|GatewayTimeoutException|UnprocessableEntityException)\\b",
       "tokenType": "class",
+      "pattern": "\\b(HttpException|BadRequestException|UnauthorizedException|ForbiddenException|NotFoundException|ConflictException|InternalServerErrorException|NotImplementedException|BadGatewayException|ServiceUnavailableException|GatewayTimeoutException|UnprocessableEntityException)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS exceptions"
     },
     {
-      "pattern": "\\b(INestApplication|INestMicroservice|DynamicModule|ModuleMetadata|CanActivate|PipeTransform|NestInterceptor|ExceptionFilter|NestMiddleware|ExecutionContext|ArgumentsHost|CallHandler|OnModuleInit|OnModuleDestroy|OnApplicationBootstrap|OnApplicationShutdown)\\b",
       "tokenType": "interface",
+      "pattern": "\\b(INestApplication|INestMicroservice|DynamicModule|ModuleMetadata|CanActivate|PipeTransform|NestInterceptor|ExceptionFilter|NestMiddleware|ExecutionContext|ArgumentsHost|CallHandler|OnModuleInit|OnModuleDestroy|OnApplicationBootstrap|OnApplicationShutdown)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "NestJS interfaces"
     },
     {
-      "pattern": "\\bclass\\s+(\\w+)",
       "tokenType": "class",
+      "pattern": "\\bclass\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Class declarations"
     },
     {
-      "pattern": "\\binterface\\s+(\\w+)",
       "tokenType": "interface",
+      "pattern": "\\binterface\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Interface declarations"
     },
     {
-      "pattern": "\\benum\\s+(\\w+)",
       "tokenType": "enum",
+      "pattern": "\\benum\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Enum declarations"
     },
     {
-      "pattern": "\\btype\\s+(\\w+)\\s*=",
       "tokenType": "type",
+      "pattern": "\\btype\\s+(\\w+)\\s*=",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Type aliases"
     },
     {
-      "pattern": "(?:async\\s+)?(\\w+)\\s*\\([^)]*\\)\\s*(?::\\s*[^{]+)?\\s*\\{",
       "tokenType": "method",
+      "pattern": "(?:async\\s+)?(\\w+)\\s*\\([^)]*\\)\\s*(?::\\s*[^{]+)?\\s*\\{",
       "tokenModifiers": [],
       "description": "Method definitions"
     },
     {
-      "pattern": "constructor\\s*\\(",
       "tokenType": "method",
+      "pattern": "constructor\\s*\\(",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Constructor"
     },
     {
-      "pattern": "(?:'[^']*'|\"[^\"]*\"|`[^`]*`)",
       "tokenType": "string",
+      "pattern": "(?:'[^']*'|\"[^\"]*\"|`[^`]*`)",
       "tokenModifiers": [],
       "description": "String literals"
     },
     {
-      "pattern": "\\b\\d+(\\.\\d+)?\\b",
       "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
       "tokenModifiers": [],
       "description": "Numeric literals"
     },
     {
-      "pattern": "\\/(?!\\/|\\*)[^\\/\\n]+\\/[gimsuy]*",
       "tokenType": "regexp",
+      "pattern": "\\/(?!\\/|\\*)[^\\/\\n]+\\/[gimsuy]*",
       "tokenModifiers": [],
       "description": "Regular expressions"
     },
     {
-      "pattern": "(?:^|\\s)(?:\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)",
       "tokenType": "comment",
+      "pattern": "(?:^|\\s)(?:\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)",
       "tokenModifiers": [],
       "description": "Comments"
     },
     {
-      "pattern": "\\b(describe|it|expect|beforeEach|afterEach|beforeAll|afterAll|jest|Test|TestingModule)\\b",
       "tokenType": "function",
+      "pattern": "\\b(describe|it|expect|beforeEach|afterEach|beforeAll|afterAll|jest|Test|TestingModule)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Testing functions"
     },
     {
-      "pattern": "\\bprocess\\.env\\.(\\w+)",
       "tokenType": "variable",
+      "pattern": "\\bprocess\\.env\\.(\\w+)",
       "tokenModifiers": [
         "readonly"
       ],

@@ -2,74 +2,151 @@
   "language": "r",
   "symbolPatterns": [
     {
-      "name": "Function",
-      "pattern": "^\\\\s*(\\\\w[\\\\w.]*)\\\\s*<-\\\\s*function\\\\s*\\\\(",
+      "name": "Function (left assign)",
+      "pattern": "^\\s*(\\w[\\w.]*)\\s*<-\\s*function\\s*\\(",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Function (equals assign)",
+      "pattern": "^\\s*(\\w[\\w.]*)\\s*=\\s*function\\s*\\(",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
       "name": "Function (right assign)",
-      "pattern": "function\\\\s*\\\\([^)]*\\\\)\\\\s*\\\\{[^}]*\\\\}\\\\s*->\\\\s*(\\\\w[\\\\w.]*)",
+      "pattern": "function\\s*\\([^)]*\\)\\s*\\{[^}]*\\}\\s*->\\s*(\\w[\\w.]*)",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "Variable (left assign)",
-      "pattern": "^\\\\s*(\\\\w[\\\\w.]*)\\\\s*<-\\\\s*(?!function)",
+      "name": "Lambda Function",
+      "pattern": "^\\s*(\\w[\\w.]*)\\s*<-\\s*\\\\\\(",
       "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
-    },
-    {
-      "name": "Variable (equals assign)",
-      "pattern": "^\\\\s*(\\\\w[\\\\w.]*)\\\\s*=\\\\s*(?!function)",
-      "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
+      "kind": 11,
+      "type": "function"
     },
     {
       "name": "S4 Class",
-      "pattern": "^\\\\s*setClass\\\\s*\\\\(\\\\s*[\"'](\\\\w+)[\"']",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "R6 Class",
-      "pattern": "^\\\\s*(\\\\w+)\\\\s*<-\\\\s*R6Class\\\\s*\\\\(",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Reference Class",
-      "pattern": "^\\\\s*(\\\\w+)\\\\s*<-\\\\s*setRefClass\\\\s*\\\\(",
+      "pattern": "setClass\\s*\\(\\s*[\"'](\\w+)[\"']",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
       "name": "S4 Generic",
-      "pattern": "^\\\\s*setGeneric\\\\s*\\\\(\\\\s*[\"'](\\\\w+)[\"']",
+      "pattern": "setGeneric\\s*\\(\\s*[\"'](\\w+)[\"']",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
       "name": "S4 Method",
-      "pattern": "^\\\\s*setMethod\\\\s*\\\\(\\\\s*[\"'](\\\\w+)[\"']",
+      "pattern": "setMethod\\s*\\(\\s*[\"'](\\w+)[\"']",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "S4 Validity",
+      "pattern": "setValidity\\s*\\(\\s*[\"'](\\w+)[\"']",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "R5 Reference Class",
+      "pattern": "^\\s*(\\w+)\\s*<-\\s*setRefClass\\s*\\(",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "R6 Class",
+      "pattern": "^\\s*(\\w+)\\s*<-\\s*R6Class\\s*\\(",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "S3 Method",
+      "pattern": "^\\s*(\\w+)\\.(\\w+)\\s*<-\\s*function\\s*\\(",
+      "captureGroup": 0,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Library",
+      "pattern": "^\\s*library\\s*\\(\\s*([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Require",
+      "pattern": "^\\s*require\\s*\\(\\s*([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Source",
+      "pattern": "^\\s*source\\s*\\(\\s*[\"']([^\"']+)[\"']",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Variable (left assign)",
+      "pattern": "^\\s*(\\w[\\w.]*)\\s*<-\\s*(?!function|R6Class|setRefClass|\\\\\\()",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Variable (right assign)",
+      "pattern": "->\\s*(\\w[\\w.]*)\\s*$",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Variable (equals assign)",
+      "pattern": "^\\s*(\\w[\\w.]*)\\s*=\\s*(?!function)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Roxygen Title",
+      "pattern": "^#'\\s*@title\\s+(.+)$",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Roxygen Export",
+      "pattern": "^#'\\s*@export\\s*(\\w*)",
+      "captureGroup": 0,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Roxygen Section",
+      "pattern": "^#'\\s*@(param|return|examples|description|details|seealso|references)\\s",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Namespace Import",
+      "pattern": "^\\s*(?:importFrom|import)\\s*\\(\\s*([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
     }
   ]
 }

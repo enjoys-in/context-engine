@@ -1,65 +1,270 @@
 {
   "language": "twig",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "macro", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "variable",
+      "property",
+      "function",
+      "macro",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "parameter"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\{%[-~]?\\s*(block|endblock|extends|include|embed|endembed|use|import|from|set|endset|if|elseif|else|endif|for|endfor|macro|endmacro|apply|endapply|autoescape|endautoescape|deprecated|do|flush|sandbox|endsandbox|verbatim|endverbatim|with|endwith)\\b",
-      "modifiers": [],
-      "description": "Twig tag keywords"
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(if|elseif|else|endif)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional block tags"
     },
     {
-      "type": "variable",
-      "pattern": "\\{\\{\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(for|endfor)\\b",
+      "tokenModifiers": [],
+      "description": "For loop tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(block|endblock)\\b",
+      "tokenModifiers": [],
+      "description": "Template block definition tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(extends|include|embed|endembed|use)\\b",
+      "tokenModifiers": [],
+      "description": "Template inheritance and inclusion tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(import|from)\\b",
+      "tokenModifiers": [],
+      "description": "Macro import tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(set|endset)\\b",
+      "tokenModifiers": [],
+      "description": "Variable assignment tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(macro|endmacro)\\b",
+      "tokenModifiers": [],
+      "description": "Macro definition tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(apply|endapply|autoescape|endautoescape|spaceless|endspaceless|verbatim|endverbatim)\\b",
+      "tokenModifiers": [],
+      "description": "Output control and escaping tags"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*(deprecated|do|flush|sandbox|endsandbox|with|endwith)\\b",
+      "tokenModifiers": [],
+      "description": "Miscellaneous utility tags"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\{%[-~]?\\s*macro\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Macro name in macro definition"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{%[-~]?\\s*block\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Named block definition"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\{\\{[-~]?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
       "description": "Variable output expressions {{ variable }}"
     },
     {
-      "type": "function",
-      "pattern": "\\|\\s*(escape|e|raw|upper|lower|title|capitalize|trim|striptags|nl2br|number_format|round|abs|length|count|first|last|join|split|sort|reverse|merge|slice|batch|column|keys|filter|map|reduce|default|date|date_modify|format|replace|url_encode|json_encode)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Twig filter functions"
-    },
-    {
-      "type": "macro",
-      "pattern": "\\{%[-~]?\\s*macro\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Macro definitions"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\{%[-~]?\\s*block\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Block definitions"
-    },
-    {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "\\{#[\\s\\S]*?#\\}",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Twig comments {# ... #}"
     },
     {
-      "type": "function",
-      "pattern": "\\b(range|cycle|constant|include|source|template_from_string|random|min|max|dump|block|parent|attribute)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Twig functions"
+      "tokenType": "function",
+      "pattern": "\\|\\s*(escape|e|raw|upper|lower|title|capitalize|trim|striptags|nl2br)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String and HTML escaping filters"
     },
     {
-      "type": "operator",
-      "pattern": "\\b(is|is not|in|not in|and|or|not|b-and|b-xor|b-or|matches|starts with|ends with|has some|has every)\\b",
-      "modifiers": [],
-      "description": "Twig test and logical operators"
+      "tokenType": "function",
+      "pattern": "\\|\\s*(number_format|round|abs|length|count)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Numeric and counting filters"
     },
     {
-      "type": "property",
+      "tokenType": "function",
+      "pattern": "\\|\\s*(first|last|join|split|sort|reverse|merge|slice|batch|column|keys)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Array/sequence manipulation filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(date|date_modify|format|replace|url_encode|json_encode|default)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Date formatting, encoding, and default value filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|\\s*(filter|map|reduce|sort)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Higher-order arrow function filters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(range|cycle|constant|random|min|max|dump|source|template_from_string)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in Twig global functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(include|block|parent|attribute)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Template rendering and attribute access functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bis\\s+(defined|empty|even|odd|iterable|null|none)\\b",
+      "tokenModifiers": [],
+      "description": "Twig tests for value state and type"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bis\\s+(same\\s+as|divisible\\s+by)\\b",
+      "tokenModifiers": [],
+      "description": "Twig comparison and divisibility tests"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(and|or|not)\\b",
+      "tokenModifiers": [],
+      "description": "Logical operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(in|not\\s+in)\\b",
+      "tokenModifiers": [],
+      "description": "Containment test operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(is|is\\s+not)\\b",
+      "tokenModifiers": [],
+      "description": "Test operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(matches|starts\\s+with|ends\\s+with)\\b",
+      "tokenModifiers": [],
+      "description": "String matching operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\.\\.(?=[^%}#])",
+      "tokenModifiers": [],
+      "description": "Range operator for generating sequences (1..10)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "~",
+      "tokenModifiers": [],
+      "description": "String concatenation operator"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\?",
+      "tokenModifiers": [],
+      "description": "Null-coalescing operator for default fallback values"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\s*:(?!=)",
+      "tokenModifiers": [],
+      "description": "Ternary conditional operator (?:)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\b(b-and|b-xor|b-or)\\b)",
+      "tokenModifiers": [],
+      "description": "Bitwise operators"
+    },
+    {
+      "tokenType": "property",
       "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
-      "description": "Property access via dot notation"
+      "tokenModifiers": [],
+      "description": "Property/attribute access via dot notation"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bloop\\.(index|index0|revindex|revindex0|first|last|length|parent)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Special loop variable properties"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(_self|_context|_charset)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Global template variables"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(?=[^=])",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named arguments in function and filter calls (key=value)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'[^']*'|\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "String literals in single or double quotes"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Integer and float numeric literals"
     }
   ]
 }

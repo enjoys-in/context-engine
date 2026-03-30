@@ -1,65 +1,205 @@
 {
   "language": "dockerfile",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "variable", "string", "function", "property", "namespace"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "string",
+      "function",
+      "property",
+      "namespace",
+      "number",
+      "comment",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "^(FROM|RUN|COPY|CMD|ENTRYPOINT|ADD|EXPOSE|VOLUME|WORKDIR|USER|LABEL|STOPSIGNAL|HEALTHCHECK|SHELL|ONBUILD)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "^(FROM|RUN|COPY|CMD|ENTRYPOINT|ADD|EXPOSE|VOLUME|WORKDIR|USER|LABEL|STOPSIGNAL|HEALTHCHECK|SHELL|ONBUILD|ARG|ENV|MAINTAINER)\\b",
+      "tokenModifiers": [],
       "description": "Dockerfile instruction keywords"
     },
     {
-      "type": "variable",
-      "pattern": "\\bARG\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:=.*)?$",
-      "modifiers": ["declaration"],
-      "description": "ARG build argument declarations"
+      "tokenType": "namespace",
+      "pattern": "^FROM\\s+(?:--platform=\\S+\\s+)?([a-z][a-z0-9_./-]*(?::[a-zA-Z0-9_.-]+)?(?:@sha256:[a-f0-9]+)?)\\s+AS\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Multi-stage FROM with image reference and AS stage alias"
     },
     {
-      "type": "variable",
-      "pattern": "\\bENV\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:[=\\s])",
-      "modifiers": ["definition"],
+      "tokenType": "string",
+      "pattern": "(?:COPY|ADD)\\s+--from=([a-zA-Z_][a-zA-Z0-9_-]*|\\d+)",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Cross-stage COPY/ADD --from=stage reference"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "--mount=type=(cache|bind|secret|ssh|tmpfs)(?:,([a-z]+=[^\\s,]+))*",
+      "tokenModifiers": [],
+      "description": "RUN --mount options for cache, bind, secret, ssh, and tmpfs mounts"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^ARG\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:=(.*))?$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "ARG build argument declarations with optional default value"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^ENV\\s+([a-zA-Z_][a-zA-Z0-9_]*)(?:[=\\s])",
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "ENV environment variable definitions"
     },
     {
-      "type": "variable",
-      "pattern": "\\$\\{?([a-zA-Z_][a-zA-Z0-9_]*)\\}?",
-      "modifiers": [],
-      "description": "Variable references ($VAR, ${VAR})"
+      "tokenType": "variable",
+      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)(?::[-+]([^}]*))?\\}",
+      "tokenModifiers": [],
+      "description": "Variable substitution with default/alternate: ${VAR:-default}, ${VAR:+alt}"
     },
     {
-      "type": "namespace",
-      "pattern": "\\bFROM\\s+([a-z][a-z0-9_./-]*(?::[a-zA-Z0-9_.-]+)?)\\s+(?:AS\\s+([a-z][a-z0-9_-]*))?",
-      "modifiers": ["declaration"],
-      "description": "FROM base image with optional multi-stage alias"
+      "tokenType": "keyword",
+      "pattern": "^HEALTHCHECK\\s+(?:--interval=\\S+\\s+)?(?:--timeout=\\S+\\s+)?(?:--start-period=\\S+\\s+)?(?:--start-interval=\\S+\\s+)?(?:--retries=\\d+\\s+)?(CMD|NONE)",
+      "tokenModifiers": [],
+      "description": "HEALTHCHECK instruction with --interval, --timeout, --start-period, --retries options"
     },
     {
-      "type": "string",
-      "pattern": "--from=([a-z][a-z0-9_-]*)",
-      "modifiers": ["readonly"],
-      "description": "Multi-stage build references (COPY --from=stage)"
+      "tokenType": "function",
+      "pattern": "^CMD\\s+\\[\\s*\"([^\"]+)\"(?:\\s*,\\s*\"[^\"]*\")*\\s*\\]",
+      "tokenModifiers": [],
+      "description": "CMD exec form [\"executable\", \"param1\", ...]"
     },
     {
-      "type": "property",
-      "pattern": "--(chown|chmod|link|from|platform|mount|network|security)=",
-      "modifiers": [],
-      "description": "Instruction flag parameters"
+      "tokenType": "function",
+      "pattern": "^ENTRYPOINT\\s+\\[\\s*\"([^\"]+)\"(?:\\s*,\\s*\"[^\"]*\")*\\s*\\]",
+      "tokenModifiers": [],
+      "description": "ENTRYPOINT exec form [\"executable\", \"param1\", ...]"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(AS)\\b",
-      "modifiers": [],
-      "description": "Multi-stage build AS keyword"
+      "tokenType": "keyword",
+      "pattern": "^(?:CMD|RUN|ENTRYPOINT)\\s+(?!\\[)(.+)$",
+      "tokenModifiers": [],
+      "description": "Shell form instructions (CMD, RUN, ENTRYPOINT without JSON array)"
     },
     {
-      "type": "function",
-      "pattern": "\\bRUN\\s+(apt-get|apk|yum|pip|npm|curl|wget|chmod|chown|mkdir|ln)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "number",
+      "pattern": "^EXPOSE\\s+(\\d+(?:/(?:tcp|udp))?)(?:\\s+\\d+(?:/(?:tcp|udp))?)*",
+      "tokenModifiers": [],
+      "description": "EXPOSE port/protocol declarations (e.g., 8080/tcp 443/udp)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^LABEL\\s+((?:[a-zA-Z_][a-zA-Z0-9_.-]*=(?:\"[^\"]*\"|\\S+)\\s*)+)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "LABEL metadata key=value pairs"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^STOPSIGNAL\\s+(SIG[A-Z]+|\\d+)",
+      "tokenModifiers": [],
+      "description": "STOPSIGNAL signal name or number (e.g., SIGTERM, 9)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "<<(-?)([a-zA-Z_][a-zA-Z0-9_]*)$",
+      "tokenModifiers": [],
+      "description": "Heredoc syntax (RUN <<EOF ... EOF)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "--(chown|chmod|link|from|platform|mount|network|security|start-period|start-interval|interval|timeout|retries)(?:=|\\s)",
+      "tokenModifiers": [],
+      "description": "Instruction flag parameters for COPY, ADD, RUN, HEALTHCHECK"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "^RUN\\s+(apt-get|apk|yum|dnf|pip|pip3|npm|yarn|curl|wget|chmod|chown|mkdir|ln|groupadd|useradd|install)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Common commands used in RUN instructions"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\s*#.*$",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Comment lines and parser directives (# syntax=, # escape=)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^#\\s*syntax\\s*=\\s*\\S+",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Parser directive for BuildKit syntax (# syntax=docker/dockerfile:1)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^#\\s*escape\\s*=\\s*.",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Parser directive for escape character (# escape=backquote)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bAS\\b",
+      "tokenModifiers": [],
+      "description": "AS keyword in FROM instruction for stage naming"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "--platform=(linux/amd64|linux/arm64|linux/arm/v7|linux/386|\\$[A-Z_]+|\\$\\{[A-Z_]+\\})",
+      "tokenModifiers": [],
+      "description": "Platform flag values in FROM (linux/amd64, linux/arm64, etc.)"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^FROM\\s+(?:--platform=\\S+\\s+)?([a-z][a-z0-9_./-]*(?::[a-zA-Z0-9_.-]+)?(?:@sha256:[a-f0-9]+)?)\\s*$",
+      "tokenModifiers": [],
+      "description": "FROM with image reference without stage alias"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [],
+      "description": "Simple variable reference $VAR without braces"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\\\\\s*$",
+      "tokenModifiers": [],
+      "description": "Line continuation backslash at end of line"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "^VOLUME\\s+(\\[\\s*\"[^\"]*\"(?:\\s*,\\s*\"[^\"]*\")*\\s*\\]|/\\S+(?:\\s+/\\S+)*)",
+      "tokenModifiers": [],
+      "description": "VOLUME declarations in exec form or shell form"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "^SHELL\\s+\\[\\s*\"([^\"]+)\"(?:\\s*,\\s*\"[^\"]*\")*\\s*\\]",
+      "tokenModifiers": [],
+      "description": "SHELL instruction to change default shell [\"executable\", \"params\"]"
     }
   ]
 }

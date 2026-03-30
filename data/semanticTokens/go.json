@@ -1,77 +1,295 @@
 {
   "language": "go",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "interface", "struct", "typeParameter", "parameter", "variable", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(func|type|var|const|package|import|return|if|else|for|range|switch|case|default|select|go|defer|recover|panic|chan|map|make|new|append|len|cap|close|delete|copy)\\b",
-      "modifiers": [],
-      "description": "Go language keywords and built-in functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(func|type|var|const|package|import|return|if|else|for|range|switch|case|default|break|continue|fallthrough|goto|struct|interface|map|chan)\\b",
+      "tokenModifiers": [],
+      "description": "Core Go language keywords"
     },
     {
-      "type": "function",
-      "pattern": "(?<=func\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Function declarations after func keyword"
+      "tokenType": "keyword",
+      "pattern": "\\b(go)\\b\\s+[a-zA-Z_]",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Goroutine launch with go keyword"
     },
     {
-      "type": "struct",
-      "pattern": "(?<=type\\s+)[A-Z][a-zA-Z0-9_]*(?=\\s+struct)",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(select)\\b\\s*\\{",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Select statement for channel multiplexing"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<-\\s*[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\s*<-",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Channel send and receive operations using <- operator"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(defer)\\b\\s+[a-zA-Z_]",
+      "tokenModifiers": [],
+      "description": "Deferred function execution with defer keyword"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(panic|recover)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Panic and recover built-in functions for error handling"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=\\bfunc\\s)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Top-level function declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunc\\s+init\\s*\\(\\s*\\)",
+      "tokenModifiers": [
+        "declaration",
+        "static"
+      ],
+      "description": "Package init functions (auto-called at startup)"
+    },
+    {
+      "tokenType": "struct",
+      "pattern": "(?<=\\btype\\s)[A-Z][a-zA-Z0-9_]*(?=\\s+struct\\b)",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Struct type declarations"
     },
     {
-      "type": "interface",
-      "pattern": "(?<=type\\s+)[A-Z][a-zA-Z0-9_]*(?=\\s+interface)",
-      "modifiers": ["declaration"],
+      "tokenType": "interface",
+      "pattern": "(?<=\\btype\\s)[A-Z][a-zA-Z0-9_]*(?=\\s+interface\\b)",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Interface type declarations"
     },
     {
-      "type": "method",
+      "tokenType": "type",
+      "pattern": "(?<=\\btype\\s)[A-Z][a-zA-Z0-9_]*(?=\\s*\\[\\s*[A-Z])",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Generic type declarations with type parameters (Go 1.18+)"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\[\\s*[A-Z][a-zA-Z0-9_]*\\s+(~?[a-zA-Z_][a-zA-Z0-9_|~\\s]*)\\s*\\]",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Type parameter constraints including ~ tilde approximation"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "\\bcomparable\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in comparable constraint for generics"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(any)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in any type alias for interface{}"
+    },
+    {
+      "tokenType": "method",
       "pattern": "(?<=\\.)\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Method calls on receivers via dot notation"
     },
     {
-      "type": "namespace",
-      "pattern": "(?<=package\\s+)[a-z][a-z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Package declarations"
+      "tokenType": "namespace",
+      "pattern": "(?<=\\bpackage\\s)[a-z][a-z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Package name declarations"
     },
     {
-      "type": "variable",
-      "pattern": "\\b[a-z_][a-zA-Z0-9_]*\\s*:=",
-      "modifiers": ["declaration"],
-      "description": "Short variable declarations with :="
+      "tokenType": "variable",
+      "pattern": "[a-z_][a-zA-Z0-9_]*\\s*:=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Short variable declarations with := operator"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(go|defer)\\b",
-      "modifiers": ["async"],
-      "description": "Goroutine launch and deferred execution keywords"
+      "tokenType": "variable",
+      "pattern": "\\b_\\b",
+      "tokenModifiers": [],
+      "description": "Blank identifier _ for discarding values"
     },
     {
-      "type": "type",
-      "pattern": "\\b(int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|complex64|complex128|string|bool|byte|rune|error|any)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in primitive types"
+      "tokenType": "type",
+      "pattern": "\\b(int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|complex64|complex128|string|bool|byte|rune|error|uintptr)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in primitive and numeric types"
     },
     {
-      "type": "comment",
+      "tokenType": "function",
+      "pattern": "\\b(make|new|append|len|cap|close|delete|copy|println|print|real|imag|complex)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in functions"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*\\.\\(\\s*[A-Z][a-zA-Z0-9_]*\\s*\\)",
+      "tokenModifiers": [],
+      "description": "Type assertions like x.(Type)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bswitch\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*:=\\s*[a-zA-Z_][a-zA-Z0-9_.]*\\.\\(type\\)",
+      "tokenModifiers": [],
+      "description": "Type switch statements"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunc\\s*\\([^)]*\\)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Function literals (closures/anonymous functions)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bfunc\\s*\\([^)]*\\)\\s*[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Method declarations with receiver"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\.\\.\\.[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\.\\.\\.",
+      "tokenModifiers": [],
+      "description": "Variadic parameters and slice unpacking with ... ellipsis"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\*[a-zA-Z_][a-zA-Z0-9_]*|&[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Pointer dereference (*) and address-of (&) operations"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*\\[[^\\]]*:[^\\]]*\\]",
+      "tokenModifiers": [],
+      "description": "Slice expressions including three-index [low:high:max]"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bmap\\s*\\[[^\\]]+\\][a-zA-Z_][a-zA-Z0-9_*]*",
+      "tokenModifiers": [],
+      "description": "Map type declarations like map[string]int"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bchan\\s+[a-zA-Z_][a-zA-Z0-9_]*|\\bchan\\s*<-|<-\\s*chan\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Channel types including directional channels"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\biota\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Iota identifier for auto-incrementing constants"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//go:(build|generate|embed|noinline|nosplit|linkname|noescape)\\b.*$|//\\s*\\+build\\s+.+$",
+      "tokenModifiers": [],
+      "description": "Build tags, constraints, and compiler directives"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Single-line and multi-line comments"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|`[^`]*`",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Interpreted and raw string literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+|[0-9][0-9_]*\\.?[0-9_]*([eE][+-]?[0-9_]+)?i?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals including hex, octal, binary, float, imaginary"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ":=|&&|\\|\\||[+\\-*/%&|^]=?|<-|<<|>>|&\\^|[<>=!]=?",
+      "tokenModifiers": [],
+      "description": "Assignment, arithmetic, logical, bitwise, and channel operators"
     }
   ]
 }

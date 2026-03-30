@@ -1,83 +1,268 @@
 {
   "language": "php",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\b(class|trait)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Class and trait declarations"
-    },
-    {
-      "type": "function",
-      "pattern": "\\bfunction\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Function declarations"
-    },
-    {
-      "type": "namespace",
-      "pattern": "\\bnamespace\\s+([\\w\\\\]+)",
-      "modifiers": ["declaration"],
+      "tokenType": "namespace",
+      "pattern": "\\bnamespace\\s+[\\w\\\\]+\\s*;",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Namespace declarations"
     },
     {
-      "type": "variable",
-      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "PHP variables prefixed with $"
-    },
-    {
-      "type": "namespace",
-      "pattern": "\\buse\\s+([\\w\\\\]+)",
-      "modifiers": ["definition"],
+      "tokenType": "namespace",
+      "pattern": "\\buse\\s+[\\w\\\\]+(?:\\s+as\\s+\\w+)?\\s*;",
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Use statements for importing classes and namespaces"
     },
     {
-      "type": "interface",
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+(\\w+)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\btrait\\s+(\\w+)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Trait declarations for horizontal code reuse"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\buse\\s+(\\w+)\\s*[;{]",
+      "tokenModifiers": [],
+      "description": "Trait use statements inside class bodies"
+    },
+    {
+      "tokenType": "interface",
       "pattern": "\\binterface\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Interface declarations"
     },
     {
-      "type": "enum",
-      "pattern": "\\benum\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Enum declarations (PHP 8.1+)"
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+(\\w+)(?:\\s*:\\s*(string|int))?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum declarations including backed enums (PHP 8.1+)"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(public|private|protected|static|final|abstract|readonly|const)\\b",
-      "modifiers": [],
-      "description": "Access modifiers and class member qualifiers"
+      "tokenType": "enumMember",
+      "pattern": "\\bcase\\s+([A-Z]\\w*)\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Backed enum case declarations with values"
     },
     {
-      "type": "type",
-      "pattern": "\\b(string|int|float|bool|array|object|callable|iterable|void|never|null|mixed|self|parent|static)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\bmatch\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Match expressions (strict comparison, returns value)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunction\\s+(\\w+)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named function declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfn\\s*\\([^)]*\\)\\s*=>",
+      "tokenModifiers": [],
+      "description": "Arrow functions (fn() => expr) with implicit return"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunction\\s*\\([^)]*\\)\\s*(use\\s*\\([^)]*\\))?\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Anonymous closures with optional use() for captured variables"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\.\\.\\.",
+      "tokenModifiers": [],
+      "description": "Spread operator for unpacking arrays and variadic args"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?->",
+      "tokenModifiers": [],
+      "description": "Null-safe operator (?->) for chained method calls"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(public|private|protected)\\s+(readonly\\s+)?\\w+\\s+\\$\\w+",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Constructor property promotion with visibility modifiers"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\breadonly\\s+(class|\\w+)",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Readonly properties and readonly classes (PHP 8.2+)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(string|int|float|bool|array|object|callable|iterable|void|never|null|mixed|self|parent|static|true|false)\\b(?=\\s+\\$|\\s*[|&(]\\s*\\w|\\s*\\))",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Type hint keywords for parameters, return types, and properties"
     },
     {
-      "type": "comment",
+      "tokenType": "type",
+      "pattern": "\\w+\\s*[|&]\\s*\\w+(?=\\s+\\$)",
+      "tokenModifiers": [],
+      "description": "Union (|) and intersection (&) types for parameters and returns"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\([A-Z]\\w*\\s*&\\s*[A-Z]\\w*\\)\\s*[|]",
+      "tokenModifiers": [],
+      "description": "DNF (Disjunctive Normal Form) types combining union and intersection"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "#\\[\\w+(?:\\([^]]*\\))?\\]",
+      "tokenModifiers": [],
+      "description": "PHP 8 attributes (#[Route], #[Override], #[Deprecated], etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\byield\\s+from\\b",
+      "tokenModifiers": [],
+      "description": "Generator delegation with yield from"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\byield\\b",
+      "tokenModifiers": [],
+      "description": "Generator yield expressions"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bnew\\s+Fiber\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Fiber creation for cooperative multitasking (PHP 8.1+)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(str_contains|str_starts_with|str_ends_with|array_is_list|enum_exists|fiber_get_return)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Modern PHP 8.x built-in string and array functions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\[\\$\\w+\\s*(?:,\\s*\\$\\w+)*\\]\\s*=",
+      "tokenModifiers": [],
+      "description": "Array destructuring assignment with short list syntax"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b__(construct|destruct|get|set|call|callStatic|toString|invoke|isset|unset|sleep|wakeup|serialize|unserialize|debugInfo|clone)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Magic methods (__construct, __get, __set, __call, __toString, etc.)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "@(var|param|return|throws|template|extends|implements|method|property|mixin)\\b",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "PHPDoc and static analysis annotations (@var, @param, @template, etc.)"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected|static|final|abstract|const)\\b",
+      "tokenModifiers": [],
+      "description": "Access modifiers and class member qualifiers"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$[a-zA-Z_]\\w*",
+      "tokenModifiers": [],
+      "description": "PHP variables prefixed with $"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|else|elseif|while|for|foreach|do|switch|case|break|continue|return|throw|try|catch|finally|new|instanceof|echo|print|as|default)\\b",
+      "tokenModifiers": [],
+      "description": "PHP control flow and language construct keywords"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\b\\w+\\s*:\\s*(?=\\$|\\w+\\()",
+      "tokenModifiers": [],
+      "description": "Named arguments in function calls (PHP 8.0+)"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "//[^\\n]*|#[^\\n]*|/\\*\\*[\\s\\S]*?\\*/|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Line comments, block comments, and PHPDoc docblocks"
-    },
-    {
-      "type": "decorator",
-      "pattern": "#\\[\\w+[^\\]]*\\]",
-      "modifiers": [],
-      "description": "PHP 8 attributes #[Attribute]"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\b(if|else|elseif|while|for|foreach|do|switch|case|break|continue|return|yield|throw|try|catch|finally|new|instanceof|match|echo|print|include|require|include_once|require_once|fn|as)\\b",
-      "modifiers": [],
-      "description": "PHP control flow and language keywords"
     }
   ]
 }

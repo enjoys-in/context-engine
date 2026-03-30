@@ -1,76 +1,261 @@
 {
   "language": "protobuf",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "property", "enumMember", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "deprecated"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\b(message)\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\bsyntax\\s*=\\s*\"proto[23]\"",
+      "tokenModifiers": [],
+      "description": "Syntax declaration specifying proto2 or proto3 version"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bmessage\\s+(\\w+)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Message type declarations"
     },
     {
-      "type": "enum",
-      "pattern": "\\b(enum)\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+(\\w+)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Enum type declarations"
     },
     {
-      "type": "interface",
-      "pattern": "\\b(service)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Service declarations for gRPC services"
+      "tokenType": "interface",
+      "pattern": "\\bservice\\s+(\\w+)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Service declarations for gRPC endpoint definitions"
     },
     {
-      "type": "method",
-      "pattern": "\\b(rpc)\\s+(\\w+)\\s*\\(",
-      "modifiers": ["declaration"],
-      "description": "RPC method definitions within services"
+      "tokenType": "method",
+      "pattern": "\\brpc\\s+(\\w+)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "RPC method definitions within service blocks"
     },
     {
-      "type": "type",
-      "pattern": "\\b(double|float|int32|int64|uint32|uint64|sint32|sint64|fixed32|fixed64|sfixed32|sfixed64|bool|string|bytes|map|repeated|optional|required|oneof|Any|Timestamp|Duration|Empty|Struct|Value|FieldMask)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Protobuf scalar types, field rules, and well-known types"
+      "tokenType": "type",
+      "pattern": "\\b(double|float)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Floating-point scalar field types"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(package)\\s+([\\w.]+)",
-      "modifiers": ["declaration"],
+      "tokenType": "type",
+      "pattern": "\\b(int32|int64|uint32|uint64|sint32|sint64)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Variable-length integer scalar field types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(fixed32|fixed64|sfixed32|sfixed64)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Fixed-length integer scalar field types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(bool|string|bytes)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Boolean, string, and bytes scalar field types"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bimport\\s+(weak|public\\s+)?\"[^\"]+\"",
+      "tokenModifiers": [],
+      "description": "Import statements with optional weak/public qualifiers"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bpackage\\s+([\\w.]+)",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Package declarations for namespace scoping"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(import|package|option|syntax|extend|extensions|reserved|returns|stream|weak|public)\\b",
-      "modifiers": [],
-      "description": "Protobuf keywords for imports, options, and structure"
+      "tokenType": "property",
+      "pattern": "\\boption\\s+([\\w.()]+)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "File, message, field, service, and method option definitions"
     },
     {
-      "type": "property",
-      "pattern": "\\b(option)\\s+([\\w.()]+)\\s*=",
-      "modifiers": ["definition"],
-      "description": "Option definitions for files, messages, fields, and services"
+      "tokenType": "type",
+      "pattern": "\\boneof\\s+(\\w+)\\s*\\{",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Oneof field group declarations for mutually exclusive fields"
     },
     {
-      "type": "number",
+      "tokenType": "type",
+      "pattern": "\\bmap\\s*<\\s*\\w+\\s*,\\s*\\w+\\s*>",
+      "tokenModifiers": [],
+      "description": "Map field type declarations map<KeyType, ValueType>"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\brepeated\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Repeated field label for list/array fields"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\boptional\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Optional field label (explicit in proto3, default in proto2)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\breserved\\s+(\\d+[^;]*|\"[^\"]+\"([^;]*))",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "Reserved field numbers or names to prevent reuse of removed fields"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(extend)\\s+(\\w+)\\b",
+      "tokenModifiers": [],
+      "description": "Extend declarations for proto2 extensions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bextensions\\s+\\d+\\s+to\\s+(\\d+|max)",
+      "tokenModifiers": [],
+      "description": "Extensions range declaration for proto2 extension points"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bgoogle\\.protobuf\\.(Timestamp|Any|Duration|Struct|Value|Empty|FieldMask|ListValue|BoolValue|Int32Value|Int64Value|UInt32Value|UInt64Value|FloatValue|DoubleValue|StringValue|BytesValue)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Well-known types from google.protobuf package"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bstream\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Stream keyword in RPC definitions for streaming messages"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\breturns\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Returns keyword in RPC method signatures"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\w+\\s*=\\s*\\d+\\s*;",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Field definitions with assigned field numbers"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\brequired\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Required field label (proto2 only)"
+    },
+    {
+      "tokenType": "number",
       "pattern": "\\b\\d+\\b",
-      "modifiers": [],
-      "description": "Field numbers and numeric values"
+      "tokenModifiers": [],
+      "description": "Numeric literals including field numbers and enum values"
     },
     {
-      "type": "comment",
-      "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
-      "modifiers": [],
-      "description": "Single-line and multi-line comments"
+      "tokenType": "keyword",
+      "pattern": "\\b(to|max)\\b",
+      "tokenModifiers": [],
+      "description": "Range keywords used in reserved and extensions declarations"
     },
     {
-      "type": "string",
+      "tokenType": "decorator",
+      "pattern": "\\[\\s*(\\w+)\\s*=\\s*[^\\]]+\\]",
+      "tokenModifiers": [],
+      "description": "Custom option annotations on fields, methods, and services [option = value]"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(java_package|java_outer_classname|java_multiple_files|go_package|csharp_namespace|objc_class_prefix|php_namespace|ruby_package|swift_prefix|optimize_for|cc_enable_arenas|deprecated)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Well-known file and field option names"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line block comments often used for documentation"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in double quotes"
     }
   ]

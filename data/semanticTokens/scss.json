@@ -1,71 +1,207 @@
 {
   "language": "scss",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "keyword", "comment", "string", "number", "operator", "type"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "type",
+      "namespace",
+      "modifier",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "documentation",
+      "defaultLibrary",
+      "deprecated",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
-      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_-]*)\\s*:",
-      "modifiers": ["declaration"],
-      "description": "SCSS variable declarations with $ prefix"
+      "tokenType": "variable",
+      "pattern": "\\0[a-zA-Z0-9_-]*\\s*:",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "SCSS variable declarations with $ prefix ($color: red)"
     },
     {
-      "type": "variable",
-      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_-]*)",
-      "modifiers": [],
-      "description": "SCSS variable references"
+      "tokenType": "variable",
+      "pattern": "\\0[a-zA-Z0-9_-]*",
+      "tokenModifiers": [],
+      "description": "SCSS variable references ($color, $font-size)"
     },
     {
-      "type": "function",
-      "pattern": "@mixin\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Mixin declarations with @mixin"
+      "tokenType": "function",
+      "pattern": "@mixin\\s+[a-zA-Z_][a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Mixin declarations with @mixin directive"
     },
     {
-      "type": "keyword",
-      "pattern": "@(include|extend|import|use|forward|at-root|if|else|each|for|while|warn|debug|error|return|content)\\b",
-      "modifiers": [],
-      "description": "SCSS at-rule directives"
+      "tokenType": "keyword",
+      "pattern": "@(include|extend|import|at-root|if|else|each|for|while|warn|debug|error|return)\\b",
+      "tokenModifiers": [],
+      "description": "SCSS control-flow and inclusion at-rule directives"
     },
     {
-      "type": "operator",
-      "pattern": "&",
-      "modifiers": [],
-      "description": "Parent selector reference"
+      "tokenType": "operator",
+      "pattern": "&(?=\\s*[.#:\\[>+~a-zA-Z_\\-{]|\\s*$)",
+      "tokenModifiers": [],
+      "description": "Parent selector reference (&) for nesting combinators (&.active, &:hover, &__element)"
     },
     {
-      "type": "type",
-      "pattern": "%([a-zA-Z_][a-zA-Z0-9_-]*)",
-      "modifiers": ["declaration"],
-      "description": "Placeholder selectors with % prefix"
+      "tokenType": "type",
+      "pattern": "%[a-zA-Z_][a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Placeholder selectors with % prefix (%clearfix, %visually-hidden) for @extend only"
     },
     {
-      "type": "function",
-      "pattern": "@function\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "SCSS function declarations"
+      "tokenType": "function",
+      "pattern": "@function\\s+[a-zA-Z_][a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "SCSS custom function declarations (@function px-to-rem)"
     },
     {
-      "type": "function",
-      "pattern": "\\b(rgb|rgba|hsl|hsla|mix|lighten|darken|saturate|desaturate|adjust-hue|opacify|transparentize|map-get|map-merge|nth|length|percentage|round|ceil|floor|abs|min|max)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in SCSS functions"
+      "tokenType": "function",
+      "pattern": "\\b(rgb|rgba|hsl|hsla|mix|lighten|darken|saturate|desaturate|adjust-hue|opacify|transparentize|complement|invert|grayscale|adjust-color|scale-color|change-color|ie-hex-str)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Legacy built-in color functions (lighten, darken, mix, adjust-color, etc.)"
     },
     {
-      "type": "property",
-      "pattern": "\\b([a-z][a-z-]*)\\s*:",
-      "modifiers": [],
-      "description": "CSS property names"
+      "tokenType": "property",
+      "pattern": "\\b[a-z][a-z-]*(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "CSS property names in SCSS declarations"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "//[^\\n]*",
-      "modifiers": [],
-      "description": "Single-line comments"
+      "tokenModifiers": [],
+      "description": "Single-line comments (//)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line block comments (/* ... */) preserved in CSS output"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@use\\s+['\\\"][^'\\\"]+['\\\"](?:\\s+as\\s+[a-zA-Z_*][a-zA-Z0-9_-]*)?(?:\\s+with\\s*\\()?",
+      "tokenModifiers": [],
+      "description": "@use module import with optional namespace alias and configuration (@use math as m with ($var: val))"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@forward\\s+['\\\"][^'\\\"]+['\\\"](?:\\s+(?:hide|show)\\s+[a-zA-Z$_][a-zA-Z0-9$_,\\s-]*)?(?:\\s+as\\s+[a-zA-Z_-]*\\*)?",
+      "tokenModifiers": [],
+      "description": "@forward module re-export with hide/show filtering and prefix (@forward lib hide $private as lib-*)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_-]*\\.\\0[a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Namespaced module variable access (math.$pi, config.$breakpoint, lib.$color)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@content\\b",
+      "tokenModifiers": [],
+      "description": "@content directive for passing content blocks into mixins"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bmeta\\.(load-css|module-functions|module-variables|module-mixins|calc-args|calc-name|feature-exists|function-exists|get-function|global-variable-exists|inspect|keywords|mixin-exists|type-of|variable-exists|call)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:meta module functions (meta.load-css, meta.type-of, meta.call, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bmath\\.(div|ceil|floor|round|abs|max|min|clamp|sqrt|pow|log|hypot|percentage|random|is-unitless|compatible|unit)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:math module functions (math.div, math.ceil, math.clamp, math.percentage, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bcolor\\.(adjust|change|scale|mix|complement|invert|grayscale|ie-hex-str|red|green|blue|hue|saturation|lightness|alpha|whiteness|blackness|hwb|channel)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:color module functions (color.adjust, color.scale, color.mix, color.channel, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bmap\\.(get|set|merge|remove|keys|values|has-key|deep-merge|deep-remove)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:map module functions (map.get, map.merge, map.keys, map.has-key, map.deep-merge, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\blist\\.(nth|set-nth|join|append|zip|index|is-bracketed|length|separator|slash)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:list module functions (list.nth, list.join, list.append, list.index, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bstring\\.(quote|unquote|length|index|insert|slice|to-upper-case|to-lower-case|unique-id|split)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "sass:string module functions (string.quote, string.slice, string.index, etc.)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "#\\{\\0[a-zA-Z0-9_-]*\\}",
+      "tokenModifiers": [],
+      "description": "Interpolation syntax #{$variable} for dynamic values in selectors, properties, and strings"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "!default\\b",
+      "tokenModifiers": [],
+      "description": "!default flag for providing fallback variable values that can be overridden by @use with()"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "!global\\b",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "!global flag to assign variable in global scope from within local scope (discouraged in module system)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "-?\\d+(\\.\\d+)?(px|em|rem|%|vw|vh|vmin|vmax|deg|rad|turn|s|ms|fr)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric values with optional CSS units"
     }
   ]
 }

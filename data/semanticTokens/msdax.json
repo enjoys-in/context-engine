@@ -1,77 +1,288 @@
 {
   "language": "msdax",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "function",
+      "variable",
+      "property",
+      "type",
+      "string",
+      "number",
+      "comment",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "\\b(CALCULATE|CALCULATETABLE|SUMX|AVERAGEX|COUNTX|MINX|MAXX|RANKX|FILTER|ALL|ALLEXCEPT|ALLSELECTED|VALUES|DISTINCT|RELATED|RELATEDTABLE|EARLIER|EARLIEST|USERELATIONSHIP|CROSSFILTER|TREATAS|SUMMARIZE|SUMMARIZECOLUMNS|ADDCOLUMNS|SELECTCOLUMNS|TOPN|GENERATE|GENERATEALL|UNION|INTERSECT|EXCEPT|DATATABLE|ROW|BLANK|ERROR)\\s*(?=\\()",
-      "modifiers": ["defaultLibrary"],
-      "description": "DAX table and filter functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(DEFINE|MEASURE|VAR|RETURN|EVALUATE|ORDER\\s+BY|ASC|DESC|START\\s+AT|TABLE|COLUMN)\\b",
+      "tokenModifiers": [],
+      "description": "DAX query and definition keywords (DEFINE, EVALUATE, VAR, RETURN, etc.)"
     },
     {
-      "type": "function",
-      "pattern": "\\b(SUM|AVERAGE|COUNT|COUNTA|COUNTBLANK|COUNTROWS|MIN|MAX|DIVIDE|IF|SWITCH|AND|OR|NOT|TRUE|FALSE|FORMAT|YEAR|MONTH|DAY|DATE|NOW|TODAY|DATEDIFF|DATEADD|TOTALYTD|TOTALQTD|TOTALMTD|SAMEPERIODLASTYEAR|PARALLELPERIOD|CLOSINGBALANCEMONTH|OPENINGBALANCEMONTH)\\s*(?=\\()",
-      "modifiers": ["defaultLibrary"],
-      "description": "DAX aggregation, logical, date, and time intelligence functions"
+      "tokenType": "function",
+      "pattern": "\\b(CALCULATE|CALCULATETABLE)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX core calculation functions (CALCULATE, CALCULATETABLE)"
     },
     {
-      "type": "variable",
-      "pattern": "(?<=DEFINE\\s+(?:MEASURE|VAR)\\s+)[a-zA-Z_'][a-zA-Z0-9_ ']*",
-      "modifiers": ["declaration"],
-      "description": "Measure and variable declarations in DEFINE blocks"
+      "tokenType": "function",
+      "pattern": "\\b(FILTER|ALL|ALLEXCEPT|ALLSELECTED|ALLNOBLANKROW|KEEPFILTERS|REMOVEFILTERS)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX filter modification functions"
     },
     {
-      "type": "property",
-      "pattern": "'?[a-zA-Z_][a-zA-Z0-9_ ]*'?\\[[a-zA-Z_][a-zA-Z0-9_ ]*\\]",
-      "modifiers": [],
-      "description": "Table[Column] references for calculated columns"
+      "tokenType": "function",
+      "pattern": "\\b(SUM|SUMX|COUNT|COUNTA|COUNTX|COUNTROWS|COUNTBLANK|DISTINCTCOUNT)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX count and sum aggregation functions"
     },
     {
-      "type": "type",
-      "pattern": "'[a-zA-Z_][a-zA-Z0-9_ ]*'",
-      "modifiers": [],
-      "description": "Table references in single quotes"
+      "tokenType": "function",
+      "pattern": "\\b(AVERAGE|AVERAGEX|MIN|MINX|MAX|MAXX|PRODUCT|PRODUCTX|MEDIAN)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX statistical aggregation functions (AVERAGE, MIN, MAX, MEDIAN, etc.)"
     },
     {
-      "type": "variable",
-      "pattern": "\\[[a-zA-Z_][a-zA-Z0-9_ ]*\\]",
-      "modifiers": [],
-      "description": "Measure references in square brackets"
+      "tokenType": "function",
+      "pattern": "\\b(PERCENTILE\\.INC|PERCENTILE\\.EXC|PERCENTILEX\\.INC|PERCENTILEX\\.EXC|RANKX|RANK\\.EQ)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX ranking and percentile functions"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(DEFINE|MEASURE|VAR|RETURN|EVALUATE|ORDER BY|ASC|DESC|START AT)\\b",
-      "modifiers": [],
-      "description": "DAX query and definition keywords"
+      "tokenType": "function",
+      "pattern": "\\b(ADDCOLUMNS|SELECTCOLUMNS|SUMMARIZE|SUMMARIZECOLUMNS|GROUPBY|CROSSJOIN|UNION|INTERSECT|EXCEPT)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX table manipulation and set operations"
     },
     {
-      "type": "operator",
-      "pattern": "(&&|\\|\\||<>|>=|<=|\\+|-|\\*|/|&|=|<|>)",
-      "modifiers": [],
-      "description": "DAX operators: arithmetic, comparison, logical, and concatenation"
+      "tokenType": "function",
+      "pattern": "\\b(DATATABLE|GENERATESERIES|GENERATE|GENERATEALL|ROW|TREATAS|NATURALINNERJOIN|NATURALLEFTOUTERJOIN|TOPN|SAMPLE)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX table construction and join functions"
     },
     {
-      "type": "comment",
-      "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
-      "description": "Single-line and multi-line DAX comments"
+      "tokenType": "function",
+      "pattern": "\\b(DATESYTD|DATESQTD|DATESMTD|TOTALYTD|TOTALQTD|TOTALMTD|SAMEPERIODLASTYEAR|DATEADD|DATESBETWEEN|DATESINPERIOD|PARALLELPERIOD)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX time intelligence period functions"
     },
     {
-      "type": "string",
+      "tokenType": "function",
+      "pattern": "\\b(PREVIOUSDAY|PREVIOUSMONTH|PREVIOUSQUARTER|PREVIOUSYEAR|NEXTDAY|NEXTMONTH|NEXTQUARTER|NEXTYEAR)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX time intelligence navigation functions (PREVIOUS/NEXT)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(STARTOFMONTH|STARTOFQUARTER|STARTOFYEAR|ENDOFMONTH|ENDOFQUARTER|ENDOFYEAR|FIRSTDATE|LASTDATE|CALENDAR|CALENDARAUTO)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX time intelligence boundary and calendar functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(OPENINGBALANCEMONTH|OPENINGBALANCEQUARTER|OPENINGBALANCEYEAR|CLOSINGBALANCEMONTH|CLOSINGBALANCEQUARTER|CLOSINGBALANCEYEAR)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX opening/closing balance time intelligence functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CONCATENATE|CONCATENATEX|FORMAT|LEFT|RIGHT|MID|LEN|TRIM|UPPER|LOWER|SUBSTITUTE|REPT|FIND|SEARCH|EXACT|FIXED|UNICHAR|UNICODE)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX text functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(IF|SWITCH|AND|OR|NOT|IFERROR|COALESCE)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX logical and conditional functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(TRUE|FALSE)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "DAX boolean constants TRUE and FALSE"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|CEILING|FLOOR|ROUND|ROUNDUP|ROUNDDOWN|POWER|SQRT|MOD|DIVIDE|INT|TRUNC|SIGN|LN|LOG|LOG10|EXP|FACT|EVEN|ODD|PI|RAND|RANDBETWEEN|GCD|LCM|QUOTIENT|MROUND|CURRENCY|CONVERT)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX mathematical and trigonometric functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(FORMAT|YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|DATE|NOW|TODAY|DATEDIFF|TIME|TIMEVALUE|UTCNOW|UTCTODAY|WEEKDAY|WEEKNUM|YEARFRAC|EDATE|EOMONTH)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX date/time functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ISBLANK|ISERROR|ISLOGICAL|ISNONTEXT|ISNUMBER|ISTEXT|ISFILTERED|ISCROSSFILTERED|HASONEVALUE|HASONEFILTER|SELECTEDVALUE)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX information and type-checking functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(RELATED|RELATEDTABLE|CROSSFILTER|USERELATIONSHIP|LOOKUPVALUE|EARLIER|EARLIEST)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX relationship navigation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(VALUES|DISTINCT|FILTERS|ADDMISSINGITEMS|PATH|PATHITEM|PATHCONTAINS|PATHLENGTH)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX set enumeration and path hierarchy functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(BLANK|ERROR|SELECTEDMEASURE|SELECTEDMEASURENAME|ISSELECTEDMEASURE|CONTAINS|CONTAINSROW)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX miscellaneous utility functions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=\\bVAR\\s+)[A-Za-z_][A-Za-z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declarations after VAR keyword"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=\\bMEASURE\\s+)'?[A-Za-z_][A-Za-z0-9_ ]*'?\\[[A-Za-z_][A-Za-z0-9_ ]*\\]",
+      "tokenModifiers": [
+        "declaration",
+        "definition"
+      ],
+      "description": "Measure definitions in DEFINE MEASURE Table[Measure]"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "'[A-Za-z_][A-Za-z0-9_ ]*'",
+      "tokenModifiers": [],
+      "description": "Table name references in single quotes"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\[[A-Za-z_][A-Za-z0-9_ ]*\\]",
+      "tokenModifiers": [],
+      "description": "Column and measure references in square brackets [Column]"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "'?[A-Za-z_][A-Za-z0-9_ ]*'?\\[[A-Za-z_][A-Za-z0-9_ ]*\\]",
+      "tokenModifiers": [],
+      "description": "Fully qualified Table[Column] references"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ":=",
+      "tokenModifiers": [],
+      "description": "DAX measure assignment operator"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(&&|\\|\\||<>|>=|<=|<|>|=|\\+|-|\\*|/|\\^|&)",
+      "tokenModifiers": [],
+      "description": "DAX arithmetic, comparison, logical, and concatenation operators"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(IN|NOT\\s+IN)\\b",
+      "tokenModifiers": [],
+      "description": "DAX IN and NOT IN set membership operators"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Single-line DAX comments (// ...)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line DAX block comments (/* ... */)"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"(?:[^\"]|\"\")*\"",
-      "modifiers": [],
-      "description": "String literals with double-quote escaping"
+      "tokenModifiers": [],
+      "description": "DAX string literals with double-quote escaping"
     },
     {
-      "type": "number",
-      "pattern": "-?\\d+\\.?\\d*",
-      "modifiers": [],
-      "description": "Numeric literals"
+      "tokenType": "number",
+      "pattern": "-?\\d+\\.?\\d*([eE][+-]?\\d+)?",
+      "tokenModifiers": [],
+      "description": "Numeric literals including scientific notation"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(INTEGER|DOUBLE|STRING|BOOLEAN|CURRENCY|DATETIME|VARIANT)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "DAX data type keywords used in DATATABLE definitions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(STDEV\\.S|STDEV\\.P|VAR\\.S|VAR\\.P|GEOMEAN|GEOMEANX|MEDIANX)\\s*(?=\\()",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DAX advanced statistical functions (STDEV, VAR, GEOMEAN)"
     }
   ]
 }

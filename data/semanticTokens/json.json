@@ -1,53 +1,192 @@
 {
   "language": "json",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["property", "keyword", "string", "number", "operator"],
-    "tokenModifiers": ["declaration"]
+  "legend": {
+    "tokenTypes": [
+      "property",
+      "keyword",
+      "string",
+      "number",
+      "operator",
+      "variable",
+      "decorator",
+      "type"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "defaultLibrary",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "\"[^\"]+\"(?=\\s*:)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Object property keys before colon"
     },
     {
-      "type": "string",
-      "pattern": "(?<=:\\s*)\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenType": "string",
+      "pattern": "(?<=:\\s*)\"(?:[^\"\\\\\\\\]|\\\\\\\\.)*\"",
+      "tokenModifiers": [],
       "description": "String values after colon"
     },
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "(?<=:\\s*)-?\\d+\\.?\\d*(?:[eE][+-]?\\d+)?",
-      "modifiers": [],
-      "description": "Numeric values including integers, floats, and scientific notation"
+      "tokenModifiers": [],
+      "description": "Numeric values including integers, floats, and scientific notation (42, 3.14, 1e10, 2.5E-3)"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "(?<=:\\s*)\\b(true|false)\\b",
-      "modifiers": [],
-      "description": "Boolean literal values"
+      "tokenModifiers": [],
+      "description": "Boolean literal values (true, false)"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "(?<=:\\s*)\\bnull\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Null literal value"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "[:\\[\\]{}]",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Structural operators: colon, brackets, and braces"
     },
     {
-      "type": "string",
-      "pattern": "(?<=\\[\\s*|,\\s*)\"(?:[^\"\\\\]|\\\\.)*\"(?=\\s*[,\\]])",
-      "modifiers": [],
+      "tokenType": "string",
+      "pattern": "(?<=\\[\\s*|,\\s*)\"(?:[^\"\\\\\\\\]|\\\\\\\\.)*\"(?=\\s*[,\\]])",
+      "tokenModifiers": [],
       "description": "String values inside arrays"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\"\\$(schema|ref|id|defs|comment|vocabulary|anchor|dynamicRef|dynamicAnchor)\"(?=\\s*:)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON Schema keywords ($schema, $ref, $id, $defs, $comment, $vocabulary, $anchor, $dynamicRef)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\"(type|enum|const|default|title|description|examples|deprecated|readOnly|writeOnly|format)\"(?=\\s*:)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON Schema validation/annotation keywords (type, enum, const, format, title, description)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\"(properties|required|additionalProperties|patternProperties|propertyNames|minProperties|maxProperties|dependentRequired|dependentSchemas|if|then|else|allOf|anyOf|oneOf|not|items|prefixItems|contains|minItems|maxItems|uniqueItems|minLength|maxLength|pattern|minimum|maximum|exclusiveMinimum|exclusiveMaximum|multipleOf)\"(?=\\s*:)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON Schema structural/validation keywords (properties, required, allOf, anyOf, oneOf, items, etc.)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\"(name|version|description|main|module|types|license|author|homepage|repository|keywords|scripts|dependencies|devDependencies|peerDependencies|engines|files|exports|bin|type|private|workspaces)\"(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "Common package.json / manifest meta keys (name, version, description, scripts, dependencies, etc.)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\\\\\]|\\\\\\\\.)*\\\\\\\\(?:[\"\\\\\\\\/bfnrt]|u[0-9a-fA-F]{4})(?:[^\"\\\\\\\\]|\\\\\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Strings containing escape sequences (\\n, \\t, \\\", \\\\, \\/, \\b, \\f, \\r, \\uXXXX)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\\\u[0-9a-fA-F]{4}",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Unicode escape sequences (\\u0041 = A, \\u00E9 = e) within JSON strings"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=\\[\\s*|,\\s*)-?\\d+\\.?\\d*(?:[eE][+-]?\\d+)?(?=\\s*[,\\]])",
+      "tokenModifiers": [],
+      "description": "Numeric values inside arrays"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<=\\[\\s*|,\\s*)\\b(true|false|null)\\b(?=\\s*[,\\]])",
+      "tokenModifiers": [],
+      "description": "Boolean and null literals inside arrays"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ",",
+      "tokenModifiers": [],
+      "description": "Comma separator between array elements and object members"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=:\\s*)-?0(?=\\s*[,}\\]])",
+      "tokenModifiers": [],
+      "description": "Zero literal value"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=:\\s*)-?\\d+(?=\\s*[,}\\]])",
+      "tokenModifiers": [],
+      "description": "Integer values (no decimal or exponent)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=:\\s*)-?\\d+\\.\\d+(?=\\s*[,}\\]])",
+      "tokenModifiers": [],
+      "description": "Float values with decimal point"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=:\\s*)-?\\d+[eE][+-]?\\d+(?=\\s*[,}\\]])",
+      "tokenModifiers": [],
+      "description": "Scientific notation numbers (1e10, 2.5E-3)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"#(/[^\"]*)+\"",
+      "tokenModifiers": [],
+      "description": "JSON Pointer syntax in $ref values (#/definitions/foo)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=\"type\"\\s*:\\s*)\"(string|number|integer|boolean|object|array|null)\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON Schema type values (string, number, integer, boolean, object, array, null)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=\"format\"\\s*:\\s*)\"(date-time|date|time|duration|email|idn-email|hostname|idn-hostname|ipv4|ipv6|uri|uri-reference|iri|iri-reference|uuid|uri-template|json-pointer|relative-json-pointer|regex)\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON Schema format values (date-time, email, uri, uuid, hostname, etc.)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\"(id|@id|@type|@context|@value|@language|@graph)\"(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "JSON-LD keywords (@id, @type, @context, @graph)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\"(compilerOptions|include|exclude|extends|references|outDir|rootDir|baseUrl|paths|target|module|lib|strict|sourceMap|declaration)\"(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "Common tsconfig.json property keys"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\"(rules|plugins|extends|parser|parserOptions|env|globals|overrides|settings|ignorePatterns)\"(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "Common eslint/config file property keys"
     }
   ]
 }

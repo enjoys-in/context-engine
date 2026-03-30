@@ -2,74 +2,123 @@
   "language": "java",
   "symbolPatterns": [
     {
+      "name": "Package Declaration",
+      "pattern": "^\\\\s*package\\\\s+([a-zA-Z_][a-zA-Z0-9_.]*);",
+      "captureGroup": 1,
+      "kind": 3,
+      "type": "package"
+    },
+    {
+      "name": "Import",
+      "pattern": "^\\\\s*import\\\\s+(?:static\\\\s+)?([a-zA-Z_][a-zA-Z0-9_.]*(?:\\\\.\\\\*)?);",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
       "name": "Class",
-      "pattern": "^\\\\s*(?:public|private|protected|abstract|final|static|sealed)?\\\\s*class\\\\s+(\\\\w+)",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:abstract\\\\s+|final\\\\s+|sealed\\\\s+|non-sealed\\\\s+|static\\\\s+)*class\\\\s+(\\\\w+)(?:\\\\s*<[^>]*>)?(?:\\\\s+extends\\\\s+\\\\w+)?(?:\\\\s+implements\\\\s+[\\\\w,\\\\s<>]+)?",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
       "name": "Interface",
-      "pattern": "^\\\\s*(?:public|private|protected)?\\\\s*interface\\\\s+(\\\\w+)",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:sealed\\\\s+|non-sealed\\\\s+)?interface\\\\s+(\\\\w+)(?:\\\\s*<[^>]*>)?(?:\\\\s+extends\\\\s+[\\\\w,\\\\s<>]+)?",
       "captureGroup": 1,
       "kind": 10,
       "type": "interface"
     },
     {
-      "name": "Method",
-      "pattern": "^\\\\s*(?:public|private|protected|static|final|abstract|synchronized|native)?\\\\s*(?:[\\\\w<>\\\\[\\\\],?]+\\\\s+)(\\\\w+)\\\\s*\\\\(",
-      "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
-    },
-    {
       "name": "Enum",
-      "pattern": "^\\\\s*(?:public|private|protected)?\\\\s*enum\\\\s+(\\\\w+)",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?enum\\\\s+(\\\\w+)(?:\\\\s+implements\\\\s+[\\\\w,\\\\s<>]+)?",
       "captureGroup": 1,
       "kind": 9,
       "type": "enum"
     },
     {
+      "name": "Enum Constant",
+      "pattern": "^\\\\s+([A-Z][A-Z0-9_]+)(?:\\\\s*\\\\([^)]*\\\\))?\\\\s*[,;{]",
+      "captureGroup": 1,
+      "kind": 21,
+      "type": "enumMember"
+    },
+    {
       "name": "Record",
-      "pattern": "^\\\\s*(?:public|private|protected)?\\\\s*record\\\\s+(\\\\w+)",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:final\\\\s+|sealed\\\\s+|static\\\\s+)*record\\\\s+(\\\\w+)\\\\s*(?:<[^>]*>)?\\\\s*\\\\(",
       "captureGroup": 1,
       "kind": 22,
       "type": "struct"
     },
     {
-      "name": "Function",
-      "pattern": "(?:function|def|fn|func|sub|proc)\\s+(\\w+)",
+      "name": "Annotation Type",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?@interface\\\\s+(\\\\w+)",
       "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
+      "kind": 10,
+      "type": "interface"
     },
     {
-      "name": "Variable",
-      "pattern": "(?:var|let|const|dim|my|local)\\s+(\\w+)",
+      "name": "Constructor",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?([A-Z]\\\\w+)\\\\s*\\\\([^)]*\\\\)\\\\s*(?:throws\\\\s+[\\\\w,\\\\s]+)?\\\\s*\\\\{",
       "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
+      "kind": 8,
+      "type": "constructor"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "Method",
+      "pattern": "^\\\\s*(?:@\\\\w+(?:\\\\([^)]*\\\\))?\\\\s+)*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:static\\\\s+|final\\\\s+|abstract\\\\s+|synchronized\\\\s+|native\\\\s+|default\\\\s+|strictfp\\\\s+)*(?:[\\\\w<>\\\\[\\\\],.?\\\\s]+\\\\s+)(\\\\w+)\\\\s*\\\\([^)]*\\\\)\\\\s*(?:throws\\\\s+[\\\\w,\\\\s]+)?",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Static Final Constant",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?static\\\\s+final\\\\s+[\\\\w<>\\\\[\\\\],.?]+\\\\s+([A-Z][A-Z0-9_]+)\\\\s*=",
       "captureGroup": 1,
       "kind": 13,
       "type": "constant"
     },
     {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "Field",
+      "pattern": "^\\\\s*(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:static\\\\s+|final\\\\s+|transient\\\\s+|volatile\\\\s+)*[\\\\w<>\\\\[\\\\],.?]+\\\\s+(\\\\w+)\\\\s*[=;]",
       "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
+      "kind": 7,
+      "type": "field"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "Static Initializer",
+      "pattern": "^\\\\s*(static)\\\\s*\\\\{",
+      "captureGroup": 1,
+      "kind": 8,
+      "type": "constructor"
+    },
+    {
+      "name": "Inner Class",
+      "pattern": "^\\\\s+(?:public\\\\s+|private\\\\s+|protected\\\\s+)?(?:static\\\\s+)?(?:abstract\\\\s+|final\\\\s+)*class\\\\s+(\\\\w+)(?:\\\\s*<[^>]*>)?",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "Lambda Assignment",
+      "pattern": "^\\\\s*(?:final\\\\s+)?[\\\\w<>\\\\[\\\\],.?]+\\\\s+(\\\\w+)\\\\s*=\\\\s*\\\\([^)]*\\\\)\\\\s*->",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Annotation Usage",
+      "pattern": "^\\\\s*@([A-Z]\\\\w+)(?:\\\\s*\\\\(|\\\\s*$)",
       "captureGroup": 1,
       "kind": 6,
       "type": "property"
+    },
+    {
+      "name": "Generic Type Parameter",
+      "pattern": "class\\\\s+\\\\w+\\\\s*<([A-Z]\\\\w*(?:\\\\s+extends\\\\s+[\\\\w<>,.\\\\s]+)?)>",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
     }
   ]
 }

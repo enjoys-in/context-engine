@@ -1,77 +1,247 @@
 {
   "language": "pascal",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "\\b(procedure|function)\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenType": "namespace",
+      "pattern": "\\b(program|unit|library)\\s+[A-Za-z_]\\w*",
+      "tokenModifiers": ["declaration"],
+      "description": "Program, unit, and library name declarations"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(uses)\\s+[A-Za-z_][\\w,\\s\\.]*;",
+      "tokenModifiers": ["definition"],
+      "description": "Uses clause importing units/namespaces"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(interface|implementation|initialization|finalization)\\b",
+      "tokenModifiers": [],
+      "description": "Unit section keywords: interface, implementation, initialization, finalization"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(procedure|function)\\s+[A-Za-z_]\\w*",
+      "tokenModifiers": ["declaration"],
       "description": "Procedure and function declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(type)\\s+(\\w+)\\s*=\\s*(record|class|object|interface|enum)",
-      "modifiers": ["declaration"],
-      "description": "Type declarations for record, class, object, interface"
+      "tokenType": "method",
+      "pattern": "\\b(constructor|destructor)\\s+[A-Za-z_]\\w*",
+      "tokenModifiers": ["declaration"],
+      "description": "Constructor and destructor declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(begin|end|program|unit|library|uses|interface|implementation|initialization|finalization|var|const|type|array|of|set|file|packed|with|do|while|for|to|downto|repeat|until|if|then|else|case|try|except|finally|raise|inherited|self)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Pascal structural and control keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(begin|end)\\b",
+      "tokenModifiers": [],
+      "description": "Block delimiters begin/end"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(uses)\\s+([\\w,\\s]+);",
-      "modifiers": ["definition"],
-      "description": "Uses clause for unit imports"
+      "tokenType": "keyword",
+      "pattern": "\\b(var|const|type)\\b",
+      "tokenModifiers": [],
+      "description": "Variable, constant, and type section keywords"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(unit|program|library)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Unit, program, and library declarations"
+      "tokenType": "class",
+      "pattern": "\\b[A-Za-z_]\\w*\\s*=\\s*(class|record|object)\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "Class, record, and object type declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(Integer|String|Boolean|Real|Double|Extended|Char|Byte|Word|LongInt|Cardinal|Pointer|TObject|TComponent|TForm|TStringList|Variant)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in and commonly used types"
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected|published)\\b",
+      "tokenModifiers": [],
+      "description": "Class member visibility specifiers"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(virtual|override|abstract|dynamic|reintroduce|overload|cdecl|stdcall|register|safecall|external|forward|inline)\\b",
-      "modifiers": [],
-      "description": "Method and calling convention modifiers"
+      "tokenType": "interface",
+      "pattern": "\\b[A-Za-z_]\\w*\\s*=\\s*interface\\b(\\s*\\[\\s*'\\{[0-9a-fA-F-]+\\}'\\s*\\])?",
+      "tokenModifiers": ["definition"],
+      "description": "Interface type declarations with optional GUID"
     },
     {
-      "type": "property",
-      "pattern": "\\b(property)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Property declarations in classes"
+      "tokenType": "property",
+      "pattern": "\\b(property)\\s+[A-Za-z_]\\w*\\s*:.*?(\\b(read|write|default|stored)\\b.*?)+;",
+      "tokenModifiers": ["declaration"],
+      "description": "Property declarations with read/write/default/stored specifiers"
     },
     {
-      "type": "comment",
+      "tokenType": "keyword",
+      "pattern": "\\b(inherited|self)\\b",
+      "tokenModifiers": [],
+      "description": "Inherited call and self reference keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|then|else)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional branching: if/then/else"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(case|of)\\b",
+      "tokenModifiers": [],
+      "description": "Case statement and of keyword"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(for|to|downto|do|while|repeat|until|with)\\b",
+      "tokenModifiers": [],
+      "description": "Loop and iteration keywords: for/to/downto/do, while/do, repeat/until, with"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(try|except|finally|raise|on)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling: try/except/finally/raise/on"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(array|set|file|packed)\\s+(of)\\b",
+      "tokenModifiers": [],
+      "description": "Compound type constructors: array of, set of, file of, packed"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Byte|Word|Integer|Longint|Int64|Cardinal|SmallInt|ShortInt|LongWord|UInt64|NativeInt|NativeUInt)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in integer types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Single|Double|Extended|Currency|Real|Comp)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in real/floating-point types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(String|Char|Boolean|AnsiString|WideString|ShortString|UnicodeString|AnsiChar|WideChar|PChar|PAnsiChar|PWideChar)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in string, char, and boolean types"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(nil|Result)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Special identifiers: nil (null pointer) and Result (function return)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\^|@",
+      "tokenModifiers": [],
+      "description": "Pointer dereference (^) and address-of (@) operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(is|as|in)\\b",
+      "tokenModifiers": [],
+      "description": "Type-testing (is), type-casting (as), and membership (in) operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(shl|shr|div|mod|and|or|not|xor)\\b",
+      "tokenModifiers": [],
+      "description": "Bitwise (shl/shr/and/or/not/xor) and integer arithmetic (div/mod) operators"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(overload|override|virtual|abstract|dynamic|reintroduce|inline|forward)\\b",
+      "tokenModifiers": [],
+      "description": "Method binding directives: overload, override, virtual, abstract, dynamic, reintroduce, inline, forward"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(cdecl|stdcall|pascal|register|safecall|external)\\b",
+      "tokenModifiers": [],
+      "description": "Calling conventions and external linkage directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(exports|absolute|asm|label|goto|resourcestring|threadvar)\\b",
+      "tokenModifiers": [],
+      "description": "Miscellaneous keywords: exports, absolute, asm, label, goto, resourcestring, threadvar"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "[A-Za-z_]\\w*<[A-Za-z_][\\w,\\s]*>",
+      "tokenModifiers": ["definition"],
+      "description": "Generic type specializations: TList<T>, TDictionary<K,V>"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\b[A-Za-z_]\\w*\\s*=\\s*\\([^)]*\\)\\s*;",
+      "tokenModifiers": ["declaration"],
+      "description": "Enumeration type declarations: TColor = (clRed, clBlue, clGreen)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Read|Write|Readln|Writeln|Assign|Reset|Rewrite|Close|EOF|EOLN|Append|BlockRead|BlockWrite|Seek|FilePos|FileSize|Rename|Erase|Flush|IOResult)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "File I/O RTL routines: Read, Write, Readln, Writeln, Assign, Reset, Rewrite, Close, EOF, EOLN"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Length|Copy|Pos|Delete|Insert|SetLength|Inc|Dec|Ord|Chr|High|Low|Succ|Pred|Abs|Round|Trunc|Sqr|Sqrt|Concat|StringOfChar|Str|Val|IntToStr|StrToInt|FloatToStr|Format|Trim|UpperCase|LowerCase|CompareStr)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "RTL utility functions: Length, Copy, Pos, Delete, Insert, SetLength, Inc, Dec, Ord, Chr, High, Low, Succ, Pred, Abs, Round, Trunc, Sqr, Sqrt"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[\\s*[A-Za-z_]\\w*(\\s*\\([^)]*\\))?\\s*\\]",
+      "tokenModifiers": [],
+      "description": "Delphi custom attributes: [CustomAttribute], [MyAttr(param)]"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\breference\\s+to\\s+(procedure|function)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Anonymous method types and reference to procedure/function"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "\\{[\\s\\S]*?\\}|\\(\\*[\\s\\S]*?\\*\\)|//[^\\n]*",
-      "modifiers": [],
-      "description": "Block comments {}, (*...*), and line comments //"
+      "tokenModifiers": [],
+      "description": "Comments: block {}, old-style (*...*), and line // styles"
     },
     {
-      "type": "string",
-      "pattern": "'([^']*)'",
-      "modifiers": [],
-      "description": "String literals in single quotes"
+      "tokenType": "string",
+      "pattern": "'([^']*)'|#\\d+|#\\$[0-9a-fA-F]+",
+      "tokenModifiers": [],
+      "description": "String literals in single quotes and character literals (#nn, #$xx)"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b|\\$[0-9a-fA-F]+\\b",
-      "modifiers": [],
-      "description": "Decimal, floating-point, and hexadecimal ($) literals"
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b|\\$[0-9a-fA-F]+\\b|&[0-7]+\\b|%[01]+\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: decimal, float, hex ($), octal (&), binary (%)"
     }
   ]
 }

@@ -1,71 +1,344 @@
 {
   "language": "systemverilog",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "typeParameter", "parameter", "variable", "property", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\bmodule\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Module declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(module|endmodule|program|endprogram)\\b",
+      "tokenModifiers": [],
+      "description": "Module and program block keywords"
     },
     {
-      "type": "interface",
-      "pattern": "\\binterface\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Interface declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(class|endclass|extends|implements|new|this|super|null)\\b",
+      "tokenModifiers": [],
+      "description": "Class declaration, inheritance, and object-oriented keywords"
     },
     {
-      "type": "class",
-      "pattern": "\\bclass\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Class declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(interface|endinterface|modport)\\b",
+      "tokenModifiers": [],
+      "description": "Interface and modport keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(always|always_comb|always_ff|always_latch|initial|assign|generate|endgenerate|genvar)\\b",
-      "modifiers": [],
-      "description": "Procedural and generate block keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(package|endpackage|import|export)\\b",
+      "tokenModifiers": [],
+      "description": "Package and import/export keywords"
     },
     {
-      "type": "type",
-      "pattern": "\\b(reg|wire|logic|bit|integer|real|time|shortint|longint|byte|shortreal|string|chandle|event)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Data types including wire, reg, logic"
+      "tokenType": "class",
+      "pattern": "(?<=module\\s+)[a-zA-Z_][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Module name declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\btask\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Task declarations"
+      "tokenType": "class",
+      "pattern": "(?<=class\\s+)[a-zA-Z_][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class name declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Function declarations"
+      "tokenType": "interface",
+      "pattern": "(?<=interface\\s+)[a-zA-Z_][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Interface name declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(input|output|inout|ref|parameter|localparam|typedef|enum|struct|union|packed|signed|unsigned)\\b",
-      "modifiers": [],
-      "description": "Port directions, parameters, and type modifiers"
+      "tokenType": "namespace",
+      "pattern": "(?<=package\\s+)[a-zA-Z_][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Package name declarations"
     },
     {
-      "type": "macro",
-      "pattern": "`([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
-      "description": "Compiler directives and macros with backtick"
+      "tokenType": "type",
+      "pattern": "\\b(logic|reg|wire|bit|byte|shortint|int|longint|integer|real|shortreal|realtime|time|string|void|chandle|event)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in data types"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(posedge|negedge|if|else|case|casex|casez|for|foreach|while|repeat|forever|begin|end|fork|join|join_any|join_none|wait|disable|assert|assume|cover|constraint|rand|randc)\\b",
-      "modifiers": [],
-      "description": "Control flow, sensitivity, and verification keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(typedef|enum|struct|union|packed|tagged)\\b",
+      "tokenModifiers": [],
+      "description": "User-defined type declaration keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(always|always_comb|always_ff|always_latch|initial|final|assign)\\b",
+      "tokenModifiers": [],
+      "description": "Always blocks and continuous assignment keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(begin|end|if|else|for|while|do|foreach|repeat|forever|return|break|continue)\\b",
+      "tokenModifiers": [],
+      "description": "Procedural control flow and loop keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(case|casex|casez|endcase|default|inside|matches)\\b",
+      "tokenModifiers": [],
+      "description": "Case statement and pattern matching keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(input|output|inout|ref)\\b",
+      "tokenModifiers": [],
+      "description": "Port direction declarations"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(signed|unsigned|static|automatic|virtual|pure|local|protected|rand|randc|const|extern)\\b",
+      "tokenModifiers": [],
+      "description": "Type and access modifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(parameter|localparam|defparam|specparam)\\b",
+      "tokenModifiers": [],
+      "description": "Parameter declaration keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(assert|assume|cover|restrict)\\b",
+      "tokenModifiers": [],
+      "description": "Immediate and concurrent assertion keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(property|endproperty|sequence|endsequence)\\b",
+      "tokenModifiers": [],
+      "description": "SVA property and sequence block keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(constraint|solve|before|dist|with|unique|priority)\\b",
+      "tokenModifiers": [],
+      "description": "Constraint and randomization keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(fork|join|join_any|join_none|disable|wait|wait_order)\\b",
+      "tokenModifiers": [],
+      "description": "Concurrent process and fork/join keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=task\\s+)[a-zA-Z_][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Task name declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(task|endtask|function|endfunction)\\b",
+      "tokenModifiers": [],
+      "description": "Task and function block delimiters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=function\\s+(?:[a-zA-Z_][a-zA-Z0-9_$]*\\s+)?)[a-zA-Z_][a-zA-Z0-9_$]*\\s*(?=[;(])",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function name declarations with optional return type"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(generate|endgenerate|genvar)\\b",
+      "tokenModifiers": [],
+      "description": "Generate block and genvar keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(covergroup|endgroup|coverpoint|cross|bins|illegal_bins|ignore_bins|wildcard|option)\\b",
+      "tokenModifiers": [],
+      "description": "Coverage group definitions and related keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(posedge|negedge|edge)\\b",
+      "tokenModifiers": [],
+      "description": "Clock edge sensitivity specifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(clocking|endclocking|iff|throughout|within|intersect)\\b",
+      "tokenModifiers": [],
+      "description": "Clocking block and temporal operator keywords"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "`(define|include|ifdef|ifndef|else|elsif|endif|undef|timescale|resetall|pragma|line|default_nettype|celldefine|endcelldefine)\\b",
+      "tokenModifiers": [],
+      "description": "Compiler preprocessor directives"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "`[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "User-defined macro references with backtick"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$(display|write|strobe|monitor|monitoron|monitoroff|finish|stop|exit|fatal|error|warning|info|time|stime|realtime|random|urandom|urandom_range|readmemh|readmemb|writememh|writememb|clog2|countones|onehot|onehot0|isunknown|bits|typename|sformatf|sscanf|fopen|fclose|fwrite|fdisplay|fgets|fscanf|rewind|feof|fseek|ftell|value\\$plusargs|test\\$plusargs)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "System tasks and functions ($display, $finish, $random, etc.)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[0-9]*'[bB][01_xXzZ]+",
+      "tokenModifiers": [],
+      "description": "Binary number literals with optional width (e.g., 8'b1010_0101)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[0-9]*'[oO][0-7_xXzZ]+",
+      "tokenModifiers": [],
+      "description": "Octal number literals with optional width (e.g., 4'o17)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[0-9]*'[hH][0-9a-fA-F_xXzZ]+",
+      "tokenModifiers": [],
+      "description": "Hexadecimal number literals with optional width (e.g., 32'hDEAD_BEEF)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[0-9]*'[dD][0-9_xXzZ]+",
+      "tokenModifiers": [],
+      "description": "Decimal number literals with explicit width (e.g., 16'd255)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9][0-9_]*(\\.[0-9_]+)?([eE][+-]?[0-9]+)?\\b",
+      "tokenModifiers": [],
+      "description": "Unsized decimal and real number literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//.*$",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Multi-line block comments"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(===|!==)",
+      "tokenModifiers": [],
+      "description": "Case equality and inequality operators (4-state)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==\\?|!=\\?)",
+      "tokenModifiers": [],
+      "description": "Wildcard equality and inequality operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==|!=|<=|>=|<|>)",
+      "tokenModifiers": [],
+      "description": "Relational comparison and equality operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(&&|\\|\\||!|->|<->)",
+      "tokenModifiers": [],
+      "description": "Logical operators and implication"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(<<<|>>>|<<|>>)",
+      "tokenModifiers": [],
+      "description": "Arithmetic and logical shift operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(&|\\||\\^|~\\^|\\^~|~&|~\\||~)",
+      "tokenModifiers": [],
+      "description": "Bitwise and reduction operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\+\\+|--|\\+|-|\\*|/|%|\\*\\*)",
+      "tokenModifiers": [],
+      "description": "Arithmetic operators including power, increment, and decrement"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\{|\\}|\\{\\{)",
+      "tokenModifiers": [],
+      "description": "Concatenation and replication operators"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@(?=\\s*\\()",
+      "tokenModifiers": [],
+      "description": "Event control at-sign for sensitivity lists"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(supply0|supply1|tri|triand|trior|tri0|tri1|trireg|wand|wor|uwire)\\b",
+      "tokenModifiers": [],
+      "description": "Net type declarations"
     }
   ]
 }

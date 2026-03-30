@@ -1,71 +1,247 @@
 {
   "language": "clojure",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["function", "variable", "macro", "namespace", "keyword", "parameter", "property", "type"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "deprecated", "defaultLibrary", "documentation"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "interface",
+      "variable",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "namespace",
+      "pattern": "\\(ns\\s+([a-zA-Z_][a-zA-Z0-9_.-]*)\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "Namespace declarations (ns)"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\(:require\\s+\\[([a-zA-Z_][a-zA-Z0-9_.-]*)\\b",
+      "tokenModifiers": [],
+      "description": "Required namespace references in ns :require"
+    },
+    {
+      "tokenType": "function",
       "pattern": "\\(defn-?\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
-      "modifiers": ["definition"],
+      "tokenModifiers": ["definition"],
       "description": "Public and private function definitions (defn, defn-)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\(def\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
-      "modifiers": ["definition"],
+      "tokenModifiers": ["definition"],
       "description": "Var definitions (def)"
     },
     {
-      "type": "macro",
+      "tokenType": "variable",
+      "pattern": "\\(defonce\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
+      "tokenModifiers": ["definition", "readonly"],
+      "description": "One-time var definitions (defonce)"
+    },
+    {
+      "tokenType": "macro",
       "pattern": "\\(defmacro\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
-      "modifiers": ["definition"],
+      "tokenModifiers": ["definition"],
       "description": "Macro definitions (defmacro)"
     },
     {
-      "type": "namespace",
-      "pattern": "\\(ns\\s+([a-zA-Z_][a-zA-Z0-9_.-]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Namespace declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|when|cond|condp|let|loop|recur|do|fn|quote|var|try|catch|finally|throw|monitor-enter|monitor-exit|new|set!)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Special forms: conditionals, bindings, exception handling, mutation"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": ":[a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>/=-]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Clojure keywords (:keyword, :namespaced/keyword)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(if|when|cond|let|loop|recur|do|fn|quote|var|try|catch|finally|throw|monitor-enter|monitor-exit)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Special forms"
-    },
-    {
-      "type": "macro",
-      "pattern": "\\b(and|or|when-let|if-let|cond->|cond->>|->|->|as->|some->|doseq|dotimes|for|with-open)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Core macros and threading macros"
-    },
-    {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\(defrecord\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["definition"],
-      "description": "Record type definitions"
+      "tokenModifiers": ["definition"],
+      "description": "Record type definitions (defrecord)"
     },
     {
-      "type": "type",
+      "tokenType": "type",
+      "pattern": "\\(deftype\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Low-level type definitions (deftype)"
+    },
+    {
+      "tokenType": "interface",
       "pattern": "\\(defprotocol\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["definition"],
-      "description": "Protocol definitions"
+      "tokenModifiers": ["definition"],
+      "description": "Protocol definitions (defprotocol)"
     },
     {
-      "type": "function",
-      "pattern": "\\b(map|filter|reduce|apply|partial|comp|juxt|identity|constantly|complement|merge|assoc|dissoc|get|conj|cons|into)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Core library functions"
+      "tokenType": "method",
+      "pattern": "\\(defmethod\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Multimethod implementations (defmethod)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\(defmulti\\s+([a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Multimethod dispatch definitions (defmulti)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(->|->>|as->|some->|some->>|cond->|cond->>)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Threading macros for pipeline-style data transformation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(map|filter|reduce|apply|partial|comp|juxt|identity|constantly|complement|memoize|trampoline)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Higher-order and composition functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(assoc|dissoc|get|get-in|assoc-in|update|update-in|merge|merge-with|select-keys|rename-keys)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Associative data structure operations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(conj|cons|into|empty|count|seq|first|rest|next|last|butlast|nth|peek|pop|vec|set|sorted-set|hash-map|sorted-map)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Core collection constructors and access functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(take|drop|take-while|drop-while|concat|interleave|interpose|partition|partition-by|partition-all|group-by|frequencies|distinct|flatten|mapcat|remove|keep|keep-indexed|dedupe)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Sequence transformation and partitioning functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(transduce|eduction|sequence|completing|halt-when|cat|mapv|filterv|reduce-kv)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Transducer operations and eager collection transforms"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(atom|swap!|reset!|deref|add-watch|remove-watch|compare-and-set!|ref|dosync|alter|commute|ensure|agent|send|send-off|await|await-for)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Atoms, refs, agents, and STM concurrency primitives"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(go|go-loop|<!|>!|alt!|alt!!|chan|close!|put!|take!|thread|onto-chan|pipeline|pipeline-async|pipeline-blocking|timeout|sliding-buffer|dropping-buffer)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Core.async channel operations, buffers, and concurrency macros"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(and|or|when-let|if-let|when-some|if-some|when-not|if-not|when-first|doseq|dotimes|for|with-open|with-redefs|binding|locking|lazy-seq|delay|force)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Core macros for binding, iteration, laziness, and resource management"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(s/def|s/fdef|s/keys|s/cat|s/alt|s/conform|s/valid\\?|s/explain|s/gen|s/and|s/or|s/coll-of|s/map-of|s/tuple|s/every|s/multi-spec|s/nilable)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Clojure.spec definitions, validators, and generators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "#'[a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>/=-]*",
+      "tokenModifiers": [],
+      "description": "Var-quote reader macro (#'symbol)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\^\\{[^}]*\\}|\\^:[a-zA-Z_][a-zA-Z0-9_-]*|\\^[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Metadata annotations (^{:key val}, ^:keyword, ^TypeHint)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "@[a-zA-Z_!?*+<>=-][a-zA-Z0-9_!?*+<>=-]*",
+      "tokenModifiers": [],
+      "description": "Deref reader macro (@atom)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "~@|~",
+      "tokenModifiers": [],
+      "description": "Unquote-splicing (~@) and unquote (~) in syntax-quote"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "#\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "Regex literal reader macro (#\"pattern\")"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\(reify\\s+([A-Z][a-zA-Z0-9_.]*)",
+      "tokenModifiers": [],
+      "description": "Reify anonymous interface implementation"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\(proxy\\s+\\[([A-Z][a-zA-Z0-9_. ]*)\\]",
+      "tokenModifiers": [],
+      "description": "Proxy Java class/interface implementations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": [],
+      "description": "Java interop instance method calls (.method)"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "[A-Z][a-zA-Z0-9_]*\\.(?=[a-zA-Z])|[A-Z][a-zA-Z0-9_]*/[a-zA-Z_]",
+      "tokenModifiers": ["static"],
+      "description": "Java interop static field/method access (Class/field, Class.method)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(println|prn|pr|print|printf|format|str|subs|re-find|re-matches|re-seq|re-pattern)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String, print, and regex functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(type|class|instance\\?|isa\\?|satisfies\\?|extends\\?|supers|ancestors|descendants|parents|derive|make-hierarchy)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Type introspection and hierarchy functions"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+[rR][0-9a-zA-Z]+\\b|\\b0[xX][0-9a-fA-F]+\\b|\\b\\d+N\\b|\\b\\d+/\\d+\\b|\\b\\d+\\.\\d+M\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: radix, hex, bigint (N), ratios, bigdecimal (M)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#_\\s*\\S+|#_\\s*\\([^)]*\\)|#_\\s*\\[[^\\]]*\\]",
+      "tokenModifiers": ["deprecated"],
+      "description": "Discard reader macro (#_) for commenting out forms"
     }
   ]
 }

@@ -2,74 +2,193 @@
   "language": "cpp",
   "symbolPatterns": [
     {
-      "name": "Function",
-      "pattern": "^\\\\s*(?:[\\\\w:<>&*]+\\\\s+)+\\\\*?(\\\\w+)\\\\s*\\\\(",
-      "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
-    },
-    {
       "name": "Class",
-      "pattern": "^\\\\s*(?:template\\\\s*<[^>]*>\\\\s*)?class\\\\s+(\\\\w+)",
+      "pattern": "^\\s*(?:template\\s*<[^>]*>\\s*)?class\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
       "name": "Struct",
-      "pattern": "^\\\\s*(?:template\\\\s*<[^>]*>\\\\s*)?struct\\\\s+(\\\\w+)",
+      "pattern": "^\\s*(?:template\\s*<[^>]*>\\s*)?struct\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "Union",
+      "pattern": "^\\s*union\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 22,
       "type": "struct"
     },
     {
       "name": "Namespace",
-      "pattern": "^\\\\s*namespace\\\\s+(\\\\w+)",
+      "pattern": "^\\s*namespace\\s+(\\w+(?:::\\w+)*)",
       "captureGroup": 1,
       "kind": 2,
-      "type": "module"
+      "type": "namespace"
     },
     {
-      "name": "Enum",
-      "pattern": "^\\\\s*enum\\\\s+(?:class\\\\s+)?(\\\\w+)",
+      "name": "TemplateFunction",
+      "pattern": "^\\s*template\\s*<[^>]*>\\s*(?:(?:inline|static|constexpr|const|volatile|extern)\\s+)*[\\w:<>&*]+\\s+(\\w+)\\s*\\(",
       "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Variable",
-      "pattern": "(?:var|let|const|dim|my|local)\\s+(\\w+)",
+      "name": "Function",
+      "pattern": "^(?:(?:inline|static|extern)\\s+)*(?:[\\w:<>&*]+\\s+)+(\\w+)\\s*\\([^;]*$",
       "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "VirtualMethod",
+      "pattern": "^\\s*virtual\\s+[\\w:<>&*\\s]+\\s+(\\w+)\\s*\\(",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "OverrideMethod",
+      "pattern": "^\\s*(?:[\\w:<>&*]+\\s+)+(\\w+)\\s*\\([^)]*\\)\\s*(?:const\\s*)?override",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "ConstMethod",
+      "pattern": "^\\s*(?:[\\w:<>&*]+\\s+)+(\\w+)\\s*\\([^)]*\\)\\s*const(?:\\s*noexcept)?\\s*[;{]",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Constructor",
+      "pattern": "^\\s*(?:explicit\\s+)?(?:constexpr\\s+)?(\\w+)\\s*\\([^)]*\\)\\s*(?::\\s|\\{|=)",
+      "captureGroup": 1,
+      "kind": 8,
+      "type": "constructor"
+    },
+    {
+      "name": "Destructor",
+      "pattern": "^\\s*(?:virtual\\s+)?(~\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "OperatorOverload",
+      "pattern": "^\\s*(?:[\\w:<>&*]+\\s+)?operator\\s*([^(]+?)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 24,
+      "type": "operator"
+    },
+    {
+      "name": "EnumClass",
+      "pattern": "^\\s*enum\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 9,
+      "type": "enum"
+    },
+    {
+      "name": "Enum",
+      "pattern": "^\\s*enum\\s+(?!class\\b)(\\w+)",
+      "captureGroup": 1,
+      "kind": 9,
+      "type": "enum"
+    },
+    {
+      "name": "EnumMember",
+      "pattern": "^\\s+(\\w+)\\s*(?:=\\s*[^,}]+)?\\s*[,}]",
+      "captureGroup": 1,
+      "kind": 21,
+      "type": "enumMember"
+    },
+    {
+      "name": "TemplateDeclaration",
+      "pattern": "^\\s*template\\s*<([^>]+)>",
+      "captureGroup": 1,
+      "kind": 25,
+      "type": "typeParameter"
+    },
+    {
+      "name": "Typedef",
+      "pattern": "^\\s*typedef\\s+.*?\\s+(\\w+)\\s*;",
       "captureGroup": 1,
       "kind": 25,
       "type": "typeAlias"
+    },
+    {
+      "name": "UsingAlias",
+      "pattern": "^\\s*using\\s+(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 25,
+      "type": "typeAlias"
+    },
+    {
+      "name": "DefineMacro",
+      "pattern": "^\\s*#\\s*define\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "Include",
+      "pattern": "^\\s*#\\s*include\\s+[<\"]([^>\"]+)[>\"]",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "FriendDeclaration",
+      "pattern": "^\\s*friend\\s+(?:class\\s+|struct\\s+)?(\\w+)",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "StaticMemberVariable",
+      "pattern": "^\\s*static\\s+(?:(?:const|constexpr|inline)\\s+)*[\\w:<>&*]+\\s+(\\w+)\\s*[;=]",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "ConstexprVariable",
+      "pattern": "^\\s*(?:static\\s+)?constexpr\\s+[\\w:<>&*]+\\s+(\\w+)\\s*[;=]",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "ConstexprFunction",
+      "pattern": "^\\s*(?:static\\s+)?constexpr\\s+[\\w:<>&*]+\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Concept",
+      "pattern": "^\\s*(?:template\\s*<[^>]*>\\s*)?concept\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 10,
+      "type": "interface"
+    },
+    {
+      "name": "ExportModule",
+      "pattern": "^\\s*(?:export\\s+)?module\\s+(\\w+(?:\\.\\w+)*)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "ImportModule",
+      "pattern": "^\\s*(?:export\\s+)?import\\s+(\\w+(?:\\.\\w+)*)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
     }
   ]
 }

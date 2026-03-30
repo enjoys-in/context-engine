@@ -1,43 +1,6 @@
 {
   "language": "nextjs",
-  "tokenTypes": [
-    "namespace",
-    "type",
-    "class",
-    "enum",
-    "interface",
-    "struct",
-    "typeParameter",
-    "parameter",
-    "variable",
-    "property",
-    "enumMember",
-    "event",
-    "function",
-    "method",
-    "macro",
-    "keyword",
-    "modifier",
-    "comment",
-    "string",
-    "number",
-    "regexp",
-    "operator",
-    "decorator"
-  ],
-  "tokenModifiers": [
-    "declaration",
-    "definition",
-    "readonly",
-    "static",
-    "deprecated",
-    "async",
-    "modification",
-    "documentation",
-    "defaultLibrary",
-    "abstract"
-  ],
-  "tokenLegend": {
+  "legend": {
     "tokenTypes": [
       "namespace",
       "type",
@@ -78,52 +41,52 @@
   },
   "semanticRules": [
     {
-      "pattern": "\\b(import|export|from|default|as)\\b",
       "tokenType": "keyword",
+      "pattern": "\\b(import|export|from|default|as)\\b",
       "tokenModifiers": [],
       "description": "Module keywords"
     },
     {
-      "pattern": "\\b(function|return|const|let|var|if|else|for|while|do|switch|case|break|continue|throw|try|catch|finally|new|delete|typeof|instanceof|in|of|void|yield|await|async|class|extends|super|this|static|get|set)\\b",
       "tokenType": "keyword",
+      "pattern": "\\b(function|return|const|let|var|if|else|for|while|do|switch|case|break|continue|throw|try|catch|finally|new|delete|typeof|instanceof|in|of|void|yield|await|async|class|extends|super|this|static|get|set)\\b",
       "tokenModifiers": [],
       "description": "Language keywords"
     },
     {
-      "pattern": "\\b(use(?:State|Effect|Context|Reducer|Callback|Memo|Ref|ImperativeHandle|LayoutEffect|DebugValue|DeferredValue|Transition|Id|SyncExternalStore|FormStatus|FormState|Optimistic|Router|Pathname|SearchParams|Params|SelectedLayoutSegment|SelectedLayoutSegments|ReportWebVitals))\\b",
       "tokenType": "function",
+      "pattern": "\\b(use(?:State|Effect|Context|Reducer|Callback|Memo|Ref|ImperativeHandle|LayoutEffect|DebugValue|DeferredValue|Transition|Id|SyncExternalStore|FormStatus|FormState|Optimistic|Router|Pathname|SearchParams|Params|SelectedLayoutSegment|SelectedLayoutSegments|ReportWebVitals))\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "React/Next.js hooks"
     },
     {
-      "pattern": "\\b(Image|Link|Script|Head|NextScript|NextDocument|Main|Html)\\b",
       "tokenType": "class",
+      "pattern": "\\b(Image|Link|Script|Head|NextScript|NextDocument|Main|Html)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Next.js built-in components"
     },
     {
-      "pattern": "\\b(NextRequest|NextResponse|NextMiddleware)\\b",
       "tokenType": "class",
+      "pattern": "\\b(NextRequest|NextResponse|NextMiddleware)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Next.js server types"
     },
     {
-      "pattern": "\\b(NextPage|NextApiRequest|NextApiResponse|GetServerSideProps|GetStaticProps|GetStaticPaths|Metadata|MetadataRoute|Viewport)\\b",
       "tokenType": "type",
+      "pattern": "\\b(NextPage|NextApiRequest|NextApiResponse|GetServerSideProps|GetStaticProps|GetStaticPaths|Metadata|MetadataRoute|Viewport)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Next.js type definitions"
     },
     {
-      "pattern": "\\bexport\\s+default\\s+function\\s+(\\w+)",
       "tokenType": "function",
+      "pattern": "\\bexport\\s+default\\s+function\\s+(\\w+)",
       "tokenModifiers": [
         "declaration",
         "definition"
@@ -131,17 +94,17 @@
       "description": "Default-exported component"
     },
     {
-      "pattern": "\\bexport\\s+async\\s+function\\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\\b",
       "tokenType": "method",
+      "pattern": "\\bexport\\s+async\\s+function\\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\\b",
       "tokenModifiers": [
         "declaration",
         "async"
       ],
-      "description": "Route handler methods"
+      "description": "Route handler methods (app/api)"
     },
     {
-      "pattern": "\\bexport\\s+async\\s+function\\s+(generateStaticParams|generateMetadata)\\b",
       "tokenType": "function",
+      "pattern": "\\bexport\\s+async\\s+function\\s+(generateStaticParams|generateMetadata|generateSitemaps|generateImageMetadata)\\b",
       "tokenModifiers": [
         "declaration",
         "async"
@@ -149,8 +112,8 @@
       "description": "Next.js generation functions"
     },
     {
-      "pattern": "\\bexport\\s+const\\s+(metadata|revalidate|dynamic|runtime|fetchCache|preferredRegion)\\b",
       "tokenType": "variable",
+      "pattern": "\\bexport\\s+const\\s+(metadata|revalidate|dynamic|runtime|fetchCache|preferredRegion|maxDuration|dynamicParams)\\b",
       "tokenModifiers": [
         "declaration",
         "readonly"
@@ -158,104 +121,156 @@
       "description": "Route segment config exports"
     },
     {
-      "pattern": "\"use (client|server)\"",
       "tokenType": "macro",
+      "pattern": "\"use (client|server)\"",
       "tokenModifiers": [],
-      "description": "React directives"
+      "description": "React Server Component directives"
     },
     {
-      "pattern": "\\b(React\\.(?:FC|Component|PureComponent|Fragment|Suspense|StrictMode|Profiler|createElement|cloneElement|createContext|forwardRef|lazy|memo|startTransition))\\b",
+      "tokenType": "macro",
+      "pattern": "'use (client|server)'",
+      "tokenModifiers": [],
+      "description": "React Server Component directives (single-quoted)"
+    },
+    {
       "tokenType": "function",
+      "pattern": "\\bexport\\s+default\\s+function\\s+(Loading|Error|NotFound|Layout|Template|Default)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "definition"
+      ],
+      "description": "Next.js special boundary/layout file exports (loading.tsx, error.tsx, not-found.tsx)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bexport\\s+function\\s+(middleware)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Next.js middleware function export"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bexport\\s+const\\s+(config)\\s*=\\s*\\{\\s*matcher",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Next.js middleware matcher config"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(React\\.(?:FC|Component|PureComponent|Fragment|Suspense|StrictMode|Profiler|createElement|cloneElement|createContext|forwardRef|lazy|memo|startTransition))\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "React namespace APIs"
     },
     {
-      "pattern": "\\binterface\\s+(\\w+)",
       "tokenType": "interface",
+      "pattern": "\\binterface\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Interface declarations"
     },
     {
-      "pattern": "\\btype\\s+(\\w+)\\s*=",
       "tokenType": "type",
+      "pattern": "\\btype\\s+(\\w+)\\s*=",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Type alias declarations"
     },
     {
-      "pattern": "\\benum\\s+(\\w+)",
       "tokenType": "enum",
+      "pattern": "\\benum\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Enum declarations"
     },
     {
-      "pattern": "\\bclass\\s+(\\w+)",
       "tokenType": "class",
+      "pattern": "\\bclass\\s+(\\w+)",
       "tokenModifiers": [
         "declaration"
       ],
       "description": "Class declarations"
     },
     {
-      "pattern": "<([A-Z][a-zA-Z0-9.]*)",
       "tokenType": "class",
+      "pattern": "<([A-Z][a-zA-Z0-9.]*)",
       "tokenModifiers": [],
       "description": "JSX component references"
     },
     {
-      "pattern": "\\b(redirect|notFound|revalidatePath|revalidateTag|unstable_cache|unstable_noStore|headers|cookies|fetch)\\b",
       "tokenType": "function",
+      "pattern": "\\b(redirect|permanentRedirect|notFound|revalidatePath|revalidateTag|unstable_cache|unstable_noStore|headers|cookies|fetch|draftMode)\\b",
       "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Next.js server functions"
     },
     {
-      "pattern": "\\b(params|searchParams|children|className)\\b",
+      "tokenType": "function",
+      "pattern": "\\b(dynamic)\\s*\\(\\s*\\(\\)\\s*=>\\s*import\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "next/dynamic lazy loading pattern"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "@[a-zA-Z][a-zA-Z0-9]*(?=\\/)",
+      "tokenModifiers": [],
+      "description": "Parallel route slot folders (@folder convention)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\(\\.\\.\\.?\\)|\\(\\.\\)",
+      "tokenModifiers": [],
+      "description": "Intercepting route conventions ((.), (..), (...))"
+    },
+    {
       "tokenType": "parameter",
+      "pattern": "\\b(params|searchParams|children|className)\\b",
       "tokenModifiers": [],
       "description": "Common Next.js props"
     },
     {
-      "pattern": "@(\\w+)",
       "tokenType": "decorator",
+      "pattern": "@(\\w+)",
       "tokenModifiers": [],
       "description": "Decorators"
     },
     {
-      "pattern": "(?:^|\\s)(?:\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)",
       "tokenType": "comment",
+      "pattern": "(?:^|\\s)(?:\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)",
       "tokenModifiers": [],
       "description": "Comments"
     },
     {
-      "pattern": "(?:'[^']*'|\"[^\"]*\"|`[^`]*`)",
       "tokenType": "string",
+      "pattern": "(?:'[^']*'|\"[^\"]*\"|`[^`]*`)",
       "tokenModifiers": [],
       "description": "String literals"
     },
     {
-      "pattern": "\\b\\d+(\\.\\d+)?\\b",
       "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
       "tokenModifiers": [],
       "description": "Numeric literals"
     },
     {
-      "pattern": "\\/(?!\\/|\\*)[^\\/\\n]+\\/[gimsuy]*",
       "tokenType": "regexp",
+      "pattern": "\\/(?!\\/|\\*)[^\\/\\n]+\\/[gimsuy]*",
       "tokenModifiers": [],
       "description": "Regular expressions"
     },
     {
-      "pattern": "\\b(process\\.env\\.\\w+|NEXT_PUBLIC_\\w+)\\b",
       "tokenType": "variable",
+      "pattern": "\\b(process\\.env\\.\\w+|NEXT_PUBLIC_\\w+)\\b",
       "tokenModifiers": [
         "readonly"
       ],

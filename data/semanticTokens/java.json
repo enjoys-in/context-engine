@@ -1,77 +1,291 @@
 {
   "language": "java",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "typeParameter", "parameter", "variable", "property", "enumMember", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(class|interface|enum|record|extends|implements|throws|throw|new|instanceof|return|if|else|for|while|do|switch|case|default|break|continue|try|catch|finally|import|package|this|super|void|assert|yield)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(class|interface|enum|extends|implements|throws|throw|new|return|if|else|for|while|do|break|continue|try|catch|finally|import|package|this|super|void|instanceof|switch|case|default|yield|assert|synchronized|goto|transient|volatile|native|strictfp)\\b",
+      "tokenModifiers": [],
       "description": "Java language keywords"
     },
     {
-      "type": "decorator",
-      "pattern": "@[A-Z][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Annotations like @Override, @Deprecated, @FunctionalInterface"
+      "tokenType": "decorator",
+      "pattern": "@(Override|Deprecated|SuppressWarnings|FunctionalInterface|SafeVarargs|Retention|Target|Documented|Inherited|Repeatable)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in Java annotations from java.lang and java.lang.annotation"
     },
     {
-      "type": "class",
-      "pattern": "(?<=(?:class|interface|enum|record)\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Class, interface, enum, and record declarations"
+      "tokenType": "decorator",
+      "pattern": "@[A-Z][a-zA-Z0-9_]*(\\([^)]*\\))?",
+      "tokenModifiers": [],
+      "description": "Custom annotations with optional parameters"
     },
     {
-      "type": "typeParameter",
-      "pattern": "(?<=<\\s*)[A-Z][a-zA-Z0-9_]*(?=\\s*(?:extends|super|>|,))",
-      "modifiers": ["declaration"],
-      "description": "Generic type parameters like <T>, <K extends Comparable>"
+      "tokenType": "class",
+      "pattern": "(?<=\\bclass\\s)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class name declarations"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(public|private|protected|static|final|abstract|synchronized|volatile|transient|native|strictfp|sealed|non-sealed|default)\\b",
-      "modifiers": [],
+      "tokenType": "interface",
+      "pattern": "(?<=\\binterface\\s)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Interface name declarations"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "(?<=\\benum\\s)[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum type declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "(?<=\\brecord\\s)[A-Z][a-zA-Z0-9_]*\\s*\\(",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Record type declarations (Java 16+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bsealed\\s+(class|interface)\\b|\\bpermits\\s+[A-Z][a-zA-Z0-9_,\\s]*",
+      "tokenModifiers": [],
+      "description": "Sealed classes and permits clause (Java 17+)"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\bnon-sealed\\b",
+      "tokenModifiers": [],
+      "description": "Non-sealed modifier for sealed class hierarchies"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "<\\s*[A-Z][a-zA-Z0-9_]*\\s*(extends|super)\\s+[A-Z][a-zA-Z0-9_<>,\\s]*>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Bounded generic type parameters like <T extends Comparable<T>>"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "<\\?\\s*(extends|super)\\s+[A-Z][a-zA-Z0-9_<>,\\s]*>",
+      "tokenModifiers": [],
+      "description": "Bounded wildcard generics like <? extends Number> or <? super Integer>"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected|static|final|abstract|synchronized|volatile|transient|native|strictfp|default)\\b",
+      "tokenModifiers": [],
       "description": "Access and non-access modifiers"
     },
     {
-      "type": "method",
+      "tokenType": "method",
+      "pattern": "\\b[a-z_][a-zA-Z0-9_]*\\s*(?=\\([^)]*\\)\\s*\\{)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Method definitions with body"
+    },
+    {
+      "tokenType": "method",
       "pattern": "\\b[a-z_][a-zA-Z0-9_]*\\s*(?=\\()",
-      "modifiers": ["definition"],
-      "description": "Method declarations and invocations"
+      "tokenModifiers": [],
+      "description": "Method invocations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(String|Integer|Long|Double|Float|Boolean|Character|Byte|Short|Object|List|Map|Set|Optional|Stream|Collection|Iterable|Comparable|Runnable|Callable)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Common built-in and standard library types"
+      "tokenType": "type",
+      "pattern": "\\b(String|Integer|Long|Double|Float|Boolean|Character|Byte|Short|Object|List|Map|Set|Optional|Stream|Collection|Iterable|Comparable|Runnable|Callable|Future|CompletableFuture|Array|Arrays|Collections|Math|System|Thread|Class|Enum|Record)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Standard library and common built-in types"
     },
     {
-      "type": "namespace",
-      "pattern": "(?<=(?:package|import)\\s+)[a-z][a-z0-9.]*",
-      "modifiers": [],
+      "tokenType": "namespace",
+      "pattern": "(?<=(?:package|import)\\s)[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*",
+      "tokenModifiers": [],
       "description": "Package and import path declarations"
     },
     {
-      "type": "comment",
-      "pattern": "//.*$|/\\*[\\s\\S]*?\\*/|/\\*\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
-      "description": "Single-line, multi-line, and Javadoc comments"
+      "tokenType": "string",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"",
+      "tokenModifiers": [],
+      "description": "Text blocks (Java 15+ multi-line string literals)"
     },
     {
-      "type": "string",
-      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|\"\"\"[\\s\\S]*?\"\"\"",
-      "modifiers": [],
-      "description": "String literals and text blocks"
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Standard string literals"
     },
     {
-      "type": "enumMember",
+      "tokenType": "comment",
+      "pattern": "//.*$|/\\*\\*[\\s\\S]*?\\*/|/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Single-line, Javadoc, and multi-line block comments"
+    },
+    {
+      "tokenType": "enumMember",
       "pattern": "\\b[A-Z][A-Z0-9_]+\\b",
-      "modifiers": ["readonly", "static"],
+      "tokenModifiers": [
+        "readonly",
+        "static"
+      ],
       "description": "Enum constants and static final fields in UPPER_CASE"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bvar\\s+[a-z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Local variable type inference with var (Java 10+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bswitch\\s*\\([^)]*\\)\\s*\\{[^}]*->",
+      "tokenModifiers": [],
+      "description": "Switch expressions with arrow syntax (Java 14+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\binstanceof\\s+[A-Z][a-zA-Z0-9_]*\\s+[a-z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Pattern matching for instanceof with binding variable (Java 16+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\btry\\s*\\([^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Try-with-resources statement for AutoCloseable resources"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\([^)]*\\)\\s*->\\s*[{(]?",
+      "tokenModifiers": [],
+      "description": "Lambda expressions with parameter list and arrow operator"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*\\s*::\\s*[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Method references using :: operator (e.g., String::valueOf, this::method)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "[A-Z][a-zA-Z0-9_]*\\s*::\\s*new",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Constructor references using ::new"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(static|default)\\s+[a-zA-Z_<>][a-zA-Z0-9_<>,\\s]*\\s+[a-z_][a-zA-Z0-9_]*\\s*\\(",
+      "tokenModifiers": [
+        "definition",
+        "static"
+      ],
+      "description": "Static and default interface method declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bassert\\s+.+?(\\s*:\\s*.+?)?;",
+      "tokenModifiers": [],
+      "description": "Assert statements with optional message"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(stream|parallelStream|of|iterate|generate|concat|builder|empty)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Stream creation and factory methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(filter|map|flatMap|peek|distinct|sorted|limit|skip|takeWhile|dropWhile|mapToInt|mapToLong|mapToDouble)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Stream intermediate operations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(collect|forEach|forEachOrdered|toArray|reduce|count|min|max|anyMatch|allMatch|noneMatch|findFirst|findAny|toList)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Stream terminal operations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(requires|exports|opens|uses|provides|with|to|transitive|module|open)\\b",
+      "tokenModifiers": [],
+      "description": "Module system keywords for module-info.java (Java 9+)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0[xX][0-9a-fA-F_]+[lL]?|0[bB][01_]+[lL]?|[0-9][0-9_]*\\.?[0-9_]*([eE][+-]?[0-9_]+)?[fFdDlL]?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals including hex, binary, floating point with suffixes"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[+\\-*/%]=?|&&|\\|\\||[!<>=]=?|&|\\||\\^|~|<<|>>>?|\\?|:",
+      "tokenModifiers": [],
+      "description": "Arithmetic, logical, bitwise, and ternary operators"
     }
   ]
 }

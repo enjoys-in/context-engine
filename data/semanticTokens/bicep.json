@@ -1,71 +1,236 @@
 {
   "language": "bicep",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "variable", "parameter", "type", "function", "property", "namespace", "decorator", "string"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary", "documentation"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "parameter",
+      "type",
+      "function",
+      "property",
+      "namespace",
+      "decorator",
+      "string",
+      "operator",
+      "comment"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(resource)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+'([^']+)'",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(resource)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+'[^']+'",
+      "tokenModifiers": ["declaration"],
       "description": "Resource declarations with symbolic name and type"
     },
     {
-      "type": "parameter",
+      "tokenType": "parameter",
       "pattern": "\\bparam\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Parameter declarations"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\bvar\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Variable declarations"
     },
     {
-      "type": "variable",
-      "pattern": "\\boutput\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Output declarations"
+      "tokenType": "keyword",
+      "pattern": "\\boutput\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+[a-zA-Z]+",
+      "tokenModifiers": ["declaration"],
+      "description": "Output declarations with type"
     },
     {
-      "type": "namespace",
-      "pattern": "\\bmodule\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+'([^']+)'",
-      "modifiers": ["declaration"],
-      "description": "Module references"
+      "tokenType": "namespace",
+      "pattern": "\\bmodule\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+'[^']+'",
+      "tokenModifiers": ["declaration"],
+      "description": "Module references with symbolic name and path"
     },
     {
-      "type": "function",
-      "pattern": "\\b(resourceGroup|subscription|tenant|managementGroup|resourceId|reference|uniqueString|concat|format)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Scope and built-in functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(targetScope)\\s*=\\s*'(resourceGroup|subscription|managementGroup|tenant)'",
+      "tokenModifiers": [],
+      "description": "Target scope assignment for deployment level"
     },
     {
-      "type": "type",
-      "pattern": "\\b(string|int|bool|object|array)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Bicep types"
-    },
-    {
-      "type": "decorator",
-      "pattern": "@(description|secure|allowed|minLength|maxLength|minValue|maxValue|metadata|batchSize)",
-      "modifiers": [],
-      "description": "Bicep decorators"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\b(targetScope|existing|if|for|in)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(existing|if|for|in|import|using|as|with|type|func|assert|test|metadata)\\b",
+      "tokenModifiers": [],
       "description": "Bicep language keywords"
     },
     {
-      "type": "property",
+      "tokenType": "type",
+      "pattern": "\\b(string|int|bool|object|array)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in Bicep primitive types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btype\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=",
+      "tokenModifiers": ["declaration"],
+      "description": "User-defined type declarations"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(description|secure|allowed|minLength|maxLength|minValue|maxValue|metadata|batchSize|export)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Standard Bicep decorators for parameters and types"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@sys\\.(description|batchSize)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "System-namespaced decorators (@sys.description, @sys.batchSize)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(discriminator|sealed)\\b",
+      "tokenModifiers": [],
+      "description": "Type system decorators for discriminated unions and sealed types"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(resourceGroup|subscription|tenant|managementGroup|environment|deployment)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Scope and context built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(resourceId|reference|list|listKeys|listAccountSas|listServiceSas|listAdminKeys|listCallbackUrl|listSecrets|listSyncFunctionTriggerStatus)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Resource reference and list* accessor functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(uniqueString|guid|newGuid|utcNow|dateTimeAdd|dateTimeEpoch|dateTimeFromEpoch|dateTimeToEpoch)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String generation and date/time built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(concat|format|toLower|toUpper|trim|replace|split|join|substring|take|skip|indexOf|lastIndexOf|padLeft|length|first|last|empty|contains|startsWith|endsWith)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String and array manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(union|intersection|array|flatten|filter|map|reduce|sort|toObject|groupBy|chunk|items|objectKeys|shallowMerge)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Collection and object manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(base64|base64ToJson|base64ToString|uri|uriComponent|uriComponentToString|json|int|string|bool|range|min|max|any|all)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Conversion, encoding, and numeric built-in functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(loadTextContent|loadJsonContent|loadFileAsBase64)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Compile-time file loading functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunc\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": ["declaration"],
+      "description": "User-defined function (lambda) declarations"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\.(name|id|properties|location|tags|type|apiVersion)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Common Azure resource property accessors"
+    },
+    {
+      "tokenType": "property",
       "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": [],
-      "description": "Property access on resources and objects"
+      "tokenModifiers": [],
+      "description": "General property access on resources and objects"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'[^']*\\$\\{[^}]+\\}[^']*'",
+      "tokenModifiers": [],
+      "description": "String interpolation expressions '...${expr}...'"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'''[\\s\\S]*?'''",
+      "tokenModifiers": [],
+      "description": "Multi-line strings enclosed in triple single quotes"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bresource\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+'[^']*'\\s+existing\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Existing resource reference for read-only access"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bresource\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+'[^']*'\\s+if\\b",
+      "tokenModifiers": [],
+      "description": "Conditional resource deployment"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\[\\s*for\\s+(?:([a-zA-Z_][a-zA-Z0-9_]*)\\s*,\\s*)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+in\\s+",
+      "tokenModifiers": [],
+      "description": "Loop expressions [for item in collection: ...] with optional index"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\?",
+      "tokenModifiers": [],
+      "description": "Null coalescing operator (??)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[^?]\\?[^?].*:",
+      "tokenModifiers": [],
+      "description": "Ternary conditional operator (condition ? trueVal : falseVal)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "=>",
+      "tokenModifiers": [],
+      "description": "Lambda arrow operator for func expressions"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "'[^']*'(?:\\s*\\|\\s*'[^']*')+",
+      "tokenModifiers": [],
+      "description": "Union types with string literal members"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bimport\\s+'[^']+'\\s+as\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "Module import with namespace alias"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "'Microsoft\\.(Compute|Network|Storage|Web|KeyVault|ContainerService|Sql|Authorization|ManagedIdentity|OperationalInsights|ContainerRegistry|App|ServiceBus|EventHub|CognitiveServices)/[^']+'",
+      "tokenModifiers": [],
+      "description": "Azure resource provider namespaces in resource type strings"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Multi-line block comments"
     }
   ]
 }

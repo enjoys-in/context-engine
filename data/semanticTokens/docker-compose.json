@@ -1,65 +1,202 @@
 {
   "language": "docker-compose",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "property", "variable", "string", "namespace", "type", "number"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "property",
+      "variable",
+      "string",
+      "namespace",
+      "type",
+      "number",
+      "operator",
+      "comment"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "^(services|volumes|networks|configs|secrets):",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "^(services|volumes|networks|configs|secrets|version|name):",
+      "tokenModifiers": [],
       "description": "Top-level compose keys"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "^\\s{2}([a-zA-Z_][a-zA-Z0-9_-]*):",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Service name declarations"
     },
     {
-      "type": "property",
-      "pattern": "\\b(image|build|ports|volumes|environment|depends_on|networks|restart|command|entrypoint|container_name|hostname|working_dir|healthcheck|deploy|labels|logging):",
-      "modifiers": [],
+      "tokenType": "property",
+      "pattern": "\\b(image|build|ports|volumes|environment|depends_on|networks|restart|command|entrypoint|container_name|hostname|working_dir|healthcheck|deploy|labels|logging|env_file|secrets|profiles|platform|privileged|cap_add|cap_drop|devices|dns|extra_hosts|init|pid|sysctls|ulimits|shm_size):",
+      "tokenModifiers": [],
       "description": "Service configuration properties"
     },
     {
-      "type": "variable",
-      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*)(?::-[^}]*)?\\}",
-      "modifiers": [],
-      "description": "Environment variable interpolation (${VAR}, ${VAR:-default})"
+      "tokenType": "variable",
+      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*)(?::?[-+]([^}]*))?\\}",
+      "tokenModifiers": [],
+      "description": "Environment variable interpolation (${VAR}, ${VAR:-default}, ${VAR:+alt})"
     },
     {
-      "type": "string",
-      "pattern": "\\b([a-z][a-z0-9_.-]*/[a-z][a-z0-9_.-]*(?::[a-zA-Z0-9_.-]+)?)\\b",
-      "modifiers": ["readonly"],
-      "description": "Docker image references (registry/image:tag)"
+      "tokenType": "string",
+      "pattern": "\\b([a-z][a-z0-9_.-]*/[a-z][a-z0-9_.-]*(?::[a-zA-Z0-9_.-]+)?(?:@sha256:[a-f0-9]+)?)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Docker image references (registry/image:tag@digest)"
     },
     {
-      "type": "type",
-      "pattern": "\\b(bridge|host|overlay|macvlan|none)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "type",
+      "pattern": "\\b(bridge|host|overlay|macvlan|none|ipvlan)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Network driver types"
     },
     {
-      "type": "property",
-      "pattern": "\\b(driver|external|name|driver_opts|attachable|internal|ipam):",
-      "modifiers": [],
+      "tokenType": "property",
+      "pattern": "\\b(driver|external|name|driver_opts|attachable|internal|ipam|aliases|enable_ipv6):",
+      "tokenModifiers": [],
       "description": "Volume and network sub-properties"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "^\\s+- ([A-Z_][A-Z0-9_]*)=",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Environment variable definitions in lists"
     },
     {
-      "type": "number",
-      "pattern": "\"?([0-9]+):([0-9]+)\"?",
-      "modifiers": [],
-      "description": "Port mappings (host:container)"
+      "tokenType": "number",
+      "pattern": "\"?(\\d{1,5}):(\\d{1,5})(?:/(tcp|udp))?\"?",
+      "tokenModifiers": [],
+      "description": "Port mappings with optional protocol (host:container/protocol)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bcondition:\\s*(service_started|service_healthy|service_completed_successfully)",
+      "tokenModifiers": [],
+      "description": "Service depends_on condition values"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bhealthcheck:\\s*\\n(?:\\s+(?:test|interval|timeout|retries|start_period|start_interval|disable):)",
+      "tokenModifiers": [],
+      "description": "Healthcheck configuration with test, interval, timeout, retries, start_period"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(resources):\\s*\\n\\s+(?:limits|reservations):\\s*\\n\\s+(?:cpus|memory|pids|devices):",
+      "tokenModifiers": [],
+      "description": "Deploy resources with limits and reservations (cpus, memory, pids)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bbuild:\\s*\\n\\s+(?:context|dockerfile|args|target|cache_from|network|labels|shm_size|extra_hosts):",
+      "tokenModifiers": [],
+      "description": "Build configuration with context, dockerfile, args, target, cache_from"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bprofiles:\\s*\\n(?:\\s+-\\s+[a-zA-Z_][a-zA-Z0-9_-]*)+",
+      "tokenModifiers": [],
+      "description": "Service profiles for selective service startup"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<<:\\s*\\*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "tokenModifiers": [],
+      "description": "YAML merge key (<<:) with anchor reference for shared configuration"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^\\s*x-([a-zA-Z_][a-zA-Z0-9_-]*):",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Extension fields (x-) for custom reusable configuration fragments"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(mode|replicas|placement|rollback_config|update_config|endpoint_mode|restart_policy):",
+      "tokenModifiers": [],
+      "description": "Deploy sub-properties for swarm/stack deployment"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(always|unless-stopped|on-failure|no)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Restart policy values"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "&([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "YAML anchor definitions (&anchor-name)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\*([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "tokenModifiers": [],
+      "description": "YAML alias references (*alias-name)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(service_healthy|service_started|service_completed_successfully)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "depends_on condition values"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "([a-zA-Z0-9_./-]+):([a-zA-Z0-9_./-]+)(?::(ro|rw|z|Z|cached|delegated|consistent))?",
+      "tokenModifiers": [],
+      "description": "Volume mount syntax (source:target:mode)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(test|interval|timeout|retries|start_period|start_interval|disable):",
+      "tokenModifiers": [],
+      "description": "Healthcheck sub-properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(max_replicas_per_node|constraints|preferences|max_size|max_file|delay|failure_action|monitor|max_failure_ratio|order|parallelism|window):",
+      "tokenModifiers": [],
+      "description": "Deploy placement, logging, and update/rollback config sub-properties"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(global|replicated)\\b",
+      "tokenModifiers": [],
+      "description": "Deploy mode values (global, replicated)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "YAML comment lines"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(read_only|tmpfs|security_opt|stop_signal|stop_grace_period|tty|stdin_open|user|domainname|ipc|mac_address|network_mode|scale):",
+      "tokenModifiers": [],
+      "description": "Additional service configuration properties"
     }
   ]
 }

@@ -3,73 +3,164 @@
   "symbolPatterns": [
     {
       "name": "Command",
-      "pattern": "^\\s*(GET|SET|DEL|HGET|HSET|HDEL|HGETALL|LPUSH|RPUSH|LPOP|RPOP|LRANGE|SADD|SREM|SMEMBERS|ZADD|ZREM|ZRANGE|SUBSCRIBE|PUBLISH|MULTI|EXEC|SELECT|AUTH|KEYS|SCAN|INFO|CONFIG|FLUSHDB|FLUSHALL)\\b",
+      "pattern": "^\\s*(GET|SET|DEL|MGET|MSET|SETNX|SETEX|GETSET|APPEND|INCR|DECR|INCRBY|DECRBY|STRLEN|GETRANGE|SETRANGE|KEYS|SCAN|RANDOMKEY|RENAME|SORT|TYPE|OBJECT|DUMP|RESTORE|UNLINK|EXISTS|TOUCH|PERSIST|EXPIRE|PEXPIRE|EXPIREAT|TTL|PTTL)\\b",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "Key",
-      "pattern": "^\\s*(?:GET|SET|DEL|HGET|HSET|LPUSH|RPUSH|SADD|ZADD)\\s+(\\S+)",
+      "name": "Key Argument",
+      "pattern": "^\\s*(?:GET|SET|DEL|SETNX|SETEX|GETSET|APPEND|INCR|DECR|INCRBY|DECRBY|STRLEN|EXPIRE|TTL|PTTL|TYPE|EXISTS|RENAME|UNLINK|PERSIST|DUMP|RESTORE|OBJECT|COPY|MOVE)\\s+(\\S+)",
       "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
+      "kind": 19,
+      "type": "key"
     },
     {
-      "name": "Comment",
-      "pattern": "^\\s*#\\s*(.*)",
+      "name": "AUTH",
+      "pattern": "^\\s*(AUTH)\\s+",
       "captureGroup": 1,
-      "kind": 14,
-      "type": "string"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
+      "name": "SELECT Database",
+      "pattern": "^\\s*SELECT\\s+(\\d+)",
       "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
+      "kind": 2,
+      "type": "namespace"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "CONFIG SET",
+      "pattern": "^\\s*CONFIG\\s+SET\\s+(\\S+)",
       "captureGroup": 1,
       "kind": 6,
       "type": "property"
     },
     {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "CONFIG GET",
+      "pattern": "^\\s*CONFIG\\s+GET\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "CONFIG Command",
+      "pattern": "^\\s*(CONFIG)\\s+(?:SET|GET|REWRITE|RESETSTAT)\\b",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "INFO Section",
+      "pattern": "^\\s*INFO\\s+(server|clients|memory|persistence|stats|replication|cpu|commandstats|latencystats|cluster|keyspace|modules|errorstats|all|everything|default)",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "CLIENT Command",
+      "pattern": "^\\s*CLIENT\\s+(LIST|GETNAME|SETNAME|KILL|PAUSE|UNPAUSE|REPLY|ID|INFO|NO-EVICT)\\b",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "CLIENT SETNAME",
+      "pattern": "^\\s*CLIENT\\s+SETNAME\\s+(\\S+)",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "CLUSTER Command",
+      "pattern": "^\\s*CLUSTER\\s+(INFO|NODES|MEET|FORGET|REPLICATE|SAVECONFIG|ADDSLOTS|DELSLOTS|SETSLOT|FAILOVER|RESET|SLOTS|MYID|KEYSLOT|COUNTKEYSINSLOT|GETKEYSINSLOT|LINKS)\\b",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "SENTINEL Command",
+      "pattern": "^\\s*SENTINEL\\s+(MONITOR|MASTERS|MASTER|SLAVES|REPLICAS|SENTINELS|GET-MASTER-ADDR-BY-NAME|RESET|FAILOVER|CKQUORUM|FLUSHCONFIG|SET|REMOVE|PENDING-SCRIPTS)\\b",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "SENTINEL Monitor Target",
+      "pattern": "^\\s*SENTINEL\\s+MONITOR\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "DEBUG Command",
+      "pattern": "^\\s*DEBUG\\s+(SLEEP|OBJECT|SEGFAULT|SET-ACTIVE-EXPIRE|RELOAD|LOADAOF|CHANGE-REPL-ID)\\b",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "MONITOR",
+      "pattern": "^\\s*(MONITOR)\\b",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "SLOWLOG Command",
+      "pattern": "^\\s*SLOWLOG\\s+(GET|LEN|RESET)\\b",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Hash Key",
+      "pattern": "^\\s*(?:HGET|HSET|HDEL|HGETALL|HMGET|HMSET|HINCRBY|HINCRBYFLOAT|HEXISTS|HKEYS|HVALS|HLEN|HSETNX|HSCAN|HRANDFIELD)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "List Key",
+      "pattern": "^\\s*(?:LPUSH|RPUSH|LPOP|RPOP|LRANGE|LLEN|LINDEX|LSET|LINSERT|LREM|LTRIM|LMOVE|LPOS|BLPOP|BRPOP|BLMOVE)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Set Key",
+      "pattern": "^\\s*(?:SADD|SREM|SMEMBERS|SISMEMBER|SCARD|SRANDMEMBER|SPOP|SUNION|SINTER|SDIFF|SUNIONSTORE|SINTERSTORE|SDIFFSTORE|SSCAN)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Sorted Set Key",
+      "pattern": "^\\s*(?:ZADD|ZREM|ZRANGE|ZRANGEBYSCORE|ZRANGEBYLEX|ZREVRANGE|ZRANK|ZSCORE|ZCARD|ZCOUNT|ZINCRBY|ZUNIONSTORE|ZINTERSTORE|ZSCAN|ZPOPMIN|ZPOPMAX|ZRANDMEMBER)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Stream Key",
+      "pattern": "^\\s*(?:XADD|XREAD|XREADGROUP|XRANGE|XREVRANGE|XLEN|XTRIM|XDEL|XINFO|XGROUP|XACK|XCLAIM|XAUTOCLAIM|XPENDING)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Pub/Sub Channel",
+      "pattern": "^\\s*(?:SUBSCRIBE|PSUBSCRIBE|PUBLISH)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Transaction",
+      "pattern": "^\\s*(MULTI|EXEC|DISCARD|WATCH|UNWATCH)\\b",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
     }
   ]
 }

@@ -1,59 +1,227 @@
 {
   "language": "doctest",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "function", "string", "variable", "comment", "operator"],
-    "tokenModifiers": ["readonly", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "variable",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "^>>>\\s",
-      "modifiers": [],
-      "description": "Interactive prompt test directive (>>>)"
+      "tokenModifiers": [],
+      "description": "Interactive Python prompt (>>>) starting a test statement"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "^\\.\\.\\.\\s",
-      "modifiers": [],
-      "description": "Continuation prompt (...)"
+      "tokenModifiers": [],
+      "description": "Continuation prompt (...) for multi-line test statements"
     },
     {
-      "type": "string",
-      "pattern": "^(?!>>>|\\.\\.\\.)(.+)$",
-      "modifiers": ["readonly"],
-      "description": "Expected output lines"
+      "tokenType": "string",
+      "pattern": "^(?!>>>|\\.\\.\\.|Traceback|\\s+File|\\s+\\^|Got:|Expected:|\\*\\*\\*|Trying|Expecting|ok)\\S.*$",
+      "tokenModifiers": ["readonly"],
+      "description": "Expected output lines following a prompt"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "Traceback \\(most recent call last\\):",
-      "modifiers": [],
-      "description": "Traceback header for expected exceptions"
+      "tokenModifiers": [],
+      "description": "Traceback header for expected exception testing"
     },
     {
-      "type": "variable",
-      "pattern": "([A-Z][a-zA-Z0-9_]*Error|[A-Z][a-zA-Z0-9_]*Exception|[A-Z][a-zA-Z0-9_]*Warning):",
-      "modifiers": ["readonly"],
-      "description": "Exception type in traceback output"
+      "tokenType": "type",
+      "pattern": "^([A-Z][a-zA-Z0-9_]*Error):\\s",
+      "tokenModifiers": ["readonly"],
+      "description": "Error type in traceback (ValueError, TypeError, etc.)"
     },
     {
-      "type": "comment",
-      "pattern": "#\\s*doctest:\\s*\\+([A-Z_]+)",
-      "modifiers": ["documentation"],
-      "description": "Doctest directive flags (# doctest: +ELLIPSIS, +SKIP, etc.)"
+      "tokenType": "type",
+      "pattern": "^([A-Z][a-zA-Z0-9_]*Exception):\\s",
+      "tokenModifiers": ["readonly"],
+      "description": "Exception type in traceback (RuntimeException, etc.)"
     },
     {
-      "type": "function",
+      "tokenType": "type",
+      "pattern": "^([A-Z][a-zA-Z0-9_]*Warning):\\s",
+      "tokenModifiers": ["readonly"],
+      "description": "Warning type in traceback output"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^\\s+File\\s+\"([^\"]+)\",\\s+line\\s+\\d+",
+      "tokenModifiers": ["readonly"],
+      "description": "Traceback file and line number entries"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+ELLIPSIS\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "ELLIPSIS directive: allows ... to match any substring in output"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+NORMALIZE_WHITESPACE\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "NORMALIZE_WHITESPACE directive: treats any whitespace run as equal"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+SKIP\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "SKIP directive: skips execution of this example"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+IGNORE_EXCEPTION_DETAIL\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "IGNORE_EXCEPTION_DETAIL directive: matches exception type only"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+DONT_ACCEPT_TRUE_FOR_1\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "DONT_ACCEPT_TRUE_FOR_1 directive: strict True/1 comparison"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+DONT_ACCEPT_BLANKLINE\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "DONT_ACCEPT_BLANKLINE directive: disables <BLANKLINE> matching"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+(REPORT_UDIFF|REPORT_CDIFF|REPORT_NDIFF)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Diff format directives: unified, context, or ndiff output on failure"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#\\s*doctest:\\s*\\+(REPORT_ONLY_FIRST_FAILURE|FAIL_FAST)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Failure reporting directives: report first failure only or abort early"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(?<=^)\\.\\.\\.$|(?<=\\s)\\.\\.\\.$",
+      "tokenModifiers": [],
+      "description": "Ellipsis wildcard in expected output (used with +ELLIPSIS)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "<BLANKLINE>",
+      "tokenModifiers": ["readonly"],
+      "description": "Blank line marker in expected output representing an empty line"
+    },
+    {
+      "tokenType": "function",
+      "pattern": ">>>\\s+def\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": ["declaration"],
+      "description": "Function definitions inside test prompts"
+    },
+    {
+      "tokenType": "function",
+      "pattern": ">>>\\s+class\\s+([A-Z][a-zA-Z0-9_]*)\\s*[:(]",
+      "tokenModifiers": ["declaration"],
+      "description": "Class definitions inside test prompts"
+    },
+    {
+      "tokenType": "function",
       "pattern": ">>>\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": [],
-      "description": "Function calls in test prompts"
+      "tokenModifiers": [],
+      "description": "Function/method calls in test prompts"
     },
     {
-      "type": "operator",
-      "pattern": "\\.\\.\\.",
-      "modifiers": [],
-      "description": "Ellipsis wildcard in expected output"
+      "tokenType": "keyword",
+      "pattern": ">>>\\s+(?:import|from)\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\b",
+      "tokenModifiers": [],
+      "description": "Import statements within test prompts"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": ">>>\\s+(?:for|while|if|elif|else|with|try|except|finally|raise|assert|return|yield|pass|del|print)\\b",
+      "tokenModifiers": [],
+      "description": "Python control flow and statement keywords in test prompts"
+    },
+    {
+      "tokenType": "function",
+      "pattern": ">>>\\s+doctest\\.(testmod|testfile|run_docstring_examples)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Doctest module runner functions (testmod, testfile)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": ">>>\\s+doctest\\.(DocTestFinder|DocTestRunner|DocTestParser|DocTestCase|DebugRunner|OutputChecker)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Doctest framework classes for programmatic use"
+    },
+    {
+      "tokenType": "type",
+      "pattern": ">>>\\s+doctest\\.(DocTestSuite|DocFileSuite)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Doctest unittest integration suites"
+    },
+    {
+      "tokenType": "function",
+      "pattern": ">>>\\s+(?:def\\s+)?(setUp|tearDown|setUpModule|tearDownModule)\\s*\\(",
+      "tokenModifiers": ["declaration"],
+      "description": "Test fixture setup and teardown functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^(Trying|Expecting|ok)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Verbose mode output labels: Trying, Expecting, ok"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^(\\*\\*\\*\\s+Test\\s+Failed|Failed\\s+examples?|\\d+\\s+items?\\s+had\\s+failures)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Test failure summary and result status lines"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^(\\d+\\s+items?\\s+passed\\s+all\\s+tests|\\d+\\s+tests?\\s+in\\s+\\d+\\s+items?)\\b",
+      "tokenModifiers": ["documentation"],
+      "description": "Test passed summary and count lines"
+    },
+    {
+      "tokenType": "number",
+      "pattern": ">>>\\s+[^#\\n]*?\\b(-?\\d+\\.?\\d*(?:[eE][+-]?\\d+)?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals within test prompt expressions"
+    },
+    {
+      "tokenType": "string",
+      "pattern": ">>>\\s+.*?('[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
+      "tokenModifiers": [],
+      "description": "String literals within interactive prompt lines"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": ">>>\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=",
+      "tokenModifiers": ["declaration"],
+      "description": "Variable assignments within test prompts"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^Got:$|^Expected:$",
+      "tokenModifiers": ["documentation"],
+      "description": "Got vs Expected labels in failure diff output"
     }
   ]
 }

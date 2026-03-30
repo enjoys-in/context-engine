@@ -1,83 +1,318 @@
 {
   "language": "python",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "typeParameter", "parameter", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "async", "deprecated", "defaultLibrary", "documentation"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "\\bdef\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(if|elif|else|while|for|in|break|continue|pass|return)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(try|except|finally|raise)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bexcept\\s*\\*\\s*",
+      "tokenModifiers": [],
+      "description": "Exception groups using except* for handling ExceptionGroup (PEP 654)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bmatch\\b",
+      "tokenModifiers": [],
+      "description": "Structural pattern matching match statement (PEP 634)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bcase\\s+[^:]+:",
+      "tokenModifiers": [],
+      "description": "Case clauses in structural pattern matching including guard expressions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bdef\\s+[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function definitions with def keyword"
     },
     {
-      "type": "class",
-      "pattern": "\\bclass\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Class definitions with class keyword"
+      "tokenType": "function",
+      "pattern": "\\basync\\s+def\\s+[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration",
+        "async"
+      ],
+      "description": "Async function definitions with async def"
     },
     {
-      "type": "decorator",
-      "pattern": "@[\\w.]+(?:\\([^)]*\\))?",
-      "modifiers": [],
-      "description": "Decorator expressions prefixed with @"
+      "tokenType": "keyword",
+      "pattern": "\\blambda\\b",
+      "tokenModifiers": [],
+      "description": "Lambda expression for anonymous inline functions"
     },
     {
-      "type": "type",
-      "pattern": ":\\s*(\\w+(?:\\[.*?\\])?)|->\\s*(\\w+(?:\\[.*?\\])?)",
-      "modifiers": [],
-      "description": "Type hints in annotations and return types"
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+[A-Z][a-zA-Z0-9_]*(?:\\([^)]*\\))?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class definitions with optional base classes"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(async\\s+def|await|async\\s+for|async\\s+with)\\b",
-      "modifiers": ["async"],
-      "description": "Async/await keywords for asynchronous programming"
+      "tokenType": "decorator",
+      "pattern": "@[a-zA-Z_][a-zA-Z0-9_.]*(?:\\([^)]*\\))?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Decorator expressions applied to functions and classes"
     },
     {
-      "type": "string",
+      "tokenType": "decorator",
+      "pattern": "@(staticmethod|classmethod|property|abstractmethod)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Built-in method decorators: staticmethod, classmethod, property, abstractmethod"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@dataclass(?:es\\.dataclass)?(?:\\([^)]*\\))?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Dataclass decorator for auto-generating special methods"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "__slots__\\s*=",
+      "tokenModifiers": [
+        "definition",
+        "readonly"
+      ],
+      "description": "__slots__ declaration for memory-optimized attribute storage"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(import|from)\\s+[a-zA-Z_][a-zA-Z0-9_.]*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Import statements and from...import module declarations"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bimport\\s+[a-zA-Z_][a-zA-Z0-9_.]*\\s+as\\s+[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Import aliasing with as keyword"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(await)\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Await expression for coroutine results"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\basync\\s+(for|with)\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Async for loops and async context managers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\byield\\s*(from)?\\b",
+      "tokenModifiers": [],
+      "description": "Yield expression and yield from delegation for generators"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bwith\\s+.+\\s+as\\b",
+      "tokenModifiers": [],
+      "description": "Context manager with...as statements"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ":=",
+      "tokenModifiers": [],
+      "description": "Walrus operator for assignment expressions (PEP 572)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|(?=\\s*[A-Z][a-zA-Z0-9_]*|\\s*None|\\s*int|\\s*str|\\s*float|\\s*bool|\\s*bytes|\\s*list|\\s*dict|\\s*tuple|\\s*set)",
+      "tokenModifiers": [],
+      "description": "Union type operator using | syntax for type annotations (PEP 604)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "->\\s*[a-zA-Z_][a-zA-Z0-9_\\[\\]|,\\s]*",
+      "tokenModifiers": [],
+      "description": "Return type annotations using -> arrow syntax"
+    },
+    {
+      "tokenType": "type",
+      "pattern": ":\\s*[A-Z][a-zA-Z0-9_]*(?:\\[.+?\\])?",
+      "tokenModifiers": [],
+      "description": "Variable and parameter type annotations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\[.+\\bfor\\b.+\\bin\\b.+\\]",
+      "tokenModifiers": [],
+      "description": "List comprehension expressions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{.+\\bfor\\b.+\\bin\\b.+\\}",
+      "tokenModifiers": [],
+      "description": "Dict and set comprehension expressions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\(.+\\bfor\\b.+\\bin\\b.+\\)",
+      "tokenModifiers": [],
+      "description": "Generator expressions with lazy evaluation"
+    },
+    {
+      "tokenType": "string",
       "pattern": "f\"[^\"]*\"|f'[^']*'|f\"\"\"[\\s\\S]*?\"\"\"|f'''[\\s\\S]*?'''",
-      "modifiers": [],
-      "description": "F-string literals with embedded expressions"
+      "tokenModifiers": [],
+      "description": "F-string formatted string literals with embedded expressions"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(import|from)\\s+([\\w.]+)",
-      "modifiers": ["definition"],
-      "description": "Import statements and from...import declarations"
+      "tokenType": "string",
+      "pattern": "r\"[^\"]*\"|r'[^']*'|r\"\"\"[\\s\\S]*?\"\"\"|r'''[\\s\\S]*?'''",
+      "tokenModifiers": [],
+      "description": "Raw string literals with unescaped backslashes"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(if|elif|else|while|for|in|try|except|finally|raise|with|as|pass|break|continue|return|yield|assert|del|lambda|global|nonlocal|is|not|and|or|match|case)\\b",
-      "modifiers": [],
-      "description": "Python control flow and structural keywords"
+      "tokenType": "string",
+      "pattern": "b\"[^\"]*\"|b'[^']*'|b\"\"\"[\\s\\S]*?\"\"\"|b'''[\\s\\S]*?'''",
+      "tokenModifiers": [],
+      "description": "Byte string literals for binary data"
     },
     {
-      "type": "type",
-      "pattern": "\\b(int|float|str|bool|list|dict|tuple|set|frozenset|bytes|bytearray|memoryview|complex|None|type|object|Callable|Optional|Union|Any|List|Dict|Tuple|Set|Type|Generator|Iterator|Iterable|Sequence|Mapping)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in types and typing module types"
-    },
-    {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\b(self|cls)\\b",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Instance (self) and class (cls) reference variables"
     },
     {
-      "type": "comment",
-      "pattern": "#[^\\n]*|\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''",
-      "modifiers": ["documentation"],
-      "description": "Line comments and docstring comments"
+      "tokenType": "method",
+      "pattern": "\\b__(init|new|del|repr|str|len|getitem|setitem|delitem|iter|next|call|enter|exit|eq|ne|lt|gt|le|ge|hash|bool|getattr|setattr|delattr|get|set|delete|init_subclass|class_getitem|aenter|aexit|aiter|anext)__\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Dunder/magic methods for Python data model and protocols"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?j?\\b|0[xXoObB][0-9a-fA-F_]+\\b",
-      "modifiers": [],
-      "description": "Numeric literals including complex, hex, octal, and binary"
+      "tokenType": "class",
+      "pattern": "\\b(type|metaclass=)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Metaclass declarations and type() dynamic class creation"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(int|float|str|bool|list|dict|tuple|set|frozenset|bytes|bytearray|memoryview|complex|range|slice|type|object|None|NotImplemented|Ellipsis)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in types and singleton constants"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Optional|Union|Any|List|Dict|Tuple|Set|FrozenSet|Type|Callable|Generator|Iterator|Iterable|Sequence|Mapping|MutableMapping|Coroutine|AsyncIterator|AsyncGenerator|ClassVar|Final|Literal|TypeVar|TypeAlias|Protocol|TypeGuard|Self|Unpack|TypeVarTuple|ParamSpec|Concatenate|Never)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "typing module types for static type checking and annotations"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(and|or|not|is|is\\s+not|in|not\\s+in)\\b",
+      "tokenModifiers": [],
+      "description": "Boolean and membership keyword operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\*\\*|//|@(?=[a-zA-Z0-9_\\s(])",
+      "tokenModifiers": [],
+      "description": "Power, floor division, and matrix multiplication operators"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Docstring comments using triple-quoted strings"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(global|nonlocal)\\b",
+      "tokenModifiers": [],
+      "description": "Scope declaration keywords for variable binding"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(assert|del)\\b",
+      "tokenModifiers": [],
+      "description": "Assert statement and del deletion keyword"
     }
   ]
 }

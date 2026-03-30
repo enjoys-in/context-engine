@@ -3,73 +3,157 @@
   "symbolPatterns": [
     {
       "name": "Function",
-      "pattern": "^\\\\s*function\\\\s+(\\\\w[\\\\w-]*)",
+      "pattern": "^\\s*(?:function|filter)\\s+([\\w-]+)",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
+      "name": "Cmdlet",
+      "pattern": "^\\s*function\\s+([A-Z][a-z]+-[A-Z][\\w]+)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "cmdlet"
+    },
+    {
       "name": "Class",
-      "pattern": "^\\\\s*class\\\\s+(\\\\w+)",
+      "pattern": "^\\s*class\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
       "name": "Enum",
-      "pattern": "^\\\\s*enum\\\\s+(\\\\w+)",
+      "pattern": "^\\s*enum\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 9,
       "type": "enum"
     },
     {
-      "name": "Variable",
-      "pattern": "^\\\\s*\\\\$(\\\\w+)\\\\s*=",
+      "name": "Param block",
+      "pattern": "^\\s*(?:\\[CmdletBinding\\([^)]*\\)\\]\\s*)?[Pp]aram\\s*\\(",
+      "captureGroup": 0,
+      "kind": 12,
+      "type": "paramBlock"
+    },
+    {
+      "name": "Parameter attribute",
+      "pattern": "^\\s*\\[Parameter\\([^)]*\\)\\]\\s*\\[?\\w+\\]?\\s*\\$(\\w+)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "parameter"
+    },
+    {
+      "name": "Variable assignment",
+      "pattern": "^\\s*\\$(\\w+)\\s*=",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "Script-scope variable",
+      "pattern": "^\\s*\\$script:(\\w+)\\s*=",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 12,
+      "type": "scriptVariable"
     },
     {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "Global variable",
+      "pattern": "^\\s*\\$global:(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "globalVariable"
+    },
+    {
+      "name": "Environment variable",
+      "pattern": "^\\s*\\$env:(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "envVariable"
+    },
+    {
+      "name": "Script block",
+      "pattern": "^\\s*\\$(\\w+)\\s*=\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "scriptBlock"
+    },
+    {
+      "name": "Begin block",
+      "pattern": "^\\s*(begin)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "beginBlock"
+    },
+    {
+      "name": "Process block",
+      "pattern": "^\\s*(process)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "processBlock"
+    },
+    {
+      "name": "End block",
+      "pattern": "^\\s*(end)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "endBlock"
+    },
+    {
+      "name": "Import-Module",
+      "pattern": "^\\s*Import-Module\\s+(?:-Name\\s+)?['\"]?([\\w.-]+)['\"]?",
       "captureGroup": 1,
       "kind": 1,
       "type": "module"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "Using module",
+      "pattern": "^\\s*using\\s+module\\s+([\\w.\\\\/-]+)",
       "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
+      "kind": 1,
+      "type": "usingModule"
     },
     {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "Using namespace",
+      "pattern": "^\\s*using\\s+namespace\\s+([\\w.]+)",
       "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
+      "kind": 2,
+      "type": "usingNamespace"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "Workflow",
+      "pattern": "^\\s*workflow\\s+([\\w-]+)",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 11,
+      "type": "workflow"
     },
     {
-      "name": "Event",
-      "pattern": "(?:event|on\\w+)\\s+(\\w+)",
+      "name": "Configuration (DSC)",
+      "pattern": "^\\s*[Cc]onfiguration\\s+(\\w+)",
       "captureGroup": 1,
-      "kind": 23,
-      "type": "event"
+      "kind": 4,
+      "type": "configuration"
+    },
+    {
+      "name": "DSC Node",
+      "pattern": "^\\s*[Nn]ode\\s+['\"]?([\\w.-]+)['\"]?",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "dscNode"
+    },
+    {
+      "name": "Set-Alias",
+      "pattern": "^\\s*Set-Alias\\s+(?:-Name\\s+)?['\"]?([\\w-]+)['\"]?",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "alias"
+    },
+    {
+      "name": "New-Variable constant",
+      "pattern": "^\\s*(?:New-Variable|Set-Variable)\\s+(?:-Name\\s+)?['\"]?(\\w+)['\"]?.*-Option\\s+(?:Constant|ReadOnly)",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
     }
   ]
 }

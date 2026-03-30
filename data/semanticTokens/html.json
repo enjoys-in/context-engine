@@ -1,71 +1,265 @@
 {
   "language": "html",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "event", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "deprecated", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "class",
+      "variable",
+      "property",
+      "event",
+      "function",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "deprecated",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "type",
-      "pattern": "(?<=<\\/?)\\s*[a-zA-Z][a-zA-Z0-9-]*",
-      "modifiers": [],
-      "description": "HTML tag names in opening and closing tags"
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(html|head|body|div|span)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Structural container elements (html, head, body, div, span)"
     },
     {
-      "type": "property",
-      "pattern": "\\b[a-zA-Z_-][a-zA-Z0-9_-]*(?=\\s*=)",
-      "modifiers": [],
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\bh[1-6]\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Heading elements (h1 through h6)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(p|a|strong|em|b|i|s|u|small|sub|sup|mark|abbr|cite|q|dfn|code|pre|blockquote|kbd|samp|var|ruby|rt|rp|bdi|bdo)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Text and inline content elements (p, a, strong, em, code, pre, blockquote, etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(ul|ol|li|dl|dt|dd|menu)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "List elements (ul, ol, li, dl, dt, dd, menu)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(table|thead|tbody|tfoot|tr|td|th|caption|colgroup|col)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Table elements (table, thead, tbody, tfoot, tr, td, th, caption, colgroup, col)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(form|input|button|select|textarea|label|fieldset|legend|datalist|output|option|optgroup|meter|progress)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Form-related elements (form, input, button, select, textarea, label, fieldset, etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(img|video|audio|canvas|svg|picture|source|track|iframe|embed|object|param|map|area)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Media and embedded content elements (img, video, audio, canvas, svg, iframe, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=<\\/?)\\s*\\b(script|style|link|meta|base|title|noscript)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Document metadata and resource elements (script, style, link, meta, base, title)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(article|section|nav|header|footer|main|aside|figure|figcaption|details|summary|dialog|address|hgroup|search)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Semantic sectioning elements (article, section, nav, header, footer, main, aside, etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<)\\s*\\b(br|hr|img|input|meta|link|area|base|col|embed|source|track|wbr)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Void (self-closing) elements that cannot have children"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=<\\/?)\\s*\\b(template|slot)\\b",
+      "tokenModifiers": [],
+      "description": "Template and slot elements for Web Components and content templating"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "(?<=<\\/?)\\s*[a-z]+-[a-z][a-z0-9-]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Custom elements (kebab-case names with mandatory hyphen, e.g. my-component, app-header)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "(?<=<\\/?)\\s*\\b(font|center|marquee|blink|big|strike|tt|frameset|frame|noframes|applet|basefont|dir|isindex)\\b",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "Deprecated HTML elements (font, center, marquee, blink, big, strike, tt, frameset, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_-]*(?=\\s*=)",
+      "tokenModifiers": [],
       "description": "Attribute names in HTML elements"
     },
     {
-      "type": "string",
-      "pattern": "(?<==\\s*)\"[^\"]*\"|'[^']*'",
-      "modifiers": [],
-      "description": "Attribute values in quotes"
-    },
-    {
-      "type": "variable",
-      "pattern": "&[a-zA-Z]+;|&#[0-9]+;|&#x[0-9a-fA-F]+;",
-      "modifiers": ["defaultLibrary"],
-      "description": "HTML character entities like &amp; &#160; &#x20;"
-    },
-    {
-      "type": "event",
-      "pattern": "\\bon[a-z]+(?=\\s*=)",
-      "modifiers": [],
-      "description": "Event handler attributes like onclick, onload, onsubmit"
-    },
-    {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "\\b(id|class)(?=\\s*=)",
-      "modifiers": ["definition"],
-      "description": "Id and class attribute references"
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Id and class attributes used for element identification and styling"
     },
     {
-      "type": "keyword",
+      "tokenType": "property",
+      "pattern": "\\bstyle(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "Inline style attribute for direct CSS styling on elements"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bdata-[a-zA-Z0-9-]+(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "Custom data attributes (data-*) for storing private element data"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\baria-[a-zA-Z-]+(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "ARIA accessibility attributes (aria-label, aria-hidden, aria-describedby, etc.)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\brole(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "WAI-ARIA role attribute for accessibility semantics"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bon(click|dblclick|mousedown|mouseup|mousemove|mouseover|mouseout|mouseenter|mouseleave|keydown|keyup|keypress|submit|reset|focus|blur|change|input|load|unload|resize|scroll|error|abort|contextmenu|wheel|pointerdown|pointerup|pointermove|pointerenter|pointerleave|touchstart|touchend|touchmove|dragstart|drag|dragend|dragenter|dragleave|dragover|drop|animationstart|animationend|transitionend|copy|cut|paste|select|invalid)(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "Event handler attributes (onclick, onchange, onsubmit, pointer/touch/drag/clipboard events)"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(disabled|checked|readonly|required|hidden|autofocus|autoplay|controls|loop|muted|novalidate|selected|multiple|open|defer|async|formnovalidate|allowfullscreen|inert|popover|reversed|default)\\b(?!=)",
+      "tokenModifiers": [],
+      "description": "Boolean attributes that need no value (disabled, checked, readonly, required, hidden, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(href|src|action|srcset|poster|formaction|cite|data|usemap)(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "URL reference attributes (href, src, action, srcset, poster, etc.)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<==\\s*)\"[^\"]*\"|'[^']*'",
+      "tokenModifiers": [],
+      "description": "Attribute values enclosed in single or double quotes"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "<!DOCTYPE[^>]*>",
-      "modifiers": [],
-      "description": "DOCTYPE declaration"
+      "tokenModifiers": [],
+      "description": "DOCTYPE declaration specifying the document type"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "<!--[\\s\\S]*?-->",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "HTML comments"
     },
     {
-      "type": "type",
-      "pattern": "\\b(div|span|p|a|img|input|button|form|table|tr|td|th|ul|ol|li|h[1-6]|section|article|nav|header|footer|main|aside)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Common built-in HTML element names"
+      "tokenType": "variable",
+      "pattern": "&(amp|lt|gt|quot|apos|nbsp|copy|reg|trade|hellip|mdash|ndash|laquo|raquo|bull|middot|shy|ensp|emsp|thinsp|zwj|zwnj|lrm|rlm|euro|pound|yen|cent|sect|deg|micro|para|frac12|frac14|frac34|times|divide);",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Named HTML character entities (&amp;, &lt;, &gt;, &nbsp;, &copy;, etc.)"
     },
     {
-      "type": "property",
-      "pattern": "\\b(data-[a-zA-Z0-9-]+)(?=\\s*=)",
-      "modifiers": [],
-      "description": "Custom data attributes (data-*)"
+      "tokenType": "number",
+      "pattern": "&#[0-9]+;|&#x[0-9a-fA-F]+;",
+      "tokenModifiers": [],
+      "description": "Numeric character references (decimal &#123; and hexadecimal &#x1F4A9;)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=<meta\\s[^>]*)charset(?=\\s*=)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Meta charset attribute for document character encoding declaration"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=content\\s*=\\s*\")width=device-width[^\"]*(?=\")",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Viewport meta content value for responsive design configuration"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=<link\\s[^>]*)rel(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "Link rel attribute defining relationship types (stylesheet, icon, preconnect, preload)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=type\\s*=\\s*\")module(?=\")",
+      "tokenModifiers": [],
+      "description": "Script type=module for ES module loading in browsers"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "<!--\\[if\\s[^\\]]*\\]>.*?<!\\[endif\\]-->",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "Internet Explorer conditional comments (deprecated)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(lang|dir|title|tabindex|accesskey|contenteditable|draggable|spellcheck|translate|enterkeyhint|inputmode|is|part|slot|exportparts)(?=\\s*=)",
+      "tokenModifiers": [],
+      "description": "Global HTML attributes (lang, dir, title, tabindex, contenteditable, draggable, etc.)"
     }
   ]
 }

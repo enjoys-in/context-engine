@@ -1,71 +1,215 @@
 {
   "language": "dart",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "enum", "type", "typeParameter", "function", "method", "variable", "property", "parameter", "keyword", "decorator", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "class",
+      "enum",
+      "type",
+      "typeParameter",
+      "function",
+      "method",
+      "variable",
+      "property",
+      "parameter",
+      "keyword",
+      "modifier",
+      "decorator",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\b(class|mixin)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Class and mixin declarations"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\bextension\\s+([A-Z][a-zA-Z0-9_]*)\\s+on\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Extension declarations"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(async|await|yield)\\b",
-      "modifiers": ["async"],
+      "tokenModifiers": [
+        "async"
+      ],
       "description": "Async/await/yield keywords"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\b(Stream|Future)<([^>]+)>",
-      "modifiers": ["defaultLibrary", "async"],
+      "tokenModifiers": [
+        "defaultLibrary",
+        "async"
+      ],
       "description": "Stream and Future async types"
     },
     {
-      "type": "decorator",
+      "tokenType": "decorator",
       "pattern": "@(override|deprecated|required|protected|immutable|sealed|visibleForTesting|pragma)",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Dart annotations (@override, @deprecated, etc.)"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "\\?\\.|\\.\\.|\\?\\?|\\?\\?=",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Null safety and cascade operators (?., .., ??)"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(late|required|final|const|var|dynamic)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Variable declaration keywords including null safety"
     },
     {
-      "type": "enum",
+      "tokenType": "enum",
       "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Enum declarations"
     },
     {
-      "type": "method",
+      "tokenType": "method",
       "pattern": "\\b(factory|static)?\\s*([A-Z][a-zA-Z0-9_]*)\\.([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Named constructor and factory method definitions"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b([A-Za-z_][A-Za-z0-9_<>?]*)\\s+([a-z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function declarations with return type"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bmixin\\s+([A-Z][a-zA-Z0-9_]*)\\s+on\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Mixin declarations with superclass constraint"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bsealed\\s+class\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Sealed class declarations for exhaustive pattern matching"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bfactory\\s+([A-Z][a-zA-Z0-9_]*)(?:\\.([a-zA-Z_][a-zA-Z0-9_]*))?\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Factory constructor declarations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "([A-Z][a-zA-Z0-9_]*)\\.([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\((?=[^)]*\\)\\s*(?::|\\{))",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named constructor declarations in class definitions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\blate\\s+(?:final\\s+)?([A-Z][a-zA-Z0-9_<>?]*)\\s+([a-z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Late variable declarations with deferred initialization"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bconst\\s+([A-Z][a-zA-Z0-9_]*)(?:\\.([a-zA-Z_][a-zA-Z0-9_]*))?\\s*\\(",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Const constructor invocations and declarations"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\.\\.[a-zA-Z_]|\\?\\.\\.",
+      "tokenModifiers": [],
+      "description": "Cascade (..) and null-aware cascade (?..) operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\?=|\\?\\?|\\?\\.|!(?=[.\\[])",
+      "tokenModifiers": [],
+      "description": "Null-aware operators: ??= assignment, ?? default, ?. access, ! assertion"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\(\\s*(?:[A-Z][a-zA-Z0-9_<>?]*\\s+[a-z_][a-zA-Z0-9_]*\\s*,\\s*)+[A-Z][a-zA-Z0-9_<>?]*\\s+[a-z_][a-zA-Z0-9_]*\\s*\\)",
+      "tokenModifiers": [],
+      "description": "Record type expressions with named fields"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bswitch\\s*\\([^)]*\\)\\s*\\{(?=\\s*case)",
+      "tokenModifiers": [],
+      "description": "Switch expression with pattern matching cases"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btypedef\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:<[^>]*>)?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Typedef declarations for function types and type aliases"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bextension\\s+type\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Extension type declarations (Dart 3)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(part\\s+of|part)\\s+['\"]",
+      "tokenModifiers": [],
+      "description": "Part and part of directives for library splitting"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(show|hide)\\s+([A-Z][a-zA-Z0-9_]*(?:\\s*,\\s*[A-Z][a-zA-Z0-9_]*)*)",
+      "tokenModifiers": [],
+      "description": "Show and hide combinators in import/export directives"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(sealed|final|base|interface)\\s+class\\b",
+      "tokenModifiers": [],
+      "description": "Dart 3 class modifiers: sealed, final, base, interface"
     }
   ]
 }

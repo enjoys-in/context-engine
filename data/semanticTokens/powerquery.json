@@ -1,83 +1,242 @@
 {
   "language": "powerquery",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(let|in|if|then|else|each|try|otherwise|error|type|is|as|not|and|or|meta|section|shared|null|true|false)\\b",
-      "modifiers": [],
-      "description": "Power Query M language keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(let|in)\\b",
+      "tokenModifiers": [],
+      "description": "Let...in expression structure keywords"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(let)\\s+(\\w+)\\s*=",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(if|then|else)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional expression keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(try|otherwise|catch|error)\\b",
+      "tokenModifiers": [],
+      "description": "Error handling keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(each|type|as|is|meta|not|and|or|section|shared)\\b",
+      "tokenModifiers": [],
+      "description": "Core M language keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(true|false|null)\\b",
+      "tokenModifiers": [],
+      "description": "Literal value keywords"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=let\\s+)([a-zA-Z_][a-zA-Z0-9_.]*)\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Variable bindings in let expressions"
     },
     {
-      "type": "type",
-      "pattern": "\\b(type)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Type declarations"
+      "tokenType": "variable",
+      "pattern": "#\"[^\"]+\"",
+      "tokenModifiers": [],
+      "description": "Quoted identifiers (#\"Column Name\") for names with special characters"
     },
     {
-      "type": "type",
-      "pattern": "\\b(number|text|logical|date|datetime|datetimezone|duration|time|record|list|table|function|binary|type|null|any|none|action)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Power Query types"
+      "tokenType": "variable",
+      "pattern": "#shared|#sections",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Intrinsic environment values #shared and #sections"
     },
     {
-      "type": "function",
-      "pattern": "\\b(Table|List|Record|Text|Number|Date|DateTime|DateTimeZone|Duration|Time|Binary|Comparer|Combiner|Splitter|Uri|Value|Expression|Error|Function|Type|Replacer|Lines|Diagnostics|DirectQueryCapabilities)\\.[A-Z]\\w+",
-      "modifiers": ["defaultLibrary"],
-      "description": "Standard library functions from built-in modules"
+      "tokenType": "variable",
+      "pattern": "#(date|datetime|datetimezone|duration|time|table|binary|infinity|nan)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Intrinsic constructor keywords and constants (#date, #table, #infinity, #nan)"
     },
     {
-      "type": "property",
-      "pattern": "\\[\\s*\\w+\\s*\\]|\\[\\s*\\w+\\s*=",
-      "modifiers": [],
-      "description": "Record field access and record expressions [field=value]"
+      "tokenType": "type",
+      "pattern": "\\b(number|text|logical|date|datetime|datetimezone|duration|time|record|list|table|function|binary|type|null|any|none|action|anynonnull)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in primitive and structural types"
     },
     {
-      "type": "variable",
-      "pattern": "#shared|#sections|#date|#time|#datetime|#datetimezone|#duration|#table|#infinity|#nan",
-      "modifiers": ["readonly", "defaultLibrary"],
-      "description": "Special # prefixed intrinsic values and constructors"
+      "tokenType": "type",
+      "pattern": "\\bnullable\\s+(number|text|logical|date|datetime|datetimezone|duration|time|record|list|table|function|binary|type|any)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Nullable type annotations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\beach\\b",
-      "modifiers": [],
-      "description": "Each keyword for shorthand function syntax"
+      "tokenType": "function",
+      "pattern": "\\bTable\\.(FromRecords|ToRecords|FromList|ToList|FromColumns|ToColumns|FromRows|ToRows|FromValue|AddColumn|RemoveColumns|RenameColumns|ReorderColumns|TransformColumns|TransformColumnTypes|SelectRows|Sort|Group|Distinct|Buffer|RowCount|ColumnNames|ColumnCount|Schema|First|FirstN|Last|LastN|Range|Skip|Combine|PromoteHeaders|DemoteHeaders|ReplaceValue|SplitColumn|FillDown|FillUp|SelectColumns|PrefixColumns|DuplicateColumn|TransformColumnNames|Repeat|AlternateRows|InsertRows|RemoveRows|ReverseRows|Profile|IsEmpty|Contains|PositionOf|MatchesAllRows|MatchesAnyRows|Max|Min)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Table module transformation and query functions"
     },
     {
-      "type": "comment",
+      "tokenType": "function",
+      "pattern": "\\bTable\\.(Pivot|Unpivot|UnpivotOtherColumns|ExpandTableColumn|ExpandRecordColumn|ExpandListColumn|Join|NestedJoin|AddJoinColumn|FuzzyJoin|FuzzyNestedJoin|View|ViewFunction)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Table pivot, expand, join, and view functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bList\\.(Transform|Select|TransformMany|Sort|Distinct|Union|Intersect|Difference|RemoveRange|RemoveItems|RemoveNulls|RemoveMatchingItems|ReplaceRange|ReplaceMatchingItems|Combine|Repeat|Buffer|Contains|ContainsAll|ContainsAny|IsEmpty|Count|First|FirstN|Last|LastN|Single|Range|Numbers|Dates|DateTimes|DateTimeZones|Durations|Times|Generate|Accumulate|Zip|Alternate|InsertRange|RemoveFirstN|RemoveLastN|Reverse|Positions|PositionOf|PositionOfAny|FindText|Max|Min|Sum|Average|Median|Mode|StandardDeviation|Product|Covariance|MinN|MaxN)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "List module functions for generation, aggregation, and manipulation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bRecord\\.(Field|FieldOrDefault|FieldValues|FieldNames|FieldCount|HasFields|AddField|RemoveFields|RenameFields|SelectFields|ReorderFields|Combine|ToTable|FromTable|TransformFields|FromList|ToList)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Record module field access and manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bText\\.(Combine|Split|SplitAny|Replace|ReplaceRange|Remove|RemoveRange|Insert|Contains|StartsWith|EndsWith|At|Range|Start|End|Middle|Length|Lower|Upper|Trim|TrimStart|TrimEnd|Clean|PadStart|PadEnd|Repeat|From|Format|NewGuid|Proper|Reverse|PositionOf|PositionOfAny|AfterDelimiter|BeforeDelimiter|BetweenDelimiters|Select|ToBinary|FromBinary|ToList|InferNumberType)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Text module string manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bNumber\\.(From|FromText|ToText|Round|RoundDown|RoundUp|RoundTowardZero|RoundAwayFromZero|Abs|Sign|Sqrt|Power|Exp|Ln|Log|Log10|Mod|IntegerDivide|IsNaN|IsEven|IsOdd|Random|RandomBetween|Combinations|Permutations|Factorial|BitwiseAnd|BitwiseOr|BitwiseXor|BitwiseNot|BitwiseShiftLeft|BitwiseShiftRight)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Number module mathematical and conversion functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bDate\\.(From|FromText|ToText|ToRecord|Year|Month|Day|DayOfWeek|DayOfYear|DaysInMonth|StartOfDay|EndOfDay|StartOfWeek|EndOfWeek|StartOfMonth|EndOfMonth|StartOfQuarter|EndOfQuarter|StartOfYear|EndOfYear|AddDays|AddWeeks|AddMonths|AddQuarters|AddYears|IsInCurrentDay|IsInCurrentWeek|IsInCurrentMonth|IsInCurrentQuarter|IsInCurrentYear|IsInPreviousDay|IsInPreviousWeek|IsInPreviousMonth|IsInNextDay|IsInNextWeek|IsInNextMonth)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Date module functions for date components and arithmetic"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(DateTime|DateTimeZone)\\.(From|FromText|FromFileTime|ToText|ToRecord|LocalNow|FixedLocalNow|UtcNow|Date|Time|Zone|ZoneHours|ZoneMinutes|RemoveZone|SwitchZone|ToLocal|ToUtc)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DateTime and DateTimeZone module functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bDuration\\.(From|FromText|ToText|ToRecord|TotalDays|TotalHours|TotalMinutes|TotalSeconds|Days|Hours|Minutes|Seconds)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Duration module conversion and component functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Sql\\.Database|Sql\\.Databases|OData\\.Feed|Web\\.Contents|Web\\.Page|Web\\.BrowserContents|File\\.Contents|Folder\\.Contents|Folder\\.Files|Excel\\.Workbook|Excel\\.CurrentWorkbook|Csv\\.Document|Json\\.Document|Json\\.FromValue|Xml\\.Tables|Xml\\.Document|Pdf\\.Tables|SharePoint\\.Tables|SharePoint\\.Contents|SharePoint\\.Files|AzureStorage\\.Blobs|AzureStorage\\.Tables|AzureStorage\\.DataLake|AzureStorage\\.DataLakeContents|GoogleAnalytics\\.Accounts|Facebook\\.Graph|Hdfs\\.Contents|Hdfs\\.Files|HdInsight\\.Containers|HdInsight\\.Contents|ActiveDirectory\\.Domains|Salesforce\\.Data|Salesforce\\.Reports|MySQL\\.Database|PostgreSQL\\.Database|Oracle\\.Database|DB2\\.Database|Odbc\\.DataSource|Odbc\\.Query|OleDb\\.DataSource|OleDb\\.Query|Access\\.Database)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Data connector and source access functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Value\\.(Is|As|Type|Equals|NativeQuery|Metadata|ReplaceMetadata|ReplaceType|FromText|Firewall|Optimize)|Type\\.(Is|TableKeys|TableRow|TableColumn|ClosedRecord|OpenRecord|ListItem|FunctionParameters|FunctionReturn|FunctionRequiredParameters|NonNullable|IsNullable|Replacer|ForFunction|ForRecord|ForTable)|Comparer\\.(Ordinal|OrdinalIgnoreCase|FromCulture|Equals)|Splitter\\.(SplitByNothing|SplitTextByDelimiter|SplitTextByAnyDelimiter|SplitTextByEachDelimiter|SplitTextByCharacterTransition|SplitTextByLengths|SplitTextByPositions|SplitTextByRanges|SplitTextByRepeatedLengths)|Combiner\\.(CombineTextByDelimiter|CombineTextByEachDelimiter|CombineTextByLengths|CombineTextByPositions|CombineTextByRanges)|Replacer\\.(ReplaceText|ReplaceValue)|Expression\\.(Evaluate|Constant|Identifier))\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Value, Type, Comparer, Splitter, Combiner, Replacer, and Expression functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Logical\\.From|Logical\\.FromText|Logical\\.ToText|Binary\\.Buffer|Binary\\.Combine|Binary\\.Compress|Binary\\.Decompress|Binary\\.From|Binary\\.FromText|Binary\\.ToText|Binary\\.Length|Binary\\.InferContentType|BinaryFormat\\.[A-Z]\\w+|Lines\\.FromBinary|Lines\\.FromText|Lines\\.ToBinary|Lines\\.ToText)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Logical, Binary, and Lines module functions"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\[\\s*[a-zA-Z_][a-zA-Z0-9_ ]*\\s*\\]",
+      "tokenModifiers": [],
+      "description": "Record field access [FieldName] and list item indexing"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\[\\s*\\[.*?\\]\\s*\\]",
+      "tokenModifiers": [],
+      "description": "Field projection [[Field1], [Field2]] for selecting multiple fields"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(=>|=|<>|<|>|<=|>=|\\+|-|\\*|/|&|\\?\\?|\\.\\.\\.)",
+      "tokenModifiers": [],
+      "description": "Operators: arrow, comparison, arithmetic, text concat (&), null coalesce (??), ellipsis"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bsection\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s*;",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Section declarations for module namespacing"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
-      "modifiers": [],
-      "description": "Single-line and multi-line comments"
+      "tokenModifiers": [],
+      "description": "Single-line (//) and multi-line (/* */) comments"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
-      "description": "String literals in double quotes"
+      "tokenModifiers": [],
+      "description": "String literals in double quotes with escape support"
     },
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b|0x[0-9a-fA-F]+\\b",
-      "modifiers": [],
-      "description": "Numeric literals including hexadecimal"
-    },
-    {
-      "type": "operator",
-      "pattern": "(=>|=|<>|<|>|<=|>=|\\+|-|\\*|/|&|@|\\.\\.\\.|\\?)",
-      "modifiers": [],
-      "description": "Operators including fat arrow, comparison, arithmetic, and optional access"
+      "tokenModifiers": [],
+      "description": "Numeric literals including decimal, scientific notation, and hexadecimal"
     }
   ]
 }

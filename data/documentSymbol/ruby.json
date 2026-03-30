@@ -2,74 +2,193 @@
   "language": "ruby",
   "symbolPatterns": [
     {
-      "name": "Method",
-      "pattern": "^\\\\s*def\\\\s+(\\\\w+[!?=]?)",
-      "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
-    },
-    {
       "name": "Class",
-      "pattern": "^\\\\s*class\\\\s+(\\\\w+)",
+      "pattern": "^\\s*class\\s+(\\w+(?:::\\w+)*)(?:\\s*<\\s*[\\w:]+)?",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
       "name": "Module",
-      "pattern": "^\\\\s*module\\\\s+(\\\\w+)",
+      "pattern": "^\\s*module\\s+(\\w+(?:::\\w+)*)",
       "captureGroup": 1,
       "kind": 1,
       "type": "module"
     },
     {
-      "name": "Constant",
-      "pattern": "^\\\\s*([A-Z][A-Z0-9_]*)\\\\s*=",
+      "name": "SingletonMethod",
+      "pattern": "^\\s*def\\s+self\\.(\\w+[!?=]?)",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 5,
+      "type": "method"
     },
     {
-      "name": "Function",
-      "pattern": "(?:function|def|fn|func|sub|proc)\\s+(\\w+)",
+      "name": "Method",
+      "pattern": "^\\s*def\\s+(\\w+[!?=]?)",
       "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
+      "kind": 5,
+      "type": "method"
     },
     {
-      "name": "Variable",
-      "pattern": "(?:var|let|const|dim|my|local)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "AttrAccessor",
+      "pattern": "^\\s*attr_accessor\\s+:?(\\w+)",
       "captureGroup": 1,
       "kind": 6,
       "type": "property"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "AttrReader",
+      "pattern": "^\\s*attr_reader\\s+:?(\\w+)",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 6,
+      "type": "property"
     },
     {
-      "name": "Event",
-      "pattern": "(?:event|on\\w+)\\s+(\\w+)",
+      "name": "AttrWriter",
+      "pattern": "^\\s*attr_writer\\s+:?(\\w+)",
       "captureGroup": 1,
-      "kind": 23,
-      "type": "event"
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "Constant",
+      "pattern": "^\\s*([A-Z][A-Z0-9_]+)\\s*=",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "CamelConstant",
+      "pattern": "^\\s*([A-Z][A-Za-z0-9]+)\\s*=\\s*(?:Struct\\.new|Class\\.new|Module\\.new|Proc\\.new|->|lambda|freeze)",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "InstanceVariable",
+      "pattern": "^\\s*(@\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "ClassVariable",
+      "pattern": "^\\s*(@@\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "field"
+    },
+    {
+      "name": "GlobalVariable",
+      "pattern": "^\\s*(\\$\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "Alias",
+      "pattern": "^\\s*alias\\s+(\\w+)\\s+\\w+",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Require",
+      "pattern": "^\\s*require\\s+['\"]([^'\"]+)['\"]",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "RequireRelative",
+      "pattern": "^\\s*require_relative\\s+['\"]([^'\"]+)['\"]",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Include",
+      "pattern": "^\\s*include\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Extend",
+      "pattern": "^\\s*extend\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Prepend",
+      "pattern": "^\\s*prepend\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "LambdaAssignment",
+      "pattern": "^\\s*(\\w+)\\s*=\\s*(?:->|lambda|proc|Proc\\.new)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "StructNew",
+      "pattern": "^\\s*(\\w+)\\s*=\\s*Struct\\.new",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "ModuleFunction",
+      "pattern": "^\\s*module_function\\s+:?(\\w+)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "PrivateBlock",
+      "pattern": "^\\s*(private)\\s*$",
+      "captureGroup": 1,
+      "kind": 18,
+      "type": "object"
+    },
+    {
+      "name": "ProtectedBlock",
+      "pattern": "^\\s*(protected)\\s*$",
+      "captureGroup": 1,
+      "kind": 18,
+      "type": "object"
+    },
+    {
+      "name": "RSpecDescribe",
+      "pattern": "^\\s*(?:RSpec\\.)?describe\\s+['\"]?([^'\"\\s,]+)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "RSpecContext",
+      "pattern": "^\\s*context\\s+['\"]([^'\"]+)['\"]",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "RSpecIt",
+      "pattern": "^\\s*it\\s+['\"]([^'\"]+)['\"]",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Block",
+      "pattern": "^\\s*(\\w+)\\s+do(?:\\s*\\|[^|]*\\|)?\\s*$",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
     }
   ]
 }

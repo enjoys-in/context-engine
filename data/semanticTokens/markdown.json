@@ -1,71 +1,240 @@
 {
   "language": "markdown",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "keyword", "comment", "string", "operator"],
-    "tokenModifiers": ["declaration", "definition"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "variable",
+      "property",
+      "keyword",
+      "comment",
+      "string",
+      "operator",
+      "decorator",
+      "macro"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "deprecated",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "^#{1,6}\\s+.*$",
-      "modifiers": ["declaration"],
-      "description": "Heading declarations from # to ######"
+      "tokenType": "keyword",
+      "pattern": "^#(?!#)\\s+.+$",
+      "tokenModifiers": ["declaration"],
+      "description": "ATX heading level 1 (h1) with single #"
     },
     {
-      "type": "variable",
-      "pattern": "\\[([^\\]]+)\\]\\(([^)]+)\\)",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "^#{2,3}(?!#)\\s+.+$",
+      "tokenModifiers": ["declaration"],
+      "description": "ATX headings level 2-3 (h2, h3)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^#{4,6}(?!#)\\s+.+$",
+      "tokenModifiers": ["declaration"],
+      "description": "ATX headings level 4-6 (h4, h5, h6)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^.+\\n={2,}\\s*$",
+      "tokenModifiers": ["declaration"],
+      "description": "Setext heading h1 underlined with ==="
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^.+\\n-{2,}\\s*$",
+      "tokenModifiers": ["declaration"],
+      "description": "Setext heading h2 underlined with ---"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(\\*\\*|__)[^*_]+\\1",
+      "tokenModifiers": [],
+      "description": "Strong emphasis with ** or __ delimiters"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "(?<!\\*)(\\*)(?!\\*)[^*\\n]+\\1(?!\\*)|(?<!_)(_)(?!_)[^_\\n]+\\1(?!_)",
+      "tokenModifiers": [],
+      "description": "Emphasis with single * or _ delimiters"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "~~[^~]+~~",
+      "tokenModifiers": ["deprecated"],
+      "description": "Strikethrough text with ~~ delimiters"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<!`)`(?!`)[^`\\n]+`(?!`)",
+      "tokenModifiers": [],
+      "description": "Inline code spans with single backticks"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "^```([a-zA-Z0-9_+-]*)\\s*$[\\s\\S]*?^```\\s*$",
+      "tokenModifiers": [],
+      "description": "Fenced code blocks delimited by triple backticks with optional language"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "^~~~([a-zA-Z0-9_+-]*)\\s*$[\\s\\S]*?^~~~\\s*$",
+      "tokenModifiers": [],
+      "description": "Fenced code blocks delimited by triple tildes with optional language"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "^(?:    |\\t).+$",
+      "tokenModifiers": [],
+      "description": "Indented code blocks (4 spaces or 1 tab indentation)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "^>+\\s+.*$",
+      "tokenModifiers": [],
+      "description": "Blockquote lines starting with > (including nested)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*[-*+]\\s+",
+      "tokenModifiers": [],
+      "description": "Unordered list item markers (-, *, +)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*\\d+\\.\\s+",
+      "tokenModifiers": [],
+      "description": "Ordered list item markers (1., 2., etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*[-*+]\\s+\\[([ xX])\\]\\s+",
+      "tokenModifiers": [],
+      "description": "Task list items with checkbox (- [ ] or - [x])"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<!!)\\[([^\\]]+)\\]\\(([^)]+)\\)",
+      "tokenModifiers": [],
       "description": "Inline links [text](url)"
     },
     {
-      "type": "variable",
-      "pattern": "\\[([^\\]]+)\\]\\[([^\\]]+)\\]",
-      "modifiers": [],
+      "tokenType": "variable",
+      "pattern": "(?<!!)\\[([^\\]]+)\\]\\[([^\\]]*)\\]",
+      "tokenModifiers": [],
       "description": "Reference-style links [text][ref]"
     },
     {
-      "type": "string",
-      "pattern": "(`{1,3})(?!`)[\\s\\S]*?\\1",
-      "modifiers": [],
-      "description": "Inline code spans and fenced code blocks"
+      "tokenType": "variable",
+      "pattern": "^\\s*\\[([^\\^][^\\]]*)\\]:\\s+\\S+",
+      "tokenModifiers": ["definition"],
+      "description": "Reference link definitions [ref]: url"
     },
     {
-      "type": "keyword",
-      "pattern": "(\\*\\*|__)[^*_]+\\1",
-      "modifiers": [],
-      "description": "Bold/strong emphasis with ** or __"
-    },
-    {
-      "type": "comment",
-      "pattern": "(\\*|_)(?!\\1)[^*_]+\\1",
-      "modifiers": [],
-      "description": "Italic/emphasis with * or _"
-    },
-    {
-      "type": "property",
-      "pattern": "^\\s*[-*+]\\s+|^\\s*\\d+\\.\\s+",
-      "modifiers": [],
-      "description": "Unordered and ordered list item markers"
-    },
-    {
-      "type": "operator",
-      "pattern": "^---+$|^\\*\\*\\*+$|^___+$",
-      "modifiers": [],
-      "description": "Horizontal rules (thematic breaks)"
-    },
-    {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "!\\[([^\\]]*)\\]\\(([^)]+)\\)",
-      "modifiers": [],
-      "description": "Image references ![alt](url)"
+      "tokenModifiers": [],
+      "description": "Inline images ![alt](url)"
     },
     {
-      "type": "type",
-      "pattern": "^>\\s+.*$",
-      "modifiers": [],
-      "description": "Blockquote lines starting with >"
+      "tokenType": "variable",
+      "pattern": "!\\[([^\\]]*)\\]\\[([^\\]]*)\\]",
+      "tokenModifiers": [],
+      "description": "Reference-style images ![alt][ref]"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "<(https?://[^>\\s]+)>|<([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})>",
+      "tokenModifiers": [],
+      "description": "Autolinks for URLs (<https://...>) and emails (<user@example.com>)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[\\^([a-zA-Z0-9_-]+)\\]",
+      "tokenModifiers": [],
+      "description": "Footnote references and definitions [^id]"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|[^|\\n]+(?:\\|[^|\\n]+)+\\|",
+      "tokenModifiers": [],
+      "description": "GFM table data/header rows with pipe-delimited cells"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\|\\s*:?-{3,}:?\\s*(?:\\|\\s*:?-{3,}:?\\s*)+\\|",
+      "tokenModifiers": [],
+      "description": "GFM table alignment separator row (:---|:---:|---:)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*(?:---+|\\*\\*\\*+|___+)\\s*$",
+      "tokenModifiers": [],
+      "description": "Horizontal rules / thematic breaks (---, ***, ___)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "  $|\\\\$",
+      "tokenModifiers": [],
+      "description": "Line breaks via trailing double space or backslash"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "<\\/?[a-zA-Z][a-zA-Z0-9]*(?:\\s[^>]*)?\\/?>",
+      "tokenModifiers": [],
+      "description": "Inline HTML tags embedded in Markdown"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "^([^:]+)\\n:\\s+.+$",
+      "tokenModifiers": [],
+      "description": "Definition list terms followed by : definition"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "^\\*\\[([^\\]]+)\\]:\\s+.+$",
+      "tokenModifiers": ["documentation"],
+      "description": "Abbreviation definitions (*[abbr]: full text)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<!\\$)\\$(?!\\$)[^$\\n]+\\$(?!\\$)",
+      "tokenModifiers": [],
+      "description": "Inline math expression with single $ delimiters"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\\$[\\s\\S]*?\\$\\$",
+      "tokenModifiers": [],
+      "description": "Display/block math expression with $$ delimiters"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^---\\s*$[\\s\\S]*?^---\\s*$",
+      "tokenModifiers": ["declaration"],
+      "description": "YAML front matter block between --- delimiters"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": ":[a-zA-Z0-9_+-]+:",
+      "tokenModifiers": [],
+      "description": "Emoji shortcodes like :smile: or :thumbsup:"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\\\[\\\\`*_{}\\[\\]()#+\\-.!|~>]",
+      "tokenModifiers": [],
+      "description": "Backslash-escaped punctuation characters"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\{#[a-zA-Z][a-zA-Z0-9_-]*\\}",
+      "tokenModifiers": ["definition"],
+      "description": "Custom heading ID attributes {#custom-id}"
     }
   ]
 }

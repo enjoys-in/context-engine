@@ -1,59 +1,220 @@
 {
   "language": "crontab",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["number", "keyword", "variable", "function", "string", "operator", "comment"],
-    "tokenModifiers": ["readonly", "definition"]
+  "legend": {
+    "tokenTypes": [
+      "number",
+      "keyword",
+      "variable",
+      "function",
+      "string",
+      "operator",
+      "comment",
+      "property"
+    ],
+    "tokenModifiers": [
+      "readonly",
+      "definition",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "^\\s*([0-9*,/-]+)\\s+([0-9*,/-]+)\\s+([0-9*,/-]+)\\s+([0-9*,/-]+)\\s+([0-9*,/-]+)",
-      "modifiers": [],
-      "description": "Cron timing fields (minute, hour, day, month, weekday)"
+      "tokenModifiers": [],
+      "description": "Cron timing fields (minute, hour, day-of-month, month, day-of-week)"
     },
     {
-      "type": "keyword",
+      "tokenType": "number",
+      "pattern": "^\\s*([0-5]?\\d)\\s",
+      "tokenModifiers": [],
+      "description": "Minute field (0-59)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "^\\s*\\S+\\s+([01]?\\d|2[0-3])\\s",
+      "tokenModifiers": [],
+      "description": "Hour field (0-23)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "^\\s*(?:\\S+\\s+){2}([1-9]|[12]\\d|3[01])\\s",
+      "tokenModifiers": [],
+      "description": "Day-of-month field (1-31)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "^\\s*(?:\\S+\\s+){3}([1-9]|1[0-2])\\s",
+      "tokenModifiers": [],
+      "description": "Month field (1-12)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "^\\s*(?:\\S+\\s+){4}([0-7])\\s",
+      "tokenModifiers": [],
+      "description": "Day-of-week field (0-7, 0 and 7 are Sunday)"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "@(reboot|yearly|annually|monthly|weekly|daily|midnight|hourly)",
-      "modifiers": ["readonly"],
-      "description": "Special schedule shortcuts"
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Special schedule shortcuts (@hourly, @daily, @weekly, @monthly, @annually, @reboot, @yearly)"
     },
     {
-      "type": "function",
-      "pattern": "(/usr/bin/|/bin/|/usr/local/bin/)([a-zA-Z0-9_.-]+)",
-      "modifiers": [],
+      "tokenType": "function",
+      "pattern": "(/usr/bin/|/bin/|/usr/local/bin/|/sbin/|/usr/sbin/)([a-zA-Z0-9_.-]+)",
+      "tokenModifiers": [],
       "description": "Command paths with executables"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "^\\s*([A-Z_][A-Z0-9_]*)\\s*=",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Environment variable assignments"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$([A-Z_][A-Z0-9_]*)",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Environment variable references"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(MAILTO|SHELL|PATH|HOME|LOGNAME|CRON_TZ)\\b",
-      "modifiers": ["readonly"],
+      "tokenType": "keyword",
+      "pattern": "\\b(MAILTO|SHELL|PATH|HOME|LOGNAME|CRON_TZ|CONTENT_TYPE|LC_ALL|LANG)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Well-known crontab environment variables"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "[,\\-*/]",
-      "modifiers": [],
-      "description": "Cron field operators (range, step, list, wildcard)"
+      "tokenModifiers": [],
+      "description": "Cron field operators (list, range, wildcard, step)"
     },
     {
-      "type": "string",
-      "pattern": "\\b(root|nobody)\\b",
-      "modifiers": [],
+      "tokenType": "string",
+      "pattern": "\\b(root|nobody|www-data|daemon|cron|mail)\\b",
+      "tokenModifiers": [],
       "description": "User fields in system crontab"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(\\d+)-(\\d+)\\b",
+      "tokenModifiers": [],
+      "description": "Range expressions in cron fields (e.g. 1-5)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(\\*|\\d+)/(\\d+)",
+      "tokenModifiers": [],
+      "description": "Step values in cron fields (e.g. */5, 0/15)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\d+(?:,\\d+)+",
+      "tokenModifiers": [],
+      "description": "List values in cron fields (e.g. 1,3,5,7)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(MON|TUE|WED|THU|FRI|SAT|SUN)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Day-of-week name abbreviations (MON-SUN)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Month name abbreviations (JAN-DEC)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(>>|>|2>&1|\\|)",
+      "tokenModifiers": [],
+      "description": "Output redirect operators (>, >>, 2>&1) and pipe (|)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "/dev/null",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Common redirect target /dev/null"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\s*#.*$",
+      "tokenModifiers": [],
+      "description": "Comment lines starting with #"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(run-parts)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "run-parts command for executing scripts in a directory"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(nice|ionice|timeout|flock)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Common cron utility commands (nice, ionice, timeout, flock)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(SHELL)\\s*=\\s*(/.+)$",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "SHELL environment variable with path value"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(PATH)\\s*=\\s*(.+)$",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "PATH environment variable with directory list"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(MAILTO)\\s*=\\s*(.*)$",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "MAILTO environment variable for cron output email"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(bash|sh|zsh|python[23]?|perl|php|ruby|node|curl|wget)\\b",
+      "tokenModifiers": [],
+      "description": "Common command interpreters and utilities in cron jobs"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "&&|\\|\\||;",
+      "tokenModifiers": [],
+      "description": "Command chaining operators (&&, ||, ;)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "/var/log/[a-zA-Z0-9_./-]+",
+      "tokenModifiers": [],
+      "description": "Common log file paths"
     }
   ]
 }

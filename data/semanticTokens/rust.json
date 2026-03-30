@@ -1,71 +1,282 @@
 {
   "language": "rust",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "enum", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "\\bfn\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "function",
+      "pattern": "\\bfn\\s+([a-z_][a-z0-9_]*)\\s*(<[^>]*>)?\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function declarations with fn keyword"
     },
     {
-      "type": "struct",
-      "pattern": "\\bstruct\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "struct",
+      "pattern": "\\bstruct\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Struct type declarations"
     },
     {
-      "type": "enum",
-      "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Enum type declarations"
     },
     {
-      "type": "typeParameter",
+      "tokenType": "interface",
+      "pattern": "\\btrait\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Trait definitions (interface-like abstractions)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bimpl\\s+(?:<[^>]*>\\s*)?([A-Z]\\w*)(?:\\s+for\\s+([A-Z]\\w*))?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Impl blocks for inherent methods and trait implementations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bdyn\\s+([A-Z]\\w*)",
+      "tokenModifiers": [],
+      "description": "Trait objects via dyn keyword (dynamic dispatch)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bimpl\\s+([A-Z]\\w*)(?=\\s*[+>)},]|$)",
+      "tokenModifiers": [],
+      "description": "Impl Trait in argument or return position (static dispatch)"
+    },
+    {
+      "tokenType": "typeParameter",
       "pattern": "'([a-z][a-z0-9_]*)",
-      "modifiers": [],
-      "description": "Lifetime annotations like 'a, 'static"
+      "tokenModifiers": [],
+      "description": "Lifetime annotations ('a, 'static, 'lifetime bounds)"
     },
     {
-      "type": "macro",
-      "pattern": "\\b([a-z_][a-z0-9_]*)\\s*!",
-      "modifiers": [],
-      "description": "Macro invocations like println!, vec!"
+      "tokenType": "keyword",
+      "pattern": "\\b(move|ref|mut)\\b",
+      "tokenModifiers": [],
+      "description": "Ownership keywords: move semantics, borrowing, mutability"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(async|await|unsafe|pub|mod|use|impl|trait|where|dyn|move|ref|mut|self|super|crate)\\b",
-      "modifiers": [],
-      "description": "Rust-specific keywords including async/await and ownership"
+      "tokenType": "operator",
+      "pattern": "&(mut\\s+)?\\w+",
+      "tokenModifiers": [],
+      "description": "Borrow operators (& shared, &mut exclusive)"
     },
     {
-      "type": "decorator",
+      "tokenType": "keyword",
+      "pattern": "\\bmatch\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Match expressions for exhaustive pattern matching"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bif\\s+let\\s+",
+      "tokenModifiers": [],
+      "description": "If let expressions for single-pattern matching"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bwhile\\s+let\\s+",
+      "tokenModifiers": [],
+      "description": "While let loops for iterative pattern matching"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\blet\\s+[^=]+=\\s*[^;]+\\s+else\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Let-else expressions for refutable pattern divergence"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(unwrap|expect|ok_or|ok_or_else|map|and_then|or_else|map_err|unwrap_or|unwrap_or_else|flatten)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Option/Result chaining and unwrapping methods"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?(?=\\s*[;.)}])",
+      "tokenModifiers": [],
+      "description": "Question mark operator for error propagation"
+    },
+    {
+      "tokenType": "decorator",
       "pattern": "#\\[derive\\(([^)]+)\\)\\]",
-      "modifiers": [],
-      "description": "Derive attribute macros"
+      "tokenModifiers": [],
+      "description": "Derive attribute macros (#[derive(Debug, Clone, ...)])"
     },
     {
-      "type": "decorator",
-      "pattern": "#\\[([a-z_][a-z0-9_:]*)\\]",
-      "modifiers": [],
-      "description": "Attribute annotations like #[test], #[cfg]"
+      "tokenType": "decorator",
+      "pattern": "#\\[([a-z_][a-z0-9_:]*(?:\\([^)]*\\))?)\\]",
+      "tokenModifiers": [],
+      "description": "Attribute macros (#[test], #[cfg(...)], #[allow(...)], etc.)"
     },
     {
-      "type": "type",
-      "pattern": "\\b(i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|char|str|usize|isize|String|Vec|Option|Result|Box)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in and common standard library types"
+      "tokenType": "decorator",
+      "pattern": "#!\\[([a-z_][a-z0-9_:]*(?:\\([^)]*\\))?)\\]",
+      "tokenModifiers": [],
+      "description": "Inner attribute macros (#![...]) for crate-level config"
     },
     {
-      "type": "variable",
+      "tokenType": "macro",
+      "pattern": "\\b([a-z_][a-z0-9_]*)\\s*!\\s*[({\\[]",
+      "tokenModifiers": [],
+      "description": "Macro invocations (println!, vec!, format!, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\|[^|]*\\|\\s*(?:->\\s*\\w+\\s*)?\\{",
+      "tokenModifiers": [],
+      "description": "Closure expressions (|args| { body })"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bmove\\s*\\|",
+      "tokenModifiers": [],
+      "description": "Move closures that take ownership of captured variables"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(iter|into_iter|iter_mut|map|filter|filter_map|flat_map|collect|fold|reduce|for_each|enumerate|zip|chain|take|skip|any|all|find|position|count|sum|min|max|cloned|copied)\\s*[(<]",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Iterator adaptor and consumer method chains"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\basync\\s+fn\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Async function declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\.await\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Await expressions on futures (.await postfix syntax)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bunsafe\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Unsafe blocks for raw pointer and FFI operations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\*(const|mut)\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Raw pointer types (*const T, *mut T)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Box|Rc|Arc|RefCell|Cell|Mutex|RwLock|Pin|Cow)<",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Smart pointer and wrapper types from std"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btype\\s+([A-Z]\\w*)\\s*(?:<[^>]*>)?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Type alias declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bwhere\\s+[A-Z]\\w*\\s*:",
+      "tokenModifiers": [],
+      "description": "Where clauses for trait bounds on generics"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btype\\s+([A-Z]\\w*)\\s*;",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Associated type declarations inside traits"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "::<[^>]+>",
+      "tokenModifiers": [],
+      "description": "Turbofish syntax (::<Type>) for explicit type parameters"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(mod|pub|use|crate|super|self)\\b",
+      "tokenModifiers": [],
+      "description": "Module system keywords (mod, pub, use, crate, super, self)"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "\\blet\\s+(mut\\s+)?([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Variable bindings with let/let mut"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|char|str|usize|isize|String|Vec|Option|Result|HashMap|HashSet|BTreeMap)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in primitives and common standard library types"
     }
   ]
 }

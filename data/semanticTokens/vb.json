@@ -1,71 +1,216 @@
 {
   "language": "vb",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "parameter", "variable", "property", "enumMember", "event", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b(Sub|Function)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Sub and Function declarations"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\bClass\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Class declarations"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "\\bModule\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Module declarations"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\b(Dim|Public|Private|Protected|Static|Friend)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Variable declarations with access modifiers"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "\\bProperty\\s+(Get|Set|Let)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Property accessors"
     },
     {
-      "type": "event",
-      "pattern": "\\b(Event|RaiseEvent|WithEvents)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Event declarations and WithEvents"
+      "tokenType": "event",
+      "pattern": "\\bEvent\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Event declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(If|Then|Else|ElseIf|End\\s+If|For|To|Step|Next|Do|Loop|While|Wend|Select\\s+Case|Case|End\\s+Select|With|End\\s+With|Try|Catch|Finally|End\\s+Try|Using|End\\s+Using|GoTo|Return|Exit|Continue)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(If|Then|Else|ElseIf|End\\s+If|For|To|Step|Next|Do|Loop|While|Wend|Select\\s+Case|Case|End\\s+Select|Try|Catch|Finally|End\\s+Try|Using|End\\s+Using|GoTo|Return|Exit|Continue)\\b",
+      "tokenModifiers": [],
       "description": "Control flow keywords"
     },
     {
-      "type": "type",
-      "pattern": "\\b(Integer|Long|Short|Byte|Single|Double|Decimal|Boolean|String|Char|Date|Object|Variant|Nothing|DBNull)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "type",
+      "pattern": "\\b(Integer|Long|Short|Byte|Single|Double|Decimal|Boolean|String|Char|Date|Object|Variant|Nothing|DBNull|SByte|UShort|UInteger|ULong)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Built-in VB data types"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(Imports|Namespace|Inherits|Implements|MustInherit|MustOverride|Overrides|Overridable|NotInheritable|NotOverridable|Shared|Shadows|ReadOnly|WriteOnly|Handles|AddHandler|RemoveHandler|Async|Await)\\b",
-      "modifiers": [],
-      "description": "OOP, inheritance, and async keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(Imports|Namespace|Inherits|Implements|MustInherit|MustOverride|Overrides|Overridable|NotInheritable|NotOverridable|Shared|Shadows|ReadOnly|WriteOnly)\\b",
+      "tokenModifiers": [],
+      "description": "OOP and inheritance keywords"
     },
     {
-      "type": "comment",
-      "pattern": "'[^\\n]*",
-      "modifiers": [],
-      "description": "Single-line comments starting with apostrophe"
+      "tokenType": "comment",
+      "pattern": "'[^\\n]*|REM\\s+[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments starting with apostrophe or REM"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bFrom\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+In\\s+.*?\\s+(Where|Select|Order\\s+By|Group\\s+By|Join|Let|Distinct|Skip|Take|Aggregate)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "LINQ query expression clauses (From...Where...Select)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(Async)\\s+(Sub|Function)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "async",
+        "declaration"
+      ],
+      "description": "Async Sub/Function declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bAwait\\s+([a-zA-Z_][a-zA-Z0-9_.()]*)\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Await operator for asynchronous operations"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bHandles\\s+([a-zA-Z_][a-zA-Z0-9_.]+)\\b",
+      "tokenModifiers": [],
+      "description": "Handles clause for event handler binding"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bRaiseEvent\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "RaiseEvent to fire declared events"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bWith\\b[\\s\\S]*?\\bEnd\\s+With\\b",
+      "tokenModifiers": [],
+      "description": "With...End With block for repeated member access"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\b(Optional|ParamArray)\\s+(ByVal|ByRef)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Optional and ParamArray parameter modifiers"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\"(?:[^\"]|\"\")*\"",
+      "tokenModifiers": [],
+      "description": "String interpolation expressions $\"...\""
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bDim\\s+\\w+\\s+As\\s+XElement\\s*=\\s*<|<%=.*?%>",
+      "tokenModifiers": [],
+      "description": "XML literals and embedded expressions in VB"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Function|Sub)\\s*\\(.*?\\)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Lambda expressions using inline Function(...)/Sub(...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(Iterator)\\s+(Function)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Iterator function declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bYield\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\b",
+      "tokenModifiers": [],
+      "description": "Yield statement for iterator return values"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\b(AddHandler|RemoveHandler)\\s+([a-zA-Z_][a-zA-Z0-9_.]+)\\s*,\\s*AddressOf\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\b",
+      "tokenModifiers": [],
+      "description": "AddHandler/RemoveHandler dynamic event binding"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bAs\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\?",
+      "tokenModifiers": [],
+      "description": "Nullable value types using ? suffix"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*:=\\s*",
+      "tokenModifiers": [],
+      "description": "Named arguments using := syntax in method calls"
     }
   ]
 }

@@ -1,77 +1,255 @@
 {
   "language": "postiats",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "enum", "typeParameter", "variable", "function", "keyword", "modifier", "comment", "string", "number", "operator", "macro"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "typeParameter",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "macro"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "defaultLibrary",
+      "abstract"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "\\b(fun|fn|implement|prfun|prfn|praxi|castfn)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Function definitions including proof functions and cast functions"
+      "tokenType": "function",
+      "pattern": "\\b(fun|fn)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Dynamic function declarations with fun/fn"
     },
     {
-      "type": "type",
-      "pattern": "\\b(typedef|abstype|abst@ype|absvtype|absvt@ype|sortdef|stacst)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Type and sort declarations including abstract types"
+      "tokenType": "function",
+      "pattern": "\\b(prfun|prfn|praxi)\\s+(\\w+)",
+      "tokenModifiers": ["declaration", "static"],
+      "description": "Proof function declarations (prfun, prfn, praxi)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(datatype|datavtype|dataview|datasort|dataprop)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Datatype and dataview declarations"
+      "tokenType": "function",
+      "pattern": "\\b(castfn)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Cast function declarations"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(val|var|val\\+|val-|prval)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Value and variable bindings including proof values"
+      "tokenType": "function",
+      "pattern": "\\b(implement|implmnt)\\s+(\\w+)",
+      "tokenModifiers": ["definition"],
+      "description": "Function implementation with implement/implmnt"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(let|in|end|local|where|if|then|else|sif|sthen|selse|case|case\\+|case-|of|when|while|for|begin|lam|llam|fix|staload|dynload|overload|with|extern|macdef|symintr)\\b",
-      "modifiers": [],
-      "description": "ATS/Postiats structural and control flow keywords"
+      "tokenType": "variable",
+      "pattern": "\\bval\\s+(\\w+)",
+      "tokenModifiers": ["declaration", "readonly"],
+      "description": "Immutable value bindings with val"
     },
     {
-      "type": "type",
-      "pattern": "\\b(int|bool|char|double|float|string|void|ptr|size_t|ssize_t|nat|Nat|Int|Bool|Char|String|List|Option|stream)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in types and sorts"
+      "tokenType": "variable",
+      "pattern": "\\bvar\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Mutable variable bindings with var"
     },
     {
-      "type": "macro",
-      "pattern": "#(define|include|if|ifdef|ifndef|else|endif|then|print|error|assert)\\b",
-      "modifiers": [],
+      "tokenType": "variable",
+      "pattern": "\\b(val\\+|val-)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Positive/negative val bindings for linear resource checking"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bprval\\s+(\\w+)",
+      "tokenModifiers": ["declaration", "static"],
+      "description": "Proof value bindings with prval"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(typedef|viewtypedef|vtypedef|propdef|viewdef)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Type alias declarations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(abstype|abst@ype|absvtype|absvt@ype|absviewtype|absviewt@ype|absprop|absview)\\s+(\\w+)",
+      "tokenModifiers": ["declaration", "abstract"],
+      "description": "Abstract type/viewtype declarations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(sortdef|stacst|stadef)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Sort definitions and static constant declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(datatype|datavtype|dataviewtype)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Algebraic datatype declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(dataview|dataprop|datasort)\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Proof-level data declarations (dataview, dataprop, datasort)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(let|in|end|local|where|begin)\\b",
+      "tokenModifiers": [],
+      "description": "Block structure keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|then|else|sif|sthen|selse)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional keywords including static if (sif)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(case|case\\+|case-|of|when)\\b",
+      "tokenModifiers": [],
+      "description": "Pattern matching keywords with exhaustiveness variants"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(while|for|while\\*|for\\*)\\b",
+      "tokenModifiers": [],
+      "description": "Loop keywords including tail-recursive variants"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(lam|llam|fix|fn\\*|fun\\*)\\b",
+      "tokenModifiers": [],
+      "description": "Lambda expressions and fixpoint combinators"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(staload|dynload|extern|symintr|overload|with|macdef)\\b",
+      "tokenModifiers": [],
+      "description": "Module loading, external declarations, and overloading keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(assume|reassume)\\b",
+      "tokenModifiers": [],
+      "description": "Type assumption and reassumption modifiers"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(infixl|infixr|prefix|postfix|nonfix)\\b",
+      "tokenModifiers": [],
+      "description": "Operator fixity declarations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(int|bool|char|double|float|string|void|ptr|size_t|ssize_t)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in dynamic types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(nat|Nat|Int|Bool|Char|String|Void|Ptr)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in sorts and static types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(List|List0|List1|Option|Option_vt|List_vt|Array|Arrayref|Matrixref|stream|stream_vt|lazy|lazy_vt)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Standard library container types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(prop|view|type|viewtype|vtype|t0ype|vt0ype|t@ype|vt@ype|addr)\\b",
+      "tokenModifiers": [],
+      "description": "Sort keywords for the statics"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(print|println|prerr|prerrln|fprint|fprintln|tostring|tostring_val|assertloc|assertloc_msg|exit|exit_errmsg|exit_void)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Standard library I/O and assertion functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(list_cons|list_nil|list_vt_cons|list_vt_nil|option_some|option_none|array_make_elt|ref_make_elt|fileref_open_exn|fileref_close)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Standard library data structure constructors and file operations"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#(define|include|if|ifdef|ifndef|else|endif|then|print|error|assert|undef|elifdef|elifndef)\\b",
+      "tokenModifiers": [],
       "description": "Preprocessor directives"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(assume|reassume|stadef|propdef|viewdef|vtypedef)\\b",
-      "modifiers": [],
-      "description": "Type assumption and definition modifiers"
+      "tokenType": "macro",
+      "pattern": "\\$\\b(literal|extval|extfcall|extmcall|extype|extype_struct|raise|effmask_all|effmask_exn|effmask_ntm|effmask_ref|effmask_wrt|showtype|myfilename|myfunction|mylocation|delay|ldelay|vcopyenv_v|vcopyenv_vt)\\b",
+      "tokenModifiers": [],
+      "description": "Dollar-prefixed special forms and macros"
     },
     {
-      "type": "comment",
-      "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/|\\(\\*[\\s\\S]*?\\*\\)",
-      "modifiers": [],
-      "description": "Line comments, C-style block comments, and ML-style comments"
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments with //"
     },
     {
-      "type": "string",
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "C-style block comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\(\\*[\\s\\S]*?\\*\\)",
+      "tokenModifiers": [],
+      "description": "ML-style block comments"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in double quotes"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b|\\b0x[0-9a-fA-F]+\\b",
-      "modifiers": [],
-      "description": "Integer, floating-point, and hexadecimal literals"
+      "tokenType": "string",
+      "pattern": "'[^'\\\\]'|'\\\\.'",
+      "tokenModifiers": [],
+      "description": "Character literals in single quotes"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0x[0-9a-fA-F]+\\b",
+      "tokenModifiers": [],
+      "description": "Hexadecimal integer literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Decimal integer and floating-point literals"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(=>|=>>|->|<-|:=|\\|>>|>>|<<|&&|\\|\\||>=|<=|!=|<>|<|>|=|\\+|-|\\*|/|%|~|!|@|\\.|:)",
+      "tokenModifiers": [],
+      "description": "ATS operators: arrows, assignment, logical, comparison, arithmetic, address-of"
     }
   ]
 }

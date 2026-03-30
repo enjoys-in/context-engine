@@ -2,74 +2,165 @@
   "language": "less",
   "symbolPatterns": [
     {
-      "name": "Variable",
-      "pattern": "^\\s*(@\\w+)\\s*:",
+      "name": "Class Selector",
+      "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_-]*)\\s*[{,>+~\\s]",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "ID Selector",
+      "pattern": "#([a-zA-Z_][a-zA-Z0-9_-]*)\\s*[{,>+~\\s]",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "id"
+    },
+    {
+      "name": "Element Selector",
+      "pattern": "^\\s*([a-zA-Z][a-zA-Z0-9]*)\\s*[{,>+~:\\[\\s]",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "element"
+    },
+    {
+      "name": "@media Query",
+      "pattern": "@media\\s+([^{]+?)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "media-query"
+    },
+    {
+      "name": "@keyframes",
+      "pattern": "@keyframes\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "keyframes"
+    },
+    {
+      "name": "@font-face",
+      "pattern": "@font-face\\s*\\{[^}]*font-family:\\s*[\"']?([^\"';}]+)",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "font-face"
+    },
+    {
+      "name": "@supports",
+      "pattern": "@supports\\s+([^{]+?)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 10,
+      "type": "supports"
+    },
+    {
+      "name": "@layer",
+      "pattern": "@layer\\s+([a-zA-Z_][a-zA-Z0-9_.-]*)\\s*[{;]",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "layer"
+    },
+    {
+      "name": "CSS Variable",
+      "pattern": "(--[a-zA-Z_][a-zA-Z0-9_-]*)\\s*:",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "css-variable"
+    },
+    {
+      "name": "Pseudo-class",
+      "pattern": ":(?!:)(?!extend)([a-zA-Z][a-zA-Z0-9-]*)(?:\\([^)]*\\))?",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "pseudo-class"
+    },
+    {
+      "name": "Pseudo-element",
+      "pattern": "::([a-zA-Z][a-zA-Z0-9-]*)",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "pseudo-element"
+    },
+    {
+      "name": "Property Declaration",
+      "pattern": "^\\s+([a-zA-Z-][a-zA-Z0-9-]*)\\s*:",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": ":root Selector",
+      "pattern": "(:root)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "root"
+    },
+    {
+      "name": "@container Query",
+      "pattern": "@container\\s+([a-zA-Z_][\\w-]*)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "container"
+    },
+    {
+      "name": "@variable",
+      "pattern": "^\\s*(@[a-zA-Z_][\\w-]*)\\s*:",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
       "name": "Mixin",
-      "pattern": "^\\s*\\.([\\w-]+)\\s*\\(",
+      "pattern": "\\.([\\w-]+)\\s*\\(\\)\\s*\\{",
       "captureGroup": 1,
       "kind": 11,
-      "type": "function"
+      "type": "mixin"
     },
     {
-      "name": "Selector",
-      "pattern": "^\\s*([.#][\\w-]+)",
+      "name": "Guarded Mixin",
+      "pattern": "\\.([\\w-]+)\\s*\\([^)]*\\)\\s*when\\b",
       "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
+      "kind": 11,
+      "type": "guarded-mixin"
     },
     {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "Parametric Mixin",
+      "pattern": "\\.([\\w-]+)\\s*\\(@[\\w-]+",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 11,
+      "type": "parametric-mixin"
     },
     {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
+      "name": "Namespace",
+      "pattern": "(#[\\w-]+)\\s*>",
       "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
+      "kind": 2,
+      "type": "namespace"
     },
     {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "@import",
+      "pattern": "@import\\s+(?:\\([\\w, ]+\\)\\s+)?[\"']([^\"']+)[\"']",
       "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
+      "kind": 3,
+      "type": "import"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": ":extend()",
+      "pattern": ":extend\\(([^)]+)\\)",
       "captureGroup": 1,
       "kind": 5,
-      "type": "method"
+      "type": "extend"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "Detached Ruleset",
+      "pattern": "(@[\\w-]+)\\s*:\\s*\\{",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 12,
+      "type": "detached-ruleset"
     },
     {
-      "name": "Event",
-      "pattern": "(?:event|on\\w+)\\s+(\\w+)",
+      "name": "Plugin",
+      "pattern": "@plugin\\s+[\"']([^\"']+)[\"']",
       "captureGroup": 1,
-      "kind": 23,
-      "type": "event"
+      "kind": 3,
+      "type": "plugin"
     }
   ]
 }

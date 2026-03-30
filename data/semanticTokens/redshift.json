@@ -1,77 +1,304 @@
 {
   "language": "redshift",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "variable", "function", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "readonly",
+      "static",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|UNION|ALL|INTO|VALUES|SET|AS|WITH|RECURSIVE|TABLE|VIEW|SCHEMA|INDEX|GRANT|REVOKE|BEGIN|COMMIT|ROLLBACK|EXPLAIN|ANALYZE|VACUUM|TRUNCATE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Standard SQL and Redshift DDL/DML keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT|INSERT\\s+INTO|UPDATE|DELETE\\s+FROM|DELETE|MERGE\\s+INTO|MERGE|FROM|WHERE|SET|INTO|VALUES|AS|ON|USING|ALL|DISTINCT|TOP|HAVING|LIMIT|OFFSET|FETCH\\s+FIRST)\\b",
+      "tokenModifiers": [],
+      "description": "Core DML query keywords"
     },
     {
-      "type": "modifier",
-      "pattern": "\\b(DISTKEY|SORTKEY|DISTSTYLE|COMPOUND|INTERLEAVED|EVEN|KEY|ALL|AUTO|ENCODE|RAW|AZ64|BYTEDICT|DELTA|DELTA32K|LZO|MOSTLY8|MOSTLY16|MOSTLY32|RUNLENGTH|TEXT255|TEXT32K|ZSTD)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redshift distribution keys, sort keys, and compression encodings"
+      "tokenType": "keyword",
+      "pattern": "\\b(CREATE(\\s+OR\\s+REPLACE)?\\s+(TABLE|EXTERNAL\\s+TABLE|VIEW|MATERIALIZED\\s+VIEW|SCHEMA|EXTERNAL\\s+SCHEMA|FUNCTION|PROCEDURE|USER|GROUP|DATABASE|LIBRARY)|ALTER\\s+(TABLE|SCHEMA|USER|GROUP|DEFAULT\\s+PRIVILEGES)|DROP\\s+(TABLE|VIEW|MATERIALIZED\\s+VIEW|SCHEMA|FUNCTION|PROCEDURE|USER|GROUP|DATABASE|LIBRARY))\\b",
+      "tokenModifiers": [],
+      "description": "DDL statements for Redshift objects including external and materialized views"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(COPY|UNLOAD)\\s+",
-      "modifiers": ["defaultLibrary"],
-      "description": "COPY and UNLOAD commands for data loading/exporting"
+      "tokenType": "keyword",
+      "pattern": "\\b(COPY|UNLOAD)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "COPY and UNLOAD data transfer commands for S3 integration"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(FROM|TO)\\s+'s3://[^']*'",
-      "modifiers": [],
-      "description": "S3 path references in COPY/UNLOAD statements"
+      "tokenType": "keyword",
+      "pattern": "\\b(INNER\\s+JOIN|LEFT(\\s+OUTER)?\\s+JOIN|RIGHT(\\s+OUTER)?\\s+JOIN|FULL(\\s+OUTER)?\\s+JOIN|CROSS\\s+JOIN|NATURAL\\s+JOIN|JOIN)\\b",
+      "tokenModifiers": [],
+      "description": "JOIN types including INNER, LEFT, RIGHT, FULL OUTER, CROSS, NATURAL"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(EXTERNAL\\s+SCHEMA|EXTERNAL\\s+TABLE|SPECTRUM)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redshift Spectrum external schema and table references"
+      "tokenType": "keyword",
+      "pattern": "\\b(GROUP\\s+BY|ORDER\\s+BY|PARTITION\\s+BY|WITH(\\s+RECURSIVE)?|UNION(\\s+ALL)?|INTERSECT|EXCEPT|CASE|WHEN|THEN|ELSE|END|EXISTS|NOT\\s+EXISTS|IN|BETWEEN|LIKE|ILIKE|SIMILAR\\s+TO|IS\\s+(NOT\\s+)?NULL)\\b",
+      "tokenModifiers": [],
+      "description": "Clauses, set operations, conditional expressions, and predicates"
     },
     {
-      "type": "type",
-      "pattern": "\\b(SMALLINT|INT2|INTEGER|INT|INT4|BIGINT|INT8|DECIMAL|NUMERIC|REAL|FLOAT4|DOUBLE\\s+PRECISION|FLOAT8|FLOAT|BOOLEAN|BOOL|CHAR|CHARACTER|NCHAR|BPCHAR|VARCHAR|CHARACTER\\s+VARYING|NVARCHAR|TEXT|DATE|TIMESTAMP|TIMESTAMPTZ|TIME|TIMETZ|SUPER|GEOMETRY|GEOGRAPHY|HLLSKETCH|VARBYTE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redshift data types"
+      "tokenType": "modifier",
+      "pattern": "\\b(DISTKEY|SORTKEY|COMPOUND\\s+SORTKEY|INTERLEAVED\\s+SORTKEY)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift distribution and sort key declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\b(NVL|NVL2|DECODE|GETDATE|SYSDATE|DATEADD|DATEDIFF|DATE_TRUNC|CONVERT_TIMEZONE|JSON_EXTRACT_PATH_TEXT|JSON_PARSE|LISTAGG|APPROXIMATE\\s+COUNT|MEDIAN|PERCENTILE_CONT|PERCENTILE_DISC|RATIO_TO_REPORT|CUME_DIST|DENSE_RANK|RANK|ROW_NUMBER|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|STRTOL|LEN|CHARINDEX|REGEXP_SUBSTR|REGEXP_REPLACE|REGEXP_COUNT)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redshift built-in and window functions"
+      "tokenType": "modifier",
+      "pattern": "\\bDISTSTYLE\\s+(KEY|ALL|EVEN|AUTO)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift DISTSTYLE distribution strategies"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(CREATE\\s+SCHEMA|CREATE\\s+EXTERNAL\\s+SCHEMA)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Schema declarations including external schemas"
+      "tokenType": "modifier",
+      "pattern": "\\bENCODE\\s+(AZ64|BYTEDICT|DELTA|DELTA32K|LZO|MOSTLY8|MOSTLY16|MOSTLY32|RAW|RUNLENGTH|TEXT255|TEXT32K|ZSTD)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift column compression encodings"
     },
     {
-      "type": "comment",
+      "tokenType": "keyword",
+      "pattern": "\\b(VACUUM(\\s+(FULL|SORT\\s+ONLY|DELETE\\s+ONLY|REINDEX|RECLUSTER))?|ANALYZE(\\s+COMPRESSION)?)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift VACUUM and ANALYZE maintenance commands with options"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(GRANT|REVOKE)\\b.*?\\b(ON|TO|FROM)\\b",
+      "tokenModifiers": [],
+      "description": "DCL GRANT/REVOKE privilege statements"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(BEGIN(\\s+TRANSACTION)?|COMMIT|ROLLBACK|END(\\s+TRANSACTION)?|LOCK\\s+TABLE|ABORT)\\b",
+      "tokenModifiers": [],
+      "description": "Transaction control keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(SMALLINT|INT2|INTEGER|INT|INT4|BIGINT|INT8|DECIMAL|NUMERIC|REAL|FLOAT4|DOUBLE\\s+PRECISION|FLOAT8|FLOAT|BOOLEAN|BOOL|CHAR|CHARACTER|NCHAR|BPCHAR|VARCHAR|CHARACTER\\s+VARYING|NVARCHAR|TEXT|DATE|TIMESTAMP(\\s+WITHOUT\\s+TIME\\s+ZONE)?|TIMESTAMPTZ|TIMESTAMP\\s+WITH\\s+TIME\\s+ZONE|TIME(\\s+WITHOUT\\s+TIME\\s+ZONE)?|TIMETZ|SUPER|GEOMETRY|GEOGRAPHY|HLLSKETCH|VARBYTE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift data types including SUPER, GEOMETRY, GEOGRAPHY, HLLSKETCH"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ROW_NUMBER|RANK|DENSE_RANK|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|NTH_VALUE|CUME_DIST|PERCENT_RANK|RATIO_TO_REPORT)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Window ranking and navigation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(LISTAGG|MEDIAN|PERCENTILE_CONT|PERCENTILE_DISC|APPROXIMATE\\s+COUNT|APPROXIMATE\\s+PERCENTILE_DISC)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift-specific aggregate and approximate functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(COUNT|SUM|AVG|MIN|MAX|STDDEV|STDDEV_SAMP|STDDEV_POP|VARIANCE|VAR_SAMP|VAR_POP|BOOL_AND|BOOL_OR)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Standard and Redshift aggregate functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(OVER)\\s*\\(|\\b(ROWS|RANGE)\\s+BETWEEN\\b|\\bUNBOUNDED\\s+(PRECEDING|FOLLOWING)\\b|\\bCURRENT\\s+ROW\\b",
+      "tokenModifiers": [],
+      "description": "Window frame specification keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(JSON_EXTRACT_PATH_TEXT|JSON_EXTRACT_ARRAY_ELEMENT_TEXT|IS_VALID_JSON|IS_VALID_JSON_ARRAY|JSON_PARSE|JSON_SERIALIZE|CAN_JSON_PARSE|JSON_ARRAY_LENGTH)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift JSON/SUPER type functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(DATEADD|DATEDIFF|DATE_TRUNC|EXTRACT|GETDATE|SYSDATE|CURRENT_DATE|CURRENT_TIMESTAMP|TO_CHAR|TO_DATE|TO_TIMESTAMP|CONVERT_TIMEZONE|ADD_MONTHS|MONTHS_BETWEEN|LAST_DAY|NEXT_DAY|TRUNC|TIMEOFDAY|TIMESTAMP_CMP|TIMESTAMP_CMP_DATE|TIMESTAMP_CMP_TIMESTAMPTZ)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift date/time functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CONCAT|SUBSTRING|LENGTH|LEN|TRIM|LTRIM|RTRIM|BTRIM|UPPER|LOWER|REPLACE|REGEXP_SUBSTR|REGEXP_REPLACE|REGEXP_INSTR|REGEXP_COUNT|CHARINDEX|LPAD|RPAD|REPEAT|REVERSE|SPLIT_PART|STRPOS|TRANSLATE|INITCAP|POSITION|CHR|ASCII|LEFT|RIGHT)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift string manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CAST|CONVERT|COALESCE|NULLIF|NVL|NVL2|DECODE|GREATEST|LEAST|ABS|CEIL|CEILING|FLOOR|ROUND|MOD|POWER|SQRT|LOG|LN|EXP|SIGN|RANDOM|PI|STRTOL|TO_NUMBER)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Conversion, conditional, and mathematical scalar functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(HLL_CREATE_SKETCH|HLL_CARDINALITY|HLL_COMBINE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "HyperLogLog sketch functions for approximate distinct counts"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(STL_QUERY|STL_QUERYTEXT|STL_SCAN|STL_ALERT_EVENT_LOG|STL_LOAD_ERRORS|STL_LOAD_COMMITS|STL_LOADERROR_DETAIL|STL_DDLTEXT|STL_UTILITYTEXT|STL_WLM_QUERY|STL_DISK_FULL_DIAG|STL_CONNECTION_LOG|STL_SESSIONS|STL_STREAM_SEGS|STL_TR_CONFLICT|STL_UNDONE|STL_VACUUM)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "STL_ system tables for historical query and load logging"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(STV_BLOCKLIST|STV_TBL_PERM|STV_TBL_TRANS|STV_RECENTS|STV_INFLIGHT|STV_LOCKS|STV_SLICES|STV_WLM_CLASSIFICATION_CONFIG|STV_WLM_QUERY_QUEUE_STATE|STV_WLM_QUERY_STATE|STV_WLM_SERVICE_CLASS_CONFIG|STV_WLM_SERVICE_CLASS_STATE|STV_SESSIONS|STV_EXEC_STATE)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "STV_ system tables for current node snapshot data"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(SVV_TABLE_INFO|SVV_TABLES|SVV_COLUMNS|SVV_EXTERNAL_SCHEMAS|SVV_EXTERNAL_TABLES|SVV_EXTERNAL_COLUMNS|SVV_EXTERNAL_PARTITIONS|SVV_REDSHIFT_DATABASES|SVV_REDSHIFT_SCHEMAS|SVV_REDSHIFT_TABLES|SVV_REDSHIFT_COLUMNS|SVV_ALL_SCHEMAS|SVV_ALL_TABLES|SVV_ALL_COLUMNS|SVV_DISKUSAGE)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "SVV_ system views for metadata and external schema information"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(SVL_QUERY_SUMMARY|SVL_QUERY_REPORT|SVL_QUERY_METRICS|SVL_QUERY_METRICS_SUMMARY|SVL_QLOG|SVL_STATEMENTTEXT|SVL_S3QUERY_SUMMARY|SVL_S3LOG|SVL_COMPILE|SVL_MULTI_STATEMENT_VIOLATIONS)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "SVL_ system views for query profiling and Spectrum logging"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(EXTERNAL\\s+SCHEMA|EXTERNAL\\s+TABLE|FROM\\s+DATA\\s+CATALOG|FROM\\s+HIVE\\s+METASTORE|IAM_ROLE|FORMAT\\s+AS\\s+(PARQUET|ORC|RCFILE|SEQUENCEFILE|TEXTFILE|AVRO|JSON|ION))\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redshift Spectrum external schema and table format declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(DELIMITER|IGNOREHEADER|BLANKSASNULL|EMPTYASNULL|ACCEPTINVCHARS|MAXERROR|DATEFORMAT|TIMEFORMAT|REGION|MANIFEST|ENCRYPTED|GZIP|BZIP2|LZOP|CSV|FIXEDWIDTH|REMOVEQUOTES|ACCEPTANYDATE|ESCAPE|TRUNCATECOLUMNS|COMPROWS|COMPUPDATE|STATUPDATE|NOLOAD)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "COPY command options and parameters"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(PARALLEL|ALLOWOVERWRITE|ADDQUOTES|HEADER|MAXFILESIZE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "UNLOAD command options and parameters"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\.[a-zA-Z_][a-zA-Z0-9_]*\\.[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": [],
+      "description": "Fully qualified schema.table.column references"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(PRIMARY\\s+KEY|FOREIGN\\s+KEY|UNIQUE|NOT\\s+NULL|DEFAULT|REFERENCES|IDENTITY|GENERATED\\s+(BY\\s+DEFAULT|ALWAYS)\\s+AS\\s+IDENTITY|CHECK|CONSTRAINT)\\b",
+      "tokenModifiers": [],
+      "description": "Table constraint and column attribute keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(BACKUP\\s+(YES|NO)|TEMP|TEMPORARY|IF\\s+NOT\\s+EXISTS|IF\\s+EXISTS|CASCADE|RESTRICT|WITH\\s+NO\\s+SCHEMA\\s+BINDING)\\b",
+      "tokenModifiers": [],
+      "description": "Table modifiers, conditional existence checks, and view binding options"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(EXPLAIN|REFRESH\\s+MATERIALIZED\\s+VIEW)\\b",
+      "tokenModifiers": [],
+      "description": "EXPLAIN query plan and materialized view refresh"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(WLM_QUERY_SLOT_COUNT|MAX_CONCURRENCY_SCALING_CLUSTERS|ENABLE_RESULT_CACHE_FOR_SESSION|QUERY_GROUP|SEARCH_PATH)\\b",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Redshift session and configuration parameters"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(=|<>|!=|<=|>=|<|>|\\+|-|\\*|/|%|\\|\\||::)",
+      "tokenModifiers": [],
+      "description": "Comparison, arithmetic, string concatenation (||), and type cast (::) operators"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "--[^\\n]*|/\\*[\\s\\S]*?\\*/",
-      "modifiers": [],
-      "description": "Single-line and multi-line SQL comments"
+      "tokenModifiers": [],
+      "description": "Single-line (--) and multi-line (/* */) SQL comments"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "'([^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in single quotes"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?\\b",
-      "modifiers": [],
-      "description": "Numeric literals"
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals including decimal and scientific notation"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "'s3://[^']*'",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "S3 path references in COPY/UNLOAD statements"
     }
   ]
 }

@@ -1,71 +1,266 @@
 {
   "language": "abap",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "interface", "type", "variable", "function", "method", "keyword", "property", "parameter", "event", "macro"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "type",
+      "class",
+      "interface",
+      "function",
+      "method",
+      "parameter",
+      "event",
+      "decorator",
+      "operator",
+      "macro",
+      "comment"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "static",
+      "abstract",
+      "deprecated",
+      "modification",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
-      "pattern": "\\bDATA\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "DATA variable declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(REPORT|PROGRAM|INCLUDE|FUNCTION-POOL|TYPE-POOL|CLASS-POOL|INTERFACE-POOL)\\b",
+      "tokenModifiers": [],
+      "description": "ABAP program type declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\bTYPES\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["definition"],
+      "tokenType": "variable",
+      "pattern": "\\bDATA(?:\\s*[:])\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "DATA variable declarations with chained colon syntax"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bDATA\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+TYPE\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "DATA variable declaration with TYPE specification"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bTYPES\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+TYPE\\b",
+      "tokenModifiers": ["definition"],
       "description": "TYPES type definitions"
     },
     {
-      "type": "method",
-      "pattern": "\\bCLASS-METHODS\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration", "static"],
-      "description": "CLASS-METHODS static method declarations"
+      "tokenType": "type",
+      "pattern": "\\bTYPE\\s+(i|c|n|p|d|t|f|x|string|xstring|decfloat16|decfloat34|int8)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "ABAP built-in elementary data types"
     },
     {
-      "type": "function",
-      "pattern": "\\bFORM\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["definition"],
-      "description": "FORM subroutine definitions"
+      "tokenType": "type",
+      "pattern": "\\bTYPE\\s+(STANDARD\\s+TABLE|SORTED\\s+TABLE|HASHED\\s+TABLE)\\s+OF\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Internal table type specifications (STANDARD, SORTED, HASHED)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|FROM|WHERE|INTO|TABLE|ENDSELECT)\\b",
-      "modifiers": [],
-      "description": "SELECT statement keywords"
+      "tokenType": "class",
+      "pattern": "\\bCLASS\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+DEFINITION\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "Class definition declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\bCALL\\s+FUNCTION\\s+'([^']+)'",
-      "modifiers": ["defaultLibrary"],
-      "description": "Function module calls"
+      "tokenType": "class",
+      "pattern": "\\bCLASS\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+IMPLEMENTATION\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Class implementation blocks"
     },
     {
-      "type": "class",
-      "pattern": "\\bCLASS\\s+([a-z_][a-z0-9_]*)\\s+DEFINITION\\b",
-      "modifiers": ["declaration"],
-      "description": "Class definitions"
+      "tokenType": "keyword",
+      "pattern": "\\b(PUBLIC\\s+SECTION|PROTECTED\\s+SECTION|PRIVATE\\s+SECTION)\\b",
+      "tokenModifiers": [],
+      "description": "Class visibility section markers"
     },
     {
-      "type": "interface",
-      "pattern": "\\bINTERFACE\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(INHERITING\\s+FROM|REDEFINITION|CREATE\\s+PUBLIC|CREATE\\s+PROTECTED|CREATE\\s+PRIVATE|FINAL|ABSTRACT)\\b",
+      "tokenModifiers": ["abstract"],
+      "description": "ABAP OO class modifiers and inheritance keywords"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "\\bINTERFACE\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["declaration"],
       "description": "Interface declarations"
     },
     {
-      "type": "method",
-      "pattern": "\\bMETHODS\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "method",
+      "pattern": "\\bMETHODS\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["declaration"],
       "description": "Instance method declarations"
     },
     {
-      "type": "event",
-      "pattern": "\\bEVENTS\\s+([a-z_][a-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Event declarations"
+      "tokenType": "method",
+      "pattern": "\\bCLASS-METHODS\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["declaration", "static"],
+      "description": "Static class method declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bFORM\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["definition", "deprecated"],
+      "description": "FORM subroutine definitions (deprecated in favor of methods)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bFUNCTION\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Function module definitions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(IF|ELSEIF|ELSE|ENDIF|CASE|WHEN|ENDCASE|CHECK|ASSERT)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional control flow keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(DO|ENDDO|WHILE|ENDWHILE|LOOP\\s+AT|ENDLOOP|EXIT|CONTINUE|RETURN)\\b",
+      "tokenModifiers": [],
+      "description": "Loop and iteration control flow keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(TRY|CATCH|CLEANUP|ENDTRY|RAISE\\s+EXCEPTION|RAISE\\s+SHORTDUMP)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT\\s+SINGLE|SELECT|ENDSELECT|UPDATE|INSERT\\s+INTO|DELETE\\s+FROM|MODIFY)\\b",
+      "tokenModifiers": [],
+      "description": "ABAP SQL / Open SQL DML statements"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(FOR\\s+ALL\\s+ENTRIES\\s+IN|INNER\\s+JOIN|LEFT\\s+OUTER\\s+JOIN|INTO\\s+TABLE|INTO\\s+CORRESPONDING\\s+FIELDS|GROUP\\s+BY|HAVING|ORDER\\s+BY|UP\\s+TO\\s+\\d+\\s+ROWS)\\b",
+      "tokenModifiers": [],
+      "description": "ABAP SQL join, aggregation, and result set clauses"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(READ\\s+TABLE|APPEND|COLLECT|SORT|DESCRIBE\\s+TABLE|CLEAR|REFRESH|FREE)\\b",
+      "tokenModifiers": ["modification"],
+      "description": "Internal table operation statements"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(MOVE-CORRESPONDING|CORRESPONDING\\s+#)\\b",
+      "tokenModifiers": [],
+      "description": "Structure/table component copy operations"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "<[a-zA-Z_][a-zA-Z0-9_]*>",
+      "tokenModifiers": ["definition"],
+      "description": "Field symbol declarations and references"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(ASSIGN|UNASSIGN|FIELD-SYMBOLS)\\b",
+      "tokenModifiers": [],
+      "description": "Field symbol assignment keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bCALL\\s+FUNCTION\\s+'([^']+)'",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Function module calls via CALL FUNCTION"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bCALL\\s+METHOD\\s+([a-zA-Z_][a-zA-Z0-9_~>-]*)\\b",
+      "tokenModifiers": [],
+      "description": "Explicit method invocation via CALL METHOD"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCREATE\\s+OBJECT\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "Object instantiation via CREATE OBJECT"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bEVENTS\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "Class event declarations"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\b(AT\\s+SELECTION-SCREEN|START-OF-SELECTION|END-OF-SELECTION|TOP-OF-PAGE|INITIALIZATION|AT\\s+LINE-SELECTION|AT\\s+USER-COMMAND)\\b",
+      "tokenModifiers": [],
+      "description": "ABAP report event blocks"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(WRITE|MESSAGE|SKIP|ULINE|NEW-LINE|NEW-PAGE|FORMAT)\\b",
+      "tokenModifiers": [],
+      "description": "Output and messaging statements"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(strlen|substring|concat_lines_of|to_upper|to_lower|condense|escape|matches|contains|find|replace|shift|translate|segment|reverse|repeat|insert|overlay)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in string processing functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(lines|line_index|line_exists|xsdbool|boolc|abs|sign|ceil|floor|frac|trunc|nmin|nmax|ipow|log|log10|exp|sqrt|cos|sin|tan|acos|asin|atan)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in numeric, math, and table functions"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@AbapCatalog\\.[a-zA-Z_.]+|@Semantics\\.[a-zA-Z_.]+|@ObjectModel\\.[a-zA-Z_.]+|@EndUserText\\.[a-zA-Z_.]+|@Metadata\\.[a-zA-Z_.]+|@Search\\.[a-zA-Z_.]+|@Consumption\\.[a-zA-Z_.]+",
+      "tokenModifiers": ["documentation"],
+      "description": "CDS view annotations for ABAP CDS entities"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(EXEC\\s+SQL|ENDEXEC|NATIVE\\s+SQL)\\b",
+      "tokenModifiers": ["deprecated"],
+      "description": "Native SQL blocks (deprecated in favor of ABAP SQL)"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\b(IMPORTING|EXPORTING|CHANGING|RETURNING|RECEIVING|EXCEPTIONS|RAISING)\\b",
+      "tokenModifiers": [],
+      "description": "Method and function parameter interface keywords"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\bDEFINE\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "ABAP macro definitions (DEFINE...END-OF-DEFINITION)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(TABLES|PARAMETERS|SELECT-OPTIONS|SELECTION-SCREEN)\\b",
+      "tokenModifiers": [],
+      "description": "Selection screen and dynpro declaration keywords"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(EQ|NE|LT|GT|LE|GE|CO|CN|CA|NA|CS|NS|CP|NP|BETWEEN|IN|IS\\s+INITIAL|IS\\s+NOT\\s+INITIAL|IS\\s+BOUND|IS\\s+NOT\\s+BOUND|IS\\s+ASSIGNED|AND|OR|NOT)\\b",
+      "tokenModifiers": [],
+      "description": "ABAP comparison and logical operators"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\*.*$|\"[^\"\\n]*$",
+      "tokenModifiers": [],
+      "description": "ABAP line comments (* at line start) and inline comments"
     }
   ]
 }

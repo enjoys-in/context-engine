@@ -1,59 +1,198 @@
 {
   "language": "dotenv",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "string", "comment", "keyword", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "variable",
+      "string",
+      "comment",
+      "keyword",
+      "operator",
+      "number",
+      "property"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "^([A-Z_][A-Z0-9_]*)\\s*=",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "KEY=VALUE variable definitions"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "^\\s*#.*$",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Comment lines starting with #"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "^export\\s+",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Exported variable prefix"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "=\\s*\"([^\"]*)\"",
-      "modifiers": [],
-      "description": "Double-quoted values"
+      "tokenModifiers": [],
+      "description": "Double-quoted values (support interpolation)"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "=\\s*'([^']*)'",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Single-quoted literal values (no interpolation)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$\\{([A-Z_][A-Z0-9_]*)\\}",
-      "modifiers": [],
-      "description": "Interpolated variable references (${VAR})"
+      "tokenModifiers": [],
+      "description": "Interpolated variable references ${VAR}"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$([A-Z_][A-Z0-9_]*)",
-      "modifiers": [],
-      "description": "Simple interpolated variable references ($VAR)"
+      "tokenModifiers": [],
+      "description": "Simple interpolated variable references $VAR"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "=",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Assignment operator"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*):-([^}]*)\\}",
+      "tokenModifiers": [],
+      "description": "Default value expansion ${VAR:-default}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*):\\?([^}]*)\\}",
+      "tokenModifiers": [],
+      "description": "Error if unset expansion ${VAR:?error message}"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "=\\s*\"[^\"]*\\\\\\n[\\s\\S]*?\"",
+      "tokenModifiers": [],
+      "description": "Multi-line values with backslash continuation in double quotes"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\s+#[^\"']*$",
+      "tokenModifiers": [],
+      "description": "Inline comments (# after value, not inside quotes)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<==\\s*)(true|false|TRUE|FALSE|True|False|yes|no|YES|NO)\\s*$",
+      "tokenModifiers": [],
+      "description": "Boolean-like values (true/false/yes/no)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<==\\s*)(https?://[^\\s#]+|ftp://[^\\s#]+|amqps?://[^\\s#]+|redis://[^\\s#]+|postgres(ql)?://[^\\s#]+|mysql://[^\\s#]+|mongodb(\\+srv)?://[^\\s#]+)",
+      "tokenModifiers": [],
+      "description": "URL values (http, https, postgres, redis, mongodb, etc.)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)\\d{1,5}(?=\\s*(?:#.*)?$)",
+      "tokenModifiers": [],
+      "description": "Port numbers and numeric values"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<==\\s*)(/[a-zA-Z0-9_./-]+|\\./[a-zA-Z0-9_./-]+)",
+      "tokenModifiers": [],
+      "description": "File path values (absolute or relative)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(NODE_ENV|APP_ENV|RAILS_ENV|FLASK_ENV|RACK_ENV|MIX_ENV)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Environment mode variables (NODE_ENV, APP_ENV, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(PORT|HOST|HOSTNAME|BIND_ADDRESS|LISTEN_PORT)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Server binding variables (PORT, HOST, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(DATABASE_URL|DB_HOST|DB_PORT|DB_NAME|DB_USER|DB_PASSWORD|DB_CONNECTION|REDIS_URL|REDIS_HOST|REDIS_PORT)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Database and cache connection variables"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(API_KEY|API_SECRET|SECRET_KEY|JWT_SECRET|SESSION_SECRET|ENCRYPTION_KEY|AUTH_SECRET|APP_KEY)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Secret and API key variables"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_REGION|AWS_BUCKET|AWS_ENDPOINT|S3_BUCKET|S3_REGION)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "AWS and S3 cloud configuration variables"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(SMTP_HOST|SMTP_PORT|SMTP_USER|SMTP_PASSWORD|MAIL_FROM|MAIL_HOST|MAIL_PORT|SENDGRID_API_KEY)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Email and SMTP configuration variables"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<==\\s*)(development|production|staging|test|local)\\s*$",
+      "tokenModifiers": [],
+      "description": "Common environment mode values"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "=\\s*$",
+      "tokenModifiers": [],
+      "description": "Empty values (KEY= with no value)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^(LOG_LEVEL|LOG_FILE|DEBUG|VERBOSE|SENTRY_DSN|NEW_RELIC_LICENSE_KEY)\\s*=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Logging and monitoring configuration variables"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{([A-Z_][A-Z0-9_]*):\\+([^}]*)\\}",
+      "tokenModifiers": [],
+      "description": "Alternate value expansion ${VAR:+alternate}"
     }
   ]
 }

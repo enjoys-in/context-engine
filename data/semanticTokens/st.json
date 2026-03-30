@@ -1,71 +1,286 @@
 {
   "language": "st",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "variable", "parameter", "property", "method", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "struct",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "method",
-      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:?\\s*[a-zA-Z_])?",
-      "modifiers": ["declaration"],
-      "description": "Method definitions with keyword-style selectors"
+      "tokenType": "keyword",
+      "pattern": "\\b(PROGRAM|END_PROGRAM|FUNCTION|END_FUNCTION|FUNCTION_BLOCK|END_FUNCTION_BLOCK)\\b",
+      "tokenModifiers": [],
+      "description": "Program organization unit (POU) keywords"
     },
     {
-      "type": "parameter",
-      "pattern": "\\[\\s*:([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\|",
-      "modifiers": ["declaration"],
-      "description": "Block closure parameters [:x |]"
+      "tokenType": "keyword",
+      "pattern": "\\b(VAR|VAR_INPUT|VAR_OUTPUT|VAR_IN_OUT|VAR_TEMP|VAR_GLOBAL|VAR_EXTERNAL|VAR_ACCESS|VAR_CONFIG|END_VAR)\\b",
+      "tokenModifiers": [],
+      "description": "Variable declaration section keywords"
     },
     {
-      "type": "variable",
-      "pattern": "\\|\\s*([a-zA-Z_][a-zA-Z0-9_ ]*)\\s*\\|",
-      "modifiers": ["declaration"],
-      "description": "Temporary variable declarations between pipes"
+      "tokenType": "keyword",
+      "pattern": "\\b(IF|THEN|ELSE|ELSIF|END_IF|CASE|OF|END_CASE)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional control flow keywords"
     },
     {
-      "type": "class",
-      "pattern": "\\b([A-Z][a-zA-Z0-9_]*)\\s+(subclass|class)\\b",
-      "modifiers": ["declaration"],
-      "description": "Class declarations and references"
+      "tokenType": "keyword",
+      "pattern": "\\b(FOR|TO|BY|DO|END_FOR|WHILE|END_WHILE|REPEAT|UNTIL|END_REPEAT)\\b",
+      "tokenModifiers": [],
+      "description": "Loop control flow keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(self|super|true|false|nil|thisContext)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Pseudo-variables and special objects"
+      "tokenType": "keyword",
+      "pattern": "\\b(EXIT|RETURN|CONTINUE)\\b",
+      "tokenModifiers": [],
+      "description": "Jump and exit control flow keywords"
     },
     {
-      "type": "method",
-      "pattern": "\\b(ifTrue|ifFalse|ifNil|ifNotNil|whileTrue|whileFalse|do|collect|select|reject|inject|detect|new|value|yourself)\\s*:",
-      "modifiers": ["defaultLibrary"],
-      "description": "Common message sends"
+      "tokenType": "modifier",
+      "pattern": "\\b(CONSTANT|RETAIN|PERSISTENT|AT|R_EDGE|F_EDGE)\\b",
+      "tokenModifiers": [],
+      "description": "Variable declaration modifiers and attributes"
     },
     {
-      "type": "operator",
-      "pattern": "(:=|\\^)",
-      "modifiers": [],
-      "description": "Assignment (:=) and return (^) operators"
+      "tokenType": "type",
+      "pattern": "\\b(BOOL|BYTE|WORD|DWORD|LWORD|SINT|INT|DINT|LINT|USINT|UINT|UDINT|ULINT|REAL|LREAL)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 elementary numeric data types"
     },
     {
-      "type": "string",
-      "pattern": "'[^']*'",
-      "modifiers": [],
-      "description": "String literals in single quotes"
+      "tokenType": "type",
+      "pattern": "\\b(STRING|WSTRING|CHAR|WCHAR)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 string and character data types"
     },
     {
-      "type": "comment",
-      "pattern": "\"[^\"]*\"",
-      "modifiers": [],
-      "description": "Comments enclosed in double quotes"
+      "tokenType": "type",
+      "pattern": "\\b(TIME|DATE|TIME_OF_DAY|TOD|DATE_AND_TIME|DT|LTIME|LDATE|LTOD|LDT)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 time, date, and duration data types"
     },
     {
-      "type": "number",
-      "pattern": "\\b[0-9]+(r[0-9A-Za-z]+)?\\b",
-      "modifiers": [],
-      "description": "Numeric literals with optional radix"
+      "tokenType": "keyword",
+      "pattern": "\\b(ARRAY|OF|STRUCT|END_STRUCT|TYPE|END_TYPE|POINTER|REF_TO|REFERENCE)\\b",
+      "tokenModifiers": [],
+      "description": "Composite type declaration and pointer keywords"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "(?<=FUNCTION_BLOCK\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function block name declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "(?<=FUNCTION\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function name declarations"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "(?<=PROGRAM\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Program name declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(TON|TOF|TP|CTU|CTD|CTUD|R_TRIG|F_TRIG|SR|RS)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 standard function blocks (timers, counters, triggers, bistables)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|SQRT|LN|LOG|EXP|SIN|COS|TAN|ASIN|ACOS|ATAN|EXPT|TRUNC|SEL|MAX|MIN|LIMIT|MUX|SHL|SHR|ROL|ROR|CONCAT|INSERT|DELETE|REPLACE|FIND|LEN|LEFT|RIGHT|MID)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 standard functions (math, string, selection, bit shift)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b[A-Z]+_TO_[A-Z]+\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IEC 61131-3 type conversion functions (e.g., INT_TO_REAL, BOOL_TO_INT)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ":=",
+      "tokenModifiers": [],
+      "description": "Assignment operator"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "=>",
+      "tokenModifiers": [],
+      "description": "Output assignment operator for function block calls"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(AND|OR|XOR|NOT)\\b",
+      "tokenModifiers": [],
+      "description": "Logical and bitwise operators as keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(MOD)\\b",
+      "tokenModifiers": [],
+      "description": "Modulo operator keyword"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\+|\\-|\\*|/|\\*\\*|<>|<=|>=|=|<|>)",
+      "tokenModifiers": [],
+      "description": "Arithmetic, comparison, and exponentiation operators"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(TRUE|FALSE)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Boolean literal constants"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[Tt]#[0-9]+([smhd]|ms|us|ns)([0-9]+([smhd]|ms|us|ns))*",
+      "tokenModifiers": [],
+      "description": "Time duration literals (T#5s, T#100ms, T#1h30m)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "[Dd]#[0-9]{4}-[0-9]{2}-[0-9]{2}",
+      "tokenModifiers": [],
+      "description": "Date literals (D#2024-01-31)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(TOD|DT)#[0-9:.\\-]+",
+      "tokenModifiers": [],
+      "description": "Time of day and date-and-time literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "16#[0-9a-fA-F_]+",
+      "tokenModifiers": [],
+      "description": "Hexadecimal numeric literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "2#[01_]+",
+      "tokenModifiers": [],
+      "description": "Binary numeric literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "8#[0-7_]+",
+      "tokenModifiers": [],
+      "description": "Octal numeric literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9][0-9_]*(\\.[0-9_]+)?([eE][+-]?[0-9]+)?\\b",
+      "tokenModifiers": [],
+      "description": "Decimal integer and floating-point numeric literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'(?:[^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted string literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals (wide strings)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\(\\*[\\s\\S]*?\\*\\)",
+      "tokenModifiers": [],
+      "description": "Block comments enclosed in (* *)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//.*$",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\{[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "Pragmas and compiler attributes ({attribute}, {warning})"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=AT\\s+)%[IQM][XBWDL]?[0-9.]+",
+      "tokenModifiers": [],
+      "description": "Directly represented variables / hardware addresses (%IX0.0, %QW1)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": [],
+      "description": "Struct member and function block property access via dot notation"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*:(?!=))",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable name declarations followed by type annotation"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()",
+      "tokenModifiers": [],
+      "description": "Function and function block invocations"
     }
   ]
 }

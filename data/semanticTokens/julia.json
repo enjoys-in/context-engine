@@ -1,77 +1,210 @@
 {
   "language": "julia",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "struct", "typeParameter", "parameter", "variable", "property", "function", "method", "macro", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "abstract", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "abstract",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(function|end|struct|module|macro|begin|let|if|elseif|else|for|while|do|try|catch|finally|return|break|continue|import|using|export|const|global|local|mutable|abstract|primitive|where|baremodule|quote)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Julia language keywords"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "(?<=function\\s+)[a-zA-Z_][a-zA-Z0-9_!]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function declarations including bang functions"
     },
     {
-      "type": "macro",
+      "tokenType": "macro",
       "pattern": "@[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Macro invocations like @show, @time, @assert"
     },
     {
-      "type": "struct",
+      "tokenType": "struct",
       "pattern": "(?<=(?:mutable\\s+)?struct\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Struct type declarations, mutable and immutable"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "(?<=module\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Module declarations"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "(?<=::)\\s*[A-Z][a-zA-Z0-9_]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Type annotations after :: operator"
     },
     {
-      "type": "operator",
-      "pattern": "(::|<:|>:|\\|>|\\.(?=[a-zA-Z(])|=>|\\.\\.\\.|∈|∘|⊂|⊃|∩|∪)",
-      "modifiers": [],
+      "tokenType": "operator",
+      "pattern": "(::|<:|>:|\\|>|\\.(?=[a-zA-Z(])|=>|\\.\\.\\.|\\u2208|\\u2218|\\u2282|\\u2283|\\u2229|\\u222A)",
+      "tokenModifiers": [],
       "description": "Type annotation ::, subtype <:, pipe |>, broadcast ., and Unicode operators"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b[a-z_][a-zA-Z0-9_!]*\\s*(?=\\([^)]*\\)\\s*where)",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Method definitions with multiple dispatch (where clause)"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\b(Int|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Bool|Char|String|Symbol|Nothing|Any|Union|Tuple|NamedTuple|Array|Vector|Matrix|Dict|Set)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Built-in types in the Julia standard library"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#=.*?=#|#.*$",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Single-line and block comments"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"\"\"[\\s\\S]*?\"\"\"|\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Triple-quoted and regular string literals"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b[a-z_][a-zA-Z0-9_!]*\\s*\\(.*::[A-Z][a-zA-Z0-9_{}]*(?:\\s*,\\s*.*::[A-Z][a-zA-Z0-9_{}]*)*\\)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Multiple dispatch: function signatures with typed arguments"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b[A-Z][a-zA-Z0-9_]*\\{[^}]+\\}",
+      "tokenModifiers": [],
+      "description": "Parametric types with type parameters (e.g., Array{Float64,2}, Dict{String,Int})"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b\\w+\\.\\(|\\.[+\\-*/^%<>=!&|]",
+      "tokenModifiers": [],
+      "description": "Broadcasting dot syntax for element-wise operations (f.(x), .+, .*, etc.)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$(?:\\w+|\\([^)]+\\))",
+      "tokenModifiers": [],
+      "description": "String interpolation with $variable or $(expression)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\[\\s*[^\\]]*\\bfor\\s+\\w+\\s+in\\s+[^\\]]*\\]",
+      "tokenModifiers": [],
+      "description": "Array comprehensions ([expr for x in iter])"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\(\\s*[^)]*\\bfor\\s+\\w+\\s+in\\s+[^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Generator expressions ((expr for x in iter))"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bdo\\s*$|\\bdo\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Do block syntax for passing anonymous functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Channel|Task|put!|take!|fetch|schedule)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Channel and Task concurrency primitives"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "@(spawn|threads|distributed|parallel|everywhere|spawnat|fetchfrom|simd|inbounds|views|generated|enum|deprecate|doc|async|sync)",
+      "tokenModifiers": [],
+      "description": "Threading, parallelism, and utility macros (@spawn, @threads, @async, @sync, etc.)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(quote|eval|macroexpand|esc|gensym)\\b|@macroexpand|\\bMeta\\.parse\\b",
+      "tokenModifiers": [],
+      "description": "Metaprogramming primitives (quote, eval, macroexpand, esc, gensym)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bUnion\\{[^}]+\\}",
+      "tokenModifiers": [],
+      "description": "Type unions (Union{Int, Float64, Nothing})"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\bwhere\\s+[A-Z][a-zA-Z0-9_]*(?:\\s*<:\\s*[A-Z][a-zA-Z0-9_]*)?",
+      "tokenModifiers": [],
+      "description": "Where clause for parametric type constraints (where T <: Number)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\babstract\\s+type\\s+[A-Z][a-zA-Z0-9_]*(?:\\s*<:\\s*[A-Z][a-zA-Z0-9_]*)?\\s*end",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Abstract type declarations (abstract type Name <: Parent end)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bconst\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*=",
+      "tokenModifiers": [
+        "readonly",
+        "declaration"
+      ],
+      "description": "Constant declarations (const NAME = value)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(using|import)\\s+[A-Z][a-zA-Z0-9_]*(?:\\.[A-Z][a-zA-Z0-9_]*)*(?:\\s*:\\s*[a-zA-Z_][a-zA-Z0-9_!,\\s]*)?",
+      "tokenModifiers": [],
+      "description": "Using/Import statements with optional selective imports (using Pkg: add, rm)"
     }
   ]
 }

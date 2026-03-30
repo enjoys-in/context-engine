@@ -1,71 +1,279 @@
 {
   "language": "nginx",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "variable", "property", "string", "number", "comment", "operator", "type"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "property",
+      "type",
+      "string",
+      "number",
+      "comment",
+      "operator",
+      "macro"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(server|location|upstream|http|events|stream|mail|map|geo|types|if|return|rewrite|set|include|worker_processes|worker_connections|error_log|access_log|pid)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Nginx block directives and core keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(http|server|location|upstream|events|stream|mail|map|geo|types|limit_req_zone|limit_conn_zone|proxy_cache_path)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Nginx top-level block and zone directives"
     },
     {
-      "type": "variable",
+      "tokenType": "property",
+      "pattern": "\\b(listen|server_name|root|index|error_page|try_files|alias)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Server block core directives (listen, server_name, root, index)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(access_log|error_log|log_format|open_log_file_cache)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Logging directives (access_log, error_log, log_format)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(sendfile|tcp_nopush|tcp_nodelay|keepalive_timeout|client_max_body_size|client_body_buffer_size|large_client_header_buffers|charset)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Connection and transfer tuning directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(gzip|gzip_types|gzip_min_length|gzip_comp_level|gzip_proxied|gzip_vary|gzip_disable|gzip_buffers|gzip_http_version|gzip_static)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Gzip compression directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(proxy_pass|proxy_set_header|proxy_redirect|proxy_buffering|proxy_buffer_size|proxy_cache|proxy_cache_valid|proxy_cache_key|proxy_cache_use_stale)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Proxy pass and caching directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(proxy_http_version|proxy_ssl_protocols|proxy_connect_timeout|proxy_read_timeout|proxy_send_timeout)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Proxy protocol and timeout directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(ssl_certificate|ssl_certificate_key|ssl_protocols|ssl_ciphers|ssl_prefer_server_ciphers|ssl_session_cache|ssl_session_timeout)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "SSL/TLS certificate and protocol directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(ssl_stapling|ssl_stapling_verify|ssl_dhparam|ssl_trusted_certificate|ssl_ecdh_curve|ssl_buffer_size)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "SSL stapling and advanced TLS directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(fastcgi_pass|fastcgi_param|fastcgi_index|fastcgi_split_path_info|uwsgi_pass|uwsgi_param|scgi_pass|grpc_pass)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "FastCGI, uWSGI, SCGI, and gRPC backend directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(limit_req|limit_conn|limit_rate|limit_rate_after)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Rate and connection limiting enforcement directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(worker_processes|worker_connections|worker_rlimit_nofile|multi_accept|use|accept_mutex|pid|daemon)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Worker process and event loop configuration directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|set|return|rewrite|break|include)\\b",
+      "tokenModifiers": [],
+      "description": "Nginx control flow and inclusion directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(last|break|redirect|permanent)\\b",
+      "tokenModifiers": [],
+      "description": "Rewrite rule flags (last, break, redirect, permanent)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$(uri|request_uri|host|remote_addr|remote_port|server_name|server_port|scheme|request_method|args|query_string|content_type|content_length|document_root|realpath_root|is_args|request_filename|request_body)",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Nginx built-in request variables"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$(http_[a-zA-Z0-9_]+|cookie_[a-zA-Z0-9_]+|sent_http_[a-zA-Z0-9_]+|upstream_[a-zA-Z0-9_]+)",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Nginx dynamic header, cookie, and upstream variables"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$(proxy_host|realip_remote_addr|fastcgi_script_name|proxy_add_x_forwarded_for|proxy_port)",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Nginx proxy and FastCGI variables"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Nginx variables like $uri, $host, $remote_addr"
+      "tokenModifiers": [],
+      "description": "User-defined Nginx variables (via set or map)"
     },
     {
-      "type": "property",
-      "pattern": "\\b(proxy_pass|proxy_set_header|proxy_redirect|proxy_connect_timeout|proxy_read_timeout|fastcgi_pass|uwsgi_pass|grpc_pass)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Proxy directives"
+      "tokenType": "keyword",
+      "pattern": "(?<=location\\s+)(=|~|~\\*|\\^~)",
+      "tokenModifiers": [],
+      "description": "Location match modifiers (= exact, ~ regex, ~* case-insensitive, ^~ prefix)"
     },
     {
-      "type": "property",
-      "pattern": "\\b(listen|server_name|root|index|try_files|alias|error_page|client_max_body_size|keepalive_timeout|sendfile|gzip|ssl_certificate|ssl_certificate_key)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Server and location configuration directives"
+      "tokenType": "operator",
+      "pattern": "(=|~|~\\*|\\^~|!~|!~\\*)(?=\\s)",
+      "tokenModifiers": [],
+      "description": "Regex and match operators in if and location blocks"
     },
     {
-      "type": "type",
-      "pattern": "\\b(text/html|text/plain|text/css|application/json|application/javascript|application/xml|image/png|image/jpeg|image/gif|application/octet-stream)\\b",
-      "modifiers": ["readonly"],
-      "description": "MIME types used in content type declarations"
+      "tokenType": "macro",
+      "pattern": "(?<=upstream\\s+)[a-zA-Z_][a-zA-Z0-9_.-]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Upstream block name declarations"
     },
     {
-      "type": "string",
-      "pattern": "'([^'\\\\]|\\\\.)*'|\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
-      "description": "String literals in single or double quotes"
+      "tokenType": "property",
+      "pattern": "(?<=upstream\\b[\\s\\S]*?)\\b(server|weight|max_fails|fail_timeout|backup|down)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Upstream server directives (server, weight, max_fails, backup, down)"
     },
     {
-      "type": "number",
+      "tokenType": "keyword",
+      "pattern": "\\b(ip_hash|least_conn|hash|zone|keepalive)\\b",
+      "tokenModifiers": [],
+      "description": "Upstream load balancing methods and directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(on|off)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean toggle values (on/off)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(200|301|302|304|400|401|403|404|500|502|503|504)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Common HTTP status codes"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(text/html|text/plain|text/css|text/xml|application/json|application/javascript|application/xml|application/octet-stream|image/png|image/jpeg|image/gif|image/svg\\+xml|font/woff2?)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "MIME types in content-type and gzip_types directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(add_header|expires|etag|if_modified_since|open_file_cache|open_file_cache_valid|open_file_cache_min_uses)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "HTTP header and caching control directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(resolver|resolver_timeout|satisfy|allow|deny|auth_basic|auth_basic_user_file)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "DNS resolver and access control directives"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'(?:[^'\\\\]|\\\\.)*'|\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Quoted string values"
+    },
+    {
+      "tokenType": "number",
       "pattern": "\\b\\d+[kmgKMG]?\\b",
-      "modifiers": [],
-      "description": "Numeric values with optional size suffixes"
+      "tokenModifiers": [],
+      "description": "Numeric values with optional size suffixes (k, m, g)"
     },
     {
-      "type": "comment",
+      "tokenType": "number",
+      "pattern": "\\b\\d+[smhd]\\b",
+      "tokenModifiers": [],
+      "description": "Time duration values with suffixes (s, m, h, d)"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line comments starting with #"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(location)\\s+(=|~|~\\*|\\^~)?",
-      "modifiers": ["definition"],
-      "description": "Location block with match modifier"
+      "tokenType": "keyword",
+      "pattern": "\\b(default_type|internal|recursive_error_pages|msie_padding|server_tokens)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Miscellaneous server configuration directives"
     },
     {
-      "type": "operator",
-      "pattern": "(=|~|~\\*|\\^~|!~|!~\\*)",
-      "modifiers": [],
-      "description": "Match and regex operators in location and if blocks"
+      "tokenType": "property",
+      "pattern": "\\b(proxy_set_body|proxy_pass_header|proxy_hide_header|proxy_ignore_headers|proxy_intercept_errors|proxy_next_upstream)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Advanced proxy header and error handling directives"
     }
   ]
 }

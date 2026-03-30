@@ -1,65 +1,332 @@
 {
   "language": "wgsl",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "struct", "parameter", "variable", "property", "function", "keyword", "modifier", "comment", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "struct",
+      "parameter",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator",
+      "namespace",
+      "enumMember"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bfn\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function declarations with fn keyword"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(var|let|const)\\s*(<[^>]+>)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Variable declarations with var/let/const"
+      "tokenType": "variable",
+      "pattern": "\\bvar\\s*(<[^>]+>)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Mutable variable declarations with var"
     },
     {
-      "type": "struct",
-      "pattern": "\\bstruct\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Struct declarations"
+      "tokenType": "variable",
+      "pattern": "\\blet\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Immutable variable declarations with let"
     },
     {
-      "type": "decorator",
-      "pattern": "@(vertex|fragment|compute|binding|group|location|builtin|workgroup_size|id|align|size|interpolate|invariant|must_use)",
-      "modifiers": [],
-      "description": "WGSL attribute annotations"
+      "tokenType": "variable",
+      "pattern": "\\bconst\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "readonly",
+        "static"
+      ],
+      "description": "Compile-time constant declarations with const"
     },
     {
-      "type": "type",
-      "pattern": "\\b(vec[234]|mat[234]x[234]|vec[234][fhiu]|mat[234]x[234]f)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Vector and matrix types"
+      "tokenType": "variable",
+      "pattern": "\\boverride\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Pipeline-overridable constant declarations with override"
     },
     {
-      "type": "type",
-      "pattern": "\\b(bool|f16|f32|i32|u32|sampler|sampler_comparison|texture_1d|texture_2d|texture_3d|texture_cube|texture_multisampled_2d|texture_depth_2d|texture_depth_cube|texture_storage_2d|array|ptr)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in scalar, sampler, and texture types"
+      "tokenType": "struct",
+      "pattern": "\\bstruct\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Struct type declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\b(abs|acos|asin|atan|atan2|ceil|clamp|cos|cross|degrees|determinant|distance|dot|exp|exp2|floor|fract|length|log|log2|max|min|mix|normalize|pow|radians|reflect|refract|round|sign|sin|smoothstep|sqrt|step|tan|transpose|trunc)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in math and utility functions"
+      "tokenType": "type",
+      "pattern": "\\balias\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Type alias declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(if|else|for|while|loop|break|continue|return|switch|case|default|discard|continuing|enable|diagnostic|const_assert|override)\\b",
-      "modifiers": [],
-      "description": "Control flow and declaration keywords"
+      "tokenType": "decorator",
+      "pattern": "@(vertex|fragment|compute)",
+      "tokenModifiers": [],
+      "description": "Shader entry point stage attributes"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(uniform|storage|read|write|read_write|function|private|workgroup)\\b",
-      "modifiers": [],
-      "description": "Address space and access mode keywords"
+      "tokenType": "decorator",
+      "pattern": "@(location|binding|group|id)\\s*\\(\\s*\\d+\\s*\\)",
+      "tokenModifiers": [],
+      "description": "Numeric resource binding and location attributes"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(builtin)\\s*\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Built-in value attribute annotations"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(workgroup_size)\\s*\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Compute shader workgroup size attribute"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(interpolate|invariant|must_use|align|size|diagnostic)",
+      "tokenModifiers": [],
+      "description": "Miscellaneous WGSL attributes (interpolation, invariance, diagnostics)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|else)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional branching keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(for|while|loop|continuing)\\b",
+      "tokenModifiers": [],
+      "description": "Loop construct keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(switch|case|default)\\b",
+      "tokenModifiers": [],
+      "description": "Switch-case selection keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(break|continue|return|discard)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow jump keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(fn|var|let|const|override|struct|alias|type|enable|diagnostic|const_assert)\\b",
+      "tokenModifiers": [],
+      "description": "Declaration and directive keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(bool|i32|u32|f32|f16)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in scalar types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(vec2|vec3|vec4|vec2i|vec3i|vec4i|vec2u|vec3u|vec4u|vec2f|vec3f|vec4f|vec2h|vec3h|vec4h)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in vector types with optional element type suffixes"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|mat2x2f|mat2x3f|mat2x4f|mat3x2f|mat3x3f|mat3x4f|mat4x2f|mat4x3f|mat4x4f|mat2x2h|mat2x3h|mat2x4h|mat3x2h|mat3x3h|mat3x4h|mat4x2h|mat4x3h|mat4x4h)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in matrix types with optional element type suffixes"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(array|ptr|atomic)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in compound types (array, pointer, atomic)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(sampler|sampler_comparison)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in sampler types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(texture_1d|texture_2d|texture_2d_array|texture_3d|texture_cube|texture_cube_array|texture_multisampled_2d|texture_depth_2d|texture_depth_2d_array|texture_depth_cube|texture_depth_cube_array|texture_depth_multisampled_2d|texture_storage_1d|texture_storage_2d|texture_storage_2d_array|texture_storage_3d|texture_external)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in texture types"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(abs|acos|acosh|asin|asinh|atan|atanh|atan2|ceil|clamp|cos|cosh|cross|degrees|determinant|distance|dot|exp|exp2|faceForward|floor|fma|fract|frexp|inverseSqrt|ldexp|length|log|log2|max|min|mix|modf|normalize|pow|quantizeToF16|radians|reflect|refract|round|saturate|sign|sin|sinh|smoothstep|sqrt|step|tan|tanh|transpose|trunc)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in math and geometric functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(all|any|select|arrayLength|countLeadingZeros|countOneBits|countTrailingZeros|extractBits|firstLeadingBit|firstTrailingBit|insertBits|reverseBits|shiftLeft|shiftRight)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in logical, bit manipulation, and data packing functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(textureSample|textureSampleBias|textureSampleLevel|textureSampleGrad|textureSampleCompare|textureSampleCompareLevel|textureLoad|textureStore|textureDimensions|textureNumLayers|textureNumLevels|textureNumSamples|textureGather|textureGatherCompare)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in texture sampling and access functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(atomicLoad|atomicStore|atomicAdd|atomicSub|atomicMax|atomicMin|atomicAnd|atomicOr|atomicXor|atomicExchange|atomicCompareExchangeWeak)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in atomic operation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(pack4x8snorm|pack4x8unorm|pack2x16snorm|pack2x16unorm|pack2x16float|unpack4x8snorm|unpack4x8unorm|unpack2x16snorm|unpack2x16unorm|unpack2x16float)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in data packing and unpacking functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(dpdx|dpdxCoarse|dpdxFine|dpdy|dpdyCoarse|dpdyFine|fwidth|fwidthCoarse|fwidthFine)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in derivative functions for fragment shaders"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(storageBarrier|workgroupBarrier|workgroupUniformLoad)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in synchronization and barrier functions"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(uniform|storage|private|workgroup|function)\\b",
+      "tokenModifiers": [],
+      "description": "Address space (storage class) keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(read|write|read_write)\\b",
+      "tokenModifiers": [],
+      "description": "Memory access mode keywords"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(position|vertex_index|instance_index|front_facing|frag_depth|local_invocation_id|local_invocation_index|global_invocation_id|workgroup_id|num_workgroups|sample_index|sample_mask)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in value names used with @builtin attribute"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0[xX][0-9a-fA-F]+[iu]?|[0-9]+[iu]|[0-9]*\\.[0-9]+([eE][+-]?[0-9]+)?[fh]?|[0-9]+\\.[0-9]*([eE][+-]?[0-9]+)?[fh]?|[0-9]+[eE][+-]?[0-9]+[fh]?|[0-9]+[fh])\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals with integer (i/u) and float (f/h) suffixes, hex literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9]+\\b",
+      "tokenModifiers": [],
+      "description": "Plain integer numeric literals"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(&&|\\|\\||<<|>>|<=|>=|==|!=|\\+|\\-|\\*|/|%|&|\\||\\^|~|!|<|>|=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|->)",
+      "tokenModifiers": [],
+      "description": "Arithmetic, logical, bitwise, comparison, and assignment operators"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Multi-line block comments"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "Struct member access via dot notation"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\.[xyzwrgba]+\\b",
+      "tokenModifiers": [],
+      "description": "Vector component swizzle access (xyzw/rgba)"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\bfn\\s+\\w+\\s*\\(([^)]*?)([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Function parameter names in fn signatures"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(true|false)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean literal keywords"
     }
   ]
 }

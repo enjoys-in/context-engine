@@ -2,74 +2,116 @@
   "language": "c",
   "symbolPatterns": [
     {
-      "name": "Function",
-      "pattern": "^\\\\s*(?:\\\\w+\\\\s+)+\\\\*?(\\\\w+)\\\\s*\\\\(",
+      "name": "Function definition",
+      "pattern": "^(?:static\\s+|inline\\s+|extern\\s+)*(?:(?:unsigned|signed|long|short|const|volatile|struct|enum|union)\\s+)*\\w[\\w*\\s]+\\s+\\*?(\\w+)\\s*\\([^)]*\\)\\s*\\{",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
+      "name": "Function prototype",
+      "pattern": "^(?:extern\\s+)?(?:(?:unsigned|signed|long|short|const|volatile|struct|enum|union)\\s+)*\\w[\\w*\\s]+\\s+\\*?(\\w+)\\s*\\([^)]*\\)\\s*;",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "functionPrototype"
+    },
+    {
       "name": "Struct",
-      "pattern": "^\\\\s*(?:typedef\\\\s+)?struct\\\\s+(\\\\w+)",
+      "pattern": "^\\s*(?:typedef\\s+)?struct\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 22,
       "type": "struct"
     },
     {
+      "name": "Typedef struct (alias)",
+      "pattern": "^\\s*typedef\\s+struct\\s+\\w*\\s*\\{[^}]*\\}\\s*(\\w+)\\s*;",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "typedefStruct"
+    },
+    {
+      "name": "Union",
+      "pattern": "^\\s*(?:typedef\\s+)?union\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "union"
+    },
+    {
       "name": "Enum",
-      "pattern": "^\\\\s*(?:typedef\\\\s+)?enum\\\\s+(\\\\w+)",
+      "pattern": "^\\s*(?:typedef\\s+)?enum\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 9,
       "type": "enum"
     },
     {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Variable",
-      "pattern": "(?:var|let|const|dim|my|local)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
-    },
-    {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
+      "name": "Enum member",
+      "pattern": "^\\s+(\\w+)\\s*(?:=\\s*[^,}]+)?\\s*[,}]",
       "captureGroup": 1,
       "kind": 13,
-      "type": "constant"
+      "type": "enumMember"
     },
     {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "Typedef (simple)",
+      "pattern": "^\\s*typedef\\s+(?:unsigned\\s+|signed\\s+|long\\s+|short\\s+)*\\w+\\s+\\**(\\w+)\\s*;",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "typedef"
+    },
+    {
+      "name": "Function pointer typedef",
+      "pattern": "^\\s*typedef\\s+\\w[\\w\\s*]+\\(\\s*\\*\\s*(\\w+)\\s*\\)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "functionPointerTypedef"
+    },
+    {
+      "name": "#define macro (object-like)",
+      "pattern": "^\\s*#\\s*define\\s+(\\w+)(?:\\s+.+)?$",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "macro"
+    },
+    {
+      "name": "#define macro (function-like)",
+      "pattern": "^\\s*#\\s*define\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "macroFunction"
+    },
+    {
+      "name": "#include",
+      "pattern": "^\\s*#\\s*include\\s+([\"<][^>\"]+[\">])",
       "captureGroup": 1,
       "kind": 1,
-      "type": "module"
+      "type": "include"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "Global variable",
+      "pattern": "^(?:(?:unsigned|signed|long|short|const|volatile)\\s+)*\\w+\\s+\\**(\\w+)\\s*(?:=\\s*[^;]+)?\\s*;",
       "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
+      "kind": 12,
+      "type": "globalVariable"
     },
     {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "Static variable",
+      "pattern": "^\\s*static\\s+(?:(?:unsigned|signed|long|short|const|volatile)\\s+)*\\w+\\s+\\**(\\w+)\\s*(?:=\\s*[^;]+)?\\s*;",
       "captureGroup": 1,
-      "kind": 5,
-      "type": "method"
+      "kind": 12,
+      "type": "staticVariable"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "Extern declaration",
+      "pattern": "^\\s*extern\\s+(?:(?:unsigned|signed|long|short|const|volatile)\\s+)*\\w+\\s+\\**(\\w+)\\s*;",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 12,
+      "type": "externDeclaration"
+    },
+    {
+      "name": "Inline function",
+      "pattern": "^\\s*(?:static\\s+)?inline\\s+\\w[\\w*\\s]+\\s+\\*?(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "inlineFunction"
     }
   ]
 }

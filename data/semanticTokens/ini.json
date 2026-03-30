@@ -1,59 +1,243 @@
 {
   "language": "ini",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "property", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "namespace",
-      "pattern": "^\\s*\\[[^\\]]+\\]",
-      "modifiers": ["declaration"],
-      "description": "Section headers in square brackets [section]"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[([^\\]]+)\\]\\s*$",
+      "tokenModifiers": ["declaration"],
+      "description": "Section headers in square brackets [section] or [section.subsection]"
     },
     {
-      "type": "property",
-      "pattern": "^\\s*[a-zA-Z_][a-zA-Z0-9_.\\-]*(?=\\s*=)",
-      "modifiers": ["definition"],
-      "description": "Key names in key=value pairs"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[[^\\]]+\\s+\"[^\"]*\"\\s*\\]",
+      "tokenModifiers": ["declaration"],
+      "description": "Subsection notation with quoted names [section \"subsection\"] (git-config style)"
     },
     {
-      "type": "operator",
-      "pattern": "=",
-      "modifiers": [],
-      "description": "Assignment operator separating key and value"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(default|global|main|settings|general|options)\\]",
+      "tokenModifiers": ["declaration", "defaultLibrary"],
+      "description": "Well-known general section names: [default], [global], [main], [settings]"
     },
     {
-      "type": "string",
-      "pattern": "(?<==\\s*)\"[^\"]*\"|(?<==\\s*)'[^']*'",
-      "modifiers": [],
-      "description": "Quoted string values"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(database|db|mysql|postgres|sqlite|redis|mongodb|elasticsearch)\\]",
+      "tokenModifiers": ["declaration", "defaultLibrary"],
+      "description": "Well-known database-related section names"
     },
     {
-      "type": "variable",
-      "pattern": "(?<==\\s*)[^;#\"'\\n]+",
-      "modifiers": [],
-      "description": "Unquoted values after the = sign"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(server|http|https|ssl|tls|network|socket|proxy)\\]",
+      "tokenModifiers": ["declaration", "defaultLibrary"],
+      "description": "Well-known server and network section names"
     },
     {
-      "type": "comment",
-      "pattern": "^\\s*[;#].*$",
-      "modifiers": ["documentation"],
-      "description": "Comment lines starting with ; or #"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(logging|log|logger|loggers|handlers|formatters)\\]",
+      "tokenModifiers": ["declaration", "defaultLibrary"],
+      "description": "Well-known logging-related section names (Python logging config, etc.)"
     },
     {
-      "type": "number",
-      "pattern": "(?<==\\s*)\\d+\\.?\\d*",
-      "modifiers": [],
-      "description": "Numeric values"
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(security|auth|authentication|authorization|credentials)\\]",
+      "tokenModifiers": ["declaration", "defaultLibrary"],
+      "description": "Well-known security and authentication section names"
     },
     {
-      "type": "keyword",
-      "pattern": "(?<==\\s*)\\b(true|false|yes|no|on|off|null|none)\\b",
-      "modifiers": [],
-      "description": "Boolean and null-like keyword values"
+      "tokenType": "property",
+      "pattern": "^\\s*[a-zA-Z_][a-zA-Z0-9_.\\-]*(?=\\s*[=:])",
+      "tokenModifiers": ["definition"],
+      "description": "Key names in key=value or key:value pairs"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(host|hostname|port|bind|listen|address|ip)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common network configuration keys: host, port, bind, listen"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(user|username|password|secret|token|api_key|auth)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common credential-related keys: user, password, token, api_key"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(path|dir|directory|root|base_dir|home|data_dir|log_file|log_dir|pid_file)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common filesystem path configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(url|uri|endpoint|base_url|api_url|connection_string|dsn)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common URL and connection string configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(timeout|max_retries|retry|interval|ttl|expires|cache_ttl|max_connections|pool_size)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common timing and connection pool configuration keys"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(debug|verbose|level|log_level|format|encoding|charset|locale|timezone)\\s*[=:]",
+      "tokenModifiers": ["definition", "defaultLibrary"],
+      "description": "Common logging and formatting configuration keys"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\s*[=:]\\s*",
+      "tokenModifiers": [],
+      "description": "Assignment operators (= or :) separating keys and values"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<=[=:]\\s*)\\b(true|false|yes|no|on|off)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Boolean keyword values: true/false, yes/no, on/off"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<=[=:]\\s*)\\b(null|none|nil|undefined|N/A)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Null and empty sentinel keyword values"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\s*;[^\\n]*$",
+      "tokenModifiers": ["documentation"],
+      "description": "Semicolon comment lines (traditional INI comment style)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\s*#[^\\n]*$",
+      "tokenModifiers": ["documentation"],
+      "description": "Hash comment lines (common in Unix-style config files)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\s+[;#][^\\n]*$",
+      "tokenModifiers": [],
+      "description": "Inline trailing comments after values (;comment or #comment)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=[=:]\\s*)\"([^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted string values after assignment"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=[=:]\\s*)'([^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted string values after assignment"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=[=:]\\s*)0[xX][0-9a-fA-F]+\\b",
+      "tokenModifiers": [],
+      "description": "Hexadecimal numeric values (0x1A, 0xFF)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=[=:]\\s*)[+-]?\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Floating-point numeric values with optional scientific notation"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=[=:]\\s*)[+-]?\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Integer numeric values"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=[=:]\\s*)\\d+[smhdwSMHDW]\\b",
+      "tokenModifiers": [],
+      "description": "Duration values with time suffixes: s(seconds), m(minutes), h(hours), d(days), w(weeks)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=[=:]\\s*)\\d+[kKmMgGtT][bB]?\\b",
+      "tokenModifiers": [],
+      "description": "Size values with byte suffixes: K/KB, M/MB, G/GB, T/TB"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*\\}",
+      "tokenModifiers": [],
+      "description": "Shell-style variable interpolation ${VAR_NAME}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "%[a-zA-Z_][a-zA-Z0-9_]*%",
+      "tokenModifiers": [],
+      "description": "Windows-style environment variable references %VAR_NAME%"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*:[a-zA-Z_][a-zA-Z0-9_]*\\}",
+      "tokenModifiers": [],
+      "description": "Cross-section interpolation references ${section:key}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "%\\([a-zA-Z_][a-zA-Z0-9_]*\\)s",
+      "tokenModifiers": [],
+      "description": "Python configparser-style interpolation %(key)s"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "^\\s*(!include|@include|%include|#include)\\b[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Include directives for importing external configuration files"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*[a-zA-Z_][a-zA-Z0-9_]*\\[\\]\\s*[=:]",
+      "tokenModifiers": ["definition"],
+      "description": "Array-style keys using bracket notation: key[] = value"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "^\\s+[^;#\\[\\n].*$",
+      "tokenModifiers": [],
+      "description": "Multi-line continuation values (indented lines following a key=value pair)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=[=:]\\s*)(https?|ftp|ssh|file)://[^\\s;#]+",
+      "tokenModifiers": [],
+      "description": "URL values: http://, https://, ftp://, ssh://, file:// protocols"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=[=:]\\s*)[A-Z]:\\\\[^\\s;#]+|(?<=[=:]\\s*)/[a-zA-Z0-9_/.-]+",
+      "tokenModifiers": [],
+      "description": "File path values: Windows (C:\\path) and Unix (/path/to/file)"
     }
   ]
 }

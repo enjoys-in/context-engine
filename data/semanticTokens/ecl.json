@@ -1,71 +1,272 @@
 {
   "language": "ecl",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "function", "keyword", "macro", "namespace", "property", "parameter"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "variable",
+      "function",
+      "keyword",
+      "macro",
+      "namespace",
+      "property",
+      "parameter",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "enumMember",
+      "method"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "type",
-      "pattern": "\\bRECORD\\b",
-      "modifiers": ["definition"],
-      "description": "RECORD structure definitions"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\bDATASET\\s*\\([^)]+\\)",
-      "modifiers": ["declaration"],
-      "description": "DATASET declarations"
-    },
-    {
-      "type": "namespace",
-      "pattern": "\\bMODULE\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "MODULE definitions"
-    },
-    {
-      "type": "function",
-      "pattern": "\\b(OUTPUT|SEQUENTIAL|PARALLEL|APPLY|IF|CASE|MAP|CHOOSE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in action keywords"
-    },
-    {
-      "type": "macro",
-      "pattern": "\\bMACRO\\b",
-      "modifiers": ["definition"],
-      "description": "MACRO definitions"
-    },
-    {
-      "type": "variable",
-      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*:=",
-      "modifiers": ["definition"],
-      "description": "Attribute/value definitions using :="
-    },
-    {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(EXPORT|SHARED|LOCAL)\\b",
-      "modifiers": [],
-      "description": "Scope/visibility keywords"
+      "tokenModifiers": [],
+      "description": "Scope and visibility keywords"
     },
     {
-      "type": "type",
-      "pattern": "\\b(STRING|INTEGER|REAL|BOOLEAN|UNSIGNED|DATA|DECIMAL|SET\\s+OF|UNICODE|VARSTRING)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in ECL data types"
+      "tokenType": "keyword",
+      "pattern": "\\b(IMPORT)\\b",
+      "tokenModifiers": [],
+      "description": "Module import keyword"
     },
     {
-      "type": "function",
-      "pattern": "\\b(SORT|DEDUP|JOIN|TABLE|COUNT|SUM|AVE|MIN|MAX|ROLLUP|DISTRIBUTE|PROJECT|NORMALIZE|DENORMALIZE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in transformation functions"
+      "tokenType": "namespace",
+      "pattern": "\\bMODULE\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "MODULE definitions defining logical namespaces"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
+      "pattern": "\\b(END|ENDMACRO|BEGINC\\+\\+|ENDC\\+\\+)\\b",
+      "tokenModifiers": [],
+      "description": "Block termination and embedded C++ keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bRECORD\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "RECORD structure type definition"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bDATASET\\s*\\([^)]+\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DATASET declarations for defining row datasets"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(STRING\\d*|INTEGER\\d*|REAL\\d*|BOOLEAN|UNSIGNED\\d*|DATA\\d*|DECIMAL\\d+_\\d+|VARSTRING\\d*|UNICODE\\d*|UTF8|QSTRING\\d*|EBCDIC)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in scalar data types with optional size suffixes"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bSET\\s+OF\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "SET OF composite type constructor"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(TYPEOF|RECORDOF|SIZEOF)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Type introspection keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(OUTPUT|FAIL|ASSERT|NOTIFY|SOAPCALL|HTTPCALL)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in action functions for output and external calls"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(SEQUENTIAL|PARALLEL|ORDERED|APPLY)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Execution ordering and workflow action functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(SORT|SORTED|DEDUP|GROUP|UNGROUP|DISTRIBUTE|MERGE|REGROUP|HAVING)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Dataset sorting, deduplication, and distribution functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(JOIN|MERGEJOIN|DENORMALIZE|NORMALIZE|PROJECT|ITERATE|PROCESS|LOOP|GRAPH)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Dataset join, transformation, and iteration functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(TABLE|ROLLUP|TOPN|CHOOSEN|CHOOSESETS|ENTH|SAMPLE|FETCH|LIMIT|CATCH)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Dataset aggregation, selection, and limiting functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(COUNT|SUM|MIN|MAX|AVE|VARIANCE|COVARIANCE|CORRELATION|EXISTS|MAP)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Aggregate and statistical functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(IF|CASE|CHOOSE|MAP|IFF|WHICH|REJECTED)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Conditional and selection expression functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(LENGTH|TRIM|REGEXFIND|REGEXREPLACE|INTFORMAT|REALFORMAT|ASSTRING|HASH|HASH32|HASH64|HASHCRC|HASHMD5)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String manipulation and hashing functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|ROUND|ROUNDUP|TRUNCATE|EXP|LN|LOG|POWER|SQRT|SIN|COS|TAN|ASIN|ACOS|ATAN|ATAN2)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in mathematical functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(TRANSFER|XMLENCODE|XMLDECODE|XMLTEXT|XMLUNICODE|TOXML|FROMXML|TOJSON|FROMJSON)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Data conversion, XML, and JSON serialization functions"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "\\b(TRANSFORM|SELF|LEFT|RIGHT|ROWS|COUNTER)\\b",
-      "modifiers": [],
-      "description": "Transform and special reference keywords"
+      "tokenModifiers": [],
+      "description": "Transform function and special row reference keywords"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(INNER|LEFT\\s+OUTER|RIGHT\\s+OUTER|FULL\\s+OUTER|LEFT\\s+ONLY|RIGHT\\s+ONLY|FULL\\s+ONLY|LOOKUP|SMART|ALL|MANY)\\b",
+      "tokenModifiers": [],
+      "description": "JOIN type specifiers"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(KEEP|LIMIT|SKIP|ONFAIL|KEYED|WILD|OPT|FLAT|CSV|XML|JSON|THOR|PIPE|LOCAL|FEW|UNSORTED|UNSTABLE|STABLE|GROUPED|UNORDERED|CLUSTER)\\b",
+      "tokenModifiers": [],
+      "description": "Dataset option and file format specifiers"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*:=",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Attribute/value definitions using := assignment operator"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\bMACRO\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "MACRO definition start keyword"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#(DECLARE|SET|APPEND|APPLY|BREAK|FOR|IF|ELSE|ELSEIF|END|OPTION|STORED|WEBSERVICE|WORKUNIT|UNIQUENAME|GETDATATYPE|EXPAND|EXPORTXML|INMODULE|ONWARNING)\\b",
+      "tokenModifiers": [],
+      "description": "Template language directives and preprocessor commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(ENCRYPT|COMPRESS|OVERWRITE|EXPIRE|BACKUP|NAMED|EXTEND|UPDATE|PERSIST|STORED|CHECKPOINT|GLOBAL|FEW|MANY|ONCE)\\b",
+      "tokenModifiers": [],
+      "description": "Workflow, persistence, and storage keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(TRUE|FALSE)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean literal keywords"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Multi-line block comments"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'[^']*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted string literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "U'[^']*'",
+      "tokenModifiers": [],
+      "description": "Unicode string literals prefixed with U"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0x[0-9a-fA-F]+|[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals (integer, decimal, hex, scientific notation)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(:=|=>|<>|>=|<=|!=|\\+|\\-|\\*|/|%|=|<|>|\\bAND\\b|\\bOR\\b|\\bNOT\\b|\\bIN\\b|\\bBETWEEN\\b)",
+      "tokenModifiers": [],
+      "description": "Assignment, comparison, arithmetic, and logical operators"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\.([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [],
+      "description": "Record field and module member access via dot notation"
     }
   ]
 }

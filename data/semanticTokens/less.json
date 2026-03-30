@@ -1,77 +1,260 @@
 {
   "language": "less",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
-      "pattern": "@[a-zA-Z_-][a-zA-Z0-9_-]*",
-      "modifiers": [],
-      "description": "Less variables prefixed with @"
-    },
-    {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "@[a-zA-Z_-][a-zA-Z0-9_-]*\\s*:",
-      "modifiers": ["declaration"],
-      "description": "Less variable declarations with @var:"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Less variable declarations (@color: #fff)"
     },
     {
-      "type": "function",
-      "pattern": "\\.[a-zA-Z_-][a-zA-Z0-9_-]*\\s*(?=\\()",
-      "modifiers": ["definition"],
-      "description": "Mixin definitions and calls with parentheses"
+      "tokenType": "variable",
+      "pattern": "@[a-zA-Z_-][a-zA-Z0-9_-]*",
+      "tokenModifiers": [],
+      "description": "Less variable references (@color, @font-size)"
     },
     {
-      "type": "type",
-      "pattern": "\\b[a-zA-Z][a-zA-Z0-9-]*(?=\\s*[{,>+~]|\\s*$)",
-      "modifiers": [],
-      "description": "Element selectors (tag names)"
+      "tokenType": "variable",
+      "pattern": "@@[a-zA-Z_-][a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Variable name interpolation (@@var) for dynamic variable references"
     },
     {
-      "type": "type",
-      "pattern": "[.#][a-zA-Z_-][a-zA-Z0-9_-]*",
-      "modifiers": [],
-      "description": "Class selectors (.) and ID selectors (#)"
+      "tokenType": "variable",
+      "pattern": "@\\{[a-zA-Z_-][a-zA-Z0-9_-]*\\}",
+      "tokenModifiers": [],
+      "description": "String/selector interpolation @{variable}"
     },
     {
-      "type": "property",
-      "pattern": "\\b[a-z-]+(?=\\s*:)",
-      "modifiers": [],
-      "description": "CSS property names before colon"
+      "tokenType": "variable",
+      "pattern": "\\$[a-zA-Z_-][a-zA-Z0-9_-]*",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Property access shorthand ($prop) for referencing property values"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(when|and|not|or)\\b",
-      "modifiers": [],
-      "description": "Mixin guard keywords"
+      "tokenType": "function",
+      "pattern": "\\.[a-zA-Z_-][a-zA-Z0-9_-]*\\s*\\([^)]*\\)\\s*(?=\\{|;|\\bwhen\\b)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Mixin definitions with parameters (.mixin(@param) { })"
     },
     {
-      "type": "keyword",
-      "pattern": "@(import|media|charset|font-face|keyframes|supports|namespace|page)\\b",
-      "modifiers": [],
-      "description": "At-rule directives"
+      "tokenType": "function",
+      "pattern": "\\.[a-zA-Z_-][a-zA-Z0-9_-]*\\s*\\([^)]*\\)\\s*;",
+      "tokenModifiers": [],
+      "description": "Mixin calls with arguments (.mixin(value);)"
     },
     {
-      "type": "function",
-      "pattern": "\\b(darken|lighten|saturate|desaturate|fadein|fadeout|fade|spin|mix|contrast|unit|ceil|floor|percentage|round|sqrt|abs|length|extract|escape|e|color|rgb|rgba|hsl|hsla)\\s*(?=\\()",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Less functions"
+      "tokenType": "keyword",
+      "pattern": "\\bwhen\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Mixin guard keyword (when) for conditional mixin application"
     },
     {
-      "type": "comment",
-      "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
-      "description": "Single-line and multi-line comments"
+      "tokenType": "keyword",
+      "pattern": "\\b(and|or|not)\\b(?=\\s*\\(|\\s*\\bwhen\\b|\\s+[^:{}])",
+      "tokenModifiers": [],
+      "description": "Guard logical operators (and, or, not)"
     },
     {
-      "type": "number",
-      "pattern": "-?\\d+\\.?\\d*(px|em|rem|%|vh|vw|s|ms|deg|fr)?",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\bdefault\\s*\\(\\s*\\)",
+      "tokenModifiers": [],
+      "description": "Default guard function default() for fallback mixin matching"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": ":extend\\([^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Extend pseudo-class for selector inheritance (:extend(.class all))"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "&",
+      "tokenModifiers": [],
+      "description": "Parent selector reference (&) for nested selector composition"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@import\\s*(\\((reference|inline|less|css|once|multiple)\\)\\s*)?",
+      "tokenModifiers": [],
+      "description": "@import with options (reference, inline, less, css, once, multiple)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@(media|charset|font-face|keyframes|supports|namespace|page|counter-style|document|viewport|layer)\\b",
+      "tokenModifiers": [],
+      "description": "CSS at-rule directives (@media, @keyframes, @supports, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(darken|lighten|saturate|desaturate|fadein|fadeout|fade|spin|mix|tint|shade|greyscale|contrast)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in color adjustment functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(rgb|rgba|hsl|hsla|hsv|hsva|argb|color)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in color creation and conversion functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(multiply|screen|overlay|softlight|hardlight|difference|exclusion|average|negation)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in color blending mode functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ceil|floor|round|sqrt|abs|pow|mod|min|max|percentage|pi|sin|asin|cos|acos|tan|atan)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in math functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(unit|convert|length|extract|range|each|if|boolean)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in utility, list, and logic functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(escape|e|replace|data-uri|image-size|image-width|image-height|svg-gradient)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in string, URI, and image functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(iscolor|isnumber|isstring|iskeyword|isurl|ispixel|ispercentage|isem|isunit|isruleset|isdefined)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in type checking functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(luma|luminance|hue|saturation|lightness|hsvhue|hsvsaturation|hsvvalue|red|green|blue|alpha)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in color channel extraction functions"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "#[a-zA-Z_-][a-zA-Z0-9_-]*\\s*>\\s*\\.[a-zA-Z_-][a-zA-Z0-9_-]*",
+      "tokenModifiers": [],
+      "description": "Namespaced mixin access (#namespace > .mixin)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=^|[{;,\\s])[a-zA-Z][a-zA-Z0-9-]*(?=\\s*[{,>+~\\s])",
+      "tokenModifiers": [],
+      "description": "HTML element/tag selectors (div, span, p, section)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "::(before|after|first-line|first-letter|placeholder|selection|backdrop|marker|spelling-error|grammar-error)",
+      "tokenModifiers": [],
+      "description": "CSS pseudo-element selectors"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": ":(hover|focus|active|visited|link|first-child|last-child|nth-child|nth-of-type|first-of-type|last-of-type|only-child|only-of-type|empty|checked|disabled|enabled|required|optional|valid|invalid|focus-within|focus-visible|not|is|where|has|root|target|lang|dir|any-link|placeholder-shown|read-only|read-write|default|indeterminate)",
+      "tokenModifiers": [],
+      "description": "CSS pseudo-class selectors"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b[a-z][a-z-]*(?=\\s*:(?!:))",
+      "tokenModifiers": [],
+      "description": "CSS property names (color, margin, display, etc.)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\+_?|-)(?=\\s*:)",
+      "tokenModifiers": [],
+      "description": "Property merge operators (+ comma merge, +_ space merge)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "#[0-9a-fA-F]{3,8}\\b",
+      "tokenModifiers": [],
+      "description": "Hex color values (#fff, #ffffff, #ffffffaa)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "-?\\d+\\.?\\d*(px|em|rem|%|vh|vw|vmin|vmax|ch|ex|cm|mm|in|pt|pc|s|ms|deg|rad|grad|turn|fr|dpi|dpcm|dppx)?\\b",
+      "tokenModifiers": [],
       "description": "Numeric values with optional CSS units"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "~\"[^\"]*\"|~'[^']*'",
+      "tokenModifiers": [],
+      "description": "Escaped values (~\"string\") output as-is without processing"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Quoted string values (single and double)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Single-line (//) and multi-line (/* */) comments"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[>+~](?=\\s*[.#a-zA-Z\\[:&*])",
+      "tokenModifiers": [],
+      "description": "CSS combinator selectors (>, +, ~)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(important)\\b|!important",
+      "tokenModifiers": [],
+      "description": "!important declaration override"
     }
   ]
 }

@@ -1,83 +1,284 @@
 {
   "language": "ruby",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "class", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "regexp", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "method",
-      "pattern": "\\bdef\\s+(self\\.)?\\w+[!?=]?",
-      "modifiers": ["declaration"],
-      "description": "Method definitions including class methods (self.) and bang/query methods"
+      "tokenType": "method",
+      "pattern": "\\bdef\\s+([a-zA-Z_]\\w*[!?=]?)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Instance method definitions including bang (!), query (?), and setter (=) methods"
     },
     {
-      "type": "class",
-      "pattern": "\\bclass\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Class definitions"
+      "tokenType": "method",
+      "pattern": "\\bdef\\s+self\\.([a-zA-Z_]\\w*[!?=]?)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "static"
+      ],
+      "description": "Class method definitions using self.method_name"
     },
     {
-      "type": "namespace",
-      "pattern": "\\bmodule\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Module definitions"
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class declarations"
     },
     {
-      "type": "method",
-      "pattern": "\\b(attr_accessor|attr_reader|attr_writer)\\s+",
-      "modifiers": ["declaration"],
-      "description": "Attribute accessor macros for generating getter/setter methods"
+      "tokenType": "namespace",
+      "pattern": "\\bmodule\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Module declarations for namespacing and mixins"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(do|end|begin|rescue|ensure|raise|yield|return|break|next|redo|retry|if|unless|elsif|else|case|when|in|while|until|for|loop|then|super|self|nil|true|false|and|or|not|defined\\?|__FILE__|__LINE__|__method__|__dir__|__ENCODING__|BEGIN|END|require|require_relative|include|extend|prepend|alias|undef)\\b",
-      "modifiers": [],
-      "description": "Ruby keywords and control flow statements"
+      "tokenType": "keyword",
+      "pattern": "\\b(include|extend|prepend)\\s+([A-Z]\\w*(::([A-Z]\\w*))*)\\b",
+      "tokenModifiers": [],
+      "description": "Module mixin keywords: include, extend, and prepend"
     },
     {
-      "type": "variable",
+      "tokenType": "macro",
+      "pattern": "\\b(attr_accessor|attr_reader|attr_writer)\\s+((:[a-zA-Z_]\\w*\\s*,?\\s*)+)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Attribute accessor macros generating getter/setter methods"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bclass\\s*<<\\s*self\\b",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Eigenclass (singleton class) opening: class << self"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(do)\\b|\\bend\\b",
+      "tokenModifiers": [],
+      "description": "Block delimiters do..end"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{\\s*\\|[^|]*\\|",
+      "tokenModifiers": [],
+      "description": "Brace block with parameters { |params| ... }"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Proc\\.new|lambda)\\b|->\\s*[({]",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Proc and lambda definitions including stabby lambda (->)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": ":[a-zA-Z_]\\w*[!?]?",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Symbol literals prefixed with colon"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "#\\{[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "String interpolation expressions #{...}"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "<<[~-]?[A-Z_]\\w*",
+      "tokenModifiers": [],
+      "description": "Heredoc opening delimiters including <<~HEREDOC and <<-HEREDOC"
+    },
+    {
+      "tokenType": "regexp",
+      "pattern": "/([^/\\\\]|\\\\.)*?/[imxosue]*",
+      "tokenModifiers": [],
+      "description": "Regular expression literals with optional flags"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b\\d+\\.\\.(\\.)?(\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Range operators: inclusive (..) and exclusive (...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bcase\\b[\\s\\S]*?\\bin\\b",
+      "tokenModifiers": [],
+      "description": "Pattern matching with case/in syntax (Ruby 3+)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(begin|rescue|ensure|retry|raise)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling keywords: begin/rescue/ensure/retry/raise"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(yield)\\b",
+      "tokenModifiers": [],
+      "description": "Yield keyword for invoking blocks"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bblock_given\\?\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in method to check if a block was passed"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(method_missing|respond_to\\?|respond_to_missing\\?)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Metaprogramming hook methods for dynamic dispatch"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(protected|private|public)\\b",
+      "tokenModifiers": [],
+      "description": "Visibility modifiers for method access control"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(freeze|frozen\\?)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Object immutability methods: freeze and frozen?"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bdefined\\?\\b",
+      "tokenModifiers": [],
+      "description": "Keyword to check if an expression is defined"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(__method__|__dir__|__FILE__|__LINE__|__ENCODING__)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Special introspection constants for current context"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(require|require_relative|load)\\s+['\"]",
+      "tokenModifiers": [],
+      "description": "File loading and dependency keywords"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(Struct|OpenStruct)\\.new\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Struct and OpenStruct class instantiation"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|unless|elsif|else|while|until|for|loop|then|case|when|in|and|or|not|super|self|nil|true|false|return|break|next|redo|alias|undef)\\b",
+      "tokenModifiers": [],
+      "description": "Ruby control flow keywords and reserved words"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b[A-Z][A-Z0-9_]+\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Constants written in SCREAMING_SNAKE_CASE"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(send|public_send|__send__|method|instance_method|define_method|class_eval|module_eval|instance_eval|instance_exec)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Metaprogramming and reflection methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(each|map|select|reject|reduce|inject|detect|find|flat_map|zip|each_with_object|collect|each_with_index|each_slice|group_by|sort_by|min_by|max_by|count|any\\?|all\\?|none\\?|include\\?|sum|first|last|take|drop|compact|uniq|flatten)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Enumerable and Array iteration/collection methods"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "@[a-zA-Z_]\\w*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Instance variables prefixed with @"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "@@[a-zA-Z_]\\w*",
-      "modifiers": ["static"],
+      "tokenModifiers": [
+        "static"
+      ],
       "description": "Class variables prefixed with @@"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$[a-zA-Z_!@&+`'~=/\\\\,;.<>*$?:\"0-9]\\w*",
-      "modifiers": [],
-      "description": "Global variables prefixed with $ including special globals"
+      "tokenModifiers": [],
+      "description": "Global variables prefixed with $ including special globals ($stdout, $LOAD_PATH, etc.)"
     },
     {
-      "type": "property",
-      "pattern": ":[a-zA-Z_]\\w*[!?]?",
-      "modifiers": ["readonly"],
-      "description": "Symbols prefixed with :"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\bdo\\b|\\{(?=\\s*\\|)|\\b(end)\\b",
-      "modifiers": [],
-      "description": "Block delimiters do/end and { } with block parameters"
-    },
-    {
-      "type": "comment",
-      "pattern": "#[^\\n]*|^=begin[\\s\\S]*?^=end",
-      "modifiers": [],
-      "description": "Single-line # comments and multi-line =begin/=end blocks"
-    },
-    {
-      "type": "regexp",
-      "pattern": "/([^/\\\\]|\\\\.)*?/[imxo]*",
-      "modifiers": [],
-      "description": "Regular expression literals with optional flags"
+      "tokenType": "comment",
+      "pattern": "#[^{\\n][^\\n]*|^=begin[\\s\\S]*?^=end",
+      "tokenModifiers": [],
+      "description": "Single-line # comments and multi-line =begin/=end documentation blocks"
     }
   ]
 }

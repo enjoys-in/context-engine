@@ -1,83 +1,276 @@
 {
   "language": "qsharp",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "typeParameter", "parameter", "variable", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "enum",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "abstract",
+      "async",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "keyword",
+      "pattern": "\\b(namespace|open|operation|function|body|adjoint|controlled|auto|self|distribute|invert|intrinsic)\\b",
+      "tokenModifiers": [],
+      "description": "Q# structural and functor keywords for declarations and specializations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(newtype|mutable|let|set|use|borrow|using|borrowing)\\b",
+      "tokenModifiers": [],
+      "description": "Q# binding and allocation keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|elif|else|for|in|while|repeat|until|fixup|return|fail|within|apply)\\b",
+      "tokenModifiers": [],
+      "description": "Q# control flow keywords including quantum-specific repeat-until-fixup and within-apply"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(is|not|and|or|internal)\\b",
+      "tokenModifiers": [],
+      "description": "Q# logical and access modifier keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(Adj|Ctl)\\b",
+      "tokenModifiers": [],
+      "description": "Functor characteristics: Adj (adjointable), Ctl (controllable) used in callable type signatures"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(Adjoint|Controlled)\\b(?=\\s+\\w)",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Functor application keywords: Adjoint and Controlled applied to operations"
+    },
+    {
+      "tokenType": "function",
       "pattern": "\\b(operation)\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Quantum operation declarations"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b(function)\\s+(\\w+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Classical function declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(Qubit|Result|Bool|Int|BigInt|Double|String|Unit|Pauli|Range|Array)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Q# built-in types including quantum types"
+      "tokenType": "type",
+      "pattern": "\\b(Qubit|Result|Bool|Int|BigInt|Double|String|Unit|Pauli|Range)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Q# primitive and quantum built-in types"
     },
     {
-      "type": "function",
-      "pattern": "\\b(H|X|Y|Z|CNOT|CCNOT|SWAP|S|T|Rx|Ry|Rz|R1|Measure|M|MResetZ|MResetX|Reset|ResetAll|Adjoint|Controlled)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Quantum gates and measurement operations"
+      "tokenType": "enumMember",
+      "pattern": "\\b(Zero|One)\\b",
+      "tokenModifiers": ["readonly", "defaultLibrary"],
+      "description": "Result enum values: Zero and One measurement outcomes"
     },
     {
-      "type": "namespace",
+      "tokenType": "enumMember",
+      "pattern": "\\b(PauliI|PauliX|PauliY|PauliZ)\\b",
+      "tokenModifiers": ["readonly", "defaultLibrary"],
+      "description": "Pauli enum values: PauliI, PauliX, PauliY, PauliZ basis constants"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(H|X|Y|Z|CNOT|CCNOT|SWAP|CZ)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Standard single-qubit and multi-qubit quantum gate operations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(T|S|Rx|Ry|Rz|R|R1|R1Frac|RFrac|Exp|ExpFrac)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Rotation and phase gate operations from Microsoft.Quantum.Intrinsic"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(M|Measure|MResetZ|MResetX|MResetY|MultiM|Reset|ResetAll)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Measurement and reset operations for qubits"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Length|Message|IntAsDouble|DoubleAsStringWithFormat|IntAsString|BoolAsString|RangeAsIntArray|Truncate|Floor|Ceiling|Round|Sqrt|Log|Sin|Cos|Tan|ArcTan2|ArcSin|ArcCos)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Q# standard library utility and math functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ApplyToEach|ApplyToEachA|ApplyToEachC|ApplyToEachCA|ApplyIf|ApplyIfA|ApplyIfC|ApplyIfCA)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Higher-order combinators from Microsoft.Quantum.Canon"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(PrepareUniformSuperposition|ApplyQFT|QFT|QFTLE|EstimateEnergy|EstimateFrequency|MeasureInteger|PrepareArbitraryStateD)\\b(?=\\s*\\()",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Quantum algorithm primitives: state preparation, QFT, and estimation"
+    },
+    {
+      "tokenType": "namespace",
       "pattern": "\\b(namespace)\\s+([\\w.]+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": ["declaration"],
       "description": "Namespace declarations"
     },
     {
-      "type": "keyword",
+      "tokenType": "namespace",
+      "pattern": "\\b(open)\\s+(Microsoft\\.Quantum\\.[\\w.]+)",
+      "tokenModifiers": ["definition"],
+      "description": "Open statements importing Microsoft.Quantum standard library namespaces"
+    },
+    {
+      "tokenType": "namespace",
       "pattern": "\\b(open)\\s+([\\w.]+)",
-      "modifiers": ["definition"],
-      "description": "Open statements for importing namespaces"
+      "tokenModifiers": ["definition"],
+      "description": "Open statements for importing user-defined namespaces"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(let|mutable|set|use|borrow|if|elif|else|for|in|while|repeat|until|fixup|return|fail|within|apply|using|borrowing|newtype|internal|body|adjoint|controlled|auto|self|distribute|invert|intrinsic)\\b",
-      "modifiers": [],
-      "description": "Q# keywords for bindings, control flow, and functors"
+      "tokenType": "decorator",
+      "pattern": "@(EntryPoint|Test|Config)\\b",
+      "tokenModifiers": [],
+      "description": "Q# attributes: @EntryPoint(), @Test(), @Config() decorating callables"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(use|borrow)\\s+(\\w+)\\s*=\\s*Qubit",
-      "modifiers": ["declaration"],
-      "description": "Qubit allocation with use and borrow statements"
+      "tokenType": "variable",
+      "pattern": "\\b(let)\\s+(\\w+)\\s*=",
+      "tokenModifiers": ["declaration", "readonly"],
+      "description": "Immutable variable bindings with let keyword"
     },
     {
-      "type": "type",
-      "pattern": "\\b(Zero|One|PauliX|PauliY|PauliZ|PauliI)\\b",
-      "modifiers": ["readonly", "defaultLibrary"],
-      "description": "Result and Pauli enum values"
+      "tokenType": "variable",
+      "pattern": "\\b(mutable)\\s+(\\w+)\\s*=",
+      "tokenModifiers": ["declaration"],
+      "description": "Mutable variable bindings with mutable keyword"
     },
     {
-      "type": "comment",
-      "pattern": "//[^\\n]*|///[^\\n]*",
-      "modifiers": ["documentation"],
-      "description": "Line comments and documentation comments"
+      "tokenType": "variable",
+      "pattern": "\\b(use)\\s+(\\w+)\\s*=\\s*Qubit",
+      "tokenModifiers": ["declaration"],
+      "description": "Qubit allocation with use statement"
     },
     {
-      "type": "string",
+      "tokenType": "variable",
+      "pattern": "\\b(borrow)\\s+(\\w+)\\s*=\\s*Qubit",
+      "tokenModifiers": ["declaration"],
+      "description": "Qubit borrowing with borrow statement for dirty ancillas"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(newtype)\\s+(\\w+)\\s*=",
+      "tokenModifiers": ["declaration"],
+      "description": "User-defined type (newtype) declarations"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "'[A-Z]\\w*\\b",
+      "tokenModifiers": [],
+      "description": "Type parameters in generic callables (e.g., 'T, 'U)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\+|\\-|\\*|\\/|%|\\^|==|!=|<=?|>=?|&&|\\|\\||!|~~~|&&&|\\|\\|\\||\\^\\^\\^|<<<|>>>|\\.\\.\\.|\\.\\.|\\?|<-|->|=>|w/)",
+      "tokenModifiers": [],
+      "description": "Q# operators: arithmetic, comparison, logical, bitwise, range, copy-and-update (w/), and lambda (=>)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "///[^\\n]*",
+      "tokenModifiers": ["documentation"],
+      "description": "Documentation comments with triple-slash (///)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments with double-slash (//)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\"([^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Interpolated string literals with $ prefix"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
-      "description": "String literals in double quotes"
+      "tokenModifiers": [],
+      "description": "Regular string literals in double quotes"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?L?\\b|0[xXoObB][0-9a-fA-F]+\\b",
-      "modifiers": [],
-      "description": "Integer, floating-point, BigInt (L suffix), and hex/octal/binary literals"
+      "tokenType": "number",
+      "pattern": "\\b0[xX][0-9a-fA-F]+L?\\b",
+      "tokenModifiers": [],
+      "description": "Hexadecimal integer literals, optionally BigInt (L suffix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[oO][0-7]+L?\\b",
+      "tokenModifiers": [],
+      "description": "Octal integer literals, optionally BigInt (L suffix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[bB][01]+L?\\b",
+      "tokenModifiers": [],
+      "description": "Binary integer literals, optionally BigInt (L suffix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Double-precision floating-point literals with optional exponent"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+L\\b",
+      "tokenModifiers": [],
+      "description": "BigInt integer literals with L suffix"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Decimal integer literals"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "(?<=\\()\\s*\\w+\\s*:\\s*\\w+",
+      "tokenModifiers": ["declaration"],
+      "description": "Callable parameter declarations in operation/function signatures"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(true|false)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Boolean literal values true and false"
     }
   ]
 }

@@ -1,59 +1,175 @@
 {
   "language": "pla",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "variable", "number", "comment", "operator", "type", "property"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "variable",
+      "property",
+      "type",
+      "number",
+      "string",
+      "comment",
+      "operator",
+      "namespace",
+      "enumMember"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\.(i|o|ilb|ob|p|e|type|phase)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "PLA format directives: .i (inputs), .o (outputs), .p (products), .e (end)"
+      "tokenType": "keyword",
+      "pattern": "^\\.i\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Input count directive (.i) specifying the number of input variables"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+\\b",
-      "modifiers": [],
-      "description": "Numeric values for input/output counts and field sizes"
+      "tokenType": "keyword",
+      "pattern": "^\\.o\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Output count directive (.o) specifying the number of output variables"
     },
     {
-      "type": "variable",
-      "pattern": "[01-~]+\\s+[01-~]+",
-      "modifiers": [],
-      "description": "Truth table entries with input and output columns (0, 1, -, ~)"
+      "tokenType": "keyword",
+      "pattern": "^\\.p\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Product term count directive (.p) specifying number of product terms"
     },
     {
-      "type": "property",
-      "pattern": "(?<=\\.ilb\\s+)[\\w\\s]+",
-      "modifiers": ["declaration"],
-      "description": "Input label names declared after .ilb directive"
+      "tokenType": "keyword",
+      "pattern": "^\\.e\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "End-of-file directive (.e) marking the end of the PLA description"
     },
     {
-      "type": "property",
-      "pattern": "(?<=\\.ob\\s+)[\\w\\s]+",
-      "modifiers": ["declaration"],
-      "description": "Output label names declared after .ob directive"
+      "tokenType": "keyword",
+      "pattern": "^\\.ilb\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Input label directive (.ilb) declaring symbolic names for input variables"
     },
     {
-      "type": "comment",
-      "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Comment lines starting with #"
+      "tokenType": "keyword",
+      "pattern": "^\\.ob\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Output label directive (.ob) declaring symbolic names for output variables"
     },
     {
-      "type": "type",
-      "pattern": "\\b(fr|fd|dr|f|r|d)\\b",
-      "modifiers": ["readonly"],
-      "description": "PLA type specifiers for output format (e.g., fr, fd, f, r, d)"
+      "tokenType": "keyword",
+      "pattern": "^\\.type\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Type directive (.type) specifying PLA representation format"
     },
     {
-      "type": "operator",
-      "pattern": "[-~]",
-      "modifiers": [],
-      "description": "Don't-care (-) and complement (~) operators in table entries"
+      "tokenType": "keyword",
+      "pattern": "^\\.phase\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Phase directive (.phase) specifying output polarity for each output"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\.(mv|label|pair|symbolic|symbolic-output|kiss)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Extended Berkeley PLA directives: .mv (multi-valued), .label, .pair, .symbolic, .kiss"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\.(na|exdc|sp|ov)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Additional PLA directives: .na (name), .exdc (external DC-set), .sp/.ov (sparse)"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "(?<=\\.type\\s+)(f|r|d|fd|fr|dr|fdr)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "PLA type values: f(ON-set), r(OFF-set), d(DC-set) and combinations fd, fr, dr, fdr"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=\\.(i|o|p)\\s+)\\d+",
+      "tokenModifiers": [],
+      "description": "Numeric count values following .i, .o, or .p directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.ilb\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Individual input variable label names after .ilb directive"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.ob\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": ["declaration"],
+      "description": "Individual output variable label names after .ob directive"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^[01-]+(?=\\s+[01-~]+)",
+      "tokenModifiers": [],
+      "description": "Input column of a product term row (binary string with 0, 1, and don't-care -)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=\\s)[01-~]+$",
+      "tokenModifiers": [],
+      "description": "Output column of a product term row (binary string with 0, 1, -, ~)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(?<=[01])\\-(?=[01])",
+      "tokenModifiers": [],
+      "description": "Don't-care literal (-) within product term input or output columns"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "~",
+      "tokenModifiers": [],
+      "description": "Complement operator (~) in output column entries"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "^\\s*#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Full-line comments beginning with # character"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\s+#[^\\n]*$",
+      "tokenModifiers": [],
+      "description": "Inline trailing comments after data, beginning with #"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "(?<=\\.phase\\s+)[01]+",
+      "tokenModifiers": ["readonly"],
+      "description": "Output polarity bit string after .phase (0=complemented, 1=true form)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<=\\.mv\\s+)\\d+(\\s+\\d+)*",
+      "tokenModifiers": [],
+      "description": "Multi-valued variable domain sizes following .mv directive"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "(?<=\\.na\\s+)[^\\n]+",
+      "tokenModifiers": ["declaration"],
+      "description": "PLA network name string following .na directive"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "(?<=\\.exdc)\\b",
+      "tokenModifiers": [],
+      "description": "External don't-care set section marker (.exdc) beginning a DC-set block"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^[01-]{2,}$",
+      "tokenModifiers": [],
+      "description": "Standalone binary pattern line (input-only or compressed truth table row)"
     }
   ]
 }

@@ -1,71 +1,303 @@
 {
   "language": "apex",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "interface", "enum", "type", "variable", "function", "method", "property", "parameter", "decorator", "keyword"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "class",
+      "interface",
+      "enum",
+      "type",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "decorator",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "abstract",
+      "async",
+      "defaultLibrary",
+      "abstract"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\b(public|private|global)\\s+(class|trigger)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Trigger and class declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(class|trigger|interface|enum|extends|implements)\\b",
+      "tokenModifiers": [],
+      "description": "Type declaration and inheritance keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|FROM|WHERE|LIMIT|ORDER\\s+BY|GROUP\\s+BY)\\b",
-      "modifiers": [],
-      "description": "SOQL query keywords"
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected|global)\\b",
+      "tokenModifiers": [],
+      "description": "Access modifier keywords"
     },
     {
-      "type": "decorator",
-      "pattern": "@(AuraEnabled|isTest|future|InvocableMethod|InvocableVariable|RemoteAction)",
-      "modifiers": [],
-      "description": "Salesforce-specific annotations"
+      "tokenType": "modifier",
+      "pattern": "\\b(static|final|abstract|virtual|override|transient|with\\s+sharing|without\\s+sharing|inherited\\s+sharing)\\b",
+      "tokenModifiers": [],
+      "description": "Class and member modifier keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(insert|update|delete|upsert|undelete|merge)\\b",
-      "modifiers": [],
-      "description": "DML operation statements"
+      "tokenType": "modifier",
+      "pattern": "\\b(webservice|testmethod)\\b",
+      "tokenModifiers": [],
+      "description": "Apex-specific webservice and testmethod modifiers"
     },
     {
-      "type": "method",
-      "pattern": "\\b(public|private|global|protected)\\s+(static\\s+)?[A-Za-z<>\\[\\]]+\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": ["declaration"],
-      "description": "Method declarations"
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class name declarations"
     },
     {
-      "type": "interface",
+      "tokenType": "interface",
       "pattern": "\\binterface\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Interface declarations"
     },
     {
-      "type": "enum",
+      "tokenType": "enum",
       "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Enum declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum type declarations"
     },
     {
-      "type": "property",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\{\\s*(get|set)",
-      "modifiers": ["definition"],
-      "description": "Property definitions with getters/setters"
+      "tokenType": "class",
+      "pattern": "\\btrigger\\s+([A-Z][a-zA-Z0-9_]*)\\s+on\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Trigger declarations (trigger Name on SObject)"
     },
     {
-      "type": "type",
-      "pattern": "\\b(List|Set|Map)<([A-Za-z_][A-Za-z0-9_,\\s]*)>",
-      "modifiers": ["defaultLibrary"],
-      "description": "Generic collection types"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|else|for|while|do|switch|when|break|continue|return|throw)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow keywords"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(trigger\\.(new|old|newMap|oldMap|isInsert|isUpdate|isDelete|isBefore|isAfter))\\b",
-      "modifiers": ["readonly", "defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\b(try|catch|finally)\\b",
+      "tokenModifiers": [],
+      "description": "Exception handling keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(new|this|super|instanceof|null)\\b",
+      "tokenModifiers": [],
+      "description": "Object creation and reference keywords"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(isTest|AuraEnabled|future|InvocableMethod|InvocableVariable|RemoteAction|TestVisible|TestSetup|ReadOnly|SuppressWarnings|NamespaceAccessible|RestResource|HttpGet|HttpPost|HttpPut|HttpDelete|HttpPatch|Deprecated)",
+      "tokenModifiers": [],
+      "description": "Salesforce-specific annotations"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@future\\s*\\(\\s*callout\\s*=\\s*true\\s*\\)",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "@future(callout=true) for async callout methods"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(String|Integer|Long|Double|Decimal|Boolean|Id|Blob|Date|Datetime|Time|Object|SObject)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Apex primitive and special types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(List|Set|Map)<",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Generic collection types (List, Set, Map)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(void|Exception|DmlException|QueryException|ListException|NullPointerException|TypeException)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Void return type and standard exception types"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT|FROM|WHERE|AND|OR|NOT|LIKE|IN|ORDER\\s+BY|GROUP\\s+BY|HAVING|LIMIT|OFFSET|INCLUDES|EXCLUDES|NULLS\\s+FIRST|NULLS\\s+LAST|ASC|DESC)\\b",
+      "tokenModifiers": [],
+      "description": "SOQL query keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bFIND\\s+'[^']*'\\s+IN\\b",
+      "tokenModifiers": [],
+      "description": "SOSL FIND ... IN search expression"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bRETURNING\\b",
+      "tokenModifiers": [],
+      "description": "SOSL RETURNING clause keyword"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(insert|update|upsert|delete|undelete|merge)\\b",
+      "tokenModifiers": [],
+      "description": "DML operation statements"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bTrigger\\.(new|old|newMap|oldMap|isInsert|isUpdate|isDelete|isBefore|isAfter|isUndelete|isExecuting|size|operationType)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
       "description": "Trigger context variables"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bDatabase\\.(query|insert|update|delete|upsert|undelete|executeBatch|getQueryLocator|setSavepoint|rollback|countQuery)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "Database class DML and query methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bSystem\\.(assert|assertEquals|assertNotEquals|debug|now|today|currentTimeMillis|abortJob|enqueueJob|schedule|runAs)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "System class assertion, debug, and job methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bTest\\.(startTest|stopTest|isRunningTest|setMock|setFixedSearchResults|getStandardPricebookId)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "Test class methods for unit test context"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bLimits\\.(getQueries|getLimitQueries|getDMLStatements|getLimitDMLStatements|getHeapSize|getLimitHeapSize|getCpuTime|getLimitCpuTime|getCallouts|getLimitCallouts)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "Governor limit inspection via Limits class"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bSchema\\.(getGlobalDescribe|describeSObjects|SObjectType)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "Schema class metadata describe methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bUserInfo\\.(getUserId|getProfileId|getOrganizationId|getUserName|getSessionId|getDefaultCurrency|isMultiCurrencyOrganization)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "UserInfo class context methods"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\{\\s*(get|set)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Property definitions with getter/setter accessors"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b[A-Z][a-zA-Z0-9_]*__(c|r|e|mdt|b|x|pc|s|ka|kav|Share|History|Feed|ChangeEvent)\\b",
+      "tokenModifiers": [],
+      "description": "Custom objects, relationships, platform events, and custom metadata types"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+[A-Z][a-zA-Z0-9_]*\\s+implements\\s+(Database\\.Batchable|Database\\.Stateful|Schedulable|Queueable|Database\\.AllowsCallouts|Messaging\\.InboundEmailHandler)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Batch, Schedulable, Queueable, and handler interface implementations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bEventBus\\.publish\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "static"
+      ],
+      "description": "Platform event publishing via EventBus"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(before\\s+insert|before\\s+update|before\\s+delete|after\\s+insert|after\\s+update|after\\s+delete|after\\s+undelete)\\b",
+      "tokenModifiers": [],
+      "description": "Trigger event context keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(global|public|private|protected)\\s+(static\\s+)?[A-Za-z<>\\[\\],\\s]+\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Method declarations with access modifiers"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?[LlDd]?\\b",
+      "tokenModifiers": [],
+      "description": "Integer, long, decimal, and double numeric literals"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'[^']*'",
+      "tokenModifiers": [],
+      "description": "Apex string literals in single quotes"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Single-line and multi-line comments"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(==|!=|<>|<=|>=|&&|\\|\\||!|\\+|-|\\*|/|=|<|>|\\?|:)",
+      "tokenModifiers": [],
+      "description": "Comparison, logical, arithmetic, and ternary operators"
     }
   ]
 }

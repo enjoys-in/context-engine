@@ -1,65 +1,243 @@
 {
   "language": "toml",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "property", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "property",
+      "keyword",
+      "string",
+      "number",
+      "comment",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "namespace",
-      "pattern": "^\\s*\\[([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\]",
-      "modifiers": ["declaration"],
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\]\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Standard table headers [table]"
     },
     {
-      "type": "namespace",
-      "pattern": "^\\s*\\[\\[([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\]\\]",
-      "modifiers": ["declaration"],
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[\\[([a-zA-Z_][a-zA-Z0-9_.\\-]*)\\]\\]\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Array of tables headers [[array]]"
     },
     {
-      "type": "property",
+      "tokenType": "namespace",
+      "pattern": "^\\s*\\[(\"[^\"]+\")\\]\\s*$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Quoted table headers [\"table.with.dots\"]"
+    },
+    {
+      "tokenType": "property",
       "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_\\-]*)\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Key declarations in key = value pairs"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Bare key declarations in key = value pairs"
     },
     {
-      "type": "property",
+      "tokenType": "property",
+      "pattern": "^\\s*\"([^\"]+)\"\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Basic quoted key declarations (double-quoted keys)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*'([^']+)'\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Literal quoted key declarations (single-quoted keys)"
+    },
+    {
+      "tokenType": "property",
       "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_\\-]*(?:\\.[a-zA-Z_][a-zA-Z0-9_\\-]*)*)\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Dotted key declarations like a.b.c = value"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Dotted key declarations (e.g., a.b.c = value)"
     },
     {
-      "type": "string",
-      "pattern": "(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''|\"[^\"\\n]*\"|'[^'\\n]*')",
-      "modifiers": [],
-      "description": "String values including multi-line and literal strings"
+      "tokenType": "operator",
+      "pattern": "(?<=^\\s*[a-zA-Z_\"'][^=]*)=",
+      "tokenModifiers": [],
+      "description": "Key-value assignment operator (=)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(true|false)\\b",
-      "modifiers": [],
-      "description": "Boolean values"
+      "tokenType": "string",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"",
+      "tokenModifiers": [],
+      "description": "Multi-line basic strings (triple double quotes, supports escape sequences)"
     },
     {
-      "type": "number",
-      "pattern": "\\b(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[+-]?(inf|nan)|[+-]?[0-9][0-9_]*(\\.[0-9_]+)?([eE][+-]?[0-9_]+)?)\\b",
-      "modifiers": [],
-      "description": "Numeric values including hex, octal, binary, float, inf, nan"
+      "tokenType": "string",
+      "pattern": "'''[\\s\\S]*?'''",
+      "tokenModifiers": [],
+      "description": "Multi-line literal strings (triple single quotes, no escape processing)"
     },
     {
-      "type": "string",
-      "pattern": "\\d{4}-\\d{2}-\\d{2}([T ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})?)?",
-      "modifiers": [],
-      "description": "Date and datetime values"
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\\\n]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "Basic single-line strings (double-quoted, supports escape sequences)"
     },
     {
-      "type": "comment",
+      "tokenType": "string",
+      "pattern": "'[^'\\n]*'",
+      "tokenModifiers": [],
+      "description": "Literal single-line strings (single-quoted, no escapes)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\\\[btnfr\"\\\\]|\\\\u[0-9a-fA-F]{4}|\\\\U[0-9a-fA-F]{8}",
+      "tokenModifiers": [],
+      "description": "Escape sequences in basic strings (\\n, \\t, \\\\, \\\", \\uXXXX, \\UXXXXXXXX)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<==\\s*)true\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean true value"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "(?<==\\s*)false\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean false value"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)0x[0-9a-fA-F][0-9a-fA-F_]*",
+      "tokenModifiers": [],
+      "description": "Hexadecimal integer values (0x prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)0o[0-7][0-7_]*",
+      "tokenModifiers": [],
+      "description": "Octal integer values (0o prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)0b[01][01_]*",
+      "tokenModifiers": [],
+      "description": "Binary integer values (0b prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)[+-]?\\d[\\d_]*(\\.[\\d_]+)?([eE][+-]?[\\d_]+)?(?=\\s*[,\\]\\}#\\n])",
+      "tokenModifiers": [],
+      "description": "Decimal integer and float values (with optional underscore separators)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "(?<==\\s*)[+-]?(inf|nan)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Special float values (inf, nan, +inf, -inf, +nan, -nan)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Offset date-time values (RFC 3339 with timezone)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(?!Z|[+-]\\d{2})",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Local date-time values (no timezone offset)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<==\\s*)\\d{4}-\\d{2}-\\d{2}(?!T|\\s*\\d{2}:)",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Local date values (YYYY-MM-DD)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<==\\s*)\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Local time values (HH:MM:SS[.fraction])"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\{",
+      "tokenModifiers": [],
+      "description": "Inline table opening brace"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\}",
+      "tokenModifiers": [],
+      "description": "Inline table closing brace"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\[(?![a-zA-Z_\"'])",
+      "tokenModifiers": [],
+      "description": "Inline array opening bracket"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\](?!\\])",
+      "tokenModifiers": [],
+      "description": "Inline array closing bracket"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": ",",
+      "tokenModifiers": [],
+      "description": "Value separator comma in arrays and inline tables"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Line comments starting with #"
+      "tokenModifiers": [],
+      "description": "Full-line and end-of-line comments starting with #"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "(?<=\\[\\[?)([a-zA-Z_][a-zA-Z0-9_\\-]*)\\.(?=[a-zA-Z_\"'])",
+      "tokenModifiers": [],
+      "description": "Parent namespace segments in dotted table headers (e.g., [parent.child])"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)[a-zA-Z_][a-zA-Z0-9_\\-]*(?=\\s*=)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Last segment of dotted key declarations"
     }
   ]
 }

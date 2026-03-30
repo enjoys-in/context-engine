@@ -1,77 +1,310 @@
 {
   "language": "cpp",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "struct", "enum", "enumMember", "namespace", "type", "typeParameter", "function", "method", "variable", "property", "parameter", "macro", "keyword", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\bclass\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Class declarations"
     },
     {
-      "type": "struct",
-      "pattern": "\\bstruct\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "struct",
+      "pattern": "\\bstruct\\s+[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Struct declarations"
     },
     {
-      "type": "typeParameter",
-      "pattern": "\\btemplate\\s*<([^>]+)>",
-      "modifiers": ["declaration"],
-      "description": "Template parameter lists"
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+(class\\s+)?[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum and scoped enum (enum class) declarations"
     },
     {
-      "type": "namespace",
-      "pattern": "\\bnamespace\\s+([a-zA-Z_][a-zA-Z0-9_:]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Namespace declarations"
+      "tokenType": "typeParameter",
+      "pattern": "\\btemplate\\s*<\\s*(typename|class)\\s+[A-Z][a-zA-Z0-9_]*(\\s*,\\s*(typename|class)\\s+[A-Z][a-zA-Z0-9_]*)*\\s*>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Template parameter declarations with typename/class"
     },
     {
-      "type": "method",
-      "pattern": "\\b(virtual|override)\\s+[a-zA-Z_][a-zA-Z0-9_:<>]*\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": ["abstract"],
-      "description": "Virtual and overridden method declarations"
+      "tokenType": "interface",
+      "pattern": "\\bconcept\\s+[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Concept declarations (C++20 constrained generics)"
     },
     {
-      "type": "function",
-      "pattern": "\\boperator\\s*(\\+\\+|--|<<|>>|[+\\-*/%=<>!&|^~]=?|\\(\\)|\\[\\]|->\\*?|,)",
-      "modifiers": ["definition"],
-      "description": "Operator overloading definitions"
+      "tokenType": "keyword",
+      "pattern": "\\brequires\\s*\\([^)]*\\)|\\brequires\\s+[A-Z][a-zA-Z0-9_<>:]*",
+      "tokenModifiers": [],
+      "description": "Requires clauses and requires expressions (C++20)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(constexpr|consteval|constinit|noexcept|decltype|auto|concept|requires)\\b",
-      "modifiers": [],
-      "description": "Modern C++ keywords"
+      "tokenType": "namespace",
+      "pattern": "\\bnamespace\\s+[a-zA-Z_][a-zA-Z0-9_:]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Namespace declarations including nested namespaces"
     },
     {
-      "type": "macro",
-      "pattern": "#define\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": ["definition"],
+      "tokenType": "keyword",
+      "pattern": "\\b(constexpr|consteval|constinit)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Compile-time evaluation specifiers (constexpr/consteval/constinit)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bnoexcept\\b(\\s*\\([^)]*\\))?",
+      "tokenModifiers": [],
+      "description": "Noexcept specifier and noexcept operator"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bdecltype\\s*\\([^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Decltype type deduction from expressions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bauto\\b(?=\\s+[a-zA-Z_\\[*&])",
+      "tokenModifiers": [],
+      "description": "Auto type deduction for variables and return types"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bauto\\s+\\[[a-zA-Z_][a-zA-Z0-9_,\\s]*\\]",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Structured bindings (auto [x, y, z] = ...) (C++17)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bif\\s+constexpr\\s*\\(",
+      "tokenModifiers": [],
+      "description": "If constexpr for compile-time branching (C++17)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\[\\s*[=&]?\\s*(,\\s*(this|\\*this|[a-zA-Z_][a-zA-Z0-9_]*(&|=)?)\\s*)*\\]\\s*\\([^)]*\\)\\s*(mutable\\s*)?(->[^{]*)?\\{",
+      "tokenModifiers": [],
+      "description": "Lambda expressions with capture clauses ([=], [&], [this], etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(std::unique_ptr|std::shared_ptr|std::weak_ptr|std::make_unique|std::make_shared)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "RAII smart pointer types and factory functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(std::move|std::forward|std::exchange)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Move semantics utilities (std::move, std::forward, std::exchange)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(co_await|co_yield|co_return)\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Coroutine keywords (C++20)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(import|export)\\s+module\\b|\\bmodule\\s+[a-zA-Z_][a-zA-Z0-9_.]*",
+      "tokenModifiers": [],
+      "description": "Module declarations and imports (C++20)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<=>",
+      "tokenModifiers": [],
+      "description": "Three-way comparison (spaceship) operator (C++20)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\{\\s*\\.[a-zA-Z_][a-zA-Z0-9_]*\\s*=",
+      "tokenModifiers": [],
+      "description": "Designated initializers (.member = value) (C++20)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(std::variant|std::optional|std::any|std::expected)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Sum type and nullable wrapper types from standard library"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bstatic_assert\\s*\\([^)]*\\)",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Static assertions for compile-time checks"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(alignas|alignof)\\s*\\([^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Alignment specifiers and queries"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[\\[(nodiscard|deprecated|maybe_unused|likely|unlikely|no_unique_address|fallthrough|carries_dependency)(\\([^)]*\\))?\\]\\]",
+      "tokenModifiers": [],
+      "description": "Standard attributes ([[nodiscard]], [[deprecated]], [[maybe_unused]], etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\boperator\\s*(\\+\\+|--|<=>|<<|>>|[+\\-*/%=<>!&|^~]=?|\\(\\)|\\[\\]|->\\*?|,|new(\\[\\])?|delete(\\[\\])?)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Operator overloading definitions including spaceship and new/delete"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(virtual|override|final)\\b",
+      "tokenModifiers": [
+        "abstract"
+      ],
+      "description": "Virtual function specifiers (virtual/override/final)"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected)\\s*:",
+      "tokenModifiers": [],
+      "description": "Access specifier labels in class definitions"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(static|inline|explicit|mutable|volatile|extern|register|thread_local)\\b",
+      "tokenModifiers": [],
+      "description": "Storage class and member function specifiers"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(std::ranges::[a-z_]+|std::views::[a-z_]+)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Ranges library algorithms and views (C++20)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(std::vector|std::string|std::map|std::unordered_map|std::set|std::unordered_set|std::array|std::deque|std::list|std::tuple|std::pair|std::span|std::string_view|std::function|std::thread|std::mutex|std::atomic|std::future|std::promise|std::coroutine_handle)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Standard library container, utility, and concurrency types"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#(define|include|ifdef|ifndef|if|elif|else|endif|pragma|error|warning|undef|line)\\b",
+      "tokenModifiers": [],
+      "description": "Preprocessor directives"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "#define\\s+[A-Z_][A-Z0-9_]*",
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Preprocessor macro definitions"
     },
     {
-      "type": "type",
-      "pattern": "\\b(std::[a-z_][a-z0-9_]*(?:<[^>]*>)?)",
-      "modifiers": ["defaultLibrary"],
-      "description": "Standard library types (std::vector, std::string, etc.)"
+      "tokenType": "keyword",
+      "pattern": "\\b(typename|typedef|using|template|class|struct|enum|union|friend|sizeof|typeid|dynamic_cast|static_cast|const_cast|reinterpret_cast|new|delete|throw|try|catch|return|if|else|for|while|do|switch|case|default|break|continue|goto|this|nullptr)\\b",
+      "tokenModifiers": [],
+      "description": "Core C++ language keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(public|private|protected|virtual|override|final|static|inline|explicit|mutable|volatile)\\b",
-      "modifiers": [],
-      "description": "Access specifiers and member modifiers"
+      "tokenType": "comment",
+      "pattern": "//.*$|/\\*\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Single-line and Doxygen-style documentation comments"
     },
     {
-      "type": "enum",
-      "pattern": "\\benum\\s+(class\\s+)?([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Enum and scoped enum declarations"
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Multi-line block comments"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "R\"\\([^)]*\\)\"|\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Raw string literals, regular strings, and character literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(0[xX][0-9a-fA-F']+[uUlL]*|0[bB][01']+[uUlL]*|[0-9][0-9']*\\.?[0-9']*([eE][+-]?[0-9']+)?[fFlLuU]*)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals with digit separators, hex, binary, and suffixes"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<=>|<<|>>|&&|\\|\\||[+\\-*/%&|^~!=<>]=?|::|->\\*?|\\.\\.\\.",
+      "tokenModifiers": [],
+      "description": "Arithmetic, logical, bitwise, scope, and member access operators"
     }
   ]
 }

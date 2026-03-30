@@ -1,43 +1,6 @@
 {
   "language": "shell",
-  "tokenTypes": [
-    "namespace",
-    "type",
-    "class",
-    "enum",
-    "interface",
-    "struct",
-    "typeParameter",
-    "parameter",
-    "variable",
-    "property",
-    "enumMember",
-    "event",
-    "function",
-    "method",
-    "macro",
-    "keyword",
-    "modifier",
-    "comment",
-    "string",
-    "number",
-    "regexp",
-    "operator",
-    "decorator"
-  ],
-  "tokenModifiers": [
-    "declaration",
-    "definition",
-    "readonly",
-    "static",
-    "deprecated",
-    "abstract",
-    "async",
-    "modification",
-    "documentation",
-    "defaultLibrary"
-  ],
-  "tokenLegend": {
+  "legend": {
     "tokenTypes": [
       "variable",
       "parameter",
@@ -46,6 +9,7 @@
       "comment",
       "string",
       "number",
+      "regexp",
       "operator"
     ],
     "tokenModifiers": [
@@ -58,181 +22,220 @@
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b|([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(\\s*\\)\\s*\\{",
-      "modifiers": [
+      "tokenModifiers": [
         "declaration"
       ],
       "description": "Function declarations with function keyword or name() syntax"
     },
     {
-      "type": "variable",
-      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)([:#%/][^}]*)?\\}",
-      "modifiers": [],
-      "description": "Variable expansion with parameter substitution ${VAR}"
+      "tokenType": "variable",
+      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)([:#%/^,@][^}]*)?\\}",
+      "tokenModifiers": [],
+      "description": "Variable expansion with parameter substitution ${VAR}, ${VAR%%pattern}, ${VAR^^}"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Simple variable references $VAR"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)=",
-      "modifiers": [
+      "tokenModifiers": [
         "declaration"
       ],
       "description": "Variable assignments"
     },
     {
-      "type": "function",
-      "pattern": "\\b(echo|printf|cd|test|read|export|source|exec|eval|trap|wait|kill|exit|return|shift|unset|set)\\b",
-      "modifiers": [
-        "defaultLibrary"
-      ],
-      "description": "Shell built-in commands"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\$(\\?|\\$|!|#|@|\\*|-|0|[1-9])",
-      "modifiers": [
-        "readonly",
-        "defaultLibrary"
-      ],
-      "description": "Special shell variables ($?, $$, $!, $#, $@, $*)"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\b(if|then|else|elif|fi|for|while|until|do|done|case|esac|in|select)\\b",
-      "modifiers": [],
-      "description": "Control flow keywords"
-    },
-    {
-      "type": "operator",
-      "pattern": "(\\|\\||&&|;;|\\|&|>>|<<|<|>|&>|2>&1)",
-      "modifiers": [],
-      "description": "Shell redirection and logical operators"
-    },
-    {
-      "type": "comment",
-      "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Line comments starting with #"
-    },
-    {
-      "type": "function",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(\\s*\\)",
-      "modifiers": [
-        "declaration"
-      ],
-      "description": "Function declarations (name() { ... })"
-    },
-    {
-      "type": "function",
-      "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": [
-        "declaration"
-      ],
-      "description": "Function declarations using function keyword"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*(:[+-][^}]*)?\\}",
-      "modifiers": [],
-      "description": "Variable expansions with parameter substitution (${VAR}, ${VAR:-default})"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Simple variable references ($VAR)"
-    },
-    {
-      "type": "function",
-      "pattern": "\\b(echo|read|printf|test|eval|exec|source|export|declare|typeset)\\b",
-      "modifiers": [
-        "defaultLibrary"
-      ],
-      "description": "Shell built-in commands"
-    },
-    {
-      "type": "keyword",
-      "pattern": "\\b(local|readonly|declare|export)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [
-        "declaration"
-      ],
-      "description": "Variable declaration keywords with local/readonly/export"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\$\\{?[#!@*?$0-9]\\}?",
-      "modifiers": [
-        "readonly",
-        "defaultLibrary"
-      ],
-      "description": "Special shell variables ($?, $#, $@, $*, $$, $!)"
-    },
-    {
-      "type": "operator",
-      "pattern": "(\\|\\||&&|;;|<<|>>|>&|<&|\\|&)",
-      "modifiers": [],
-      "description": "Shell operators (pipe, redirect, logical)"
-    },
-    {
-      "type": "string",
-      "pattern": "\\$\\([^)]+\\)",
-      "modifiers": [],
-      "description": "Command substitution expressions"
-    },
-    {
-      "type": "variable",
-      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)([:#%/=^,@][^}]*)?\\}",
-      "modifiers": [],
-      "description": "Variable expansion with parameter substitution"
-    },
-    {
-      "type": "function",
-      "pattern": "\\b(autoload|zmodload|zstyle|zle|bindkey|compdef|compadd|compctl|zformat|zparseopts|zstat)\\b",
-      "modifiers": [
-        "defaultLibrary"
-      ],
-      "description": "Zsh-specific builtins including autoload and zstyle"
-    },
-    {
-      "type": "function",
-      "pattern": "\\b(echo|print|printf|cd|pushd|popd|export|source|eval|exec|trap|wait|kill|exit|return|shift|unset|set|setopt|unsetopt|typeset|local|integer|float|declare|readonly|hash|unhash|whence|where|which)\\b",
-      "modifiers": [
+      "tokenType": "function",
+      "pattern": "\\b(echo|print|printf|cd|pushd|popd|test|read|export|source|exec|eval|trap|wait|kill|exit|return|shift|unset|set|setopt|unsetopt|typeset|local|integer|float|declare|readonly|hash|unhash|whence|where|which)\\b",
+      "tokenModifiers": [
         "defaultLibrary"
       ],
       "description": "Shell builtins and zsh extensions"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(if|then|else|elif|fi|for|while|until|do|done|case|esac|in|select|repeat|foreach|end|coproc)\\b",
-      "modifiers": [],
-      "description": "Control flow keywords including zsh-specific ones"
-    },
-    {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$(\\?|\\$|!|#|@|\\*|-|0|[1-9]|REPLY|reply|MATCH|match|MBEGIN|MEND|ZSH_VERSION|HISTFILE|HISTSIZE|SAVEHIST|ZDOTDIR|FPATH|fpath|path|PATH)",
-      "modifiers": [
+      "tokenModifiers": [
         "readonly",
         "defaultLibrary"
       ],
-      "description": "Special variables including zsh-specific ones"
+      "description": "Special shell variables including zsh-specific ones ($?, $$, $!, $#, $@, $*)"
     },
     {
-      "type": "operator",
-      "pattern": "(\\(\\#|\\(\\(|\\)\\)|\\[\\[|\\]\\]|\\|\\||&&|;;|;\\||&!|&\\||>>|<<|<>|>!|>&|<&)",
-      "modifiers": [],
-      "description": "Zsh operators and redirections"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|then|else|elif|fi|for|while|until|do|done|case|esac|in|select|repeat|foreach|end|coproc)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow keywords including zsh-specific ones"
     },
     {
-      "type": "keyword",
+      "tokenType": "operator",
+      "pattern": "(\\|\\||&&|;;|;\\||&!|&\\||>>|<<|<>|>!|>&|<&|\\|&|\\(\\(|\\)\\)|\\[\\[|\\]\\])",
+      "tokenModifiers": [],
+      "description": "Shell operators, redirections, and compound test brackets"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Line comments starting with #"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(local|readonly|declare|export)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declaration keywords with local/readonly/export"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Command substitution expressions $(command)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "`[^`]+`",
+      "tokenModifiers": [],
+      "description": "Legacy backtick command substitution"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(autoload|zmodload|zstyle|zle|bindkey|compdef|compadd|compctl|zformat|zparseopts|zstat)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Zsh-specific builtins including autoload and zstyle"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "\\(\\*\\)|\\(@\\)|\\(\\.|\\(\\^|\\(/|\\(f|\\(\\+|\\(-|\\(r|\\(w|\\(x|\\(L|\\(N|\\(D|\\(om|\\(on",
-      "modifiers": [],
-      "description": "Glob qualifiers for filename generation"
+      "tokenModifiers": [],
+      "description": "Zsh glob qualifiers for filename generation"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<\\([^)]*\\)|>\\([^)]*\\)",
+      "tokenModifiers": [],
+      "description": "Process substitution <(command) and >(command)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*\\([^)]*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Indexed array declaration arr=(val1 val2 val3)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bdeclare\\s+-[aA]\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Associative array (declare -A) and indexed array (declare -a) declaration"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)\\[@\\]\\}|\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)\\[\\*\\]\\}",
+      "tokenModifiers": [],
+      "description": "Array expansion ${arr[@]} and ${arr[*]}"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\$\\(\\([^)]+\\)\\)",
+      "tokenModifiers": [],
+      "description": "Arithmetic expansion $(( expression ))"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{BASH_REMATCH\\[\\d+\\]\\}|\\$\\{match\\[\\d+\\]\\}",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Regex capture group via BASH_REMATCH (bash) or match (zsh)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\btrap\\s+['\"]?\\w+['\"]?\\s+(EXIT|ERR|DEBUG|RETURN|INT|TERM|HUP|QUIT|ABRT|KILL|USR1|USR2|SIGINT|SIGTERM|SIGHUP)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Trap signal handlers for EXIT, ERR, DEBUG, RETURN, and POSIX signals"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bcoproc\\s+([a-zA-Z_][a-zA-Z0-9_]*)?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Coprocess declaration for asynchronous bidirectional I/O"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bdeclare\\s+(-[aAirxlufFgntpS]+)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Declare with type attributes (-a array, -A assoc, -i integer, -r readonly, -x export)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\{[a-zA-Z0-9]+\\.\\.[a-zA-Z0-9]+(\\.\\.\\d+)?\\}|\\{[^,}]+(?:,[^,}]+)+\\}",
+      "tokenModifiers": [],
+      "description": "Brace expansion {a..z}, {1..10..2}, {foo,bar,baz}"
+    },
+    {
+      "tokenType": "regexp",
+      "pattern": "\\*\\*\\/|\\?|\\*|\\[!?[^\\]]+\\]|\\[\\[:?\\w+:\\]\\]|@\\(|\\?\\(|\\*\\(|\\+\\(|!\\(",
+      "tokenModifiers": [],
+      "description": "Globbing patterns: **, ?, *, [!...], [[:class:]], extglob @()|?()|*()|+()|!()"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<<<",
+      "tokenModifiers": [],
+      "description": "Here string operator <<<"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<<-?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?",
+      "tokenModifiers": [],
+      "description": "Here document operator <<EOF or <<-EOF"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(mkfifo|mknod)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Named pipe (FIFO) creation commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "#!\\s*/(?:usr/)?(?:bin|env)/\\S+",
+      "tokenModifiers": [],
+      "description": "Shebang line for interpreter specification"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{#[a-zA-Z_][a-zA-Z0-9_]*\\}",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "String length expansion ${#VAR}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{![a-zA-Z_][a-zA-Z0-9_]*[@*]?\\}",
+      "tokenModifiers": [],
+      "description": "Indirect expansion ${!VAR} and array key expansion ${!arr[@]}"
     }
   ]
 }

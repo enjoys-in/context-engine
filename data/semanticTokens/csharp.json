@@ -1,77 +1,286 @@
 {
   "language": "csharp",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "interface", "struct", "enum", "enumMember", "type", "typeParameter", "namespace", "method", "function", "property", "variable", "parameter", "event", "keyword", "decorator", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\b(class|record)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Class and record type declarations"
-    },
-    {
-      "type": "interface",
-      "pattern": "\\binterface\\s+(I[A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Interface declarations (I-prefix convention)"
-    },
-    {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(async\\s+)?await\\b",
-      "modifiers": ["async"],
-      "description": "Async/await expressions"
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Async/await keywords for asynchronous programming"
     },
     {
-      "type": "method",
-      "pattern": "\\basync\\s+Task[<]?[^>]*[>]?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-      "modifiers": ["declaration", "async"],
-      "description": "Async method declarations"
+      "tokenType": "method",
+      "pattern": "\\basync\\s+(?:Task|ValueTask|IAsyncEnumerable)[<>\\w]*\\s+([a-zA-Z_]\\w*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration",
+        "async"
+      ],
+      "description": "Async method declarations returning Task/ValueTask"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(from|where|select|orderby|group|into|join|on|equals|let)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(from|where|select|orderby|ascending|descending|group|by|into|join|on|equals|let)\\b",
+      "tokenModifiers": [],
       "description": "LINQ query expression keywords"
     },
     {
-      "type": "decorator",
-      "pattern": "\\[([A-Z][a-zA-Z0-9_]*)(?:\\([^)]*\\))?\\]",
-      "modifiers": [],
-      "description": "Attribute decorators ([Attribute], [Serializable], etc.)"
+      "tokenType": "keyword",
+      "pattern": "\\b(is|and|or|not)\\b(?=\\s+[A-Za-z{(\\[])",
+      "tokenModifiers": [],
+      "description": "Pattern matching combinators (is, and, or, not patterns)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\busing\\s+(?:static\\s+)?([a-zA-Z_][a-zA-Z0-9_.]*);",
-      "modifiers": [],
-      "description": "Using directives (namespace imports)"
+      "tokenType": "keyword",
+      "pattern": "\\bswitch\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Switch expressions for pattern matching"
     },
     {
-      "type": "struct",
-      "pattern": "\\bstruct\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Struct declarations"
+      "tokenType": "operator",
+      "pattern": "\\b(>=|<=|>|<)\\s+(?=\\d|[a-zA-Z])",
+      "tokenModifiers": [],
+      "description": "Relational patterns in switch expressions"
     },
     {
-      "type": "enum",
-      "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Enum declarations"
+      "tokenType": "class",
+      "pattern": "\\brecord\\s+(class|struct)\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Record class and record struct declarations"
     },
     {
-      "type": "property",
-      "pattern": "\\b([A-Z][a-zA-Z0-9_]*)\\s*\\{\\s*(get|set|init)",
-      "modifiers": ["definition"],
-      "description": "Property definitions with accessors"
+      "tokenType": "keyword",
+      "pattern": "\\bwith\\s*\\{",
+      "tokenModifiers": [],
+      "description": "With expressions for non-destructive mutation of records"
     },
     {
-      "type": "event",
-      "pattern": "\\bevent\\s+[A-Za-z<>_]+\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Event declarations"
+      "tokenType": "keyword",
+      "pattern": "\\bglobal\\s+using\\s+(?:static\\s+)?[\\w.]+;",
+      "tokenModifiers": [],
+      "description": "Global using directives (file-scoped imports)"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bnamespace\\s+[\\w.]+\\s*;",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "File-scoped namespace declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(class|struct)\\s+([A-Z]\\w*)\\s*\\([^)]*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Primary constructor declarations on classes and structs"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\brequired\\s+\\w+\\s+([A-Z]\\w*)\\s*\\{",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Required members enforcing initialization"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\binit\\s*;",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Init-only setters for immutable property initialization"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\.",
+      "tokenModifiers": [],
+      "description": "Null-conditional member access operator (?.) for nullable reference types"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\?=?",
+      "tokenModifiers": [],
+      "description": "Null-coalescing (??) and null-coalescing assignment (??=) operators"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "String interpolation expressions"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"\"\"[\\s\\S]*?\"\"\"",
+      "tokenModifiers": [],
+      "description": "Raw string literals delimited by triple quotes"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\^\\d+|\\.\\.(?=\\d|\\^|\\])",
+      "tokenModifiers": [],
+      "description": "Index from end (^) and range (..) operators"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[([A-Z]\\w*)(?:\\([^)]*\\))?\\]",
+      "tokenModifiers": [],
+      "description": "Attributes ([Serializable], [DllImport], [Obsolete], etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(ref|out|in)\\s+\\w+",
+      "tokenModifiers": [],
+      "description": "Parameter passing modifiers (ref, out, in)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(unsafe|fixed|stackalloc)\\b",
+      "tokenModifiers": [],
+      "description": "Unsafe code keywords for pointer and stack operations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\block\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Lock statement for thread synchronization"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bevent\\s+\\w[\\w<>,\\s]*\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Event declarations with delegate types"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bthis\\s*\\[\\s*\\w+\\s+\\w+\\s*\\]",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Indexer declarations using this[] syntax"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\bpartial\\s+(class|struct|interface|record)\\b",
+      "tokenModifiers": [],
+      "description": "Partial type declarations split across files"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bstatic\\s+\\w+\\s+\\w+\\s*\\(\\s*this\\s+\\w+",
+      "tokenModifiers": [
+        "declaration",
+        "static"
+      ],
+      "description": "Extension methods with this parameter modifier"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "=>\\s*[^;{]+;",
+      "tokenModifiers": [],
+      "description": "Expression-bodied members using fat arrow (=>)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b_\\b(?=\\s*[=,;)])",
+      "tokenModifiers": [],
+      "description": "Discard variable (_) for unused values"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Span|ReadOnlySpan|Memory|ReadOnlyMemory)<\\w+>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Span and Memory types for high-performance buffers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bparams\\s+(Span|ReadOnlySpan)<",
+      "tokenModifiers": [],
+      "description": "Params Span<T> for efficient variadic parameters"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "\\binterface\\s+(I[A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Interface declarations following I-prefix convention"
+    },
+    {
+      "tokenType": "struct",
+      "pattern": "\\bstruct\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Value type struct declarations"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+([A-Z]\\w*)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum type declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\busing\\s+(?:static\\s+)?[\\w.]+\\s*;",
+      "tokenModifiers": [],
+      "description": "Using directives for namespace imports"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b([A-Z]\\w*)\\s*\\{\\s*(get|set|init)",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Auto-property definitions with get/set/init accessors"
     }
   ]
 }

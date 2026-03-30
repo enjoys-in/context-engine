@@ -2,74 +2,81 @@
   "language": "makefile",
   "symbolPatterns": [
     {
-      "name": "Target",
-      "pattern": "^([a-zA-Z_][a-zA-Z0-9_./-]*)\\\\s*:",
+      "name": "Include",
+      "pattern": "^-?include\\s+(.+)",
       "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
+      "kind": 1,
+      "type": "include"
     },
     {
-      "name": "Variable",
-      "pattern": "^\\\\s*([A-Z_][A-Z0-9_]*)\\\\s*[:?+]?=",
+      "name": ".PHONY",
+      "pattern": "^\\.PHONY:\\s*(.+)",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "phony"
+    },
+    {
+      "name": "Override variable",
+      "pattern": "^override\\s+(\\w+)\\s*[:?+]?=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "override"
+    },
+    {
+      "name": "Export variable",
+      "pattern": "^export\\s+(\\w+)\\s*[:?+]?=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "export"
+    },
+    {
+      "name": "Define macro",
+      "pattern": "^define\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "macro"
+    },
+    {
+      "name": "Conditional",
+      "pattern": "^(ifeq|ifneq|ifdef|ifndef)\\s+(.+)",
+      "captureGroup": 2,
+      "kind": 19,
+      "type": "conditional"
+    },
+    {
+      "name": "Variable assignment",
+      "pattern": "^([A-Za-z_][\\w]*)\\s*[:?+]?=",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
-      "name": "target",
-      "pattern": "^([\\w.-]+)\\s*:",
+      "name": "Pattern rule",
+      "pattern": "^(%[\\w.]+)\\s*:\\s*%",
       "captureGroup": 1,
-      "kind": 12,
+      "kind": 5,
+      "type": "pattern-rule"
+    },
+    {
+      "name": "Target",
+      "pattern": "^([a-zA-Z_][\\w.-]*)\\s*:[^=]",
+      "captureGroup": 1,
+      "kind": 11,
       "type": "target"
     },
     {
-      "name": "variable",
-      "pattern": "^(\\w+)\\s*[:?]?=",
+      "name": "Function call",
+      "pattern": "\\$\\(call\\s+(\\w[\\w-]*)",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "variable"
+      "kind": 11,
+      "type": "function-call"
     },
     {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "Recipe line",
+      "pattern": "^\\t(.+)",
       "captureGroup": 1,
       "kind": 5,
-      "type": "method"
+      "type": "recipe"
     }
   ]
 }

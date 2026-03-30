@@ -2,11 +2,116 @@
   "language": "sparql",
   "symbolPatterns": [
     {
-      "name": "Prefix",
-      "pattern": "^PREFIX\\s+(\\w+):",
+      "name": "SELECT Query",
+      "pattern": "(?:^|\\n)\\s*(SELECT)\\s+(?:DISTINCT\\s+|REDUCED\\s+)?(.+?)\\s*(?:WHERE|\\{)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "ASK Query",
+      "pattern": "(?:^|\\n)\\s*(ASK)\\s*(?:WHERE)?\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "CONSTRUCT Query",
+      "pattern": "(?:^|\\n)\\s*(CONSTRUCT)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "DESCRIBE Query",
+      "pattern": "(?:^|\\n)\\s*(DESCRIBE)\\s+(\\S+)",
+      "captureGroup": 2,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "PREFIX",
+      "pattern": "^\\s*PREFIX\\s+(\\w+)\\s*:",
       "captureGroup": 1,
       "kind": 1,
       "type": "module"
+    },
+    {
+      "name": "BASE",
+      "pattern": "^\\s*BASE\\s+<([^>]+)>",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "FILTER",
+      "pattern": "FILTER\\s*\\(\\s*(.+?)\\s*\\)",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "OPTIONAL Block",
+      "pattern": "(OPTIONAL)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "UNION Block",
+      "pattern": "\\}\\s*(UNION)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "SERVICE",
+      "pattern": "SERVICE\\s+(?:SILENT\\s+)?<([^>]+)>",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "BIND",
+      "pattern": "BIND\\s*\\(.+\\s+AS\\s+\\?(\\w+)\\s*\\)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "VALUES",
+      "pattern": "VALUES\\s+\\(?(\\?\\w+(?:\\s+\\?\\w+)*)\\)?",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "GRAPH",
+      "pattern": "GRAPH\\s+(?:<([^>]+)>|\\?(\\w+))",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "INSERT DATA",
+      "pattern": "(?:^|\\n)\\s*(INSERT\\s+DATA)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "DELETE DATA",
+      "pattern": "(?:^|\\n)\\s*(DELETE\\s+DATA)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "DELETE/INSERT WHERE",
+      "pattern": "(?:^|\\n)\\s*(?:WITH\\s+<[^>]+>\\s+)?(DELETE)\\s*\\{",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
     },
     {
       "name": "Variable",
@@ -16,60 +121,18 @@
       "type": "variable"
     },
     {
-      "pattern": "PREFIX\\s+(\\w+):",
-      "captureGroup": 1,
-      "kind": 3,
-      "description": "Prefix declaration",
-      "name": "Symbol"
-    },
-    {
-      "pattern": "\\?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "description": "Variable",
-      "name": "Symbol"
-    },
-    {
+      "name": "Prefixed URI",
       "pattern": "(\\w+):(\\w+)",
       "captureGroup": 2,
       "kind": 7,
-      "description": "Prefixed name",
-      "name": "Symbol"
+      "type": "field"
     },
     {
-      "name": "Function",
-      "pattern": "(?:function|def|fn|func|sub|proc)\\s+(\\w+)",
+      "name": "Named Graph WITH",
+      "pattern": "WITH\\s+<([^>]+)>",
       "captureGroup": 1,
-      "kind": 11,
-      "type": "function"
-    },
-    {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
+      "kind": 2,
+      "type": "namespace"
     }
   ]
 }

@@ -1,53 +1,210 @@
 {
   "language": "ssh_config",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "keyword", "comment", "string", "number"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "variable",
+      "property",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "defaultLibrary",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "^\\s*(Host|Match)\\b",
-      "modifiers": ["declaration"],
-      "description": "Host and Match block declarations"
+      "tokenType": "keyword",
+      "pattern": "^\\s*(Host)\\s+(.+)$",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Host block declarations including wildcard patterns (Host *, Host *.example.com)"
     },
     {
-      "type": "property",
-      "pattern": "^\\s*(HostName|User|Port|IdentityFile|IdentitiesOnly|ProxyJump|ProxyCommand|ForwardAgent|ForwardX11|LocalForward|RemoteForward|AddKeysToAgent|ServerAliveInterval|ServerAliveCountMax|StrictHostKeyChecking|UserKnownHostsFile|LogLevel|Compression|TCPKeepAlive|ConnectTimeout|ConnectionAttempts|BatchMode|RequestTTY|PermitLocalCommand|SendEnv|SetEnv|Include)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "SSH configuration directive keywords"
+      "tokenType": "keyword",
+      "pattern": "^\\s*(Match)\\s+(host|user|localuser|exec|originalhost|localnetwork|all)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Match block with criteria (host, user, localuser, exec, originalhost)"
     },
     {
-      "type": "string",
-      "pattern": "\\b(yes|no)\\b",
-      "modifiers": [],
-      "description": "Boolean values yes/no"
+      "tokenType": "property",
+      "pattern": "^\\s*(HostName|User|Port|IdentityFile|IdentitiesOnly|AddKeysToAgent|ServerAliveInterval|ServerAliveCountMax|StrictHostKeyChecking|UserKnownHostsFile|LogLevel|TCPKeepAlive|ConnectTimeout|ConnectionAttempts|BatchMode|RequestTTY|Include|PreferredAuthentications|PubkeyAuthentication|PasswordAuthentication|KbdInteractiveAuthentication)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Core SSH configuration directive keywords"
     },
     {
-      "type": "variable",
-      "pattern": "%([dlhknprtu]|\\{[^}]+\\})",
-      "modifiers": [],
-      "description": "Token substitutions like %h, %u, %r, %{host}"
+      "tokenType": "string",
+      "pattern": "\\b(yes|no|ask|confirm|accept-new|auto|autoask)\\b",
+      "tokenModifiers": [],
+      "description": "Boolean and enum values (yes/no/ask/confirm/accept-new)"
     },
     {
-      "type": "string",
+      "tokenType": "variable",
+      "pattern": "%([dlhknprtuCL%]|\\{[^}]+\\})",
+      "tokenModifiers": [],
+      "description": "Token substitutions (%h=host, %p=port, %r=remote user, %L=local hostname, etc.)"
+    },
+    {
+      "tokenType": "string",
       "pattern": "~/.ssh/[a-zA-Z0-9_./\\-]+",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Common SSH file paths"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Line comments starting with #"
     },
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "\\b([0-9]+)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Numeric values for ports and timeouts"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(ProxyCommand|ProxyJump|ProxyUseFdpass)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Proxy command and jump host directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(LocalForward|RemoteForward|DynamicForward|ExitOnForwardFailure|GatewayPorts|ClearAllForwardings)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Port forwarding directives (local, remote, dynamic, SOCKS)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(ControlMaster|ControlPath|ControlPersist)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Connection multiplexing (ControlMaster/ControlPath/ControlPersist)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(ForwardAgent|ForwardX11|ForwardX11Trusted|ForwardX11Timeout|PermitLocalCommand|LocalCommand)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Agent/X11 forwarding and local command execution directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(SendEnv|SetEnv|Compression|IPQoS|AddressFamily|BindAddress|BindInterface|NoHostAuthenticationForLocalhost)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Environment, compression, and network directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(Ciphers|MACs|KexAlgorithms|HostKeyAlgorithms|PubkeyAcceptedAlgorithms|CASignatureAlgorithms|RekeyLimit)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Cryptographic algorithm selection (Ciphers, MACs, KexAlgorithms)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(CanonicalizeHostname|CanonicalDomains|CanonicalizeMaxDots|CanonicalizeFallbackLocal|CanonicalizePermittedCNAMEs)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Hostname canonicalization directives"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[*?]",
+      "tokenModifiers": [],
+      "description": "Wildcard pattern characters (* matches any, ? matches single char)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(GlobalKnownHostsFile|HashKnownHosts|CheckHostIP|HostbasedAuthentication|HostbasedKeyTypes|HostKeyAlias|FingerprintHash|VisualHostKey|UpdateHostKeys|VerifyHostKeyDNS)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Host key verification and known hosts directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(CertificateFile|PKCS11Provider|SecurityKeyProvider|KnownHostsCommand|RevokedHostKeys)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Certificate and key provider directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(StreamLocalBindMask|StreamLocalBindUnlink|Tunnel|TunnelDevice|PermitRemoteOpen)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Tunnel and stream socket directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(EscapeChar|NumberOfPasswordPrompts|PubkeyAcceptedKeyTypes|EnableSSHKeysign|GSSAPIAuthentication|GSSAPIDelegateCredentials|GSSAPIKeyExchange|GSSAPIRenewalForcesRekey|GSSAPIServerIdentity|GSSAPITrustDns)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Authentication methods and GSSAPI directives"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(QUIET|FATAL|ERROR|INFO|VERBOSE|DEBUG|DEBUG1|DEBUG2|DEBUG3)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "LogLevel values (QUIET through DEBUG3)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(publickey|password|keyboard-interactive|hostbased|gssapi-with-mic)\\b",
+      "tokenModifiers": [],
+      "description": "Authentication method names for PreferredAuthentications"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(inet|inet6|any)\\b",
+      "tokenModifiers": [],
+      "description": "AddressFamily values (inet, inet6, any)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(point-to-point|ethernet)\\b",
+      "tokenModifiers": [],
+      "description": "Tunnel mode values"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(sha256|md5)\\b",
+      "tokenModifiers": [],
+      "description": "FingerprintHash algorithm values"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(Tag|Match)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Tag directive and Match conditional block"
     }
   ]
 }

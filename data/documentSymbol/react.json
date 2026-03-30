@@ -2,144 +2,172 @@
   "language": "react",
   "symbolPatterns": [
     {
-      "name": "FunctionalComponentExport",
-      "pattern": "export\\s+(?:default\\s+)?function\\s+([A-Z][a-zA-Z0-9]*)",
+      "name": "Function Component Export",
+      "pattern": "export\\s+(?:default\\s+)?function\\s+([A-Z]\\w*)",
       "captureGroup": 1,
       "kind": 11,
-      "detail": "Exported React functional component"
+      "type": "function-component"
     },
     {
-      "name": "ConstComponentExport",
-      "pattern": "export\\s+(?:default\\s+)?const\\s+([A-Z][a-zA-Z0-9]*)\\s*(?::\\s*React\\.FC)?\\s*=",
+      "name": "Const Component Export",
+      "pattern": "export\\s+(?:default\\s+)?const\\s+([A-Z]\\w*)\\s*(?::\\s*React\\.FC[^=]*)?\\s*=",
       "captureGroup": 1,
       "kind": 12,
-      "detail": "Exported const React component"
+      "type": "const-component"
     },
     {
-      "name": "ArrowComponentConst",
-      "pattern": "const\\s+([A-Z][a-zA-Z0-9]*)\\s*(?::\\s*React\\.FC[^=]*)?\\s*=\\s*(?:\\([^)]*\\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\\s*=>",
-      "captureGroup": 1,
-      "kind": 12,
-      "detail": "Arrow function React component"
-    },
-    {
-      "name": "ClassComponent",
-      "pattern": "class\\s+([A-Z][a-zA-Z0-9]*)\\s+extends\\s+(?:React\\.)?(?:Component|PureComponent)",
+      "name": "Class Component",
+      "pattern": "class\\s+([A-Z]\\w*)\\s+extends\\s+(?:React\\.)?(?:Component|PureComponent)",
       "captureGroup": 1,
       "kind": 4,
-      "detail": "Class-based React component"
+      "type": "class-component"
     },
     {
-      "name": "CustomHook",
-      "pattern": "(?:export\\s+)?(?:function|const)\\s+(use[A-Z][a-zA-Z0-9]*)\\s*(?:=|\\()",
+      "name": "useState",
+      "pattern": "const\\s+\\[(\\w+),\\s*set\\w+\\]\\s*=\\s*useState",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "use-state"
+    },
+    {
+      "name": "useEffect",
+      "pattern": "(useEffect)\\s*\\(",
       "captureGroup": 1,
       "kind": 11,
-      "detail": "Custom React hook"
+      "type": "use-effect"
     },
     {
-      "name": "CreateContext",
-      "pattern": "(?:export\\s+)?const\\s+([A-Za-z][a-zA-Z0-9]*Context)\\s*=\\s*(?:React\\.)?createContext",
+      "name": "useContext",
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useContext\\s*\\(",
       "captureGroup": 1,
       "kind": 12,
-      "detail": "React Context"
+      "type": "use-context"
     },
     {
-      "name": "MemoComponent",
-      "pattern": "(?:export\\s+)?const\\s+([A-Z][a-zA-Z0-9]*)\\s*=\\s*(?:React\\.)?memo\\s*\\(",
+      "name": "useReducer",
+      "pattern": "const\\s+\\[(\\w+),\\s*\\w+\\]\\s*=\\s*useReducer\\s*\\(",
       "captureGroup": 1,
       "kind": 12,
-      "detail": "Memoized React component"
+      "type": "use-reducer"
     },
     {
-      "name": "ForwardRefComponent",
-      "pattern": "(?:export\\s+)?const\\s+([A-Z][a-zA-Z0-9]*)\\s*=\\s*(?:React\\.)?forwardRef\\s*[<(]",
+      "name": "useMemo",
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useMemo\\s*\\(",
       "captureGroup": 1,
       "kind": 12,
-      "detail": "forwardRef React component"
+      "type": "use-memo"
     },
     {
-      "name": "LazyComponent",
-      "pattern": "const\\s+([A-Z][a-zA-Z0-9]*)\\s*=\\s*(?:React\\.)?lazy\\s*\\(",
-      "captureGroup": 1,
-      "kind": 12,
-      "detail": "Lazy-loaded React component"
-    },
-    {
-      "name": "ReducerFunction",
-      "pattern": "(?:export\\s+)?(?:function|const)\\s+([a-z][a-zA-Z0-9]*Reducer)\\s*(?:=|\\()",
+      "name": "useCallback",
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useCallback\\s*\\(",
       "captureGroup": 1,
       "kind": 11,
-      "detail": "Reducer function"
+      "type": "use-callback"
     },
     {
-      "name": "ActionType",
-      "pattern": "type\\s+([A-Z][a-zA-Z0-9]*Action)\\s*=",
+      "name": "useRef",
+      "pattern": "const\\s+(\\w+)\\s*=\\s*useRef\\s*[<(]",
       "captureGroup": 1,
       "kind": 12,
-      "detail": "TypeScript action type"
+      "type": "use-ref"
     },
     {
-      "name": "HOCFunction",
-      "pattern": "(?:export\\s+)?(?:function|const)\\s+(with[A-Z][a-zA-Z0-9]*)\\s*(?:=|\\(|<)",
+      "name": "Custom Hook",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+(use[A-Z]\\w*)\\s*[=(]",
       "captureGroup": 1,
       "kind": 11,
-      "detail": "Higher-Order Component"
+      "type": "custom-hook"
     },
     {
-      "name": "PropsInterface",
-      "pattern": "(?:export\\s+)?interface\\s+([A-Z][a-zA-Z0-9]*Props)\\s*(?:<[^>]*>)?\\s*\\{",
+      "name": "JSX Element",
+      "pattern": "<([A-Z]\\w*)(?:\\s|>|/)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "jsx-element"
+    },
+    {
+      "name": "Props Destructuring",
+      "pattern": "(?:function\\s+\\w+|=>)\\s*\\(\\s*\\{\\s*([^}]+)\\}",
+      "captureGroup": 1,
+      "kind": 7,
+      "type": "props-destructure"
+    },
+    {
+      "name": "createContext",
+      "pattern": "(?:export\\s+)?const\\s+(\\w+)\\s*=\\s*(?:React\\.)?createContext",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "context"
+    },
+    {
+      "name": "forwardRef",
+      "pattern": "(?:export\\s+)?const\\s+([A-Z]\\w*)\\s*=\\s*(?:React\\.)?forwardRef\\s*[<(]",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "forward-ref"
+    },
+    {
+      "name": "memo",
+      "pattern": "(?:export\\s+)?const\\s+([A-Z]\\w*)\\s*=\\s*(?:React\\.)?memo\\s*\\(",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "memo"
+    },
+    {
+      "name": "Suspense",
+      "pattern": "<(Suspense)\\s+fallback=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "suspense"
+    },
+    {
+      "name": "lazy",
+      "pattern": "const\\s+([A-Z]\\w*)\\s*=\\s*(?:React\\.)?lazy\\s*\\(",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "lazy"
+    },
+    {
+      "name": "ErrorBoundary",
+      "pattern": "class\\s+([A-Z]\\w*)\\s+extends\\s+(?:React\\.)?Component[^{]*componentDidCatch|class\\s+(\\w*ErrorBoundary)\\s+extends",
       "captureGroup": 1,
       "kind": 4,
-      "detail": "Component props interface"
+      "type": "error-boundary"
     },
     {
-      "name": "StateInterface",
-      "pattern": "(?:export\\s+)?interface\\s+([A-Z][a-zA-Z0-9]*State)\\s*\\{",
+      "name": "defaultProps",
+      "pattern": "(\\w+)\\.defaultProps\\s*=",
       "captureGroup": 1,
-      "kind": 4,
-      "detail": "Component state interface"
+      "kind": 6,
+      "type": "default-props"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:export\\s+)?type\\s+([A-Z][a-zA-Z0-9]*)\\s*(?:<[^>]*>)?\\s*=",
+      "name": "propTypes",
+      "pattern": "(\\w+)\\.propTypes\\s*=",
       "captureGroup": 1,
-      "kind": 12,
-      "detail": "TypeScript type alias"
+      "kind": 6,
+      "type": "prop-types"
     },
     {
-      "name": "ContextProvider",
-      "pattern": "(?:export\\s+)?(?:function|const)\\s+([A-Z][a-zA-Z0-9]*Provider)\\s*(?:=|\\(|:)",
-      "captureGroup": 1,
-      "kind": 11,
-      "detail": "Context Provider component"
-    },
-    {
-      "name": "EventHandler",
-      "pattern": "const\\s+(handle[A-Z][a-zA-Z0-9]*)\\s*=\\s*(?:useCallback\\()?",
+      "name": "Context Provider",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+([A-Z]\\w*Provider)\\s*[=(]",
       "captureGroup": 1,
       "kind": 11,
-      "detail": "Event handler function"
+      "type": "context-provider"
     },
     {
-      "name": "DefaultExport",
-      "pattern": "export\\s+default\\s+([A-Z][a-zA-Z0-9]*)",
+      "name": "Reducer Function",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+(\\w+Reducer)\\s*[=(]",
       "captureGroup": 1,
-      "kind": 1,
-      "detail": "Default exported component"
+      "kind": 11,
+      "type": "reducer"
     },
     {
-      "name": "ConstantDeclaration",
-      "pattern": "(?:export\\s+)?const\\s+([A-Z_][A-Z_0-9]*)\\s*=",
+      "name": "HOC",
+      "pattern": "(?:export\\s+)?(?:function|const)\\s+(with[A-Z]\\w*)\\s*[=(]",
       "captureGroup": 1,
-      "kind": 13,
-      "detail": "Constant declaration"
-    },
-    {
-      "name": "EnumDeclaration",
-      "pattern": "(?:export\\s+)?enum\\s+([A-Z][a-zA-Z0-9]*)\\s*\\{",
-      "captureGroup": 1,
-      "kind": 12,
-      "detail": "TypeScript enum"
+      "kind": 11,
+      "type": "hoc"
     }
   ]
 }

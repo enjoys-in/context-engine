@@ -1,77 +1,247 @@
 {
   "language": "elixir",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "function", "macro", "variable", "keyword", "operator", "property", "type", "decorator", "string"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "deprecated", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "struct",
+      "parameter",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "\\bdefmodule\\s+([A-Z][a-zA-Z0-9_.]+)\\b",
-      "modifiers": ["declaration"],
-      "description": "Module declarations (defmodule)"
+      "tokenModifiers": ["declaration"],
+      "description": "Module declarations via defmodule"
     },
     {
-      "type": "function",
-      "pattern": "\\bdef\\s+([a-z_][a-zA-Z0-9_!?]*)\\b",
-      "modifiers": ["definition"],
+      "tokenType": "function",
+      "pattern": "\\bdef\\s+([a-z_][a-zA-Z0-9_!?]*)\\s*[\\(,]?",
+      "tokenModifiers": ["definition"],
       "description": "Public function definitions (def)"
     },
     {
-      "type": "function",
-      "pattern": "\\bdefp\\s+([a-z_][a-zA-Z0-9_!?]*)\\b",
-      "modifiers": ["definition"],
+      "tokenType": "function",
+      "pattern": "\\bdefp\\s+([a-z_][a-zA-Z0-9_!?]*)\\s*[\\(,]?",
+      "tokenModifiers": ["definition", "static"],
       "description": "Private function definitions (defp)"
     },
     {
-      "type": "operator",
+      "tokenType": "macro",
+      "pattern": "\\bdefmacro[p]?\\s+([a-z_][a-zA-Z0-9_!?]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Macro definitions (defmacro/defmacrop)"
+    },
+    {
+      "tokenType": "struct",
+      "pattern": "\\bdefstruct\\s+\\[?[:\\w,\\s]+\\]?",
+      "tokenModifiers": ["definition"],
+      "description": "Struct definitions via defstruct"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bdefprotocol\\s+([A-Z][a-zA-Z0-9_.]+)\\b",
+      "tokenModifiers": ["declaration", "abstract"],
+      "description": "Protocol definitions (defprotocol)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bdefimpl\\s+([A-Z][a-zA-Z0-9_.]+),\\s*for:\\s*([A-Z][a-zA-Z0-9_.]+)",
+      "tokenModifiers": ["definition"],
+      "description": "Protocol implementations (defimpl ... for:)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "@(moduledoc|doc)\\s+(?:\"\"\"|\")",
+      "tokenModifiers": ["documentation"],
+      "description": "Documentation attributes (@doc, @moduledoc)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@spec\\s+[a-z_][a-zA-Z0-9_!?]*\\(.*\\)\\s*::\\s*.*",
+      "tokenModifiers": ["declaration"],
+      "description": "Type spec annotations (@spec)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(type|typep|opaque)\\s+[a-z_][a-zA-Z0-9_]*",
+      "tokenModifiers": ["definition"],
+      "description": "Type definitions (@type, @typep, @opaque)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@(behaviour|callback)\\s+[A-Z][a-zA-Z0-9_.]*",
+      "tokenModifiers": ["declaration", "abstract"],
+      "description": "Behaviour and callback declarations (@behaviour, @callback)"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "@impl\\s+(true|[A-Z][a-zA-Z0-9_.]*)",
+      "tokenModifiers": ["definition"],
+      "description": "Implementation marker attribute (@impl)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@[a-z_][a-zA-Z0-9_]*(?=\\s)",
+      "tokenModifiers": [],
+      "description": "Custom module attributes used as compile-time constants"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(use|import|alias|require)\\s+[A-Z][a-zA-Z0-9_.]*",
+      "tokenModifiers": [],
+      "description": "Module directives: use, import, alias, require"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(if|unless)\\s+",
+      "tokenModifiers": [],
+      "description": "Conditional keywords (if, unless)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(case|cond|with)\\s+",
+      "tokenModifiers": [],
+      "description": "Pattern matching control flow (case, cond, with)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(try|rescue|catch|after|raise|throw|reraise)\\b",
+      "tokenModifiers": [],
+      "description": "Error handling keywords (try/rescue/catch/after/raise)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bfn\\b.*->",
+      "tokenModifiers": [],
+      "description": "Anonymous function expression (fn ... -> ... end)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(do|end|else|after|in|not|and|or|when)\\b",
+      "tokenModifiers": [],
+      "description": "Block and logical keywords (do, end, else, when, in, and, or, not)"
+    },
+    {
+      "tokenType": "operator",
       "pattern": "\\|>",
-      "modifiers": [],
-      "description": "Pipe operator (|>)"
+      "tokenModifiers": [],
+      "description": "Pipe operator for chaining function calls"
     },
     {
-      "type": "decorator",
-      "pattern": "@(moduledoc|doc|spec|type|typep|callback|behaviour|impl|derive)\\b",
-      "modifiers": ["documentation"],
-      "description": "Module attributes for documentation and types"
+      "tokenType": "operator",
+      "pattern": "&(?:[a-zA-Z_][a-zA-Z0-9_.]*\\/\\d+|\\d+|\\()",
+      "tokenModifiers": [],
+      "description": "Capture operator (&fun/arity, &1, &(...))"
     },
     {
-      "type": "variable",
-      "pattern": "\\b([a-z_][a-zA-Z0-9_]*)\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Pattern matching / variable binding"
+      "tokenType": "operator",
+      "pattern": "\\^[a-z_][a-zA-Z0-9_]*",
+      "tokenModifiers": ["readonly"],
+      "description": "Pin operator (^var) for matching existing values in patterns"
     },
     {
-      "type": "property",
-      "pattern": ":[a-z_][a-zA-Z0-9_]*",
-      "modifiers": ["readonly"],
-      "description": "Atoms (:atom_name)"
+      "tokenType": "string",
+      "pattern": "~[rRsSwWcCDNUT](?:[/|\"'({<\\[])[\\s\\S]*?(?:[/|\"')}\\]>])[a-z]*",
+      "tokenModifiers": [],
+      "description": "Sigils (~r, ~s, ~w, ~c, etc.) for regex, strings, word lists"
     },
     {
-      "type": "macro",
-      "pattern": "\\b(defmacro|defmacrop|quote|unquote|use|require|import|alias)\\b",
-      "modifiers": [],
-      "description": "Macro definitions and metaprogramming keywords"
+      "tokenType": "property",
+      "pattern": ":[a-z_][a-zA-Z0-9_!?]*",
+      "tokenModifiers": ["readonly"],
+      "description": "Atoms (:atom_name) used as constant identifiers"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(case|cond|with|if|unless|try|catch|rescue|after|raise|throw)\\b",
-      "modifiers": [],
-      "description": "Control flow and pattern matching keywords"
+      "tokenType": "property",
+      "pattern": "%\\{(?:\\s*[a-z_][a-zA-Z0-9_]*:\\s*|\\s*\"[^\"]+\"\\s*=>)",
+      "tokenModifiers": [],
+      "description": "Map literals with atom or string keys (%{key: val})"
     },
     {
-      "type": "type",
-      "pattern": "\\b(defstruct|defprotocol|defimpl)\\b",
-      "modifiers": ["definition"],
-      "description": "Struct and protocol definitions"
+      "tokenType": "struct",
+      "pattern": "%[A-Z][a-zA-Z0-9_.]*\\{",
+      "tokenModifiers": [],
+      "description": "Struct literal construction and pattern matching (%ModuleName{})"
     },
     {
-      "type": "function",
-      "pattern": "\\b(Enum|Map|List|String|IO|Kernel|Agent|GenServer|Task|Supervisor)\\.[a-z_][a-zA-Z0-9_!?]*",
-      "modifiers": ["defaultLibrary"],
-      "description": "Standard library module function calls"
+      "tokenType": "operator",
+      "pattern": "<<[^>]*>>",
+      "tokenModifiers": [],
+      "description": "Binary/bitstring syntax (<<...>>)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(GenServer|Supervisor|DynamicSupervisor|Agent)\\.(start_link|start|init|call|cast|handle_call|handle_cast|handle_info|terminate|child_spec|stop)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "OTP GenServer/Supervisor/Agent callback and API functions"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(Enum|Stream)\\.(map|filter|reduce|each|flat_map|into|reject|sort|chunk_every|zip|any\\?|all\\?|find|count|take|drop|concat)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Enum and Stream standard library collection functions"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(Task|Task\\.Supervisor)\\.(async|await|start|start_link|async_stream|yield)\\b",
+      "tokenModifiers": ["defaultLibrary", "async"],
+      "description": "Task module concurrency functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(spawn|spawn_link|spawn_monitor|send|receive)\\b",
+      "tokenModifiers": ["async"],
+      "description": "Process primitives: spawn, send, receive"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\bwhen\\s+(is_[a-z_]+\\(.*?\\)|[a-z_]+\\s*(?:in|==|!=|<|>|<=|>=))",
+      "tokenModifiers": [],
+      "description": "Guard clauses in function heads (when is_atom/1, when x in ...)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bfor\\s+[a-z_][a-zA-Z0-9_]*\\s*<-",
+      "tokenModifiers": [],
+      "description": "List comprehensions (for x <- collection, do: ...)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b_[a-z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": ["deprecated"],
+      "description": "Unused/ignored variables prefixed with underscore (_var)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b(?:0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+|\\d[\\d_]*(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d+)?)\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals including hex, binary, octal, float, and scientific"
     }
   ]
 }

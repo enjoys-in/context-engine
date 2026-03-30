@@ -1,83 +1,251 @@
 {
   "language": "kotlin",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "typeParameter", "parameter", "variable", "property", "enumMember", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(fun|class|object|interface|val|var|return|if|else|when|for|while|do|break|continue|throw|try|catch|finally|is|as|in|out|by|constructor|init|companion|data|sealed|enum|annotation|inner|inline|infix|operator|suspend|tailrec|reified|crossinline|noinline|import|package|typealias|where|it)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Kotlin language keywords"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "(?<=fun\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function declarations after fun keyword"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "(?<=(?:class|interface|object|enum\\s+class)\\s+)[A-Z][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Class, interface, object, and enum class declarations"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "(?<=val\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["readonly", "declaration"],
+      "tokenModifiers": [
+        "readonly",
+        "declaration"
+      ],
       "description": "Immutable val property declarations"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "(?<=var\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Mutable var property declarations"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(companion\\s+object|data\\s+class|sealed\\s+class|sealed\\s+interface|value\\s+class|enum\\s+class)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Compound keyword declarations: companion object, data class, sealed class"
     },
     {
-      "type": "decorator",
+      "tokenType": "decorator",
       "pattern": "@[A-Z][a-zA-Z0-9_]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Annotations like @JvmStatic, @Serializable, @Deprecated"
     },
     {
-      "type": "modifier",
+      "tokenType": "modifier",
       "pattern": "\\b(public|private|protected|internal|open|final|abstract|override|lateinit|const|expect|actual)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Visibility and other modifiers"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(suspend|launch|async|await|withContext|coroutineScope|runBlocking)\\b",
-      "modifiers": ["async"],
+      "tokenModifiers": [
+        "async"
+      ],
       "description": "Coroutine-related keywords and builders"
     },
     {
-      "type": "typeParameter",
+      "tokenType": "typeParameter",
       "pattern": "(?<=<\\s*)[A-Z][a-zA-Z0-9_]*(?=\\s*(?::|>|,))",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Generic type parameters in angle brackets"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Single-line and multi-line comments including KDoc"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"\"\"[\\s\\S]*?\"\"\"|\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Raw triple-quoted and escaped string literals"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bdata\\s+class\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Data class declarations with primary constructor"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bsealed\\s+(?:class|interface)\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Sealed class and sealed interface declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bsuspend\\s+fun\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration",
+        "async"
+      ],
+      "description": "Suspend function declarations for coroutines"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\binfix\\s+fun\\s+(?:[A-Z][a-zA-Z0-9_<>?]*\\.)?([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Infix function declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\boperator\\s+fun\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Operator overload function declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\binline\\s+fun\\s+(?:<[^>]*>\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Inline function declarations with optional reified type parameters"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfun\\s+[A-Z][a-zA-Z0-9_<>?]*\\.([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Extension function declarations on a receiver type"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(launch|async|withContext|supervisorScope|coroutineScope)\\s*(?:\\([^)]*\\))?\\s*\\{",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Coroutine scope builders: launch, async, withContext blocks"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bval\\s+\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*(?:\\s*,\\s*[a-zA-Z_][a-zA-Z0-9_]*)*)\\s*\\)",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Destructuring declarations with val"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btypealias\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:<[^>]*>)?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Type alias declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bannotation\\s+class\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Annotation class declarations"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bby\\s+lazy\\s*\\{",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Property delegation with by lazy initializer"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\breified\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Reified type parameters in inline functions"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\.|\\.\\?|\\?:|!!",
+      "tokenModifiers": [],
+      "description": "Null-safety operators: safe call (?.), elvis (?:), non-null assertion (!!)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\$\\{[^}]+\\}|\\$[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "String template expressions ${expr} and $variable"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bwhen\\s*\\([^)]*\\)\\s*\\{[^}]*->",
+      "tokenModifiers": [],
+      "description": "When expression with branch arrows"
     }
   ]
 }

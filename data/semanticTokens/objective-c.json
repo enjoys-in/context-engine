@@ -1,77 +1,349 @@
 {
   "language": "objective-c",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["class", "interface", "enum", "struct", "method", "property", "variable", "function", "macro", "keyword", "modifier", "comment", "string", "number", "operator", "decorator", "type"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "class",
+      "interface",
+      "enum",
+      "struct",
+      "method",
+      "property",
+      "variable",
+      "function",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator",
+      "type",
+      "parameter"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "defaultLibrary",
+      "modification",
+      "abstract"
+    ]
   },
   "semanticRules": [
     {
-      "type": "interface",
-      "pattern": "@interface\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Objective-C class interface declarations"
+      "tokenType": "interface",
+      "pattern": "@interface\\s+(\\w+)\\s*(?::\\s*\\w+)?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Objective-C class interface declarations with optional superclass"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "@implementation\\s+(\\w+)",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Objective-C class implementation blocks"
     },
     {
-      "type": "method",
-      "pattern": "[-+]\\s*\\([^)]+\\)\\s*\\w+",
-      "modifiers": ["definition"],
-      "description": "Instance (-) and class (+) method signatures"
+      "tokenType": "method",
+      "pattern": "[-+]\\s*\\([^)]+\\)\\s*\\w+(?:\\s*:\\s*\\([^)]+\\)\\s*\\w+)*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Instance (-) and class (+) method signatures with typed parameters"
     },
     {
-      "type": "interface",
-      "pattern": "@protocol\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Protocol declarations"
+      "tokenType": "interface",
+      "pattern": "@protocol\\s+(\\w+)(?:\\s*<[^>]+>)?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Protocol declarations with optional protocol conformance"
     },
     {
-      "type": "macro",
+      "tokenType": "macro",
       "pattern": "#import\\s+[<\"][^>\"]+[>\"]",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "#import directives for header inclusion"
     },
     {
-      "type": "property",
-      "pattern": "@property\\s*\\([^)]*\\)\\s*\\w+\\s*\\*?\\s*\\w+",
-      "modifiers": ["declaration"],
-      "description": "@property declarations with attributes"
+      "tokenType": "property",
+      "pattern": "@property\\s*\\(\\s*(?:(?:nonatomic|atomic|strong|weak|copy|assign|retain|readonly|readwrite|getter\\s*=\\s*\\w+|setter\\s*=\\s*\\w+:?|nullable|nonnull|null_resettable|class)\\s*,?\\s*)*\\)\\s*\\w+[\\s*]*\\w+",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "@property declarations with attributes (nonatomic, strong, weak, copy, readonly, etc.)"
     },
     {
-      "type": "keyword",
-      "pattern": "@(synthesize|dynamic|autoreleasepool|try|catch|finally|throw|synchronized|selector|encode|end|class|optional|required|public|private|protected|package)",
-      "modifiers": ["defaultLibrary"],
-      "description": "Objective-C @ keywords"
+      "tokenType": "keyword",
+      "pattern": "@(synthesize|dynamic|autoreleasepool|try|catch|finally|throw|synchronized|selector|encode|end|class|optional|required|public|private|protected|package|available|import|compatibility_alias)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Objective-C @ keywords including @autoreleasepool, @try, @catch, @throw"
     },
     {
-      "type": "type",
-      "pattern": "\\b(NSString|NSArray|NSDictionary|NSNumber|NSObject|NSInteger|NSUInteger|CGFloat|BOOL|id|instancetype|void|SEL|IMP|Class)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Foundation and runtime types"
+      "tokenType": "type",
+      "pattern": "\\b(NSString|NSMutableString|NSArray|NSMutableArray|NSDictionary|NSMutableDictionary|NSSet|NSMutableSet|NSNumber|NSObject|NSValue|NSData|NSDate|NSError|NSURL|NSNotification|NSNotificationCenter|NSTimer|NSThread|NSOperationQueue|NSBundle|NSUserDefaults|NSFileManager)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Foundation framework classes"
     },
     {
-      "type": "string",
+      "tokenType": "type",
+      "pattern": "\\b(NSInteger|NSUInteger|CGFloat|CGRect|CGPoint|CGSize|BOOL|id|instancetype|void|SEL|IMP|Class|NSRange|NSTimeInterval|CGAffineTransform|UIEdgeInsets)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Foundation and CoreGraphics primitive types"
+    },
+    {
+      "tokenType": "string",
       "pattern": "@\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "NSString literals prefixed with @"
     },
     {
-      "type": "decorator",
+      "tokenType": "decorator",
       "pattern": "__attribute__\\s*\\(\\([^)]*\\)\\)",
-      "modifiers": [],
-      "description": "GCC/Clang attribute decorators"
+      "tokenModifiers": [],
+      "description": "GCC/Clang __attribute__ decorators"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "//[^\\n]*|/\\*[\\s\\S]*?\\*/",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line and multi-line comments"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\^\\s*(?:\\([^)]*\\))?\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Block (closure) syntax with caret ^ and optional return type"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@selector\\s*\\(\\s*\\w+(?::\\w*)*\\s*\\)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "@selector() expressions for method selector references"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "@interface\\s+\\w+\\s*\\(\\s*(\\w*)\\s*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Category declarations @interface ClassName(CategoryName) and class extensions (empty parens)"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\b(NS_ENUM|NS_OPTIONS|NS_CLOSED_ENUM|NS_ERROR_ENUM)\\s*\\([^)]+\\)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NS_ENUM, NS_OPTIONS, and related typed enum macros"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(dispatch_async|dispatch_sync|dispatch_after|dispatch_once|dispatch_get_main_queue|dispatch_get_global_queue|dispatch_queue_create|dispatch_group_create|dispatch_semaphore_create|dispatch_barrier_async)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Grand Central Dispatch (GCD) functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bNSLog\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NSLog debug logging function"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@try\\s*\\{|@catch\\s*\\([^)]*\\)\\s*\\{|@finally\\s*\\{|@throw\\b",
+      "tokenModifiers": [],
+      "description": "@try/@catch/@throw/@finally exception handling blocks"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(valueForKey|setValue:forKey|valueForKeyPath|setValue:forKeyPath|dictionaryWithValuesForKeys|setValuesForKeysWithDictionary)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Key-Value Coding (KVC) methods"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(__nullable|__nonnull|_Nullable|_Nonnull|_Null_unspecified|nullable|nonnull|null_unspecified)\\b|NS_ASSUME_NONNULL_BEGIN|NS_ASSUME_NONNULL_END",
+      "tokenModifiers": [],
+      "description": "Nullability annotations (__nullable, __nonnull, NS_ASSUME_NONNULL)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(NSArray|NSDictionary|NSSet)\\s*<[^>]+>",
+      "tokenModifiers": [],
+      "description": "Lightweight generics (NSArray<NSString *>, NSDictionary<NSString *, id>)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "@\\(\\s*[^)]+\\s*\\)|@\\[\\s*[^\\]]*\\s*\\]|@\\{\\s*[^}]*\\s*\\}",
+      "tokenModifiers": [],
+      "description": "Boxed expressions @(), array literals @[], and dictionary literals @{}"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(__block|__weak|__strong|__unsafe_unretained|__autoreleasing)\\b",
+      "tokenModifiers": [],
+      "description": "Block and ARC memory management qualifiers"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(addObserver:forKeyPath:options:context:|observeValueForKeyPath:ofObject:change:context:|removeObserver:forKeyPath:|removeObserver:forKeyPath:context:)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Key-Value Observing (KVO) methods for observing property changes"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(addObserver:selector:name:object:|removeObserver:|removeObserver:name:object:|postNotificationName:object:|postNotificationName:object:userInfo:|addObserverForName:object:queue:usingBlock:)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NSNotificationCenter observer and notification posting methods"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(UIView|UIViewController|UITableView|UITableViewCell|UITableViewController|UICollectionView|UICollectionViewCell|UICollectionViewController|UINavigationController|UITabBarController|UIButton|UILabel|UIImageView|UITextField|UITextView|UIScrollView|UIStackView|UIAlertController|UIActivityIndicatorView|UISwitch|UISlider|UIProgressView|UIPickerView|UIPageViewController|UISplitViewController|UISearchController|UIWindow|UIApplication|UIStoryboard|UIScreen|UIColor|UIFont|UIImage|UIBarButtonItem|UIGestureRecognizer|UITapGestureRecognizer|UIPanGestureRecognizer|UISwipeGestureRecognizer|UILongPressGestureRecognizer)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "UIKit framework view, controller, and UI element classes"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(NSManagedObject|NSManagedObjectContext|NSManagedObjectModel|NSPersistentStoreCoordinator|NSPersistentContainer|NSFetchRequest|NSFetchedResultsController|NSEntityDescription|NSPredicate|NSSortDescriptor|NSBatchUpdateRequest|NSBatchDeleteRequest|NSMergePolicy)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Core Data framework classes for persistence and object graph management"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(encodeWithCoder:|initWithCoder:|encodeObject:forKey:|decodeObjectForKey:|encodeBool:forKey:|decodeBoolForKey:|encodeInt:forKey:|decodeIntForKey:|encodeInteger:forKey:|decodeIntegerForKey:|encodeFloat:forKey:|decodeFloatForKey:|encodeDouble:forKey:|decodeDoubleForKey:|supportsSecureCoding|decodeObjectOfClass:forKey:|decodeObjectOfClasses:forKey:)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NSCoding and NSSecureCoding archival/serialization methods"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "%([@dDiuUxXoOfeEgGcCsSPaAF]|l[dDiuUxXoO]|ll[dDiuUxXoO]|z[duUxX]|t[dDiuUxXoO]|q[dDiuUxXoO]|[0-9]*\\.?[0-9]*[feEgGdDiuUxX])",
+      "tokenModifiers": [],
+      "description": "NSString/NSLog format specifiers (%@, %d, %ld, %lld, %f, %lu, %zu, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(method_exchangeImplementations|class_addMethod|class_replaceMethod|method_getImplementation|method_setImplementation|class_getInstanceMethod|class_getClassMethod|method_getTypeEncoding|objc_getAssociatedObject|objc_setAssociatedObject|objc_removeAssociatedObjects|object_getClass|object_setClass|class_getName|class_getSuperclass|class_conformsToProtocol|class_respondsToSelector|class_copyMethodList|class_copyPropertyList|class_copyProtocolList|protocol_getMethodDescription)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Objective-C runtime functions for method swizzling, associated objects, and introspection"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "@interface\\s+\\w+\\s*\\(\\s*\\)\\s*<\\s*\\w+(?:\\s*,\\s*\\w+)*\\s*>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class extension with protocol conformance @interface Class () <Protocol1, Protocol2>"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\bNS_DESIGNATED_INITIALIZER\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NS_DESIGNATED_INITIALIZER macro marking the designated initializer method"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(API_AVAILABLE|API_UNAVAILABLE|API_DEPRECATED|API_DEPRECATED_WITH_REPLACEMENT)\\s*\\([^)]+\\)",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "API availability macros (API_AVAILABLE, API_DEPRECATED, etc.) with platform versions"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(__IPHONE_[0-9_]+|__MAC_[0-9_]+|__TVOS_[0-9_]+|__WATCHOS_[0-9_]+|__IPHONE_OS_VERSION_MIN_REQUIRED|__IPHONE_OS_VERSION_MAX_ALLOWED|__MAC_OS_X_VERSION_MIN_REQUIRED|__MAC_OS_X_VERSION_MAX_ALLOWED|NS_AVAILABLE|NS_AVAILABLE_IOS|NS_DEPRECATED|NS_DEPRECATED_IOS)\\b",
+      "tokenModifiers": [
+        "deprecated"
+      ],
+      "description": "Platform version macros (__IPHONE_*, __MAC_*) and NS_AVAILABLE/NS_DEPRECATED"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(objectAtIndexedSubscript:|setObject:atIndexedSubscript:|objectForKeyedSubscript:|setObject:forKeyedSubscript:)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Subscript access methods for indexed and keyed subscript operator support"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "@([0-9]+\\.?[0-9]*([eE][+-]?[0-9]+)?|\\.[0-9]+([eE][+-]?[0-9]+)?|0[xX][0-9a-fA-F]+)\\b",
+      "tokenModifiers": [],
+      "description": "Boxed number literals (@42, @3.14, @0xFF)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@(YES|NO|TRUE|FALSE)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boxed boolean literals (@YES, @NO, @TRUE, @FALSE)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(NS_REQUIRES_SUPER|NS_UNAVAILABLE|NS_NOESCAPE|NS_RETURNS_RETAINED|NS_RETURNS_NOT_RETAINED|NS_RETURNS_INNER_POINTER|NS_RELEASES_ARGUMENT|NS_VALID_UNTIL_END_OF_SCOPE|NS_ROOT_CLASS|NS_FORMAT_FUNCTION|NS_FORMAT_ARGUMENT|NS_SWIFT_NAME|NS_SWIFT_UNAVAILABLE|NS_REFINED_FOR_SWIFT|NS_TYPED_ENUM|NS_TYPED_EXTENSIBLE_ENUM|NS_INLINE|NS_REQUIRES_NIL_TERMINATION|CF_RETURNS_RETAINED|CF_RETURNS_NOT_RETAINED)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "NS_* and CF_* attribute macros for method behavior, memory management, and Swift interop"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(NSStringFromSelector|NSSelectorFromString|NSStringFromClass|NSClassFromString|NSStringFromProtocol|NSProtocolFromString|NSStringFromCGRect|NSStringFromCGPoint|NSStringFromCGSize|NSStringFromRange|NSMakeRange|CGRectMake|CGPointMake|CGSizeMake|CGRectZero|CGPointZero|CGSizeZero)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Foundation/CoreGraphics utility functions for type conversion and struct construction"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(IBOutlet|IBAction|IBInspectable|IBDesignable|IB_DESIGNABLE)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Interface Builder annotations (IBOutlet, IBAction, IBInspectable, IBDesignable)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(OBJC_ASSOCIATION_ASSIGN|OBJC_ASSOCIATION_RETAIN_NONATOMIC|OBJC_ASSOCIATION_COPY_NONATOMIC|OBJC_ASSOCIATION_RETAIN|OBJC_ASSOCIATION_COPY)\\b",
+      "tokenModifiers": [
+        "static"
+      ],
+      "description": "Objective-C associated object policy constants for objc_setAssociatedObject"
     }
   ]
 }

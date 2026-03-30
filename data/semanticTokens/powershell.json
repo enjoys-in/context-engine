@@ -1,77 +1,228 @@
 {
   "language": "powershell",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "variable", "parameter", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "variable",
+      "parameter",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b(function|filter)\\s+([\\w-]+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function and filter declarations"
     },
     {
-      "type": "function",
-      "pattern": "\\b(\\w+-\\w+)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "function",
+      "pattern": "\\b([A-Z][a-z]+-[A-Z][a-zA-Z]+)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Cmdlet names in Verb-Noun format (e.g., Get-Process, Set-Content)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*|\\$\\{[^}]+\\}",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "PowerShell variables prefixed with $"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$\\w+:\\w+",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Scoped variables like $env:PATH, $script:var, $global:var"
     },
     {
-      "type": "type",
-      "pattern": "\\[\\w+(?:\\.\\w+)*(?:\\[\\])?\\]",
-      "modifiers": [],
-      "description": "Type accelerators and .NET type references in brackets"
+      "tokenType": "variable",
+      "pattern": "\\$(_|PSItem|null|true|false|PSVersionTable|PSCmdlet|MyInvocation|PSScriptRoot|PSCommandPath|args|input|Error|LastExitCode|PROFILE|HOME|Host|PID)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Automatic variables ($_, $PSItem, $null, $true, $false, $Error, etc.)"
     },
     {
-      "type": "parameter",
+      "tokenType": "type",
+      "pattern": "\\[(string|int|int32|int64|bool|float|double|decimal|datetime|array|hashtable|psobject|pscustomobject|scriptblock|regex|void|xml|char|byte|long|guid|uri|mailaddress|ipaddress|timespan)\\]",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Type accelerators for common .NET types ([string], [int], [bool], etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\[\\w+(?:\\.\\w+)*(?:\\[\\])?\\]",
+      "tokenModifiers": [],
+      "description": "Full .NET type references in brackets [System.IO.FileInfo]"
+    },
+    {
+      "tokenType": "parameter",
       "pattern": "-[a-zA-Z][a-zA-Z0-9]*\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Named parameters prefixed with -"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(param|begin|process|end|if|elseif|else|switch|while|for|foreach|do|until|try|catch|finally|throw|return|break|continue|exit|trap|class|enum|using|in|workflow|parallel|sequence|inlinescript)\\b",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(param|begin|process|end|clean|if|elseif|else|switch|while|for|foreach|do|until|try|catch|finally|throw|return|break|continue|exit|trap|class|enum|using|in|workflow|parallel|sequence|inlinescript|data|define|dynamicparam)\\b",
+      "tokenModifiers": [],
       "description": "PowerShell keywords and control flow statements"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "\\||\\|\\||&&|\\+=|-=|\\*=|/=|%=|-eq|-ne|-lt|-gt|-le|-ge|-match|-notmatch|-like|-notlike|-contains|-notcontains|-in|-notin|-replace|-split|-join|-as|-is|-isnot|-band|-bor|-bxor|-bnot|-shl|-shr",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Pipeline, assignment, comparison, and bitwise operators"
     },
     {
-      "type": "decorator",
-      "pattern": "\\[\\w+(?:Attribute)?\\([^)]*\\)\\]|\\[Parameter\\([^)]*\\)\\]|\\[CmdletBinding\\([^)]*\\)\\]|\\[ValidateSet\\([^)]*\\)\\]",
-      "modifiers": [],
-      "description": "Attribute decorators for parameters and cmdlet bindings"
+      "tokenType": "decorator",
+      "pattern": "\\[\\w+(?:Attribute)?\\([^)]*\\)\\]|\\[Parameter\\([^)]*\\)\\]|\\[CmdletBinding\\([^)]*\\)\\]|\\[ValidateSet\\([^)]*\\)\\]|\\[ValidateRange\\([^)]*\\)\\]|\\[ValidatePattern\\([^)]*\\)\\]|\\[ValidateScript\\([^)]*\\)\\]|\\[Alias\\([^)]*\\)\\]|\\[OutputType\\([^)]*\\)\\]",
+      "tokenModifiers": [],
+      "description": "Attribute decorators for parameters, validation, and cmdlet bindings"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#[^\\n]*|<#[\\s\\S]*?#>",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line # comments and block <# #> comments"
     },
     {
-      "type": "string",
+      "tokenType": "comment",
+      "pattern": "<#\\s*\\.SYNOPSIS|\\.DESCRIPTION|\\.PARAMETER|\\.EXAMPLE|\\.NOTES|\\.LINK|\\.INPUTS|\\.OUTPUTS|\\.COMPONENT|\\.ROLE|\\.FUNCTIONALITY",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Comment-based help keywords (.SYNOPSIS, .DESCRIPTION, .PARAMETER, etc.)"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^']*)'|@\"[\\s\\S]*?\"@|@'[\\s\\S]*?'@",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single/double quoted strings and here-strings"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "@[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "tokenModifiers": [],
+      "description": "Splatting operator @params to pass hashtable as named parameters"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\{[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "ScriptBlock delimiters { code } used for closures and deferred execution"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Where-Object|ForEach-Object|Select-Object|Sort-Object|Group-Object|Measure-Object|Compare-Object|Tee-Object|New-Object)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Core pipeline cmdlets for filtering, projection, and aggregation"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "-f\\b",
+      "tokenModifiers": [],
+      "description": "Format operator for string formatting ('{0} {1}' -f $a, $b)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "-match|-imatch|-cmatch|-notmatch\\b",
+      "tokenModifiers": [],
+      "description": "Regex match operators with case sensitivity variants"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "#Requires\\s+-\\w+",
+      "tokenModifiers": [],
+      "description": "#Requires statement for module, version, or shell edition prerequisites"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "@\\{\\s*[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "Hashtable literal / calculated property @{ Name = expr; Expression = { ... } }"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(Import-Module|Export-ModuleMember|Get-Module|Remove-Module|New-Module)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Module management cmdlets"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bconfiguration\\s+\\w+",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DSC Configuration block declaration"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\busing\\s+(namespace|module|assembly)\\s+[\\w.]+",
+      "tokenModifiers": [],
+      "description": "Using statement for namespace, module, or assembly imports"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bclass\\s+(\\w+)\\s*(?::\\s*\\w+)?\\s*\\{",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "PowerShell class declaration with optional inheritance"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\[(\\w+)\\]\\s+(\\w+)\\s*\\([^)]*\\)\\s*\\{",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Class method definition with return type [type] MethodName() { }"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\[(\\w+)\\]\\s*\\$(\\w+)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Typed class property declaration [type]$PropertyName"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+(\\w+)\\s*\\{",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "PowerShell enum definition"
     }
   ]
 }

@@ -2,74 +2,228 @@
   "language": "pgsql",
   "symbolPatterns": [
     {
-      "name": "Table",
-      "pattern": "CREATE\\s+TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?(\\w+)",
+      "name": "CreateTable",
+      "pattern": "CREATE\\s+(?:TEMP(?:ORARY)?\\s+|UNLOGGED\\s+)?TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([\\w.]+)",
       "captureGroup": 1,
       "kind": 4,
       "type": "class"
     },
     {
-      "name": "Function",
-      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?FUNCTION\\s+(\\w+)",
+      "name": "CreateView",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?(?:TEMP(?:ORARY)?\\s+|RECURSIVE\\s+)?VIEW\\s+([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "CreateIndex",
+      "pattern": "CREATE\\s+(?:UNIQUE\\s+)?INDEX\\s+(?:CONCURRENTLY\\s+)?(?:IF\\s+NOT\\s+EXISTS\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "CreateProcedure",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?PROCEDURE\\s+([\\w.]+)",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "View",
-      "pattern": "CREATE\\s+(?:MATERIALIZED\\s+)?VIEW\\s+(\\w+)",
+      "name": "CreateFunction",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?FUNCTION\\s+([\\w.]+)",
       "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Index",
-      "pattern": "CREATE\\s+(?:UNIQUE\\s+)?INDEX\\s+(\\w+)",
+      "name": "CreateTrigger",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?(?:CONSTRAINT\\s+)?TRIGGER\\s+([\\w.]+)",
       "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Type",
-      "pattern": "CREATE\\s+TYPE\\s+(\\w+)",
+      "name": "AlterTable",
+      "pattern": "ALTER\\s+TABLE\\s+(?:IF\\s+EXISTS\\s+)?(?:ONLY\\s+)?([\\w.]+)",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "type"
+      "kind": 5,
+      "type": "method"
     },
     {
-      "name": "Variable",
-      "pattern": "(?:var|let|const|dim|my|local)\\s+(\\w+)",
+      "name": "DropTable",
+      "pattern": "DROP\\s+TABLE\\s+(?:IF\\s+EXISTS\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "SelectAlias",
+      "pattern": "\\)\\s+AS\\s+(\\w+)",
       "captureGroup": 1,
       "kind": 12,
       "type": "variable"
     },
     {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
+      "name": "InsertInto",
+      "pattern": "INSERT\\s+INTO\\s+([\\w.]+)",
       "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
+      "kind": 5,
+      "type": "method"
     },
     {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
+      "name": "Update",
+      "pattern": "UPDATE\\s+(?:ONLY\\s+)?([\\w.]+)\\s+SET\\b",
       "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
+      "kind": 5,
+      "type": "method"
     },
     {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
+      "name": "DeleteFrom",
+      "pattern": "DELETE\\s+FROM\\s+(?:ONLY\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "CTE",
+      "pattern": "(?:WITH|,)\\s+(?:RECURSIVE\\s+)?(\\w+)\\s+AS\\s*(?:NOT\\s+)?(?:MATERIALIZED\\s+)?\\(",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "Grant",
+      "pattern": "GRANT\\s+[\\w,\\s]+ON\\s+(?:TABLE\\s+|SCHEMA\\s+|SEQUENCE\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Revoke",
+      "pattern": "REVOKE\\s+[\\w,\\s]+ON\\s+(?:TABLE\\s+|SCHEMA\\s+|SEQUENCE\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "DeclareVariable",
+      "pattern": "DECLARE\\s+(\\w+)\\s+\\w+",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "CreateSchema",
+      "pattern": "CREATE\\s+SCHEMA\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?(\\w+)",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Constraint",
+      "pattern": "CONSTRAINT\\s+(\\w+)\\s+(?:PRIMARY|FOREIGN|UNIQUE|CHECK|EXCLUDE)",
       "captureGroup": 1,
       "kind": 6,
       "type": "property"
     },
     {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "CreateExtension",
+      "pattern": "CREATE\\s+EXTENSION\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?(\\w+)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "CreateType",
+      "pattern": "CREATE\\s+TYPE\\s+([\\w.]+)\\s+AS\\s+(?:ENUM|RANGE|\\()",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "CreateDomain",
+      "pattern": "CREATE\\s+DOMAIN\\s+([\\w.]+)\\s+AS\\b",
+      "captureGroup": 1,
+      "kind": 22,
+      "type": "struct"
+    },
+    {
+      "name": "CreateSequence",
+      "pattern": "CREATE\\s+(?:TEMP(?:ORARY)?\\s+)?SEQUENCE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "CreateMaterializedView",
+      "pattern": "CREATE\\s+MATERIALIZED\\s+VIEW\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 4,
+      "type": "class"
+    },
+    {
+      "name": "CreateRule",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?RULE\\s+(\\w+)\\s+AS\\s+ON",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "DoBlock",
+      "pattern": "DO\\s+([$]\\w*[$])",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Returning",
+      "pattern": "RETURNING\\s+([\\w.,\\s*]+?)\\s*(?:;|$|\\))",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "OnConflict",
+      "pattern": "ON\\s+CONFLICT\\s+(?:ON\\s+CONSTRAINT\\s+(\\w+)|\\(([\\w,\\s]+)\\))",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
+    },
+    {
+      "name": "Listen",
+      "pattern": "LISTEN\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Notify",
+      "pattern": "NOTIFY\\s+(\\w+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "CreatePolicy",
+      "pattern": "CREATE\\s+POLICY\\s+(\\w+)\\s+ON\\s+[\\w.]+",
+      "captureGroup": 1,
+      "kind": 13,
+      "type": "constant"
+    },
+    {
+      "name": "RowLevelSecurity",
+      "pattern": "ALTER\\s+TABLE\\s+([\\w.]+)\\s+(?:ENABLE|DISABLE)\\s+ROW\\s+LEVEL\\s+SECURITY",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "CreateAggregate",
+      "pattern": "CREATE\\s+(?:OR\\s+REPLACE\\s+)?AGGREGATE\\s+([\\w.]+)",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
     }
   ]
 }

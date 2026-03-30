@@ -1,64 +1,263 @@
 {
   "language": "sparql",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|CONSTRUCT|ASK|DESCRIBE|WHERE|FROM|NAMED|BASE|PREFIX|DISTINCT|REDUCED|ORDER\\s+BY|LIMIT|OFFSET|GROUP\\s+BY|HAVING|UNION)\\b",
-      "modifiers": [],
-      "description": "SPARQL query form and clause keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT|ASK|DESCRIBE|CONSTRUCT)\\b",
+      "tokenModifiers": [],
+      "description": "SPARQL query form keywords"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(FILTER|OPTIONAL|BIND|VALUES|GRAPH|SERVICE|MINUS|EXISTS|NOT\\s+EXISTS)\\b",
-      "modifiers": [],
-      "description": "SPARQL pattern and filter keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(WHERE|FROM|NAMED|BASE|PREFIX)\\b",
+      "tokenModifiers": [],
+      "description": "Dataset and prologue clause keywords"
     },
     {
-      "type": "variable",
-      "pattern": "\\?([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
-      "description": "SPARQL query variables with ? prefix"
+      "tokenType": "keyword",
+      "pattern": "\\b(DISTINCT|REDUCED)\\b",
+      "tokenModifiers": [],
+      "description": "Solution modifiers for duplicate elimination"
     },
     {
-      "type": "variable",
-      "pattern": "\\$([a-zA-Z_][a-zA-Z0-9_]*)",
-      "modifiers": [],
-      "description": "SPARQL query variables with $ prefix"
+      "tokenType": "keyword",
+      "pattern": "\\b(ORDER\\s+BY|GROUP\\s+BY|HAVING|LIMIT|OFFSET)\\b",
+      "tokenModifiers": [],
+      "description": "Result ordering, grouping, and pagination clauses"
     },
     {
-      "type": "namespace",
-      "pattern": "PREFIX\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
-      "modifiers": ["declaration"],
-      "description": "PREFIX namespace declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(FILTER|OPTIONAL|BIND|VALUES|UNION|MINUS)\\b",
+      "tokenModifiers": [],
+      "description": "Graph pattern modifiers and constraints"
     },
     {
-      "type": "function",
-      "pattern": "\\b(STR|LANG|LANGMATCHES|DATATYPE|BOUND|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|STRLEN|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|NOW|UUID|STRUUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANG|STRDT|sameTerm|isIRI|isURI|isBLANK|isLITERAL|isNUMERIC|REGEX|REPLACE|SUBSTR)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in SPARQL functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(EXISTS|NOT\\s+EXISTS)\\b",
+      "tokenModifiers": [],
+      "description": "Existence test keywords for FILTER expressions"
     },
     {
-      "type": "function",
-      "pattern": "\\b(COUNT|SUM|MIN|MAX|AVG|GROUP_CONCAT|SAMPLE)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\bGRAPH\\b",
+      "tokenModifiers": [],
+      "description": "Named graph pattern keyword"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bSERVICE(\\s+SILENT)?\\b",
+      "tokenModifiers": [],
+      "description": "Federated query SERVICE keyword with optional SILENT"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(INSERT\\s+DATA|DELETE\\s+DATA|INSERT|DELETE|LOAD|CLEAR|DROP|CREATE|COPY|MOVE|ADD)\\b",
+      "tokenModifiers": [],
+      "description": "SPARQL Update operation keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(WITH|USING|INTO|TO|DEFAULT|ALL|SILENT)\\b",
+      "tokenModifiers": [],
+      "description": "SPARQL Update auxiliary keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bAS\\b",
+      "tokenModifiers": [],
+      "description": "AS keyword for variable aliasing in BIND and SELECT"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(ASC|DESC)\\b",
+      "tokenModifiers": [],
+      "description": "Sort direction keywords for ORDER BY"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\?[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "SPARQL variables with ? prefix"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "SPARQL variables with $ prefix"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "PREFIX\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*:\\s*<[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "PREFIX namespace declarations mapping prefix to IRI"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "BASE\\s+<[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "BASE IRI declaration for relative IRI resolution"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*:[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Prefixed name references (prefix:localName)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "<[^>]+>",
+      "tokenModifiers": [],
+      "description": "Full IRI references enclosed in angle brackets"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "_:[a-zA-Z0-9_]+",
+      "tokenModifiers": [],
+      "description": "Blank node labels (_:identifier)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\ba\\b",
+      "tokenModifiers": [],
+      "description": "Shorthand 'a' for rdf:type predicate"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(STR|LANG|LANGMATCHES|DATATYPE|BOUND|IRI|URI|BNODE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "RDF term constructor and accessor functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CONCAT|STRLEN|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|SUBSTR|REPLACE|REGEX)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "SPARQL string manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|CEIL|FLOOR|ROUND|RAND)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Numeric math functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(NOW|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Date/time accessor and constructor functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(MD5|SHA1|SHA256|SHA384|SHA512|UUID|STRUUID)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Hash and UUID generator functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(IF|COALESCE|sameTerm|STRLANG|STRDT)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Conditional, coalesce, and datatype cast functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(isIRI|isURI|isBLANK|isLITERAL|isNUMERIC)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "RDF term type-checking functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(COUNT|SUM|AVG|MIN|MAX|GROUP_CONCAT|SAMPLE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "SPARQL aggregate functions"
     },
     {
-      "type": "property",
-      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*):[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": [],
-      "description": "Prefixed name property references"
+      "tokenType": "string",
+      "pattern": "\"[^\"]*\"@[a-zA-Z]{2,}(-[a-zA-Z0-9]+)*",
+      "tokenModifiers": [],
+      "description": "Language-tagged string literals (\"text\"@en)"
     },
     {
-      "type": "comment",
+      "tokenType": "type",
+      "pattern": "\"[^\"]*\"\\^\\^[a-zA-Z_][a-zA-Z0-9_]*:[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Typed literals with datatype IRI (\"value\"^^xsd:type)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(xsd|rdf|rdfs|owl):[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Common RDF/XSD/OWL vocabulary prefixed types"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+\\.\\d*([eE][+-]?\\d+)?\\b|\\b\\d+[eE][+-]?\\d+\\b|\\b\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Integer, decimal, and double numeric literals"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(true|false)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Boolean literal values"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(&&|\\|\\||!=|<=|>=|=|<|>|!|\\+|-|\\*|/)",
+      "tokenModifiers": [],
+      "description": "Logical, comparison, and arithmetic operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[/^?*+|]",
+      "tokenModifiers": [],
+      "description": "Property path operators (sequence, inverse, optional, closure, alternative)"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Line comments starting with #"
     }
   ]

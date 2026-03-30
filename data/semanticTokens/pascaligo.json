@@ -1,77 +1,210 @@
 {
   "language": "pascaligo",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "enum", "typeParameter", "variable", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "enum",
+      "typeParameter",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "modification"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
-      "pattern": "\\b(let|const)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Let and const bindings for value declarations"
+      "tokenType": "function",
+      "pattern": "\\bfunction\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Function declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\btype\\s+(\\w+)\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Type alias and definition declarations"
+      "tokenType": "function",
+      "pattern": "\\brecursive\\s+function\\s+(\\w+)",
+      "tokenModifiers": ["declaration"],
+      "description": "Recursive function declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(let|in|type|is|of|if|then|else|match|with|function|var|const|begin|end|block|case|for|to|while|do|skip|record|map|list|set|module|from|import|export|recursive|contains|not|and|or|mod)\\b",
-      "modifiers": [],
-      "description": "PascaLIGO and CameLIGO keywords"
+      "tokenType": "variable",
+      "pattern": "\\bvar\\s+(\\w+)\\s*:",
+      "tokenModifiers": ["declaration"],
+      "description": "Mutable variable declarations with var"
     },
     {
-      "type": "function",
-      "pattern": "\\b(function|recursive)\\s+(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Function declarations including recursive functions"
+      "tokenType": "variable",
+      "pattern": "\\bconst\\s+(\\w+)\\s*[=:]",
+      "tokenModifiers": ["declaration", "readonly"],
+      "description": "Constant value declarations with const"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(match)\\s+\\w+\\s+(with)\\b",
-      "modifiers": [],
-      "description": "Pattern match expressions"
+      "tokenType": "type",
+      "pattern": "\\btype\\s+(\\w+)\\s+is\\b",
+      "tokenModifiers": ["declaration"],
+      "description": "Named type declarations with type X is"
     },
     {
-      "type": "type",
-      "pattern": "\\b(nat|int|tez|string|bytes|address|key|key_hash|signature|timestamp|bool|unit|operation|contract|option|list|map|big_map|set)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "LIGO built-in types for Tezos smart contracts"
+      "tokenType": "keyword",
+      "pattern": "\\b(function|is|var|const|begin|end|if|then|else|case|of|for|to|while|do|block|with|skip|failwith|assert|recursive)\\b",
+      "tokenModifiers": [],
+      "description": "PascaLIGO core language keywords"
     },
     {
-      "type": "function",
-      "pattern": "\\b(Tezos\\.|Crypto\\.|Bytes\\.|Map\\.|List\\.|Set\\.|Big_map\\.)\\w+",
-      "modifiers": ["defaultLibrary"],
-      "description": "LIGO standard library module functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(type|record|map|big_map|list|set|patch|remove|from|contains|not|and|or|mod)\\b",
+      "tokenModifiers": [],
+      "description": "Type definition and collection keywords"
     },
     {
-      "type": "enum",
-      "pattern": "\\|\\s*(\\w+)\\s*(of\\b)?",
-      "modifiers": ["declaration"],
-      "description": "Variant/sum type constructors"
+      "tokenType": "keyword",
+      "pattern": "\\b(module|import|export)\\b",
+      "tokenModifiers": [],
+      "description": "Module system keywords"
     },
     {
-      "type": "comment",
-      "pattern": "//[^\\n]*|\\(\\*[\\s\\S]*?\\*\\)",
-      "modifiers": [],
-      "description": "Line comments // and block comments (* *)"
+      "tokenType": "type",
+      "pattern": "\\b(nat|int|tez|mutez|string|bytes|bool|unit|address|key|key_hash|signature|timestamp|chain_id|operation|contract)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in primitive types for Tezos smart contracts"
     },
     {
-      "type": "string",
+      "tokenType": "type",
+      "pattern": "\\b(option|list|map|big_map|set)\\s*\\(",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in parameterized collection types"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bTezos\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Tezos standard library module"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bTezos\\.(sender|balance|amount|now|level|self_address|source|chain_id|transaction|set_delegate|create_contract|implicit_account|address|self|voting_power|total_voting_power|min_block_time|get_entrypoint_opt|get_contract_opt|emit|create_ticket|read_ticket|join_tickets|split_ticket|sapling_empty_state|sapling_verify_update|never|pairing_check)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Tezos module built-in functions and constants"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bCrypto\\.(blake2b|sha256|sha512|sha3|keccak|hash_key|check)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Crypto module hashing and signature functions"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bBytes\\.(pack|unpack|concat|sub|length)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Bytes module serialization and manipulation functions"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bMap\\.(find_opt|update|add|remove|iter|map|fold|mem|empty|literal|size|get_and_update)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Map module operations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bList\\.(iter|map|fold|fold_left|fold_right|cons|size|head_opt|tail_opt|filter_map|find_opt|length)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "List module operations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bSet\\.(add|remove|mem|cardinal|iter|fold|empty|literal|size|update)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Set module operations"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bBig_map\\.(find_opt|update|add|remove|mem|empty|literal|get_and_update)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Big_map module operations for lazily deserialized maps"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bString\\.(concat|sub|length|slice)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String module manipulation functions"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\|\\s*([A-Z][a-zA-Z0-9_]*)\\s*(of\\b)?",
+      "tokenModifiers": ["declaration"],
+      "description": "Variant/sum type constructors in type definitions"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=\\.)\\s*[a-z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Record field access after dot"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[@(entry|view|inline|no_mutation|private|public|dyn_entry|annot)\\]",
+      "tokenModifiers": [],
+      "description": "Attributes/decorators: @entry, @view, @inline, etc."
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "'[a-z][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Type variables/parameters prefixed with apostrophe"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Single-line comments with //"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\(\\*[\\s\\S]*?\\*\\)",
+      "tokenModifiers": [],
+      "description": "Block comments delimited by (* and *)"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in double quotes"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+n?\\b|\\b\\d+\\.\\d+\\b|\\b\\d+mutez\\b|\\b\\d+tez\\b",
-      "modifiers": [],
-      "description": "Numeric literals including nat (n suffix) and tez amounts"
+      "tokenType": "number",
+      "pattern": "\\b\\d+n\\b",
+      "tokenModifiers": [],
+      "description": "Natural number literals with n suffix"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(mutez|tez)\\b",
+      "tokenModifiers": [],
+      "description": "Tez/mutez currency amount literals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Integer and floating-point numeric literals"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(:=|=/=|>=|<=|<>|->|=>|\\+|-|\\*|/|<|>|=|#|\\^|@)",
+      "tokenModifiers": [],
+      "description": "PascaLIGO operators: assignment, comparison, arithmetic, concatenation"
     }
   ]
 }

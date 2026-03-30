@@ -1,71 +1,321 @@
 {
   "language": "pgsql",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "variable", "parameter", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "parameter",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?FUNCTION\\s+([\\w.]+)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "CREATE FUNCTION declarations for PL/pgSQL functions"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|OFFSET|UNION|INTO|VALUES|SET|RETURNING|WITH|RECURSIVE|AS|TABLE|INDEX|VIEW|SCHEMA|SEQUENCE|TRIGGER|EXTENSION|GRANT|REVOKE|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|EXPLAIN|ANALYZE|VACUUM|NOTIFY|LISTEN|PERFORM|RAISE|EXCEPTION|NOTICE|LOOP|EXIT|CONTINUE|FOREACH|EXECUTE|OPEN|CLOSE|FETCH|MOVE)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|OFFSET|UNION|INTO|VALUES|SET|TABLE|INDEX|VIEW|SCHEMA|SEQUENCE|TRIGGER|EXTENSION|GRANT|REVOKE|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|EXPLAIN|ANALYZE|VACUUM|PERFORM|LOOP|EXIT|CONTINUE|FOREACH|OPEN|CLOSE|FETCH|MOVE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "PostgreSQL SQL and PL/pgSQL keywords"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(DECLARE|BEGIN|END|IF|THEN|ELSIF|ELSE|CASE|WHEN|LOOP|WHILE|FOR|IN|RETURN|RETURNS|LANGUAGE|PLPGSQL|SQL|VOLATILE|STABLE|IMMUTABLE|SECURITY\\s+DEFINER|SECURITY\\s+INVOKER)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "PL/pgSQL block structure and function attributes"
     },
     {
-      "type": "string",
-      "pattern": "\\$\\$[\\s\\S]*?\\$\\$|\\$[a-zA-Z_]*\\$[\\s\\S]*?\\$[a-zA-Z_]*\\$",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\bRETURNING\\b\\s+([\\w.*,\\s]+)",
+      "tokenModifiers": [],
+      "description": "RETURNING clause for INSERT/UPDATE/DELETE results"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bON\\s+CONFLICT\\s*(\\([^)]*\\))?\\s*(DO\\s+NOTHING|DO\\s+UPDATE\\s+SET)\\b",
+      "tokenModifiers": [],
+      "description": "ON CONFLICT (upsert) clause with DO NOTHING or DO UPDATE"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bWITH\\s+RECURSIVE\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+AS\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Recursive CTE (WITH RECURSIVE...AS)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(LISTEN|NOTIFY)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [],
+      "description": "LISTEN/NOTIFY pub-sub channel commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bLATERAL\\s+(\\(|[a-zA-Z_])",
+      "tokenModifiers": [],
+      "description": "LATERAL subquery or function reference"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(CREATE\\s+)?MATERIALIZED\\s+VIEW\\b",
+      "tokenModifiers": [],
+      "description": "MATERIALIZED VIEW creation and references"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bDISTINCT\\s+ON\\s*\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "PostgreSQL DISTINCT ON (expressions) clause"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "$$[\\s\\S]*?$$|$[a-zA-Z_]*$[\\s\\S]*?$[a-zA-Z_]*$",
+      "tokenModifiers": [],
       "description": "Dollar-quoted string blocks used in function bodies"
     },
     {
-      "type": "type",
+      "tokenType": "keyword",
+      "pattern": "\\bDO\\s+$$",
+      "tokenModifiers": [],
+      "description": "Anonymous DO code block"
+    },
+    {
+      "tokenType": "type",
       "pattern": "\\b(INTEGER|INT|BIGINT|SMALLINT|SERIAL|BIGSERIAL|NUMERIC|DECIMAL|REAL|DOUBLE\\s+PRECISION|FLOAT|TEXT|VARCHAR|CHAR|CHARACTER|BOOLEAN|BOOL|DATE|TIME|TIMESTAMP|TIMESTAMPTZ|INTERVAL|UUID|JSONB|JSON|BYTEA|ARRAY|RECORD|VOID|HSTORE|INET|CIDR|MACADDR|POINT|LINE|LSEG|BOX|PATH|POLYGON|CIRCLE|TSQUERY|TSVECTOR|REGCLASS|OID)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "PostgreSQL data types"
     },
     {
-      "type": "namespace",
+      "tokenType": "operator",
+      "pattern": "->|->>|#>|#>>|@>|<@|\\?|\\?\\||\\?&|\\|\\|",
+      "tokenModifiers": [],
+      "description": "JSONB operators (-> ->> #> #>> @> <@ ? ?| ?& ||)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "&&|@>|<@|\\|\\|",
+      "tokenModifiers": [],
+      "description": "Array operators (overlap &&, contains @>, contained <@, concat ||)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(row_to_json|json_build_object|jsonb_build_object|json_build_array|jsonb_build_array|to_json|to_jsonb|json_agg|jsonb_agg|json_object_agg|jsonb_object_agg|json_each|jsonb_each|json_extract_path|jsonb_extract_path|json_extract_path_text|jsonb_extract_path_text|json_typeof|jsonb_typeof|jsonb_set|jsonb_insert|jsonb_pretty)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "PostgreSQL JSON/JSONB builder and manipulation functions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(generate_series|unnest|array_agg|string_agg|coalesce|nullif|greatest|least|now|current_timestamp|current_date|pg_sleep|regexp_matches|regexp_replace|regexp_split_to_table|regexp_split_to_array)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in PostgreSQL utility and aggregate functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bRAISE\\s+(DEBUG|LOG|INFO|NOTICE|WARNING|EXCEPTION)\\b",
+      "tokenModifiers": [],
+      "description": "PL/pgSQL RAISE statement at various severity levels"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bEXECUTE\\s+(format\\s*\\(|')",
+      "tokenModifiers": [],
+      "description": "PL/pgSQL EXECUTE for dynamic SQL with optional format()"
+    },
+    {
+      "tokenType": "namespace",
       "pattern": "\\b(CREATE\\s+SCHEMA|SET\\s+search_path)\\s+(?:TO\\s+)?([\\w,\\s]+)",
-      "modifiers": ["definition"],
+      "tokenModifiers": [
+        "definition"
+      ],
       "description": "Schema declarations and search path configuration"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\bNEW\\b|\\bOLD\\b|\\bTG_\\w+\\b|\\bFOUND\\b",
-      "modifiers": ["readonly", "defaultLibrary"],
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
       "description": "Special PL/pgSQL variables in trigger and function context"
     },
     {
-      "type": "function",
-      "pattern": "\\b(array_agg|string_agg|json_build_object|jsonb_build_object|row_to_json|to_json|coalesce|nullif|greatest|least|generate_series|unnest|now|current_timestamp|current_date|pg_sleep|regexp_matches|regexp_replace)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in PostgreSQL functions"
-    },
-    {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "--[^\\n]*|/\\*[\\s\\S]*?\\*/",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line and multi-line SQL comments"
     },
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "\\b\\d+(\\.\\d+)?\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Numeric literals"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?(CONSTRAINT\\s+)?TRIGGER\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(BEFORE|AFTER|INSTEAD\\s+OF)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "CREATE TRIGGER definitions with timing clause (BEFORE/AFTER/INSTEAD OF)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(FOR\\s+EACH\\s+(ROW|STATEMENT)|EXECUTE\\s+(FUNCTION|PROCEDURE)|REFERENCING\\s+(NEW|OLD)\\s+TABLE\\s+AS)\\b",
+      "tokenModifiers": [],
+      "description": "Trigger execution clauses (FOR EACH ROW/STATEMENT, EXECUTE FUNCTION/PROCEDURE)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCREATE\\s+(UNIQUE\\s+)?INDEX\\s+(CONCURRENTLY\\s+)?(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+ON",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "CREATE INDEX definitions including UNIQUE and CONCURRENTLY options"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bUSING\\s+(BTREE|HASH|GIST|SPGIST|GIN|BRIN)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Index access method specification (BTREE, HASH, GiST, SP-GiST, GIN, BRIN)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bCREATE\\s+TYPE\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s+AS\\s+(ENUM|RANGE)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "CREATE TYPE for defining enum and range types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bCREATE\\s+TYPE\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s+AS\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "CREATE TYPE for defining composite types"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ROW_NUMBER|RANK|DENSE_RANK|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|NTH_VALUE|CUME_DIST|PERCENT_RANK)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "PostgreSQL window functions (ROW_NUMBER, RANK, LAG, LEAD, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(OVER\\s*\\(|PARTITION\\s+BY|ROWS\\s+BETWEEN|RANGE\\s+BETWEEN|GROUPS\\s+BETWEEN|UNBOUNDED\\s+PRECEDING|CURRENT\\s+ROW|UNBOUNDED\\s+FOLLOWING)\\b",
+      "tokenModifiers": [],
+      "description": "Window clause keywords (OVER, PARTITION BY, frame specifications)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bWINDOW\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+AS\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Named window definition (WINDOW name AS (...))"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bINHERITS\\s*\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Table inheritance clause (INHERITS (parent_table))"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCOPY\\s+([a-zA-Z_][a-zA-Z0-9_.]*)(\\s*\\([^)]*\\))?\\s+(FROM|TO)\\s+",
+      "tokenModifiers": [],
+      "description": "COPY command for bulk data import/export (FROM/TO)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bALTER\\s+TABLE\\s+(IF\\s+EXISTS\\s+)?[a-zA-Z_][a-zA-Z0-9_.]*\\s+(ADD\\s+COLUMN|DROP\\s+COLUMN|ALTER\\s+COLUMN|RENAME\\s+COLUMN|RENAME\\s+TO|ADD\\s+CONSTRAINT|DROP\\s+CONSTRAINT|ENABLE\\s+ROW\\s+LEVEL\\s+SECURITY|DISABLE\\s+ROW\\s+LEVEL\\s+SECURITY|SET\\s+DEFAULT|DROP\\s+DEFAULT|SET\\s+NOT\\s+NULL|DROP\\s+NOT\\s+NULL|SET\\s+SCHEMA|OWNER\\s+TO)",
+      "tokenModifiers": [],
+      "description": "ALTER TABLE operations (ADD/DROP/ALTER COLUMN, RENAME, constraints, RLS toggle)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(GRANT|REVOKE)\\s+(ALL\\s+PRIVILEGES|ALL|SELECT|INSERT|UPDATE|DELETE|TRUNCATE|REFERENCES|TRIGGER|USAGE|CREATE|CONNECT|EXECUTE|TEMP|TEMPORARY)(\\s*,\\s*(SELECT|INSERT|UPDATE|DELETE|TRUNCATE|REFERENCES|TRIGGER|USAGE|CREATE|CONNECT|EXECUTE))*\\s+ON\\b",
+      "tokenModifiers": [],
+      "description": "GRANT/REVOKE privilege management with specific permissions on objects"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCREATE\\s+EXTENSION\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z_][a-zA-Z0-9_-]*)(\\s+WITH\\s+SCHEMA\\s+[a-zA-Z_][a-zA-Z0-9_]*)?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "CREATE EXTENSION to install PostgreSQL extensions (e.g. postgis, pg_trgm)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bCREATE\\s+POLICY\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+ON\\s+([a-zA-Z_][a-zA-Z0-9_.]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Row-level security CREATE POLICY definition on a table"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(USING\\s*\\(|WITH\\s+CHECK\\s*\\()(?=.*\\bCREATE\\s+POLICY|\\bPOLICY)",
+      "tokenModifiers": [],
+      "description": "Row-level security policy USING and WITH CHECK filter expressions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(CREATE\\s+FOREIGN\\s+TABLE|CREATE\\s+SERVER|CREATE\\s+FOREIGN\\s+DATA\\s+WRAPPER|IMPORT\\s+FOREIGN\\s+SCHEMA|CREATE\\s+USER\\s+MAPPING\\s+FOR)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Foreign data wrapper commands (FOREIGN TABLE, SERVER, FDW, USER MAPPING)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bEXCLUDE\\s+USING\\s+(GIST|SPGIST|GIN|BTREE|HASH)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Exclusion constraints with specified index method (EXCLUDE USING gist/btree/etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(percentile_cont|percentile_disc|mode|corr|covar_pop|covar_samp|regr_avgx|regr_avgy|regr_count|regr_intercept|regr_r2|regr_slope|regr_sxx|regr_sxy|regr_syy|bool_and|bool_or|every|xmlagg|grouping)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "PostgreSQL statistical, ordered-set, and hypothetical aggregate functions"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(CASCADE|RESTRICT|CONCURRENTLY|IF\\s+NOT\\s+EXISTS|IF\\s+EXISTS|ONLY|NO\\s+INHERIT|NOT\\s+VALID|DEFERRABLE|NOT\\s+DEFERRABLE|INITIALLY\\s+DEFERRED|INITIALLY\\s+IMMEDIATE)\\b",
+      "tokenModifiers": [],
+      "description": "PostgreSQL DDL modifiers (CASCADE, RESTRICT, CONCURRENTLY, DEFERRABLE, etc.)"
     }
   ]
 }

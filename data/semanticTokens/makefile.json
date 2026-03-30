@@ -1,71 +1,264 @@
 {
   "language": "makefile",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "function", "macro", "keyword", "comment", "string", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "variable",
+      "property",
+      "function",
+      "macro",
+      "keyword",
+      "comment",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
-      "pattern": "^[a-zA-Z_][a-zA-Z0-9_.-]*(?=\\s*:(?!=))",
-      "modifiers": ["declaration"],
-      "description": "Target declarations before the colon"
+      "tokenType": "function",
+      "pattern": "^([a-zA-Z_][a-zA-Z0-9_.-]*)\\s*:(?!=)",
+      "tokenModifiers": ["declaration"],
+      "description": "Target declarations (simple rules)"
     },
     {
-      "type": "property",
-      "pattern": "(?<=:\\s*)[a-zA-Z_][a-zA-Z0-9_. -]*(?=\\s|$)",
-      "modifiers": [],
+      "tokenType": "function",
+      "pattern": "^([a-zA-Z_][a-zA-Z0-9_.-]*)\\s*::(?!=)",
+      "tokenModifiers": ["declaration"],
+      "description": "Double-colon rule targets (rebuilt independently)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "%\\.[a-zA-Z]+\\s*:\\s*%\\.[a-zA-Z]+",
+      "tokenModifiers": ["declaration"],
+      "description": "Pattern rules with % wildcard (e.g., %.o: %.c)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "(?<=:\\s*)[a-zA-Z_][a-zA-Z0-9_. $()-]*(?=\\s|$)",
+      "tokenModifiers": [],
       "description": "Prerequisites listed after the colon"
     },
     {
-      "type": "keyword",
-      "pattern": "^\\t.*$",
-      "modifiers": [],
-      "description": "Recipe lines (tab-indented commands)"
+      "tokenType": "operator",
+      "pattern": "(?<=:)\\s*\\|\\s*(?=[a-zA-Z_$])",
+      "tokenModifiers": [],
+      "description": "Order-only prerequisites separator (|)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
+      "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*:=",
+      "tokenModifiers": ["definition"],
+      "description": "Simply-expanded variable assignment (:=)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*=(?!=)",
+      "tokenModifiers": ["definition"],
+      "description": "Recursively-expanded variable assignment (=)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\?=",
+      "tokenModifiers": ["definition"],
+      "description": "Conditional variable assignment (?= only if undefined)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\+=",
+      "tokenModifiers": ["definition"],
+      "description": "Appending variable assignment (+=)"
+    },
+    {
+      "tokenType": "variable",
       "pattern": "\\$\\([a-zA-Z_][a-zA-Z0-9_]*\\)|\\$\\{[a-zA-Z_][a-zA-Z0-9_]*\\}",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Variable references $(VAR) or ${VAR}"
     },
     {
-      "type": "variable",
-      "pattern": "^\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*[:?+]?=",
-      "modifiers": ["declaration"],
-      "description": "Variable assignments with =, :=, ?=, +="
+      "tokenType": "macro",
+      "pattern": "\\$@",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $@ — target name"
     },
     {
-      "type": "macro",
-      "pattern": "\\$[@<^?*%+]|\\$\\([@<^?*%+][DF]?\\)",
-      "modifiers": ["readonly"],
-      "description": "Automatic variables: $@, $<, $^, $?, $*, $%, $+"
+      "tokenType": "macro",
+      "pattern": "\\$<",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $< — first prerequisite"
     },
     {
-      "type": "keyword",
-      "pattern": "^\\.PHONY|\\.SUFFIXES|\\.DEFAULT|\\.PRECIOUS|\\.INTERMEDIATE|\\.SECONDARY|\\.SECONDEXPANSION|\\.DELETE_ON_ERROR|\\.IGNORE|\\.SILENT|\\.EXPORT_ALL_VARIABLES|\\.NOTPARALLEL|\\.ONESHELL|\\.POSIX",
-      "modifiers": ["defaultLibrary"],
-      "description": "Special built-in target names"
+      "tokenType": "macro",
+      "pattern": "\\$\\^",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $^ — all prerequisites (deduplicated)"
     },
     {
-      "type": "function",
-      "pattern": "\\$\\((wildcard|patsubst|subst|strip|findstring|filter|filter-out|sort|word|words|wordlist|firstword|lastword|dir|notdir|suffix|basename|addsuffix|addprefix|join|realpath|abspath|shell|foreach|call|eval|origin|value|info|warning|error)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Make functions"
+      "tokenType": "macro",
+      "pattern": "\\$\\*",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $* — stem of pattern rule match"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(ifeq|ifneq|ifdef|ifndef|else|endif|include|-include|sinclude|override|export|unexport|define|endef|vpath)\\b",
-      "modifiers": [],
-      "description": "Make directives and conditionals"
+      "tokenType": "macro",
+      "pattern": "\\$\\?",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $? — prerequisites newer than target"
     },
     {
-      "type": "comment",
+      "tokenType": "macro",
+      "pattern": "\\$\\|",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable $| — order-only prerequisites"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\$\\([@<^?*%+][DF]\\)",
+      "tokenModifiers": ["readonly"],
+      "description": "Automatic variable (D)/(F) variants for dir/file parts"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\(wildcard\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "$(wildcard pattern) — glob expansion for file matching"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\(patsubst\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "$(patsubst pattern,replacement,text) — pattern substitution"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((subst|strip|findstring)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String functions: subst, strip, findstring"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((filter|filter-out|sort|word|words|wordlist|firstword|lastword)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "List functions: filter, filter-out, sort, word-access"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((dir|notdir|suffix|basename|addsuffix|addprefix|join|realpath|abspath)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Filename functions: dir, notdir, suffix, basename, path ops"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\(shell\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "$(shell command) — execute shell command and capture output"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((foreach|call|eval|value|origin|flavor)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Control functions: foreach, call, eval, value, origin, flavor"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((if|or|and)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Conditional functions: $(if ...), $(or ...), $(and ...)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\((info|warning|error)\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Diagnostic functions: $(info ...), $(warning ...), $(error ...)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\$\\(file\\s",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "$(file op,filename,text) — read/write file contents"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*(ifeq|ifneq)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Conditional directives ifeq/ifneq for string comparison"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*(ifdef|ifndef)\\s+[a-zA-Z_]",
+      "tokenModifiers": [],
+      "description": "Conditional directives ifdef/ifndef for variable existence"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*(else|endif)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional else/endif block terminators"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^-?include\\s+|^sinclude\\s+",
+      "tokenModifiers": [],
+      "description": "Include directives (include, -include, sinclude)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*(override|export|unexport|undefine|private)\\s+",
+      "tokenModifiers": [],
+      "description": "Variable modifier directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*define\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": ["definition"],
+      "description": "Multi-line variable definition block (define/endef)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*endef\\b",
+      "tokenModifiers": [],
+      "description": "End of multi-line variable definition block"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "^\\.(PHONY|SUFFIXES|DEFAULT|PRECIOUS|INTERMEDIATE|SECONDARY|DELETE_ON_ERROR|IGNORE|SILENT|EXPORT_ALL_VARIABLES|NOTPARALLEL|ONESHELL|POSIX)\\s*:",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Special built-in target names (.PHONY, .PRECIOUS, etc.)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "^\\.DEFAULT_GOAL\\s*:?=|^\\.RECIPEPREFIX\\s*:?=",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Special built-in variables (.DEFAULT_GOAL, .RECIPEPREFIX)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "^\\s*vpath\\s+",
+      "tokenModifiers": [],
+      "description": "vpath directive for pattern-specific search paths"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\$\\(MAKE\\)|\\$\\{MAKE\\}|\\$\\(MAKECMDGOALS\\)|\\$\\(MAKEFLAGS\\)|\\$\\(CURDIR\\)|\\$\\(MAKEFILE_LIST\\)",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Built-in Make variables: MAKE, MAKECMDGOALS, MAKEFLAGS, CURDIR"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#.*$",
-      "modifiers": ["documentation"],
-      "description": "Comment lines starting with #"
+      "tokenModifiers": ["documentation"],
+      "description": "Comments starting with #"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\\\\\s*$",
+      "tokenModifiers": [],
+      "description": "Line continuation with trailing backslash"
     }
   ]
 }

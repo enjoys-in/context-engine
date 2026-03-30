@@ -1,77 +1,273 @@
 {
   "language": "mysql",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "variable", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|GROUP\\s+BY|ORDER\\s+BY|HAVING|LIMIT|OFFSET|UNION|INTO|VALUES|SET|INDEX|TABLE|DATABASE|VIEW|TRIGGER|PROCEDURE|FUNCTION|BEGIN|END|IF|THEN|ELSE|WHILE|DO|LOOP|REPEAT|UNTIL|CASE|WHEN|RETURN|DECLARE|CURSOR|FETCH|CALL)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "SQL keywords and DML/DDL statements"
+      "tokenType": "keyword",
+      "pattern": "\\b(CREATE|ALTER|DROP)\\s+(TABLE|VIEW|INDEX|DATABASE|SCHEMA|TRIGGER|PROCEDURE|FUNCTION|EVENT)\\b",
+      "tokenModifiers": [],
+      "description": "DDL statements for creating, altering, and dropping database objects"
     },
     {
-      "type": "function",
-      "pattern": "\\b(CREATE\\s+(PROCEDURE|FUNCTION)\\s+)(\\w+)",
-      "modifiers": ["declaration"],
-      "description": "Stored procedure and function definitions"
+      "tokenType": "keyword",
+      "pattern": "\\b(SELECT|INSERT\\s+INTO|INSERT|UPDATE|DELETE|REPLACE\\s+INTO|REPLACE)\\b",
+      "tokenModifiers": [],
+      "description": "DML statements for data manipulation"
     },
     {
-      "type": "variable",
-      "pattern": "@\\w+",
-      "modifiers": [],
+      "tokenType": "keyword",
+      "pattern": "\\b(FROM|WHERE|GROUP\\s+BY|HAVING|ORDER\\s+BY|LIMIT|OFFSET|DISTINCT|UNION\\s+ALL|UNION|AS|INTO|VALUES|EXISTS)\\b",
+      "tokenModifiers": [],
+      "description": "Query clauses for filtering, grouping, ordering, and combining results"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(LEFT\\s+JOIN|RIGHT\\s+JOIN|INNER\\s+JOIN|OUTER\\s+JOIN|CROSS\\s+JOIN|NATURAL\\s+JOIN|STRAIGHT_JOIN|JOIN|ON|USING)\\b",
+      "tokenModifiers": [],
+      "description": "JOIN types and join condition keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(EXPLAIN|SHOW|DESCRIBE|DESC|USE|HANDLER)\\b",
+      "tokenModifiers": [],
+      "description": "MySQL utility and admin statements"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bDELIMITER\\s+\\S+",
+      "tokenModifiers": [],
+      "description": "DELIMITER statement for changing the statement separator"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(LOAD\\s+DATA\\s+INFILE|INTO\\s+OUTFILE|LOAD\\s+DATA\\s+LOCAL\\s+INFILE)\\b",
+      "tokenModifiers": [],
+      "description": "LOAD DATA INFILE and INTO OUTFILE for bulk data import/export"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(OVER|PARTITION\\s+BY|ROWS|RANGE|UNBOUNDED|PRECEDING|FOLLOWING|CURRENT\\s+ROW)\\b",
+      "tokenModifiers": [],
+      "description": "Window clause keywords for framing and partitioning"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ROW_NUMBER|RANK|DENSE_RANK|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|NTH_VALUE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Window functions for ranking and value access across partitions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(COUNT|SUM|AVG|MIN|MAX|GROUP_CONCAT|BIT_AND|BIT_OR|BIT_XOR|STD|STDDEV|VARIANCE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Aggregate functions for summarizing grouped data"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CONCAT|CONCAT_WS|SUBSTRING|LENGTH|CHAR_LENGTH|LOCATE|LEFT|RIGHT|LPAD|RPAD|REPEAT|REVERSE|TRIM|UPPER|LOWER|REPLACE|FORMAT|HEX|UNHEX)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String functions for text manipulation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(NOW|CURDATE|CURTIME|DATE_ADD|DATE_SUB|DATEDIFF|DATE_FORMAT|STR_TO_DATE|YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|TIMESTAMPDIFF|TIMESTAMPADD|LAST_DAY|DAYOFWEEK|WEEK)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Date and time functions for temporal operations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ABS|CEIL|CEILING|FLOOR|ROUND|TRUNCATE|MOD|POW|POWER|SQRT|LOG|LOG2|LOG10|EXP|RAND|SIGN|PI|GREATEST|LEAST)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Mathematical functions for numeric computation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(JSON_EXTRACT|JSON_OBJECT|JSON_ARRAY|JSON_SET|JSON_REPLACE|JSON_REMOVE|JSON_CONTAINS|JSON_SEARCH|JSON_KEYS|JSON_LENGTH|JSON_TYPE|JSON_VALID|JSON_UNQUOTE|JSON_MERGE_PATCH|JSON_MERGE_PRESERVE|JSON_ARRAYAGG|JSON_OBJECTAGG|JSON_TABLE)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "JSON functions for querying and manipulating JSON data"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(IF|IFNULL|NULLIF|COALESCE|ELT|FIELD|FIND_IN_SET|CAST|CONVERT)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Control flow and conversion functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(CASE|WHEN|THEN|ELSE|END)\\b",
+      "tokenModifiers": [],
+      "description": "CASE WHEN conditional expression keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(INT|INTEGER|BIGINT|SMALLINT|TINYINT|MEDIUMINT|FLOAT|DOUBLE|DECIMAL|NUMERIC|CHAR|VARCHAR|TEXT|TINYTEXT|MEDIUMTEXT|LONGTEXT|BLOB|TINYBLOB|MEDIUMBLOB|LONGBLOB|DATE|DATETIME|TIMESTAMP|TIME|YEAR|BOOLEAN|BOOL|ENUM|SET|JSON|BINARY|VARBINARY|BIT)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "MySQL data types for column definitions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "@(?!@)\\w+",
+      "tokenModifiers": [],
       "description": "User-defined variables prefixed with @"
     },
     {
-      "type": "variable",
-      "pattern": "@@\\w+",
-      "modifiers": ["readonly", "defaultLibrary"],
-      "description": "System variables prefixed with @@"
+      "tokenType": "variable",
+      "pattern": "@@(global|session|local)\\.\\w+|@@\\w+",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "System variables prefixed with @@ including global/session scope"
     },
     {
-      "type": "type",
-      "pattern": "\\b(INT|INTEGER|BIGINT|SMALLINT|TINYINT|MEDIUMINT|FLOAT|DOUBLE|DECIMAL|NUMERIC|CHAR|VARCHAR|TEXT|TINYTEXT|MEDIUMTEXT|LONGTEXT|BLOB|DATE|DATETIME|TIMESTAMP|TIME|YEAR|BOOLEAN|BOOL|ENUM|SET|JSON|BINARY|VARBINARY)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "MySQL data types"
+      "tokenType": "keyword",
+      "pattern": "\\b(BEGIN|START\\s+TRANSACTION|COMMIT|ROLLBACK|SAVEPOINT|RELEASE\\s+SAVEPOINT)\\b",
+      "tokenModifiers": [],
+      "description": "Transaction control statements"
     },
     {
-      "type": "function",
-      "pattern": "\\b(COUNT|SUM|AVG|MIN|MAX|CONCAT|SUBSTRING|LENGTH|TRIM|UPPER|LOWER|NOW|CURDATE|DATE_FORMAT|IFNULL|COALESCE|CAST|CONVERT|GROUP_CONCAT|ROUND|FLOOR|CEIL)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in MySQL functions"
+      "tokenType": "keyword",
+      "pattern": "\\b(SET|LOCK\\s+TABLES|UNLOCK\\s+TABLES|FLUSH|RESET)\\b",
+      "tokenModifiers": [],
+      "description": "Session configuration and table locking statements"
     },
     {
-      "type": "namespace",
-      "pattern": "\\b(USE|DATABASE)\\s+(\\w+)",
-      "modifiers": ["definition"],
-      "description": "Database/schema references"
+      "tokenType": "keyword",
+      "pattern": "\\b(DECLARE|LEAVE|ITERATE|RETURN|BEGIN|END)\\b",
+      "tokenModifiers": [],
+      "description": "Stored procedure control flow keywords"
     },
     {
-      "type": "comment",
-      "pattern": "--[^\\n]*|/\\*[\\s\\S]*?\\*/|#[^\\n]*",
-      "modifiers": [],
-      "description": "Single-line and multi-line comments"
+      "tokenType": "keyword",
+      "pattern": "\\b(CURSOR|OPEN|FETCH|CLOSE)\\b",
+      "tokenModifiers": [],
+      "description": "Cursor declaration and operations in stored programs"
     },
     {
-      "type": "string",
+      "tokenType": "keyword",
+      "pattern": "\\b(LOOP|END\\s+LOOP|WHILE|END\\s+WHILE|REPEAT|END\\s+REPEAT|UNTIL|DO|IF|THEN|ELSEIF|ELSE|END\\s+IF)\\b",
+      "tokenModifiers": [],
+      "description": "Loop and conditional constructs in stored procedures"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(SIGNAL|RESIGNAL)\\s+SQLSTATE\\b",
+      "tokenModifiers": [],
+      "description": "SIGNAL and RESIGNAL for raising errors in stored routines"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bDECLARE\\s+(?:CONTINUE|EXIT|UNDO)\\s+HANDLER\\s+FOR\\b",
+      "tokenModifiers": [],
+      "description": "DECLARE HANDLER for condition handling in stored programs"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(AUTO_INCREMENT|NOT\\s+NULL|DEFAULT|PRIMARY\\s+KEY|UNIQUE|FOREIGN\\s+KEY|REFERENCES|CHECK|UNSIGNED|ZEROFILL|CHARACTER\\s+SET|COLLATE|GENERATED|VIRTUAL|STORED)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Column attributes, constraints, and modifier keywords"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bENGINE\\s*=\\s*(InnoDB|MyISAM|MEMORY|CSV|ARCHIVE|BLACKHOLE|FEDERATED|NDB|MERGE)\\b",
+      "tokenModifiers": [],
+      "description": "Storage ENGINE specification for table definitions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bON\\s+DUPLICATE\\s+KEY\\s+UPDATE\\b",
+      "tokenModifiers": [],
+      "description": "ON DUPLICATE KEY UPDATE upsert clause"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(MATCH)\\s*\\([^)]+\\)\\s*(AGAINST)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "FULLTEXT search with MATCH...AGAINST syntax"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(USE|CREATE\\s+DATABASE|CREATE\\s+SCHEMA|DROP\\s+DATABASE|DROP\\s+SCHEMA)\\s+`?\\w+`?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Database and schema references with namespace scoping"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bCREATE\\s+(?:PROCEDURE|FUNCTION)\\s+`?(\\w+)`?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Stored procedure and function name declarations"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "->>'[^']*'|->\"[^\"]*\"|->>|->",
+      "tokenModifiers": [],
+      "description": "MySQL JSON inline path operators (->> and ->)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "--\\s[^\\n]*|#[^\\n]*|/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [],
+      "description": "Single-line (-- or #) and block (/* */) comments"
+    },
+    {
+      "tokenType": "string",
       "pattern": "'([^'\\\\]|\\\\.)*'|\"([^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in single or double quotes"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+(\\.\\d+)?\\b",
-      "modifiers": [],
-      "description": "Numeric literals"
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals including integers, decimals, and scientific notation"
     },
     {
-      "type": "operator",
-      "pattern": "(=|<>|!=|<=|>=|<|>|\\+|-|\\*|/|%|AND|OR|NOT|IN|LIKE|BETWEEN|IS\\s+NULL|IS\\s+NOT\\s+NULL|EXISTS)",
-      "modifiers": [],
-      "description": "Comparison, arithmetic, and logical operators"
+      "tokenType": "operator",
+      "pattern": "(=|<=>|<>|!=|<=|>=|<|>|\\+|-|\\*|/|%|&&|\\|\\||!|AND|OR|NOT|XOR|IN|LIKE|REGEXP|RLIKE|BETWEEN|IS\\s+NULL|IS\\s+NOT\\s+NULL|DIV|MOD)",
+      "tokenModifiers": [],
+      "description": "Comparison, arithmetic, logical, and pattern-matching operators"
     }
   ]
 }

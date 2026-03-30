@@ -1,65 +1,268 @@
 {
   "language": "xml",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "property", "keyword", "comment", "string", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "property",
+      "keyword",
+      "string",
+      "comment",
+      "operator",
+      "macro"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "type",
-      "pattern": "</?([a-zA-Z_][a-zA-Z0-9_:.\\-]*)",
-      "modifiers": [],
+      "tokenType": "type",
+      "pattern": "</?([a-zA-Z_][a-zA-Z0-9_.:\\-]*)(?=[\\s/>])",
+      "tokenModifiers": [],
       "description": "Element tag names in opening and closing tags"
     },
     {
-      "type": "property",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_:.\\-]*)\\s*=",
-      "modifiers": [],
-      "description": "Attribute names in elements"
+      "tokenType": "property",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_.:\\-]*)\\s*=\\s*[\"']",
+      "tokenModifiers": [],
+      "description": "Attribute names in element tags"
     },
     {
-      "type": "namespace",
-      "pattern": "xmlns(?::([a-zA-Z_][a-zA-Z0-9_]*))?\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Namespace declarations with xmlns"
+      "tokenType": "namespace",
+      "pattern": "\\bxmlns(?::([a-zA-Z_][a-zA-Z0-9_]*))?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Namespace declarations (xmlns and xmlns:prefix)"
     },
     {
-      "type": "namespace",
-      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*):[a-zA-Z_][a-zA-Z0-9_:.\\-]*",
-      "modifiers": [],
-      "description": "Namespace prefixes on elements and attributes"
+      "tokenType": "namespace",
+      "pattern": "([a-zA-Z_][a-zA-Z0-9_]*)(?=:[a-zA-Z_][a-zA-Z0-9_.\\-]*[\\s=/>])",
+      "tokenModifiers": [],
+      "description": "Namespace prefixes on elements and attributes (prefix:name)"
     },
     {
-      "type": "keyword",
-      "pattern": "<!\\[CDATA\\[[\\s\\S]*?\\]\\]>",
-      "modifiers": [],
-      "description": "CDATA sections"
+      "tokenType": "keyword",
+      "pattern": "<\\?xml\\b[^?]*\\?>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "XML declaration (<?xml version=\"1.0\" encoding=\"UTF-8\"?>)"
     },
     {
-      "type": "keyword",
-      "pattern": "<\\?([a-zA-Z_][a-zA-Z0-9_\\-]*)\\b",
-      "modifiers": [],
-      "description": "Processing instructions like <?xml ?>"
+      "tokenType": "property",
+      "pattern": "(?<=<\\?xml\\s[^?]*?)\\b(version|encoding|standalone)\\s*=",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "XML declaration attributes (version, encoding, standalone)"
     },
     {
-      "type": "comment",
-      "pattern": "<!--[\\s\\S]*?-->",
-      "modifiers": [],
-      "description": "XML comments"
+      "tokenType": "keyword",
+      "pattern": "<\\?xml-stylesheet\\b[^?]*\\?>",
+      "tokenModifiers": [],
+      "description": "XML stylesheet processing instruction (<?xml-stylesheet?>)"
     },
     {
-      "type": "keyword",
+      "tokenType": "macro",
+      "pattern": "<\\?([a-zA-Z_][a-zA-Z0-9_\\-]*)\\b[^?]*\\?>",
+      "tokenModifiers": [],
+      "description": "Generic processing instructions (<?target data?>)"
+    },
+    {
+      "tokenType": "keyword",
       "pattern": "<!DOCTYPE\\b[^>]*>",
-      "modifiers": [],
-      "description": "DOCTYPE declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DOCTYPE declarations with optional SYSTEM/PUBLIC identifiers"
     },
     {
-      "type": "string",
-      "pattern": "&([a-zA-Z_][a-zA-Z0-9_]*|#[0-9]+|#x[0-9a-fA-F]+);",
-      "modifiers": [],
-      "description": "Entity references and character references"
+      "tokenType": "keyword",
+      "pattern": "\\b(SYSTEM|PUBLIC)\\b",
+      "tokenModifiers": [],
+      "description": "External identifier keywords in DOCTYPE and ENTITY declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<!ELEMENT\\s+[a-zA-Z_][a-zA-Z0-9_:.\\-]*\\s+[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DTD element type declarations (<!ELEMENT name content-model>)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<!ATTLIST\\s+[a-zA-Z_][a-zA-Z0-9_:.\\-]*\\s+[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DTD attribute list declarations (<!ATTLIST element attributes>)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<!ENTITY\\s+(%\\s+)?[a-zA-Z_][a-zA-Z0-9_:.\\-]*\\s+[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DTD entity declarations (<!ENTITY name value>)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<!NOTATION\\s+[a-zA-Z_][a-zA-Z0-9_:.\\-]*\\s+(?:SYSTEM|PUBLIC)\\s+[^>]+>",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "DTD notation declarations (<!NOTATION name identifier>)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(#REQUIRED|#IMPLIED|#FIXED|#PCDATA|EMPTY|ANY|CDATA|NMTOKEN|NMTOKENS|ID|IDREF|IDREFS|ENTITY|ENTITIES|NOTATION)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "DTD attribute types and content model keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "<!\\[CDATA\\[[\\s\\S]*?\\]\\]>",
+      "tokenModifiers": [],
+      "description": "CDATA sections for unescaped character data"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "&(amp|lt|gt|quot|apos);",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Predefined XML entity references (&amp; &lt; &gt; &quot; &apos;)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "&[a-zA-Z_][a-zA-Z0-9_]*;",
+      "tokenModifiers": [],
+      "description": "Named entity references (&custom;)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "&#[0-9]+;",
+      "tokenModifiers": [],
+      "description": "Decimal character references (&#decimal;)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "&#x[0-9a-fA-F]+;",
+      "tokenModifiers": [],
+      "description": "Hexadecimal character references (&#xhex;)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "<!--[\\s\\S]*?-->",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "XML comments (<!-- ... -->)"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(xs|xsd):(string|integer|boolean|date|float|double|decimal|anyType|complexType|simpleType|element|attribute|sequence|choice|all)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "XSD built-in types and structural elements"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(xs|xsd):(restriction|extension|pattern|enumeration|minInclusive|maxInclusive|minExclusive|maxExclusive|minLength|maxLength|totalDigits|fractionDigits)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "XSD facets and type derivation elements"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bxsl:(template|apply-templates|value-of|for-each|if|choose|when|otherwise)\\b",
+      "tokenModifiers": [],
+      "description": "XSLT core transformation elements"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bxsl:(variable|param|import|include|output|sort|key|copy|copy-of|text|number|message|fallback)\\b",
+      "tokenModifiers": [],
+      "description": "XSLT variable, inclusion, and output elements"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bxsl:(stylesheet|transform)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "XSLT root elements (xsl:stylesheet, xsl:transform)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(match|select|name|mode|priority|use|test|disable-output-escaping)\\s*=",
+      "tokenModifiers": [],
+      "description": "XSLT-specific attributes (match, select, name, test, etc.)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "/>",
+      "tokenModifiers": [],
+      "description": "Self-closing element tag ending />"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bxsi:schemaLocation\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Schema location attribute (xsi:schemaLocation)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bxsi:noNamespaceSchemaLocation\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "No-namespace schema location attribute"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bxml:space\\s*=\\s*\"(default|preserve)\"",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Whitespace handling attribute xml:space"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bxml:lang\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "Language identification attribute xml:lang"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bxml:base\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "Base URI attribute xml:base"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"[^\"]*\"|'[^']*'",
+      "tokenModifiers": [],
+      "description": "Attribute string values in single or double quotes"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(INCLUDE|IGNORE)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional section keywords in DTD (INCLUDE, IGNORE)"
     }
   ]
 }

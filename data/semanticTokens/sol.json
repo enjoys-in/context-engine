@@ -1,77 +1,276 @@
 {
   "language": "sol",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "parameter", "variable", "property", "enumMember", "event", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\bcontract\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Contract declarations"
     },
     {
-      "type": "interface",
+      "tokenType": "class",
+      "pattern": "\\blibrary\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+      "tokenModifiers": [
+        "declaration",
+        "static"
+      ],
+      "description": "Library declarations (stateless utility contracts)"
+    },
+    {
+      "tokenType": "interface",
       "pattern": "\\binterface\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
       "description": "Interface declarations"
     },
     {
-      "type": "class",
-      "pattern": "\\blibrary\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Library declarations"
+      "tokenType": "type",
+      "pattern": "\\bis\\s+([A-Z][a-zA-Z0-9_]*(\\s*,\\s*[A-Z][a-zA-Z0-9_]*)*)",
+      "tokenModifiers": [],
+      "description": "Inheritance clause using 'is' keyword"
     },
     {
-      "type": "function",
-      "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Function declarations"
+      "tokenType": "function",
+      "pattern": "\\bconstructor\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Constructor function declaration"
     },
     {
-      "type": "modifier",
+      "tokenType": "function",
+      "pattern": "\\bfunction\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named function declarations"
+    },
+    {
+      "tokenType": "modifier",
       "pattern": "\\bmodifier\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Custom modifier declarations"
     },
     {
-      "type": "event",
-      "pattern": "\\bevent\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|internal|external)\\b",
+      "tokenModifiers": [],
+      "description": "Function and state variable visibility modifiers"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(view|pure|payable)\\b",
+      "tokenModifiers": [],
+      "description": "Function state mutability modifiers"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bevent\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Event declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\b(mapping|address|bool|string|bytes[0-9]*|uint[0-9]*|int[0-9]*)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Solidity built-in types including mapping and address"
+      "tokenType": "event",
+      "pattern": "\\bemit\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Event emission using emit keyword"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(payable|view|pure|external|public|internal|private|virtual|override|immutable|constant|indexed|memory|storage|calldata)\\b",
-      "modifiers": [],
-      "description": "Solidity visibility, mutability, and data location keywords"
+      "tokenType": "modifier",
+      "pattern": "\\bindexed\\b",
+      "tokenModifiers": [],
+      "description": "Indexed keyword for event parameters enabling log filtering"
     },
     {
-      "type": "struct",
+      "tokenType": "type",
+      "pattern": "\\berror\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Custom error declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(revert|require|assert)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Error handling and assertion functions"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bmapping\\s*\\([^)]+\\s*=>\\s*[^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Mapping type declarations mapping(KeyType => ValueType)"
+    },
+    {
+      "tokenType": "struct",
       "pattern": "\\bstruct\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Struct declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Struct type declarations"
     },
     {
-      "type": "enum",
+      "tokenType": "enum",
       "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Enum declarations"
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Enum type declarations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(pragma\\s+solidity|import|using|is|emit|revert|require|assert)\\b",
-      "modifiers": [],
-      "description": "Pragma, import, inheritance, and error handling keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(storage|memory|calldata)\\b",
+      "tokenModifiers": [],
+      "description": "Data location specifiers for reference types"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b(msg\\.sender|msg\\.value|msg\\.data|msg\\.sig|block\\.timestamp|block\\.number|block\\.difficulty|block\\.coinbase|block\\.gaslimit|tx\\.origin|tx\\.gasprice)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Global transaction and block context variables"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(address|payable)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Address and payable type keywords"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(abi\\.encode|abi\\.encodePacked|abi\\.encodeWithSelector|abi\\.encodeWithSignature|abi\\.decode)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "ABI encoding and decoding utility functions"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\.(delegatecall|staticcall|call)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Low-level call methods on address type"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\btry\\b[^{]*\\bcatch\\b",
+      "tokenModifiers": [],
+      "description": "Try/catch for external call error handling"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(receive|fallback)\\s*\\(\\s*\\)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Special receive and fallback function declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bassembly\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Inline assembly (Yul) block declarations"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\btype\\s*\\([^)]+\\)\\.(max|min|interfaceId)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Type information expressions: type(T).max, type(T).min, type(T).interfaceId"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bunchecked\\s*\\{",
+      "tokenModifiers": [],
+      "description": "Unchecked arithmetic blocks to skip overflow checks"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\busing\\s+([A-Z][a-zA-Z0-9_]*)\\s+for\\b",
+      "tokenModifiers": [],
+      "description": "Using..for directive to attach library functions to types"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bpragma\\s+solidity\\s+[^;]+",
+      "tokenModifiers": [],
+      "description": "Pragma directive specifying compiler version constraints"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bimport\\s+[{\"'][^;]+",
+      "tokenModifiers": [],
+      "description": "Import statements for external contract files"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "///\\s*@(notice|param|return|dev|inheritdoc|custom)[^\\n]*",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "NatSpec documentation comments (/// @notice, @param, @return, @dev)"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(uint(8|16|32|64|128|256)?|int(8|16|32|64|128|256)?|bool|string|bytes(1|2|3|4|8|16|20|32)?|address)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in value types with explicit bit sizes"
     }
   ]
 }

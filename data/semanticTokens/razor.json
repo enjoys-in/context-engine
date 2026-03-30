@@ -1,71 +1,340 @@
 {
   "language": "razor",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "interface",
+      "typeParameter",
+      "variable",
+      "property",
+      "event",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "async",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "@(model|inject|inherits|implements|using|namespace|attribute|layout|page|section|addTagHelper|removeTagHelper|tagHelperPrefix|functions|code)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Razor directives like @model, @inject, @using"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "@\\{",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Razor code blocks @{ ... }"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "@\\(([^)]+)\\)",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Explicit Razor expressions @(...)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "@[A-Z]\\w+(\\.\\w+)*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Implicit Razor expressions referencing C# variables and properties"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "@(Html|Url|Component|ViewBag|ViewData|TempData|Model)\\.\\w+",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Razor HTML helpers and built-in objects"
     },
     {
-      "type": "decorator",
+      "tokenType": "decorator",
       "pattern": "<(component|\\w+-\\w+)[^>]*\\/>|<(Component|\\w+-\\w+)[^>]*>",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Tag helpers and Blazor component elements"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "@(if|else|switch|case|for|foreach|while|do|try|catch|finally|lock|using|await)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "C# control flow keywords prefixed with @ in Razor"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\b(string|int|bool|double|decimal|float|object|void|var|dynamic|Task|IEnumerable|IHtmlContent|MarkupString|RenderFragment|EventCallback)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Common C# types used in Razor views"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "@\\*[\\s\\S]*?\\*@|//[^\\n]*|/\\*[\\s\\S]*?\\*/|<!--[\\s\\S]*?-->",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Razor comments @* *@, C# comments, and HTML comments"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in C# and HTML attributes"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@model\\s+[A-Z][\\w.<>,\\[\\]]+",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "@model directive specifying the view's strongly-typed model"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@inject\\s+[A-Z][\\w.<>,]+\\s+[A-Z]\\w*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "@inject directive for dependency injection into the view"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\b(asp-for|asp-action|asp-controller|asp-route|asp-route-\\w+|asp-area|asp-page|asp-page-handler|asp-all-route-data|asp-fragment|asp-host|asp-protocol)\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Tag helper attributes (asp-for, asp-action, asp-controller, asp-route)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "@(?:await\\s+)?Component\\.InvokeAsync\\s*\\(\\s*\"[^\"]+\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "View Component invocations via Component.InvokeAsync"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "@(?:await\\s+)?Html\\.PartialAsync\\s*\\(|<partial\\s+name\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Partial view rendering via Html.PartialAsync or <partial> tag helper"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@section\\s+[A-Za-z_]\\w*\\s*\\{",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "@section directive defining named content sections"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "@RenderBody\\s*\\(\\s*\\)|@RenderSection\\s*\\(\\s*\"[^\"]+\"(?:\\s*,\\s*(?:required:\\s*)?(?:true|false))?\\s*\\)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "@RenderBody() and @RenderSection() in layout pages"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "@Html\\.(DisplayFor|EditorFor|LabelFor|TextBoxFor|DropDownListFor|ValidationMessageFor|HiddenFor|CheckBoxFor|RadioButtonFor|TextAreaFor|Raw|Encode|ActionLink|RouteLink|AntiForgeryToken)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "@Html helper methods for forms, display, and encoding"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\b(asp-validation-for|asp-validation-summary)\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Validation tag helpers (asp-validation-for, asp-validation-summary)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "@Html\\.AntiForgeryToken\\s*\\(\\s*\\)|@addTagHelper\\s*\\*,\\s*Microsoft\\.AspNetCore\\.Mvc\\.TagHelpers",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Anti-forgery token generation and tag helper registration"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@await\\s+",
+      "tokenModifiers": [],
+      "description": "@await for asynchronous operations in Razor views"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "<environment\\s+(?:include|exclude|names)\\s*=\\s*\"[^\"]*\"[^>]*>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Environment tag helper for conditional rendering by environment"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "<cache(?:\\s+(?:expires-after|expires-on|expires-sliding|vary-by-\\w+|enabled|priority)\\s*=\\s*\"[^\"]*\")*[^>]*>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Cache tag helper for output caching with expiration settings"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@bind(-[A-Za-z]+)?(:(event|format|after|get|set|culture))?\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor @bind directive with variants: @bind, @bind-Value, @bind:event, @bind:format, @bind:after, @bind:get, @bind:set"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "@on(click|change|submit|input|mouseover|mouseout|mouseenter|mouseleave|keydown|keyup|keypress|focus|blur|dblclick|mousedown|mouseup|mousemove|touchstart|touchend|touchmove|drag|dragstart|dragend|dragover|dragenter|dragleave|drop|wheel|scroll|copy|cut|paste|reset|select|toggle|invalid|load|error|contextmenu)(:(preventDefault|stopPropagation))?\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor event handler directives (@onclick, @onchange, @onsubmit, etc.) with optional :preventDefault/:stopPropagation modifiers"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@ref\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Blazor @ref directive for capturing element or component references"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "@typeparam\\s+[A-Z]\\w*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Blazor @typeparam directive for declaring generic type parameters on components"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@attribute\\s+\\[(Authorize|AllowAnonymous|RequireAntiforgeryToken|StreamRendering|RenderModeInteractiveServer|RenderModeInteractiveWebAssembly|RenderModeInteractiveAuto|Layout)\\b[^\\]]*\\]",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Blazor @attribute directive applying C# attributes like [Authorize], [AllowAnonymous], [StreamRendering]"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@helper\\s+\\w+\\s*\\([^)]*\\)\\s*\\{",
+      "tokenModifiers": [
+        "declaration",
+        "deprecated"
+      ],
+      "description": "Legacy Razor @helper blocks for defining reusable inline template methods (deprecated in ASP.NET Core)"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "<(CascadingValue|CascadingAuthenticationState)(?:\\s+(?:Value|Name|IsFixed|TValue)\\s*=\\s*\"[^\"]*\")*[^>]*>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor CascadingValue and CascadingAuthenticationState components providing cascading data to descendants"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(OnInitialized|OnParametersSet|OnAfterRender|ShouldRender|StateHasChanged|BuildRenderTree)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor synchronous component lifecycle methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(OnInitializedAsync|OnParametersSetAsync|OnAfterRenderAsync|SetParametersAsync|DisposeAsync)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "async"
+      ],
+      "description": "Blazor async component lifecycle methods returning Task"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\[(Parameter|CascadingParameter|Inject|EditorRequired|Required|SupplyParameterFromQuery|SupplyParameterFromForm|JSInvokable)\\b[^\\]]*\\]",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Blazor C# attributes: [Parameter], [CascadingParameter], [Inject], [EditorRequired], [SupplyParameterFromQuery]"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "<(EditForm|InputText|InputNumber|InputDate|InputCheckbox|InputSelect|InputTextArea|InputFile|InputRadio|InputRadioGroup|ValidationSummary|ValidationMessage|DataAnnotationsValidator)\\b[^>]*>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor EditForm and built-in form input components (InputText, InputNumber, InputDate, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@preservewhitespace\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor @preservewhitespace directive to control whitespace trimming in component markup"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "\\b(IJSRuntime|IJSObjectReference|IJSInProcessRuntime|IJSInProcessObjectReference|IJSUnmarshalledRuntime)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor JavaScript interop service interfaces for calling JS from .NET"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bJS(?:Runtime)?\\.Invoke(Async|VoidAsync)\\s*(<[^>]+>)?\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "async"
+      ],
+      "description": "Blazor JS interop invocations: InvokeAsync<T> and InvokeVoidAsync for calling JavaScript functions"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@key\\s*=\\s*\"[^\"]*\"",
+      "tokenModifiers": [],
+      "description": "Blazor @key directive for controlling element/component diffing and preservation during rendering"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "@rendermode\\s+(InteractiveServer|InteractiveWebAssembly|InteractiveAuto|RenderMode\\.\\w+)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor @rendermode directive (.NET 8+) for specifying component render mode (InteractiveServer, InteractiveWebAssembly, InteractiveAuto)"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "<(AuthorizeView|Authorized|NotAuthorized|Authorizing|Router|RouteView|FocusOnNavigate|PageTitle|HeadContent|HeadOutlet|ErrorBoundary|ChildContent|SectionContent|SectionOutlet)\\b[^>]*>",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Blazor built-in structural and authorization components (AuthorizeView, Router, ErrorBoundary, PageTitle, etc.)"
     }
   ]
 }

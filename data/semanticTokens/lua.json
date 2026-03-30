@@ -1,77 +1,286 @@
 {
   "language": "lua",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(function|local|end|return|if|then|elseif|else|for|in|do|while|repeat|until|break|goto|and|or|not|nil|true|false)\\b",
-      "modifiers": [],
-      "description": "Lua language keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(local|function|end|return|do)\\b",
+      "tokenModifiers": [],
+      "description": "Core control flow keywords: local, function, end, return, do"
     },
     {
-      "type": "function",
-      "pattern": "(?<=function\\s+)[a-zA-Z_][a-zA-Z0-9_.]*",
-      "modifiers": ["declaration"],
-      "description": "Named function declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|then|elseif|else)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional keywords: if, then, elseif, else"
     },
     {
-      "type": "function",
-      "pattern": "(?<=local\\s+function\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Local function declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(for|in|while|repeat|until|break)\\b",
+      "tokenModifiers": [],
+      "description": "Loop keywords: for, in, while, repeat, until, break"
     },
     {
-      "type": "variable",
-      "pattern": "(?<=local\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
-      "modifiers": ["declaration"],
-      "description": "Local variable declarations"
+      "tokenType": "keyword",
+      "pattern": "\\bgoto\\b",
+      "tokenModifiers": [],
+      "description": "Goto jump keyword"
     },
     {
-      "type": "property",
-      "pattern": "\\{[^}]*\\}",
-      "modifiers": [],
-      "description": "Table constructor expressions"
+      "tokenType": "keyword",
+      "pattern": "\\b(and|or|not)\\b",
+      "tokenModifiers": [],
+      "description": "Logical operators: and, or, not"
     },
     {
-      "type": "method",
-      "pattern": "(?<=:)[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()",
-      "modifiers": [],
-      "description": "Method calls using colon operator (self-passing)"
+      "tokenType": "keyword",
+      "pattern": "\\b(nil|true|false)\\b",
+      "tokenModifiers": [],
+      "description": "Literal value keywords: nil, true, false"
     },
     {
-      "type": "function",
-      "pattern": "\\b(require|dofile|loadfile|pcall|xpcall|setmetatable|getmetatable|rawget|rawset|rawequal|type|tostring|tonumber|print|error|assert|pairs|ipairs|next|select|unpack|table\\.\\w+|string\\.\\w+|math\\.\\w+|io\\.\\w+|os\\.\\w+)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in functions and standard library functions"
-    },
-    {
-      "type": "keyword",
+      "tokenType": "variable",
       "pattern": "\\bself\\b",
-      "modifiers": [],
-      "description": "Self reference in methods"
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Self reference in methods (implicit first argument via colon syntax)"
     },
     {
-      "type": "operator",
-      "pattern": "(\\.\\.|\\.\\.\\.|\\.\\.|~=|==|<=|>=|<<|>>|//|#)",
-      "modifiers": [],
-      "description": "Lua operators: concatenation, varargs, comparison, length"
+      "tokenType": "function",
+      "pattern": "(?<=function\\s+)[a-zA-Z_][a-zA-Z0-9_.]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named function declarations (function myFunc)"
     },
     {
-      "type": "comment",
-      "pattern": "--\\[\\[[\\s\\S]*?\\]\\]|--.*$",
-      "modifiers": ["documentation"],
-      "description": "Single-line and long bracket comments"
+      "tokenType": "function",
+      "pattern": "(?<=local\\s+function\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Local function declarations (local function myFunc)"
     },
     {
-      "type": "string",
-      "pattern": "\\[\\[[\\s\\S]*?\\]\\]|\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
-      "modifiers": [],
-      "description": "Long bracket strings, double-quoted and single-quoted strings"
+      "tokenType": "variable",
+      "pattern": "(?<=local\\s+)[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Local variable declarations (local x)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "(?<=:)[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()",
+      "tokenModifiers": [],
+      "description": "Method calls using colon operator (obj:method())"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\brequire\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Module require function"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\btable(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Table library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\btable\\.(insert|remove|sort|concat|unpack|pack|move)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Table library functions: insert, remove, sort, concat, unpack, pack, move"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bstring(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bstring\\.(byte|char|find|format|gmatch|gsub|len|lower|upper|match|rep|reverse|sub)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String library functions: byte, char, find, format, gmatch, gsub, len, lower, upper, match, rep, reverse, sub"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bmath(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Math library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bmath\\.(abs|ceil|floor|sqrt|sin|cos|random|randomseed|max|min|log|exp|tan)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Math library functions: abs, ceil, floor, sqrt, sin, cos, random, etc."
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bmath\\.(huge|pi|maxinteger)\\b",
+      "tokenModifiers": [
+        "readonly",
+        "defaultLibrary"
+      ],
+      "description": "Math library constants: huge, pi, maxinteger"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bio(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IO library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bio\\.(open|close|read|write|lines)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "IO library functions: open, close, read, write, lines"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bos(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "OS library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bos\\.(clock|date|execute|exit|getenv|time)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "OS library functions: clock, date, execute, exit, getenv, time"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bcoroutine(?=\\.)",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Coroutine library namespace"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bcoroutine\\.(create|resume|yield|wrap|status)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Coroutine library functions: create, resume, yield, wrap, status"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(print|type|tostring|tonumber|error|pcall|xpcall|assert|pairs|ipairs|next|rawget|rawset|setmetatable|getmetatable|collectgarbage|load|dofile)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in global functions: print, type, tostring, tonumber, error, pcall, xpcall, assert, pairs, ipairs, next, rawget, rawset, setmetatable, getmetatable, collectgarbage, load, dofile"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(__index|__newindex|__add|__sub|__mul|__div|__eq|__lt|__le|__len|__concat|__call|__tostring|__gc)\\b",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Metamethod names: __index, __newindex, __add, __sub, __mul, __div, __eq, __lt, __le, __len, __concat, __call, __tostring, __gc"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "--\\[\\[[\\s\\S]*?\\]\\]",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Long bracket (multi-line) comments: --[[ ... ]]"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "--[^\\[\\n].*$|--$",
+      "tokenModifiers": [],
+      "description": "Single-line comments: -- ..."
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\[\\[[\\s\\S]*?\\]\\]",
+      "tokenModifiers": [],
+      "description": "Long bracket (multi-line) strings: [[ ... ]]"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Quoted strings: double-quoted and single-quoted"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "0[xX][0-9a-fA-F]+|\\b\\d+\\.?\\d*(?:[eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals: integers, floats, hex, and scientific notation"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\+|-|\\*|/|%|\\^|==|~=|<=|>=|<|>|=|\\.\\.|\\.\\.|//|#",
+      "tokenModifiers": [],
+      "description": "Lua operators: arithmetic, comparison, concatenation, length"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "::[a-zA-Z_][a-zA-Z0-9_]*::",
+      "tokenModifiers": [],
+      "description": "Label declarations for goto statements: ::name::"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\.\\.\\.",
+      "tokenModifiers": [],
+      "description": "Vararg expression (...) for variable-length argument lists"
+    },
+    {
+      "tokenType": "regexp",
+      "pattern": "%%[acdlpsuwxACDLPSUWX%%%.%(%)%[%]]",
+      "tokenModifiers": [],
+      "description": "Lua string pattern character classes: %d, %s, %w, %a, etc."
     }
   ]
 }

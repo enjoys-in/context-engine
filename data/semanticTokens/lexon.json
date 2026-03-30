@@ -1,65 +1,194 @@
 {
   "language": "lexon",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["type", "variable", "property", "function", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "type",
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "namespace",
+      "modifier",
+      "enum",
+      "parameter"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(LEX|CLAUSE|TERMS|RECITALS|COVENANTS|WHEREAS|THEREFORE|PROVIDED THAT|IF|THEN|ELSE|AND|OR|SHALL|MAY|MUST)\\b",
-      "modifiers": [],
-      "description": "Lexon structural and legal keywords"
+      "tokenType": "keyword",
+      "pattern": "\\b(LEX|CLAUSE|TERMS|ARTICLE|SECTION|PARAGRAPH|RECITALS|COVENANTS|SCHEDULE|APPENDIX|EXHIBIT|PREAMBLE|DEFINITIONS)\\b",
+      "tokenModifiers": [],
+      "description": "Lexon structural document keywords for contract organization"
     },
     {
-      "type": "type",
-      "pattern": "(?<=CLAUSE\\s+)\\w+",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(WHEREAS|THEREFORE|PROVIDED THAT|WITNESSETH|HEREBY|HEREIN|HEREOF|HERETO|HEREUNDER|THEREIN|THEREOF|THERETO|THEREUNDER|NOTWITHSTANDING)\\b",
+      "tokenModifiers": [],
+      "description": "Legal boilerplate and recital keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(IF|THEN|ELSE|WHEN|UNLESS|PROVIDED THAT|IN CASE|OTHERWISE|WHERE|SUCH THAT)\\b",
+      "tokenModifiers": [],
+      "description": "Conditional and branching keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(SHALL|MAY|MUST|WILL|SHOULD|OUGHT TO|IS REQUIRED TO|IS ENTITLED TO|AGREES TO|WARRANTS|REPRESENTS|COVENANTS)\\b",
+      "tokenModifiers": [],
+      "description": "Legal obligation and permission modifiers (deontic modality)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(pay|send|transfer|return|deliver|remit|disburse|allocate|distribute|refund)\\b",
+      "tokenModifiers": [],
+      "description": "Financial and transfer action verbs"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(notify|declare|certify|register|terminate|execute|amend|revoke|cancel|suspend|reinstate|renew|extend|waive|assign|delegate|appoint|authorize|confirm|acknowledge|accept|reject|approve|dispute|resolve|enforce|forfeit|indemnify|compensate|remedy)\\b",
+      "tokenModifiers": [],
+      "description": "Legal and administrative action verbs"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(amount|person|text|time|binary|number|date|boolean|percentage|currency|duration|address|account|identifier)\\b",
+      "tokenModifiers": [],
+      "description": "Lexon primitive value types"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(contract|agreement|deed|license|memorandum|charter|covenant|instrument|indenture)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Top-level contract document type declarations"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b(party|parties|obligation|right|duty|liability|warranty|representation|condition|term|consideration|benefit|interest|claim|consent|notice|default|breach|remedy|damages|penalty|force majeure|indemnity|confidentiality|jurisdiction|governing law|severability|entirety|waiver|assignment)\\b",
+      "tokenModifiers": [],
+      "description": "Legal construct and contract property terms"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(before|after|within|upon|during|until|from|through|commencing|expiring|effective|retroactive)\\b",
+      "tokenModifiers": [],
+      "description": "Temporal prepositions and time-reference keywords"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(days|months|years|weeks|hours|minutes|business days|calendar days|working days)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Time duration unit types"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=CLAUSE\\s+)\\w[\\w\\s]*(?=\\.)",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Clause name declarations"
     },
     {
-      "type": "variable",
-      "pattern": "(?<=TERMS\\.\\s*)\\w+|\"[^\"]+\"(?=\\s+(?:is|means|be))",
-      "modifiers": ["declaration"],
-      "description": "Term definitions in the contract"
+      "tokenType": "variable",
+      "pattern": "(?<=ARTICLE\\s+)\\w[\\w\\s]*(?=\\.)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Article name declarations"
     },
     {
-      "type": "property",
-      "pattern": "(?<=RECITALS\\.\\s*)\\w+",
-      "modifiers": ["definition"],
-      "description": "Recital declarations and references"
+      "tokenType": "variable",
+      "pattern": "\"[^\"]+\"(?=\\s+(?:is|means|be|shall mean|refers to|denotes))",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Defined term names in the definitions section"
     },
     {
-      "type": "function",
-      "pattern": "\\b(pay|transfer|send|notify|certify|register|terminate|declare|appoint|authorize|assign|deliver|execute)\\b",
-      "modifiers": [],
-      "description": "Action verbs for contract operations"
+      "tokenType": "parameter",
+      "pattern": "(?<=\\b(?:pay|send|transfer|deliver|remit|notify)\\s+)\\w+(?=\\s+to\\b)",
+      "tokenModifiers": [],
+      "description": "Direct object parameters of action verbs"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(amount|percent|date|time|party|person|address|account)\\b",
-      "modifiers": [],
-      "description": "Condition and value type keywords"
+      "tokenType": "enum",
+      "pattern": "\\b(USD|EUR|GBP|JPY|CHF|ETH|BTC|WEI|GWEI|FINNEY)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Currency and cryptocurrency denomination constants"
     },
     {
-      "type": "number",
-      "pattern": "\\b\\d+\\.?\\d*\\b",
-      "modifiers": [],
-      "description": "Numeric values for amounts and percentages"
+      "tokenType": "operator",
+      "pattern": "\\b(AND|OR|NOT|NOR|XOR)\\b",
+      "tokenModifiers": [],
+      "description": "Logical connective operators"
     },
     {
-      "type": "string",
+      "tokenType": "operator",
+      "pattern": "\\b(equals|greater than|less than|at least|at most|no more than|no less than|exceeds|between|is equal to|is not equal to|is greater than|is less than)\\b",
+      "tokenModifiers": [],
+      "description": "Natural-language comparison operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(plus|minus|times|divided by|multiplied by|per|of)\\b",
+      "tokenModifiers": [],
+      "description": "Natural-language arithmetic operators"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d{1,3}(,\\d{3})*(\\.\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals with optional comma-separated thousands and decimals"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?%",
+      "tokenModifiers": [],
+      "description": "Percentage literals"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
-      "description": "Quoted string literals for names and identifiers"
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals for names and identifiers"
     },
     {
-      "type": "comment",
-      "pattern": "//.*$",
-      "modifiers": ["documentation"],
+      "tokenType": "string",
+      "pattern": "'(?:[^'\\\\]|\\\\.)*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted string literals"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "//[^\\n]*",
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Single-line comments"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line block comments"
     }
   ]
 }

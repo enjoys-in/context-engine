@@ -1,59 +1,213 @@
 {
   "language": "redis-cli",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "variable", "string", "number", "comment", "operator"],
-    "tokenModifiers": ["defaultLibrary", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "function",
+      "variable",
+      "string",
+      "number",
+      "comment",
+      "operator",
+      "modifier",
+      "namespace",
+      "type",
+      "parameter"
+    ],
+    "tokenModifiers": [
+      "defaultLibrary",
+      "readonly",
+      "modification",
+      "deprecated"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(GET|SET|DEL|EXISTS|EXPIRE|TTL|KEYS|SCAN|TYPE|RENAME|MGET|MSET|APPEND|INCR|DECR|INCRBY|DECRBY|INCRBYFLOAT|SETNX|SETEX|PSETEX|GETSET|GETDEL|GETEX|STRLEN)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redis string and key commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(GET|SET|DEL|EXISTS|EXPIRE|TTL|KEYS|SCAN|TYPE|RENAME|RENAMENX|MGET|MSET|MSETNX|APPEND|INCR|DECR|INCRBY|DECRBY|INCRBYFLOAT|SETNX|SETEX|PSETEX|GETSET|GETDEL|GETEX|STRLEN|SETRANGE|GETRANGE|PERSIST|PTTL|DUMP|RESTORE|OBJECT|RANDOMKEY|UNLINK|COPY|TOUCH|SORT|SORT_RO|WAIT)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis string and key management commands"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(HGET|HSET|HDEL|HMGET|HMSET|HGETALL|LPUSH|RPUSH|LPOP|RPOP|LRANGE|SADD|SREM|SMEMBERS|ZADD|ZREM|ZRANGE|ZSCORE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Redis data structure commands (hash, list, set, sorted set)"
+      "tokenType": "keyword",
+      "pattern": "\\b(HGET|HSET|HDEL|HMGET|HMSET|HGETALL|HEXISTS|HKEYS|HVALS|HLEN|HINCRBY|HINCRBYFLOAT|HSETNX|HSCAN|HRANDFIELD)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis hash commands"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(AUTH|SELECT|PING|ECHO|QUIT|INFO|CONFIG|DBSIZE|FLUSHDB|FLUSHALL|SAVE|BGSAVE|BGREWRITEAOF|LASTSAVE|SHUTDOWN|MONITOR|DEBUG|SLOWLOG|CLIENT|CLUSTER|COMMAND|MEMORY|MODULE|SWAPDB|WAIT|RESET)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenType": "keyword",
+      "pattern": "\\b(LPUSH|RPUSH|LPOP|RPOP|LRANGE|LLEN|LINDEX|LSET|LINSERT|LREM|LTRIM|RPOPLPUSH|LMOVE|BLPOP|BRPOP|BRPOPLPUSH|BLMOVE|LPOS|LPUSHX|RPUSHX|LMPOP|BLMPOP)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis list commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(SADD|SREM|SMEMBERS|SISMEMBER|SMISMEMBER|SCARD|SPOP|SRANDMEMBER|SUNION|SUNIONSTORE|SINTER|SINTERCARD|SINTERSTORE|SDIFF|SDIFFSTORE|SMOVE|SSCAN)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis set commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(ZADD|ZREM|ZRANGE|ZRANGEBYSCORE|ZRANGEBYLEX|ZREVRANGE|ZREVRANGEBYSCORE|ZREVRANGEBYLEX|ZSCORE|ZMSCORE|ZRANK|ZREVRANK|ZCARD|ZCOUNT|ZLEXCOUNT|ZINCRBY|ZUNIONSTORE|ZINTERSTORE|ZDIFFSTORE|ZRANGESTORE|ZPOPMIN|ZPOPMAX|BZPOPMIN|BZPOPMAX|ZRANDMEMBER|ZSCAN|ZMPOP|BZMPOP)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis sorted set commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(XADD|XREAD|XREADGROUP|XRANGE|XREVRANGE|XLEN|XTRIM|XDEL|XINFO|XGROUP|XACK|XCLAIM|XAUTOCLAIM|XPENDING|XSETID)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis stream commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(SUBSCRIBE|UNSUBSCRIBE|PUBLISH|PSUBSCRIBE|PUNSUBSCRIBE|PUBSUB|SSUBSCRIBE|SUNSUBSCRIBE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis pub/sub commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(MULTI|EXEC|DISCARD|WATCH|UNWATCH)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "modification"
+      ],
+      "description": "Redis transaction commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(AUTH|SELECT|PING|ECHO|QUIT|INFO|CONFIG\\s+(GET|SET|REWRITE|RESETSTAT)|DBSIZE|FLUSHDB|FLUSHALL|SAVE|BGSAVE|BGREWRITEAOF|LASTSAVE|SHUTDOWN|MONITOR|DEBUG|SLOWLOG|CLIENT\\s+(LIST|GETNAME|SETNAME|KILL|PAUSE|UNPAUSE|ID|INFO|NO-EVICT)|COMMAND\\s*(COUNT|DOCS|GETKEYS|INFO|LIST)?|MEMORY\\s+(USAGE|DOCTOR|MALLOC-STATS|PURGE|STATS)|MODULE\\s+(LOAD|UNLOAD|LIST)|SWAPDB|RESET|ACL\\s+(CAT|DELUSER|GENPASS|GETUSER|LIST|LOG|LOAD|SAVE|SETUSER|WHOAMI)|LATENCY|LOLWUT|OBJECT\\s+(ENCODING|REFCOUNT|IDLETIME|FREQ|HELP))\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Server administration and connection commands"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(MULTI|EXEC|DISCARD|WATCH|UNWATCH)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Transaction commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(CLUSTER\\s+(INFO|NODES|MEET|ADDSLOTS|DELSLOTS|SLOTS|FAILOVER|FORGET|REPLICATE|RESET|SAVECONFIG|SET-CONFIG-EPOCH|SETSLOT|SLAVES|REPLICAS|MYID|COUNTKEYSINSLOT|GETKEYSINSLOT|KEYSLOT|LINKS|SHARDS))\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis Cluster management commands"
     },
     {
-      "type": "variable",
-      "pattern": "[\\w:*?\\[\\]-]+",
-      "modifiers": [],
-      "description": "Redis key patterns and key names"
+      "tokenType": "keyword",
+      "pattern": "\\b(EVAL|EVALSHA|EVALRO|EVALSHA_RO|SCRIPT\\s+(EXISTS|FLUSH|KILL|LOAD)|FUNCTION\\s+(CREATE|DELETE|DUMP|FLUSH|LIST|LOAD|RESTORE|STATS)|FCALL|FCALL_RO)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis scripting and function commands"
     },
     {
-      "type": "string",
+      "tokenType": "keyword",
+      "pattern": "\\b(EXPIRE|PEXPIRE|EXPIREAT|PEXPIREAT|EXPIRETIME|PEXPIRETIME|PERSIST|TTL|PTTL)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Key expiration and TTL commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(GEOADD|GEODIST|GEOHASH|GEOPOS|GEORADIUS|GEORADIUSBYMEMBER|GEOSEARCH|GEOSEARCHSTORE)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis geospatial commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(PFADD|PFCOUNT|PFMERGE|PFDEBUG|PFSELFTEST)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis HyperLogLog commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(BITCOUNT|BITFIELD|BITFIELD_RO|BITOP|BITPOS|GETBIT|SETBIT)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Redis bitmap/bitfield commands"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(EX|PX|EXAT|PXAT|NX|XX|KEEPTTL|GET|MATCH|COUNT|ASC|DESC|LIMIT|WITHSCORES|BYSCORE|BYLEX|REV|AGGREGATE|WEIGHTS|CH|GT|LT|ABSTTL|REPLACE|BEFORE|AFTER|OVERFLOW|WRAP|SAT|FAIL|NOMKSTREAM|MAXLEN|MINID|IDLE|TIME|RETRYCOUNT|FORCE|JUSTID|BLOCK|STREAMS|BY|ALPHA|STORE)\\b",
+      "tokenModifiers": [],
+      "description": "Redis command option flags and modifiers"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "--(?:help|pipe|pipe-timeout|rdb|bigkeys|memkeys|hotkeys|scan|pattern|intrinsic-latency|latency|latency-history|latency-dist|stat|raw|no-raw|csv|json|resp2|resp3|cluster|tls|sni|cacert|cacertdir|cert|key|insecure|askpass|user|pass|repeat|interval|dbnum|verbose|no-auth-warning|ldb|ldb-sync-mode|eval|uri|show-pushes)\\b",
+      "tokenModifiers": [],
+      "description": "CLI flags and options for redis-cli invocation"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(INFO)\\s+(server|clients|memory|persistence|stats|replication|cpu|commandstats|latencystats|cluster|keyspace|modules|errorstats|all|everything|default)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "INFO command section arguments"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "(?<=\\s)[\\w:][\\w:.\\-]*(?:\\*|\\?|\\[.*?\\])?",
+      "tokenModifiers": [],
+      "description": "Redis key names and key glob patterns"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Quoted string values"
     },
     {
-      "type": "number",
-      "pattern": "\\b-?\\d+(\\.\\d+)?\\b",
-      "modifiers": [],
-      "description": "Numeric values for scores, indices, and timeouts"
+      "tokenType": "number",
+      "pattern": "\\b-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric values for scores, indices, timeouts, and counts"
     },
     {
-      "type": "comment",
+      "tokenType": "number",
+      "pattern": "(?<=[+-])inf\\b|\\binf\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Infinity literals used in sorted set range queries"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Comments in redis-cli scripts"
+      "tokenModifiers": [],
+      "description": "Comments in redis-cli scripts and configuration"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\b(AND|OR|NOT|XOR)\\b",
+      "tokenModifiers": [],
+      "description": "Bitwise operators for BITOP command"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(string|list|set|zset|hash|stream|none)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Redis data type names returned by TYPE command"
     }
   ]
 }

@@ -1,83 +1,328 @@
 {
   "language": "typescript",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "interface", "typeParameter", "parameter", "variable", "property", "enumMember", "function", "method", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "class",
-      "pattern": "\\bclass\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Class declarations"
+      "tokenType": "keyword",
+      "pattern": "\\b(if|else|switch|case|default|for|while|do|break|continue|return|throw|with)\\b",
+      "tokenModifiers": [],
+      "description": "Control flow keywords"
     },
     {
-      "type": "interface",
-      "pattern": "\\binterface\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "keyword",
+      "pattern": "\\b(try|catch|finally)\\b",
+      "tokenModifiers": [],
+      "description": "Error handling keywords for try/catch/finally blocks"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(const|let|var)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable declaration keywords"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bfunction\\s+[a-zA-Z_$][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Named function declarations"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\basync\\s+function\\s+[a-zA-Z_$][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration",
+        "async"
+      ],
+      "description": "Async function declarations"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bclass\\s+[A-Z][a-zA-Z0-9_$]*(?:\\s+extends\\s+[A-Z][a-zA-Z0-9_$.]*)?(?:\\s+implements\\s+[A-Z][a-zA-Z0-9_$.,\\s]*)?",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class declarations with optional extends and implements clauses"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\babstract\\s+class\\s+[A-Z][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Abstract class declarations"
+    },
+    {
+      "tokenType": "interface",
+      "pattern": "\\binterface\\s+[A-Z][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Interface declarations"
     },
     {
-      "type": "type",
-      "pattern": "\\btype\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Type alias declarations"
+      "tokenType": "type",
+      "pattern": "\\btype\\s+[A-Z][a-zA-Z0-9_$]*\\s*(?:<[^>]*>)?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Type alias declarations with optional generic parameters"
     },
     {
-      "type": "enum",
-      "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+[A-Z][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Enum declarations"
     },
     {
-      "type": "typeParameter",
-      "pattern": "<([A-Z][a-zA-Z0-9_]*(?:\\s+extends\\s+[a-zA-Z0-9_<>]+)?)>",
-      "modifiers": [],
+      "tokenType": "enum",
+      "pattern": "\\bconst\\s+enum\\s+[A-Z][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Const enum declarations for compile-time inlined values"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "<([A-Z][a-zA-Z0-9_,\\s]*(?:\\s+extends\\s+[a-zA-Z0-9_<>|&\\s]+)?)>",
+      "tokenModifiers": [],
       "description": "Generic type parameters with optional constraints"
     },
     {
-      "type": "decorator",
-      "pattern": "@([a-zA-Z_][a-zA-Z0-9_.]*)",
-      "modifiers": [],
-      "description": "Decorator annotations"
+      "tokenType": "typeParameter",
+      "pattern": "\\binfer\\s+[A-Z][a-zA-Z0-9_]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Infer keyword for type inference in conditional types"
     },
     {
-      "type": "function",
-      "pattern": "\\b(async\\s+)?function\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Function declarations including async"
+      "tokenType": "keyword",
+      "pattern": "\\b(keyof|typeof|readonly)\\b",
+      "tokenModifiers": [],
+      "description": "Type query and modifier keywords (keyof, typeof, readonly)"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(abstract|as|asserts|await|declare|export|from|implements|import|in|infer|instanceof|is|keyof|namespace|never|readonly|satisfies|typeof|undefined|unique|unknown|using)\\b",
-      "modifiers": [],
-      "description": "TypeScript-specific keywords"
+      "tokenType": "type",
+      "pattern": "extends\\s+.+\\s*\\?\\s*.+\\s*:\\s*.+",
+      "tokenModifiers": [],
+      "description": "Conditional types using extends ? : ternary syntax"
     },
     {
-      "type": "variable",
-      "pattern": "\\b(const|let|var)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Variable declarations with const/let/var"
+      "tokenType": "type",
+      "pattern": "\\{\\s*\\[[a-zA-Z_]+\\s+in\\s+[a-zA-Z_<>|]+\\]\\s*:",
+      "tokenModifiers": [],
+      "description": "Mapped types using [K in keyof T] index signature syntax"
     },
     {
-      "type": "method",
-      "pattern": "\\b(async\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*(<[^>]*>)?\\s*\\([^)]*\\)\\s*(?::\\s*[a-zA-Z<>|&\\[\\]]+)?\\s*(?:=>|\\{)",
-      "modifiers": ["declaration"],
-      "description": "Method declarations and arrow functions"
+      "tokenType": "keyword",
+      "pattern": "\\bsatisfies\\s+[A-Z][a-zA-Z0-9_<>|&\\[\\]]*",
+      "tokenModifiers": [],
+      "description": "Satisfies operator for type validation without widening"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s+is\\s+[A-Z][a-zA-Z0-9_]*\\b",
-      "modifiers": [],
-      "description": "Type guard expressions using 'is'"
+      "tokenType": "keyword",
+      "pattern": "\\bas\\s+const\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Const assertion for immutable literal types"
     },
     {
-      "type": "type",
-      "pattern": "\\b(string|number|boolean|symbol|bigint|void|null|undefined|never|any|unknown|object|Promise|Array|Map|Set|Record|Partial|Required|Readonly|Pick|Omit|Exclude|Extract|NonNullable|ReturnType|Parameters|Awaited)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in types and utility types"
+      "tokenType": "variable",
+      "pattern": "\\busing\\s+[a-zA-Z_$][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Using declarations for explicit resource management (dispose pattern)"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\bawait\\s+using\\s+[a-zA-Z_$][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "declaration",
+        "async"
+      ],
+      "description": "Async using declarations for async disposable resources"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b[a-zA-Z_$][a-zA-Z0-9_$]*\\s+is\\s+[A-Z][a-zA-Z0-9_$<>|&]*",
+      "tokenModifiers": [],
+      "description": "Type predicate return types for user-defined type guards"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\basserts\\s+[a-zA-Z_$][a-zA-Z0-9_$]*\\s+is\\s+[A-Z][a-zA-Z0-9_$<>|&]*",
+      "tokenModifiers": [],
+      "description": "Assertion function signatures with asserts keyword"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "@[a-zA-Z_$][a-zA-Z0-9_$.]*(?:\\([^)]*\\))?",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Decorator annotations on classes, methods, and properties"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(import|export|from|as|default)\\b",
+      "tokenModifiers": [],
+      "description": "ES module import/export keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bimport\\s+type\\b|\\bexport\\s+type\\b",
+      "tokenModifiers": [],
+      "description": "Type-only import and export declarations"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\bnamespace\\s+[a-zA-Z_$][a-zA-Z0-9_$.]*",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Namespace declarations for module augmentation and declaration merging"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bdeclare\\s+(module|global|function|class|var|const|let|enum|interface|type|namespace)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Ambient declarations using the declare keyword"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bawait\\b",
+      "tokenModifiers": [
+        "async"
+      ],
+      "description": "Await expression for resolving promises"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(string|number|boolean|symbol|bigint|void|null|undefined|never|any|unknown|object)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Primitive and special built-in types"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Partial|Required|Readonly|Record|Pick|Omit|Exclude|Extract|NonNullable|ReturnType|Parameters|ConstructorParameters|InstanceType|Awaited|ThisParameterType|OmitThisParameter|ThisType|Uppercase|Lowercase|Capitalize|Uncapitalize)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Built-in utility types and template literal manipulation types"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(Promise|Array|Map|Set|WeakMap|WeakSet|WeakRef|FinalizationRegistry|Proxy|Reflect|Symbol|RegExp|Error|Date|JSON|Math|Intl)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Global built-in constructor and utility classes"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "`(?:[^`\\\\]|\\\\.)*`",
+      "tokenModifiers": [],
+      "description": "Template literal strings including template literal types"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\.",
+      "tokenModifiers": [],
+      "description": "Optional chaining operator for safe property access"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\?\\?",
+      "tokenModifiers": [],
+      "description": "Nullish coalescing operator for default value fallback"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\!\\.",
+      "tokenModifiers": [],
+      "description": "Non-null assertion operator to assert value is not null/undefined"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(public|private|protected|override|accessor)\\b",
+      "tokenModifiers": [],
+      "description": "Access modifiers and class member keywords"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(abstract|static|readonly)\\s+[a-zA-Z_$#][a-zA-Z0-9_$]*",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Member modifier keywords (abstract, static, readonly) on declarations"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "TSDoc/JSDoc documentation comments"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\b(get|set)\\s+[a-zA-Z_$][a-zA-Z0-9_$]*\\s*\\(",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Getter and setter accessor declarations"
     }
   ]
 }

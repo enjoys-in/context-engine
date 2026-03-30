@@ -1,65 +1,215 @@
 {
   "language": "systemd",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "variable", "property", "keyword", "comment", "string", "number"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "variable",
+      "property",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "defaultLibrary",
+      "readonly"
+    ]
   },
   "semanticRules": [
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "^\\[\\s*(Unit|Service|Timer|Socket|Mount|Automount|Swap|Path|Slice|Scope|Install)\\s*\\]",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Section headers like [Unit], [Service], [Timer]"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^\\s*(ExecStart|ExecStartPre|ExecStartPost|ExecStop|ExecStopPost|ExecReload|ExecCondition)\\s*=",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Exec directives for service commands"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^\\s*(Type|Restart|RestartSec|TimeoutStartSec|TimeoutStopSec|WatchdogSec|RemainAfterExit|GuessMainPID|PIDFile|BusName|NotifyAccess)\\s*=",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Service type and restart directives"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^\\s*(Description|Documentation|After|Before|Requires|Wants|BindsTo|PartOf|Conflicts|Condition[A-Za-z]*|Assert[A-Za-z]*)\\s*=",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Unit dependency and metadata directives"
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "^\\s*(WantedBy|RequiredBy|Also|DefaultInstance|Alias)\\s*=",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Install section directives"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(simple|exec|forking|oneshot|dbus|notify|idle|always|on-failure|on-abnormal|on-abort|on-watchdog|on-success|no)\\b",
-      "modifiers": [],
-      "description": "Common directive values for Type= and Restart="
+      "tokenType": "keyword",
+      "pattern": "\\b(simple|exec|forking|oneshot|dbus|notify|notify-reload|idle|always|on-failure|on-abnormal|on-abort|on-watchdog|on-success|no)\\b",
+      "tokenModifiers": [],
+      "description": "Service Type= and Restart= policy values"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "%([nNpPiIfcrRtTsSCdDhHbBLjJGvVwW])",
-      "modifiers": [],
-      "description": "Systemd unit specifiers like %n, %i, %u"
+      "tokenModifiers": [],
+      "description": "Unit specifiers (%n=name, %p=prefix, %i=instance, %I=unescaped instance, etc.)"
     },
     {
-      "type": "property",
-      "pattern": "^\\s*(User|Group|WorkingDirectory|Environment|EnvironmentFile|StandardOutput|StandardError|SyslogIdentifier|PrivateTmp|ProtectSystem|ProtectHome|ReadOnlyPaths|NoNewPrivileges|LimitNOFILE|LimitNPROC)\\s*=",
-      "modifiers": ["defaultLibrary"],
-      "description": "Security, environment, and resource directives"
+      "tokenType": "property",
+      "pattern": "^\\s*(User|Group|WorkingDirectory|Environment|EnvironmentFile|StandardOutput|StandardError|SyslogIdentifier|PrivateTmp|ProtectSystem|ProtectHome|ReadOnlyPaths|NoNewPrivileges)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Security and environment directives"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "^\\s*[#;][^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Comments starting with # or ;"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(OnCalendar|OnBootSec|OnStartupSec|OnUnitActiveSec|OnUnitInactiveSec|OnActiveSec|AccuracySec|RandomizedDelaySec|Persistent|WakeSystem)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Timer section directives (OnCalendar, OnBootSec, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(ListenStream|ListenDatagram|ListenSequentialPacket|ListenFIFO|ListenSpecial|ListenNetlink|ListenMessageQueue|Accept|Backlog|SocketMode|SocketUser|SocketGroup|FreeBind|Writable|MaxConnections|MaxConnectionsPerSource)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Socket section directives (ListenStream, Accept, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(What|Where|Type|Options|SloppyOptions|LazyUnmount|ReadWriteOnly|ForceUnmount|DirectoryMode|TimeoutSec)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Mount section directives (What, Where, Type, Options)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(PathChanged|PathModified|PathExists|PathExistsGlob|DirectoryNotEmpty|Unit|MakeDirectory|DirectoryMode|TriggerLimitIntervalSec|TriggerLimitBurst)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Path section directives (PathChanged, PathModified, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(LimitNOFILE|LimitNPROC|LimitCORE|LimitAS|LimitRSS|LimitMEMLOCK|LimitSTACK|LimitFSIZE|LimitCPU|LimitLOCKS|MemoryMax|MemoryHigh|MemoryLow|CPUQuota|CPUWeight|IOWeight|TasksMax)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Resource limits and cgroup controls (LimitNOFILE, MemoryMax, CPUQuota, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(Slice|Delegate|IPAddressAllow|IPAddressDeny|IPIngressFilterPath|IPEgressFilterPath|DeviceAllow|DevicePolicy)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Slice, scope, and network restriction directives"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(Storage|Compress|Seal|SplitMode|RateLimitIntervalSec|RateLimitBurst|SystemMaxUse|RuntimeMaxUse|MaxRetentionSec|MaxFileSec|ForwardToSyslog|ForwardToKMsg|ForwardToConsole)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Journal logging configuration directives"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\\b(multi-user\\.target|graphical\\.target|default\\.target|network-online\\.target|network\\.target|sockets\\.target|timers\\.target|sysinit\\.target|basic\\.target|rescue\\.target|emergency\\.target)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Well-known systemd targets"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(RuntimeDirectory|StateDirectory|CacheDirectory|LogsDirectory|ConfigurationDirectory|RuntimeDirectoryMode|StateDirectoryMode)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Managed directory directives (RuntimeDirectory, StateDirectory, CacheDirectory)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(ProtectKernelTunables|ProtectKernelModules|ProtectKernelLogs|ProtectControlGroups|ProtectClock|ProtectHostname|ProtectProc|ProcSubset|LockPersonality|MemoryDenyWriteExecute|RestrictAddressFamilies|RestrictNamespaces|RestrictRealtime|RestrictSUIDSGID|SystemCallFilter|SystemCallArchitectures|SystemCallErrorNumber)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Advanced security/sandboxing directives (ProtectKernel*, SystemCallFilter, etc.)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(CapabilityBoundingSet|AmbientCapabilities|SecureBits|ReadWritePaths|ReadOnlyPaths|InaccessiblePaths|TemporaryFileSystem|BindPaths|BindReadOnlyPaths|MountFlags|PrivateDevices|PrivateNetwork|PrivateUsers|PrivateMounts|RootDirectory|RootImage)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Capability, namespace, and filesystem isolation directives"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(true|false|yes|no|full|strict)\\b",
+      "tokenModifiers": [],
+      "description": "Boolean and protection level values (true/false/yes/no/full/strict)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+[smhd]?\\b",
+      "tokenModifiers": [],
+      "description": "Time values with optional suffix (s=seconds, m=minutes, h=hours, d=days)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+[KMGT]?\\b",
+      "tokenModifiers": [],
+      "description": "Memory and size values with optional suffix (K, M, G, T)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d+%\\b",
+      "tokenModifiers": [],
+      "description": "Percentage values for CPUQuota and similar"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "^\\s*-",
+      "tokenModifiers": [],
+      "description": "Prefix dash (-) to suppress errors on ExecStart/ExecStop commands"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*(SuccessExitStatus|RestartPreventExitStatus|RestartForceExitStatus|KillMode|KillSignal|SendSIGKILL|SendSIGHUP|FinalKillSignal|WatchdogSignal)\\s*=",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Exit status and kill behavior directives"
     }
   ]
 }

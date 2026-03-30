@@ -1,71 +1,203 @@
 {
   "language": "mips",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "keyword", "comment", "string", "number", "operator", "decorator"],
-    "tokenModifiers": ["declaration", "definition", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "variable",
+      "property",
+      "function",
+      "keyword",
+      "comment",
+      "string",
+      "number",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary",
+      "documentation"
+    ]
   },
   "semanticRules": [
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$(?:zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|fp|ra)",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Named MIPS registers ($t0-$t9, $s0-$s7, $zero, $ra, etc.)"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\$\\d{1,2}",
-      "modifiers": ["readonly"],
+      "tokenModifiers": [
+        "readonly"
+      ],
       "description": "Numbered registers $0-$31"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(add|addi|addiu|addu|sub|subu|mul|mult|multu|div|divu|and|andi|or|ori|nor|xor|xori|sll|srl|sra|sllv|srlv|srav|slt|slti|sltiu|sltu|beq|bne|bgt|bge|blt|ble|j|jal|jr|jalr|lw|lh|lb|lbu|lhu|sw|sh|sb|lui|la|li|move|mfhi|mflo|mthi|mtlo|nop|syscall|break)\\b",
-      "modifiers": [],
-      "description": "MIPS instruction mnemonics"
+      "tokenType": "variable",
+      "pattern": "\\$f(\\d|[12]\\d|3[01])",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Floating-point registers $f0-$f31"
     },
     {
-      "type": "function",
+      "tokenType": "keyword",
+      "pattern": "\\b(add|addu|sub|subu|and|or|nor|xor|slt|sltu|sll|srl|sra|sllv|srlv|srav|jr|jalr|mult|multu|div|divu|mfhi|mflo|mthi|mtlo)\\b",
+      "tokenModifiers": [],
+      "description": "R-type instructions (add, sub, and, or, slt, sll, srl, jr, mult, div, mfhi, mflo)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(addi|addiu|andi|ori|xori|slti|sltiu|beq|bne|lui|lw|lh|lhu|lb|lbu|sw|sh|sb|lwl|lwr|swl|swr)\\b",
+      "tokenModifiers": [],
+      "description": "I-type instructions (addi, andi, ori, lw, sw, beq, bne, lui, slti, lb, sb, lh, sh)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(j|jal)\\b",
+      "tokenModifiers": [],
+      "description": "J-type instructions (j, jal)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(li|la|move|blt|bgt|ble|bge|blez|bgez|bltz|bgtz|beqz|bnez|neg|negu|not|abs|mul|rem|remu|subi|seq|sne|sge|sgeu|sgt|sgtu|sle|sleu|nop)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Pseudo-instructions (li, la, move, blt, bgt, ble, bge, nop, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(add\\.[sd]|sub\\.[sd]|mul\\.[sd]|div\\.[sd]|mov\\.[sd]|cvt\\.s\\.d|cvt\\.d\\.s|cvt\\.w\\.[sd]|cvt\\.[sd]\\.w|mfc1|mtc1|lwc1|swc1|ldc1|sdc1|c\\.eq\\.[sd]|c\\.lt\\.[sd]|c\\.le\\.[sd]|bc1t|bc1f|neg\\.[sd]|abs\\.[sd]|sqrt\\.[sd])\\b",
+      "tokenModifiers": [],
+      "description": "Floating-point instructions (add.s, mul.d, cvt.s.d, c.eq.s, bc1t, etc.)"
+    },
+    {
+      "tokenType": "function",
       "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*:",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Label declarations (targets for jumps/branches)"
     },
     {
-      "type": "decorator",
-      "pattern": "\\.(data|text|globl|global|word|half|byte|ascii|asciiz|space|align|float|double|extern|kdata|ktext|set|macro|end_macro|eqv|include)",
-      "modifiers": [],
-      "description": "Assembler directives (.data, .text, .globl, etc.)"
+      "tokenType": "decorator",
+      "pattern": "\\.(data|text|globl|global)\\b",
+      "tokenModifiers": [],
+      "description": "Section directives (.data, .text, .globl)"
     },
     {
-      "type": "number",
-      "pattern": "\\b0x[0-9a-fA-F]+\\b|\\b-?\\d+\\b",
-      "modifiers": [],
-      "description": "Immediate values in decimal or hexadecimal"
+      "tokenType": "decorator",
+      "pattern": "\\.(word|half|byte|ascii|asciiz|space|float|double)\\b",
+      "tokenModifiers": [],
+      "description": "Data storage directives (.word, .byte, .ascii, .asciiz, .space, .float, .double)"
     },
     {
-      "type": "operator",
+      "tokenType": "decorator",
+      "pattern": "\\.(align)\\s+[0-3]",
+      "tokenModifiers": [],
+      "description": "Memory alignment directive (.align 0-3 for byte/half/word/double alignment)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\.(extern|kdata|ktext|set|macro|end_macro|eqv|include)\\b",
+      "tokenModifiers": [],
+      "description": "Advanced assembler directives (.extern, .set, .macro, .include, etc.)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0x[0-9a-fA-F]+\\b",
+      "tokenModifiers": [],
+      "description": "Hexadecimal immediate values (0x prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0b[01]+\\b",
+      "tokenModifiers": [],
+      "description": "Binary immediate values (0b prefix)"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b-?\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Decimal immediate values"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b-?\\d+\\.\\d+\\b",
+      "tokenModifiers": [],
+      "description": "Floating-point literal values for .float/.double directives"
+    },
+    {
+      "tokenType": "operator",
       "pattern": "[(),+\\-]",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Parentheses for addressing modes and arithmetic signs"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#.*$",
-      "modifiers": ["documentation"],
+      "tokenModifiers": [
+        "documentation"
+      ],
       "description": "Comments starting with #"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in double quotes for .asciiz/.ascii"
     },
     {
-      "type": "variable",
-      "pattern": "\\$f[0-9]{1,2}",
-      "modifiers": ["readonly"],
-      "description": "Floating-point registers $f0-$f31"
+      "tokenType": "keyword",
+      "pattern": "\\b(syscall)\\b",
+      "tokenModifiers": [],
+      "description": "System call instruction (syscall)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(break)\\b",
+      "tokenModifiers": [],
+      "description": "Break instruction for debugger traps"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(eret|mfc0|mtc0|cop0|cop2|rfe|tlbr|tlbwi|tlbwr|tlbp|cache)\\b",
+      "tokenModifiers": [],
+      "description": "Coprocessor and exception handling instructions (mfc0, mtc0, eret, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(subu|addiu|sw|lw)\\b(?=\\s+\\$(?:sp|fp|ra))",
+      "tokenModifiers": [],
+      "description": "Stack frame operations (push/pop via $sp adjustments)"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "-?\\d+\\(\\$[a-z0-9]+\\)",
+      "tokenModifiers": [],
+      "description": "Memory addressing mode offset($register) e.g. 4($sp), -8($fp)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(main|_start)\\b(?=\\s*:)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Common entry point labels (main, _start)"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "/\\*[\\s\\S]*?\\*/",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Multi-line block comments /* ... */ (some assemblers)"
     }
   ]
 }

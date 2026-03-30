@@ -1,71 +1,222 @@
 {
   "language": "scala",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "enum", "typeParameter", "parameter", "variable", "property", "function", "method", "keyword", "modifier", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "documentation", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\bdef\\s+([a-z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Method/function definitions with def keyword"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\b(case\\s+)?class\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Class and case class declarations"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\b(object|trait)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Object and trait declarations"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\b(val)\\s+([a-z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration", "readonly"],
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
       "description": "Immutable value bindings with val"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\bvar\\s+([a-z_][a-zA-Z0-9_]*)\\b",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Mutable variable bindings with var"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(implicit|sealed|final|lazy|override|abstract|private|protected|extends|with|yield|match|case|forSome|type)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Scala-specific keywords including implicit and pattern matching"
     },
     {
-      "type": "typeParameter",
+      "tokenType": "typeParameter",
       "pattern": "\\[([A-Z][a-zA-Z0-9_]*)\\]",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Type parameters in square brackets"
     },
     {
-      "type": "namespace",
+      "tokenType": "namespace",
       "pattern": "\\bpackage\\s+([a-z][a-z0-9_.]*)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Package declarations"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(for)\\s*\\{",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "For-comprehension blocks"
     },
     {
-      "type": "type",
+      "tokenType": "type",
       "pattern": "\\b(Int|Long|Float|Double|Boolean|String|Char|Byte|Short|Unit|Any|AnyRef|AnyVal|Nothing|Null|Option|Either|List|Seq|Map|Set|Future)\\b",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Standard library and primitive types"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bcase\\s+class\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Case class declarations with primary constructor parameters"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bsealed\\s+trait\\s+([A-Z][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration",
+        "abstract"
+      ],
+      "description": "Sealed trait declarations for ADT hierarchies"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bobject\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:extends|\\{)",
+      "tokenModifiers": [
+        "declaration",
+        "static"
+      ],
+      "description": "Singleton object declarations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\bimplicit\\s+(def|val|class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [],
+      "description": "Implicit definitions: implicit def, implicit val, implicit class"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(given|using)\\s+([a-zA-Z_][a-zA-Z0-9_]*)?\\s*(?::|\\()",
+      "tokenModifiers": [],
+      "description": "Scala 3 given instances and using clauses for contextual abstractions"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bextension\\s*(?:\\[?[A-Z][a-zA-Z0-9_]*\\]?)?\\s*\\(([a-z_][a-zA-Z0-9_]*)\\s*:",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Scala 3 extension method declarations"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\btype\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:\\[[^\\]]*\\])?\\s*=\\s*[A-Z][a-zA-Z0-9_]*\\s+match\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Scala 3 match types for type-level pattern matching"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\blazy\\s+val\\s+([a-z_][a-zA-Z0-9_]*)",
+      "tokenModifiers": [
+        "declaration",
+        "readonly"
+      ],
+      "description": "Lazy val declarations with deferred initialization"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\bdef\\s+unapply\\s*(?:\\[[^\\]]*\\])?\\s*\\(",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Extractor pattern matching with unapply/unapplySeq methods"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\[([A-Z][a-zA-Z0-9_]*)\\s*(<:|>:|:)\\s*[A-Z][a-zA-Z0-9_]*\\]",
+      "tokenModifiers": [],
+      "description": "Type bounds: upper (<:), lower (>:), and context (:) bounds"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\bopaque\\s+type\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:\\[[^\\]]*\\])?\\s*=",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Scala 3 opaque type alias declarations"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(inline|transparent)\\s+(?:def|val|given)\\b",
+      "tokenModifiers": [],
+      "description": "Scala 3 inline and transparent modifiers for compile-time evaluation"
+    },
+    {
+      "tokenType": "enum",
+      "pattern": "\\benum\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?:\\[[^\\]]*\\])?\\s*(?:extends|\\{|:)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Scala 3 enum declarations with optional type parameters"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\[([A-Z][a-zA-Z0-9_]*)\\s*(?:=>>|=>)\\s*[A-Z][a-zA-Z0-9_]*\\]",
+      "tokenModifiers": [],
+      "description": "Type lambdas using =>> syntax for higher-kinded types"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "'\\{[^}]*\\}|\\$\\{[^}]*\\}",
+      "tokenModifiers": [],
+      "description": "Scala 3 macro quotes ('{...}) and splices (${...})"
     }
   ]
 }

@@ -1,71 +1,230 @@
 {
   "language": "azcli",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "function", "parameter", "variable", "property", "string", "namespace"],
-    "tokenModifiers": ["declaration", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "function",
+      "parameter",
+      "variable",
+      "property",
+      "string",
+      "namespace",
+      "number",
+      "comment",
+      "operator",
+      "method",
+      "type",
+      "enumMember"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "readonly",
+      "defaultLibrary",
+      "deprecated"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "^az\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Root az command"
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Root az CLI command keyword"
     },
     {
-      "type": "function",
-      "pattern": "\\baz\\s+(group|account|vm|storage|network|webapp|aks|acr|ad|keyvault|monitor|sql|cosmosdb|functionapp)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Top-level az command groups"
+      "tokenType": "namespace",
+      "pattern": "\\baz\\s+(account|group|vm|storage|network|webapp|aks|acr|ad|keyvault|monitor|sql|cosmosdb|functionapp|role|resource|policy|feature|provider|lock|tag|deployment)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Top-level az resource command groups"
     },
     {
-      "type": "parameter",
-      "pattern": "--([a-z][a-z0-9-]*)",
-      "modifiers": [],
-      "description": "Long parameter flags (--parameter)"
+      "tokenType": "namespace",
+      "pattern": "\\baz\\s+(appservice|batch|cdn|cognitiveservices|container|disk|dns|eventgrid|eventhubs|hdinsight|iot|logicapp|maps|mysql|postgres|redis|relay|search|servicebus|signalr|spring|synapse)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Extended az service command groups"
     },
     {
-      "type": "parameter",
+      "tokenType": "method",
+      "pattern": "\\b(create|delete|list|show|update|set|get|start|stop|restart|wait|import|export|invoke|run|add|remove|revoke|grant)\\b",
+      "tokenModifiers": [],
+      "description": "Action sub-commands (CRUD and lifecycle operations)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\baz\\s+login\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Azure login authentication command"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\baz\\s+logout\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Azure logout command"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\baz\\s+(configure|interactive|upgrade|version|feedback|find|rest|extension)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Utility and meta CLI commands"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "--(name|resource-group|location|subscription|output|query|verbose|debug|help|only-show-errors|no-wait)\\b",
+      "tokenModifiers": [],
+      "description": "Common global and frequently-used parameter flags"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "--(sku|kind|tier|size|count|tags|admin-username|admin-password|image|os-type|authentication-type|ssh-key-value)\\b",
+      "tokenModifiers": [],
+      "description": "Resource creation and configuration parameter flags"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "--(vnet-name|subnet|nsg|public-ip-address|private-ip-address|dns-name-label|lb-name|address-pool|frontend-ip-name)\\b",
+      "tokenModifiers": [],
+      "description": "Networking-related parameter flags"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "--(storage-account|container-name|account-name|account-key|connection-string|sas-token|blob-endpoint)\\b",
+      "tokenModifiers": [],
+      "description": "Storage-related parameter flags"
+    },
+    {
+      "tokenType": "parameter",
       "pattern": "\\s-([a-zA-Z])\\s",
-      "modifiers": [],
-      "description": "Short parameter flags (-p)"
+      "tokenModifiers": [],
+      "description": "Short single-character parameter flags (-n, -g, -l, etc.)"
     },
     {
-      "type": "variable",
-      "pattern": "\\$\\{?[a-zA-Z_][a-zA-Z0-9_]*\\}?",
-      "modifiers": [],
-      "description": "Shell variable references"
+      "tokenType": "parameter",
+      "pattern": "--([a-z][a-z0-9-]*)(?=\\s|=|$)",
+      "tokenModifiers": [],
+      "description": "Generic long parameter flags"
     },
     {
-      "type": "property",
-      "pattern": "--resource-group\\s+([a-zA-Z0-9_-]+)",
-      "modifiers": [],
-      "description": "Resource group name references"
+      "tokenType": "enumMember",
+      "pattern": "--output\\s+(json|table|tsv|jsonc|yaml|yamlc|none)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Output format enumeration values"
     },
     {
-      "type": "string",
-      "pattern": "--subscription\\s+(['\"]?[a-zA-Z0-9-]+['\"]?)",
-      "modifiers": ["readonly"],
-      "description": "Subscription references"
+      "tokenType": "enumMember",
+      "pattern": "--os-type\\s+(Windows|Linux)\\b",
+      "tokenModifiers": [],
+      "description": "OS type enumeration values"
     },
     {
-      "type": "namespace",
-      "pattern": "/subscriptions/[a-f0-9-]+/resourceGroups/[a-zA-Z0-9_-]+",
-      "modifiers": ["readonly"],
-      "description": "Azure resource ID paths"
+      "tokenType": "enumMember",
+      "pattern": "--sku\\s+(Free|Basic|Standard|Premium|PremiumV2|PremiumV3|Isolated|Dynamic|ElasticPremium|Consumption)\\b",
+      "tokenModifiers": [],
+      "description": "Common SKU tier enumeration values"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(create|delete|list|show|update|set|get|start|stop|restart)\\b",
-      "modifiers": [],
-      "description": "Common action subcommands"
+      "tokenType": "string",
+      "pattern": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"",
+      "tokenModifiers": [],
+      "description": "Double-quoted string literals"
     },
     {
-      "type": "parameter",
-      "pattern": "--output\\s+(json|table|tsv|jsonc|yaml|yamlc|none)",
-      "modifiers": [],
-      "description": "Output format parameter values"
+      "tokenType": "string",
+      "pattern": "'[^']*'",
+      "tokenModifiers": [],
+      "description": "Single-quoted string literals"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\([^)]+\\)",
+      "tokenModifiers": [],
+      "description": "Command substitution $(...) expressions"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$\\{[a-zA-Z_][a-zA-Z0-9_]*\\}",
+      "tokenModifiers": [],
+      "description": "Braced shell variable references ${VAR}"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\$[a-zA-Z_][a-zA-Z0-9_]*",
+      "tokenModifiers": [],
+      "description": "Unbraced shell variable references $VAR"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "/subscriptions/[a-f0-9-]+(/resourceGroups/[a-zA-Z0-9_-]+)?(/providers/[a-zA-Z0-9_.]+(/[a-zA-Z0-9_-]+)*)?",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Azure resource ID path expressions"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "--query\\s+\"?\\[?[a-zA-Z0-9_.\\[\\]\\*]+\"?",
+      "tokenModifiers": [],
+      "description": "JMESPath query expressions following --query"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(\\|\\||&&|\\||;|>|>>|<|2>&1)",
+      "tokenModifiers": [],
+      "description": "Shell pipeline, redirection, and logical operators"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b[0-9]+\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literal values"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Shell-style single-line comments"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Microsoft\\.[A-Za-z]+/[A-Za-z]+)\\b",
+      "tokenModifiers": [
+        "readonly"
+      ],
+      "description": "Azure resource provider type references (Microsoft.Compute/virtualMachines, etc.)"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(az\\s+account\\s+set|az\\s+account\\s+show|az\\s+account\\s+list)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Common account management command patterns"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\baz\\s+extension\\s+(add|remove|list|show|update)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Azure CLI extension management commands"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)=([^\\s]+)",
+      "tokenModifiers": [],
+      "description": "Key=value tag and parameter assignments"
     }
   ]
 }

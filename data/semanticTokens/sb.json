@@ -1,53 +1,377 @@
 {
   "language": "sb",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["variable", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "keyword",
+      "class",
+      "function",
+      "method",
+      "property",
+      "variable",
+      "event",
+      "macro",
+      "comment",
+      "string",
+      "number",
+      "operator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(Sub|EndSub|If|Then|Else|ElseIf|EndIf|For|To|Step|EndFor|While|EndWhile|Goto)\\b",
-      "modifiers": [],
-      "description": "Small Basic control flow and structure keywords"
+      "tokenModifiers": [],
+      "description": "Control flow and structure keywords"
     },
     {
-      "type": "function",
+      "tokenType": "keyword",
+      "pattern": "\\b(And|Or|Not)\\b",
+      "tokenModifiers": [],
+      "description": "Logical operator keywords"
+    },
+    {
+      "tokenType": "function",
       "pattern": "\\bSub\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
-      "modifiers": ["declaration"],
-      "description": "Subroutine declarations"
+      "tokenModifiers": [
+        "declaration",
+        "definition"
+      ],
+      "description": "Subroutine name in Sub declaration"
     },
     {
-      "type": "variable",
-      "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*=",
-      "modifiers": ["declaration"],
-      "description": "Variable assignments"
+      "tokenType": "function",
+      "pattern": "(?<!\\.)\\b([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+      "tokenModifiers": [],
+      "description": "Subroutine call references"
     },
     {
-      "type": "property",
-      "pattern": "\\b(TextWindow|GraphicsWindow|Math|Clock|Desktop|File|Network|Program|Sound|Stack|Array|Turtle|Shapes|Timer|Mouse|Flickr|ImageList)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in Small Basic objects"
+      "tokenType": "variable",
+      "pattern": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*=(?!=)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Variable assignments and declarations"
     },
     {
-      "type": "method",
-      "pattern": "\\.(WriteLine|ReadLine|Show|DrawRectangle|DrawEllipse|FillRectangle|GetRandomNumber|Clear|Pause|Read|Write|GetContent|AddLine|InsertLine)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Built-in object methods"
+      "tokenType": "class",
+      "pattern": "\\b(TextWindow|GraphicsWindow|Math|Clock|Desktop|File|Network|Program|Sound|Stack|Array|Turtle|Shapes|Timer|Mouse|Flickr|ImageList|Dictionary|Controls)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "All built-in Small Basic objects"
     },
     {
-      "type": "string",
+      "tokenType": "method",
+      "pattern": "\\bTextWindow\\.(WriteLine|ReadLine|ReadNumber|Read|Write|Pause|Clear|Show|Hide)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "TextWindow methods for console I/O"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bGraphicsWindow\\.(Show|Hide|DrawLine|DrawRectangle|FillRectangle|DrawEllipse|FillEllipse|DrawTriangle|FillTriangle|DrawText|DrawBoundText|DrawResizedImage|DrawImage|SetPixel|GetPixel|GetColorFromRGB|Clear|ShowMessage|GetRandomColor)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "GraphicsWindow drawing and utility methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bMath\\.(Abs|Ceiling|Floor|GetRandomNumber|Max|Min|NaturalLog|Log|Cos|Sin|Tan|ArcCos|ArcSin|ArcTan|SquareRoot|Power|Remainder|Round|GetDegrees|GetRadians)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Math calculation and trigonometry methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bFile\\.(ReadContents|WriteContents|AppendContents|ReadLine|InsertLine|CopyFile|DeleteFile|CreateDirectory|DeleteDirectory|GetFiles|GetDirectories|GetTemporaryFilePath)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "File system operation methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bSound\\.(PlayClick|PlayChime|PlayChimes|PlayBellRing|PlayBellRingAndWait|PlayMusic|PlayMusicAndWait|Pause|Play|PlayAndWait|Stop)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Sound playback methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bStack\\.(PushValue|PopValue|GetCount)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Stack data structure methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bArray\\.(ContainsIndex|ContainsValue|GetAllIndices|GetItemCount|IsArray|SetValue|GetValue)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Array utility methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bTurtle\\.(Show|Hide|PenDown|PenUp|Move|Turn|TurnLeft|TurnRight|MoveTo)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Turtle graphics movement and pen methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bShapes\\.(AddRectangle|AddEllipse|AddTriangle|AddLine|AddImage|AddText|Remove|Move|Rotate|Zoom|Animate|GetLeft|GetTop|SetText|HideShape|ShowShape|GetOpacity|SetOpacity)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shapes creation and manipulation methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bProgram\\.(Delay|End|GetArgument)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Program control methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bNetwork\\.(GetWebPageContents|DownloadFile)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Network access methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bControls\\.(AddButton|AddTextBox|AddMultiLineTextBox|GetTextBoxText|SetTextBoxText|GetButtonCaption|Remove|Move|SetSize|HideControl|ShowControl)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "UI controls creation and management methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bDesktop\\.(SetWallPaper)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Desktop utility methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bFlickr\\.(GetPictureOfMoment|GetRandomPicture)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Flickr image retrieval methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bImageList\\.(LoadImage|GetWidthOfImage|GetHeightOfImage)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "ImageList loading and dimension methods"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\bDictionary\\.(GetDefinition|GetWebDefinition)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Dictionary lookup methods"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bTextWindow\\.(ForegroundColor|BackgroundColor|CursorLeft|CursorTop|Left|Top|Title)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "TextWindow appearance and cursor properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bGraphicsWindow\\.(BackgroundColor|BrushColor|PenColor|PenWidth|FontName|FontSize|FontBold|FontItalic|Width|Height|Left|Top|Title|CanResize|LastKey|LastText|MouseX|MouseY)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "GraphicsWindow appearance, font, and input properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bTurtle\\.(Angle|Speed|X|Y|PenColor|BrushColor)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Turtle position, speed, and color properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bTimer\\.(Interval)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Timer interval property"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bMouse\\.(MouseX|MouseY|IsLeftButtonDown|IsRightButtonDown)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Mouse position and button state properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bMath\\.(Pi)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Math constant Pi"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bClock\\.(Year|Month|Day|WeekDay|Hour|Minute|Second|ElapsedMilliseconds|Date|Time)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Clock date and time read-only properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bProgram\\.(ArgumentCount|Directory)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Program argument count and directory read-only properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bDesktop\\.(Width|Height)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Desktop screen dimension read-only properties"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bFile\\.(LastError)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "File last error read-only property"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "\\bControls\\.(LastClickedButton|LastTypedTextBox)\\b",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "readonly"
+      ],
+      "description": "Controls last interaction read-only properties"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bGraphicsWindow\\.(KeyDown|KeyUp|MouseDown|MouseUp|MouseMove|TextInput)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "GraphicsWindow input events"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bTimer\\.(Tick)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Timer tick event"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bControls\\.(ButtonClicked|TextTyped)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Controls user interaction events"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\bMouse\\.(MouseDown|MouseUp|MouseMove)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Mouse button and movement events"
+    },
+    {
+      "tokenType": "event",
+      "pattern": "\\b(GraphicsWindow|Timer|Controls|Mouse)\\.[A-Za-z]+\\s*=\\s*[A-Za-z_][A-Za-z0-9_]*\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Event handler assignment pattern (e.g. Timer.Tick = OnTick)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*:",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Label declarations for Goto targets"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"[^\"]*\"",
-      "modifiers": [],
-      "description": "String literals in double quotes"
+      "tokenModifiers": [],
+      "description": "String literals enclosed in double quotes"
     },
     {
-      "type": "comment",
+      "tokenType": "number",
+      "pattern": "\\b\\d+(\\.\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Integer and decimal number literals"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "'[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line comments starting with apostrophe"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "<>|<=|>=|<|>",
+      "tokenModifiers": [],
+      "description": "Comparison operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "[+\\-*/]",
+      "tokenModifiers": [],
+      "description": "Arithmetic operators"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "=",
+      "tokenModifiers": [],
+      "description": "Assignment and equality operator"
     }
   ]
 }

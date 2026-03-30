@@ -2,74 +2,144 @@
   "language": "redis",
   "symbolPatterns": [
     {
-      "name": "Command",
-      "pattern": "^\\s*(GET|SET|DEL|HGET|HSET|HDEL|HGETALL|LPUSH|RPUSH|LPOP|RPOP|LRANGE|SADD|SREM|SMEMBERS|ZADD|ZREM|ZRANGE|SUBSCRIBE|PUBLISH|MULTI|EXEC|SELECT|AUTH|KEYS|SCAN|INFO|CONFIG|FLUSHDB|FLUSHALL)\\b",
+      "name": "EVAL Script",
+      "pattern": "^\\s*(EVAL(?:SHA)?)\\s+",
       "captureGroup": 1,
       "kind": 11,
       "type": "function"
     },
     {
-      "name": "Key",
-      "pattern": "^\\s*(?:GET|SET|DEL|HGET|HSET|LPUSH|RPUSH|SADD|ZADD)\\s+(\\S+)",
+      "name": "Lua Function",
+      "pattern": "(?:local\\s+)?function\\s+(\\w[\\w.]*)\\s*\\(",
       "captureGroup": 1,
-      "kind": 12,
-      "type": "variable"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Comment",
-      "pattern": "^\\s*#\\s*(.*)",
+      "name": "Lua Local Function",
+      "pattern": "local\\s+(\\w+)\\s*=\\s*function\\s*\\(",
       "captureGroup": 1,
-      "kind": 14,
-      "type": "string"
+      "kind": 11,
+      "type": "function"
     },
     {
-      "name": "Class",
-      "pattern": "(?:class|struct|interface|trait|type|record)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 4,
-      "type": "class"
-    },
-    {
-      "name": "Constant",
-      "pattern": "(?:CONST|const|final|readonly)\\s+(?:\\w+\\s+)?(\\w+)",
-      "captureGroup": 1,
-      "kind": 13,
-      "type": "constant"
-    },
-    {
-      "name": "Enum",
-      "pattern": "(?:enum)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 9,
-      "type": "enum"
-    },
-    {
-      "name": "Module",
-      "pattern": "(?:module|namespace|package|import)\\s+(\\w+)",
-      "captureGroup": 1,
-      "kind": 1,
-      "type": "module"
-    },
-    {
-      "name": "Property",
-      "pattern": "(\\w+)\\s*[=:]",
-      "captureGroup": 1,
-      "kind": 6,
-      "type": "property"
-    },
-    {
-      "name": "Method",
-      "pattern": "(?:public|private|protected)?\\s*(?:static)?\\s*(\\w+)\\s*\\(",
+      "name": "redis.call",
+      "pattern": "redis\\.call\\s*\\(\\s*['\"]([A-Z_]+)['\"]",
       "captureGroup": 1,
       "kind": 5,
       "type": "method"
     },
     {
-      "name": "TypeAlias",
-      "pattern": "(?:type|typedef)\\s+(\\w+)",
+      "name": "redis.pcall",
+      "pattern": "redis\\.pcall\\s*\\(\\s*['\"]([A-Z_]+)['\"]",
       "captureGroup": 1,
-      "kind": 25,
-      "type": "typeAlias"
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Key Pattern",
+      "pattern": "^\\s*(?:GET|SET|DEL|MGET|MSET|SETNX|SETEX|PSETEX|GETSET|GETDEL|GETEX|APPEND|INCR|DECR|INCRBY|DECRBY|INCRBYFLOAT|EXPIRE|PEXPIRE|TTL|PTTL|PERSIST|RENAME|TYPE|EXISTS|UNLINK|COPY)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Hash Key",
+      "pattern": "^\\s*(?:HGET|HSET|HDEL|HGETALL|HMGET|HMSET|HINCRBY|HINCRBYFLOAT|HEXISTS|HKEYS|HVALS|HLEN|HSETNX|HSCAN|HRANDFIELD)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "List Key",
+      "pattern": "^\\s*(?:LPUSH|RPUSH|LPOP|RPOP|LRANGE|LLEN|LINDEX|LSET|LINSERT|LREM|LTRIM|LMOVE|LPOS|BLPOP|BRPOP|BLMOVE)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Set Key",
+      "pattern": "^\\s*(?:SADD|SREM|SMEMBERS|SISMEMBER|SCARD|SRANDMEMBER|SPOP|SUNION|SINTER|SDIFF|SUNIONSTORE|SINTERSTORE|SDIFFSTORE|SSCAN)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Sorted Set Key",
+      "pattern": "^\\s*(?:ZADD|ZREM|ZRANGE|ZRANGEBYSCORE|ZRANGEBYLEX|ZREVRANGE|ZRANK|ZREVRANK|ZSCORE|ZCARD|ZCOUNT|ZINCRBY|ZUNIONSTORE|ZINTERSTORE|ZSCAN|ZPOPMIN|ZPOPMAX|ZRANDMEMBER)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Transaction",
+      "pattern": "^\\s*(MULTI|EXEC|DISCARD|WATCH|UNWATCH)\\b",
+      "captureGroup": 1,
+      "kind": 2,
+      "type": "namespace"
+    },
+    {
+      "name": "Pub/Sub Channel",
+      "pattern": "^\\s*(?:SUBSCRIBE|PSUBSCRIBE|PUBLISH)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 5,
+      "type": "method"
+    },
+    {
+      "name": "Pub/Sub Command",
+      "pattern": "^\\s*(SUBSCRIBE|UNSUBSCRIBE|PSUBSCRIBE|PUNSUBSCRIBE|PUBLISH)\\b",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Stream Key",
+      "pattern": "^\\s*(?:XADD|XREAD|XREADGROUP|XRANGE|XREVRANGE|XLEN|XTRIM|XDEL|XINFO|XGROUP|XACK|XCLAIM|XAUTOCLAIM|XPENDING)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Stream Command",
+      "pattern": "^\\s*(XADD|XREAD|XREADGROUP|XRANGE|XREVRANGE|XLEN|XTRIM|XDEL|XINFO|XGROUP|XACK|XCLAIM|XAUTOCLAIM|XPENDING)\\b",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
+    },
+    {
+      "name": "Module Load",
+      "pattern": "^\\s*MODULE\\s+(?:LOAD|LOADEX)\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 1,
+      "type": "module"
+    },
+    {
+      "name": "Keyspace Notification",
+      "pattern": "^\\s*CONFIG\\s+SET\\s+notify-keyspace-events\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 6,
+      "type": "property"
+    },
+    {
+      "name": "Lua Local Variable",
+      "pattern": "local\\s+(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 12,
+      "type": "variable"
+    },
+    {
+      "name": "KEYS Pattern",
+      "pattern": "KEYS\\s+(\\S+)",
+      "captureGroup": 1,
+      "kind": 19,
+      "type": "key"
+    },
+    {
+      "name": "Register Function",
+      "pattern": "redis\\.register_function\\s*\\(\\s*['\"]([\\w]+)['\"]",
+      "captureGroup": 1,
+      "kind": 11,
+      "type": "function"
     }
   ]
 }

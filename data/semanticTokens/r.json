@@ -1,77 +1,317 @@
 {
   "language": "r",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["namespace", "type", "class", "variable", "parameter", "property", "function", "method", "keyword", "comment", "string", "number", "operator"],
-    "tokenModifiers": ["declaration", "definition", "readonly", "defaultLibrary"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "variable",
+      "parameter",
+      "property",
+      "function",
+      "method",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator",
+      "macro"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
   },
   "semanticRules": [
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "(\\w+)\\s*<-\\s*function\\s*\\(",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Function definitions assigned with <- operator"
     },
     {
-      "type": "operator",
+      "tokenType": "operator",
       "pattern": "<-|<<-|->|->>|\\|>|%%|%in%|%\\*%|%o%|%/%",
-      "modifiers": [],
-      "description": "Assignment operators (<-, <<-, ->, ->>), pipe |>, and special operators"
+      "tokenModifiers": [],
+      "description": "Assignment operators (<-, <<-, ->, ->>), native pipe |>, and special operators"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b(library|require|source|install\\.packages|loadNamespace)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Package loading and sourcing functions"
     },
     {
-      "type": "class",
+      "tokenType": "class",
       "pattern": "\\b(setClass|setRefClass|R6Class|setGeneric|setMethod)\\s*\\(",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "S4, Reference, and R6 class definitions"
     },
     {
-      "type": "keyword",
+      "tokenType": "keyword",
       "pattern": "\\b(if|else|for|in|while|repeat|break|next|return|function|switch|tryCatch|withCallingHandlers|on\\.exit|stop|warning|message|invisible|NULL|NA|NA_integer_|NA_real_|NA_complex_|NA_character_|TRUE|FALSE|Inf|NaN|T|F)\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "R keywords, control flow, and special constants"
     },
     {
-      "type": "function",
+      "tokenType": "function",
       "pattern": "\\b(c|length|dim|nrow|ncol|names|class|typeof|is\\.|as\\.|which|match|sum|mean|median|sd|var|min|max|range|sort|order|table|apply|lapply|sapply|vapply|tapply|mapply|do\\.call|Reduce|Filter|Map|paste|paste0|sprintf|cat|print|head|tail|str|summary|data\\.frame|matrix|list|vector|array|factor|seq|rep)\\s*\\(",
-      "modifiers": ["defaultLibrary"],
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
       "description": "Common built-in R functions"
     },
     {
-      "type": "variable",
+      "tokenType": "variable",
       "pattern": "\\b\\w+\\s*(?:<-|=)\\s*(?!function)",
-      "modifiers": ["declaration"],
+      "tokenModifiers": [
+        "declaration"
+      ],
       "description": "Variable assignments with <- or ="
     },
     {
-      "type": "property",
+      "tokenType": "property",
       "pattern": "\\$\\w+|@\\w+",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "List element access ($) and S4 slot access (@)"
     },
     {
-      "type": "comment",
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Single-line comments starting with #"
     },
     {
-      "type": "string",
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "String literals in single or double quotes"
     },
     {
-      "type": "number",
+      "tokenType": "number",
       "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?L?\\b|0x[0-9a-fA-F]+L?\\b",
-      "modifiers": [],
+      "tokenModifiers": [],
       "description": "Numeric literals including integer (L suffix) and hexadecimal"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "%>%|%<>%|%T>%|%\\$%",
+      "tokenModifiers": [],
+      "description": "Magrittr pipe operators (%>%, %<>%, %T>%, %$%)"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "~(?=\\s*[\\w.+\\-*/:()]+)",
+      "tokenModifiers": [],
+      "description": "Formula operator (~) for model specifications and tidyverse selection"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\bnew\\s*\\(\\s*['\"][A-Z]\\w*['\"]|\\bsetClass\\s*\\(\\s*['\"]\\w+['\"]\\s*,\\s*(?:representation|contains|slots)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "S4 class system (new(), setClass with representation/contains/slots)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(select|filter|mutate|summarise|summarize|arrange|group_by|ungroup|rename|distinct|slice|pull|count|tally|across|where|everything|starts_with|ends_with|contains|matches|between|case_when|if_else|left_join|right_join|inner_join|full_join|semi_join|anti_join|bind_rows|bind_cols|pivot_longer|pivot_wider|gather|spread|separate|unite|nest|unnest)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Tidyverse dplyr/tidyr verbs for data manipulation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(enquo|enquos|quo|quos|expr|enexpr|sym|syms|eval_tidy)\\b|!!|!!!|\\{\\{\\s*\\w+\\s*\\}\\}",
+      "tokenModifiers": [],
+      "description": "Non-standard evaluation helpers (enquo, !!, {{ }}, tidy eval)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\\\\\(\\s*[\\w.,\\s]*\\)\\s*",
+      "tokenModifiers": [],
+      "description": "Lambda/anonymous function shorthand (\\(x) x + 1) introduced in R 4.1"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(sapply|lapply|vapply|tapply|mapply|rapply|eapply)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Apply family of functions for iterating over structures"
+    },
+    {
+      "tokenType": "regexp",
+      "pattern": "\\b(grep|grepl|sub|gsub|regexpr|gregexpr|regmatches|regexec|strsplit)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Regular expression functions (grep, grepl, sub, gsub, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(factor|levels|nlevels|relevel|droplevels|as\\.factor|is\\.factor|ordered|gl|cut)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Factor creation and manipulation functions"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "#'\\s*@(param|return|export|import|importFrom|examples|title|description|details|seealso|family|inheritParams|rdname|name|aliases|keywords|usage|format|source)\\b",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Roxygen2 documentation tags (@param, @return, @export, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(glue|glue_data|glue_col|glue_sql|str_interp)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "String interpolation functions (glue, str_interp)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(reactive|reactiveVal|reactiveValues|observe|observeEvent|eventReactive|isolate|renderPlot|renderTable|renderText|renderUI|req|shinyApp|fluidPage|sidebarLayout|tabsetPanel)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Shiny reactive programming functions and UI builders"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(ggplot|aes|aes_string|aes_q|geom_point|geom_line|geom_bar|geom_col|geom_histogram|geom_boxplot|geom_violin|geom_tile|geom_raster|geom_contour|geom_density|geom_area|geom_ribbon|geom_smooth|geom_jitter|geom_text|geom_label|geom_sf|geom_hline|geom_vline|geom_abline|geom_segment|geom_path|geom_polygon|geom_errorbar|geom_crossbar|geom_pointrange|geom_rug|geom_hex|geom_bin2d|geom_step|geom_freqpoly|geom_dotplot|geom_spoke|geom_rect|geom_blank|geom_map|geom_qq|geom_qq_line|scale_x_continuous|scale_y_continuous|scale_x_discrete|scale_y_discrete|scale_x_log10|scale_y_log10|scale_x_date|scale_y_date|scale_x_datetime|scale_y_datetime|scale_color_manual|scale_fill_manual|scale_color_gradient|scale_fill_gradient|scale_color_brewer|scale_fill_brewer|scale_color_viridis_c|scale_color_viridis_d|scale_fill_viridis_c|scale_fill_viridis_d|scale_alpha|scale_size|scale_shape|scale_linetype|theme|theme_bw|theme_classic|theme_minimal|theme_void|theme_dark|theme_light|theme_gray|theme_grey|theme_linedraw|theme_set|theme_get|theme_update|element_text|element_line|element_rect|element_blank|facet_wrap|facet_grid|facet_null|labs|xlab|ylab|ggtitle|coord_cartesian|coord_flip|coord_polar|coord_fixed|coord_map|coord_sf|coord_trans|position_dodge|position_jitter|position_stack|position_fill|position_nudge|stat_summary|stat_smooth|stat_count|stat_bin|stat_density|annotation_custom|annotate|guides|guide_legend|guide_colorbar|guide_colourbar)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "ggplot2 layer functions (ggplot, aes, geom_*, scale_*, theme_*, facet_*, labs, coord_*, stat_*, position_*, guides)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(environment|new\\.env|parent\\.env|globalenv|baseenv|emptyenv|environmentName|parent\\.frame|sys\\.frame|sys\\.call|sys\\.function|sys\\.nframe|as\\.environment|is\\.environment|topenv|packageEnv|pos\\.to\\.env|attach|detach|search|searchpaths|ls\\.str|env\\.profile)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "R environment functions (environment, new.env, parent.env, globalenv, baseenv, etc.)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(browser|debug|undebug|debugonce|isdebugged|trace|untrace|traceback|tracingState|sys\\.call|sys\\.frame|sys\\.function|sys\\.nframe|sys\\.on\\.exit|sys\\.parents|sys\\.status|recover|setBreakpoint|options\\s*\\(\\s*error\\s*=)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary",
+        "deprecated"
+      ],
+      "description": "R debugging and tracing functions (browser, debug, trace, traceback, sys.call, sys.frame, recover)"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\b(`:=`|\\.\\.\\s*\\(|\\b\\.N\\b|\\b\\.SD\\b|\\b\\.GRP\\b|\\b\\.BY\\b|\\b\\.I\\b|\\b\\.NGRP\\b|\\b\\.EACHI\\b)",
+      "tokenModifiers": [],
+      "description": "data.table special symbols (:=, .N, .SD, .GRP, .BY, .I, .NGRP, .EACHI)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(data\\.table|as\\.data\\.table|setDT|setDF|fread|fwrite|setkey|setkeyv|setindex|setindexv|setorder|setorderv|setnames|setcolorder|setattr|copy|rbindlist|foverlaps|merge\\.data\\.table|dcast|melt|shift|fcoalesce|fifelse|fintersect|funion|fsetdiff|fsetequal|uniqueN|rleid|rleidv|frank|frankv|nafill|setnafill|CJ|SJ|tables|between|inrange)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "data.table functions (fread, fwrite, setDT, setkey, dcast, melt, shift, rbindlist, etc.)"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\bknitr::(opts_chunk|opts_knit|opts_hooks|opts_template|knit_hooks|knit_engines|spin|purl)\\s*\\$|\\b(render|knit|knit2html|knit2pdf|spin|purl|read_chunk|kable|include_graphics)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "R Markdown/knitr functions (opts_chunk, render, knit, kable, include_graphics)"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "```\\{r[^}]*\\}|<<[a-zA-Z][\\w.-]*>>",
+      "tokenModifiers": [],
+      "description": "R Markdown chunk headers (```{r ...}) and knitr chunk references (<<label>>)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(crossprod|tcrossprod|solve|eigen|svd|det|chol|qr|qr\\.Q|qr\\.R|qr\\.X|qr\\.coef|qr\\.fitted|qr\\.resid|qr\\.solve|norm|rcond|kappa|chol2inv|backsolve|forwardsolve|ginv|kronecker|outer|diag|t|colSums|rowSums|colMeans|rowMeans|rownames|colnames|nrow|ncol|is\\.matrix)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Matrix and linear algebra functions (crossprod, solve, eigen, svd, det, chol, qr, diag, t)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(lm|glm|nls|aov|anova|manova|predict|residuals|fitted|coef|confint|vcov|logLik|AIC|BIC|deviance|df\\.residual|summary\\.lm|summary\\.glm|update\\.formula|model\\.matrix|model\\.frame|model\\.response|step|add1|drop1|rstudent|hatvalues|cooks\\.distance|influence|rstandard|sigma|nobs|formula|terms|contrasts)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Statistical modeling functions (lm, glm, nls, aov, anova, predict, residuals, fitted, coef, confint)"
+    },
+    {
+      "tokenType": "method",
+      "pattern": "\\$(new|initialize|clone|print|format|finalize)\\s*\\(|\\b(self|private|super)\\$\\w+",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "R6 class method patterns ($new, $initialize, $clone, self$, private$, super$)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(tryCatch|withCallingHandlers|conditionMessage|conditionCall|simpleError|simpleWarning|simpleMessage|simpleCondition|tryCatchLog|tryLog|rlang::abort|rlang::warn|rlang::inform|rlang::try_fetch|rlang::catch_cnd|rlang::cnd_signal|rlang::cnd_message|withRestarts|invokeRestart|computeRestarts|isRestart|sys\\.on\\.exit)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Condition handling functions (tryCatch, withCallingHandlers, simpleError, simpleWarning, rlang condition tools, restarts)"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "\\b(devtools|usethis|testthat|roxygen2|pkgload|remotes|rcmdcheck|covr)\\s*::\\s*(load_all|document|test|check|install|build|release|roxygenise|roxygenize|create_package|use_testthat|use_package|use_pipe|use_r|use_test|test_that|expect_equal|expect_true|expect_false|expect_error|expect_warning|expect_message|expect_identical|expect_type|expect_s3_class|expect_s4_class|expect_length|expect_match|expect_output|expect_silent|describe|it|local_edition)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Package development functions (devtools, usethis, testthat, roxygen2, pkgload, remotes)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(map|map2|pmap|walk|walk2|pwalk|imap|imap_chr|imap_lgl|imap_int|imap_dbl|map_chr|map_lgl|map_int|map_dbl|map_dfr|map_dfc|map2_chr|map2_lgl|map2_int|map2_dbl|map2_dfr|map2_dfc|pmap_chr|pmap_lgl|pmap_int|pmap_dbl|pmap_dfr|pmap_dfc|modify|modify_if|modify_at|modify_depth|modify2|imodify|reduce|reduce2|accumulate|accumulate2|pluck|pluck_depth|chuck|keep|discard|compact|every|some|none|detect|detect_index|head_while|tail_while|prepend|splice|flatten|flatten_chr|flatten_lgl|flatten_int|flatten_dbl|flatten_dfr|flatten_dfc|transpose|list_flatten|list_c|list_rbind|list_cbind|list_assign|list_modify|list_transpose|safely|quietly|possibly|insistently|slowly|auto_browse|compose|partial|negate|lift|lift_dl|lift_dv|lift_ld|lift_lv|lift_vl|lift_vd)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "purrr functional programming functions (map, map2, pmap, walk, imap, modify, reduce, accumulate, pluck, keep, discard, compact, safely, possibly, compose, partial)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(dnorm|pnorm|qnorm|rnorm|dbinom|pbinom|qbinom|rbinom|dpois|ppois|qpois|rpois|dunif|punif|qunif|runif|dt|pt|qt|rt|df|pf|qf|rf|dchisq|pchisq|qchisq|rchisq|dgamma|pgamma|qgamma|rgamma|dbeta|pbeta|qbeta|rbeta|dexp|pexp|qexp|rexp|dweibull|pweibull|qweibull|rweibull|dlnorm|plnorm|qlnorm|rlnorm|dmultinom|rmultinom|sample|set\\.seed)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Statistical distribution functions (d/p/q/r families: norm, binom, pois, unif, t, f, chisq, gamma, beta, exp, weibull, lnorm, multinom)"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(t\\.test|chisq\\.test|wilcox\\.test|fisher\\.test|ks\\.test|shapiro\\.test|var\\.test|bartlett\\.test|prop\\.test|binom\\.test|cor\\.test|mcnemar\\.test|friedman\\.test|kruskal\\.test|pairwise\\.t\\.test|pairwise\\.wilcox\\.test|p\\.adjust|power\\.t\\.test|power\\.prop\\.test)\\s*\\(",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Statistical hypothesis test functions (t.test, chisq.test, wilcox.test, fisher.test, shapiro.test, ks.test, etc.)"
     }
   ]
 }

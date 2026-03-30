@@ -1,77 +1,207 @@
 {
   "language": "redis",
-  "tokenTypes": ["namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter", "variable", "property", "enumMember", "event", "function", "method", "macro", "keyword", "modifier", "comment", "string", "number", "regexp", "operator", "decorator"],
-  "tokenModifiers": ["declaration", "definition", "readonly", "static", "deprecated", "abstract", "async", "modification", "documentation", "defaultLibrary"],
-  "tokenLegend": {
-    "tokenTypes": ["keyword", "function", "variable", "string", "number", "comment", "operator", "type"],
-    "tokenModifiers": ["defaultLibrary", "readonly"]
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "keyword",
+      "function",
+      "variable",
+      "property",
+      "string",
+      "number",
+      "comment",
+      "operator",
+      "type",
+      "modifier",
+      "enum",
+      "enumMember"
+    ],
+    "tokenModifiers": [
+      "defaultLibrary",
+      "readonly",
+      "modification"
+    ]
   },
   "semanticRules": [
     {
-      "type": "keyword",
-      "pattern": "\\b(GET|SET|DEL|EXISTS|EXPIRE|TTL|PERSIST|KEYS|SCAN|TYPE|RENAME|RENAMENX|DUMP|RESTORE|OBJECT|WAIT|TOUCH|UNLINK|COPY|MOVE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Key manipulation commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(SET|GET|MSET|MGET|APPEND|INCR|DECR|INCRBY|DECRBY|INCRBYFLOAT|STRLEN|GETRANGE|SETRANGE|SETNX|SETEX|PSETEX|GETSET|GETDEL|GETEX|MSETNX|LCS)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "String commands for get/set operations and manipulation"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(HGET|HSET|HDEL|HMGET|HMSET|HGETALL|HKEYS|HVALS|HEXISTS|HINCRBY|HINCRBYFLOAT|HLEN|HSCAN|HSETNX)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Hash commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(HSET|HGET|HMSET|HMGET|HDEL|HEXISTS|HGETALL|HKEYS|HVALS|HLEN|HINCRBY|HINCRBYFLOAT|HSETNX|HSCAN|HRANDFIELD)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Hash commands for field-value pair operations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(LPUSH|RPUSH|LPOP|RPOP|LLEN|LRANGE|LINDEX|LSET|LINSERT|LREM|BLPOP|BRPOP|BRPOPLPUSH|LMOVE|BLMOVE|LPOS)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "List commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(LPUSH|RPUSH|LPOP|RPOP|LLEN|LRANGE|LINDEX|LSET|LINSERT|LREM|LTRIM|BLPOP|BRPOP|LMPOP|BLMPOP|LMOVE|BLMOVE|LPOS|LPUSHX|RPUSHX)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "List commands for push/pop and range operations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(SADD|SREM|SMEMBERS|SISMEMBER|SCARD|SUNION|SINTER|SDIFF|SRANDMEMBER|SPOP|SSCAN|SMISMEMBER|SMOVE)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Set commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(SADD|SREM|SMEMBERS|SISMEMBER|SCARD|SUNION|SINTER|SDIFF|SRANDMEMBER|SPOP|SMOVE|SUNIONSTORE|SINTERSTORE|SDIFFSTORE|SSCAN|SMISMEMBER|SINTERCARD)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Set commands for unordered collection operations"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(ZADD|ZREM|ZSCORE|ZRANK|ZREVRANK|ZRANGE|ZREVRANGE|ZRANGEBYSCORE|ZCOUNT|ZCARD|ZINCRBY|ZPOPMIN|ZPOPMAX|ZRANGESTORE|ZUNIONSTORE|ZINTERSTORE|ZDIFFSTORE|ZLEXCOUNT|ZRANDMEMBER|ZSCAN)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Sorted set commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(ZADD|ZREM|ZRANGE|ZRANGEBYSCORE|ZREVRANGEBYSCORE|ZRANGEBYLEX|ZREVRANGEBYLEX|ZRANK|ZREVRANK|ZSCORE|ZCARD|ZCOUNT|ZINCRBY|ZUNIONSTORE|ZINTERSTORE|ZDIFFSTORE|ZPOPMIN|ZPOPMAX|BZPOPMIN|BZPOPMAX|ZRANGESTORE|ZLEXCOUNT|ZRANDMEMBER|ZSCAN|ZMSCORE|ZMPOP|BZMPOP|ZDIFF|ZUNION|ZINTER|ZREVRANGE)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Sorted set commands for score-based ordered collections"
     },
     {
-      "type": "keyword",
-      "pattern": "\\b(PUBLISH|SUBSCRIBE|UNSUBSCRIBE|PSUBSCRIBE|PUNSUBSCRIBE|PUBSUB)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Pub/Sub commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(DEL|EXISTS|EXPIRE|TTL|PEXPIRE|PTTL|PERSIST|RENAME|RENAMENX|TYPE|KEYS|SCAN|RANDOMKEY|DUMP|RESTORE|OBJECT|WAIT|TOUCH|UNLINK|COPY|MOVE|EXPIREAT|PEXPIREAT|EXPIRETIME|PEXPIRETIME|SORT|SORT_RO)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Key management commands for lifecycle and inspection"
     },
     {
-      "type": "function",
-      "pattern": "\\b(EVAL|EVALSHA|SCRIPT)\\b",
-      "modifiers": ["defaultLibrary"],
-      "description": "Lua scripting commands"
+      "tokenType": "keyword",
+      "pattern": "\\b(XADD|XREAD|XRANGE|XREVRANGE|XLEN|XINFO|XGROUP|XACK|XCLAIM|XDEL|XTRIM|XAUTOCLAIM|XPENDING|XSETID)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Stream commands for append-only log data structure"
     },
     {
-      "type": "variable",
-      "pattern": "[\\w:*?\\[\\]-]+(?=\\s|$)",
-      "modifiers": [],
-      "description": "Redis key patterns with glob-style matching"
+      "tokenType": "keyword",
+      "pattern": "\\b(SUBSCRIBE|UNSUBSCRIBE|PUBLISH|PSUBSCRIBE|PUNSUBSCRIBE|PUBSUB|SSUBSCRIBE|SUNSUBSCRIBE)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Pub/Sub messaging commands"
     },
     {
-      "type": "string",
+      "tokenType": "keyword",
+      "pattern": "\\b(MULTI|EXEC|DISCARD|WATCH|UNWATCH)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Transaction commands for atomic operation batching"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(EVAL|EVALSHA|EVALRO|SCRIPT|FUNCTION|FCALL|FCALL_RO)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Scripting and function commands for server-side Lua/library execution"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(INFO|CONFIG|DBSIZE|FLUSHDB|FLUSHALL|BGSAVE|BGREWRITEAOF|CLIENT|MONITOR|DEBUG|SLOWLOG|SAVE|LASTSAVE|SHUTDOWN|SLAVEOF|REPLICAOF|COMMAND|ACL|MODULE|SWAPDB|RESET|FAILOVER|LATENCY|MEMORY|CLUSTER|SENTINEL|TIME|ROLE|HELLO|QUIT|PING|ECHO|SELECT|AUTH)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Server administration and connection commands"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(PFADD|PFCOUNT|PFMERGE)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "HyperLogLog commands for cardinality estimation"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(GEOADD|GEOPOS|GEODIST|GEORADIUS|GEORADIUSBYMEMBER|GEOSEARCH|GEOSEARCHSTORE|GEOHASH)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Geospatial commands for location-based operations"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(BITCOUNT|BITPOS|BITOP|BITFIELD|BITFIELD_RO|SETBIT|GETBIT)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Bitmap/bitfield commands for bit-level operations"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(NX|XX|EX|PX|EXAT|PXAT|KEEPTTL|GT|LT|GET|ABSTTL|REPLACE|FREQ|IDLETIME|ENCODING|REFCOUNT|HELP)\\b",
+      "tokenModifiers": [],
+      "description": "Command option flags and modifiers for SET, EXPIRE, RESTORE, OBJECT, etc."
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "\\b(MATCH|COUNT|TYPE|BY|LIMIT|WITHSCORES|WITHCOORD|WITHDIST|WITHHASH|REV|BYSCORE|BYLEX|AGGREGATE|WEIGHTS|ASC|DESC|ALPHA|STORE|CH|INCR|ASYNC|SYNC|NOSAVE)\\b",
+      "tokenModifiers": [],
+      "description": "Subcommand arguments for SCAN, SORT, GEO, ZADD, FLUSHDB, etc."
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(BEFORE|AFTER|LEFT|RIGHT|MIN|MAX|SUM|CREATE|SETID|DELCONSUMER|DESTROY|MKSTREAM|NOMKSTREAM|LOAD|FLUSH|LIST|KILL|GETNAME|SETNAME|PAUSE|UNPAUSE|ID|BLOCK|STREAMS|GROUP|CONSUMERS|FULL)\\b",
+      "tokenModifiers": [],
+      "description": "Positional arguments and subcommand keywords for LINSERT, LMPOP, XGROUP, CLIENT, SCRIPT, XINFO, XREAD, etc."
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(string|list|set|zset|hash|stream|ReJSON-RL|MBbloom--|graphdata|TSDB-TYPE)\\b",
+      "tokenModifiers": ["readonly"],
+      "description": "Redis data type identifiers returned by TYPE command"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(XINFO\\s+STREAM|XINFO\\s+GROUPS|XINFO\\s+CONSUMERS|XGROUP\\s+CREATE|XGROUP\\s+SETID|XGROUP\\s+DESTROY|XGROUP\\s+DELCONSUMER|XGROUP\\s+CREATECONSUMER)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "Compound stream subcommands for XINFO and XGROUP"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CLIENT\\s+LIST|CLIENT\\s+KILL|CLIENT\\s+GETNAME|CLIENT\\s+SETNAME|CLIENT\\s+PAUSE|CLIENT\\s+UNPAUSE|CLIENT\\s+ID|CLIENT\\s+INFO)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "CLIENT subcommands for connection management"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CONFIG\\s+SET|CONFIG\\s+GET|CONFIG\\s+RESETSTAT|CONFIG\\s+REWRITE)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "CONFIG subcommands for runtime configuration"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(SCRIPT\\s+LOAD|SCRIPT\\s+EXISTS|SCRIPT\\s+FLUSH|SCRIPT\\s+DEBUG|FUNCTION\\s+LOAD|FUNCTION\\s+LIST|FUNCTION\\s+DELETE|FUNCTION\\s+DUMP|FUNCTION\\s+RESTORE|FUNCTION\\s+STATS)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "SCRIPT and FUNCTION subcommands for server-side scripting"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(OBJECT\\s+ENCODING|OBJECT\\s+REFCOUNT|OBJECT\\s+IDLETIME|OBJECT\\s+FREQ|OBJECT\\s+HELP)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "OBJECT subcommands for key introspection"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(CLUSTER\\s+INFO|CLUSTER\\s+NODES|CLUSTER\\s+MEET|CLUSTER\\s+ADDSLOTS|CLUSTER\\s+DELSLOTS|CLUSTER\\s+FAILOVER|CLUSTER\\s+RESET|CLUSTER\\s+SLOTS|CLUSTER\\s+SHARDS|CLUSTER\\s+KEYSLOT|CLUSTER\\s+REPLICATE|CLUSTER\\s+SETSLOT|CLUSTER\\s+SAVECONFIG|CLUSTER\\s+FLUSHSLOTS|CLUSTER\\s+MYID)\\b",
+      "tokenModifiers": ["defaultLibrary"],
+      "description": "CLUSTER subcommands for cluster management"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "[a-zA-Z][a-zA-Z0-9_:.-]*(?=\\s|$)",
+      "tokenModifiers": [],
+      "description": "Redis key names including namespaced keys with colons"
+    },
+    {
+      "tokenType": "string",
       "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
-      "modifiers": [],
-      "description": "String values in quotes"
+      "tokenModifiers": [],
+      "description": "Quoted string values"
     },
     {
-      "type": "number",
-      "pattern": "\\b-?\\d+(\\.\\d+)?\\b",
-      "modifiers": [],
-      "description": "Numeric values (scores, TTLs, counts)"
+      "tokenType": "number",
+      "pattern": "[+-]?\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Numeric literals for scores, TTLs, counts, and offsets"
     },
     {
-      "type": "comment",
+      "tokenType": "number",
+      "pattern": "[+-]inf\\b|\\binf\\b",
+      "tokenModifiers": [],
+      "description": "Infinity literals for sorted set range queries"
+    },
+    {
+      "tokenType": "comment",
       "pattern": "#[^\\n]*",
-      "modifiers": [],
-      "description": "Comments in Redis configuration and scripts"
+      "tokenModifiers": [],
+      "description": "Comments starting with # in redis.conf and scripts"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "\\*\\d+|\\$\\d+",
+      "tokenModifiers": [],
+      "description": "RESP protocol array (*N) and bulk string ($N) length prefixes"
     }
   ]
 }
