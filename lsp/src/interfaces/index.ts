@@ -24,3 +24,6 @@ export * from "./selectionRange";
 export * from "./semanticTokens";
 export * from "./signatureHelp";
 export * from "./typeDefinition";
+export * from "./monarchTokens";
+export * from "./newSymbolNames";
+export * from "./multiDocumentHighlight";

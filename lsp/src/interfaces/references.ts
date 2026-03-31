@@ -8,4 +8,5 @@ export interface ReferencePattern {
 export interface ReferencesData {
   language: string;
   referencePatterns: ReferencePattern[];
+  identifierPattern?: string;
 }

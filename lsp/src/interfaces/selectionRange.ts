@@ -13,5 +13,5 @@ export interface SelectionRanges {
 
 export interface SelectionRangeData {
   language: string;
-  selectionRanges: SelectionRanges;
+  selectionRanges: SelectionRanges & { wordPattern?: string };
 }

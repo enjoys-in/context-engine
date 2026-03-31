@@ -1,5 +1,7 @@
-export function buildCapabilities(providers: Record<string, any>): Record<string, any> {
-  const caps: Record<string, any> = {};
+import type { LanguageProviders, ServerCapabilities } from "./types.ts";
+
+export function buildCapabilities(providers: LanguageProviders): ServerCapabilities {
+  const caps: ServerCapabilities = {};
 
   // Document sync — full content on open/change
   caps.textDocumentSync = {
@@ -8,8 +10,7 @@ export function buildCapabilities(providers: Record<string, any>): Record<string
   };
 
   if (providers.completion) {
-    const trigger = providers.completion.triggerCharacters || ["."];
-    caps.completionProvider = { triggerCharacters: trigger, resolveProvider: false };
+    caps.completionProvider = { triggerCharacters: ["."], resolveProvider: false };
   }
 
   if (providers.hover) caps.hoverProvider = true;
@@ -28,9 +29,10 @@ export function buildCapabilities(providers: Record<string, any>): Record<string
   if (providers.documentRangeFormatting) caps.documentRangeFormattingProvider = true;
 
   if (providers.onTypeFormatting) {
-    const trigger = providers.onTypeFormatting.triggerCharacters || [";", "}"];
+    const chars = providers.onTypeFormatting.autoFormatTriggerCharacters;
+    const trigger = chars.length > 0 ? chars : [";", "}"];
     caps.documentOnTypeFormattingProvider = {
-      firstTriggerCharacter: trigger[0],
+      firstTriggerCharacter: trigger[0]!,
       moreTriggerCharacter: trigger.slice(1),
     };
   }
@@ -53,11 +55,20 @@ export function buildCapabilities(providers: Record<string, any>): Record<string
 
   if (providers.semanticTokens) {
     caps.semanticTokensProvider = {
-      legend: providers.semanticTokens.legend || { tokenTypes: [], tokenModifiers: [] },
+      legend: providers.semanticTokens.tokenLegend ?? { tokenTypes: [], tokenModifiers: [] },
       full: true,
       range: !!providers.rangeSemanticTokens,
     };
   }
+
+  // Monarch tokenizer data (custom capability — Monaco-specific)
+  if (providers.monarchTokens) caps.monarchTokensProvider = true;
+
+  // New symbol names / rename suggestions (custom capability)
+  if (providers.newSymbolNames) caps.newSymbolNamesProvider = true;
+
+  // Multi-document highlight (custom capability)
+  if (providers.multiDocumentHighlight) caps.multiDocumentHighlightProvider = true;
 
   return caps;
 }

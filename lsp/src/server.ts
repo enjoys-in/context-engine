@@ -1,8 +1,8 @@
-import { WebSocketServer, type WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 import * as url from "node:url";
 import * as crypto from "node:crypto";
-import { WebSocketMessageReader, WebSocketMessageWriter } from "vscode-ws-jsonrpc";
-import type { IWebSocket, JsonRpcRequest, JsonRpcNotification } from "./types.ts";
+import { createReader, createWriter } from "./jsonrpc.ts";
+import type { JsonRpcRequest, JsonRpcNotification, LanguageProviders, ServerCapabilities } from "./types.ts";
 import {
   hasLanguage,
   listLanguages,
@@ -13,20 +13,8 @@ import {
 } from "./dataLoader.ts";
 import { buildCapabilities } from "./capabilities.ts";
 import { handleRequest, handleNotification } from "./handlers.ts";
-import { getServerConfig, isServerAvailable } from "./languageServers.ts";
-import { createLspProxy } from "./lspProxy.ts";
 
 const PORT = parseInt(process.env.PORT || "9257", 10);
-
-function wrapSocket(ws: WebSocket): IWebSocket {
-  return {
-    send: (content) => ws.send(content),
-    onMessage: (cb) => ws.on("message", (data) => cb(String(data))),
-    onError: (cb) => ws.on("error", (e) => cb(e.message ?? String(e))),
-    onClose: (cb) => ws.on("close", (code, reason) => cb(code, String(reason))),
-    dispose: () => ws.close(),
-  }; 
-}
 
 const wss = new WebSocketServer({ port: PORT, path: "/lsp" }, () => {
   console.log(`Context-Engine LSP WebSocket server listening on ws://127.0.0.1:${PORT}/lsp`);
@@ -53,34 +41,16 @@ wss.on("connection", (ws, req) => {
   const connectionId = crypto.randomUUID();
   console.log(`[${languageId}] client connected (${connectionId})`);
 
-  const socket = wrapSocket(ws);
-
-  // ── Try real LSP server proxy first ─────────────────────────────
-  const serverConfig = getServerConfig(languageId);
-  if (serverConfig && isServerAvailable(serverConfig)) {
-    console.log(`[${languageId}] real LSP server available → proxy mode`);
-    const proxy = createLspProxy(socket, serverConfig, languageId);
-    if (proxy) {
-      ws.on("close", () => {
-        console.log(`[${languageId}] client disconnected (${connectionId})`);
-        proxy.dispose();
-      });
-      return; // all messages handled by forward()
-    }
-    console.log(`[${languageId}] proxy failed, falling back to static data`);
-  }
-
-  // ── Fallback: static context-engine data ────────────────────────
-  // Allocate per-connection cache
   createConnectionCache(connectionId);
-  const reader = new WebSocketMessageReader(socket);
-  const writer = new WebSocketMessageWriter(socket);
+
+  const reader = createReader(ws);
+  const writer = createWriter(ws);
 
   const langData = loadLanguageData(connectionId, languageId);
-  const providers = langData?.providers ?? {};
-  const capabilities = buildCapabilities(providers);
+  const providers: LanguageProviders = langData?.providers ?? {};
+  const capabilities: ServerCapabilities = buildCapabilities(providers);
 
-  reader.listen((message: any) => {
+  reader.listen((message) => {
     if (message.method !== undefined) {
       if (message.id !== undefined && message.id !== null) {
         handleRequest(

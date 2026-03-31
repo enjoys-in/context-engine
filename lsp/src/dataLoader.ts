@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Manifest, ManifestLanguage, LanguageData } from "./types.ts";
+import type { Manifest, ManifestLanguage, LanguageData, LanguageProviders } from "./types.ts";
 
 const DATA_DIR = path.resolve(import.meta.dirname, "..", "..", "data");
 const MANIFEST_PATH = path.join(DATA_DIR, "manifest.json");
@@ -32,6 +32,9 @@ const PROVIDERS = [
   "semanticTokens",
   "rangeSemanticTokens",
   "commands",
+  "monarchTokens",
+  "newSymbolNames",
+  "multiDocumentHighlight",
 ] as const;
 
 // ── Language aliases ─────────────────────────────────────────────────
@@ -107,7 +110,7 @@ export function loadLanguageData(
 
     const fullPath = path.join(DATA_DIR, relPath);
     try {
-      data.providers[provider] = JSON.parse(fs.readFileSync(fullPath, "utf-8"));
+      (data.providers as Record<string, unknown>)[provider] = JSON.parse(fs.readFileSync(fullPath, "utf-8"));
     } catch {
       // file missing or invalid — skip
     }
