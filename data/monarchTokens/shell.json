@@ -1,0 +1,258 @@
+{
+  "language": "shell",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".shell",
+  "keywords": [
+    "if",
+    "then",
+    "else",
+    "elif",
+    "fi",
+    "case",
+    "esac",
+    "for",
+    "select",
+    "while",
+    "until",
+    "do",
+    "done",
+    "in",
+    "function",
+    "time",
+    "coproc",
+    "break",
+    "continue",
+    "return",
+    "exit",
+    "export",
+    "readonly",
+    "declare",
+    "local",
+    "typeset",
+    "unset",
+    "shift",
+    "source",
+    "alias",
+    "unalias",
+    "set",
+    "shopt",
+    "trap",
+    "eval",
+    "exec",
+    "test",
+    "true",
+    "false",
+    "read",
+    "echo",
+    "printf",
+    "cd",
+    "pwd",
+    "pushd",
+    "popd",
+    "dirs",
+    "let",
+    "getopts",
+    "wait",
+    "kill",
+    "jobs",
+    "bg",
+    "fg",
+    "disown",
+    "builtin",
+    "command",
+    "enable",
+    "help",
+    "history",
+    "logout",
+    "mapfile",
+    "readarray",
+    "suspend",
+    "type",
+    "ulimit",
+    "umask"
+  ],
+  "typeKeywords": [],
+  "operators": [
+    "=",
+    "==",
+    "!=",
+    "-eq",
+    "-ne",
+    "-gt",
+    "-lt",
+    "-ge",
+    "-le",
+    "-z",
+    "-n",
+    "-f",
+    "-d",
+    "-e",
+    "-r",
+    "-w",
+    "-x",
+    "-s",
+    "&&",
+    "||",
+    "!",
+    "|",
+    "&",
+    ">",
+    "<",
+    ">>",
+    "<<",
+    "<<<",
+    ">&",
+    "2>&1",
+    "|&"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "\\$\\{[^}]+\\}",
+        "variable"
+      ],
+      [
+        "\\$\\([^)]+\\)",
+        "variable"
+      ],
+      [
+        "\\$[A-Za-z_]\\w*",
+        "variable"
+      ],
+      [
+        "\\$[0-9@#?!\\-*$]",
+        "variable"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "[0-9]+",
+        "number"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single_sh"
+      ],
+      [
+        "\\$\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "\\$'",
+        "string",
+        "@string_ansi"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "\\$[A-Za-z_]\\w*",
+        "variable"
+      ],
+      [
+        "\\$\\{[^}]+\\}",
+        "variable"
+      ],
+      [
+        "\\\\.",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single_sh": [
+      [
+        "[^']+",
+        "string"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_ansi": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "\\\\.",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

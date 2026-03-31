@@ -1,0 +1,252 @@
+{
+  "language": "go",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".go",
+  "keywords": [
+    "break",
+    "case",
+    "chan",
+    "const",
+    "continue",
+    "default",
+    "defer",
+    "else",
+    "fallthrough",
+    "for",
+    "func",
+    "go",
+    "goto",
+    "if",
+    "import",
+    "interface",
+    "map",
+    "package",
+    "range",
+    "return",
+    "select",
+    "struct",
+    "switch",
+    "type",
+    "var"
+  ],
+  "typeKeywords": [
+    "bool",
+    "byte",
+    "complex64",
+    "complex128",
+    "error",
+    "float32",
+    "float64",
+    "int",
+    "int8",
+    "int16",
+    "int32",
+    "int64",
+    "rune",
+    "string",
+    "uint",
+    "uint8",
+    "uint16",
+    "uint32",
+    "uint64",
+    "uintptr",
+    "any",
+    "comparable"
+  ],
+  "operators": [
+    "=",
+    ":=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    "&^=",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!",
+    "<-",
+    "++",
+    "--",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "&",
+    "|",
+    "^",
+    "~",
+    "<<",
+    ">>",
+    "&^",
+    "..."
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO][0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ],
+      [
+        "`",
+        "string",
+        "@string_raw"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [
+      [
+        "[^/]+",
+        "comment"
+      ],
+      [
+        "\\*/",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_raw": [
+      [
+        "[^`]+",
+        "string"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

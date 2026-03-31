@@ -1,0 +1,360 @@
+{
+  "language": "elixir",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".elixir",
+  "keywords": [
+    "after",
+    "alias",
+    "and",
+    "case",
+    "catch",
+    "cond",
+    "def",
+    "defp",
+    "defcallback",
+    "defdelegate",
+    "defexception",
+    "defguard",
+    "defguardp",
+    "defimpl",
+    "defmacro",
+    "defmacrop",
+    "defmodule",
+    "defn",
+    "defnp",
+    "defoverridable",
+    "defprotocol",
+    "defstruct",
+    "do",
+    "else",
+    "end",
+    "fn",
+    "for",
+    "if",
+    "import",
+    "in",
+    "not",
+    "or",
+    "quote",
+    "raise",
+    "receive",
+    "require",
+    "rescue",
+    "try",
+    "unless",
+    "unquote",
+    "unquote_splicing",
+    "use",
+    "when",
+    "with",
+    "true",
+    "false",
+    "nil"
+  ],
+  "typeKeywords": [
+    "Atom",
+    "BitString",
+    "Float",
+    "Function",
+    "Integer",
+    "List",
+    "Map",
+    "Pid",
+    "Port",
+    "Reference",
+    "Tuple",
+    "String",
+    "Regex",
+    "Range",
+    "MapSet",
+    "Keyword",
+    "IO",
+    "File",
+    "Path",
+    "System",
+    "Task",
+    "Agent",
+    "GenServer",
+    "Supervisor",
+    "Application",
+    "Registry",
+    "DynamicSupervisor",
+    "Enum",
+    "Stream"
+  ],
+  "operators": [
+    "=",
+    "==",
+    "===",
+    "!=",
+    "!==",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!",
+    "|>",
+    "<>",
+    "++",
+    "--",
+    "..",
+    "..//",
+    "\\\\",
+    "<-",
+    "->",
+    "|",
+    "::",
+    "~>",
+    "<~>",
+    "<<<",
+    ">>>",
+    "~~~",
+    "+",
+    "-",
+    "*",
+    "/",
+    "**",
+    "^^^",
+    "&&&",
+    "|||",
+    "<<<",
+    ">>>",
+    "^^^",
+    "&",
+    "@",
+    "^"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%@.]+",
+  "escapes": "\\\\(?:[abdefnrstv\\\\\"'\\\\]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4})",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        ":[a-zA-Z_]\\w*[!?]?",
+        "string.symbol"
+      ],
+      [
+        "@[a-zA-Z_]\\w*",
+        "annotation"
+      ],
+      [
+        "[A-Z]\\w*",
+        "type"
+      ],
+      [
+        "[a-zA-Z_]\\w*[!?]?",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "0[xX][0-9a-fA-F_]+",
+        "number.hex"
+      ],
+      [
+        "0[bB][01_]+",
+        "number.binary"
+      ],
+      [
+        "0[oO][0-7_]+",
+        "number.octal"
+      ],
+      [
+        "\\d[\\d_]*\\.?\\d*([eE][\\-+]?\\d+)?",
+        "number"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@string_triple"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "~[a-zA-Z]\"\"\"",
+        "string",
+        "@sigil_triple"
+      ],
+      [
+        "~[a-zA-Z]\"",
+        "string",
+        "@sigil_double"
+      ],
+      [
+        "~[a-zA-Z]\\/",
+        "regexp",
+        "@sigil_regex"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\#\"]+",
+        "string"
+      ],
+      [
+        "#\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@interpolation"
+        }
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\\\\#\"]+",
+        "string"
+      ],
+      [
+        "#\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@interpolation"
+        }
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
+      ]
+    ],
+    "sigil_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"[a-z]*",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
+      ]
+    ],
+    "sigil_double": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"[a-z]*",
+        "string",
+        "@pop"
+      ]
+    ],
+    "sigil_regex": [
+      [
+        "[^\\/]+",
+        "regexp"
+      ],
+      [
+        "\\/[a-z]*",
+        "regexp",
+        "@pop"
+      ]
+    ],
+    "interpolation": [
+      [
+        "\\{",
+        "delimiter.bracket",
+        "@interpolation"
+      ],
+      [
+        "\\}",
+        "delimiter.bracket",
+        "@pop"
+      ],
+      {
+        "include": "root"
+      }
+    ]
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "language": "powerquery",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".powerquery",
+  "ignoreCase": false,
+  "keywords": [],
+  "typeKeywords": [],
+  "operators": [
+    "=",
+    "!=",
+    "==",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

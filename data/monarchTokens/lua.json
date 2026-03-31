@@ -1,0 +1,210 @@
+{
+  "language": "lua",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".lua",
+  "keywords": [
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while"
+  ],
+  "typeKeywords": [
+    "coroutine",
+    "debug",
+    "io",
+    "math",
+    "os",
+    "package",
+    "string",
+    "table",
+    "utf8"
+  ],
+  "operators": [
+    "=",
+    "==",
+    "~=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "..",
+    "...",
+    "#",
+    "+",
+    "-",
+    "*",
+    "/",
+    "//",
+    "%",
+    "^",
+    "&",
+    "|",
+    "~",
+    "<<",
+    ">>",
+    "and",
+    "or",
+    "not"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%#.]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{2}|\\d{1,3}|u\\{[0-9A-Fa-f]+\\})",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type.identifier",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "0[xX][0-9a-fA-F_]+",
+        "number.hex"
+      ],
+      [
+        "\\d+\\.?\\d*([eE][\\-+]?\\d+)?",
+        "number"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "\\[=*\\[",
+        "string",
+        "@string_long"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "--\\[=*\\[",
+        "comment",
+        "@comment_long"
+      ],
+      [
+        "--.*$",
+        "comment"
+      ]
+    ],
+    "comment_long": [
+      [
+        "\\]=*\\]",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_long": [
+      [
+        "\\]=*\\]",
+        "string",
+        "@pop"
+      ],
+      [
+        ".",
+        "string"
+      ]
+    ]
+  }
+}

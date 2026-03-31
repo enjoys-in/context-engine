@@ -1,0 +1,342 @@
+{
+  "language": "scala",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".scala",
+  "keywords": [
+    "abstract",
+    "case",
+    "catch",
+    "class",
+    "def",
+    "derives",
+    "do",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "extension",
+    "false",
+    "final",
+    "finally",
+    "for",
+    "forSome",
+    "given",
+    "if",
+    "implicit",
+    "import",
+    "inline",
+    "lazy",
+    "match",
+    "new",
+    "null",
+    "object",
+    "opaque",
+    "open",
+    "override",
+    "package",
+    "private",
+    "protected",
+    "return",
+    "sealed",
+    "super",
+    "then",
+    "this",
+    "throw",
+    "trait",
+    "transparent",
+    "true",
+    "try",
+    "type",
+    "using",
+    "val",
+    "var",
+    "while",
+    "with",
+    "yield"
+  ],
+  "typeKeywords": [
+    "Any",
+    "AnyRef",
+    "AnyVal",
+    "Boolean",
+    "Byte",
+    "Char",
+    "Double",
+    "Float",
+    "Int",
+    "Long",
+    "Nothing",
+    "Null",
+    "Short",
+    "String",
+    "Unit",
+    "Array",
+    "List",
+    "Map",
+    "Set",
+    "Seq",
+    "Vector",
+    "Option",
+    "Either",
+    "Future",
+    "Try",
+    "Tuple",
+    "Function",
+    "PartialFunction"
+  ],
+  "operators": [
+    "=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!",
+    "?",
+    ":",
+    "::",
+    "+:",
+    ":+",
+    "++",
+    "#",
+    "_",
+    "@",
+    "<-",
+    "->",
+    "=>",
+    "<:",
+    ">:",
+    "<%",
+    "=:=",
+    "<:<",
+    "=>>"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%@#]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    },
+    {
+      "open": "<",
+      "close": ">",
+      "token": "delimiter.angle"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO][0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ],
+      [
+        "@[A-Za-z_]\\w*",
+        "annotation"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@string_triple"
+      ],
+      [
+        "s\"",
+        "string",
+        "@string_interpolated"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [
+      [
+        "[^/]+",
+        "comment"
+      ],
+      [
+        "\\*/",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
+      ]
+    ],
+    "string_interpolated": [
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "bracketCounting": [
+      [
+        "\\{",
+        "delimiter.bracket",
+        "@bracketCounting"
+      ],
+      [
+        "\\}",
+        "delimiter.bracket",
+        "@pop"
+      ],
+      {
+        "include": "root"
+      }
+    ]
+  }
+}

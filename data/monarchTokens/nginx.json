@@ -1,0 +1,195 @@
+{
+  "language": "nginx",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".nginx",
+  "ignoreCase": false,
+  "keywords": [
+    "server",
+    "location",
+    "upstream",
+    "http",
+    "events",
+    "worker_processes",
+    "worker_connections",
+    "include",
+    "error_log",
+    "access_log",
+    "pid",
+    "user",
+    "daemon",
+    "master_process",
+    "types",
+    "default_type",
+    "sendfile",
+    "tcp_nopush",
+    "tcp_nodelay",
+    "keepalive_timeout",
+    "gzip",
+    "proxy_pass",
+    "proxy_set_header",
+    "proxy_redirect",
+    "proxy_buffering",
+    "fastcgi_pass",
+    "uwsgi_pass",
+    "ssl_certificate",
+    "ssl_certificate_key",
+    "ssl_protocols",
+    "ssl_ciphers",
+    "root",
+    "index",
+    "try_files",
+    "rewrite",
+    "return",
+    "if",
+    "set",
+    "map",
+    "geo",
+    "limit_req",
+    "limit_conn",
+    "add_header",
+    "expires",
+    "log_format",
+    "error_page",
+    "deny",
+    "allow",
+    "auth_basic",
+    "listen",
+    "server_name",
+    "charset",
+    "resolver",
+    "client_max_body_size"
+  ],
+  "typeKeywords": [],
+  "operators": [
+    "=",
+    "!=",
+    "==",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

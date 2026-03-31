@@ -1,0 +1,423 @@
+{
+  "language": "dart",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".dart",
+  "keywords": [
+    "abstract",
+    "as",
+    "assert",
+    "async",
+    "await",
+    "base",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "covariant",
+    "default",
+    "deferred",
+    "do",
+    "dynamic",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "extension",
+    "external",
+    "factory",
+    "false",
+    "final",
+    "finally",
+    "for",
+    "Function",
+    "get",
+    "hide",
+    "if",
+    "implements",
+    "import",
+    "in",
+    "interface",
+    "is",
+    "late",
+    "library",
+    "mixin",
+    "new",
+    "null",
+    "of",
+    "on",
+    "operator",
+    "part",
+    "required",
+    "rethrow",
+    "return",
+    "sealed",
+    "set",
+    "show",
+    "static",
+    "super",
+    "switch",
+    "sync",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typedef",
+    "var",
+    "void",
+    "when",
+    "while",
+    "with",
+    "yield"
+  ],
+  "typeKeywords": [
+    "int",
+    "double",
+    "num",
+    "bool",
+    "String",
+    "List",
+    "Map",
+    "Set",
+    "Iterable",
+    "Future",
+    "Stream",
+    "dynamic",
+    "void",
+    "Object",
+    "Null",
+    "Function",
+    "Type",
+    "Symbol",
+    "Never",
+    "Record",
+    "Enum",
+    "DateTime",
+    "Duration",
+    "Uri",
+    "RegExp",
+    "BigInt"
+  ],
+  "operators": [
+    "=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    ">>>=",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!",
+    "?",
+    ":",
+    "++",
+    "--",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "&",
+    "|",
+    "^",
+    "~",
+    "<<",
+    ">>",
+    ">>>",
+    "->",
+    "::"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    },
+    {
+      "open": "<",
+      "close": ">",
+      "token": "delimiter.angle"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO][0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ],
+      [
+        "@[A-Za-z_]\\w*",
+        "annotation"
+      ],
+      [
+        "r\"",
+        "string",
+        "@string_raw_double"
+      ],
+      [
+        "r'",
+        "string",
+        "@string_raw_single"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@string_triple_double"
+      ],
+      [
+        "'''",
+        "string",
+        "@string_triple_single"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [
+      [
+        "[^/]+",
+        "comment"
+      ],
+      [
+        "\\*/",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\'\\$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_raw_double": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_raw_single": [
+      [
+        "[^']+",
+        "string"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple_double": [
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
+      ]
+    ],
+    "string_triple_single": [
+      [
+        "[^\\\\'\\$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "'''",
+        "string",
+        "@pop"
+      ],
+      [
+        "'",
+        "string"
+      ]
+    ],
+    "bracketCounting": [
+      [
+        "\\{",
+        "delimiter.bracket",
+        "@bracketCounting"
+      ],
+      [
+        "\\}",
+        "delimiter.bracket",
+        "@pop"
+      ],
+      {
+        "include": "root"
+      }
+    ]
+  }
+}

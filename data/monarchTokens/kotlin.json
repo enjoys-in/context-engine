@@ -1,0 +1,363 @@
+{
+  "language": "kotlin",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".kt",
+  "keywords": [
+    "abstract",
+    "actual",
+    "annotation",
+    "as",
+    "break",
+    "by",
+    "catch",
+    "class",
+    "companion",
+    "const",
+    "constructor",
+    "continue",
+    "crossinline",
+    "data",
+    "delegate",
+    "do",
+    "dynamic",
+    "else",
+    "enum",
+    "expect",
+    "external",
+    "false",
+    "field",
+    "final",
+    "finally",
+    "for",
+    "fun",
+    "get",
+    "if",
+    "import",
+    "in",
+    "infix",
+    "init",
+    "inline",
+    "inner",
+    "interface",
+    "internal",
+    "is",
+    "it",
+    "lateinit",
+    "noinline",
+    "null",
+    "object",
+    "open",
+    "operator",
+    "out",
+    "override",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "reified",
+    "return",
+    "sealed",
+    "set",
+    "super",
+    "suspend",
+    "tailrec",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typealias",
+    "val",
+    "value",
+    "var",
+    "vararg",
+    "when",
+    "where",
+    "while",
+    "yield"
+  ],
+  "typeKeywords": [
+    "Any",
+    "Boolean",
+    "Byte",
+    "Char",
+    "Double",
+    "Float",
+    "Int",
+    "Long",
+    "Nothing",
+    "Short",
+    "String",
+    "Unit",
+    "Array",
+    "List",
+    "Map",
+    "Set",
+    "Pair",
+    "Triple",
+    "Sequence",
+    "MutableList",
+    "MutableMap",
+    "MutableSet",
+    "Comparable",
+    "Iterable",
+    "Collection"
+  ],
+  "operators": [
+    "=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    ">>>=",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!",
+    "?",
+    ":",
+    "++",
+    "--",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "&",
+    "|",
+    "^",
+    "~",
+    "<<",
+    ">>",
+    ">>>",
+    "->",
+    "::"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    },
+    {
+      "open": "<",
+      "close": ">",
+      "token": "delimiter.angle"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO][0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ],
+      [
+        "@[A-Za-z_]\\w*",
+        "annotation"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@string_multiline"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [
+      [
+        "[^/]+",
+        "comment"
+      ],
+      [
+        "\\*/",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_multiline": [
+      [
+        "[^\"$]+",
+        "string"
+      ],
+      [
+        "\\$\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@bracketCounting"
+        }
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
+      ]
+    ],
+    "bracketCounting": [
+      [
+        "\\{",
+        "delimiter.bracket",
+        "@bracketCounting"
+      ],
+      [
+        "\\}",
+        "delimiter.bracket",
+        "@pop"
+      ],
+      {
+        "include": "root"
+      }
+    ]
+  }
+}

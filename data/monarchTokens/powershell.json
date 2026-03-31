@@ -1,0 +1,328 @@
+{
+  "language": "powershell",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".ps1",
+  "ignoreCase": true,
+  "keywords": [
+    "begin",
+    "break",
+    "catch",
+    "class",
+    "continue",
+    "data",
+    "define",
+    "do",
+    "dynamicparam",
+    "else",
+    "elseif",
+    "end",
+    "enum",
+    "exit",
+    "filter",
+    "finally",
+    "for",
+    "foreach",
+    "from",
+    "function",
+    "hidden",
+    "if",
+    "in",
+    "inlinescript",
+    "parallel",
+    "param",
+    "process",
+    "return",
+    "sequence",
+    "static",
+    "switch",
+    "throw",
+    "trap",
+    "try",
+    "until",
+    "using",
+    "var",
+    "while",
+    "workflow",
+    "configuration",
+    "where",
+    "sort",
+    "select",
+    "group",
+    "measure",
+    "new",
+    "format",
+    "write",
+    "read",
+    "invoke",
+    "start",
+    "stop",
+    "get",
+    "set",
+    "add",
+    "remove",
+    "test",
+    "clear",
+    "import",
+    "export",
+    "convertto",
+    "convertfrom",
+    "join",
+    "split",
+    "foreach-object",
+    "where-object",
+    "select-object",
+    "sort-object",
+    "group-object",
+    "out-null",
+    "out-file",
+    "out-string",
+    "tee-object"
+  ],
+  "typeKeywords": [
+    "string",
+    "int",
+    "long",
+    "double",
+    "decimal",
+    "float",
+    "bool",
+    "byte",
+    "char",
+    "void",
+    "array",
+    "hashtable",
+    "datetime",
+    "timespan",
+    "regex",
+    "scriptblock",
+    "type",
+    "xml",
+    "psobject",
+    "pscustomobject",
+    "switch",
+    "nullable",
+    "ref",
+    "ordered"
+  ],
+  "operators": [
+    "=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "-eq",
+    "-ne",
+    "-gt",
+    "-lt",
+    "-ge",
+    "-le",
+    "-like",
+    "-notlike",
+    "-match",
+    "-notmatch",
+    "-contains",
+    "-notcontains",
+    "-in",
+    "-notin",
+    "-replace",
+    "-and",
+    "-or",
+    "-not",
+    "-xor",
+    "-band",
+    "-bor",
+    "-bnot",
+    "-bxor",
+    "-shl",
+    "-shr",
+    "..",
+    "::",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "++",
+    "--",
+    "!"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "\\$[A-Za-z_:]\\w*",
+        "variable"
+      ],
+      [
+        "@[A-Za-z_]\\w*",
+        "variable"
+      ],
+      [
+        "[a-zA-Z_][\\w-]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "\\d+\\.?\\d*",
+        "number"
+      ],
+      [
+        "0x[0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double_ps"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single_ps"
+      ],
+      [
+        "@\"",
+        "string",
+        "@string_here_double"
+      ],
+      [
+        "@'",
+        "string",
+        "@string_here_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ],
+      [
+        "<#",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [
+      [
+        "#>",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double_ps": [
+      [
+        "[^\\\\\"$]+",
+        "string"
+      ],
+      [
+        "\\$[A-Za-z_:]\\w*",
+        "variable"
+      ],
+      [
+        "\\$\\([^)]*\\)",
+        "variable"
+      ],
+      [
+        "`[`0abefnrtv]",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single_ps": [
+      [
+        "[^']+",
+        "string"
+      ],
+      [
+        "''",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_here_double": [
+      [
+        "\"@",
+        "string",
+        "@pop"
+      ],
+      [
+        "\\$[A-Za-z_:]\\w*",
+        "variable"
+      ],
+      [
+        ".",
+        "string"
+      ]
+    ],
+    "string_here_single": [
+      [
+        "'@",
+        "string",
+        "@pop"
+      ],
+      [
+        ".",
+        "string"
+      ]
+    ]
+  }
+}

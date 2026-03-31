@@ -1,0 +1,174 @@
+{
+  "language": "docker-compose",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".docker-compose",
+  "ignoreCase": false,
+  "keywords": [
+    "version",
+    "services",
+    "build",
+    "image",
+    "container_name",
+    "ports",
+    "volumes",
+    "environment",
+    "networks",
+    "depends_on",
+    "restart",
+    "command",
+    "entrypoint",
+    "working_dir",
+    "healthcheck",
+    "deploy",
+    "configs",
+    "secrets",
+    "logging",
+    "labels",
+    "expose",
+    "links",
+    "extra_hosts",
+    "dns",
+    "tmpfs",
+    "sysctls",
+    "ulimits",
+    "cap_add",
+    "cap_drop",
+    "devices",
+    "privileged",
+    "stdin_open",
+    "tty"
+  ],
+  "typeKeywords": [],
+  "operators": [
+    "=",
+    "!=",
+    "==",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%"
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ]
+    ],
+    "comment": [],
+    "string_double": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

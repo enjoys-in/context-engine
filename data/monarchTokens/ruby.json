@@ -1,0 +1,337 @@
+{
+  "language": "ruby",
+  "defaultToken": "invalid",
+  "tokenPostfix": ".ruby",
+  "keywords": [
+    "BEGIN",
+    "END",
+    "__ENCODING__",
+    "__END__",
+    "__FILE__",
+    "__LINE__",
+    "alias",
+    "and",
+    "begin",
+    "break",
+    "case",
+    "class",
+    "def",
+    "defined?",
+    "do",
+    "else",
+    "elsif",
+    "end",
+    "ensure",
+    "false",
+    "for",
+    "if",
+    "in",
+    "module",
+    "next",
+    "nil",
+    "not",
+    "or",
+    "redo",
+    "rescue",
+    "retry",
+    "return",
+    "self",
+    "super",
+    "then",
+    "true",
+    "undef",
+    "unless",
+    "until",
+    "when",
+    "while",
+    "yield",
+    "raise",
+    "require",
+    "require_relative",
+    "include",
+    "extend",
+    "prepend",
+    "attr_reader",
+    "attr_writer",
+    "attr_accessor",
+    "public",
+    "private",
+    "protected",
+    "puts",
+    "print",
+    "p"
+  ],
+  "typeKeywords": [
+    "String",
+    "Integer",
+    "Float",
+    "Array",
+    "Hash",
+    "Symbol",
+    "NilClass",
+    "TrueClass",
+    "FalseClass",
+    "Regexp",
+    "Range",
+    "Proc",
+    "Lambda",
+    "IO",
+    "File",
+    "Dir",
+    "Time",
+    "Struct",
+    "OpenStruct",
+    "Enumerable",
+    "Comparable",
+    "Kernel",
+    "Object",
+    "BasicObject",
+    "Module",
+    "Class"
+  ],
+  "operators": [
+    "=",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "**=",
+    "&=",
+    "|=",
+    "^=",
+    "<<=",
+    ">>=",
+    "&&=",
+    "||=",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "<=>",
+    "===",
+    "=~",
+    "!~",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "**",
+    "&",
+    "|",
+    "^",
+    "~",
+    "<<",
+    ">>",
+    "..",
+    "...",
+    "?",
+    ":",
+    "::",
+    "."
+  ],
+  "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abefnrstv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,2}|u[0-9A-Fa-f]{4}|\\d{1,3})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        ":[a-zA-Z_]\\w*[!?]?",
+        "string.symbol"
+      ],
+      [
+        "[A-Z]\\w*",
+        "type"
+      ],
+      [
+        "@[a-zA-Z_]\\w*",
+        "variable.instance"
+      ],
+      [
+        "@@[a-zA-Z_]\\w*",
+        "variable.class"
+      ],
+      [
+        "\\$[a-zA-Z_]\\w*",
+        "variable.global"
+      ],
+      [
+        "[a-zA-Z_]\\w*[!?]?",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "0[xX][0-9a-fA-F_]+",
+        "number.hex"
+      ],
+      [
+        "0[bB][01_]+",
+        "number.binary"
+      ],
+      [
+        "0[oO][0-7_]+",
+        "number.octal"
+      ],
+      [
+        "@digits",
+        "number"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "\\/(\\\\.|[^\\/])+\\/[imx]*",
+        "regexp"
+      ],
+      [
+        "%[qQwWiIxrs]?[({<\\[]",
+        "string",
+        "@string_percent"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,.]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ],
+      [
+        "#.*$",
+        "comment"
+      ],
+      [
+        "=begin",
+        "comment",
+        "@comment_block"
+      ]
+    ],
+    "comment_block": [
+      [
+        "=end",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\\\\#\"]+",
+        "string"
+      ],
+      [
+        "#\\{",
+        {
+          "token": "delimiter.bracket",
+          "next": "@interpolation"
+        }
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^\\\\']+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_percent": [
+      [
+        "[^\\\\}\\]>)]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "[}\\]>)]",
+        "string",
+        "@pop"
+      ]
+    ],
+    "interpolation": [
+      [
+        "\\{",
+        "delimiter.bracket",
+        "@interpolation"
+      ],
+      [
+        "\\}",
+        "delimiter.bracket",
+        "@pop"
+      ],
+      {
+        "include": "root"
+      }
+    ]
+  }
+}

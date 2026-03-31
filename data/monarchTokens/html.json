@@ -1,0 +1,198 @@
+{
+  "language": "html",
+  "defaultToken": "",
+  "tokenPostfix": ".html",
+  "ignoreCase": true,
+  "keywords": [],
+  "typeKeywords": [],
+  "operators": [],
+  "symbols": "",
+  "brackets": [
+    {
+      "open": "<!--",
+      "close": "-->",
+      "token": "comment"
+    },
+    {
+      "open": "<",
+      "close": ">",
+      "token": "delimiter.angle"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      [
+        "<!DOCTYPE",
+        "metatag",
+        "@doctype"
+      ],
+      [
+        "<!--",
+        "comment",
+        "@comment"
+      ],
+      [
+        "(<)(script)",
+        [
+          "delimiter",
+          {
+            "token": "tag",
+            "next": "@script"
+          }
+        ]
+      ],
+      [
+        "(<)(style)",
+        [
+          "delimiter",
+          {
+            "token": "tag",
+            "next": "@style"
+          }
+        ]
+      ],
+      [
+        "(<)(\\/?)(\\w+)",
+        [
+          "delimiter",
+          "delimiter",
+          {
+            "token": "tag",
+            "next": "@otherTag"
+          }
+        ]
+      ],
+      [
+        "[^<]+",
+        ""
+      ]
+    ],
+    "doctype": [
+      [
+        ">",
+        "metatag",
+        "@pop"
+      ],
+      [
+        ".",
+        "metatag"
+      ]
+    ],
+    "comment": [
+      [
+        "-->",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
+    "otherTag": [
+      [
+        "\\/?>",
+        "delimiter",
+        "@pop"
+      ],
+      [
+        "\"[^\"]*\"",
+        "attribute.value"
+      ],
+      [
+        "'[^']*'",
+        "attribute.value"
+      ],
+      [
+        "=",
+        "delimiter"
+      ],
+      [
+        "[\\w-]+",
+        "attribute.name"
+      ],
+      [
+        "[ \\t\\r\\n]+",
+        "white"
+      ]
+    ],
+    "script": [
+      [
+        ">",
+        "delimiter",
+        "@scriptBody"
+      ],
+      [
+        "\"[^\"]*\"",
+        "attribute.value"
+      ],
+      [
+        "'[^']*'",
+        "attribute.value"
+      ],
+      [
+        "=",
+        "delimiter"
+      ],
+      [
+        "[\\w-]+",
+        "attribute.name"
+      ]
+    ],
+    "scriptBody": [
+      [
+        "<\\/script\\s*>",
+        {
+          "token": "@rematch",
+          "next": "@pop"
+        }
+      ],
+      [
+        ".",
+        {
+          "token": "",
+          "next": "@pop"
+        }
+      ]
+    ],
+    "style": [
+      [
+        ">",
+        "delimiter",
+        "@styleBody"
+      ],
+      [
+        "\"[^\"]*\"",
+        "attribute.value"
+      ],
+      [
+        "'[^']*'",
+        "attribute.value"
+      ],
+      [
+        "=",
+        "delimiter"
+      ],
+      [
+        "[\\w-]+",
+        "attribute.name"
+      ]
+    ],
+    "styleBody": [
+      [
+        "<\\/style\\s*>",
+        {
+          "token": "@rematch",
+          "next": "@pop"
+        }
+      ],
+      [
+        ".",
+        {
+          "token": "",
+          "next": "@pop"
+        }
+      ]
+    ]
+  }
+}
