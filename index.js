@@ -1,176 +1,247 @@
 "use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-const fs = require("fs");
-const path = require("path");
-
-const COMMANDS_DIR = path.join(__dirname, "data", "commands");
-
-/** @type {Map<string, object>|null} */
-let _cache = null;
-
-/**
- * Load all commands into cache (lazy, first call only).
- * @returns {Map<string, object>}
- */
-function _loadAll() {
-  if (_cache) return _cache;
-  _cache = new Map();
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
+  clearCache: () => clearCache,
+  count: () => count,
+  dataDir: () => dataDir,
+  default: () => index_default,
+  getAllCommands: () => getAllCommands,
+  getCategories: () => getCategories,
+  getCommand: () => getCommand,
+  getCommandsByCategory: () => getCommandsByCategory,
+  getCommandsByPlatform: () => getCommandsByPlatform,
+  getContextEngine: () => getContextEngine,
+  getExamples: () => getExamples,
+  getGlobalOptions: () => getGlobalOptions,
+  getLanguageData: () => getLanguageData,
+  getManifest: () => getManifest,
+  getProviderData: () => getProviderData,
+  getSubcommands: () => getSubcommands,
+  getTheme: () => getTheme,
+  listCommandNames: () => listCommandNames,
+  listLanguages: () => listLanguages,
+  listLanguagesForProvider: () => listLanguagesForProvider,
+  listProviders: () => listProviders,
+  listThemes: () => listThemes,
+  resolveCommandPath: () => resolveCommandPath,
+  resolveProviderPath: () => resolveProviderPath,
+  resolveThemePath: () => resolveThemePath,
+  searchCommands: () => searchCommands
+});
+module.exports = __toCommonJS(index_exports);
+var fs = __toESM(require("node:fs"));
+var path = __toESM(require("node:path"));
+var import_meta = {};
+var ROOT = typeof __dirname !== "undefined" ? __dirname : path.dirname(new URL(import_meta.url).pathname);
+var DATA_DIR = path.join(ROOT, "data");
+var COMMANDS_DIR = path.join(DATA_DIR, "commands");
+var PROVIDERS = [
+  "codeActions",
+  "codeLens",
+  "color",
+  "commands",
+  "completion",
+  "declaration",
+  "definition",
+  "documentHighlight",
+  "documentRangeFormatting",
+  "documentSymbol",
+  "foldingRange",
+  "formatting",
+  "hover",
+  "implementation",
+  "inlayHints",
+  "inlineCompletions",
+  "linkedEditingRange",
+  "links",
+  "monarchTokens",
+  "multiDocumentHighlight",
+  "newSymbolNames",
+  "onTypeFormatting",
+  "rangeSemanticTokens",
+  "references",
+  "rename",
+  "selectionRange",
+  "semanticTokens",
+  "signatureHelp",
+  "typeDefinition"
+];
+var _commandCache = null;
+function loadCommands() {
+  if (_commandCache) return _commandCache;
+  _commandCache = /* @__PURE__ */ new Map();
   const files = fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".json") && f !== "manifest.json");
   for (const file of files) {
-    const data = JSON.parse(
-      fs.readFileSync(path.join(COMMANDS_DIR, file), "utf-8")
-    );
-    _cache.set(data.name, data);
+    const data = JSON.parse(fs.readFileSync(path.join(COMMANDS_DIR, file), "utf-8"));
+    _commandCache.set(data.name, data);
   }
-  return _cache;
+  return _commandCache;
 }
-
-/**
- * Get a single command by name.
- * @param {string} name - Command name (e.g. "git", "docker", "kubectl")
- * @returns {object|undefined}
- */
+var _providerCache = /* @__PURE__ */ new Map();
+function providerCacheKey(provider, lang) {
+  return `${provider}/${lang}`;
+}
 function getCommand(name) {
-  return _loadAll().get(name);
+  return loadCommands().get(name);
 }
-
-/**
- * Get all commands as an array.
- * @returns {object[]}
- */
 function getAllCommands() {
-  return Array.from(_loadAll().values());
+  return Array.from(loadCommands().values());
 }
-
-/**
- * List all available command names.
- * @returns {string[]}
- */
 function listCommandNames() {
-  return Array.from(_loadAll().keys()).sort();
+  return Array.from(loadCommands().keys()).sort();
 }
-
-/**
- * Get commands filtered by category.
- * @param {string} category - Category name (case-insensitive partial match)
- * @returns {object[]}
- */
 function getCommandsByCategory(category) {
   const lc = category.toLowerCase();
-  return getAllCommands().filter(
-    (cmd) => cmd.category && cmd.category.toLowerCase().includes(lc)
-  );
+  return getAllCommands().filter((cmd) => cmd.category && cmd.category.toLowerCase().includes(lc));
 }
-
-/**
- * Get commands filtered by platform.
- * @param {string} platform - "linux" | "macos" | "windows"
- * @returns {object[]}
- */
 function getCommandsByPlatform(platform) {
   const lc = platform.toLowerCase();
   return getAllCommands().filter(
-    (cmd) =>
-      Array.isArray(cmd.platforms) &&
-      cmd.platforms.some((p) => p.toLowerCase() === lc)
+    (cmd) => Array.isArray(cmd.platforms) && cmd.platforms.some((p) => p.toLowerCase() === lc)
   );
 }
-
-/**
- * Search commands by name, description, or category.
- * @param {string} query - Search query (case-insensitive)
- * @returns {object[]}
- */
 function searchCommands(query) {
   const lc = query.toLowerCase();
   return getAllCommands().filter(
-    (cmd) =>
-      cmd.name.toLowerCase().includes(lc) ||
-      (cmd.description && cmd.description.toLowerCase().includes(lc)) ||
-      (cmd.category && cmd.category.toLowerCase().includes(lc))
+    (cmd) => cmd.name.toLowerCase().includes(lc) || cmd.description && cmd.description.toLowerCase().includes(lc) || cmd.category && cmd.category.toLowerCase().includes(lc)
   );
 }
-
-/**
- * Get all unique categories.
- * @returns {string[]}
- */
 function getCategories() {
-  const cats = new Set();
-  for (const cmd of _loadAll().values()) {
+  const cats = /* @__PURE__ */ new Set();
+  for (const cmd of loadCommands().values()) {
     if (cmd.category) cats.add(cmd.category);
   }
   return Array.from(cats).sort();
 }
-
-/**
- * Get the context engine detectors for a command.
- * @param {string} name - Command name
- * @returns {object|null} The contextEngine config or null
- */
 function getContextEngine(name) {
   const cmd = getCommand(name);
-  return cmd && cmd.contextEngine ? cmd.contextEngine : null;
+  return cmd?.contextEngine ?? null;
 }
-
-/**
- * Get subcommands for a command.
- * @param {string} name - Command name
- * @returns {object[]}
- */
 function getSubcommands(name) {
   const cmd = getCommand(name);
-  return cmd && Array.isArray(cmd.subcommands) ? cmd.subcommands : [];
+  return Array.isArray(cmd?.subcommands) ? cmd.subcommands : [];
 }
-
-/**
- * Get global options for a command.
- * @param {string} name - Command name
- * @returns {object[]}
- */
 function getGlobalOptions(name) {
   const cmd = getCommand(name);
-  return cmd && Array.isArray(cmd.globalOptions) ? cmd.globalOptions : [];
+  return Array.isArray(cmd?.globalOptions) ? cmd.globalOptions : [];
 }
-
-/**
- * Get examples for a command.
- * @param {string} name - Command name
- * @returns {object[]}
- */
 function getExamples(name) {
   const cmd = getCommand(name);
-  return cmd && Array.isArray(cmd.examples) ? cmd.examples : [];
+  return Array.isArray(cmd?.examples) ? cmd.examples : [];
 }
-
-/**
- * Get the total number of commands available.
- * @returns {number}
- */
 function count() {
-  return _loadAll().size;
+  return loadCommands().size;
 }
-
-/**
- * Clear the internal cache (useful for testing).
- */
 function clearCache() {
-  _cache = null;
+  _commandCache = null;
+  _providerCache.clear();
 }
-
-/**
- * Resolve the path to a specific command JSON file.
- * @param {string} name - Command name
- * @returns {string}
- */
 function resolveCommandPath(name) {
   return path.join(COMMANDS_DIR, `${name}.json`);
 }
-
-/** @type {string} Path to the commands data directory */
-const dataDir = COMMANDS_DIR;
-
-module.exports = {
+var dataDir = COMMANDS_DIR;
+function getProviderData(provider, languageId) {
+  const key = providerCacheKey(provider, languageId);
+  if (_providerCache.has(key)) return _providerCache.get(key);
+  const filePath = path.join(DATA_DIR, provider, `${languageId}.json`);
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    _providerCache.set(key, data);
+    return data;
+  } catch {
+    return null;
+  }
+}
+function getLanguageData(languageId) {
+  const result = {};
+  for (const provider of PROVIDERS) {
+    const data = getProviderData(provider, languageId);
+    if (data) result[provider] = data;
+  }
+  return result;
+}
+function listLanguagesForProvider(provider) {
+  const dir = path.join(DATA_DIR, provider);
+  try {
+    return fs.readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
+  } catch {
+    return [];
+  }
+}
+function listLanguages() {
+  const langs = /* @__PURE__ */ new Set();
+  for (const provider of PROVIDERS) {
+    for (const lang of listLanguagesForProvider(provider)) {
+      langs.add(lang);
+    }
+  }
+  return Array.from(langs).sort();
+}
+function listProviders() {
+  return PROVIDERS;
+}
+function resolveProviderPath(provider, languageId) {
+  return path.join(DATA_DIR, provider, `${languageId}.json`);
+}
+var _manifest = null;
+function getManifest() {
+  if (_manifest) return _manifest;
+  _manifest = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "manifest.json"), "utf-8"));
+  return _manifest;
+}
+var _themeCache = /* @__PURE__ */ new Map();
+function getTheme(name) {
+  if (_themeCache.has(name)) return _themeCache.get(name);
+  const filePath = path.join(DATA_DIR, "themes", `${name}.json`);
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    _themeCache.set(name, data);
+    return data;
+  } catch {
+    return null;
+  }
+}
+function listThemes() {
+  try {
+    return fs.readdirSync(path.join(DATA_DIR, "themes")).filter((f) => f.endsWith(".json") && !f.startsWith("_")).map((f) => f.replace(/\.json$/, ""));
+  } catch {
+    return [];
+  }
+}
+function resolveThemePath(name) {
+  return path.join(DATA_DIR, "themes", `${name}.json`);
+}
+var index_default = {
+  // Commands
   getCommand,
   getAllCommands,
   listCommandNames,
@@ -186,4 +257,45 @@ module.exports = {
   clearCache,
   resolveCommandPath,
   dataDir,
+  // Providers
+  getProviderData,
+  getLanguageData,
+  listLanguagesForProvider,
+  listLanguages,
+  listProviders,
+  resolveProviderPath,
+  // Manifest
+  getManifest,
+  // Themes
+  getTheme,
+  listThemes,
+  resolveThemePath
 };
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  clearCache,
+  count,
+  dataDir,
+  getAllCommands,
+  getCategories,
+  getCommand,
+  getCommandsByCategory,
+  getCommandsByPlatform,
+  getContextEngine,
+  getExamples,
+  getGlobalOptions,
+  getLanguageData,
+  getManifest,
+  getProviderData,
+  getSubcommands,
+  getTheme,
+  listCommandNames,
+  listLanguages,
+  listLanguagesForProvider,
+  listProviders,
+  listThemes,
+  resolveCommandPath,
+  resolveProviderPath,
+  resolveThemePath,
+  searchCommands
+});
