@@ -1,23 +1,60 @@
 {
   "language": "pgsql",
-  "wordPattern": "[a-zA-Z_][a-zA-Z0-9_]*",
+  "wordPattern": "[a-zA-Z_$][a-zA-Z0-9_$]*",
   "linkedEditingPatterns": [
     {
-      "type": "tag_pair",
+      "type": "bracket_pair",
+      "openPattern": "\\(",
+      "closePattern": "\\)",
+      "description": "Parenthesis pair"
+    },
+    {
+      "type": "scope_pair",
       "openPattern": "\\bBEGIN\\b",
       "closePattern": "\\bEND\\b",
-      "description": "PostgreSQL BEGIN/END block pair"
+      "description": "BEGIN/END block pair"
     },
     {
-      "type": "tag_pair",
-      "openPattern": "\\$([a-zA-Z_]*)\\$",
-      "closePattern": "\\$([a-zA-Z_]*)\\$",
-      "description": "PostgreSQL dollar-quoted string tag synchronization"
+      "type": "scope_pair",
+      "openPattern": "\\bCASE\\b",
+      "closePattern": "\\bEND\\b",
+      "description": "CASE/END pair"
     },
     {
-      "kind": "tag",
-      "pattern": "<(\\w+)[^>]*>.*?</\\1>",
-      "description": "Linked editing for matching HTML/XML tags"
+      "type": "scope_pair",
+      "openPattern": "\\bIF\\b",
+      "closePattern": "\\bEND\\s+IF\\b",
+      "description": "IF/END IF pair"
+    },
+    {
+      "type": "scope_pair",
+      "openPattern": "\\bLOOP\\b",
+      "closePattern": "\\bEND\\s+LOOP\\b",
+      "description": "LOOP/END LOOP pair"
+    },
+    {
+      "type": "scope_pair",
+      "openPattern": "\\bWHILE\\b",
+      "closePattern": "\\bEND\\s+WHILE\\b",
+      "description": "WHILE/END WHILE pair"
+    },
+    {
+      "type": "scope_pair",
+      "openPattern": "\\bCREATE\\s+(FUNCTION|PROCEDURE)",
+      "closePattern": "\\bEND\\b",
+      "description": "Function/Procedure scope"
+    },
+    {
+      "type": "string_pair",
+      "openPattern": "\\$\\$",
+      "closePattern": "\\$\\$",
+      "description": "Dollar-quoted string pair"
+    },
+    {
+      "type": "comment_pair",
+      "openPattern": "/\\*",
+      "closePattern": "\\*/",
+      "description": "Block comment pair"
     }
   ],
   "supported": true

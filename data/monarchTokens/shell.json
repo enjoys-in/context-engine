@@ -1,77 +1,97 @@
 {
   "language": "shell",
-  "defaultToken": "invalid",
   "tokenPostfix": ".shell",
+  "defaultToken": "invalid",
   "keywords": [
-    "if",
-    "then",
-    "else",
-    "elif",
-    "fi",
     "case",
-    "esac",
-    "for",
-    "select",
-    "while",
-    "until",
+    "coproc",
     "do",
     "done",
-    "in",
+    "elif",
+    "else",
+    "esac",
+    "fi",
+    "for",
     "function",
-    "time",
-    "coproc",
-    "break",
-    "continue",
-    "return",
-    "exit",
-    "export",
-    "readonly",
-    "declare",
-    "local",
-    "typeset",
-    "unset",
-    "shift",
-    "source",
-    "alias",
-    "unalias",
-    "set",
-    "shopt",
-    "trap",
-    "eval",
-    "exec",
-    "test",
-    "true",
-    "false",
-    "read",
-    "echo",
-    "printf",
-    "cd",
-    "pwd",
-    "pushd",
-    "popd",
-    "dirs",
-    "let",
-    "getopts",
-    "wait",
-    "kill",
-    "jobs",
-    "bg",
-    "fg",
-    "disown",
-    "builtin",
-    "command",
-    "enable",
-    "help",
-    "history",
-    "logout",
+    "if",
+    "in",
     "mapfile",
     "readarray",
+    "select",
+    "then",
+    "time",
+    "until",
+    "while",
+    "alias",
+    "bg",
+    "bind",
+    "break",
+    "builtin",
+    "caller",
+    "cd",
+    "command",
+    "compgen",
+    "complete",
+    "compopt",
+    "continue",
+    "declare",
+    "dirs",
+    "disown",
+    "echo",
+    "enable",
+    "eval",
+    "exec",
+    "exit",
+    "export",
+    "false",
+    "fc",
+    "fg",
+    "getopts",
+    "hash",
+    "help",
+    "history",
+    "jobs",
+    "kill",
+    "let",
+    "local",
+    "logout",
+    "popd",
+    "printf",
+    "pushd",
+    "pwd",
+    "read",
+    "readonly",
+    "return",
+    "set",
+    "shift",
+    "shopt",
+    "source",
     "suspend",
+    "test",
+    "times",
+    "trap",
+    "true",
     "type",
+    "typeset",
     "ulimit",
-    "umask"
+    "umask",
+    "unalias",
+    "unset",
+    "wait"
   ],
-  "typeKeywords": [],
+  "typeKeywords": [
+    "string",
+    "integer",
+    "array",
+    "associative_array",
+    "readonly",
+    "export",
+    "local",
+    "declare",
+    "typeset",
+    "nameref",
+    "unset"
+  ],
   "operators": [
     "=",
     "==",
@@ -106,6 +126,8 @@
     "|&"
   ],
   "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'`]|x[0-9a-fA-F]{1,4}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
+  "digits": "\\d+(_+\\d+)*",
   "brackets": [
     {
       "open": "{",
@@ -125,41 +147,18 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
+      [
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
+      ],
       [
         "[{}()\\[\\]]",
-        "@brackets"
+        "delimiter.bracket"
       ],
       [
-        "\\$\\{[^}]+\\}",
-        "variable"
-      ],
-      [
-        "\\$\\([^)]+\\)",
-        "variable"
-      ],
-      [
-        "\\$[A-Za-z_]\\w*",
-        "variable"
-      ],
-      [
-        "\\$[0-9@#?!\\-*$]",
-        "variable"
-      ],
-      [
-        "[a-zA-Z_]\\w*",
-        {
-          "cases": {
-            "@keywords": "keyword",
-            "@default": "identifier"
-          }
-        }
-      ],
-      [
-        "[0-9]+",
-        "number"
+        "#.*$",
+        "comment"
       ],
       [
         "\"",
@@ -169,17 +168,42 @@
       [
         "'",
         "string",
-        "@string_single_sh"
+        "@string_single"
       ],
       [
-        "\\$\"",
+        "`",
         "string",
-        "@string_double"
+        "@string_backtick"
       ],
       [
-        "\\$'",
-        "string",
-        "@string_ansi"
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO]?[0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
       ],
       [
         "@symbols",
@@ -189,17 +213,15 @@
             "@default": ""
           }
         }
-      ],
-      [
-        "[;,]",
-        "delimiter"
       ]
     ],
     "whitespace": [
       [
         "[ \\t\\r\\n]+",
-        "white"
-      ],
+        ""
+      ]
+    ],
+    "comment": [
       [
         "#.*$",
         "comment"
@@ -207,19 +229,11 @@
     ],
     "string_double": [
       [
-        "[^\\\\\"$]+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "\\$[A-Za-z_]\\w*",
-        "variable"
-      ],
-      [
-        "\\$\\{[^}]+\\}",
-        "variable"
-      ],
-      [
-        "\\\\.",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -228,10 +242,14 @@
         "@pop"
       ]
     ],
-    "string_single_sh": [
+    "string_single": [
       [
-        "[^']+",
+        "[^'\\\\]+",
         "string"
+      ],
+      [
+        "\\\\[\\\\nrt\"']",
+        "string.escape"
       ],
       [
         "'",
@@ -239,19 +257,34 @@
         "@pop"
       ]
     ],
-    "string_ansi": [
+    "string_backtick": [
       [
-        "[^\\\\']+",
+        "[^`\\\\]+",
         "string"
       ],
       [
-        "\\\\.",
+        "\\\\[\\\\nrt]",
         "string.escape"
       ],
       [
-        "'",
+        "`",
         "string",
         "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
       ]
     ]
   }

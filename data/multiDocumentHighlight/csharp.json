@@ -13,88 +13,91 @@
     {
       "symbolKind": "class",
       "pattern": "\\bclass\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
-      "exportPattern": "public\\s+(partial\\s+)?class\\s+{name}",
+      "importPattern": "using\\s+[\\w.]+;",
+      "exportPattern": "public\\s+class\\s+{name}",
       "highlightKind": 1,
-      "description": "Class across files",
+      "description": "Class across namespaces",
       "crossFileCapable": true
     },
     {
       "symbolKind": "interface",
       "pattern": "\\binterface\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
+      "importPattern": "using\\s+[\\w.]+;",
       "exportPattern": "public\\s+interface\\s+{name}",
       "highlightKind": 1,
-      "description": "Interface across files",
+      "description": "Interface across namespaces",
       "crossFileCapable": true
     },
     {
       "symbolKind": "struct",
       "pattern": "\\bstruct\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
-      "exportPattern": "public\\s+(readonly\\s+)?struct\\s+{name}",
+      "importPattern": "using\\s+[\\w.]+;",
+      "exportPattern": "public\\s+struct\\s+{name}",
       "highlightKind": 1,
-      "description": "Struct across files",
+      "description": "Struct across namespaces",
       "crossFileCapable": true
     },
     {
       "symbolKind": "enum",
       "pattern": "\\benum\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
+      "importPattern": "using\\s+[\\w.]+;",
       "exportPattern": "public\\s+enum\\s+{name}",
       "highlightKind": 1,
-      "description": "Enum across files",
-      "crossFileCapable": true
-    },
-    {
-      "symbolKind": "record",
-      "pattern": "\\brecord\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
-      "exportPattern": "public\\s+record\\s+{name}",
-      "highlightKind": 1,
-      "description": "Record across files",
+      "description": "Enum across namespaces",
       "crossFileCapable": true
     },
     {
       "symbolKind": "delegate",
-      "pattern": "\\bdelegate\\s+\\w+\\s+(\\w+)",
-      "importPattern": "using\\s+[\\w.]+",
+      "pattern": "\\bdelegate\\s+\\S+\\s+(\\w+)",
+      "importPattern": "using\\s+[\\w.]+;",
       "exportPattern": "public\\s+delegate",
       "highlightKind": 1,
-      "description": "Delegate across files",
+      "description": "Delegate type across files",
       "crossFileCapable": true
     },
     {
       "symbolKind": "namespace",
       "pattern": "\\bnamespace\\s+([\\w.]+)",
-      "importPattern": "using\\s+{name}",
+      "importPattern": "using\\s+{name};",
       "exportPattern": "namespace\\s+{name}",
       "highlightKind": 1,
-      "description": "Namespace across files",
+      "description": "Namespace reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "attribute",
+      "pattern": "\\[(\\w+)(Attribute)?\\]",
+      "importPattern": "using\\s+[\\w.]+;",
+      "exportPattern": "public\\s+class\\s+{name}Attribute",
+      "highlightKind": 1,
+      "description": "Attribute across namespaces",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "using\\s+([\\w.]+)\\s*;",
-      "using\\s+static\\s+([\\w.]+)\\s*;",
-      "using\\s+(\\w+)\\s*=\\s*([\\w.]+)\\s*;"
+      "using\\s+([\\w.]+);",
+      "using\\s+static\\s+([\\w.]+);",
+      "using\\s+(\\w+)\\s*=\\s*([\\w.]+);",
+      "global\\s+using\\s+([\\w.]+);"
     ],
     "exportStatements": [
-      "(public|internal)\\s+(partial\\s+)?(class|interface|struct|enum|record|delegate)\\s+(\\w+)"
+      "namespace\\s+([\\w.]+)",
+      "public\\s+(class|interface|struct|enum|record|delegate)\\s+(\\w+)"
     ],
     "reExportStatements": []
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "\\bstatic\\s+.+\\s+(\\w+)"
+        "\\bstatic\\s+.*\\b(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\bnamespace\\s+([\\w.]+)"
+        "\\bnamespace\\s+([\\w.]+)",
+        "\\bpublic\\s+\\w+\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
@@ -102,22 +105,19 @@
       "patterns": [
         "\\bthis\\.(\\w+)",
         "\\bbase\\.(\\w+)",
-        "(private|protected|public|internal)\\s+\\w+\\s+(\\w+)"
+        "\\bstatic\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
-        "\\b(var|\\w+)\\s+(\\w+)\\s*=",
-        "foreach\\s*\\(.+\\s+(\\w+)\\s+in",
-        "catch\\s*\\(\\w+\\s+(\\w+)\\)"
+        "\\b(var|\\w+)\\s+(\\w+)\\s*="
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\bvar\\s+(\\w+)",
-        "using\\s*\\(.+\\s+(\\w+)\\s*="
+        "\\b(var|\\w+)\\s+(\\w+)\\s*="
       ],
       "highlightKind": 1
     }
@@ -129,69 +129,65 @@
     "*=",
     "/=",
     "%=",
-    "&=",
-    "|=",
-    "^=",
+    "**=",
     "<<=",
     ">>=",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
     "++",
     "--",
-    ".Add(",
-    ".Remove(",
-    ".Clear(",
-    ".Insert(",
-    ".RemoveAt(",
-    ".Sort(",
-    ".Reverse(",
-    ".AddRange(",
-    ".TryAdd("
+    "delete",
+    ".push(",
+    ".pop(",
+    ".shift(",
+    ".splice(",
+    ".sort(",
+    ".reverse(",
+    ".fill("
   ],
   "readOperations": [
-    ".Count",
-    ".Length",
-    ".Contains(",
-    ".IndexOf(",
-    ".Any(",
-    ".All(",
-    ".First(",
-    ".Last(",
-    ".Select(",
-    ".Where(",
-    ".OrderBy(",
-    ".GroupBy(",
-    ".ToList(",
-    ".ToArray(",
-    ".ToDictionary(",
-    ".ToString(",
-    ".GetType(",
-    "is ",
-    "as "
+    ".length",
+    ".indexOf(",
+    ".includes(",
+    ".find(",
+    ".filter(",
+    ".map(",
+    ".reduce(",
+    ".some(",
+    ".every(",
+    ".forEach(",
+    ".keys(",
+    ".values(",
+    ".entries(",
+    ".slice(",
+    ".concat(",
+    ".join(",
+    ".toString(",
+    ".valueOf(",
+    "JSON.stringify(",
+    "JSON.parse(",
+    "typeof",
+    "instanceof",
+    "in"
   ],
   "declarationPatterns": [
     "\\b(var|\\w+)\\s+(\\w+)\\s*=",
-    "\\b\\w+\\s+(\\w+)\\s*;",
-    "\\b\\w+\\s+(\\w+)\\s*\\("
+    "\\bclass\\s+(\\w+)",
+    "\\binterface\\s+(\\w+)",
+    "\\bstruct\\s+(\\w+)"
   ],
   "referencePatterns": [
+    "\\b(\\w+)\\(",
     "\\b(\\w+)\\.",
-    "\\bnew\\s+(\\w+)",
-    "\\b:\\s*(\\w+)",
-    "\\bas\\s+(\\w+)",
-    "\\bis\\s+(\\w+)",
-    "\\[(\\w+)\\]"
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "\\b([A-Z]\\w+)(?:<|\\s|\\.|\\))",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "\\[(\\w+)(?:\\(|\\])",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": "///<\\s*(param|returns|typeparam).*?name=\"(\\w+)\"",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

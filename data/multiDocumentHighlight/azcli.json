@@ -11,52 +11,95 @@
   },
   "crossFileSymbols": [
     {
-      "symbolKind": "type",
-      "pattern": "\\b(class|struct|type|interface|module)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+.*{name}",
-      "exportPattern": "(export|public|pub)\\s+",
-      "highlightKind": 1,
-      "description": "Type across files",
-      "crossFileCapable": true
-    },
-    {
       "symbolKind": "function",
-      "pattern": "\\b(function|func|def|fn|sub|proc)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+",
-      "exportPattern": "(export|public|pub)\\s+",
+      "pattern": "(\\w+)\\s*\\(\\)\\s*\\{|function\\s+(\\w+)",
+      "importPattern": "source\\s+.*|\\. \\s+",
+      "exportPattern": "",
       "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Function across scripts",
       "crossFileCapable": true
     },
     {
       "symbolKind": "variable",
-      "pattern": "\\b(var|let|const|val|my|local)\\s+(\\w+)",
+      "pattern": "\\b(\\w+)=",
+      "importPattern": "source\\s+|\\. ",
+      "exportPattern": "export\\s+{name}",
+      "highlightKind": 1,
+      "description": "Variable across scripts",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "alias",
+      "pattern": "alias\\s+(\\w+)=",
+      "importPattern": "source\\s+",
+      "exportPattern": "alias\\s+{name}=",
+      "highlightKind": 1,
+      "description": "Alias across scripts",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "envVar",
+      "pattern": "export\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "export\\s+{name}",
+      "highlightKind": 2,
+      "description": "Exported environment variable",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "command",
+      "pattern": "\\b(\\w+)\\b",
       "importPattern": "",
       "exportPattern": "",
       "highlightKind": 1,
-      "description": "Variable reference",
+      "description": "Command reference",
       "crossFileCapable": false
+    },
+    {
+      "symbolKind": "parameter",
+      "pattern": "\\$\\{?(\\w+)\\}?",
+      "importPattern": "",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Parameter/variable expansion",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "script",
+      "pattern": "source\\s+([\\w./]+)|\\. ([\\w./]+)",
+      "importPattern": "source\\s+{name}",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Sourced script reference",
+      "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "(import|use|require|include|from)\\s+([\\w./]+)"
+      "source\\s+([\\w./]+)",
+      "\\.\\s+([\\w./]+)",
+      "Import-Module\\s+(\\w+)",
+      "using\\s+module\\s+(\\w+)"
     ],
     "exportStatements": [
-      "(export|public|pub)\\s+(\\w+)\\s+(\\w+)"
+      "export\\s+(\\w+)",
+      "(function|filter)\\s+(\\w+)",
+      "alias\\s+(\\w+)="
     ],
     "reExportStatements": []
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "\\b(global|public)\\s+\\w+\\s+(\\w+)"
+        "\\bexport\\s+(\\w+)",
+        "\\bENV:\\s*(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\b(\\w+)=",
+        "\\$\\{?(\\w+)\\}?"
       ],
       "highlightKind": 1
     },
@@ -66,46 +109,63 @@
     },
     "functionScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\blocal\\s+(\\w+)",
+        "\\bmy\\s+\\$(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
-      "patterns": [],
+      "patterns": [
+        "\\b(\\w+)\\s+in\\b"
+      ],
       "highlightKind": 1
     }
   },
   "writeOperations": [
     "=",
     "+=",
-    "-=",
-    "*=",
-    "/="
+    "export",
+    "unset",
+    "declare",
+    "readonly",
+    "local",
+    "typeset",
+    "let",
+    "read",
+    "eval"
   ],
   "readOperations": [
-    ".",
-    "("
+    "echo",
+    "printf",
+    "cat",
+    "grep",
+    "awk",
+    "sed",
+    "wc",
+    "head",
+    "tail",
+    "test",
+    "[ ]",
+    "[[ ]]",
+    "-z",
+    "-n",
+    "-f",
+    "-d",
+    "-e"
   ],
   "declarationPatterns": [
     "\\b(\\w+)\\s*=",
-    "\\b(class|struct|type|function|def|fn|sub)\\s+(\\w+)"
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
+    "\\b(\\w+)\\(",
     "\\b(\\w+)\\.",
-    "\\b(\\w+)\\("
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "comments": {
-      "pattern": "",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": false,
+    "comments": true
   }
 }

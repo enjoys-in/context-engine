@@ -13,101 +13,112 @@
     {
       "symbolKind": "class",
       "pattern": "\\bclass\\s+(\\w+)",
-      "importPattern": "import\\s+[\\w.]+\\.{name}",
+      "importPattern": "import\\s+[\\w.]+\\.{name};",
       "exportPattern": "public\\s+class\\s+{name}",
       "highlightKind": 1,
-      "description": "Class across files",
+      "description": "Class across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "interface",
       "pattern": "\\binterface\\s+(\\w+)",
-      "importPattern": "import\\s+[\\w.]+\\.{name}",
+      "importPattern": "import\\s+[\\w.]+\\.{name};",
       "exportPattern": "public\\s+interface\\s+{name}",
       "highlightKind": 1,
-      "description": "Interface across files",
+      "description": "Interface across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "enum",
       "pattern": "\\benum\\s+(\\w+)",
-      "importPattern": "import\\s+[\\w.]+\\.{name}",
+      "importPattern": "import\\s+[\\w.]+\\.{name};",
       "exportPattern": "public\\s+enum\\s+{name}",
       "highlightKind": 1,
-      "description": "Enum across files",
+      "description": "Enum across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "annotation",
-      "pattern": "@interface\\s+(\\w+)",
-      "importPattern": "import\\s+[\\w.]+\\.{name}",
+      "pattern": "@(\\w+)",
+      "importPattern": "import\\s+[\\w.]+\\.{name};",
       "exportPattern": "public\\s+@interface\\s+{name}",
       "highlightKind": 1,
-      "description": "Annotation across files",
+      "description": "Annotation across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "method",
-      "pattern": "\\b(public|protected|private)?\\s*\\w+\\s+(\\w+)\\s*\\(",
+      "pattern": "\\b(public|private|protected)\\s+\\S+\\s+(\\w+)\\(",
       "importPattern": "",
       "exportPattern": "",
       "highlightKind": 1,
-      "description": "Method reference across files",
+      "description": "Method declaration",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "constant",
+      "pattern": "\\bstatic\\s+final\\s+\\S+\\s+(\\w+)",
+      "importPattern": "import\\s+static\\s+[\\w.]+\\.{name};",
+      "exportPattern": "public\\s+static\\s+final",
+      "highlightKind": 1,
+      "description": "Static constant",
       "crossFileCapable": true
     },
     {
-      "symbolKind": "staticImport",
-      "pattern": "import\\s+static\\s+([\\w.]+)",
-      "importPattern": "import\\s+static\\s+{name}",
-      "exportPattern": "public\\s+static",
+      "symbolKind": "package",
+      "pattern": "package\\s+([\\w.]+)",
+      "importPattern": "import\\s+{name}\\.",
+      "exportPattern": "package\\s+{name}",
       "highlightKind": 1,
-      "description": "Static import across files",
+      "description": "Package reference",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "import\\s+([\\w.*]+)",
-      "import\\s+static\\s+([\\w.*]+)"
+      "import\\s+([\\w.]+);",
+      "import\\s+static\\s+([\\w.]+);",
+      "import\\s+([\\w.]+)\\.\\*;"
     ],
     "exportStatements": [
-      "public\\s+(class|interface|enum|@interface|record)\\s+(\\w+)"
+      "public\\s+(class|interface|enum|@interface|record)\\s+(\\w+)",
+      "public\\s+static\\s+(\\w+)\\s+(\\w+)",
+      "package\\s+([\\w.]+);"
     ],
     "reExportStatements": []
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "public\\s+static\\s+.+\\s+(\\w+)"
+        "\\bstatic\\s+.*\\b(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "package\\s+([\\w.]+)"
+        "\\bpackage\\s+([\\w.]+)",
+        "\\b(public|protected|private)\\s+\\w+\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "classScope": {
       "patterns": [
         "\\bthis\\.(\\w+)",
-        "\\bsuper\\.(\\w+)",
-        "(private|protected|public)\\s+\\w+\\s+(\\w+)"
+        "\\bstatic\\s+(\\w+)",
+        "\\bsuper\\.(\\w+)"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
         "\\b(\\w+)\\s+(\\w+)\\s*=",
-        "\\bfor\\s*\\(\\w+\\s+(\\w+)",
-        "catch\\s*\\(\\w+\\s+(\\w+)\\)"
+        "\\b(\\w+)\\s+(\\w+)\\s*;"
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\bvar\\s+(\\w+)",
-        "\\bfinal\\s+\\w+\\s+(\\w+)"
+        "\\b(final\\s+)?\\w+\\s+(\\w+)\\s*="
       ],
       "highlightKind": 1
     }
@@ -119,67 +130,67 @@
     "*=",
     "/=",
     "%=",
-    "&=",
-    "|=",
-    "^=",
+    "**=",
     "<<=",
     ">>=",
-    ">>>=",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
     "++",
     "--",
-    ".set(",
-    ".put(",
-    ".add(",
-    ".remove(",
-    ".clear(",
+    "delete",
+    ".push(",
+    ".pop(",
+    ".shift(",
+    ".splice(",
     ".sort(",
-    ".addAll(",
-    ".removeAll(",
-    ".replaceAll("
+    ".reverse(",
+    ".fill("
   ],
   "readOperations": [
-    ".get(",
-    ".size(",
-    ".isEmpty(",
-    ".contains(",
+    ".length",
     ".indexOf(",
-    ".containsKey(",
-    ".containsValue(",
-    ".keySet(",
+    ".includes(",
+    ".find(",
+    ".filter(",
+    ".map(",
+    ".reduce(",
+    ".some(",
+    ".every(",
+    ".forEach(",
+    ".keys(",
     ".values(",
-    ".entrySet(",
-    ".stream(",
-    ".iterator(",
+    ".entries(",
+    ".slice(",
+    ".concat(",
+    ".join(",
     ".toString(",
-    ".hashCode(",
-    ".equals(",
-    "instanceof"
+    ".valueOf(",
+    "JSON.stringify(",
+    "JSON.parse(",
+    "typeof",
+    "instanceof",
+    "in"
   ],
   "declarationPatterns": [
-    "\\b(\\w+)\\s+(\\w+)\\s*=",
-    "\\b(\\w+)\\s+(\\w+)\\s*;",
-    "\\b(\\w+)\\s+(\\w+)\\s*\\("
+    "(public|private|protected)\\s+.*\\s+(\\w+)\\s*[=(;]",
+    "\\bclass\\s+(\\w+)",
+    "\\binterface\\s+(\\w+)",
+    "\\benum\\s+(\\w+)"
   ],
   "referencePatterns": [
-    "\\b(\\w+)\\.",
-    "\\bnew\\s+(\\w+)",
-    "\\bextends\\s+(\\w+)",
-    "\\bimplements\\s+(\\w+)",
-    "\\bthrows\\s+(\\w+)",
+    "\\b(\\w+)\\(",
+    "new\\s+(\\w+)",
+    "extends\\s+(\\w+)",
+    "implements\\s+(\\w+)",
     "@(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "\\b([A-Z]\\w+)(?:<|\\s)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "@(\\w+)",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": "@(param|return|throws)\\s+(\\w+)",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

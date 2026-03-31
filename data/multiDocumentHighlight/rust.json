@@ -16,7 +16,7 @@
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+fn\\s+{name}",
       "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Function across modules",
       "crossFileCapable": true
     },
     {
@@ -25,7 +25,7 @@
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+struct\\s+{name}",
       "highlightKind": 1,
-      "description": "Struct across files",
+      "description": "Struct across modules",
       "crossFileCapable": true
     },
     {
@@ -34,7 +34,7 @@
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+enum\\s+{name}",
       "highlightKind": 1,
-      "description": "Enum across files",
+      "description": "Enum across modules",
       "crossFileCapable": true
     },
     {
@@ -43,34 +43,34 @@
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+trait\\s+{name}",
       "highlightKind": 1,
-      "description": "Trait across files",
+      "description": "Trait across modules",
       "crossFileCapable": true
     },
     {
       "symbolKind": "module",
       "pattern": "\\bmod\\s+(\\w+)",
-      "importPattern": "use\\s+{name}",
+      "importPattern": "use\\s+{name}::",
       "exportPattern": "pub\\s+mod\\s+{name}",
       "highlightKind": 1,
-      "description": "Module across files",
+      "description": "Module declaration",
       "crossFileCapable": true
     },
     {
-      "symbolKind": "macro",
-      "pattern": "\\bmacro_rules!\\s+(\\w+)",
-      "importPattern": "use\\s+[\\w:]+::{name}",
-      "exportPattern": "#\\[macro_export\\]",
-      "highlightKind": 1,
-      "description": "Macro across files",
-      "crossFileCapable": true
-    },
-    {
-      "symbolKind": "typeAlias",
+      "symbolKind": "type",
       "pattern": "\\btype\\s+(\\w+)",
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+type\\s+{name}",
       "highlightKind": 1,
-      "description": "Type alias across files",
+      "description": "Type alias across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "macro",
+      "pattern": "macro_rules!\\s+(\\w+)",
+      "importPattern": "use\\s+[\\w:]+::{name}",
+      "exportPattern": "#\\[macro_export\\]",
+      "highlightKind": 1,
+      "description": "Macro across crates",
       "crossFileCapable": true
     },
     {
@@ -79,51 +79,53 @@
       "importPattern": "use\\s+[\\w:]+::{name}",
       "exportPattern": "pub\\s+const\\s+{name}",
       "highlightKind": 1,
-      "description": "Constant across files",
+      "description": "Constant across modules",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "use\\s+([\\w:]+(?:::\\{[^}]+\\})?)",
-      "use\\s+([\\w:]+)\\s+as\\s+(\\w+)",
-      "extern\\s+crate\\s+(\\w+)"
+      "use\\s+([\\w:]+::\\{[^}]+\\})",
+      "use\\s+([\\w:]+::\\w+)",
+      "use\\s+([\\w:]+::\\*)",
+      "extern\\s+crate\\s+(\\w+)",
+      "use\\s+(\\w+)\\s+as\\s+(\\w+)"
     ],
     "exportStatements": [
-      "pub(\\(crate\\))?\\s+(fn|struct|enum|trait|type|const|static|mod)\\s+(\\w+)"
+      "pub\\s+(fn|struct|enum|trait|type|const|static|mod|use)\\s+(\\w+)",
+      "pub\\(crate\\)\\s+(fn|struct|enum)\\s+(\\w+)",
+      "#\\[macro_export\\]"
     ],
     "reExportStatements": [
-      "pub\\s+use\\s+([\\w:]+)"
+      "pub\\s+use\\s+([\\w:]+)",
+      "pub\\s+use\\s+([\\w:]+::\\*)"
     ]
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "pub\\s+(static|const)\\s+(\\w+)"
+        "\\bstatic\\s+(mut\\s+)?(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\bmod\\s+(\\w+)",
-        "pub\\s+(fn|struct|enum|trait)\\s+(\\w+)"
+        "\\bpub\\s+(fn|struct|enum|trait)\\s+(\\w+)",
+        "\\bmod\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "classScope": {
       "patterns": [
         "\\bself\\.(\\w+)",
-        "\\bSelf::(\\w+)",
-        "&self",
-        "&mut self"
+        "Self::(\\w+)"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
         "\\blet\\s+(mut\\s+)?(\\w+)",
-        "\\bfor\\s+(\\w+)\\s+in",
-        "if\\s+let\\s+.+\\s*=\\s*(\\w+)"
+        "\\bfn\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
@@ -141,75 +143,66 @@
     "*=",
     "/=",
     "%=",
-    "&=",
-    "|=",
-    "^=",
+    "**=",
     "<<=",
     ">>=",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
+    "++",
+    "--",
+    "delete",
     ".push(",
     ".pop(",
-    ".insert(",
-    ".remove(",
-    ".clear(",
+    ".shift(",
+    ".splice(",
     ".sort(",
-    ".drain(",
-    ".extend(",
-    ".truncate(",
-    "std::mem::swap(",
-    "std::mem::replace("
+    ".reverse(",
+    ".fill("
   ],
   "readOperations": [
-    ".len()",
-    ".is_empty()",
-    ".contains(",
-    ".iter()",
-    ".into_iter()",
-    ".get(",
-    ".unwrap()",
-    ".expect(",
-    ".as_ref()",
-    ".as_mut()",
-    ".clone()",
-    ".to_string()",
-    ".to_owned()",
-    ".as_str()",
-    "&"
+    ".length",
+    ".indexOf(",
+    ".includes(",
+    ".find(",
+    ".filter(",
+    ".map(",
+    ".reduce(",
+    ".some(",
+    ".every(",
+    ".forEach(",
+    ".keys(",
+    ".values(",
+    ".entries(",
+    ".slice(",
+    ".concat(",
+    ".join(",
+    ".toString(",
+    ".valueOf(",
+    "JSON.stringify(",
+    "JSON.parse(",
+    "typeof",
+    "instanceof",
+    "in"
   ],
   "declarationPatterns": [
     "\\blet\\s+(mut\\s+)?(\\w+)",
     "\\bfn\\s+(\\w+)",
     "\\bstruct\\s+(\\w+)",
     "\\benum\\s+(\\w+)",
-    "\\btrait\\s+(\\w+)",
-    "\\btype\\s+(\\w+)",
-    "\\bconst\\s+(\\w+)",
-    "\\bstatic\\s+(\\w+)",
-    "\\bmod\\s+(\\w+)"
+    "\\btrait\\s+(\\w+)"
   ],
   "referencePatterns": [
-    "\\b(\\w+)::",
     "\\b(\\w+)\\(",
-    "\\b(\\w+)\\{",
-    "\\bimpl\\s+(\\w+)",
-    "\\bdyn\\s+(\\w+)",
-    "impl\\s+<[^>]*>\\s+(\\w+)"
+    "\\b(\\w+)\\.",
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": ":\\s*(\\w+)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "#\\[(\\w+)",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "lifetimes": {
-      "pattern": "'(\\w+)",
-      "highlightKind": 1
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

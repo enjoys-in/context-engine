@@ -14,27 +14,45 @@
       "symbolKind": "function",
       "pattern": "\\bdef\\s+(\\w+)",
       "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
-      "exportPattern": "__all__\\s*=.*\\b{name}\\b",
+      "exportPattern": "\\bdef\\s+{name}\\b",
       "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Function definition across modules",
       "crossFileCapable": true
     },
     {
       "symbolKind": "class",
       "pattern": "\\bclass\\s+(\\w+)",
       "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
-      "exportPattern": "__all__\\s*=.*\\b{name}\\b",
+      "exportPattern": "\\bclass\\s+{name}\\b",
       "highlightKind": 1,
-      "description": "Class across files",
+      "description": "Class definition across modules",
       "crossFileCapable": true
     },
     {
       "symbolKind": "variable",
-      "pattern": "^(\\w+)\\s*=",
+      "pattern": "\\b(\\w+)\\s*=",
       "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
       "exportPattern": "__all__\\s*=.*\\b{name}\\b",
       "highlightKind": 1,
-      "description": "Module variable across files",
+      "description": "Module-level variable",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "constant",
+      "pattern": "\\b([A-Z_][A-Z0-9_]+)\\s*=",
+      "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
+      "exportPattern": "__all__\\s*=.*\\b{name}\\b",
+      "highlightKind": 1,
+      "description": "Constant across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "decorator",
+      "pattern": "@(\\w+)",
+      "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
+      "exportPattern": "\\bdef\\s+{name}\\b",
+      "highlightKind": 1,
+      "description": "Decorator across modules",
       "crossFileCapable": true
     },
     {
@@ -43,24 +61,27 @@
       "importPattern": "import\\s+{name}",
       "exportPattern": "",
       "highlightKind": 1,
-      "description": "Module import across files",
+      "description": "Module import",
       "crossFileCapable": true
     },
     {
-      "symbolKind": "decorator",
-      "pattern": "@(\\w+)",
+      "symbolKind": "exception",
+      "pattern": "\\bclass\\s+(\\w+Error|\\w+Exception)",
       "importPattern": "from\\s+\\S+\\s+import\\s+.*\\b{name}\\b",
-      "exportPattern": "def\\s+{name}",
+      "exportPattern": "\\bclass\\s+{name}\\b",
       "highlightKind": 1,
-      "description": "Decorator across files",
+      "description": "Exception class across modules",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "from\\s+(\\S+)\\s+import\\s+(.+)",
-      "import\\s+(\\S+)(?:\\s+as\\s+(\\w+))?",
-      "from\\s+(\\S+)\\s+import\\s+\\(([^)]+)\\)"
+      "import\\s+(\\w+)",
+      "from\\s+(\\w+)\\s+import\\s+(.+)",
+      "from\\s+\\.(\\w*)\\s+import",
+      "import\\s+(\\w+)\\s+as\\s+(\\w+)",
+      "from\\s+(\\w+)\\s+import\\s+\\*",
+      "__import__\\(['\"]([\\w.]+)['\"]\\)"
     ],
     "exportStatements": [
       "__all__\\s*=\\s*\\[([^\\]]+)\\]",
@@ -68,21 +89,22 @@
       "\\bclass\\s+(\\w+)"
     ],
     "reExportStatements": [
-      "from\\s+(\\S+)\\s+import\\s+\\*"
+      "from\\s+(\\w+)\\s+import\\s+(.+)"
     ]
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
+        "\\b(\\w+)\\s*=\\s*",
         "\\bglobal\\s+(\\w+)"
       ],
-      "highlightKind": 2
+      "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "^(\\w+)\\s*=",
-        "\\bdef\\s+(\\w+)",
-        "\\bclass\\s+(\\w+)"
+        "\\b(\\w+)\\s*=",
+        "def\\s+(\\w+)",
+        "class\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
@@ -90,26 +112,23 @@
       "patterns": [
         "\\bself\\.(\\w+)",
         "\\bcls\\.(\\w+)",
-        "@classmethod",
-        "@staticmethod",
-        "@property"
+        "@classmethod"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
         "\\b(\\w+)\\s*=",
-        "\\bfor\\s+(\\w+)\\s+in",
-        "\\bwith\\s+.+\\s+as\\s+(\\w+)",
-        "\\bexcept\\s+\\w+\\s+as\\s+(\\w+)"
+        "\\bdef\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\bnonlocal\\s+(\\w+)"
+        "\\bfor\\s+(\\w+)\\s+in",
+        "\\bwith\\s+.*\\bas\\s+(\\w+)"
       ],
-      "highlightKind": 2
+      "highlightKind": 1
     }
   },
   "writeOperations": [
@@ -119,14 +138,13 @@
     "*=",
     "/=",
     "//=",
-    "%=",
     "**=",
+    "%=",
     "&=",
     "|=",
     "^=",
-    ">>=",
     "<<=",
-    ":=",
+    ">>=",
     ".append(",
     ".extend(",
     ".insert(",
@@ -135,60 +153,51 @@
     ".clear(",
     ".sort(",
     ".reverse(",
+    "del ",
     ".update(",
-    ".add(",
-    ".discard(",
-    "del "
+    ".add("
   ],
   "readOperations": [
     "len(",
-    "type(",
-    "isinstance(",
-    "hasattr(",
-    "getattr(",
-    "dir(",
-    "vars(",
     ".index(",
     ".count(",
     ".find(",
-    ".keys(",
-    ".values(",
-    ".items(",
-    ".get(",
-    "in ",
-    "not in",
     ".startswith(",
     ".endswith(",
-    ".strip(",
-    ".split(",
-    ".join("
+    "isinstance(",
+    "type(",
+    "getattr(",
+    "hasattr(",
+    "dir(",
+    "vars(",
+    ".items(",
+    ".keys(",
+    ".values(",
+    "str(",
+    "int(",
+    "float(",
+    "list(",
+    "tuple(",
+    "dict(",
+    "set(",
+    "sorted("
   ],
   "declarationPatterns": [
     "\\bdef\\s+(\\w+)",
     "\\bclass\\s+(\\w+)",
     "\\b(\\w+)\\s*=",
     "\\b(\\w+)\\s*:",
-    "for\\s+(\\w+)",
-    "as\\s+(\\w+)"
+    "import\\s+(\\w+)"
   ],
   "referencePatterns": [
     "\\b(\\w+)\\(",
-    "\\b(\\w+)\\.",
-    "\\bfrom\\s+(\\w+)",
-    "\\bimport\\s+(\\w+)"
+    "\\b(\\w+)\\s*\\.",
+    "(\\w+)\\s*:",
+    "isinstance\\(.*,\\s*(\\w+)\\)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": ":\\s*(\\w+)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "@(\\w+)",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": ":param\\s+(\\w+)",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

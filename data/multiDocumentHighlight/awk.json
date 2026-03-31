@@ -11,41 +11,82 @@
   },
   "crossFileSymbols": [
     {
-      "symbolKind": "type",
-      "pattern": "\\b(class|struct|type|interface|module)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+.*{name}",
-      "exportPattern": "(export|public|pub)\\s+",
-      "highlightKind": 1,
-      "description": "Type across files",
-      "crossFileCapable": true
-    },
-    {
       "symbolKind": "function",
-      "pattern": "\\b(function|func|def|fn|sub|proc)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+",
-      "exportPattern": "(export|public|pub)\\s+",
+      "pattern": "\\b(def|function|fn|sub|proc)\\s+(\\w+)",
+      "importPattern": "(import|require|use|load|include|source)\\s+.*{name}",
+      "exportPattern": "\\b(def|function)\\s+{name}",
       "highlightKind": 1,
       "description": "Function across files",
       "crossFileCapable": true
     },
     {
+      "symbolKind": "class",
+      "pattern": "\\b(class|module|package)\\s+(\\w+)",
+      "importPattern": "(import|require|use|load|include)\\s+.*{name}",
+      "exportPattern": "\\b(class|module)\\s+{name}",
+      "highlightKind": 1,
+      "description": "Class/module across files",
+      "crossFileCapable": true
+    },
+    {
       "symbolKind": "variable",
-      "pattern": "\\b(var|let|const|val|my|local)\\s+(\\w+)",
+      "pattern": "\\b(\\w+)\\s*=",
       "importPattern": "",
       "exportPattern": "",
       "highlightKind": 1,
       "description": "Variable reference",
       "crossFileCapable": false
+    },
+    {
+      "symbolKind": "constant",
+      "pattern": "\\b([A-Z_][A-Z0-9_]+)\\s*=",
+      "importPattern": "(import|require|use)\\s+",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Constant reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "method",
+      "pattern": "\\b(def|function)\\s+",
+      "importPattern": "",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Method definition",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "type",
+      "pattern": "\\b(type|alias|typedef|class)\\s+(\\w+)",
+      "importPattern": "(import|require|use)\\s+",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Type definition",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "module",
+      "pattern": "(import|require|use|include)\\s+([\\w./]+)",
+      "importPattern": "(import|require|use)\\s+{name}",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Module import",
+      "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "(import|use|require|include|from)\\s+([\\w./]+)"
+      "(import|require|use|include|load|source)\\s+['\"]?([\\w./]+)['\"]?",
+      "from\\s+(\\w+)\\s+import",
+      "require\\s+(\\w+)"
     ],
     "exportStatements": [
-      "(export|public|pub)\\s+(\\w+)\\s+(\\w+)"
+      "(def|function|class|module)\\s+(\\w+)",
+      "(export|public)\\s+(\\w+)"
     ],
-    "reExportStatements": []
+    "reExportStatements": [
+      "from\\s+(\\w+)\\s+import\\s+(.+)"
+    ]
   },
   "scopeRules": {
     "globalScope": {
@@ -56,22 +97,28 @@
     },
     "moduleScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\b(\\w+)\\s*=",
+        "(class|module|namespace)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "classScope": {
-      "patterns": [],
+      "patterns": [
+        "\\b(self|this|me)\\.(\\w+)"
+      ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\b(\\w+)\\s*=",
+        "\\b(var|let|const|local)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
-      "patterns": [],
+      "patterns": [
+        "\\b(\\w+)\\s*="
+      ],
       "highlightKind": 1
     }
   },
@@ -80,32 +127,45 @@
     "+=",
     "-=",
     "*=",
-    "/="
+    "/=",
+    "%=",
+    "++",
+    "--",
+    ".push(",
+    ".pop(",
+    ".set(",
+    ".add(",
+    ".remove(",
+    ".delete(",
+    ".clear("
   ],
   "readOperations": [
-    ".",
-    "("
+    ".length",
+    ".size()",
+    ".get(",
+    ".contains(",
+    ".indexOf(",
+    ".toString(",
+    ".equals(",
+    ".compareTo(",
+    "typeof",
+    "instanceof",
+    ".isEmpty()",
+    ".count("
   ],
   "declarationPatterns": [
     "\\b(\\w+)\\s*=",
-    "\\b(class|struct|type|function|def|fn|sub)\\s+(\\w+)"
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
+    "\\b(\\w+)\\(",
     "\\b(\\w+)\\.",
-    "\\b(\\w+)\\("
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "comments": {
-      "pattern": "",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

@@ -1,60 +1,50 @@
 {
   "language": "sol",
-  "defaultToken": "invalid",
   "tokenPostfix": ".sol",
-  "ignoreCase": false,
+  "defaultToken": "invalid",
   "keywords": [
     "pragma",
     "solidity",
     "import",
     "contract",
-    "interface",
     "library",
+    "interface",
     "is",
-    "abstract",
-    "function",
-    "constructor",
-    "modifier",
-    "event",
-    "error",
     "struct",
     "enum",
+    "event",
+    "modifier",
+    "function",
+    "constructor",
+    "fallback",
+    "receive",
     "mapping",
-    "storage",
-    "memory",
-    "calldata",
-    "public",
-    "private",
-    "internal",
-    "external",
-    "pure",
-    "view",
-    "payable",
-    "nonpayable",
-    "virtual",
-    "override",
-    "returns",
-    "return",
-    "if",
-    "else",
-    "for",
-    "while",
-    "do",
-    "break",
-    "continue",
-    "throw",
-    "revert",
-    "require",
-    "assert",
-    "emit",
-    "try",
-    "catch",
-    "new",
-    "delete",
-    "this",
-    "super",
-    "selfdestruct",
-    "type",
+    "address",
+    "bool",
+    "string",
+    "bytes",
+    "int",
+    "uint",
+    "int8",
+    "int16",
+    "int32",
+    "int64",
+    "int128",
+    "int256",
+    "uint8",
+    "uint16",
+    "uint32",
+    "uint64",
+    "uint128",
+    "uint256",
+    "bytes1",
+    "bytes2",
+    "bytes4",
+    "bytes8",
+    "bytes16",
+    "bytes32",
+    "fixed",
+    "ufixed",
     "true",
     "false",
     "wei",
@@ -64,22 +54,125 @@
     "minutes",
     "hours",
     "days",
-    "weeks"
+    "weeks",
+    "if",
+    "else",
+    "for",
+    "while",
+    "do",
+    "break",
+    "continue",
+    "return",
+    "throw",
+    "emit",
+    "require",
+    "assert",
+    "revert",
+    "try",
+    "catch",
+    "new",
+    "delete",
+    "public",
+    "private",
+    "internal",
+    "external",
+    "view",
+    "pure",
+    "payable",
+    "constant",
+    "immutable",
+    "anonymous",
+    "indexed",
+    "virtual",
+    "override",
+    "abstract",
+    "memory",
+    "storage",
+    "calldata",
+    "this",
+    "super",
+    "msg",
+    "block",
+    "tx",
+    "abi",
+    "type",
+    "assembly"
   ],
-  "typeKeywords": [],
+  "typeKeywords": [
+    "int",
+    "float",
+    "double",
+    "string",
+    "bool",
+    "boolean",
+    "void",
+    "null",
+    "char",
+    "byte",
+    "long",
+    "short",
+    "array",
+    "list",
+    "map",
+    "set",
+    "object",
+    "class",
+    "type",
+    "function",
+    "module",
+    "tuple",
+    "record",
+    "enum",
+    "struct",
+    "interface",
+    "trait",
+    "any",
+    "never",
+    "unknown",
+    "optional",
+    "result",
+    "error",
+    "promise",
+    "future",
+    "stream",
+    "iterator",
+    "callable",
+    "undefined",
+    "none",
+    "unit",
+    "variant"
+  ],
   "operators": [
-    "=",
-    "!=",
-    "==",
-    ">",
-    "<",
-    ">=",
-    "<=",
     "+",
     "-",
     "*",
     "/",
-    "%"
+    "=",
+    "!",
+    "<",
+    ">",
+    "&",
+    "|",
+    "^",
+    "~",
+    "%",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "&&",
+    "||",
+    "++",
+    "--",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "<<",
+    ">>",
+    "??",
+    "?.",
+    "=>"
   ],
   "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
   "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
@@ -103,30 +196,23 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
+      [
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
+      ],
       [
         "[{}()\\[\\]]",
-        "@brackets"
+        "delimiter.bracket"
       ],
       [
-        "[a-zA-Z_]\\w*",
-        {
-          "cases": {
-            "@keywords": "keyword",
-            "@typeKeywords": "type",
-            "@default": "identifier"
-          }
-        }
+        "/\\*",
+        "comment",
+        "@comment"
       ],
       [
-        "@digits",
-        "number"
-      ],
-      [
-        "0[xX][0-9a-fA-F]+",
-        "number.hex"
+        "//.*$",
+        "comment"
       ],
       [
         "\"",
@@ -139,6 +225,36 @@
         "@string_single"
       ],
       [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO]?[0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
         "@symbols",
         {
           "cases": {
@@ -146,35 +262,32 @@
             "@default": ""
           }
         }
-      ],
-      [
-        "[;,.]",
-        "delimiter"
       ]
     ],
     "whitespace": [
       [
         "[ \\t\\r\\n]+",
-        "white"
-      ],
-      [
-        "//.*$",
-        "comment"
-      ],
-      [
-        "/\\*",
-        "comment",
-        "@comment"
+        ""
       ]
     ],
-    "comment": [],
+    "comment": [
+      [
+        "\\*/",
+        "comment",
+        "@pop"
+      ],
+      [
+        ".",
+        "comment"
+      ]
+    ],
     "string_double": [
       [
-        "[^\\\\\"]+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -185,17 +298,47 @@
     ],
     "string_single": [
       [
-        "[^\\\\']+",
+        "[^'\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
         "'",
         "string",
         "@pop"
+      ]
+    ],
+    "string_backtick": [
+      [
+        "[^`\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\[\\\\nrt]",
+        "string.escape"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
       ]
     ]
   }

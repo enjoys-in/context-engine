@@ -1,7 +1,7 @@
 {
   "language": "java",
-  "defaultToken": "invalid",
   "tokenPostfix": ".java",
+  "defaultToken": "invalid",
   "keywords": [
     "abstract",
     "assert",
@@ -71,22 +71,38 @@
     "long",
     "short",
     "void",
-    "String",
+    "Boolean",
+    "Byte",
+    "Character",
+    "Double",
+    "Float",
     "Integer",
     "Long",
-    "Float",
-    "Double",
-    "Boolean",
-    "Character",
+    "Short",
+    "String",
     "Object",
-    "Class",
+    "Number",
+    "BigInteger",
+    "BigDecimal",
     "List",
     "Map",
     "Set",
+    "Collection",
     "Optional",
     "Stream",
-    "Collection",
-    "Iterable"
+    "Future",
+    "CompletableFuture",
+    "Iterable",
+    "Iterator",
+    "Runnable",
+    "Callable",
+    "Comparable",
+    "Serializable",
+    "Cloneable",
+    "Throwable",
+    "Exception",
+    "RuntimeException",
+    "Error"
   ],
   "operators": [
     "=",
@@ -156,38 +172,23 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
+      [
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
+      ],
       [
         "[{}()\\[\\]]",
-        "@brackets"
+        "delimiter.bracket"
       ],
       [
-        "[a-zA-Z_$][\\w$]*",
-        {
-          "cases": {
-            "@keywords": "keyword",
-            "@typeKeywords": "type",
-            "@default": "identifier"
-          }
-        }
+        "/\\*",
+        "comment",
+        "@comment"
       ],
       [
-        "@digits",
-        "number"
-      ],
-      [
-        "0[xX][0-9a-fA-F]+",
-        "number.hex"
-      ],
-      [
-        "0[oO][0-7]+",
-        "number.octal"
-      ],
-      [
-        "0[bB][01]+",
-        "number.binary"
+        "//.*$",
+        "comment"
       ],
       [
         "\"",
@@ -200,6 +201,41 @@
         "@string_single"
       ],
       [
+        "\"\"\"",
+        "string",
+        "@string_triple"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO]?[0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
         "@symbols",
         {
           "cases": {
@@ -207,41 +243,15 @@
             "@default": ""
           }
         }
-      ],
-      [
-        "[;,.]",
-        "delimiter"
-      ],
-      [
-        "@[A-Za-z_]\\w*",
-        "annotation"
-      ],
-      [
-        "\"\"\"",
-        "string",
-        "@string_text_block"
       ]
     ],
     "whitespace": [
       [
         "[ \\t\\r\\n]+",
-        "white"
-      ],
-      [
-        "//.*$",
-        "comment"
-      ],
-      [
-        "/\\*",
-        "comment",
-        "@comment"
+        ""
       ]
     ],
     "comment": [
-      [
-        "[^/]+",
-        "comment"
-      ],
       [
         "\\*/",
         "comment",
@@ -254,11 +264,11 @@
     ],
     "string_double": [
       [
-        "[^\\\\\"]+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -269,11 +279,11 @@
     ],
     "string_single": [
       [
-        "[^\\\\']+",
+        "[^'\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -282,14 +292,25 @@
         "@pop"
       ]
     ],
-    "string_text_block": [
+    "string_backtick": [
       [
-        "[^\\\\\"]+",
+        "[^`\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt]",
         "string.escape"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
       ],
       [
         "\"\"\"",

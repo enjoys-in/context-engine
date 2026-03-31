@@ -11,52 +11,93 @@
   },
   "crossFileSymbols": [
     {
-      "symbolKind": "type",
-      "pattern": "\\b(class|struct|type|interface|module)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+.*{name}",
-      "exportPattern": "(export|public|pub)\\s+",
+      "symbolKind": "table",
+      "pattern": "\\bCREATE\\s+TABLE\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+TABLE\\s+{name}",
       "highlightKind": 1,
-      "description": "Type across files",
+      "description": "Table reference across queries",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "view",
+      "pattern": "\\bCREATE\\s+VIEW\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+VIEW\\s+{name}",
+      "highlightKind": 1,
+      "description": "View reference",
       "crossFileCapable": true
     },
     {
       "symbolKind": "function",
-      "pattern": "\\b(function|func|def|fn|sub|proc)\\s+(\\w+)",
-      "importPattern": "(import|use|require|include)\\s+",
-      "exportPattern": "(export|public|pub)\\s+",
+      "pattern": "\\bCREATE\\s+FUNCTION\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+FUNCTION\\s+{name}",
       "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Function reference",
       "crossFileCapable": true
     },
     {
-      "symbolKind": "variable",
-      "pattern": "\\b(var|let|const|val|my|local)\\s+(\\w+)",
+      "symbolKind": "procedure",
+      "pattern": "\\bCREATE\\s+PROCEDURE\\s+(\\w+)",
       "importPattern": "",
-      "exportPattern": "",
+      "exportPattern": "CREATE\\s+PROCEDURE\\s+{name}",
       "highlightKind": 1,
-      "description": "Variable reference",
-      "crossFileCapable": false
+      "description": "Procedure reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "trigger",
+      "pattern": "\\bCREATE\\s+TRIGGER\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+TRIGGER\\s+{name}",
+      "highlightKind": 1,
+      "description": "Trigger reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "index",
+      "pattern": "\\bCREATE\\s+INDEX\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+INDEX\\s+{name}",
+      "highlightKind": 1,
+      "description": "Index reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "schema",
+      "pattern": "\\bCREATE\\s+SCHEMA\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "CREATE\\s+SCHEMA\\s+{name}",
+      "highlightKind": 1,
+      "description": "Schema reference",
+      "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "(import|use|require|include|from)\\s+([\\w./]+)"
+      "USE\\s+(\\w+)",
+      "FROM\\s+(\\w+)",
+      "JOIN\\s+(\\w+)",
+      "INTO\\s+(\\w+)",
+      "REFERENCES\\s+(\\w+)"
     ],
     "exportStatements": [
-      "(export|public|pub)\\s+(\\w+)\\s+(\\w+)"
+      "CREATE\\s+(TABLE|VIEW|FUNCTION|PROCEDURE|TRIGGER|INDEX)\\s+(\\w+)",
+      "ALTER\\s+TABLE\\s+(\\w+)"
     ],
     "reExportStatements": []
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "\\b(global|public)\\s+\\w+\\s+(\\w+)"
+        "\\bDECLARE\\s+@(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\bCREATE\\s+(TABLE|VIEW|FUNCTION|PROCEDURE)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
@@ -66,46 +107,61 @@
     },
     "functionScope": {
       "patterns": [
-        "\\b(\\w+)\\s*="
+        "\\bDECLARE\\s+@?(\\w+)",
+        "\\bSET\\s+@?(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
-      "patterns": [],
+      "patterns": [
+        "\\bDECLARE\\s+@?(\\w+)"
+      ],
       "highlightKind": 1
     }
   },
   "writeOperations": [
     "=",
-    "+=",
-    "-=",
-    "*=",
-    "/="
+    "INSERT",
+    "UPDATE",
+    "DELETE",
+    "ALTER",
+    "DROP",
+    "TRUNCATE",
+    "CREATE",
+    "REPLACE",
+    "MERGE",
+    "SET"
   ],
   "readOperations": [
-    ".",
-    "("
+    "SELECT",
+    "COUNT(",
+    "SUM(",
+    "AVG(",
+    "MIN(",
+    "MAX(",
+    "EXISTS(",
+    "IN (",
+    "BETWEEN",
+    "LIKE",
+    "IS NULL",
+    "COALESCE(",
+    "CASE",
+    "CAST(",
+    "CONVERT("
   ],
   "declarationPatterns": [
     "\\b(\\w+)\\s*=",
-    "\\b(class|struct|type|function|def|fn|sub)\\s+(\\w+)"
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
+    "\\b(\\w+)\\(",
     "\\b(\\w+)\\.",
-    "\\b(\\w+)\\("
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "comments": {
-      "pattern": "",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": false,
+    "comments": true
   }
 }

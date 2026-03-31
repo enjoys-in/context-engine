@@ -13,157 +13,183 @@
     {
       "symbolKind": "function",
       "pattern": "\\bfunc\\s+(\\w+)",
-      "importPattern": "\\b{package}\\.{name}",
-      "exportPattern": "func\\s+{name}",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "\\bfunc\\s+{name}",
       "highlightKind": 1,
-      "description": "Exported function across files",
+      "description": "Exported function across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "type",
-      "pattern": "\\btype\\s+(\\w+)",
-      "importPattern": "\\b{package}\\.{name}",
-      "exportPattern": "type\\s+{name}",
+      "pattern": "\\btype\\s+(\\w+)\\s+struct",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "\\btype\\s+{name}\\s+struct",
       "highlightKind": 1,
-      "description": "Type across files",
+      "description": "Struct type across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "interface",
       "pattern": "\\btype\\s+(\\w+)\\s+interface",
-      "importPattern": "\\b{package}\\.{name}",
-      "exportPattern": "type\\s+{name}\\s+interface",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "\\btype\\s+{name}\\s+interface",
       "highlightKind": 1,
-      "description": "Interface across files",
-      "crossFileCapable": true
-    },
-    {
-      "symbolKind": "variable",
-      "pattern": "\\bvar\\s+(\\w+)",
-      "importPattern": "\\b{package}\\.{name}",
-      "exportPattern": "var\\s+{name}",
-      "highlightKind": 1,
-      "description": "Package variable across files",
+      "description": "Interface type across packages",
       "crossFileCapable": true
     },
     {
       "symbolKind": "constant",
       "pattern": "\\bconst\\s+(\\w+)",
-      "importPattern": "\\b{package}\\.{name}",
-      "exportPattern": "const\\s+{name}",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "\\bconst\\s+{name}",
       "highlightKind": 1,
-      "description": "Constant across files",
+      "description": "Package-level constant",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "variable",
+      "pattern": "\\bvar\\s+(\\w+)",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "\\bvar\\s+{name}",
+      "highlightKind": 1,
+      "description": "Package-level variable",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "method",
+      "pattern": "\\bfunc\\s+\\(\\w+\\s+\\*?\\w+\\)\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Method on type",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "package",
+      "pattern": "package\\s+(\\w+)",
+      "importPattern": "\"[\\w./]+\"",
+      "exportPattern": "package\\s+{name}",
+      "highlightKind": 1,
+      "description": "Package reference",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "import\\s+\"([^\"]+)\"",
-      "import\\s+\\(([^)]+)\\)",
-      "import\\s+(\\w+)\\s+\"([^\"]+)\""
+      "\"([\\w./]+)\"",
+      "(\\w+)\\s+\"([\\w./]+)\"",
+      "_\\s+\"([\\w./]+)\"",
+      "\\.\\s+\"([\\w./]+)\""
     ],
     "exportStatements": [
-      "func\\s+([A-Z]\\w*)\\s*\\(",
-      "type\\s+([A-Z]\\w*)",
-      "var\\s+([A-Z]\\w*)",
-      "const\\s+([A-Z]\\w*)"
+      "\\bfunc\\s+([A-Z]\\w*)",
+      "\\btype\\s+([A-Z]\\w*)\\s+struct",
+      "\\btype\\s+([A-Z]\\w*)\\s+interface",
+      "\\bvar\\s+([A-Z]\\w*)",
+      "\\bconst\\s+([A-Z]\\w*)"
     ],
     "reExportStatements": []
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "\\bvar\\s+([A-Z]\\w+)",
-        "\\bconst\\s+([A-Z]\\w+)"
+        "\\bvar\\s+([A-Z]\\w*)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\bpackage\\s+(\\w+)"
+        "\\bpackage\\s+(\\w+)",
+        "\\bfunc\\s+([A-Z]\\w*)"
       ],
       "highlightKind": 1
     },
     "classScope": {
       "patterns": [
-        "\\bfunc\\s*\\((\\w+)\\s+\\*?\\w+\\)",
-        "\\b(\\w+)\\.(\\w+)"
+        "(\\w+)\\.(\\w+)"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
         "\\b(\\w+)\\s*:=",
-        "\\bvar\\s+(\\w+)",
-        "\\bfor\\s+(\\w+)"
+        "\\bvar\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\b(\\w+)\\s*:=",
-        "if\\s+(\\w+)\\s*:="
+        "\\b(\\w+)\\s*:="
       ],
       "highlightKind": 1
     }
   },
   "writeOperations": [
-    ":=",
     "=",
     "+=",
     "-=",
     "*=",
     "/=",
     "%=",
-    "&=",
-    "|=",
-    "^=",
+    "**=",
     "<<=",
     ">>=",
-    "&^=",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
     "++",
     "--",
-    "append(",
-    "delete(",
-    "close("
+    "delete",
+    ".push(",
+    ".pop(",
+    ".shift(",
+    ".splice(",
+    ".sort(",
+    ".reverse(",
+    ".fill("
   ],
   "readOperations": [
-    "len(",
-    "cap(",
-    "make(",
-    "new(",
-    "range ",
-    "fmt.Sprint",
-    "fmt.Print",
-    "strings.",
-    "strconv.",
-    "sort.",
-    "reflect."
+    ".length",
+    ".indexOf(",
+    ".includes(",
+    ".find(",
+    ".filter(",
+    ".map(",
+    ".reduce(",
+    ".some(",
+    ".every(",
+    ".forEach(",
+    ".keys(",
+    ".values(",
+    ".entries(",
+    ".slice(",
+    ".concat(",
+    ".join(",
+    ".toString(",
+    ".valueOf(",
+    "JSON.stringify(",
+    "JSON.parse(",
+    "typeof",
+    "instanceof",
+    "in"
   ],
   "declarationPatterns": [
-    "\\b(\\w+)\\s*:=",
-    "\\bvar\\s+(\\w+)",
-    "\\bconst\\s+(\\w+)",
+    "\\b(var|const)\\s+(\\w+)",
+    "\\btype\\s+(\\w+)",
     "\\bfunc\\s+(\\w+)",
-    "\\btype\\s+(\\w+)"
+    "(\\w+)\\s*:="
   ],
   "referencePatterns": [
-    "\\b(\\w+)\\.",
     "\\b(\\w+)\\(",
-    "\\b(\\w+)\\{"
+    "\\b(\\w+)\\.",
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "\\b([A-Z]\\w+)(?:\\{|\\(|\\))",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "comments": {
-      "pattern": "",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

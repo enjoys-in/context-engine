@@ -12,9 +12,9 @@
   "crossFileSymbols": [
     {
       "symbolKind": "module",
-      "pattern": "\\bdefmodule\\s+(\\w+)",
-      "importPattern": "\\balias\\s+{name}",
-      "exportPattern": "defmodule\\s+{name}",
+      "pattern": "\\bdefmodule\\s+([\\w.]+)",
+      "importPattern": "alias\\s+{name}|import\\s+{name}|use\\s+{name}",
+      "exportPattern": "\\bdefmodule\\s+{name}",
       "highlightKind": 1,
       "description": "Module across files",
       "crossFileCapable": true
@@ -22,76 +22,101 @@
     {
       "symbolKind": "function",
       "pattern": "\\bdef\\s+(\\w+)",
-      "importPattern": "import\\s+{module},\\s*only:\\s*\\[.*{name}",
-      "exportPattern": "def\\s+{name}",
+      "importPattern": "import\\s+\\w+,\\s*only:\\s*\\[.*{name}",
+      "exportPattern": "\\bdef\\s+{name}",
       "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Public function across modules",
       "crossFileCapable": true
     },
     {
       "symbolKind": "macro",
       "pattern": "\\bdefmacro\\s+(\\w+)",
-      "importPattern": "import\\s+{module}",
-      "exportPattern": "defmacro\\s+{name}",
+      "importPattern": "import\\s+\\w+,\\s*only:\\s*\\[.*{name}",
+      "exportPattern": "\\bdefmacro\\s+{name}",
       "highlightKind": 1,
-      "description": "Macro across files",
+      "description": "Macro across modules",
       "crossFileCapable": true
     },
     {
       "symbolKind": "protocol",
       "pattern": "\\bdefprotocol\\s+(\\w+)",
-      "importPattern": "\\balias\\s+{name}",
-      "exportPattern": "defprotocol\\s+{name}",
+      "importPattern": "alias\\s+{name}",
+      "exportPattern": "\\bdefprotocol\\s+{name}",
       "highlightKind": 1,
-      "description": "Protocol across files",
+      "description": "Protocol across modules",
       "crossFileCapable": true
+    },
+    {
+      "symbolKind": "behaviour",
+      "pattern": "@behaviour\\s+(\\w+)",
+      "importPattern": "alias\\s+{name}",
+      "exportPattern": "\\bdefmodule\\s+{name}",
+      "highlightKind": 1,
+      "description": "Behaviour across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "struct",
+      "pattern": "\\bdefstruct\\b",
+      "importPattern": "alias\\s+{name}",
+      "exportPattern": "\\bdefstruct\\b",
+      "highlightKind": 1,
+      "description": "Struct across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "callback",
+      "pattern": "@callback\\s+(\\w+)",
+      "importPattern": "",
+      "exportPattern": "@callback",
+      "highlightKind": 1,
+      "description": "Callback specification",
+      "crossFileCapable": false
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "alias\\s+([\\w.]+)",
-      "import\\s+([\\w.]+)",
-      "use\\s+([\\w.]+)",
-      "require\\s+([\\w.]+)"
+      "(import|require|use|include|load|source)\\s+['\"]?([\\w./]+)['\"]?",
+      "from\\s+(\\w+)\\s+import",
+      "require\\s+(\\w+)"
     ],
     "exportStatements": [
-      "defmodule\\s+(\\w+)",
-      "def\\s+(\\w+)",
-      "defmacro\\s+(\\w+)"
+      "(def|function|class|module)\\s+(\\w+)",
+      "(export|public)\\s+(\\w+)"
     ],
     "reExportStatements": [
-      "defdelegate\\s+(\\w+)"
+      "from\\s+(\\w+)\\s+import\\s+(.+)"
     ]
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "@(\\w+)"
+        "\\b(global|public)\\s+\\w+\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "\\bdef\\s+(\\w+)",
-        "\\bdefp\\s+(\\w+)",
-        "@(\\w+)"
+        "\\b(\\w+)\\s*=",
+        "(class|module|namespace)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "classScope": {
-      "patterns": [],
+      "patterns": [
+        "\\b(self|this|me)\\.(\\w+)"
+      ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
         "\\b(\\w+)\\s*=",
-        "fn\\s+(\\w+)"
+        "\\b(var|let|const|local)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\b(\\w+)\\s*<-",
         "\\b(\\w+)\\s*="
       ],
       "highlightKind": 1
@@ -99,57 +124,48 @@
   },
   "writeOperations": [
     "=",
-    "|>",
-    "put_in(",
-    "Map.put(",
-    "Map.delete(",
-    "List.delete(",
-    "List.insert_at(",
-    "Keyword.put(",
-    "Agent.update(",
-    "GenServer.cast("
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    "++",
+    "--",
+    ".push(",
+    ".pop(",
+    ".set(",
+    ".add(",
+    ".remove(",
+    ".delete(",
+    ".clear("
   ],
   "readOperations": [
-    "Enum.",
-    "Stream.",
-    "Map.get(",
-    "Map.fetch(",
-    "Keyword.get(",
-    "List.first(",
-    "List.last(",
-    "length(",
-    "is_",
-    "Enum.count(",
-    "Enum.find(",
-    "Enum.filter(",
-    "Enum.map(",
-    "Enum.reduce("
+    ".length",
+    ".size()",
+    ".get(",
+    ".contains(",
+    ".indexOf(",
+    ".toString(",
+    ".equals(",
+    ".compareTo(",
+    "typeof",
+    "instanceof",
+    ".isEmpty()",
+    ".count("
   ],
   "declarationPatterns": [
-    "\\bdef\\s+(\\w+)",
-    "\\bdefp\\s+(\\w+)",
-    "\\bdefmodule\\s+(\\w+)",
-    "\\bdefmacro\\s+(\\w+)",
-    "\\b(\\w+)\\s*="
+    "\\b(\\w+)\\s*=",
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
-    "\\b(\\w+)\\.",
     "\\b(\\w+)\\(",
-    "\\b(\\w+)/\\d+",
-    "&(\\w+)/\\d+"
+    "\\b(\\w+)\\.",
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "@spec\\s+\\w+\\(([^)]+)\\)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "@(\\w+)",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": "@(doc|moduledoc|typedoc)",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

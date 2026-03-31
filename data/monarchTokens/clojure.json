@@ -1,7 +1,7 @@
 {
   "language": "clojure",
-  "defaultToken": "invalid",
   "tokenPostfix": ".clj",
+  "defaultToken": "invalid",
   "keywords": [
     "def",
     "defn",
@@ -96,9 +96,85 @@
     "pcalls",
     "pvalues"
   ],
-  "typeKeywords": [],
-  "operators": [],
+  "typeKeywords": [
+    "int",
+    "float",
+    "double",
+    "string",
+    "bool",
+    "boolean",
+    "void",
+    "null",
+    "char",
+    "byte",
+    "long",
+    "short",
+    "array",
+    "list",
+    "map",
+    "set",
+    "object",
+    "class",
+    "type",
+    "function",
+    "module",
+    "tuple",
+    "record",
+    "enum",
+    "struct",
+    "interface",
+    "trait",
+    "any",
+    "never",
+    "unknown",
+    "optional",
+    "result",
+    "error",
+    "promise",
+    "future",
+    "stream",
+    "iterator",
+    "callable",
+    "undefined",
+    "none",
+    "unit",
+    "variant"
+  ],
+  "operators": [
+    "+",
+    "-",
+    "*",
+    "/",
+    "=",
+    "!",
+    "<",
+    ">",
+    "&",
+    "|",
+    "^",
+    "~",
+    "%",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "&&",
+    "||",
+    "++",
+    "--",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "<<",
+    ">>",
+    "??",
+    "?.",
+    "=>"
+  ],
   "symbols": "[=><!+\\-*/]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'`]|x[0-9a-fA-F]{1,4}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
+  "digits": "\\d+(_+\\d+)*",
   "brackets": [
     {
       "open": "(",
@@ -118,25 +194,18 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
       [
-        "[()\\[\\]{}]",
-        "@brackets"
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
       ],
       [
-        ":[a-zA-Z][\\w-/.*+!?<>=]*",
-        "string.symbol"
+        "[{}()\\[\\]]",
+        "delimiter.bracket"
       ],
       [
-        "::[a-zA-Z][\\w-/.*+!?<>=]*",
-        "string.symbol.auto"
-      ],
-      [
-        "#\"",
-        "regexp",
-        "@regexp"
+        ";.*$",
+        "comment"
       ],
       [
         "\"",
@@ -144,48 +213,57 @@
         "@string_double"
       ],
       [
-        "\\\\[a-zA-Z]+",
-        "string.char"
+        "'",
+        "string",
+        "@string_single"
       ],
       [
-        "#'",
-        "tag"
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
       ],
       [
-        "@[a-zA-Z_]\\w*",
-        "annotation"
+        "0[oO]?[0-7]+",
+        "number.octal"
       ],
       [
-        "[a-zA-Z_][\\w-/.*+!?<>=]*",
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
         {
           "cases": {
             "@keywords": "keyword",
+            "@typeKeywords": "type",
             "@default": "identifier"
           }
         }
       ],
       [
-        "[-+]?0[xX][0-9a-fA-F]+N?",
-        "number.hex"
-      ],
-      [
-        "[-+]?0[0-7]+N?",
-        "number.octal"
-      ],
-      [
-        "[-+]?\\d+\\.?\\d*([eE][\\-+]?\\d+)?M?",
-        "number"
-      ],
-      [
-        "[-+]?\\d+/\\d+",
-        "number.fraction"
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
       ]
     ],
     "whitespace": [
       [
-        "[ \\t\\r\\n,]+",
-        "white"
-      ],
+        "[ \\t\\r\\n]+",
+        ""
+      ]
+    ],
+    "comment": [
       [
         ";.*$",
         "comment"
@@ -193,11 +271,11 @@
     ],
     "string_double": [
       [
-        "[^\\\\\"]+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "\\\\.",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -206,19 +284,49 @@
         "@pop"
       ]
     ],
-    "regexp": [
+    "string_single": [
       [
-        "[^\\\\\"]+",
-        "regexp"
+        "[^'\\\\]+",
+        "string"
       ],
       [
-        "\\\\.",
-        "regexp.escape"
+        "\\\\[\\\\nrt\"']",
+        "string.escape"
+      ],
+      [
+        "'",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_backtick": [
+      [
+        "[^`\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\[\\\\nrt]",
+        "string.escape"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
       ],
       [
         "\"",
-        "regexp",
-        "@pop"
+        "string"
       ]
     ]
   }

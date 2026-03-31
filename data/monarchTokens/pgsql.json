@@ -1,8 +1,7 @@
 {
   "language": "pgsql",
-  "defaultToken": "invalid",
   "tokenPostfix": ".pgsql",
-  "ignoreCase": true,
+  "defaultToken": "invalid",
   "keywords": [
     "SELECT",
     "FROM",
@@ -131,86 +130,96 @@
     "ILIKE"
   ],
   "typeKeywords": [
-    "INT",
-    "INTEGER",
     "BIGINT",
+    "BIT",
+    "DECIMAL",
+    "INT",
+    "MONEY",
+    "NUMERIC",
     "SMALLINT",
+    "SMALLMONEY",
     "TINYINT",
     "FLOAT",
     "REAL",
-    "DOUBLE",
-    "DECIMAL",
-    "NUMERIC",
-    "CHAR",
-    "VARCHAR",
-    "TEXT",
-    "CLOB",
-    "BLOB",
-    "BINARY",
-    "VARBINARY",
     "DATE",
-    "TIME",
-    "TIMESTAMP",
     "DATETIME",
-    "INTERVAL",
+    "DATETIME2",
+    "DATETIMEOFFSET",
+    "SMALLDATETIME",
+    "TIME",
+    "CHAR",
+    "NCHAR",
+    "TEXT",
+    "NTEXT",
+    "VARCHAR",
+    "NVARCHAR",
+    "BINARY",
+    "IMAGE",
+    "VARBINARY",
+    "CURSOR",
+    "HIERARCHYID",
+    "SQL_VARIANT",
+    "TABLE",
+    "TIMESTAMP",
+    "UNIQUEIDENTIFIER",
+    "XML",
+    "GEOGRAPHY",
+    "GEOMETRY",
+    "ROWVERSION",
     "BOOLEAN",
-    "BOOL",
     "JSON",
     "JSONB",
-    "XML",
     "UUID",
-    "ARRAY",
-    "ENUM",
     "SERIAL",
     "BIGSERIAL",
-    "MONEY",
+    "INTERVAL",
+    "ARRAY",
     "BYTEA",
     "INET",
     "CIDR",
     "MACADDR",
-    "BIT",
-    "VARBIT",
     "POINT",
     "LINE",
-    "LSEG",
-    "BOX",
-    "PATH",
     "POLYGON",
     "CIRCLE",
     "TSQUERY",
-    "TSVECTOR",
-    "HSTORE",
-    "GEOGRAPHY",
-    "GEOMETRY"
+    "TSVECTOR"
   ],
   "operators": [
-    "=",
-    "<>",
-    "!=",
-    ">",
-    "<",
-    ">=",
-    "<=",
-    "||",
     "+",
     "-",
     "*",
     "/",
+    "=",
+    "!",
+    "<",
+    ">",
+    "&",
+    "|",
     "^",
+    "~",
     "%",
-    "::",
-    "->",
-    "->>",
-    "#>",
-    "#>>",
-    "@>",
-    "<@",
-    "?",
-    "?&",
-    "?|",
-    "&&"
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "&&",
+    "||",
+    "++",
+    "--",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "<<",
+    ">>",
+    "??",
+    "?.",
+    "=>"
   ],
   "symbols": "[-=><!~?:&|+\\-*\\/\\^%@#]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'`]|x[0-9a-fA-F]{1,4}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
+  "digits": "\\d+(_+\\d+)*",
   "brackets": [
     {
       "open": "{",
@@ -230,15 +239,56 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
       [
-        "[{}()\\[\\]]",
-        "@brackets"
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
       ],
       [
-        "[a-zA-Z_]\\w*",
+        "[{}()\\[\\]]",
+        "delimiter.bracket"
+      ],
+      [
+        "/\\*",
+        "comment",
+        "@comment"
+      ],
+      [
+        "--.*$",
+        "comment"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "'",
+        "string",
+        "@string_single"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO]?[0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
         {
           "cases": {
             "@keywords": "keyword",
@@ -248,15 +298,6 @@
         }
       ],
       [
-        "\\d+\\.?\\d*",
-        "number"
-      ],
-      [
-        "'",
-        "string",
-        "@string_single"
-      ],
-      [
         "@symbols",
         {
           "cases": {
@@ -264,32 +305,15 @@
             "@default": ""
           }
         }
-      ],
-      [
-        "[;,.]",
-        "delimiter"
       ]
     ],
     "whitespace": [
       [
         "[ \\t\\r\\n]+",
-        "white"
-      ],
-      [
-        "--.*$",
-        "comment"
-      ],
-      [
-        "\\/\\*",
-        "comment",
-        "@comment"
+        ""
       ]
     ],
     "comment": [
-      [
-        "[^/]+",
-        "comment"
-      ],
       [
         "\\*/",
         "comment",
@@ -300,19 +324,64 @@
         "comment"
       ]
     ],
-    "string_single": [
+    "string_double": [
       [
-        "[^']+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "''",
+        "\\\\[\\\\nrt\"']",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_single": [
+      [
+        "[^'\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
         "'",
         "string",
         "@pop"
+      ]
+    ],
+    "string_backtick": [
+      [
+        "[^`\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\[\\\\nrt]",
+        "string.escape"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
       ]
     ]
   }

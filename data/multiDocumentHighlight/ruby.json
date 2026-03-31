@@ -13,8 +13,8 @@
     {
       "symbolKind": "class",
       "pattern": "\\bclass\\s+(\\w+)",
-      "importPattern": "require(_relative)?\\s+['\"][^'\"]*{name}",
-      "exportPattern": "class\\s+{name}",
+      "importPattern": "require\\s+['\"][^'\"]*{name}",
+      "exportPattern": "\\bclass\\s+{name}",
       "highlightKind": 1,
       "description": "Class across files",
       "crossFileCapable": true
@@ -23,27 +23,54 @@
       "symbolKind": "module",
       "pattern": "\\bmodule\\s+(\\w+)",
       "importPattern": "require\\s+['\"][^'\"]*{name}",
-      "exportPattern": "module\\s+{name}",
+      "exportPattern": "\\bmodule\\s+{name}",
       "highlightKind": 1,
       "description": "Module across files",
       "crossFileCapable": true
     },
     {
       "symbolKind": "method",
-      "pattern": "\\bdef\\s+(\\w+)",
+      "pattern": "\\bdef\\s+(\\w+[!?]?)",
       "importPattern": "",
       "exportPattern": "",
       "highlightKind": 1,
-      "description": "Method reference across files",
-      "crossFileCapable": true
+      "description": "Method definition",
+      "crossFileCapable": false
     },
     {
       "symbolKind": "constant",
       "pattern": "\\b([A-Z][A-Z0-9_]+)\\s*=",
+      "importPattern": "require\\s+",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Constant reference",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "symbol",
+      "pattern": ":(\\w+)",
       "importPattern": "",
       "exportPattern": "",
       "highlightKind": 1,
-      "description": "Constant across files",
+      "description": "Symbol reference",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "attribute",
+      "pattern": "attr_(reader|writer|accessor)\\s+:(\\w+)",
+      "importPattern": "",
+      "exportPattern": "",
+      "highlightKind": 1,
+      "description": "Attribute accessor",
+      "crossFileCapable": false
+    },
+    {
+      "symbolKind": "mixin",
+      "pattern": "(include|extend|prepend)\\s+(\\w+)",
+      "importPattern": "require\\s+",
+      "exportPattern": "\\bmodule\\s+{name}",
+      "highlightKind": 1,
+      "description": "Mixin across files",
       "crossFileCapable": true
     }
   ],
@@ -51,16 +78,14 @@
     "importStatements": [
       "require\\s+['\"]([^'\"]+)['\"]",
       "require_relative\\s+['\"]([^'\"]+)['\"]",
+      "load\\s+['\"]([^'\"]+)['\"]",
+      "autoload\\s+:(\\w+)",
       "include\\s+(\\w+)",
-      "extend\\s+(\\w+)",
-      "prepend\\s+(\\w+)",
-      "autoload\\s+:(\\w+)\\s*,\\s*['\"]([^'\"]+)['\"]"
+      "extend\\s+(\\w+)"
     ],
     "exportStatements": [
-      "\\bclass\\s+(\\w+)",
-      "\\bmodule\\s+(\\w+)",
-      "\\bdef\\s+(\\w+)",
-      "\\b([A-Z][A-Z_]+)\\s*="
+      "\\b(class|module)\\s+(\\w+)",
+      "attr_(reader|writer|accessor)\\s+:(\\w+)"
     ],
     "reExportStatements": []
   },
@@ -73,30 +98,27 @@
     },
     "moduleScope": {
       "patterns": [
-        "\\bmodule\\s+(\\w+)",
-        "\\bclass\\s+(\\w+)"
+        "\\b(class|module)\\s+(\\w+)",
+        "attr_(reader|writer|accessor)\\s+"
       ],
       "highlightKind": 1
     },
     "classScope": {
       "patterns": [
         "@\\w+",
-        "@@\\w+",
-        "\\bself\\.(\\w+)"
+        "@@\\w+"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
-        "\\b(\\w+)\\s*=",
-        "\\|([^|]+)\\|"
+        "\\b(\\w+)\\s*="
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\|([^|]+)\\|",
-        "\\bdo\\b"
+        "\\|([\\w,\\s]+)\\|"
       ],
       "highlightKind": 1
     }
@@ -109,17 +131,13 @@
     "/=",
     "%=",
     "**=",
-    "&=",
-    "|=",
-    "^=",
-    "<<=",
-    ">>=",
     "||=",
     "&&=",
+    "<<=",
     ".push(",
-    ".pop",
-    ".shift",
-    ".unshift",
+    ".pop(",
+    ".shift(",
+    ".unshift(",
     ".delete(",
     ".clear",
     ".sort!",
@@ -136,54 +154,39 @@
     ".size",
     ".count",
     ".include?(",
-    ".empty?",
-    ".nil?",
-    ".any?",
-    ".all?",
-    ".each",
-    ".map",
-    ".select",
-    ".find",
-    ".first",
-    ".last",
     ".index(",
-    ".key?(",
-    ".value?(",
-    ".to_s",
-    ".to_i",
-    ".to_f",
-    ".class",
-    ".is_a?(",
-    ".respond_to?(",
-    ".frozen?"
+    ".find(",
+    ".select(",
+    ".reject(",
+    ".map(",
+    ".each(",
+    ".reduce(",
+    ".any?(",
+    ".all?(",
+    ".none?(",
+    ".min",
+    ".max",
+    ".sum",
+    ".sort",
+    ".reverse",
+    ".flatten",
+    ".compact",
+    ".uniq",
+    ".first"
   ],
   "declarationPatterns": [
-    "\\bdef\\s+(\\w+)",
-    "\\bclass\\s+(\\w+)",
-    "\\bmodule\\s+(\\w+)",
     "\\b(\\w+)\\s*=",
-    "@(\\w+)",
-    "@@(\\w+)",
-    "\\$(\\w+)"
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
+    "\\b(\\w+)\\(",
     "\\b(\\w+)\\.",
-    "\\b(\\w+)\\s*\\(",
-    "\\b(\\w+)::",
-    ":(\\w+)"
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": "\\b([A-Z]\\w+)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "",
-      "highlightKind": 0
-    },
-    "comments": {
-      "pattern": "@(param|return|type)\\s+(\\w+)",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }

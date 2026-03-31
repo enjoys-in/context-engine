@@ -1,52 +1,130 @@
 {
   "language": "hcl",
-  "defaultToken": "invalid",
   "tokenPostfix": ".hcl",
-  "ignoreCase": false,
+  "defaultToken": "invalid",
   "keywords": [
     "resource",
     "data",
     "variable",
     "output",
-    "locals",
-    "module",
     "provider",
     "terraform",
+    "module",
+    "locals",
+    "moved",
+    "import",
     "required_providers",
     "required_version",
     "backend",
-    "for",
+    "cloud",
     "for_each",
-    "if",
-    "else",
     "count",
     "depends_on",
     "lifecycle",
+    "provisioner",
+    "connection",
     "dynamic",
     "content",
-    "each",
-    "self",
-    "path",
-    "var",
-    "local",
+    "for",
+    "in",
+    "if",
+    "else",
     "true",
     "false",
-    "null"
+    "null",
+    "tostring",
+    "tonumber",
+    "tobool",
+    "tolist",
+    "toset",
+    "tomap",
+    "try",
+    "can",
+    "sensitive",
+    "nonsensitive",
+    "type",
+    "description",
+    "default",
+    "validation",
+    "nullable",
+    "condition",
+    "error_message"
   ],
-  "typeKeywords": [],
+  "typeKeywords": [
+    "int",
+    "float",
+    "double",
+    "string",
+    "bool",
+    "boolean",
+    "void",
+    "null",
+    "char",
+    "byte",
+    "long",
+    "short",
+    "array",
+    "list",
+    "map",
+    "set",
+    "object",
+    "class",
+    "type",
+    "function",
+    "module",
+    "tuple",
+    "record",
+    "enum",
+    "struct",
+    "interface",
+    "trait",
+    "any",
+    "never",
+    "unknown",
+    "optional",
+    "result",
+    "error",
+    "promise",
+    "future",
+    "stream",
+    "iterator",
+    "callable",
+    "undefined",
+    "none",
+    "unit",
+    "variant"
+  ],
   "operators": [
-    "=",
-    "!=",
-    "==",
-    ">",
-    "<",
-    ">=",
-    "<=",
     "+",
     "-",
     "*",
     "/",
-    "%"
+    "=",
+    "!",
+    "<",
+    ">",
+    "&",
+    "|",
+    "^",
+    "~",
+    "%",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "&&",
+    "||",
+    "++",
+    "--",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "<<",
+    ">>",
+    "??",
+    "?.",
+    "=>"
   ],
   "symbols": "[-=><!~?:&|+\\-*\\/\\^%]+",
   "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
@@ -70,30 +148,23 @@
   ],
   "tokenizer": {
     "root": [
-      {
-        "include": "@whitespace"
-      },
+      [
+        "[ \\t\\r\\n]+",
+        "",
+        "@whitespace"
+      ],
       [
         "[{}()\\[\\]]",
-        "@brackets"
+        "delimiter.bracket"
       ],
       [
-        "[a-zA-Z_]\\w*",
-        {
-          "cases": {
-            "@keywords": "keyword",
-            "@typeKeywords": "type",
-            "@default": "identifier"
-          }
-        }
+        "/\\*",
+        "comment",
+        "@comment"
       ],
       [
-        "@digits",
-        "number"
-      ],
-      [
-        "0[xX][0-9a-fA-F]+",
-        "number.hex"
+        "//.*$",
+        "comment"
       ],
       [
         "\"",
@@ -106,6 +177,36 @@
         "@string_single"
       ],
       [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "0[oO]?[0-7]+",
+        "number.octal"
+      ],
+      [
+        "0[bB][01]+",
+        "number.binary"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[a-zA-Z_$][\\w$]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
         "@symbols",
         {
           "cases": {
@@ -113,32 +214,15 @@
             "@default": ""
           }
         }
-      ],
-      [
-        "[;,.]",
-        "delimiter"
       ]
     ],
     "whitespace": [
       [
         "[ \\t\\r\\n]+",
-        "white"
-      ],
-      [
-        "#.*$",
-        "comment"
-      ],
-      [
-        "/\\*",
-        "comment",
-        "@comment"
+        ""
       ]
     ],
     "comment": [
-      [
-        "[^/]+",
-        "comment"
-      ],
       [
         "\\*/",
         "comment",
@@ -151,11 +235,11 @@
     ],
     "string_double": [
       [
-        "[^\\\\\"]+",
+        "[^\"\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
@@ -166,17 +250,47 @@
     ],
     "string_single": [
       [
-        "[^\\\\']+",
+        "[^'\\\\]+",
         "string"
       ],
       [
-        "@escapes",
+        "\\\\[\\\\nrt\"']",
         "string.escape"
       ],
       [
         "'",
         "string",
         "@pop"
+      ]
+    ],
+    "string_backtick": [
+      [
+        "[^`\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\[\\\\nrt]",
+        "string.escape"
+      ],
+      [
+        "`",
+        "string",
+        "@pop"
+      ]
+    ],
+    "string_triple": [
+      [
+        "[^\"]+",
+        "string"
+      ],
+      [
+        "\"\"\"",
+        "string",
+        "@pop"
+      ],
+      [
+        "\"",
+        "string"
       ]
     ]
   }

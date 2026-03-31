@@ -14,9 +14,9 @@
       "symbolKind": "class",
       "pattern": "\\bclass\\s+(\\w+)",
       "importPattern": "import\\s+\\w+",
-      "exportPattern": "(public|open)\\s+class\\s+{name}",
+      "exportPattern": "public\\s+class\\s+{name}",
       "highlightKind": 1,
-      "description": "Class across files",
+      "description": "Class across modules",
       "crossFileCapable": true
     },
     {
@@ -25,7 +25,7 @@
       "importPattern": "import\\s+\\w+",
       "exportPattern": "public\\s+struct\\s+{name}",
       "highlightKind": 1,
-      "description": "Struct across files",
+      "description": "Struct across modules",
       "crossFileCapable": true
     },
     {
@@ -34,7 +34,7 @@
       "importPattern": "import\\s+\\w+",
       "exportPattern": "public\\s+protocol\\s+{name}",
       "highlightKind": 1,
-      "description": "Protocol across files",
+      "description": "Protocol across modules",
       "crossFileCapable": true
     },
     {
@@ -43,7 +43,25 @@
       "importPattern": "import\\s+\\w+",
       "exportPattern": "public\\s+enum\\s+{name}",
       "highlightKind": 1,
-      "description": "Enum across files",
+      "description": "Enum across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "function",
+      "pattern": "\\bfunc\\s+(\\w+)",
+      "importPattern": "import\\s+\\w+",
+      "exportPattern": "public\\s+func\\s+{name}",
+      "highlightKind": 1,
+      "description": "Function across modules",
+      "crossFileCapable": true
+    },
+    {
+      "symbolKind": "typealias",
+      "pattern": "\\btypealias\\s+(\\w+)",
+      "importPattern": "import\\s+\\w+",
+      "exportPattern": "public\\s+typealias\\s+{name}",
+      "highlightKind": 1,
+      "description": "Type alias across modules",
       "crossFileCapable": true
     },
     {
@@ -52,64 +70,55 @@
       "importPattern": "import\\s+\\w+",
       "exportPattern": "public\\s+actor\\s+{name}",
       "highlightKind": 1,
-      "description": "Actor across files",
-      "crossFileCapable": true
-    },
-    {
-      "symbolKind": "function",
-      "pattern": "\\bfunc\\s+(\\w+)",
-      "importPattern": "",
-      "exportPattern": "public\\s+func\\s+{name}",
-      "highlightKind": 1,
-      "description": "Function across files",
+      "description": "Actor across modules",
       "crossFileCapable": true
     }
   ],
   "importExportPatterns": {
     "importStatements": [
-      "import\\s+(\\w+)",
-      "@testable\\s+import\\s+(\\w+)"
+      "#include\\s+[<\"]([^>\"]+)[>\"]",
+      "import\\s+([\\w.]+)",
+      "using\\s+([\\w.]+)",
+      "require\\s+([\\w.]+)"
     ],
     "exportStatements": [
-      "(public|open)\\s+(class|struct|protocol|enum|actor|func|var|let|typealias)\\s+(\\w+)"
+      "(public|export)\\s+(class|struct|function|fn|func|def)\\s+(\\w+)",
+      "module\\.exports"
     ],
     "reExportStatements": [
-      "@_exported\\s+import\\s+(\\w+)"
+      "(export|pub)\\s+(use|import)\\s+"
     ]
   },
   "scopeRules": {
     "globalScope": {
       "patterns": [
-        "(public|open)\\s+(var|let|func)\\s+(\\w+)"
+        "\\b(global|public)\\s+\\w+\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "moduleScope": {
       "patterns": [
-        "(internal)\\s+(class|struct|func)\\s+(\\w+)"
+        "\\b(\\w+)\\s*=",
+        "(class|module|namespace)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "classScope": {
       "patterns": [
-        "\\bself\\.(\\w+)",
-        "\\bSelf\\.(\\w+)",
-        "(private|fileprivate)\\s+(var|let|func)\\s+(\\w+)"
+        "\\b(self|this|me)\\.(\\w+)"
       ],
       "highlightKind": 1
     },
     "functionScope": {
       "patterns": [
-        "\\b(let|var)\\s+(\\w+)",
-        "\\bguard\\s+let\\s+(\\w+)",
-        "\\bfor\\s+(\\w+)\\s+in"
+        "\\b(\\w+)\\s*=",
+        "\\b(var|let|const|local)\\s+(\\w+)"
       ],
       "highlightKind": 1
     },
     "blockScope": {
       "patterns": [
-        "\\b(let|var)\\s+(\\w+)",
-        "if\\s+let\\s+(\\w+)"
+        "\\b(\\w+)\\s*="
       ],
       "highlightKind": 1
     }
@@ -121,64 +130,64 @@
     "*=",
     "/=",
     "%=",
-    "&=",
-    "|=",
-    "^=",
+    "**=",
     "<<=",
     ">>=",
-    ".append(",
-    ".insert(",
-    ".remove(",
-    ".removeAll(",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
+    "++",
+    "--",
+    "delete",
+    ".push(",
+    ".pop(",
+    ".shift(",
+    ".splice(",
     ".sort(",
     ".reverse(",
-    ".swapAt("
+    ".fill("
   ],
   "readOperations": [
-    ".count",
-    ".isEmpty",
-    ".contains(",
-    ".first",
-    ".last",
-    ".map(",
+    ".length",
+    ".indexOf(",
+    ".includes(",
+    ".find(",
     ".filter(",
+    ".map(",
     ".reduce(",
-    ".compactMap(",
-    ".flatMap(",
+    ".some(",
+    ".every(",
     ".forEach(",
-    ".enumerated(",
-    ".sorted(",
-    ".reversed(",
-    "type(of"
+    ".keys(",
+    ".values(",
+    ".entries(",
+    ".slice(",
+    ".concat(",
+    ".join(",
+    ".toString(",
+    ".valueOf(",
+    "JSON.stringify(",
+    "JSON.parse(",
+    "typeof",
+    "instanceof",
+    "in"
   ],
   "declarationPatterns": [
-    "\\b(let|var)\\s+(\\w+)",
-    "\\bfunc\\s+(\\w+)",
-    "\\bclass\\s+(\\w+)",
-    "\\bstruct\\s+(\\w+)",
-    "\\bprotocol\\s+(\\w+)",
-    "\\benum\\s+(\\w+)",
-    "\\bactor\\s+(\\w+)",
-    "\\btypealias\\s+(\\w+)"
+    "\\b(\\w+)\\s*=",
+    "\\b(var|let|const|val|def|func|fn)\\s+(\\w+)",
+    "\\b(class|struct|type|interface)\\s+(\\w+)"
   ],
   "referencePatterns": [
-    "\\b(\\w+)\\.",
     "\\b(\\w+)\\(",
-    ":\\s+(\\w+)",
-    "\\bextension\\s+(\\w+)"
+    "\\b(\\w+)\\.",
+    "new\\s+(\\w+)"
   ],
   "specialHighlights": {
-    "typeReferences": {
-      "pattern": ":\\s*(\\w+)",
-      "highlightKind": 1
-    },
-    "decorators": {
-      "pattern": "@(\\w+)",
-      "highlightKind": 1
-    },
-    "comments": {
-      "pattern": "- (Parameter|Returns|Throws)\\s+(\\w+)",
-      "highlightKind": 0
-    }
+    "typeReferences": true,
+    "decorators": true,
+    "comments": true
   }
 }
