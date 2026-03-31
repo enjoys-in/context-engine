@@ -2,165 +2,187 @@
   "language": "nextjs",
   "implementationPatterns": [
     {
-      "interface": "Page",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+(?:async\\s+)?function\\s+\\w+\\s*\\(\\s*(?:\\{\\s*(?:params|searchParams)[^}]*\\})?",
-      "description": "App Router page component implementing the page file convention"
-    },
-    {
-      "interface": "Layout",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+(?:async\\s+)?function\\s+\\w+\\s*\\(\\s*\\{\\s*children",
-      "description": "App Router layout component implementing the layout file convention"
-    },
-    {
-      "interface": "Loading",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+Loading\\s*\\(",
-      "description": "Loading UI component implementing the loading file convention"
-    },
-    {
-      "interface": "Error",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+Error\\s*\\(\\s*\\{\\s*error\\s*,\\s*reset",
-      "description": "Error boundary component implementing the error file convention"
-    },
-    {
-      "interface": "NotFound",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+NotFound\\s*\\(",
-      "description": "Not-found component implementing the not-found file convention"
-    },
-    {
-      "interface": "RouteHandler",
-      "implementationKeyword": "export async function",
-      "pattern": "export\\s+(?:async\\s+)?function\\s+(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\\s*\\(",
-      "description": "App Router Route Handler implementing HTTP method handlers"
-    },
-    {
-      "interface": "Middleware",
-      "implementationKeyword": "export function middleware",
-      "pattern": "export\\s+(?:async\\s+)?function\\s+middleware\\s*\\(\\s*(?:request|req)\\s*:\\s*NextRequest",
-      "description": "Middleware function implementing the middleware file convention"
-    },
-    {
-      "interface": "ServerAction",
-      "implementationKeyword": "use server",
-      "pattern": "['\"]use server['\"]\\s*;?\\s*(?:export\\s+)?async\\s+function\\s+\\w+",
-      "description": "Server Action implementing the 'use server' directive convention"
-    },
-    {
-      "interface": "GetServerSideProps",
-      "implementationKeyword": "export const getServerSideProps",
-      "pattern": "export\\s+(?:const\\s+getServerSideProps|async\\s+function\\s+getServerSideProps)",
-      "description": "Pages Router server-side data fetching implementation"
-    },
-    {
-      "interface": "GetStaticProps",
-      "implementationKeyword": "export const getStaticProps",
-      "pattern": "export\\s+(?:const\\s+getStaticProps|async\\s+function\\s+getStaticProps)",
-      "description": "Pages Router static generation implementation"
-    },
-    {
-      "interface": "GetStaticPaths",
-      "implementationKeyword": "export const getStaticPaths",
-      "pattern": "export\\s+(?:const\\s+getStaticPaths|async\\s+function\\s+getStaticPaths)",
-      "description": "Pages Router static paths implementation for dynamic routes"
-    },
-    {
-      "interface": "APIRoute",
-      "implementationKeyword": "export default function handler",
-      "pattern": "export\\s+default\\s+(?:async\\s+)?function\\s+handler\\s*\\(\\s*req\\s*:\\s*NextApiRequest",
-      "description": "Pages Router API route handler implementation"
-    },
-    {
-      "interface": "GenerateMetadata",
-      "implementationKeyword": "export async function generateMetadata",
-      "pattern": "export\\s+async\\s+function\\s+generateMetadata\\s*\\(",
-      "description": "Dynamic metadata generation function implementation"
-    },
-    {
-      "interface": "GenerateStaticParams",
-      "implementationKeyword": "export async function generateStaticParams",
-      "pattern": "export\\s+async\\s+function\\s+generateStaticParams\\s*\\(",
-      "description": "Static params generation function implementation"
-    },
-    {
-      "interface": "Template",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+Template\\s*\\(\\s*\\{\\s*children",
-      "description": "Template component implementing the template file convention"
-    },
-    {
-      "interface": "GlobalError",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+GlobalError\\s*\\(\\s*\\{\\s*error\\s*,\\s*reset",
-      "description": "Global error boundary implementing the global-error file convention"
-    },
-    {
-      "interface": "Default",
-      "implementationKeyword": "export default function",
-      "pattern": "export\\s+default\\s+function\\s+Default\\s*\\(",
-      "description": "Default component for parallel route slots implementing the default file convention"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "ClassDeclaration",
+      "implementationKeyword": "class",
+      "pattern": "class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "Class declaration",
+      "kind": "class"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ClassExtends",
+      "implementationKeyword": "extends",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
+      "description": "Class extending another class",
+      "kind": "class"
+    },
+    {
+      "interface": "PrototypeAssignment",
+      "pattern": "(\\w+)\\.prototype\\.(\\w+)\\s*=\\s*function",
+      "captureGroup": 2,
+      "description": "Prototype method assignment",
       "kind": "method"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "PrototypeChain",
+      "pattern": "(\\w+)\\.prototype\\s*=\\s*Object\\.create\\((\\w+)\\.prototype\\)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Prototype chain inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "ObjectCreate",
+      "pattern": "Object\\.create\\((\\w+)(?:\\.prototype)?\\)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Object.create inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
+      "interface": "MixinPattern",
+      "pattern": "Object\\.assign\\((\\w+)\\.prototype,\\s*(\\w+)\\)",
+      "captureGroup": 1,
+      "description": "Mixin via Object.assign",
+      "kind": "mixin"
+    },
+    {
+      "interface": "FactoryFunction",
+      "pattern": "function\\s+(create|make|build)\\w*\\s*\\(",
+      "description": "Factory function pattern",
+      "kind": "factory"
+    },
+    {
+      "interface": "GetterSetter",
+      "pattern": "(get|set)\\s+(\\w+)\\s*\\(",
+      "captureGroup": 2,
+      "description": "Getter/setter implementation",
+      "kind": "accessor"
+    },
+    {
+      "interface": "SymbolIterator",
+      "pattern": "\\[Symbol\\.(iterator|asyncIterator)\\]\\s*\\(",
+      "description": "Symbol.iterator implementation",
+      "kind": "protocol"
+    },
+    {
+      "interface": "SymbolToPrimitive",
+      "pattern": "\\[Symbol\\.toPrimitive\\]\\s*\\(",
+      "description": "Symbol.toPrimitive implementation",
+      "kind": "protocol"
+    },
+    {
+      "interface": "ProxyHandler",
+      "pattern": "new\\s+Proxy\\s*\\([^,]+,\\s*\\{",
+      "description": "Proxy handler implementation",
+      "kind": "handler"
+    },
+    {
+      "interface": "EventHandler",
+      "pattern": "(?:addEventListener|on\\w+)\\s*[=(].*(?:function|=>)",
       "description": "Event handler implementation",
       "kind": "handler"
+    },
+    {
+      "interface": "PromiseExecutor",
+      "pattern": "new\\s+Promise\\s*\\(\\s*(?:function|\\()",
+      "description": "Promise executor implementation",
+      "kind": "callback"
+    },
+    {
+      "interface": "CallbackImpl",
+      "pattern": "\\w+\\s*\\(\\s*(?:function|\\([^)]*\\)\\s*=>)",
+      "description": "Callback implementation",
+      "kind": "callback"
+    },
+    {
+      "interface": "ModuleExport",
+      "implementationKeyword": "export",
+      "pattern": "export\\s+(default\\s+)?(?:class|function|const|let|var)\\s+(\\w+)",
+      "captureGroup": 2,
+      "description": "Module export",
+      "kind": "module"
+    },
+    {
+      "interface": "StaticMethod",
+      "pattern": "static\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Static method implementation",
+      "kind": "method"
+    },
+    {
+      "interface": "AsyncGenerator",
+      "pattern": "async\\s*\\*\\s*(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Async generator implementation",
+      "kind": "generator"
+    },
+    {
+      "interface": "ComputedProperty",
+      "pattern": "\\[(\\w+)\\]\\s*\\(",
+      "captureGroup": 1,
+      "description": "Computed property method",
+      "kind": "method"
+    },
+    {
+      "interface": "FunctionComponent",
+      "pattern": "(?:const|function)\\s+(\\w+)\\s*[:=]\\s*(?:React\\.FC|FC|\\([^)]*\\)\\s*(?:=>|:))",
+      "captureGroup": 1,
+      "description": "React function component",
+      "kind": "component"
+    },
+    {
+      "interface": "CustomHook",
+      "pattern": "(?:function|const)\\s+(use\\w+)\\s*[=(]",
+      "captureGroup": 1,
+      "description": "Custom React hook",
+      "kind": "hook"
+    },
+    {
+      "interface": "ForwardRef",
+      "pattern": "React\\.forwardRef\\s*(?:<[^>]+>)?\\s*\\(",
+      "description": "ForwardRef component",
+      "kind": "component"
+    },
+    {
+      "interface": "ContextProvider",
+      "pattern": "(?:const|let)\\s+(\\w+Context)\\s*=\\s*(?:React\\.)?createContext",
+      "captureGroup": 1,
+      "description": "React context",
+      "kind": "context"
+    },
+    {
+      "interface": "HOC",
+      "pattern": "(?:function|const)\\s+(with\\w+)\\s*[=(]",
+      "captureGroup": 1,
+      "description": "Higher-order component",
+      "kind": "hoc"
+    },
+    {
+      "interface": "MemoComponent",
+      "pattern": "React\\.memo\\s*\\(\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Memoized component",
+      "kind": "component"
     }
   ],
   "keywords": {
     "interface": [
-      "Page",
-      "Layout",
-      "Loading",
-      "Error",
-      "NotFound",
-      "Template",
-      "GlobalError",
-      "Default",
-      "RouteHandler",
-      "Middleware",
-      "ServerAction",
-      "APIRoute",
-      "GetServerSideProps",
-      "GetStaticProps",
-      "GetStaticPaths",
-      "GenerateMetadata",
-      "GenerateStaticParams"
+      "class",
+      "extends",
+      "prototype",
+      "Symbol.iterator",
+      "Symbol.asyncIterator",
+      "Symbol.toPrimitive",
+      "Proxy"
     ],
     "implementation": [
-      "export default function",
-      "export default async function",
-      "export async function",
-      "export const",
-      "export function",
-      "use server",
-      "use client"
+      "class",
+      "extends",
+      "Object.create",
+      "Object.assign",
+      "prototype",
+      "new",
+      "export"
     ]
   }
 }

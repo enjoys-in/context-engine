@@ -2,55 +2,154 @@
   "language": "csharp",
   "implementationPatterns": [
     {
-      "interface": "interface",
-      "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "interface": "abstract class",
-      "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "InterfaceImpl",
+      "implementationKeyword": ":",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?\\s*:\\s*(?:[\\w<>,\\s]+)?I[A-Z]\\w+",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Interface implementation (convention I-prefix)",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ClassInherit",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?\\s*:\\s*(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Class inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "AbstractClass",
+      "implementationKeyword": "abstract",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Abstract class declaration",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "InterfaceDecl",
+      "implementationKeyword": "interface",
+      "pattern": "interface\\s+(I\\w+)(?:<[^>]+>)?",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Interface declaration",
+      "kind": "interface"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "OverrideMethod",
+      "implementationKeyword": "override",
+      "pattern": "override\\s+(?:async\\s+)?\\w+(?:<[^>]+>)?\\s+(\\w+)\\s*[(<]",
+      "captureGroup": 1,
+      "description": "Method override",
+      "kind": "override"
+    },
+    {
+      "interface": "VirtualMethod",
+      "implementationKeyword": "virtual",
+      "pattern": "virtual\\s+(?:async\\s+)?\\w+(?:<[^>]+>)?\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Virtual method declaration",
+      "kind": "virtual"
+    },
+    {
+      "interface": "ExplicitInterfaceImpl",
+      "pattern": "\\w+\\.I(\\w+)\\.(\\w+)\\s*\\(",
+      "captureGroup": 2,
+      "description": "Explicit interface implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "PartialClass",
+      "implementationKeyword": "partial",
+      "pattern": "partial\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Partial class implementation",
+      "kind": "partial"
+    },
+    {
+      "interface": "RecordDecl",
+      "implementationKeyword": "record",
+      "pattern": "record\\s+(struct\\s+)?(\\w+)",
+      "captureGroup": 2,
+      "description": "Record declaration",
+      "kind": "record"
+    },
+    {
+      "interface": "StructDecl",
+      "implementationKeyword": "struct",
+      "pattern": "(?:readonly\\s+)?struct\\s+(\\w+)(?:\\s*:\\s*[\\w<>,\\s]+)?",
+      "captureGroup": 1,
+      "description": "Struct declaration",
+      "kind": "struct"
+    },
+    {
+      "interface": "ExtensionMethod",
+      "pattern": "static\\s+\\w+\\s+(\\w+)\\s*\\(\\s*this\\s+\\w+",
+      "captureGroup": 1,
+      "description": "Extension method",
+      "kind": "extension"
+    },
+    {
+      "interface": "DelegateDecl",
+      "implementationKeyword": "delegate",
+      "pattern": "delegate\\s+\\w+\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Delegate declaration",
+      "kind": "delegate"
+    },
+    {
+      "interface": "EventHandler",
+      "pattern": "event\\s+\\w+(?:<[^>]+>)?\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Event declaration",
+      "kind": "event"
+    },
+    {
+      "interface": "IndexerImpl",
+      "pattern": "\\w+\\s+this\\s*\\[",
+      "description": "Indexer implementation",
+      "kind": "indexer"
+    },
+    {
+      "interface": "OperatorOverload",
+      "pattern": "static\\s+\\w+\\s+operator\\s*(\\S+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Operator overload",
+      "kind": "operator"
+    },
+    {
+      "interface": "IDisposablePattern",
+      "pattern": "(?:void\\s+)?Dispose\\s*\\((?:bool)?\\)",
+      "description": "IDisposable pattern",
+      "kind": "pattern"
+    },
+    {
+      "interface": "AsyncPattern",
+      "pattern": "async\\s+Task(?:<\\w+>)?\\s+(\\w+)Async\\s*\\(",
+      "captureGroup": 1,
+      "description": "Async method pattern",
+      "kind": "async"
     }
   ],
   "keywords": {
     "interface": [
       "interface",
-      "abstract class"
+      "abstract",
+      "virtual",
+      "override",
+      "sealed",
+      "partial",
+      "delegate",
+      "event"
     ],
     "implementation": [
+      "class",
+      "struct",
+      "record",
+      "override",
+      "virtual",
+      "abstract",
+      "partial",
       "implements",
-      "class"
+      "this",
+      "operator"
     ]
   }
 }

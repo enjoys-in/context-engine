@@ -6,64 +6,65 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent continuation lines after backslash",
-      "pattern": "\\\\\\s*$",
+      "description": "Align instruction keywords",
       "action": "indent",
+      "pattern": "^(FROM|RUN|CMD|COPY|ADD|ENV|ARG|EXPOSE|WORKDIR|VOLUME|USER|LABEL|ENTRYPOINT|HEALTHCHECK|SHELL)\\s+"
+    },
+    {
+      "description": "Format multi-line RUN commands",
+      "action": "indent",
+      "pattern": "RUN\\s+.*\\\\\\s*$",
       "options": {
         "continuationIndent": 4
       }
     },
     {
-      "description": "Normalize spacing after Dockerfile instructions",
-      "pattern": "^\\s*(FROM|RUN|COPY|ADD|CMD|ENTRYPOINT|ENV|EXPOSE|WORKDIR|ARG|LABEL|VOLUME|USER|HEALTHCHECK)\\s+",
-      "action": "normalizeSpacing",
-      "options": {}
+      "description": "Align LABEL key-value pairs",
+      "action": "align",
+      "pattern": "^\\s*\\w+=\"[^\"]*\""
     },
     {
-      "description": "Align consecutive ENV or LABEL declarations",
-      "pattern": "^\\s*(ENV|LABEL)\\s+\\w+=",
+      "description": "Format COPY --from stages",
+      "action": "normalizeSpacing",
+      "pattern": "COPY\\s+--from=\\w+"
+    },
+    {
+      "description": "Normalize ENV variable assignments",
       "action": "align",
+      "pattern": "^ENV\\s+\\w+=",
       "options": {
         "alignOn": "="
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Indent HEALTHCHECK options",
+      "action": "indent",
+      "pattern": "HEALTHCHECK\\s+--"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format ARG default values",
+      "action": "normalizeSpacing",
+      "pattern": "ARG\\s+\\w+="
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
-    "block",
-    "function",
-    "class",
+    "instruction",
     "comment",
-    "selection"
+    "selection",
+    "stage"
   ]
 }

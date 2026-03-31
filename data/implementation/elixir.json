@@ -2,88 +2,73 @@
   "language": "elixir",
   "implementationPatterns": [
     {
-      "interface": "Behaviour",
-      "implementationKeyword": "@behaviour",
-      "pattern": "@behaviour\\s+(\\w[\\w.]*)",
-      "description": "Behaviour callback implementation"
-    },
-    {
-      "interface": "Protocol",
-      "implementationKeyword": "defprotocol",
-      "pattern": "defprotocol\\s+(\\w[\\w.]*)",
-      "description": "Protocol declaration"
-    },
-    {
-      "interface": "ProtocolImpl",
-      "implementationKeyword": "defimpl",
-      "pattern": "defimpl\\s+(\\w[\\w.]*)\\s*,\\s*for:\\s*(\\w[\\w.]*)",
-      "description": "Protocol implementation for a type"
-    },
-    {
-      "interface": "UseModule",
-      "implementationKeyword": "use",
-      "pattern": "use\\s+(\\w[\\w.]*)",
-      "description": "Using a module (macro-based behaviour)"
-    },
-    {
-      "interface": "Callback",
-      "implementationKeyword": "@callback",
+      "interface": "BehaviourCallback",
       "pattern": "@callback\\s+(\\w+)",
-      "description": "Behaviour callback declaration"
+      "captureGroup": 1,
+      "description": "Behaviour callback",
+      "kind": "callback"
     },
     {
-      "interface": "Impl",
-      "implementationKeyword": "@impl",
+      "interface": "BehaviourImpl",
+      "pattern": "@behaviour\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Behaviour usage",
+      "kind": "behaviour"
+    },
+    {
+      "interface": "ImplDecl",
       "pattern": "@impl\\s+true",
-      "description": "Callback implementation marker"
+      "description": "Implementation marker",
+      "kind": "impl"
     },
     {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "ProtocolDef",
+      "pattern": "defprotocol\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:defimpl|impl|instance)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Protocol/typeclass implementation",
+      "description": "Protocol definition",
       "kind": "protocol"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "ProtocolImpl",
+      "pattern": "defimpl\\s+(\\w+),\\s*for:\\s*(\\w+)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Protocol implementation",
+      "kind": "impl"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "GenServerImpl",
+      "pattern": "use\\s+GenServer",
+      "description": "GenServer behaviour",
+      "kind": "behaviour"
+    },
+    {
+      "interface": "SupervisorImpl",
+      "pattern": "use\\s+Supervisor",
+      "description": "Supervisor behaviour",
+      "kind": "behaviour"
+    },
+    {
+      "interface": "PlugImpl",
+      "pattern": "use\\s+Plug",
+      "description": "Plug behaviour",
+      "kind": "behaviour"
     }
   ],
   "keywords": {
     "interface": [
+      "@callback",
       "defprotocol",
       "@behaviour",
-      "@callback"
+      "GenServer",
+      "Supervisor"
     ],
     "implementation": [
       "defimpl",
-      "@impl true",
+      "@impl",
+      "@behaviour",
       "use",
-      "defmodule"
+      "def",
+      "defp"
     ]
   }
 }

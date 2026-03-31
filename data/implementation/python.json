@@ -5,66 +5,146 @@
       "interface": "ClassInherit",
       "implementationKeyword": "class",
       "pattern": "class\\s+(\\w+)\\s*\\(([\\w.,\\s]+)\\)\\s*:",
-      "description": "Class inheriting from base class(es)"
+      "captureGroup": 1,
+      "description": "Class inheriting from base class(es)",
+      "kind": "class"
     },
     {
       "interface": "ABC",
       "implementationKeyword": "ABC",
-      "pattern": "class\\s+(\\w+)\\s*\\(.*ABC.*\\)\\s*:",
-      "description": "Abstract base class implementation"
+      "pattern": "class\\s+(\\w+)\\s*\\(.*(?:ABC|ABCMeta).*\\)\\s*:",
+      "captureGroup": 1,
+      "description": "Abstract base class implementation",
+      "kind": "abstract"
     },
     {
       "interface": "Protocol",
       "implementationKeyword": "Protocol",
       "pattern": "class\\s+(\\w+)\\s*\\(.*Protocol.*\\)\\s*:",
-      "description": "Protocol (structural typing) implementation"
+      "captureGroup": 1,
+      "description": "Protocol (structural typing) implementation",
+      "kind": "protocol"
     },
     {
       "interface": "AbstractMethod",
       "implementationKeyword": "@abstractmethod",
       "pattern": "@abstractmethod\\s*\\ndef\\s+(\\w+)",
-      "description": "Abstract method declaration"
+      "captureGroup": 1,
+      "description": "Abstract method declaration",
+      "kind": "abstract"
+    },
+    {
+      "interface": "AbstractProperty",
+      "pattern": "@property\\s*\\n\\s*@abstractmethod\\s*\\ndef\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Abstract property",
+      "kind": "abstract"
     },
     {
       "interface": "Register",
       "implementationKeyword": "register",
       "pattern": "(\\w+)\\.register\\s*\\((\\w+)\\)",
-      "description": "ABC virtual subclass registration"
+      "captureGroup": 2,
+      "description": "ABC virtual subclass registration",
+      "kind": "registration"
     },
     {
       "interface": "Mixin",
       "implementationKeyword": "Mixin",
       "pattern": "class\\s+(\\w+Mixin)\\s*(?:\\([^)]*\\))?\\s*:",
-      "description": "Mixin class definition"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "Mixin class definition",
+      "kind": "mixin"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "Dataclass",
+      "implementationKeyword": "@dataclass",
+      "pattern": "@dataclass(?:\\([^)]*\\))?\\s*\\nclass\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Dataclass implementation",
+      "kind": "class"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "DunderMethod",
+      "pattern": "def\\s+(__\\w+__)\\s*\\(self",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Dunder method implementation",
+      "kind": "protocol"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "PropertyImpl",
+      "pattern": "@property\\s*\\ndef\\s+(\\w+)\\(self\\)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Property getter implementation",
+      "kind": "accessor"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "PropertySetter",
+      "pattern": "@(\\w+)\\.setter\\s*\\ndef\\s+\\1\\(self",
+      "captureGroup": 1,
+      "description": "Property setter implementation",
+      "kind": "accessor"
+    },
+    {
+      "interface": "ContextManager",
+      "pattern": "def\\s+(__enter__|__exit__)\\s*\\(self",
+      "captureGroup": 1,
+      "description": "Context manager protocol",
+      "kind": "protocol"
+    },
+    {
+      "interface": "Iterator",
+      "pattern": "def\\s+(__iter__|__next__)\\s*\\(self",
+      "captureGroup": 1,
+      "description": "Iterator protocol",
+      "kind": "protocol"
+    },
+    {
+      "interface": "Descriptor",
+      "pattern": "def\\s+(__get__|__set__|__delete__)\\s*\\(self",
+      "captureGroup": 1,
+      "description": "Descriptor protocol",
+      "kind": "protocol"
+    },
+    {
+      "interface": "MetaClass",
+      "pattern": "class\\s+(\\w+)\\(type\\)",
+      "captureGroup": 1,
+      "description": "Metaclass implementation",
+      "kind": "metaclass"
+    },
+    {
+      "interface": "Singleton",
+      "pattern": "def\\s+__new__\\s*\\(cls[^)]*\\)",
+      "description": "Singleton or custom __new__",
+      "kind": "pattern"
+    },
+    {
+      "interface": "PluginRegistration",
+      "pattern": "(\\w+)_registry\\.register|@register\\w*",
+      "description": "Plugin/handler registration",
+      "kind": "registration"
+    },
+    {
+      "interface": "TypeVar",
+      "pattern": "(\\w+)\\s*=\\s*TypeVar\\(",
+      "captureGroup": 1,
+      "description": "TypeVar definition",
+      "kind": "type"
+    },
+    {
+      "interface": "GenericClass",
+      "pattern": "class\\s+(\\w+)\\(Generic\\[",
+      "captureGroup": 1,
+      "description": "Generic class implementation",
+      "kind": "generic"
+    },
+    {
+      "interface": "NamedTuple",
+      "pattern": "class\\s+(\\w+)\\(NamedTuple\\)",
+      "captureGroup": 1,
+      "description": "NamedTuple implementation",
+      "kind": "class"
     }
   ],
   "keywords": {
@@ -73,14 +153,24 @@
       "ABCMeta",
       "Protocol",
       "@abstractmethod",
-      "abstract"
+      "abstract",
+      "Generic",
+      "TypeVar",
+      "NamedTuple"
     ],
     "implementation": [
       "class",
       "def",
       "register",
-      "Mixin",
-      "super()"
+      "super()",
+      "@dataclass",
+      "@property",
+      "__init__",
+      "__new__",
+      "__enter__",
+      "__exit__",
+      "__iter__",
+      "__next__"
     ]
   }
 }

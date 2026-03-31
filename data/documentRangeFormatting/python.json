@@ -6,81 +6,131 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent block bodies (if, for, while, with, try, class, def)",
-      "pattern": "^\\s*(if|elif|else|for|while|with|try|except|finally|class|def|async\\s+def|async\\s+for|async\\s+with)\\b.*:",
-      "action": "indent",
+      "description": "PEP8 indentation (4 spaces)",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 4,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Align decorator lines above function/class definitions",
-      "pattern": "^\\s*@[\\w.]+",
-      "action": "align",
-      "options": {
-        "alignTo": "nextDef"
-      }
-    },
-    {
-      "description": "Wrap long dict and list comprehensions",
-      "pattern": "\\{[^}]{80,}\\}|\\[[^\\]]{80,}\\]",
+      "description": "Black-style line length limit",
       "action": "wrapLine",
+      "pattern": ".{89,}",
       "options": {
-        "maxLength": 79
+        "maxLineLength": 88
       }
     },
     {
-      "description": "Normalize spacing around assignment and comparison operators",
-      "pattern": "\\s*(=|==|!=|<=|>=|\\+=|-=|\\*=|/=|:=)\\s*",
+      "description": "Normalize spacing around operators",
       "action": "normalizeSpacing",
-      "options": {
-        "around": "operator"
-      }
-    },
-    {
-      "description": "Format f-string expressions for readability",
-      "pattern": "f['\"][^'\"]*\\{[^}]+\\}[^'\"]*['\"]",
-      "action": "normalizeSpacing",
-      "options": {
-        "insideBraces": true
-      }
+      "pattern": "\\s*(==|!=|>=|<=|\\+=|-=|\\*=|/=|//=|%=|\\*\\*=|&=|\\|=|\\^=|>>=|<<=|:=|[+\\-*/%@&|^~<>=])\\s*"
     },
     {
       "description": "Align dictionary key-value pairs",
-      "pattern": "'[^']*'\\s*:\\s*|\"[^\"]*\"\\s*:\\s*",
       "action": "align",
+      "pattern": "^\\s*['\"]?\\w+['\"]?\\s*:",
       "options": {
         "alignOn": ":"
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Format f-string expressions",
+      "action": "normalizeSpacing",
+      "pattern": "\\{[^}]+\\}"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Indent function parameters",
+      "action": "indent",
+      "pattern": "def\\s+\\w+\\([^)]*$",
+      "options": {
+        "continuationIndent": 4
+      }
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Align decorator stack",
+      "action": "indent",
+      "pattern": "^\\s*@\\w+"
+    },
+    {
+      "description": "Normalize keyword argument spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\w+\\s*=\\s*(?=[^=])"
+    },
+    {
+      "description": "Format list/dict/set comprehensions",
+      "action": "indent",
+      "pattern": "\\[.+for\\s+.+in\\s+.+\\]"
+    },
+    {
+      "description": "Indent multiline function calls",
+      "action": "indent",
+      "pattern": "\\w+\\($",
+      "options": {
+        "continuationIndent": 4
+      }
+    },
+    {
+      "description": "Align import statements",
+      "action": "align",
+      "pattern": "^from\\s+.+import\\s+"
+    },
+    {
+      "description": "Format multi-line string concatenation",
+      "action": "indent",
+      "pattern": "\\($[^)]*$"
+    },
+    {
+      "description": "Normalize trailing commas",
+      "action": "normalizeSpacing",
+      "pattern": ",\\s*(?=[)\\]})"
+    },
+    {
+      "description": "Indent class body",
+      "action": "indent",
+      "pattern": "^class\\s+\\w+.*:$",
+      "options": {
+        "indentBody": true
+      }
+    },
+    {
+      "description": "Format type annotations",
+      "action": "normalizeSpacing",
+      "pattern": ":\\s*\\w+\\[?"
+    },
+    {
+      "description": "Indent with-statement context managers",
+      "action": "indent",
+      "pattern": "^\\s*with\\s+.+:$"
+    },
+    {
+      "description": "Blank lines between top-level defs (2)",
+      "action": "normalizeBlankLines",
+      "pattern": "^(def|class)\\s+",
+      "options": {
+        "blankLines": 2
+      }
+    },
+    {
+      "description": "Blank line between methods (1)",
+      "action": "normalizeBlankLines",
+      "pattern": "^\\s+def\\s+",
+      "options": {
+        "blankLines": 1
+      }
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -90,6 +140,10 @@
     "function",
     "class",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "module",
+    "decorator",
+    "comprehension"
   ]
 }

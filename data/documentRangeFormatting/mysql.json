@@ -6,70 +6,124 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent SQL clauses on new lines",
-      "pattern": "\\b(SELECT|FROM|WHERE|JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|ON|GROUP BY|HAVING|ORDER BY|LIMIT|INSERT|UPDATE|SET|DELETE|VALUES|UNION|EXCEPT|INTERSECT)\\b",
+      "description": "Uppercase SQL keywords",
+      "action": "normalizeCase",
+      "pattern": "\\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|JOIN|ON|AND|OR|NOT|NULL|IN|BETWEEN|LIKE|ORDER|BY|GROUP|HAVING|UNION|SET|VALUES|INTO|AS|CASE|WHEN|THEN|ELSE|END|EXISTS|DISTINCT|LIMIT|OFFSET|LEFT|RIGHT|INNER|OUTER|FULL|CROSS)\\b",
+      "options": {
+        "targetCase": "upper"
+      }
+    },
+    {
+      "description": "Indent subqueries",
       "action": "indent",
-      "options": {}
+      "pattern": "\\(\\s*SELECT"
     },
     {
-      "description": "Align consecutive column definitions in CREATE TABLE",
-      "pattern": "^\\s+`?\\w+`?\\s+\\w+",
+      "description": "Align SELECT columns",
       "action": "align",
-      "options": {
-        "alignOn": " "
-      }
+      "pattern": "^\\s*\\w+\\.?\\w*\\s*,?$"
     },
     {
-      "description": "Normalize spacing around comparison operators",
-      "pattern": "\\s*(=|<>|!=|>=|<=|<|>|LIKE|IN|BETWEEN)\\s*",
-      "action": "normalizeSpacing",
-      "options": {}
-    },
-    {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
-    },
-    {
-      "description": "Wrap long SELECT column lists",
-      "pattern": "SELECT\\s+.{80,}\\s+FROM",
+      "description": "One clause per line",
       "action": "wrapLine",
+      "pattern": "\\b(SELECT|FROM|WHERE|JOIN|ON|GROUP BY|ORDER BY|HAVING|LIMIT)\\b"
+    },
+    {
+      "description": "Indent JOIN conditions",
+      "action": "indent",
+      "pattern": "ON\\s+\\w+",
       "options": {
-        "maxLineLength": 100
+        "continuationIndent": 4
       }
+    },
+    {
+      "description": "Align CASE-WHEN expressions",
+      "action": "indent",
+      "pattern": "WHEN\\s+.+THEN"
+    },
+    {
+      "description": "Format IN clause values",
+      "action": "indent",
+      "pattern": "IN\\s*\\("
+    },
+    {
+      "description": "Normalize comparison operators",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(=|<>|!=|>=|<=|>|<)\\s*"
+    },
+    {
+      "description": "Indent INSERT column list",
+      "action": "indent",
+      "pattern": "INSERT\\s+INTO\\s+\\w+\\s*\\("
+    },
+    {
+      "description": "Format CREATE TABLE columns",
+      "action": "indent",
+      "pattern": "^\\s*\\w+\\s+\\w+"
+    },
+    {
+      "description": "Align UPDATE SET clauses",
+      "action": "align",
+      "pattern": "^\\s*\\w+\\s*=",
+      "options": {
+        "alignOn": "="
+      }
+    },
+    {
+      "description": "Normalize function calls",
+      "action": "normalizeSpacing",
+      "pattern": "\\w+\\s*\\("
+    },
+    {
+      "description": "Format window functions",
+      "action": "indent",
+      "pattern": "OVER\\s*\\("
+    },
+    {
+      "description": "Format CTE (WITH clause)",
+      "action": "indent",
+      "pattern": "WITH\\s+\\w+\\s+AS\\s*\\("
+    },
+    {
+      "description": "Remove trailing whitespace",
+      "action": "trimTrailing",
+      "pattern": "\\s+$"
+    },
+    {
+      "description": "Normalize line endings",
+      "action": "normalizeEOL"
     },
     {
       "description": "Normalize indentation in range",
       "action": "reindent"
     },
     {
-      "description": "Remove trailing whitespace in range",
-      "action": "trimTrailing",
-      "pattern": "\\s+$"
+      "description": "Format DELIMITER statements",
+      "action": "normalizeSpacing",
+      "pattern": "DELIMITER\\s+"
     },
     {
-      "description": "Normalize line endings in range",
-      "action": "normalizeEOL"
+      "description": "Format AUTO_INCREMENT",
+      "action": "normalizeSpacing",
+      "pattern": "AUTO_INCREMENT\\s*=?"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Format ENGINE clause",
+      "action": "normalizeSpacing",
+      "pattern": "ENGINE\\s*="
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
     "statement",
     "block",
-    "function",
-    "class",
+    "query",
+    "subquery",
+    "expression",
     "comment",
-    "selection"
+    "selection",
+    "cte",
+    "procedure",
+    "trigger"
   ]
 }

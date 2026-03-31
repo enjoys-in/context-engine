@@ -6,69 +6,101 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent block contents within braces",
-      "pattern": "\\{[^}]*\\}",
-      "action": "indent",
-      "options": {}
-    },
-    {
-      "description": "Normalize spacing around binary operators",
-      "pattern": "\\s*(==|!=|>=|<=|&&|\\|\\||->|[+\\-*/%]=?|=)\\s*",
-      "action": "normalizeSpacing",
-      "options": {}
-    },
-    {
-      "description": "Wrap long parameter lists",
-      "pattern": "\\([^)]{80,}\\)",
-      "action": "wrapLine",
+      "description": "Kotlin 4-space indentation",
+      "action": "reindent",
       "options": {
-        "maxLineLength": 120
+        "tabSize": 4,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Normalize operator spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(==|!=|>=|<=|&&|\\|\\||\\?:|\\?\\.|->|[+\\-*/%]=?|=)\\s*"
     },
     {
-      "description": "Indent chained calls with dot notation",
-      "pattern": "\\.[a-z]\\w*[({]",
+      "description": "Wrap lines at 100 characters",
+      "action": "wrapLine",
+      "pattern": ".{100,}",
+      "options": {
+        "maxLineLength": 100
+      }
+    },
+    {
+      "description": "Indent lambda bodies",
       "action": "indent",
+      "pattern": "\\{\\s*$"
+    },
+    {
+      "description": "Format when branches",
+      "action": "indent",
+      "pattern": "^\\s*.+\\s*->"
+    },
+    {
+      "description": "Align constructor parameters",
+      "action": "indent",
+      "pattern": "constructor\\s*\\([^)]*$",
       "options": {
         "continuationIndent": 4
       }
     },
     {
-      "description": "Align consecutive val/var declarations",
-      "pattern": "^\\s*(val|var)\\s+\\w+",
-      "action": "align",
-      "options": {
-        "alignOn": "="
-      }
+      "description": "Format safe call chains",
+      "action": "normalizeSpacing",
+      "pattern": "\\?\\.(\\w+)"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Indent companion object",
+      "action": "indent",
+      "pattern": "companion\\s+object\\s*\\{"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize data class formatting",
+      "action": "indent",
+      "pattern": "data\\s+class\\s+\\w+\\("
+    },
+    {
+      "description": "Format string templates",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\{[^}]+\\}"
+    },
+    {
+      "description": "Align property delegates",
+      "action": "normalizeSpacing",
+      "pattern": "by\\s+\\w+"
+    },
+    {
+      "description": "Indent sealed class variants",
+      "action": "indent",
+      "pattern": "^\\s*(data\\s+)?class\\s+\\w+"
+    },
+    {
+      "description": "Format extension functions",
+      "action": "indent",
+      "pattern": "fun\\s+\\w+\\.\\w+\\("
+    },
+    {
+      "description": "Normalize trailing lambda",
+      "action": "indent",
+      "pattern": "\\)\\s*\\{\\s*$"
+    },
+    {
+      "description": "Align annotation parameters",
+      "action": "indent",
+      "pattern": "^\\s*@\\w+\\("
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -77,7 +109,13 @@
     "block",
     "function",
     "class",
+    "interface",
+    "object",
+    "enum",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "when",
+    "lambda"
   ]
 }

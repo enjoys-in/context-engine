@@ -2,78 +2,111 @@
   "language": "dart",
   "implementationPatterns": [
     {
-      "interface": "Interface",
+      "interface": "ClassImpl",
       "implementationKeyword": "implements",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*(?:extends\\s+\\w+\\s*)?implements\\s+\\w+",
-      "description": "Classes implementing interfaces"
-    },
-    {
-      "interface": "AbstractClass",
-      "implementationKeyword": "extends",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*extends\\s+\\w+",
-      "description": "Classes extending abstract classes"
-    },
-    {
-      "interface": "Mixin",
-      "implementationKeyword": "with",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*(?:extends\\s+\\w+\\s*)?with\\s+\\w+",
-      "description": "Classes applying mixins with 'with' keyword"
-    },
-    {
-      "interface": "SealedClass",
-      "implementationKeyword": "extends",
-      "pattern": "(?:class|sealed\\s+class)\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*extends\\s+\\w+",
-      "description": "Sealed class subtypes"
-    },
-    {
-      "interface": "MixinOn",
-      "implementationKeyword": "on",
-      "pattern": "mixin\\s+(\\w+)\\s+on\\s+\\w+",
-      "description": "Mixin with superclass constraint"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?(?:\\s+extends\\s+\\w+)?\\s+implements\\s+([\\w,\\s<>]+)",
       "captureGroup": 1,
       "description": "Interface implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ClassExtends",
+      "implementationKeyword": "extends",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?\\s+extends\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Class extension",
+      "kind": "class"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "MixinWith",
+      "implementationKeyword": "with",
+      "pattern": "class\\s+(\\w+).*with\\s+([\\w,\\s<>]+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Mixin usage",
+      "kind": "mixin"
+    },
+    {
+      "interface": "MixinDecl",
+      "implementationKeyword": "mixin",
+      "pattern": "mixin\\s+(\\w+)(?:\\s+on\\s+\\w+)?",
+      "captureGroup": 1,
+      "description": "Mixin declaration",
+      "kind": "mixin"
+    },
+    {
+      "interface": "AbstractClass",
+      "implementationKeyword": "abstract",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Abstract class",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "OverrideMethod",
+      "implementationKeyword": "@override",
+      "pattern": "@override\\s*\\n\\s*\\w+\\s+(\\w+)\\s*\\(",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Method override",
+      "kind": "override"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "ExtensionDecl",
+      "implementationKeyword": "extension",
+      "pattern": "extension\\s+(\\w+)\\s+on\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Extension declaration",
+      "kind": "extension"
+    },
+    {
+      "interface": "FactoryConstructor",
+      "implementationKeyword": "factory",
+      "pattern": "factory\\s+(\\w+)(?:\\.(\\w+))?\\s*\\(",
+      "captureGroup": 1,
+      "description": "Factory constructor",
+      "kind": "factory"
+    },
+    {
+      "interface": "StateWidget",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+State<(\\w+)>",
+      "captureGroup": 1,
+      "description": "Stateful Widget State",
+      "kind": "widget"
+    },
+    {
+      "interface": "StatelessWidget",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+StatelessWidget",
+      "captureGroup": 1,
+      "description": "Stateless Widget",
+      "kind": "widget"
+    },
+    {
+      "interface": "StatefulWidget",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+StatefulWidget",
+      "captureGroup": 1,
+      "description": "Stateful Widget",
+      "kind": "widget"
     }
   ],
   "keywords": {
     "interface": [
-      "abstract class",
-      "sealed class",
-      "interface class",
+      "abstract",
+      "implements",
+      "extends",
+      "with",
       "mixin",
-      "mixin class"
+      "@override",
+      "extension",
+      "factory"
     ],
     "implementation": [
       "class",
-      "enum",
-      "extension type",
-      "mixin class"
+      "mixin",
+      "extends",
+      "implements",
+      "with",
+      "override",
+      "extension",
+      "factory"
     ]
   }
 }

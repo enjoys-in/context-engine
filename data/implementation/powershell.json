@@ -2,76 +2,71 @@
   "language": "powershell",
   "implementationPatterns": [
     {
-      "interface": "Class",
+      "interface": "FunctionDef",
+      "implementationKeyword": "function",
+      "pattern": "function\\s+(\\w+-\\w+)\\s*\\{",
+      "captureGroup": 1,
+      "description": "PowerShell function (Verb-Noun)",
+      "kind": "function"
+    },
+    {
+      "interface": "ClassDecl",
       "implementationKeyword": "class",
-      "pattern": "class\\s+(\\w+)(?:\\s*:\\s*\\w+)?\\s*\\{",
-      "description": "PowerShell class definition"
+      "pattern": "class\\s+(\\w+)(?:\\s*:\\s*[\\w,\\s]+)?\\s*\\{",
+      "captureGroup": 1,
+      "description": "PowerShell class",
+      "kind": "class"
     },
     {
       "interface": "ClassInherit",
-      "implementationKeyword": ":",
       "pattern": "class\\s+(\\w+)\\s*:\\s*(\\w+)",
-      "description": "Class inheriting base class or implementing interface"
+      "captureGroup": 1,
+      "description": "Class inheritance",
+      "kind": "class"
     },
     {
-      "interface": "Function",
-      "implementationKeyword": "function",
-      "pattern": "function\\s+(\\w[\\w-]*)\\s*(?:\\([^)]*\\))?\\s*\\{",
-      "description": "Function definition"
-    },
-    {
-      "interface": "CmdletBinding",
-      "implementationKeyword": "[CmdletBinding()]",
-      "pattern": "\\[CmdletBinding\\(\\)\\]",
-      "description": "Advanced function (cmdlet implementation)"
-    },
-    {
-      "interface": "Enum",
-      "implementationKeyword": "enum",
-      "pattern": "enum\\s+(\\w+)\\s*\\{",
-      "description": "Enum type definition"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "InterfaceImpl",
+      "pattern": "class\\s+(\\w+)\\s*:\\s*.*I\\w+",
       "captureGroup": 1,
       "description": "Interface implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "FilterDef",
+      "implementationKeyword": "filter",
+      "pattern": "filter\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Filter function",
+      "kind": "filter"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "DSCResource",
+      "pattern": "\\[DscResource\\(\\)\\]\\s*class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "DSC Resource",
+      "kind": "resource"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "Cmdlet",
+      "pattern": "\\[Cmdlet\\([^)]+\\)\\]\\s*class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
-    },
-    {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "description": "Cmdlet implementation",
+      "kind": "cmdlet"
     }
   ],
   "keywords": {
     "interface": [
       "class",
-      "interface",
-      "[CmdletBinding()]"
+      "function",
+      "filter",
+      "[DscResource]",
+      "[Cmdlet]"
     ],
     "implementation": [
       "class",
       "function",
-      "enum",
-      "filter"
+      "filter",
+      "New-Object"
     ]
   }
 }

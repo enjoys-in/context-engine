@@ -6,91 +6,145 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent nested selector rule bodies",
-      "pattern": "[.#&\\w][\\w-]*\\s*\\{",
+      "description": "Indent rule declarations",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "\\{[^}]*\\}"
     },
     {
-      "description": "Align mixin and include declarations",
-      "pattern": "@(mixin|include)\\s+[\\w-]+",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Group and align SCSS variable declarations",
-      "pattern": "\\$[\\w-]+\\s*:",
+      "description": "Align property values",
       "action": "align",
+      "pattern": "^\\s*[\\w-]+\\s*:",
       "options": {
         "alignOn": ":"
       }
     },
     {
-      "description": "Indent @if/@else/@each/@for control directive bodies",
-      "pattern": "@(if|else|each|for|while)\\b[^{]*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "description": "One declaration per line",
+      "action": "wrapLine",
+      "pattern": "[;{][^;{]*[;{]"
     },
     {
-      "description": "Normalize spacing around property colon",
-      "pattern": "[\\w-]+\\s*:\\s*",
+      "description": "Normalize colon spacing",
       "action": "normalizeSpacing",
+      "pattern": ":\\s*"
+    },
+    {
+      "description": "Wrap long value lists",
+      "action": "wrapLine",
+      "pattern": ":\\s*.{60,};",
       "options": {
-        "beforeColon": false,
-        "afterColon": true
+        "maxLineLength": 80
       }
     },
     {
-      "description": "Format @media query blocks",
-      "pattern": "@media\\b[^{]*\\{",
+      "description": "Format media query conditions",
+      "action": "normalizeSpacing",
+      "pattern": "@media\\s+[^{]+"
+    },
+    {
+      "description": "Normalize shorthand properties",
+      "action": "normalizeSpacing",
+      "pattern": "(margin|padding|border|font|background):\\s*"
+    },
+    {
+      "description": "Indent nested at-rules",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "@(media|supports|layer|container)\\s*"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Format color function arguments",
+      "action": "normalizeSpacing",
+      "pattern": "(rgb|hsl|lab|oklch|color)\\s*\\("
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Align multiple selectors",
+      "action": "indent",
+      "pattern": ",\\s*$"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize calc() expressions",
+      "action": "normalizeSpacing",
+      "pattern": "calc\\([^)]+\\)"
+    },
+    {
+      "description": "Format custom property declarations",
+      "action": "normalizeSpacing",
+      "pattern": "--[\\w-]+:\\s*"
+    },
+    {
+      "description": "Normalize important declarations",
+      "action": "normalizeSpacing",
+      "pattern": "!\\s*important"
+    },
+    {
+      "description": "Indent nested selectors",
+      "action": "indent",
+      "pattern": "&[.:#\\[]"
+    },
+    {
+      "description": "Format mixin definitions",
+      "action": "indent",
+      "pattern": "@mixin\\s+\\w+\\s*\\("
+    },
+    {
+      "description": "Format include calls",
+      "action": "normalizeSpacing",
+      "pattern": "@include\\s+\\w+"
+    },
+    {
+      "description": "Normalize variable declarations",
+      "action": "normalizeSpacing",
+      "pattern": "\\$[\\w-]+\\s*:"
+    },
+    {
+      "description": "Format @each/@for/@while loops",
+      "action": "indent",
+      "pattern": "@(each|for|while)\\s+"
+    },
+    {
+      "description": "Indent placeholder selectors",
+      "action": "indent",
+      "pattern": "%\\w+\\s*\\{"
+    },
+    {
+      "description": "Format @extend directives",
+      "action": "normalizeSpacing",
+      "pattern": "@extend\\s+"
+    },
+    {
+      "description": "Normalize interpolation",
+      "action": "normalizeSpacing",
+      "pattern": "#\\{[^}]+\\}"
+    },
+    {
+      "description": "Format @use/@forward modules",
+      "action": "align",
+      "pattern": "^@(use|forward)\\s+"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
-    "block",
-    "function",
-    "class",
+    "rule",
+    "declaration",
+    "selector",
+    "mixin",
+    "at-rule",
     "comment",
-    "selection"
+    "selection",
+    "variable",
+    "placeholder"
   ]
 }

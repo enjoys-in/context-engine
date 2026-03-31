@@ -2,39 +2,74 @@
   "language": "lua",
   "colorPatterns": [
     {
-      "pattern": "#([0-9a-fA-F]{6})\\b",
-      "format": "hex6",
-      "description": "6-digit hex color (#RRGGBB)"
+      "pattern": "[\"']#([0-9a-fA-F]{6})[\"']",
+      "format": "hex6_string",
+      "description": "Hex color in string literal (#rrggbb)."
     },
     {
-      "pattern": "#([0-9a-fA-F]{3})\\b",
-      "format": "hex3",
-      "description": "3-digit shorthand hex color (#RGB)"
+      "pattern": "[\"']#([0-9a-fA-F]{3})[\"']",
+      "format": "hex3_string",
+      "description": "Short hex in string literal."
+    },
+    {
+      "pattern": "[\"']#([0-9a-fA-F]{8})[\"']",
+      "format": "hex8_string",
+      "description": "Hex+alpha in string literal."
     },
     {
       "pattern": "0x([0-9a-fA-F]{6})\\b",
       "format": "hex_literal",
-      "description": "Hex color literal (0xRRGGBB)"
+      "description": "Hex integer color (0xRRGGBB)."
     },
     {
-      "pattern": "0x([0-9a-fA-F]{8})\\b",
-      "format": "hex_literal_alpha",
-      "description": "Hex color literal with alpha (0xAARRGGBB)"
+      "pattern": "\\{\\s*(\\d+(?:\\.\\d+)?)\\s*,\\s*(\\d+(?:\\.\\d+)?)\\s*,\\s*(\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(\\d+(?:\\.\\d+)?))?\\s*\\}",
+      "format": "table-rgba",
+      "description": "Lua table {r, g, b[, a]}."
     },
     {
-      "pattern": "#(?:[0-9a-fA-F]{3,4}){1,2}\\b",
-      "description": "Hex color (#RGB, #RGBA, #RRGGBB, #RRGGBBAA)",
-      "format": "hex"
+      "pattern": "love\\.graphics\\.setColor\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)(?:\\s*,\\s*([0-9.]+))?\\s*\\)",
+      "format": "love-setcolor",
+      "description": "LOVE2D setColor (0-1)."
     },
     {
-      "pattern": "rgba?\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+",
-      "description": "RGB/RGBA color function",
-      "format": "rgb"
+      "pattern": "Color3\\.fromRGB\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)",
+      "format": "roblox-fromrgb",
+      "description": "Roblox Color3.fromRGB()."
+    },
+    {
+      "pattern": "Color3\\.fromHSV\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\)",
+      "format": "roblox-fromhsv",
+      "description": "Roblox Color3.fromHSV()."
+    },
+    {
+      "pattern": "Color3\\.new\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\)",
+      "format": "roblox-new",
+      "description": "Roblox Color3.new (0-1)."
+    },
+    {
+      "pattern": "BrickColor\\.new\\(\\s*[\"']([^\"']+)[\"']\\s*\\)",
+      "format": "roblox-brick",
+      "description": "Roblox BrickColor by name."
     }
   ],
   "colorPresentations": [
-    "hex",
-    "hex_literal"
+    "hex6",
+    "rgb",
+    "table",
+    "named"
   ],
-  "namedColors": {}
+  "namedColors": {
+    "red": "#FF0000",
+    "green": "#008000",
+    "blue": "#0000FF",
+    "white": "#FFFFFF",
+    "black": "#000000",
+    "yellow": "#FFFF00",
+    "cyan": "#00FFFF",
+    "magenta": "#FF00FF",
+    "orange": "#FFA500",
+    "purple": "#800080",
+    "gray": "#808080",
+    "transparent": "rgba(0,0,0,0)"
+  }
 }

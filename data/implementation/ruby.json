@@ -2,48 +2,128 @@
   "language": "ruby",
   "implementationPatterns": [
     {
-      "interface": "module",
-      "implementationKeyword": "include",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+include\\\\s+(\\\\w+)",
-      "description": "Find classes using include"
+      "interface": "ClassInherit",
+      "implementationKeyword": "<",
+      "pattern": "class\\s+(\\w+)\\s*<\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Class inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "ModuleInclude",
+      "implementationKeyword": "include",
+      "pattern": "include\\s+(\\w+(?:::\\w+)*)",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Module inclusion (mixin)",
+      "kind": "mixin"
+    },
+    {
+      "interface": "ModulePrepend",
+      "implementationKeyword": "prepend",
+      "pattern": "prepend\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "description": "Module prepend",
+      "kind": "mixin"
+    },
+    {
+      "interface": "ModuleExtend",
+      "implementationKeyword": "extend",
+      "pattern": "extend\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "description": "Module extend (class-level mixin)",
+      "kind": "mixin"
+    },
+    {
+      "interface": "ModuleDef",
+      "implementationKeyword": "module",
+      "pattern": "module\\s+(\\w+(?:::\\w+)*)",
+      "captureGroup": 1,
+      "description": "Module definition",
+      "kind": "module"
+    },
+    {
+      "interface": "MethodMissing",
+      "pattern": "def\\s+method_missing\\s*\\(",
+      "description": "Dynamic method handling",
+      "kind": "metaprogramming"
+    },
+    {
+      "interface": "RespondTo",
+      "pattern": "def\\s+respond_to_missing\\?\\s*\\(",
+      "description": "Dynamic respond_to? support",
+      "kind": "metaprogramming"
+    },
+    {
+      "interface": "Comparable",
+      "pattern": "def\\s+<=>\\s*\\(",
+      "description": "Comparable#<=> implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
+      "interface": "Enumerable",
+      "pattern": "include\\s+Enumerable",
+      "description": "Enumerable inclusion",
+      "kind": "mixin"
+    },
+    {
+      "interface": "Each",
+      "pattern": "def\\s+each\\s*(?:\\(&?\\w+\\))?\\s*$",
+      "description": "each method for Enumerable",
       "kind": "method"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "interface": "Concern",
+      "pattern": "extend\\s+ActiveSupport::Concern",
+      "description": "Rails Concern pattern",
+      "kind": "concern"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "InstanceMethod",
+      "pattern": "def\\s+(\\w+[?!=]?)\\s*(?:\\([^)]*\\))?\\s*$",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Instance method definition",
+      "kind": "method"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "ClassMethod",
+      "pattern": "def\\s+self\\.(\\w+[?!=]?)",
+      "captureGroup": 1,
+      "description": "Class method definition",
+      "kind": "class_method"
+    },
+    {
+      "interface": "DSL",
+      "pattern": "class_eval|module_eval|define_method",
+      "description": "Metaprogramming DSL patterns",
+      "kind": "metaprogramming"
+    },
+    {
+      "interface": "AttrAccessor",
+      "pattern": "attr_(reader|writer|accessor)\\s+:(\\w+)",
+      "captureGroup": 2,
+      "description": "Attribute accessor",
+      "kind": "accessor"
     }
   ],
   "keywords": {
     "interface": [
-      "module"
+      "include",
+      "extend",
+      "prepend",
+      "module",
+      "class",
+      "<"
     ],
     "implementation": [
+      "class",
+      "module",
       "include",
-      "class"
+      "extend",
+      "prepend",
+      "def",
+      "attr_reader",
+      "attr_writer",
+      "attr_accessor"
     ]
   }
 }

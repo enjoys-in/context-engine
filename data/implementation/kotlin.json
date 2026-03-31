@@ -2,73 +2,130 @@
   "language": "kotlin",
   "implementationPatterns": [
     {
-      "interface": "Interface",
+      "interface": "InterfaceImpl",
       "implementationKeyword": ":",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+",
-      "description": "Classes implementing interfaces"
-    },
-    {
-      "interface": "AbstractClass",
-      "implementationKeyword": ":",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+\\s*\\(",
-      "description": "Classes extending abstract classes"
-    },
-    {
-      "interface": "Sealed",
-      "implementationKeyword": ":",
-      "pattern": "(?:class|object|data\\s+class)\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+",
-      "description": "Sealed class/interface implementations"
-    },
-    {
-      "interface": "FunInterface",
-      "implementationKeyword": "fun interface",
-      "pattern": "fun\\s+interface\\s+(\\w+)",
-      "description": "Functional interface declarations"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?(?:\\([^)]*\\))?\\s*:\\s*([\\w<>,\\s]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Interface/class implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "InterfaceDecl",
+      "implementationKeyword": "interface",
+      "pattern": "interface\\s+(\\w+)(?:<[^>]+>)?",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Interface declaration",
+      "kind": "interface"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "AbstractClass",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Abstract class",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "OverrideMethod",
+      "implementationKeyword": "override",
+      "pattern": "override\\s+(?:suspend\\s+)?fun\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Method override",
+      "kind": "override"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "OverrideProperty",
+      "pattern": "override\\s+val\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Property override",
+      "kind": "override"
+    },
+    {
+      "interface": "DataClass",
+      "implementationKeyword": "data class",
+      "pattern": "data\\s+class\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Data class",
+      "kind": "class"
+    },
+    {
+      "interface": "SealedClass",
+      "implementationKeyword": "sealed",
+      "pattern": "sealed\\s+(?:class|interface)\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Sealed class/interface",
+      "kind": "sealed"
+    },
+    {
+      "interface": "ObjectDecl",
+      "implementationKeyword": "object",
+      "pattern": "(?:companion\\s+)?object\\s+(\\w+)(?:\\s*:\\s*[\\w<>,\\s]+)?",
+      "captureGroup": 1,
+      "description": "Object declaration",
+      "kind": "object"
+    },
+    {
+      "interface": "Delegation",
+      "implementationKeyword": "by",
+      "pattern": "class\\s+(\\w+).*:\\s*\\w+\\s+by\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Interface delegation",
+      "kind": "delegation"
+    },
+    {
+      "interface": "ExtensionFunc",
+      "pattern": "fun\\s+(\\w+)\\.(\\w+)\\s*\\(",
+      "captureGroup": 2,
+      "description": "Extension function",
+      "kind": "extension"
+    },
+    {
+      "interface": "InlineClass",
+      "pattern": "@JvmInline\\s+value\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Inline/value class",
+      "kind": "class"
+    },
+    {
+      "interface": "TypeAlias",
+      "pattern": "typealias\\s+(\\w+)(?:<[^>]+>)?\\s*=",
+      "captureGroup": 1,
+      "description": "Type alias",
+      "kind": "type"
+    },
+    {
+      "interface": "Coroutine",
+      "pattern": "suspend\\s+fun\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Suspending function",
+      "kind": "coroutine"
+    },
+    {
+      "interface": "AnonymousObject",
+      "pattern": "object\\s*:\\s*(\\w+)(?:\\([^)]*\\))?\\s*\\{",
+      "captureGroup": 1,
+      "description": "Anonymous object expression",
+      "kind": "anonymous"
     }
   ],
   "keywords": {
     "interface": [
       "interface",
-      "abstract class",
-      "sealed class",
-      "sealed interface",
-      "fun interface"
+      "abstract",
+      "sealed",
+      "override",
+      "by",
+      "companion object",
+      "@JvmInline"
     ],
     "implementation": [
       "class",
       "object",
       "data class",
-      "enum class",
-      "value class"
+      "override",
+      "by",
+      "fun",
+      "val",
+      "typealias"
     ]
   }
 }

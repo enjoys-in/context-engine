@@ -2,86 +2,61 @@
   "language": "perl",
   "implementationPatterns": [
     {
-      "interface": "Package",
-      "implementationKeyword": "package",
+      "interface": "PackageDecl",
       "pattern": "package\\s+([\\w:]+)",
-      "description": "Package/class declaration"
+      "captureGroup": 1,
+      "description": "Package declaration",
+      "kind": "class"
+    },
+    {
+      "interface": "UseMoose",
+      "pattern": "use\\s+(Moose|Moo|Mouse)(?:::\\w+)?",
+      "captureGroup": 1,
+      "description": "OOP framework usage",
+      "kind": "framework"
+    },
+    {
+      "interface": "ExtendsDecl",
+      "pattern": "extends\\s+['\"]([\\w:]+)['\"]",
+      "captureGroup": 1,
+      "description": "Class extension (Moose)",
+      "kind": "extends"
+    },
+    {
+      "interface": "WithRole",
+      "pattern": "with\\s+['\"]([\\w:]+)['\"]",
+      "captureGroup": 1,
+      "description": "Role composition (Moose)",
+      "kind": "role"
+    },
+    {
+      "interface": "BlessNew",
+      "pattern": "sub\\s+new\\s*\\{.*bless",
+      "description": "Constructor (bless)",
+      "kind": "constructor"
     },
     {
       "interface": "ISA",
-      "implementationKeyword": "@ISA",
-      "pattern": "@ISA\\s*=\\s*(?:qw)?[\\s(]*([\\w:]+)",
-      "description": "Inheritance via @ISA"
-    },
-    {
-      "interface": "UseBase",
-      "implementationKeyword": "use base",
-      "pattern": "use\\s+(?:base|parent)\\s+(?:qw)?[\\s('\"]*([\\w:]+)",
-      "description": "Inheritance via use base/parent"
-    },
-    {
-      "interface": "MooseRole",
-      "implementationKeyword": "with",
-      "pattern": "with\\s+['\"]([\\w:]+)['\"]",
-      "description": "Moose/Moo role consumption"
-    },
-    {
-      "interface": "SubDef",
-      "implementationKeyword": "sub",
-      "pattern": "sub\\s+(\\w+)\\s*\\{",
-      "description": "Subroutine/method implementation"
-    },
-    {
-      "interface": "MooseHas",
-      "implementationKeyword": "has",
-      "pattern": "has\\s+['\"]?(\\w+)['\"]?\\s*=>",
-      "description": "Moose attribute declaration"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "@ISA\\s*=.*\\b(\\w+)\\b",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
-    },
-    {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "description": "@ISA inheritance",
+      "kind": "class"
     }
   ],
   "keywords": {
     "interface": [
-      "package",
-      "use base",
-      "use parent",
-      "with (role)",
-      "@ISA"
-    ],
-    "implementation": [
-      "sub",
-      "has",
       "extends",
       "with",
-      "use Moose",
-      "use Moo"
+      "@ISA",
+      "bless"
+    ],
+    "implementation": [
+      "package",
+      "extends",
+      "with",
+      "bless",
+      "sub new",
+      "use base"
     ]
   }
 }

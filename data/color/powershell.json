@@ -2,39 +2,57 @@
   "language": "powershell",
   "colorPatterns": [
     {
-      "pattern": "\\\\033\\[(\\d+;)*\\d+m|\\\\e\\[(\\d+;)*\\d+m|\\\\x1b\\[(\\d+;)*\\d+m",
-      "format": "ansi_escape",
-      "description": "ANSI escape code color sequence"
-    },
-    {
-      "pattern": "tput\\s+setaf\\s+(\\d+)",
-      "format": "tput_setaf",
-      "description": "tput foreground color"
-    },
-    {
-      "pattern": "tput\\s+setab\\s+(\\d+)",
-      "format": "tput_setab",
-      "description": "tput background color"
-    },
-    {
       "pattern": "[\"']#([0-9a-fA-F]{6})[\"']",
       "format": "hex6_string",
-      "description": "Hex color in string literal"
+      "description": "Hex color in string literal (#rrggbb)."
+    },
+    {
+      "pattern": "[\"']#([0-9a-fA-F]{3})[\"']",
+      "format": "hex3_string",
+      "description": "Short hex in string literal."
+    },
+    {
+      "pattern": "0x([0-9a-fA-F]{6})\\b",
+      "format": "hex_literal",
+      "description": "Hex integer color (0xRRGGBB)."
+    },
+    {
+      "pattern": "\\[System\\.Drawing\\.Color\\]::\\w+",
+      "format": "dotnet-color",
+      "description": ".NET System.Drawing.Color."
+    },
+    {
+      "pattern": "\\[System\\.ConsoleColor\\]::(?:DarkBlue|DarkGreen|DarkCyan|DarkRed|DarkMagenta|DarkYellow|Gray|DarkGray|Blue|Green|Cyan|Red|Magenta|Yellow|White|Black)\\b",
+      "format": "console-color",
+      "description": ".NET ConsoleColor."
+    },
+    {
+      "pattern": "Write-Host.*-(?:ForegroundColor|BackgroundColor)\\s+(\\w+)",
+      "format": "write-host-color",
+      "description": "Write-Host color param."
+    },
+    {
+      "pattern": "\\\\e\\[\\d+(?:;\\d+)*m|`e\\[\\d+(?:;\\d+)*m",
+      "format": "ansi-escape",
+      "description": "ANSI/VT escape."
     }
   ],
   "colorPresentations": [
-    "ansi_escape",
-    "tput",
-    "hex"
+    "hex6",
+    "console-color"
   ],
   "namedColors": {
+    "red": "#FF0000",
+    "green": "#008000",
+    "blue": "#0000FF",
+    "white": "#FFFFFF",
     "black": "#000000",
-    "red": "#CD0000",
-    "green": "#00CD00",
-    "yellow": "#CDCD00",
-    "blue": "#0000CD",
-    "magenta": "#CD00CD",
-    "cyan": "#00CDCD",
-    "white": "#CDCDCD"
+    "yellow": "#FFFF00",
+    "cyan": "#00FFFF",
+    "magenta": "#FF00FF",
+    "orange": "#FFA500",
+    "purple": "#800080",
+    "gray": "#808080",
+    "transparent": "rgba(0,0,0,0)"
   }
 }

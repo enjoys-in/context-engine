@@ -2,35 +2,70 @@
   "language": "ruby",
   "colorPatterns": [
     {
-      "pattern": "[\"']#([0-9a-fA-F]{6})[\"']",
-      "format": "hex6_string",
-      "description": "Hex color in string literal"
-    },
-    {
       "pattern": "[\"']#([0-9a-fA-F]{3})[\"']",
       "format": "hex3_string",
-      "description": "Short hex color in string literal"
+      "description": "Short hex in string literal."
+    },
+    {
+      "pattern": "[\"']#([0-9a-fA-F]{6})[\"']",
+      "format": "hex6_string",
+      "description": "Hex color in string literal (#rrggbb)."
+    },
+    {
+      "pattern": "[\"']#([0-9a-fA-F]{8})[\"']",
+      "format": "hex8_string",
+      "description": "Hex+alpha in string literal."
     },
     {
       "pattern": "0x([0-9a-fA-F]{6})\\b",
       "format": "hex_literal",
-      "description": "Hex color literal (0xRRGGBB)"
+      "description": "Hex integer color (0xRRGGBB)."
     },
     {
-      "pattern": "rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)",
+      "pattern": "rgb\\(\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*\\)",
       "format": "rgb",
-      "description": "RGB color function"
+      "description": "RGB with comma-separated integers (0-255)."
     },
     {
-      "pattern": "rgba\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*([\\d.]+)\\)",
+      "pattern": "rgba\\(\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*([0-9.]+)\\s*\\)",
       "format": "rgba",
-      "description": "RGBA color function"
+      "description": "RGBA with alpha (0-1)."
+    },
+    {
+      "pattern": "\\b(?:red|green|blue|white|black|yellow|purple|orange|gray|cyan|magenta|pink|brown)\\b",
+      "format": "named",
+      "description": "Common named colors."
+    },
+    {
+      "pattern": "(?:Color|Colour)\\.new\\(\\s*[\"']?([^)\"']+)[\"']?\\)",
+      "format": "color-new",
+      "description": "Color.new constructor."
+    },
+    {
+      "pattern": "(?:Color|Colour)\\.(?:rgb|hex|hsl|parse)\\(",
+      "format": "color-factory",
+      "description": "Color factory method."
+    },
+    {
+      "pattern": "(?:colorize|colored|paint)\\(\\s*[\"']([^\"']+)[\"']",
+      "format": "gem-color",
+      "description": "Ruby gem color method."
+    },
+    {
+      "pattern": ":\\s*(?:red|green|blue|yellow|cyan|magenta|white|black|light_red|light_green|light_blue)\\b",
+      "format": "symbol-color",
+      "description": "Ruby symbol color."
+    },
+    {
+      "pattern": "\\\\e\\[\\d+(?:;\\d+)*m",
+      "format": "ansi-escape",
+      "description": "ANSI escape color."
     }
   ],
   "colorPresentations": [
-    "hex",
+    "hex6",
     "rgb",
-    "rgba"
+    "named"
   ],
   "namedColors": {
     "red": "#FF0000",
@@ -44,6 +79,6 @@
     "orange": "#FFA500",
     "purple": "#800080",
     "gray": "#808080",
-    "transparent": "#000000"
+    "transparent": "rgba(0,0,0,0)"
   }
 }

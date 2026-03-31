@@ -2,74 +2,121 @@
   "language": "go",
   "implementationPatterns": [
     {
-      "interface": "Interface",
-      "implementationKeyword": "func",
-      "pattern": "func\\s+\\(\\w+\\s+\\*?(\\w+)\\)\\s+\\w+\\s*\\(",
-      "description": "Method on struct (implicit interface satisfaction)"
-    },
-    {
       "interface": "InterfaceDecl",
       "implementationKeyword": "interface",
       "pattern": "type\\s+(\\w+)\\s+interface\\s*\\{",
-      "description": "Interface type declaration"
+      "captureGroup": 1,
+      "description": "Interface declaration",
+      "kind": "interface"
     },
     {
       "interface": "StructDecl",
       "implementationKeyword": "struct",
       "pattern": "type\\s+(\\w+)\\s+struct\\s*\\{",
-      "description": "Struct type declaration (implements interfaces implicitly)"
-    },
-    {
-      "interface": "Embedding",
-      "implementationKeyword": "embed",
-      "pattern": "type\\s+(\\w+)\\s+struct\\s*\\{[^}]*\\n\\s+\\w+\\b",
-      "description": "Struct embedding (composition / interface delegation)"
-    },
-    {
-      "interface": "TypeAssertion",
-      "implementationKeyword": ".(type)",
-      "pattern": "\\w+\\.\\((\\w+)\\)",
-      "description": "Type assertion checking interface satisfaction"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "Struct declaration",
+      "kind": "struct"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
+      "interface": "MethodReceiver",
+      "pattern": "func\\s+\\((\\w+)\\s+\\*?(\\w+)\\)\\s+(\\w+)\\s*\\(",
+      "captureGroup": 3,
+      "description": "Method with receiver (implicit interface impl)",
       "kind": "method"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "EmbeddedStruct",
+      "pattern": "type\\s+\\w+\\s+struct\\s*\\{[^}]*\\n\\s+(\\w+)\\s*$",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Embedded struct (composition)",
+      "kind": "embedding"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "EmbeddedInterface",
+      "pattern": "type\\s+\\w+\\s+interface\\s*\\{[^}]*\\n\\s+(\\w+)\\s*$",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Embedded interface",
+      "kind": "embedding"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
+      "interface": "TypeAlias",
+      "pattern": "type\\s+(\\w+)\\s*=\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Type alias",
+      "kind": "type"
+    },
+    {
+      "interface": "TypeConstraint",
+      "pattern": "type\\s+(\\w+)\\s+interface\\s*\\{[^}]*~?\\w+",
+      "captureGroup": 1,
+      "description": "Type constraint (generics)",
+      "kind": "constraint"
+    },
+    {
+      "interface": "GenericType",
+      "pattern": "type\\s+(\\w+)\\[([^\\]]+)\\]",
+      "captureGroup": 1,
+      "description": "Generic type definition",
+      "kind": "generic"
+    },
+    {
+      "interface": "GenericFunc",
+      "pattern": "func\\s+(\\w+)\\[([^\\]]+)\\]\\s*\\(",
+      "captureGroup": 1,
+      "description": "Generic function",
+      "kind": "generic"
+    },
+    {
+      "interface": "ErrorInterface",
+      "pattern": "func\\s+\\(\\w+\\s+\\*?\\w+\\)\\s+Error\\s*\\(\\)\\s+string",
+      "description": "error interface implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "StringerInterface",
+      "pattern": "func\\s+\\(\\w+\\s+\\*?\\w+\\)\\s+String\\s*\\(\\)\\s+string",
+      "description": "Stringer interface implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "SortInterface",
+      "pattern": "func\\s+\\(\\w+\\s+\\*?\\w+\\)\\s+(Len|Less|Swap)\\s*\\(",
+      "captureGroup": 1,
+      "description": "sort.Interface implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "HandlerFunc",
+      "pattern": "func\\s+(\\w+)\\s*\\(\\s*\\w+\\s+http\\.ResponseWriter\\s*,\\s*\\w+\\s*\\*http\\.Request\\)",
+      "captureGroup": 1,
+      "description": "HTTP handler function",
       "kind": "handler"
+    },
+    {
+      "interface": "ConstructorFunc",
+      "pattern": "func\\s+New(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Constructor function pattern",
+      "kind": "factory"
     }
   ],
   "keywords": {
     "interface": [
       "interface",
-      "type"
+      "struct",
+      "type",
+      "error",
+      "Stringer",
+      "io.Reader",
+      "io.Writer",
+      "http.Handler"
     ],
     "implementation": [
+      "func",
+      "type",
       "struct",
-      "func (receiver)",
-      "type assertion"
+      "interface",
+      "New"
     ]
   }
 }

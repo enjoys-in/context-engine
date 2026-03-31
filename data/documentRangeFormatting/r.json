@@ -1,78 +1,72 @@
 {
   "language": "r",
   "defaultOptions": {
-    "tabSize": 4,
+    "tabSize": 2,
     "insertSpaces": true
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent function body blocks",
-      "pattern": "\\bfunction\\b\\s*\\([^)]*\\)\\s*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "description": "R 2-space indentation",
+      "action": "reindent"
     },
     {
-      "description": "Indent control flow blocks (if, for, while, repeat)",
-      "pattern": "\\b(if|else|for|while|repeat)\\b[^{]*\\{",
+      "description": "Normalize operator spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(<-|->|<<-|->>|==|!=|>=|<=|%%|%>%|%in%|[+\\-*/^]=?|=)\\s*"
+    },
+    {
+      "description": "Indent function bodies",
       "action": "indent",
+      "pattern": "function\\s*\\([^)]*\\)\\s*\\{"
+    },
+    {
+      "description": "Format pipe operator chains",
+      "action": "indent",
+      "pattern": "%>%\\s*$",
       "options": {
-        "indentBody": true
+        "continuationIndent": 2
       }
     },
     {
       "description": "Align assignment operators",
-      "pattern": "\\w+\\s*(<-|=|<<-)\\s*",
       "action": "align",
+      "pattern": "\\s*<-\\s*",
       "options": {
         "alignOn": "<-"
       }
     },
     {
-      "description": "Format pipe operator chains",
-      "pattern": "%>%\\s*\\n|\\|>\\s*\\n",
+      "description": "Format formula expressions",
+      "action": "normalizeSpacing",
+      "pattern": "~\\s*"
+    },
+    {
+      "description": "Indent if/else blocks",
       "action": "indent",
-      "options": {
-        "continuationIndent": true
-      }
+      "pattern": "(if|else)\\s*[({]"
     },
     {
-      "description": "Wrap long function argument lists",
-      "pattern": "\\w+\\([^)]{80,}\\)",
-      "action": "wrapLine",
-      "options": {
-        "maxLength": 80
-      }
+      "description": "Format apply-family calls",
+      "action": "indent",
+      "pattern": "[lstv]?apply\\s*\\("
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Normalize comma spacing in calls",
+      "action": "normalizeSpacing",
+      "pattern": ",\\s*"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
-    },
-    {
-      "description": "Remove trailing whitespace in range",
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -80,8 +74,8 @@
     "statement",
     "block",
     "function",
-    "class",
     "comment",
-    "selection"
+    "selection",
+    "expression"
   ]
 }

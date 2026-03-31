@@ -2,55 +2,152 @@
   "language": "java",
   "implementationPatterns": [
     {
-      "interface": "interface",
+      "interface": "InterfaceImpl",
       "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "interface": "abstract class",
-      "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?(?:\\s+extends\\s+\\w+(?:<[^>]+>)?)?\\s+implements\\s+([\\w,\\s<>]+)",
       "captureGroup": 1,
       "description": "Interface implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ClassExtends",
+      "implementationKeyword": "extends",
+      "pattern": "class\\s+(\\w+)(?:<[^>]+>)?\\s+extends\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Class extension",
+      "kind": "class"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "AbstractClass",
+      "implementationKeyword": "abstract",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Abstract class declaration",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "InterfaceDecl",
+      "implementationKeyword": "interface",
+      "pattern": "interface\\s+(\\w+)(?:<[^>]+>)?(?:\\s+extends\\s+[\\w,\\s<>]+)?",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Interface declaration",
+      "kind": "interface"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "OverrideMethod",
+      "implementationKeyword": "@Override",
+      "pattern": "@Override\\s*\\n\\s*(?:public|protected|private)?\\s*(?:static\\s+)?(?:<[^>]+>\\s+)?\\w+(?:<[^>]+>)?\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Method override",
+      "kind": "override"
+    },
+    {
+      "interface": "AnonymousClass",
+      "pattern": "new\\s+(\\w+)(?:<[^>]+>)?\\s*\\([^)]*\\)\\s*\\{",
+      "captureGroup": 1,
+      "description": "Anonymous class implementation",
+      "kind": "anonymous"
+    },
+    {
+      "interface": "LambdaImpl",
+      "pattern": "(?:\\w+(?:<[^>]+>)?\\s+\\w+\\s*=\\s*)?\\([^)]*\\)\\s*->",
+      "description": "Lambda/functional interface implementation",
+      "kind": "lambda"
+    },
+    {
+      "interface": "MethodReference",
+      "pattern": "(\\w+)::(\\w+|new)",
+      "captureGroup": 2,
+      "description": "Method reference",
+      "kind": "reference"
+    },
+    {
+      "interface": "EnumImpl",
+      "implementationKeyword": "enum",
+      "pattern": "enum\\s+(\\w+)(?:\\s+implements\\s+[\\w,\\s<>]+)?",
+      "captureGroup": 1,
+      "description": "Enum implementation",
+      "kind": "enum"
+    },
+    {
+      "interface": "RecordDecl",
+      "implementationKeyword": "record",
+      "pattern": "record\\s+(\\w+)(?:<[^>]+>)?\\s*\\(",
+      "captureGroup": 1,
+      "description": "Record declaration",
+      "kind": "record"
+    },
+    {
+      "interface": "SealedClass",
+      "pattern": "sealed\\s+(?:class|interface)\\s+(\\w+).*permits\\s+([\\w,\\s]+)",
+      "captureGroup": 1,
+      "description": "Sealed class/interface",
+      "kind": "sealed"
+    },
+    {
+      "interface": "DefaultMethod",
+      "pattern": "default\\s+\\w+(?:<[^>]+>)?\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Default interface method",
+      "kind": "default"
+    },
+    {
+      "interface": "StaticFactory",
+      "pattern": "static\\s+(?:<[^>]+>\\s+)?\\w+(?:<[^>]+>)?\\s+(of|from|valueOf|create|newInstance|getInstance)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Static factory method",
+      "kind": "factory"
+    },
+    {
+      "interface": "BuilderPattern",
+      "pattern": "class\\s+(\\w+Builder|Builder)",
+      "captureGroup": 1,
+      "description": "Builder pattern implementation",
+      "kind": "pattern"
+    },
+    {
+      "interface": "Comparable",
+      "pattern": "implements\\s+.*Comparable<(\\w+)>",
+      "captureGroup": 1,
+      "description": "Comparable implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "Serializable",
+      "pattern": "implements\\s+.*Serializable",
+      "description": "Serializable implementation",
+      "kind": "interface"
+    },
+    {
+      "interface": "FunctionalInterface",
+      "implementationKeyword": "@FunctionalInterface",
+      "pattern": "@FunctionalInterface\\s*\\ninterface\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Functional interface declaration",
+      "kind": "interface"
     }
   ],
   "keywords": {
     "interface": [
       "interface",
-      "abstract class"
+      "abstract",
+      "implements",
+      "extends",
+      "@Override",
+      "sealed",
+      "permits",
+      "@FunctionalInterface"
     ],
     "implementation": [
+      "class",
       "implements",
-      "class"
+      "extends",
+      "new",
+      "@Override",
+      "enum",
+      "record",
+      "default",
+      "abstract"
     ]
   }
 }

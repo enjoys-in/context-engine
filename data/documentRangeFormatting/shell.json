@@ -6,132 +6,86 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent function bodies",
-      "pattern": "\\w+\\s*\\(\\)\\s*\\{|\\bfunction\\b\\s+\\w+\\s*\\{",
-      "action": "indent",
+      "description": "Shell 2-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 2,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Indent if/elif/else/fi blocks",
-      "pattern": "\\b(if|elif|else)\\b",
+      "description": "Indent if/then/else blocks",
       "action": "indent",
+      "pattern": "(then|else)\\s*$"
+    },
+    {
+      "description": "Indent case branches",
+      "action": "indent",
+      "pattern": "^\\s*\\w+\\)"
+    },
+    {
+      "description": "Format function bodies",
+      "action": "indent",
+      "pattern": "\\w+\\s*\\(\\)\\s*\\{"
+    },
+    {
+      "description": "Align variable assignments",
+      "action": "align",
+      "pattern": "^\\s*\\w+=",
       "options": {
-        "indentBody": true,
-        "endKeyword": "fi"
+        "alignOn": "="
       }
     },
     {
-      "description": "Format case statement patterns and bodies",
-      "pattern": "\\bcase\\b\\s+.*\\bin\\b[\\s\\S]*?\\besac\\b",
+      "description": "Indent heredoc content",
       "action": "indent",
+      "pattern": "<<[-~]?\\w+"
+    },
+    {
+      "description": "Normalize test brackets",
+      "action": "normalizeSpacing",
+      "pattern": "\\[\\[\\s+.+\\s+\\]\\]"
+    },
+    {
+      "description": "Format pipe chains",
+      "action": "indent",
+      "pattern": "\\|\\s*$",
       "options": {
-        "indentPatterns": true,
-        "indentBody": true
+        "continuationIndent": 4
       }
+    },
+    {
+      "description": "Normalize command substitution",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\([^)]+\\)"
     },
     {
       "description": "Indent for/while/until loops",
-      "pattern": "\\b(for|while|until)\\b.*\\bdo\\b",
       "action": "indent",
-      "options": {
-        "indentBody": true,
-        "endKeyword": "done"
-      }
+      "pattern": "^\\s*(for|while|until)\\s+.+;?\\s*do\\s*$"
     },
     {
-      "description": "Format pipeline continuations across lines",
-      "pattern": "\\|\\s*\\\\?\\s*\\n",
+      "description": "Format array declarations",
       "action": "indent",
-      "options": {
-        "continuationIndent": true
-      }
+      "pattern": "\\w+=\\([^)]*$"
     },
     {
-      "description": "Indent here-document content",
-      "pattern": "<<-?\\s*['\"]?\\w+['\"]?",
-      "action": "indent",
-      "options": {
-        "heredoc": true
-      }
-    },
-    {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
-    },
-    {
-      "description": "Indent contents of if/then/fi blocks",
-      "pattern": "\\b(if|then|elif|else|fi)\\b",
-      "action": "indent",
-      "options": {}
-    },
-    {
-      "description": "Indent contents of for/while/do/done loops",
-      "pattern": "\\b(for|while|do|done)\\b",
-      "action": "indent",
-      "options": {}
-    },
-    {
-      "description": "Indent case/esac blocks",
-      "pattern": "\\b(case|esac)\\b",
-      "action": "indent",
-      "options": {}
-    },
-    {
-      "description": "Normalize spacing around variable assignments",
-      "pattern": "\\w+=",
+      "description": "Normalize redirection spacing",
       "action": "normalizeSpacing",
-      "options": {
-        "spacesAroundEquals": false
-      }
+      "pattern": "\\s*(>>?|2>>?|&>>?|<)\\s*"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
-    },
-    {
-      "description": "Indent here-document and here-string content",
-      "pattern": "<<-?\\s*['\"]?\\w+['\"]?|<<<",
-      "action": "indent",
-      "options": {
-        "heredoc": true
-      }
-    },
-    {
-      "description": "Indent zsh-specific constructs (zparseopts, zstyle)",
-      "pattern": "\\b(zparseopts|zstyle|autoload|zmodload)\\b",
-      "action": "normalizeSpacing",
-      "options": {
-        "singleSpace": true
-      }
-    },
-    {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
-    },
-    {
-      "description": "Remove trailing whitespace in range",
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -139,8 +93,11 @@
     "statement",
     "block",
     "function",
-    "class",
+    "case",
+    "if_block",
+    "loop",
     "comment",
-    "selection"
+    "selection",
+    "pipeline"
   ]
 }

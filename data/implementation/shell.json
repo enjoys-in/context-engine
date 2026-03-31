@@ -2,118 +2,58 @@
   "language": "shell",
   "implementationPatterns": [
     {
-      "interface": "Function",
+      "interface": "FunctionDef",
       "implementationKeyword": "function",
       "pattern": "(?:function\\s+)?(\\w+)\\s*\\(\\s*\\)\\s*\\{",
-      "description": "Shell function definition"
+      "captureGroup": 1,
+      "description": "Shell function definition",
+      "kind": "function"
     },
     {
-      "interface": "Alias",
+      "interface": "AliasCmd",
       "implementationKeyword": "alias",
       "pattern": "alias\\s+(\\w+)=",
-      "description": "Alias definition"
+      "captureGroup": 1,
+      "description": "Alias definition",
+      "kind": "alias"
     },
     {
-      "interface": "Source",
+      "interface": "TrapHandler",
+      "implementationKeyword": "trap",
+      "pattern": "trap\\s+['\"]?\\w+['\"]?\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Signal trap handler",
+      "kind": "handler"
+    },
+    {
+      "interface": "Sourced",
       "implementationKeyword": "source",
       "pattern": "(?:source|\\.)\\s+([\\w./]+)",
-      "description": "Sourcing another script (include)"
-    },
-    {
-      "interface": "callback_pattern",
-      "implementationKeyword": "function",
-      "pattern": "^\\s*(?:function\\s+)?(\\w+_(?:callback|handler|hook))\\s*\\(\\s*\\)",
-      "description": "Functions following callback/handler/hook naming convention"
-    },
-    {
-      "interface": "completion_function",
-      "implementationKeyword": "complete -F",
-      "pattern": "^\\s*(?:function\\s+)?(_\\w+)\\s*\\(\\s*\\).*#.*completion",
-      "description": "Programmable completion functions (typically prefixed with _)"
-    },
-    {
-      "interface": "trap_handler",
-      "implementationKeyword": "trap",
-      "pattern": "^\\s*(?:function\\s+)?(cleanup|on_exit|on_err|handle_\\w+)\\s*\\(\\s*\\)",
-      "description": "Functions used as trap signal handlers"
-    },
-    {
-      "interface": "subcommand_pattern",
-      "implementationKeyword": "case",
-      "pattern": "^\\s*(?:function\\s+)?cmd_(\\w+)\\s*\\(\\s*\\)|^\\s*(?:function\\s+)?subcmd_(\\w+)",
-      "description": "Functions implementing CLI subcommands (cmd_* or subcmd_* prefix)"
-    },
-    {
-      "interface": "Widget",
-      "implementationKeyword": "zle",
-      "pattern": "zle\\s+-N\\s+(\\w+)",
-      "description": "ZLE widget registration"
-    },
-    {
-      "interface": "Completion",
-      "implementationKeyword": "compdef",
-      "pattern": "compdef\\s+(\\w+)",
-      "description": "Completion function binding"
-    },
-    {
-      "interface": "Autoload",
-      "implementationKeyword": "autoload",
-      "pattern": "autoload\\s+(?:-[Uz]+\\s+)*(\\w+)",
-      "description": "Autoloaded function"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "Sourced script inclusion",
+      "kind": "include"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "Subcommand",
+      "pattern": "case\\s+\"?\\$\\w+\"?\\s+in\\s*.*\\)\\s*(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
-    },
-    {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "description": "Subcommand dispatch",
+      "kind": "dispatch"
     }
   ],
   "keywords": {
     "interface": [
-      "function name",
+      "function",
       "alias",
-      "callback",
-      "handler",
-      "hook",
-      "plugin",
-      "override",
-      "autoload",
-      "zle -N",
-      "compdef"
+      "trap",
+      "source"
     ],
     "implementation": [
-      "function...{}",
-      "() {}",
-      "alias...=",
       "function",
-      "complete -F",
+      "alias",
       "trap",
-      "() {",
-      "autoload -Uz"
-    ],
-    "note": "Bash does not have formal interface/implementation constructs. Patterns here detect convention-based implementations like callback naming and completion functions."
+      "source",
+      "."
+    ]
   }
 }

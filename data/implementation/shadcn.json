@@ -2,129 +2,187 @@
   "language": "shadcn",
   "implementationPatterns": [
     {
-      "name": "ForwardRef Component",
-      "pattern": "const\\s+(\\w+)\\s*=\\s*React\\.forwardRef<",
+      "interface": "ClassDeclaration",
+      "implementationKeyword": "class",
+      "pattern": "class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "React.forwardRef component implementation"
+      "description": "Class declaration",
+      "kind": "class"
     },
     {
-      "name": "Component DisplayName",
-      "pattern": "(\\w+)\\.displayName\\s*=",
+      "interface": "ClassExtends",
+      "implementationKeyword": "extends",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Component displayName assignment for DevTools"
+      "description": "Class extending another class",
+      "kind": "class"
     },
     {
-      "name": "CVA Variant Implementation",
-      "pattern": "const\\s+(\\w+Variants?)\\s*=\\s*cva\\(",
-      "captureGroup": 1,
-      "description": "cva() class-variance-authority variant definition"
-    },
-    {
-      "name": "cn() Utility Function",
-      "pattern": "function\\s+(cn)\\(\\.\\.\\.",
-      "captureGroup": 1,
-      "description": "cn() class merging utility function implementation"
-    },
-    {
-      "name": "cn() Arrow Utility",
-      "pattern": "(?:export\\s+)?const\\s+(cn)\\s*=\\s*\\(",
-      "captureGroup": 1,
-      "description": "cn() utility implemented as arrow function"
-    },
-    {
-      "name": "useToast Hook",
-      "pattern": "function\\s+(useToast)\\s*\\(",
-      "captureGroup": 1,
-      "description": "useToast hook implementation for toast notifications"
-    },
-    {
-      "name": "Toast Reducer",
-      "pattern": "(?:const|function)\\s+(\\w*[Rr]educer)\\s*[=(]",
-      "captureGroup": 1,
-      "description": "Toast state reducer implementation"
-    },
-    {
-      "name": "FormField Context Provider",
-      "pattern": "<FormFieldContext\\.Provider\\s+value=\\{([^}]+)\\}",
-      "captureGroup": 1,
-      "description": "FormField context provider wrapping form fields"
-    },
-    {
-      "name": "Custom Hook Implementation",
-      "pattern": "(?:export\\s+)?function\\s+(use\\w+)\\s*\\(",
-      "captureGroup": 1,
-      "description": "Custom React hook implementation"
-    },
-    {
-      "name": "Radix Primitive Wrapper",
-      "pattern": "<(\\w+Primitive)\\b",
-      "captureGroup": 1,
-      "description": "Wrapper around a Radix UI primitive component"
-    },
-    {
-      "name": "DataTable Implementation",
-      "pattern": "function\\s+(DataTable)[<(]",
-      "captureGroup": 1,
-      "description": "DataTable component implementation with TanStack Table"
-    },
-    {
-      "name": "Column Accessor Implementation",
-      "pattern": "(?:accessorKey|accessorFn):\\s*[\"']?(\\w+)",
-      "captureGroup": 1,
-      "description": "DataTable column accessor definition"
-    },
-    {
-      "name": "Form Validation Schema",
-      "pattern": "const\\s+(\\w+Schema)\\s*=\\s*z\\.",
-      "captureGroup": 1,
-      "description": "Zod validation schema implementation for forms"
-    },
-    {
-      "name": "Component Composition with Slot",
-      "pattern": "asChild\\s*(?:\\?|&&)\\s*.*<(Slot)\\b",
-      "captureGroup": 1,
-      "description": "Component composition using Radix Slot for asChild pattern"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
-      "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
+      "interface": "PrototypeAssignment",
+      "pattern": "(\\w+)\\.prototype\\.(\\w+)\\s*=\\s*function",
+      "captureGroup": 2,
+      "description": "Prototype method assignment",
       "kind": "method"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "PrototypeChain",
+      "pattern": "(\\w+)\\.prototype\\s*=\\s*Object\\.create\\((\\w+)\\.prototype\\)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Prototype chain inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "ObjectCreate",
+      "pattern": "Object\\.create\\((\\w+)(?:\\.prototype)?\\)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Object.create inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
+      "interface": "MixinPattern",
+      "pattern": "Object\\.assign\\((\\w+)\\.prototype,\\s*(\\w+)\\)",
+      "captureGroup": 1,
+      "description": "Mixin via Object.assign",
+      "kind": "mixin"
+    },
+    {
+      "interface": "FactoryFunction",
+      "pattern": "function\\s+(create|make|build)\\w*\\s*\\(",
+      "description": "Factory function pattern",
+      "kind": "factory"
+    },
+    {
+      "interface": "GetterSetter",
+      "pattern": "(get|set)\\s+(\\w+)\\s*\\(",
+      "captureGroup": 2,
+      "description": "Getter/setter implementation",
+      "kind": "accessor"
+    },
+    {
+      "interface": "SymbolIterator",
+      "pattern": "\\[Symbol\\.(iterator|asyncIterator)\\]\\s*\\(",
+      "description": "Symbol.iterator implementation",
+      "kind": "protocol"
+    },
+    {
+      "interface": "SymbolToPrimitive",
+      "pattern": "\\[Symbol\\.toPrimitive\\]\\s*\\(",
+      "description": "Symbol.toPrimitive implementation",
+      "kind": "protocol"
+    },
+    {
+      "interface": "ProxyHandler",
+      "pattern": "new\\s+Proxy\\s*\\([^,]+,\\s*\\{",
+      "description": "Proxy handler implementation",
+      "kind": "handler"
+    },
+    {
+      "interface": "EventHandler",
+      "pattern": "(?:addEventListener|on\\w+)\\s*[=(].*(?:function|=>)",
       "description": "Event handler implementation",
       "kind": "handler"
+    },
+    {
+      "interface": "PromiseExecutor",
+      "pattern": "new\\s+Promise\\s*\\(\\s*(?:function|\\()",
+      "description": "Promise executor implementation",
+      "kind": "callback"
+    },
+    {
+      "interface": "CallbackImpl",
+      "pattern": "\\w+\\s*\\(\\s*(?:function|\\([^)]*\\)\\s*=>)",
+      "description": "Callback implementation",
+      "kind": "callback"
+    },
+    {
+      "interface": "ModuleExport",
+      "implementationKeyword": "export",
+      "pattern": "export\\s+(default\\s+)?(?:class|function|const|let|var)\\s+(\\w+)",
+      "captureGroup": 2,
+      "description": "Module export",
+      "kind": "module"
+    },
+    {
+      "interface": "StaticMethod",
+      "pattern": "static\\s+(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Static method implementation",
+      "kind": "method"
+    },
+    {
+      "interface": "AsyncGenerator",
+      "pattern": "async\\s*\\*\\s*(\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Async generator implementation",
+      "kind": "generator"
+    },
+    {
+      "interface": "ComputedProperty",
+      "pattern": "\\[(\\w+)\\]\\s*\\(",
+      "captureGroup": 1,
+      "description": "Computed property method",
+      "kind": "method"
+    },
+    {
+      "interface": "FunctionComponent",
+      "pattern": "(?:const|function)\\s+(\\w+)\\s*[:=]\\s*(?:React\\.FC|FC|\\([^)]*\\)\\s*(?:=>|:))",
+      "captureGroup": 1,
+      "description": "React function component",
+      "kind": "component"
+    },
+    {
+      "interface": "CustomHook",
+      "pattern": "(?:function|const)\\s+(use\\w+)\\s*[=(]",
+      "captureGroup": 1,
+      "description": "Custom React hook",
+      "kind": "hook"
+    },
+    {
+      "interface": "ForwardRef",
+      "pattern": "React\\.forwardRef\\s*(?:<[^>]+>)?\\s*\\(",
+      "description": "ForwardRef component",
+      "kind": "component"
+    },
+    {
+      "interface": "ContextProvider",
+      "pattern": "(?:const|let)\\s+(\\w+Context)\\s*=\\s*(?:React\\.)?createContext",
+      "captureGroup": 1,
+      "description": "React context",
+      "kind": "context"
+    },
+    {
+      "interface": "HOC",
+      "pattern": "(?:function|const)\\s+(with\\w+)\\s*[=(]",
+      "captureGroup": 1,
+      "description": "Higher-order component",
+      "kind": "hoc"
+    },
+    {
+      "interface": "MemoComponent",
+      "pattern": "React\\.memo\\s*\\(\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Memoized component",
+      "kind": "component"
     }
   ],
-  "keywords": [
-    "implements",
-    "extends",
-    "override",
-    "abstract",
-    "virtual",
-    "interface",
-    "protocol",
-    "trait",
-    "mixin",
-    "delegate"
-  ]
+  "keywords": {
+    "interface": [
+      "class",
+      "extends",
+      "prototype",
+      "Symbol.iterator",
+      "Symbol.asyncIterator",
+      "Symbol.toPrimitive",
+      "Proxy"
+    ],
+    "implementation": [
+      "class",
+      "extends",
+      "Object.create",
+      "Object.assign",
+      "prototype",
+      "new",
+      "export"
+    ]
+  }
 }

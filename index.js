@@ -15,7 +15,7 @@ let _cache = null;
 function _loadAll() {
   if (_cache) return _cache;
   _cache = new Map();
-  const files = fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".json"));
+  const files = fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".json") && f !== "manifest.json");
   for (const file of files) {
     const data = JSON.parse(
       fs.readFileSync(path.join(COMMANDS_DIR, file), "utf-8")

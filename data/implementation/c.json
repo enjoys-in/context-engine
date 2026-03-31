@@ -2,69 +2,96 @@
   "language": "c",
   "implementationPatterns": [
     {
-      "interface": "FunctionDecl",
-      "implementationKeyword": "definition",
-      "pattern": "^\\w[\\w\\s\\*]+\\s+(\\w+)\\s*\\([^)]*\\)\\s*\\{",
-      "description": "Function definition implementing a declared prototype"
-    },
-    {
-      "interface": "FunctionPointerTable",
-      "implementationKeyword": "struct",
-      "pattern": "struct\\s+(\\w+)\\s*\\{[^}]*\\(\\s*\\*\\s*\\w+\\s*\\)",
-      "description": "Struct containing function pointers (vtable pattern)"
-    },
-    {
-      "interface": "Callback",
-      "implementationKeyword": "typedef",
-      "pattern": "typedef\\s+\\w+\\s*\\(\\s*\\*\\s*(\\w+)\\s*\\)",
-      "description": "Callback typedef (interface-like)"
-    },
-    {
-      "interface": "ExternDecl",
-      "implementationKeyword": "extern",
-      "pattern": "extern\\s+\\w+\\s+(\\w+)\\s*\\(",
-      "description": "Extern function declarations (header interface)"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "FunctionDef",
+      "pattern": "(?:static\\s+)?(?:inline\\s+)?(?:const\\s+)?\\w+[\\s*]+(\\w+)\\s*\\([^)]*\\)\\s*\\{",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Function definition",
+      "kind": "function"
+    },
+    {
+      "interface": "StructDef",
+      "implementationKeyword": "struct",
+      "pattern": "(?:typedef\\s+)?struct\\s+(\\w+)\\s*\\{",
+      "captureGroup": 1,
+      "description": "Struct definition",
+      "kind": "struct"
+    },
+    {
+      "interface": "FunctionPointer",
+      "pattern": "(?:typedef\\s+)?\\w+\\s*\\(\\s*\\*\\s*(\\w+)\\s*\\)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Function pointer declaration",
+      "kind": "callback"
+    },
+    {
+      "interface": "VTablePattern",
+      "pattern": "struct\\s+(\\w+)_vtable\\s*\\{",
+      "captureGroup": 1,
+      "description": "Virtual table (OOP in C pattern)",
+      "kind": "vtable"
+    },
+    {
+      "interface": "VTableInit",
+      "pattern": "(\\w+)_vtable\\s*=\\s*\\{",
+      "captureGroup": 1,
+      "description": "VTable initialization",
+      "kind": "vtable"
+    },
+    {
+      "interface": "InterfaceStruct",
+      "pattern": "typedef\\s+struct\\s*\\{[^}]*\\(\\s*\\*\\s*\\w+\\s*\\)\\s*\\([^)]*\\);[^}]*\\}\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Interface via function pointer struct",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "CallbackRegistration",
+      "pattern": "(\\w+)_register\\s*\\(\\s*[^,]+,\\s*\\w+",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Callback registration",
+      "kind": "callback"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "MacroImplementation",
+      "pattern": "#define\\s+(\\w+)\\([^)]*\\)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Macro implementation",
+      "kind": "macro"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "interface": "StaticDispatch",
+      "pattern": "switch\\s*\\(\\s*\\w+->type\\s*\\)",
+      "description": "Type-based static dispatch",
+      "kind": "dispatch"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
+      "interface": "GenericMacro",
+      "pattern": "_Generic\\s*\\(\\s*\\(\\w+\\)",
+      "description": "C11 _Generic type dispatch",
+      "kind": "generic"
+    },
+    {
+      "interface": "SignalHandler",
+      "pattern": "signal\\s*\\(\\s*SIG\\w+\\s*,\\s*(\\w+)\\s*\\)",
+      "captureGroup": 1,
+      "description": "Signal handler implementation",
       "kind": "handler"
     }
   ],
   "keywords": {
     "interface": [
+      "struct",
       "typedef",
-      "extern",
-      "struct (with function pointers)"
+      "_Generic",
+      "void (*",
+      "signal"
     ],
     "implementation": [
-      "function definition",
       "struct",
-      "static"
+      "typedef",
+      "#define",
+      "static",
+      "inline"
     ]
   }
 }

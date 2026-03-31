@@ -6,68 +6,78 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent block contents within braces",
-      "pattern": "\\{[^}]*\\}",
-      "action": "indent",
-      "options": {}
+      "description": "terraform fmt 2-space indentation",
+      "action": "reindent",
+      "options": {
+        "tabSize": 2,
+        "insertSpaces": true
+      }
     },
     {
-      "description": "Align consecutive attribute assignments",
-      "pattern": "^\\s*\\w+\\s*=",
+      "description": "Align block arguments",
       "action": "align",
+      "pattern": "^\\s*\\w+\\s*=",
       "options": {
         "alignOn": "="
       }
     },
     {
-      "description": "Normalize spacing around equals sign",
-      "pattern": "\\s*=\\s*",
-      "action": "normalizeSpacing",
-      "options": {}
-    },
-    {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
-    },
-    {
-      "description": "Indent nested blocks within resource/data definitions",
-      "pattern": "\\b(resource|data|variable|output|module|locals|provider)\\b",
+      "description": "Indent resource blocks",
       "action": "indent",
-      "options": {}
+      "pattern": "(resource|data|variable|output|module|provider|locals|terraform)\\s+.*\\{"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format for expressions",
+      "action": "indent",
+      "pattern": "\\[for\\s+"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize interpolation",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\{[^}]+\\}"
+    },
+    {
+      "description": "Align lifecycle rules",
+      "action": "indent",
+      "pattern": "lifecycle\\s*\\{"
+    },
+    {
+      "description": "Format conditional expressions",
+      "action": "normalizeSpacing",
+      "pattern": ".+\\?.+:.+"
+    },
+    {
+      "description": "Indent dynamic blocks",
+      "action": "indent",
+      "pattern": "dynamic\\s+\"\\w+\"\\s*\\{"
+    },
+    {
+      "description": "Normalize heredoc strings",
+      "action": "indent",
+      "pattern": "<<-?\\w+"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
     "block",
-    "function",
-    "class",
+    "attribute",
+    "expression",
     "comment",
-    "selection"
+    "selection",
+    "resource",
+    "variable"
   ]
 }

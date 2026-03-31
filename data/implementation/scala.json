@@ -2,92 +2,115 @@
   "language": "scala",
   "implementationPatterns": [
     {
-      "interface": "Trait",
+      "interface": "TraitImpl",
       "implementationKeyword": "extends",
-      "pattern": "(?:class|object|enum)\\s+(\\w+)\\s*(?:\\([^)]*\\))?\\s*extends\\s+(\\w+)",
-      "description": "Class/object extending a trait or class"
-    },
-    {
-      "interface": "Trait Mixin",
-      "implementationKeyword": "with",
-      "pattern": "(?:class|object|trait)\\s+(\\w+)\\s*(?:\\([^)]*\\))?\\s*(?:extends\\s+\\w+\\s+)?with\\s+(\\w+)",
-      "description": "Mixing in additional traits with 'with' keyword"
-    },
-    {
-      "interface": "Abstract Class",
-      "implementationKeyword": "extends",
-      "pattern": "class\\s+(\\w+)\\s*(?:\\([^)]*\\))?\\s*extends\\s+(?:abstract\\s+)?class\\s+(\\w+)",
-      "description": "Concrete class extending an abstract class"
-    },
-    {
-      "interface": "Sealed Trait",
-      "implementationKeyword": "extends",
-      "pattern": "(?:case\\s+)?(?:class|object)\\s+(\\w+)\\s*(?:\\([^)]*\\))?\\s*extends\\s+(\\w+)",
-      "description": "Case classes/objects extending a sealed trait"
-    },
-    {
-      "interface": "Enum Case",
-      "implementationKeyword": "extends",
-      "pattern": "case\\s+(\\w+)\\s+extends\\s+(\\w+)",
-      "description": "Enum case extending the enum type"
-    },
-    {
-      "interface": "Given Implementation",
-      "implementationKeyword": "given",
-      "pattern": "given\\s+(?:\\w+\\s*:\\s*)?(\\w+)\\s*(?:\\[.*?\\])?\\s+with",
-      "description": "Given instance implementing a type class"
-    },
-    {
-      "interface": "Self Type",
-      "implementationKeyword": "=>",
-      "pattern": "(?:trait|class)\\s+\\w+\\s*\\{\\s*(?:\\w+\\s*:)?\\s*(\\w+)\\s*=>",
-      "description": "Self-type annotation requiring a trait"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "(?:class|object)\\s+(\\w+)(?:<[^>]+>)?\\s+extends\\s+(\\w+)(?:\\s+with\\s+[\\w\\s]+)*",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
+      "description": "Trait/class extension",
       "kind": "trait"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "TraitDecl",
+      "implementationKeyword": "trait",
+      "pattern": "trait\\s+(\\w+)(?:\\[[^\\]]+\\])?",
+      "captureGroup": 1,
+      "description": "Trait declaration",
+      "kind": "trait"
+    },
+    {
+      "interface": "AbstractClass",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Abstract class",
+      "kind": "abstract"
+    },
+    {
+      "interface": "OverrideMethod",
+      "implementationKeyword": "override",
+      "pattern": "override\\s+def\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Method override",
+      "kind": "override"
+    },
+    {
+      "interface": "CaseClass",
+      "pattern": "case\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Case class",
+      "kind": "class"
+    },
+    {
+      "interface": "SealedTrait",
+      "pattern": "sealed\\s+trait\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Sealed trait",
+      "kind": "sealed"
+    },
+    {
+      "interface": "ImplicitClass",
+      "pattern": "implicit\\s+class\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Implicit class (extension)",
+      "kind": "extension"
+    },
+    {
+      "interface": "GivenInstance",
+      "implementationKeyword": "given",
+      "pattern": "given\\s+(\\w+)\\s*:\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Given instance (Scala 3)",
+      "kind": "given"
+    },
+    {
+      "interface": "ExtensionMethod",
+      "implementationKeyword": "extension",
+      "pattern": "extension\\s*\\(\\w+\\s*:\\s*(\\w+)\\)\\s*def\\s+(\\w+)",
+      "captureGroup": 2,
+      "description": "Extension method (Scala 3)",
+      "kind": "extension"
+    },
+    {
+      "interface": "TypeClass",
+      "pattern": "trait\\s+(\\w+)\\[([^\\]]+)\\]",
+      "captureGroup": 1,
+      "description": "Type class pattern",
+      "kind": "typeclass"
+    },
+    {
+      "interface": "CompanionObject",
+      "pattern": "object\\s+(\\w+)(?:\\s+extends\\s+[\\w\\s]+)?",
+      "captureGroup": 1,
+      "description": "Companion object",
+      "kind": "object"
+    },
+    {
+      "interface": "CakePattern",
+      "pattern": "trait\\s+(\\w+Component|\\w+Module)",
+      "captureGroup": 1,
+      "description": "Cake pattern component",
+      "kind": "pattern"
     }
   ],
   "keywords": {
     "interface": [
       "trait",
-      "abstract class",
-      "sealed trait",
-      "sealed abstract class",
-      "enum"
+      "abstract",
+      "extends",
+      "with",
+      "override",
+      "sealed",
+      "given",
+      "extension"
     ],
     "implementation": [
       "class",
-      "case class",
       "object",
-      "case object",
-      "enum case",
-      "given"
+      "trait",
+      "extends",
+      "with",
+      "override",
+      "given",
+      "case class"
     ]
   }
 }

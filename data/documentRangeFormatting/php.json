@@ -6,82 +6,107 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent control structure bodies",
-      "pattern": "\\b(if|else|elseif|while|for|foreach|switch|try|catch|finally)\\b\\s*\\(.*\\)\\s*\\{",
-      "action": "indent",
+      "description": "PSR-12 4-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 4,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Align associative array key-value pairs",
-      "pattern": "'[^']*'\\s*=>\\s*",
+      "description": "Normalize operator spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(===|!==|==|!=|>=|<=|&&|\\|\\||\\?\\?|\\?:|=>|->|::|\\.\\.\\.|[+\\-*/%&|^.]=?|=)\\s*"
+    },
+    {
+      "description": "Wrap lines at 120 characters",
+      "action": "wrapLine",
+      "pattern": ".{120,}",
+      "options": {
+        "maxLineLength": 120
+      }
+    },
+    {
+      "description": "PSR-12 brace placement for classes/methods",
+      "action": "indent",
+      "pattern": "\\{[^}]*\\}"
+    },
+    {
+      "description": "Align double-arrow in arrays",
       "action": "align",
+      "pattern": "^\\s*['\"]?\\w+['\"]?\\s*=>",
       "options": {
         "alignOn": "=>"
       }
     },
     {
-      "description": "Format method chaining with arrow operators",
-      "pattern": "->\\w+\\(",
-      "action": "wrapLine",
-      "options": {
-        "breakBefore": "->"
-      }
+      "description": "Format use/namespace declarations",
+      "action": "align",
+      "pattern": "^(use|namespace)\\s+"
     },
     {
-      "description": "Normalize spacing around PHP concatenation operator",
-      "pattern": "\\s*\\.\\s*",
-      "action": "normalizeSpacing",
-      "options": {
-        "around": "."
-      }
-    },
-    {
-      "description": "Indent class and function bodies",
-      "pattern": "\\b(class|function|interface|trait)\\b[^{]*\\{",
+      "description": "Indent switch cases",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "case\\s+.+:|default:"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Format PHPDoc comments",
+      "action": "indent",
+      "pattern": "^\\s*\\*\\s"
     },
     {
-      "description": "Normalize spacing around type hints and return types",
-      "pattern": "\\)\\s*:\\s*\\??(\\w+)",
+      "description": "Normalize type declarations",
       "action": "normalizeSpacing",
+      "pattern": "(int|string|float|bool|array|callable|void|mixed|null|self|static)\\s"
+    },
+    {
+      "description": "Format match expressions",
+      "action": "indent",
+      "pattern": "match\\s*\\([^)]*\\)\\s*\\{"
+    },
+    {
+      "description": "Indent chained method calls",
+      "action": "indent",
+      "pattern": "->\\w+\\(",
       "options": {
-        "beforeColon": false,
-        "afterColon": true
+        "continuationIndent": 4
       }
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Align assignment operators",
+      "action": "align",
+      "pattern": "\\s*=\\s*",
+      "options": {
+        "alignOn": "="
+      }
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Format named arguments",
+      "action": "normalizeSpacing",
+      "pattern": "\\w+:\\s*"
+    },
+    {
+      "description": "Normalize concatenation spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*\\.\\s*"
+    },
+    {
+      "description": "Indent closure bodies",
+      "action": "indent",
+      "pattern": "function\\s*\\([^)]*\\)\\s*(use\\s*\\([^)]*\\))?\\s*\\{"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -90,7 +115,12 @@
     "block",
     "function",
     "class",
+    "interface",
+    "trait",
+    "enum",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "namespace"
   ]
 }

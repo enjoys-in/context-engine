@@ -6,89 +6,91 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent class, object, and trait bodies",
-      "pattern": "\\b(class|object|trait|abstract\\s+class)\\b[^{]*\\{",
-      "action": "indent",
+      "description": "Scalafmt 2-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 2,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Indent def/val/var function bodies",
-      "pattern": "\\b(def|val|var)\\b\\s+\\w+[^=]*=\\s*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Align pattern match case clauses",
-      "pattern": "\\bmatch\\b\\s*\\{[\\s\\S]*?\\}",
-      "action": "align",
-      "options": {
-        "alignOn": "=>"
-      }
-    },
-    {
-      "description": "Format for-comprehension yield expressions",
-      "pattern": "\\bfor\\b\\s*\\{[\\s\\S]*?\\}\\s*\\byield\\b",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Normalize spacing around implicit parameter lists",
-      "pattern": "\\(\\s*implicit\\b",
+      "description": "Normalize operator spacing",
       "action": "normalizeSpacing",
-      "options": {
-        "afterKeyword": true
-      }
+      "pattern": "\\s*(==|!=|>=|<=|&&|\\|\\||=>|<-|[+\\-*/%&|^]=?|=)\\s*"
     },
     {
-      "description": "Wrap long parameter lists",
-      "pattern": "\\([^)]{80,}\\)",
+      "description": "Wrap lines at 120 characters",
       "action": "wrapLine",
+      "pattern": ".{120,}",
       "options": {
-        "maxLength": 80
+        "maxLineLength": 120
       }
     },
     {
-      "description": "Format method chaining",
-      "pattern": "\\.\\w+[({]",
-      "action": "wrapLine",
+      "description": "Indent match case arms",
+      "action": "indent",
+      "pattern": "case\\s+.+\\s*=>"
+    },
+    {
+      "description": "Align for-comprehension generators",
+      "action": "indent",
+      "pattern": "<-|yield"
+    },
+    {
+      "description": "Format implicit parameters",
+      "action": "indent",
+      "pattern": "\\(implicit\\s+"
+    },
+    {
+      "description": "Indent trait/class body",
+      "action": "indent",
+      "pattern": "(trait|class|object)\\s+\\w+.*\\{"
+    },
+    {
+      "description": "Format pattern matching",
+      "action": "normalizeSpacing",
+      "pattern": "case\\s+\\w+\\(.*\\)"
+    },
+    {
+      "description": "Align val/var declarations",
+      "action": "align",
+      "pattern": "^\\s*(val|var)\\s+\\w+\\s*[:=]",
       "options": {
-        "breakBefore": "."
+        "alignOn": "="
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Normalize type annotations",
+      "action": "normalizeSpacing",
+      "pattern": ":\\s*\\w+"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format string interpolation",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\{[^}]+\\}"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Indent extension methods",
+      "action": "indent",
+      "pattern": "extension\\s*\\("
+    },
+    {
+      "description": "Format given/using clauses",
+      "action": "indent",
+      "pattern": "(given|using)\\s+"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -97,7 +99,12 @@
     "block",
     "function",
     "class",
+    "trait",
+    "object",
+    "match",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "for_comprehension"
   ]
 }

@@ -2,62 +2,111 @@
   "language": "php",
   "implementationPatterns": [
     {
-      "interface": "interface",
+      "interface": "InterfaceImpl",
       "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "interface": "trait",
-      "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "interface": "abstract class",
-      "implementationKeyword": "implements",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "class\\s+(\\w+)(?:\\s+extends\\s+\\w+)?\\s+implements\\s+([\\w,\\s\\\\]+)",
       "captureGroup": 1,
       "description": "Interface implementation",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ClassExtends",
+      "implementationKeyword": "extends",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Class extension",
+      "kind": "class"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "AbstractClass",
+      "implementationKeyword": "abstract",
+      "pattern": "abstract\\s+class\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Abstract class declaration",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "InterfaceDecl",
+      "implementationKeyword": "interface",
+      "pattern": "interface\\s+(\\w+)(?:\\s+extends\\s+[\\w,\\s\\\\]+)?",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
+      "description": "Interface declaration",
+      "kind": "interface"
+    },
+    {
+      "interface": "TraitUse",
+      "implementationKeyword": "use",
+      "pattern": "use\\s+(\\w+(?:\\\\\\w+)*(?:\\s*,\\s*\\w+(?:\\\\\\w+)*)*)\\s*[;{]",
+      "captureGroup": 1,
+      "description": "Trait usage",
       "kind": "trait"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "TraitDecl",
+      "implementationKeyword": "trait",
+      "pattern": "trait\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Trait declaration",
+      "kind": "trait"
+    },
+    {
+      "interface": "EnumDecl",
+      "implementationKeyword": "enum",
+      "pattern": "enum\\s+(\\w+)(?:\\s*:\\s*\\w+)?(?:\\s+implements\\s+[\\w,\\s\\\\]+)?",
+      "captureGroup": 1,
+      "description": "Enum declaration (PHP 8.1)",
+      "kind": "enum"
+    },
+    {
+      "interface": "MagicMethod",
+      "pattern": "(?:public|protected|private)?\\s*function\\s+(__\\w+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Magic method implementation",
+      "kind": "magic"
+    },
+    {
+      "interface": "ClosureBinding",
+      "pattern": "\\$\\w+\\s*=\\s*Closure::bind\\s*\\(",
+      "description": "Closure binding",
+      "kind": "closure"
+    },
+    {
+      "interface": "AnonymousClass",
+      "pattern": "new\\s+class(?:\\s*\\([^)]*\\))?\\s+(?:extends\\s+\\w+\\s+)?(?:implements\\s+\\w+\\s+)?\\{",
+      "description": "Anonymous class",
+      "kind": "anonymous"
+    },
+    {
+      "interface": "ServiceProvider",
+      "pattern": "class\\s+(\\w+)\\s+extends\\s+ServiceProvider",
+      "captureGroup": 1,
+      "description": "Service provider (Laravel)",
+      "kind": "provider"
+    },
+    {
+      "interface": "ContractImpl",
+      "pattern": "class\\s+(\\w+).*implements.*\\\\Contracts\\\\(\\w+)",
+      "captureGroup": 1,
+      "description": "Laravel Contract implementation",
+      "kind": "contract"
     }
   ],
   "keywords": {
     "interface": [
       "interface",
+      "abstract",
       "trait",
-      "abstract class"
+      "implements",
+      "extends"
     ],
     "implementation": [
+      "class",
+      "trait",
       "implements",
-      "class"
+      "extends",
+      "use",
+      "new class",
+      "enum"
     ]
   }
 }

@@ -2,48 +2,203 @@
   "language": "cpp",
   "implementationPatterns": [
     {
-      "interface": "class",
-      "implementationKeyword": "public",
-      "pattern": "(?:class)\\\\s+(\\\\w+)\\\\s+public\\\\s+(\\\\w+)",
-      "description": "Find classes using public"
+      "interface": "FunctionDef",
+      "pattern": "(?:static\\s+)?(?:inline\\s+)?(?:const\\s+)?\\w+[\\s*]+(\\w+)\\s*\\([^)]*\\)\\s*\\{",
+      "captureGroup": 1,
+      "description": "Function definition",
+      "kind": "function"
     },
     {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "StructDef",
+      "implementationKeyword": "struct",
+      "pattern": "(?:typedef\\s+)?struct\\s+(\\w+)\\s*\\{",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Struct definition",
+      "kind": "struct"
+    },
+    {
+      "interface": "FunctionPointer",
+      "pattern": "(?:typedef\\s+)?\\w+\\s*\\(\\s*\\*\\s*(\\w+)\\s*\\)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Function pointer declaration",
+      "kind": "callback"
+    },
+    {
+      "interface": "VTablePattern",
+      "pattern": "struct\\s+(\\w+)_vtable\\s*\\{",
+      "captureGroup": 1,
+      "description": "Virtual table (OOP in C pattern)",
+      "kind": "vtable"
+    },
+    {
+      "interface": "VTableInit",
+      "pattern": "(\\w+)_vtable\\s*=\\s*\\{",
+      "captureGroup": 1,
+      "description": "VTable initialization",
+      "kind": "vtable"
+    },
+    {
+      "interface": "InterfaceStruct",
+      "pattern": "typedef\\s+struct\\s*\\{[^}]*\\(\\s*\\*\\s*\\w+\\s*\\)\\s*\\([^)]*\\);[^}]*\\}\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Interface via function pointer struct",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "CallbackRegistration",
+      "pattern": "(\\w+)_register\\s*\\(\\s*[^,]+,\\s*\\w+",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Callback registration",
+      "kind": "callback"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "MacroImplementation",
+      "pattern": "#define\\s+(\\w+)\\([^)]*\\)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
+      "description": "Macro implementation",
+      "kind": "macro"
+    },
+    {
+      "interface": "StaticDispatch",
+      "pattern": "switch\\s*\\(\\s*\\w+->type\\s*\\)",
+      "description": "Type-based static dispatch",
+      "kind": "dispatch"
+    },
+    {
+      "interface": "GenericMacro",
+      "pattern": "_Generic\\s*\\(\\s*\\(\\w+\\)",
+      "description": "C11 _Generic type dispatch",
+      "kind": "generic"
+    },
+    {
+      "interface": "SignalHandler",
+      "pattern": "signal\\s*\\(\\s*SIG\\w+\\s*,\\s*(\\w+)\\s*\\)",
+      "captureGroup": 1,
+      "description": "Signal handler implementation",
+      "kind": "handler"
+    },
+    {
+      "interface": "ClassInherit",
+      "implementationKeyword": ":",
+      "pattern": "class\\s+(\\w+)\\s*(?:final\\s+)?:\\s*(?:public|protected|private)\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Class inheritance",
+      "kind": "class"
+    },
+    {
+      "interface": "VirtualOverride",
+      "implementationKeyword": "override",
+      "pattern": "\\w+\\s+(\\w+)\\s*\\([^)]*\\)\\s*(?:const\\s+)?override",
+      "captureGroup": 1,
+      "description": "Virtual method override",
+      "kind": "override"
+    },
+    {
+      "interface": "PureVirtual",
+      "pattern": "virtual\\s+\\w+\\s+(\\w+)\\s*\\([^)]*\\)\\s*(?:const\\s+)?=\\s*0",
+      "captureGroup": 1,
+      "description": "Pure virtual method",
       "kind": "abstract"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "VirtualMethod",
+      "implementationKeyword": "virtual",
+      "pattern": "virtual\\s+\\w+\\s+(\\w+)\\s*\\(",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Virtual method declaration",
+      "kind": "virtual"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "FinalClass",
+      "pattern": "class\\s+(\\w+)\\s+final",
+      "captureGroup": 1,
+      "description": "Final class declaration",
+      "kind": "final"
+    },
+    {
+      "interface": "TemplateSpecialization",
+      "pattern": "template\\s*<>\\s*(?:class|struct)\\s+(\\w+)<(\\w+)>",
+      "captureGroup": 1,
+      "description": "Template specialization",
+      "kind": "specialization"
+    },
+    {
+      "interface": "TemplateClass",
+      "pattern": "template\\s*<[^>]+>\\s*(?:class|struct)\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Template class definition",
+      "kind": "template"
+    },
+    {
+      "interface": "ConceptDef",
+      "implementationKeyword": "concept",
+      "pattern": "concept\\s+(\\w+)\\s*=",
+      "captureGroup": 1,
+      "description": "Concept definition (C++20)",
+      "kind": "concept"
+    },
+    {
+      "interface": "ConceptConstraint",
+      "pattern": "requires\\s+(?:\\w+|\\([^)]+\\))",
+      "description": "Requires clause constraint",
+      "kind": "constraint"
+    },
+    {
+      "interface": "OperatorOverload",
+      "pattern": "\\w+\\s+operator\\s*(\\S+)\\s*\\(",
+      "captureGroup": 1,
+      "description": "Operator overload",
+      "kind": "operator"
+    },
+    {
+      "interface": "CRTP",
+      "pattern": "class\\s+(\\w+)\\s*:\\s*(?:public|protected|private)\\s+\\w+<\\1>",
+      "captureGroup": 1,
+      "description": "CRTP pattern",
+      "kind": "pattern"
+    },
+    {
+      "interface": "SmartPointerFactory",
+      "pattern": "std::(?:make_unique|make_shared)<(\\w+)>",
+      "captureGroup": 1,
+      "description": "Smart pointer factory",
+      "kind": "factory"
+    },
+    {
+      "interface": "ModuleExport",
+      "pattern": "export\\s+(?:class|struct|function|template)\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Module export (C++20)",
+      "kind": "module"
+    },
+    {
+      "interface": "Coroutine",
+      "pattern": "\\w+\\s+(\\w+)\\s*\\([^)]*\\)\\s*(?=.*(?:co_await|co_yield|co_return))",
+      "captureGroup": 1,
+      "description": "Coroutine implementation",
+      "kind": "coroutine"
     }
   ],
   "keywords": {
     "interface": [
-      "class"
+      "virtual",
+      "override",
+      "final",
+      "concept",
+      "requires",
+      "abstract",
+      "template",
+      "=0"
     ],
     "implementation": [
-      "public",
-      "class"
+      "class",
+      "struct",
+      "override",
+      "virtual",
+      "final",
+      "concept",
+      "template<>",
+      "export"
     ]
   }
 }

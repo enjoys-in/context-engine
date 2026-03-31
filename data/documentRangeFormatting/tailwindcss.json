@@ -6,82 +6,99 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Sort utility classes in @apply rules within the selected range",
-      "pattern": "@apply\\s+([\\w\\s:/-]+);",
-      "action": "sortClasses",
+      "description": "Indent rule declarations",
+      "action": "indent",
+      "pattern": "\\{[^}]*\\}"
+    },
+    {
+      "description": "Align property values",
+      "action": "align",
+      "pattern": "^\\s*[\\w-]+\\s*:",
       "options": {
-        "order": "headwind"
+        "alignOn": ":"
       }
     },
     {
-      "description": "Normalize whitespace in class lists within the selected range",
-      "pattern": "class\\s*=\\s*[\"']([^\"']+)[\"']",
-      "action": "normalizeWhitespace",
+      "description": "One declaration per line",
+      "action": "wrapLine",
+      "pattern": "[;{][^;{]*[;{]"
+    },
+    {
+      "description": "Normalize colon spacing",
+      "action": "normalizeSpacing",
+      "pattern": ":\\s*"
+    },
+    {
+      "description": "Wrap long value lists",
+      "action": "wrapLine",
+      "pattern": ":\\s*.{60,};",
       "options": {
-        "singleSpace": true,
-        "trimEdges": true
+        "maxLineLength": 80
       }
     },
     {
-      "description": "Format @layer block indentation within the selected range",
-      "pattern": "@layer\\s+\\w+\\s*\\{[\\s\\S]*?\\}",
-      "action": "formatBlock",
-      "options": {
-        "indentSize": 2,
-        "insertSpaces": true
-      }
+      "description": "Format media query conditions",
+      "action": "normalizeSpacing",
+      "pattern": "@media\\s+[^{]+"
     },
     {
-      "description": "Normalize @apply directive spacing within the selected range",
-      "pattern": "@apply\\s{2,}",
-      "action": "replaceWhitespace",
-      "options": {
-        "replacement": "@apply "
-      }
+      "description": "Normalize shorthand properties",
+      "action": "normalizeSpacing",
+      "pattern": "(margin|padding|border|font|background):\\s*"
     },
     {
-      "description": "Format CSS rule blocks within the selected range",
-      "pattern": "\\.[\\w-]+\\s*\\{[^}]*\\}",
-      "action": "formatBlock",
-      "options": {
-        "indentSize": 2,
-        "insertSpaces": true,
-        "newlineAfterBrace": true
-      }
+      "description": "Indent nested at-rules",
+      "action": "indent",
+      "pattern": "@(media|supports|layer|container)\\s*"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format color function arguments",
+      "action": "normalizeSpacing",
+      "pattern": "(rgb|hsl|lab|oklch|color)\\s*\\("
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Align multiple selectors",
+      "action": "indent",
+      "pattern": ",\\s*$"
+    },
+    {
+      "description": "Normalize calc() expressions",
+      "action": "normalizeSpacing",
+      "pattern": "calc\\([^)]+\\)"
+    },
+    {
+      "description": "Format custom property declarations",
+      "action": "normalizeSpacing",
+      "pattern": "--[\\w-]+:\\s*"
+    },
+    {
+      "description": "Normalize important declarations",
+      "action": "normalizeSpacing",
+      "pattern": "!\\s*important"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
-    "block",
-    "directive",
+    "rule",
     "declaration",
-    "function",
-    "class",
+    "selector",
+    "at-rule",
     "comment",
-    "selection"
+    "selection",
+    "media-query",
+    "value"
   ]
 }

@@ -6,90 +6,160 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent function, class, and interface bodies",
-      "pattern": "\\b(function|class|interface|enum|type)\\b[^{]*\\{",
+      "description": "Indent block contents within braces",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "\\{[^}]*\\}"
     },
     {
-      "description": "Indent control flow block bodies",
-      "pattern": "\\b(if|else|for|while|do|switch|try|catch|finally)\\b[^{]*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Normalize spacing around type annotation colons",
-      "pattern": ":\\s*(string|number|boolean|void|any|unknown|never|null|undefined|\\w+(<[^>]*>)?(\\[\\])?)",
+      "description": "Normalize spacing around operators",
       "action": "normalizeSpacing",
-      "options": {
-        "beforeColon": false,
-        "afterColon": true
-      }
+      "pattern": "\\s*(===|!==|==|!=|>=|<=|&&|\\|\\||=>|\\?\\.?|\\?\\?|[+\\-*/%]=?|=)\\s*"
     },
     {
-      "description": "Align generic type parameters",
-      "pattern": "<[^>]{40,}>",
+      "description": "Wrap long lines at 100 characters",
       "action": "wrapLine",
+      "pattern": "[({][^)}]{80,}[)}]",
       "options": {
-        "maxLength": 80
+        "maxLineLength": 100
       }
     },
     {
-      "description": "Format object/interface property alignment",
-      "pattern": "\\w+\\??:\\s*",
+      "description": "Indent chained method calls",
+      "action": "indent",
+      "pattern": "\\.[a-z]\\w*\\(",
+      "options": {
+        "continuationIndent": 2
+      }
+    },
+    {
+      "description": "Align consecutive const/let/var declarations",
       "action": "align",
+      "pattern": "^\\s*(const|let|var)\\s+\\w+\\s*=",
+      "options": {
+        "alignOn": "="
+      }
+    },
+    {
+      "description": "Align object properties",
+      "action": "align",
+      "pattern": "^\\s*\\w+\\s*:",
       "options": {
         "alignOn": ":"
       }
     },
     {
-      "description": "Format arrow function expressions",
-      "pattern": "\\([^)]*\\)\\s*=>\\s*",
+      "description": "Normalize spacing in arrow functions",
       "action": "normalizeSpacing",
+      "pattern": "\\s*=>\\s*"
+    },
+    {
+      "description": "Indent switch case blocks",
+      "action": "indent",
+      "pattern": "case\\s+.+:|default:",
       "options": {
-        "around": "=>"
+        "indentInner": true
       }
     },
     {
-      "description": "Wrap long import statements",
-      "pattern": "import\\s*\\{[^}]{60,}\\}\\s*from",
+      "description": "Format template literal expressions",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\{[^}]+\\}"
+    },
+    {
+      "description": "Normalize ternary operator formatting",
       "action": "wrapLine",
+      "pattern": ".+\\?.+:.+",
       "options": {
-        "maxLength": 80
+        "maxLineLength": 80
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Align import statements",
+      "action": "align",
+      "pattern": "^import\\s+",
+      "options": {
+        "alignOn": "from"
+      }
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Normalize comma spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*,\\s*"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Format destructuring assignments",
+      "action": "indent",
+      "pattern": "(const|let|var)\\s*\\{[^}]+\\}\\s*="
+    },
+    {
+      "description": "Space after control keywords",
+      "action": "normalizeSpacing",
+      "pattern": "(if|for|while|switch|catch)\\s*\\("
+    },
+    {
+      "description": "Align type annotations",
+      "action": "align",
+      "pattern": ":\\s*\\w+",
+      "options": {
+        "alignOn": ":"
+      }
+    },
+    {
+      "description": "Format generic type parameters",
+      "action": "normalizeSpacing",
+      "pattern": "<[^>]+>"
+    },
+    {
+      "description": "Align interface properties",
+      "action": "align",
+      "pattern": "^\\s*\\w+\\??:\\s*",
+      "options": {
+        "alignOn": ":"
+      }
+    },
+    {
+      "description": "Format union/intersection types",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*[|&]\\s*(?=\\w)"
+    },
+    {
+      "description": "Indent enum members",
+      "action": "indent",
+      "pattern": "^\\s*\\w+\\s*=\\s*",
+      "options": {
+        "withinEnum": true
+      }
+    },
+    {
+      "description": "Format conditional types",
+      "action": "wrapLine",
+      "pattern": "extends\\s+.+\\?\\s*.+:\\s*.+",
+      "options": {
+        "maxLineLength": 80
+      }
+    },
+    {
+      "description": "Normalize decorator placement",
+      "action": "indent",
+      "pattern": "^\\s*@\\w+"
+    },
+    {
+      "description": "Format mapped types",
+      "action": "indent",
+      "pattern": "\\[\\w+\\s+in\\s+\\w+\\]"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -98,7 +168,12 @@
     "block",
     "function",
     "class",
+    "interface",
+    "type",
+    "enum",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "module"
   ]
 }

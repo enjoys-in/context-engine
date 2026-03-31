@@ -6,62 +6,72 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent block contents within braces",
-      "pattern": "\\{[^}]*\\}",
+      "description": "Indent server/location blocks",
       "action": "indent",
-      "options": {}
+      "pattern": "(server|location|upstream|events|http|map)\\s*.*\\{"
     },
     {
-      "description": "Align consecutive directive values",
-      "pattern": "^\\s*\\w+\\s+",
+      "description": "Align directive values",
       "action": "align",
-      "options": {
-        "alignOn": " "
-      }
+      "pattern": "^\\s*\\w+\\s+.+;$"
     },
     {
-      "description": "Normalize spacing between directive and value",
-      "pattern": "^\\s*\\w+\\s{2,}",
+      "description": "Format proxy_pass directives",
       "action": "normalizeSpacing",
-      "options": {}
+      "pattern": "proxy_pass\\s+"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Align listen directives",
+      "action": "align",
+      "pattern": "^\\s*listen\\s+"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Indent nested location blocks",
+      "action": "indent",
+      "pattern": "location\\s+[~=^]*\\s*/"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Format SSL directives",
+      "action": "align",
+      "pattern": "^\\s*ssl_\\w+\\s+"
+    },
+    {
+      "description": "Normalize include directives",
+      "action": "normalizeSpacing",
+      "pattern": "include\\s+"
+    },
+    {
+      "description": "Align log directives",
+      "action": "align",
+      "pattern": "^\\s*(access|error)_log\\s+"
+    },
+    {
+      "description": "Format try_files fallback",
+      "action": "normalizeSpacing",
+      "pattern": "try_files\\s+"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
     "block",
-    "function",
-    "class",
+    "directive",
     "comment",
-    "selection"
+    "selection",
+    "server",
+    "location",
+    "upstream"
   ]
 }

@@ -6,128 +6,99 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Normalize property declaration spacing",
-      "pattern": "([a-z-]+)\\s*:\\s*",
-      "action": "replace",
+      "description": "Indent rule declarations",
+      "action": "indent",
+      "pattern": "\\{[^}]*\\}"
+    },
+    {
+      "description": "Align property values",
+      "action": "align",
+      "pattern": "^\\s*[\\w-]+\\s*:",
       "options": {
-        "replacement": "$1: ",
-        "scope": "declaration"
+        "alignOn": ":"
       }
     },
     {
-      "description": "Ensure proper indentation within rule blocks",
-      "pattern": "^(\\s*)([a-z-]+\\s*:)",
-      "action": "reindent",
+      "description": "One declaration per line",
+      "action": "wrapLine",
+      "pattern": "[;{][^;{]*[;{]"
+    },
+    {
+      "description": "Normalize colon spacing",
+      "action": "normalizeSpacing",
+      "pattern": ":\\s*"
+    },
+    {
+      "description": "Wrap long value lists",
+      "action": "wrapLine",
+      "pattern": ":\\s*.{60,};",
       "options": {
-        "baseIndent": "parentBlock",
-        "indentSize": 2,
-        "scope": "block"
+        "maxLineLength": 80
       }
     },
     {
-      "description": "Normalize brace formatting for rule blocks",
-      "pattern": "([^\\s])\\s*\\{",
-      "action": "replace",
-      "options": {
-        "replacement": "$1 {",
-        "scope": "rule"
-      }
+      "description": "Format media query conditions",
+      "action": "normalizeSpacing",
+      "pattern": "@media\\s+[^{]+"
     },
     {
-      "description": "Ensure closing brace alignment",
-      "pattern": "^(\\s*)\\}",
-      "action": "reindent",
-      "options": {
-        "matchIndent": "openingBrace",
-        "scope": "block"
-      }
+      "description": "Normalize shorthand properties",
+      "action": "normalizeSpacing",
+      "pattern": "(margin|padding|border|font|background):\\s*"
     },
     {
-      "description": "Ensure semicolons terminate declarations",
-      "pattern": "([a-z-]+\\s*:[^;{}]+?)\\s*(?=\\n\\s*[a-z-]|\\n\\s*\\})",
-      "action": "appendSemicolon",
-      "options": {
-        "scope": "declaration"
-      }
+      "description": "Indent nested at-rules",
+      "action": "indent",
+      "pattern": "@(media|supports|layer|container)\\s*"
     },
     {
-      "description": "Remove extra blank lines within a rule block",
-      "pattern": "\\n\\s*\\n\\s*\\n",
-      "action": "replace",
-      "options": {
-        "replacement": "\n\n",
-        "scope": "block"
-      }
+      "description": "Format color function arguments",
+      "action": "normalizeSpacing",
+      "pattern": "(rgb|hsl|lab|oklch|color)\\s*\\("
     },
     {
-      "description": "Normalize comma-separated selectors to one per line",
-      "pattern": ",\\s*([.#a-zA-Z*:\\[])",
-      "action": "replace",
-      "options": {
-        "replacement": ",\n$1",
-        "scope": "rule"
-      }
+      "description": "Align multiple selectors",
+      "action": "indent",
+      "pattern": ",\\s*$"
     },
     {
-      "description": "Remove trailing whitespace on each line",
-      "pattern": "[ \\t]+$",
-      "action": "replace",
-      "options": {
-        "replacement": "",
-        "scope": "statement"
-      }
+      "description": "Normalize calc() expressions",
+      "action": "normalizeSpacing",
+      "pattern": "calc\\([^)]+\\)"
     },
     {
-      "description": "Normalize space in !important declarations",
-      "pattern": "\\s*!\\s*important",
-      "action": "replace",
-      "options": {
-        "replacement": " !important",
-        "scope": "declaration"
-      }
+      "description": "Format custom property declarations",
+      "action": "normalizeSpacing",
+      "pattern": "--[\\w-]+:\\s*"
     },
     {
-      "description": "Format multi-value properties with consistent spacing",
-      "pattern": ",\\s*(?=[^\\n])",
-      "action": "replace",
-      "options": {
-        "replacement": ", ",
-        "scope": "declaration"
-      }
+      "description": "Normalize important declarations",
+      "action": "normalizeSpacing",
+      "pattern": "!\\s*important"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
-    },
-    {
-      "description": "Remove trailing whitespace in range",
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
-    "block",
     "rule",
     "declaration",
-    "function",
-    "class",
+    "selector",
+    "at-rule",
     "comment",
-    "selection"
+    "selection",
+    "media-query",
+    "value"
   ]
 }

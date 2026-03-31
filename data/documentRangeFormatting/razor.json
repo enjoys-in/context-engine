@@ -1,84 +1,123 @@
 {
   "language": "razor",
   "defaultOptions": {
-    "tabSize": 2,
+    "tabSize": 4,
     "insertSpaces": true
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent Razor code blocks (@{ ... })",
-      "pattern": "@\\{[\\s\\S]*?\\}",
+      "description": "Indent nested HTML elements",
       "action": "indent",
+      "pattern": "<[a-z][^>]*>[^<]*</[a-z]+>"
+    },
+    {
+      "description": "Wrap long attribute lists",
+      "action": "wrapLine",
+      "pattern": "<\\w+\\s+[^>]{80,}>",
       "options": {
-        "indentBody": true
+        "maxLineLength": 100
       }
     },
     {
-      "description": "Indent HTML tag contents",
-      "pattern": "<(\\w+)[^>]*>[\\s\\S]*?</\\1>",
+      "description": "Align HTML attributes",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "^\\s+\\w+=\"[^\"]*\""
     },
     {
-      "description": "Format Razor control structures (@if, @foreach, @for)",
-      "pattern": "@(if|foreach|for|while|switch)\\b[^{]*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Align HTML tag attributes",
-      "pattern": "<\\w+\\s+[\\w-]+=\"[^\"]*\"(\\s+[\\w-]+=\"[^\"]*\")+",
-      "action": "align",
-      "options": {
-        "alignTo": "firstAttribute"
-      }
-    },
-    {
-      "description": "Normalize spacing around Razor expressions (@Model.Property)",
-      "pattern": "@(\\w+\\.)+\\w+",
+      "description": "Normalize self-closing tags",
       "action": "normalizeSpacing",
-      "options": {}
+      "pattern": "<\\w+[^>]*/\\s*>"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Indent script/style blocks",
+      "action": "indent",
+      "pattern": "<(script|style)[^>]*>"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format DOCTYPE declaration",
+      "action": "normalizeSpacing",
+      "pattern": "<!DOCTYPE[^>]+>"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize attribute quoting",
+      "action": "normalizeSpacing",
+      "pattern": "\\w+=(?:\"|')[^\"']*(?:\"|')"
+    },
+    {
+      "description": "Indent conditional comments",
+      "action": "indent",
+      "pattern": "<!--\\[if[^\\]]*\\]>"
+    },
+    {
+      "description": "Format data attributes",
+      "action": "normalizeSpacing",
+      "pattern": "data-[\\w-]+="
+    },
+    {
+      "description": "Normalize void element spacing",
+      "action": "normalizeSpacing",
+      "pattern": "<(br|hr|img|input|meta|link)[^>]*/?>"
+    },
+    {
+      "description": "Align table columns",
+      "action": "align",
+      "pattern": "<t[dh][^>]*>"
+    },
+    {
+      "description": "Indent form elements",
+      "action": "indent",
+      "pattern": "<(form|fieldset|select)"
+    },
+    {
+      "description": "Normalize class attribute lists",
+      "action": "normalizeSpacing",
+      "pattern": "class=\"[^\"]+\""
+    },
+    {
+      "description": "Indent Razor code blocks",
+      "action": "indent",
+      "pattern": "@\\{\\s*$"
+    },
+    {
+      "description": "Format Razor expressions",
+      "action": "normalizeSpacing",
+      "pattern": "@\\([^)]+\\)"
+    },
+    {
+      "description": "Indent @if/@foreach blocks",
+      "action": "indent",
+      "pattern": "@(if|foreach|for|while|switch)\\s*\\("
+    },
+    {
+      "description": "Format @model directive",
+      "action": "normalizeSpacing",
+      "pattern": "@model\\s+\\w+"
+    },
+    {
+      "description": "Normalize helper function calls",
+      "action": "normalizeSpacing",
+      "pattern": "@Html\\.\\w+\\("
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "statement",
-    "block",
-    "function",
-    "class",
+    "element",
+    "code_block",
+    "expression",
+    "directive",
     "comment",
     "selection"
   ]

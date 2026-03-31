@@ -1,87 +1,115 @@
 {
   "language": "ruby",
   "defaultOptions": {
-    "tabSize": 4,
+    "tabSize": 2,
     "insertSpaces": true
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent def/class/module bodies",
-      "pattern": "\\b(def|class|module)\\b\\s+\\w+",
-      "action": "indent",
+      "description": "RuboCop 2-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true,
-        "endKeyword": "end"
+        "tabSize": 2,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Indent do..end block bodies",
-      "pattern": "\\bdo\\b(\\s*\\|[^|]*\\|)?",
-      "action": "indent",
+      "description": "Normalize operator spacing",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(==|!=|>=|<=|&&|\\|\\||=>|<=>|=~|!~|[+\\-*/%&|^]=?|=)\\s*"
+    },
+    {
+      "description": "Wrap lines at 120 characters",
+      "action": "wrapLine",
+      "pattern": ".{120,}",
       "options": {
-        "indentBody": true,
-        "endKeyword": "end"
+        "maxLineLength": 120
       }
     },
     {
-      "description": "Align hash rocket key-value pairs",
-      "pattern": "\\w+\\s*=>\\s*",
+      "description": "Align hash rocket pairs",
       "action": "align",
+      "pattern": "^\\s*[:\\w]+\\s*=>",
       "options": {
         "alignOn": "=>"
       }
     },
     {
-      "description": "Indent if/unless/case/begin blocks",
-      "pattern": "\\b(if|unless|case|begin|while|until)\\b",
+      "description": "Align keyword-style hash values",
+      "action": "align",
+      "pattern": "^\\s*\\w+:\\s*",
+      "options": {
+        "alignOn": ":"
+      }
+    },
+    {
+      "description": "Indent do..end blocks",
       "action": "indent",
+      "pattern": "\\bdo\\b.*$"
+    },
+    {
+      "description": "Indent method chains",
+      "action": "indent",
+      "pattern": "\\.[a-z]\\w*",
       "options": {
-        "indentBody": true,
-        "endKeyword": "end"
+        "continuationIndent": 2
       }
     },
     {
-      "description": "Format method chaining with dot operator",
-      "pattern": "\\.\\w+[({]?",
-      "action": "wrapLine",
-      "options": {
-        "breakBefore": "."
-      }
-    },
-    {
-      "description": "Normalize spacing around heredoc declarations",
-      "pattern": "<<[~-]?\\w+",
+      "description": "Format string interpolation",
       "action": "normalizeSpacing",
-      "options": {}
+      "pattern": "#\\{[^}]+\\}"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Indent case-when branches",
+      "action": "indent",
+      "pattern": "when\\s+.+"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Align assignments",
+      "action": "align",
+      "pattern": "\\s*=\\s*",
+      "options": {
+        "alignOn": "="
+      }
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize heredoc indentation",
+      "action": "reindent",
+      "pattern": "<<[~-]?\\w+"
+    },
+    {
+      "description": "Format proc/lambda expressions",
+      "action": "normalizeSpacing",
+      "pattern": "(proc|lambda|->)\\s*[{(]"
+    },
+    {
+      "description": "Indent rescue/ensure blocks",
+      "action": "indent",
+      "pattern": "^\\s*(rescue|ensure)\\b"
+    },
+    {
+      "description": "Format array/hash comprehensions",
+      "action": "indent",
+      "pattern": "\\.(map|select|reject|each)\\s*[{]"
+    },
+    {
+      "description": "Normalize ternary expressions",
+      "action": "normalizeSpacing",
+      "pattern": ".+\\?.+:.+"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -90,7 +118,11 @@
     "block",
     "function",
     "class",
+    "module",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "do_end",
+    "begin_rescue"
   ]
 }

@@ -2,76 +2,44 @@
   "language": "lua",
   "implementationPatterns": [
     {
-      "interface": "Metatable",
-      "implementationKeyword": "setmetatable",
-      "pattern": "setmetatable\\s*\\(\\s*(\\w+)",
-      "description": "Setting metatable (OOP via metatables)"
-    },
-    {
-      "interface": "MethodDef",
-      "implementationKeyword": "function",
+      "interface": "ClassFn",
       "pattern": "function\\s+(\\w+):(\\w+)\\s*\\(",
-      "description": "Method definition on table (colon syntax)"
-    },
-    {
-      "interface": "ClassNew",
-      "implementationKeyword": "function",
-      "pattern": "function\\s+(\\w+)\\.new\\s*\\(",
-      "description": "Constructor function (prototype pattern)"
-    },
-    {
-      "interface": "Module",
-      "implementationKeyword": "return",
-      "pattern": "local\\s+(\\w+)\\s*=\\s*\\{\\}",
-      "description": "Module table (returned from file)"
-    },
-    {
-      "interface": "Prototype",
-      "implementationKeyword": "__index",
-      "pattern": "(\\w+)\\.__index\\s*=\\s*\\1",
-      "description": "Prototype setup via __index metamethod"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
-      "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
+      "captureGroup": 2,
+      "description": "Method definition (colon syntax)",
       "kind": "method"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "interface": "MetamethodImpl",
+      "pattern": "__(?:index|newindex|call|tostring|len|add|sub|mul|div|eq|lt|le)\\s*=\\s*function",
+      "description": "Metamethod implementation",
+      "kind": "metamethod"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "InheritanceSetup",
+      "pattern": "setmetatable\\s*\\(\\s*(\\w+)\\s*,\\s*\\{\\s*__index\\s*=\\s*(\\w+)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Metatable-based inheritance",
+      "kind": "class"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "ModuleDef",
+      "pattern": "local\\s+(\\w+)\\s*=\\s*\\{\\}",
+      "captureGroup": 1,
+      "description": "Module table definition",
+      "kind": "module"
     }
   ],
   "keywords": {
     "interface": [
-      "metatable",
+      "setmetatable",
       "__index",
-      "module"
+      "__newindex",
+      "class"
     ],
     "implementation": [
       "setmetatable",
-      "function T:method",
-      "T.new",
-      "__index"
+      "function",
+      "return"
     ]
   }
 }

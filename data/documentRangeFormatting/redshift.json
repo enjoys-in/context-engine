@@ -7,84 +7,121 @@
   "rangeFormattingRules": [
     {
       "description": "Uppercase SQL keywords",
-      "pattern": "\\b(select|from|where|join|left|right|inner|outer|cross|on|group|order|by|having|limit|insert|update|delete|create|alter|drop|into|values|set|and|or|not|in|exists|between|like|is|null|as|union|intersect|except|with|copy|unload|vacuum|analyze|distkey|sortkey|diststyle)\\b",
-      "action": "normalizeSpacing",
+      "action": "normalizeCase",
+      "pattern": "\\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|JOIN|ON|AND|OR|NOT|NULL|IN|BETWEEN|LIKE|ORDER|BY|GROUP|HAVING|UNION|SET|VALUES|INTO|AS|CASE|WHEN|THEN|ELSE|END|EXISTS|DISTINCT|LIMIT|OFFSET|LEFT|RIGHT|INNER|OUTER|FULL|CROSS)\\b",
       "options": {
-        "uppercase": true
+        "targetCase": "upper"
       }
     },
     {
-      "description": "Align major SQL clauses on new lines",
-      "pattern": "\\b(SELECT|FROM|WHERE|JOIN|LEFT JOIN|RIGHT JOIN|GROUP BY|ORDER BY|HAVING|LIMIT|COPY|UNLOAD)\\b",
+      "description": "Indent subqueries",
       "action": "indent",
-      "options": {
-        "clauseNewline": true
-      }
+      "pattern": "\\(\\s*SELECT"
     },
     {
-      "description": "Indent subquery blocks",
-      "pattern": "\\(\\s*SELECT[\\s\\S]*?\\)",
-      "action": "indent",
-      "options": {
-        "indentLevel": 1
-      }
-    },
-    {
-      "description": "Align DISTKEY and SORTKEY definitions",
-      "pattern": "\\b(DISTKEY|SORTKEY|DISTSTYLE)\\b\\s*\\(",
-      "action": "normalizeSpacing",
-      "options": {
-        "before": true
-      }
-    },
-    {
-      "description": "Format COPY/UNLOAD command options",
-      "pattern": "\\b(DELIMITER|IGNOREHEADER|CSV|GZIP|MANIFEST|REGION|IAM_ROLE)\\b",
+      "description": "Align SELECT columns",
       "action": "align",
+      "pattern": "^\\s*\\w+\\.?\\w*\\s*,?$"
+    },
+    {
+      "description": "One clause per line",
+      "action": "wrapLine",
+      "pattern": "\\b(SELECT|FROM|WHERE|JOIN|ON|GROUP BY|ORDER BY|HAVING|LIMIT)\\b"
+    },
+    {
+      "description": "Indent JOIN conditions",
+      "action": "indent",
+      "pattern": "ON\\s+\\w+",
       "options": {
-        "alignTo": "option"
+        "continuationIndent": 4
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Align CASE-WHEN expressions",
+      "action": "indent",
+      "pattern": "WHEN\\s+.+THEN"
+    },
+    {
+      "description": "Format IN clause values",
+      "action": "indent",
+      "pattern": "IN\\s*\\("
+    },
+    {
+      "description": "Normalize comparison operators",
+      "action": "normalizeSpacing",
+      "pattern": "\\s*(=|<>|!=|>=|<=|>|<)\\s*"
+    },
+    {
+      "description": "Indent INSERT column list",
+      "action": "indent",
+      "pattern": "INSERT\\s+INTO\\s+\\w+\\s*\\("
+    },
+    {
+      "description": "Format CREATE TABLE columns",
+      "action": "indent",
+      "pattern": "^\\s*\\w+\\s+\\w+"
+    },
+    {
+      "description": "Align UPDATE SET clauses",
+      "action": "align",
+      "pattern": "^\\s*\\w+\\s*=",
+      "options": {
+        "alignOn": "="
+      }
+    },
+    {
+      "description": "Normalize function calls",
+      "action": "normalizeSpacing",
+      "pattern": "\\w+\\s*\\("
+    },
+    {
+      "description": "Format window functions",
+      "action": "indent",
+      "pattern": "OVER\\s*\\("
+    },
+    {
+      "description": "Format CTE (WITH clause)",
+      "action": "indent",
+      "pattern": "WITH\\s+\\w+\\s+AS\\s*\\("
+    },
+    {
+      "description": "Remove trailing whitespace",
+      "action": "trimTrailing",
+      "pattern": "\\s+$"
+    },
+    {
+      "description": "Normalize line endings",
+      "action": "normalizeEOL"
     },
     {
       "description": "Normalize indentation in range",
       "action": "reindent"
     },
     {
-      "description": "Remove trailing whitespace in range",
-      "action": "trimTrailing",
-      "pattern": "\\s+$"
+      "description": "Format DISTKEY/SORTKEY",
+      "action": "normalizeSpacing",
+      "pattern": "(DISTKEY|SORTKEY|DISTSTYLE)\\s*\\(?"
     },
     {
-      "description": "Normalize line endings in range",
-      "action": "normalizeEOL"
+      "description": "Format COPY/UNLOAD",
+      "action": "indent",
+      "pattern": "(COPY|UNLOAD)\\s+"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Format ENCODE columns",
+      "action": "normalizeSpacing",
+      "pattern": "ENCODE\\s+\\w+"
     }
   ],
   "adjustToSyntaxNode": true,
   "supportedRangeTypes": [
-    "query",
-    "clause",
-    "subquery",
-    "function",
     "statement",
     "block",
-    "class",
+    "query",
+    "subquery",
+    "expression",
     "comment",
-    "selection"
+    "selection",
+    "cte"
   ]
 }

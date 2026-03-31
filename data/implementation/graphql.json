@@ -2,48 +2,68 @@
   "language": "graphql",
   "implementationPatterns": [
     {
-      "interface": "interface",
-      "implementationKeyword": "implements",
-      "pattern": "(?:type)\\\\s+(\\\\w+)\\\\s+implements\\\\s+(\\\\w+)",
-      "description": "Find classes using implements"
+      "interface": "TypeImpl",
+      "implementationKeyword": "type",
+      "pattern": "type\\s+(\\w+)(?:\\s+implements\\s+[\\w&\\s]+)?",
+      "captureGroup": 1,
+      "description": "Type implementation",
+      "kind": "type"
     },
     {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "InterfaceDecl",
+      "pattern": "interface\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
+      "description": "Interface declaration",
       "kind": "interface"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "UnionDecl",
+      "pattern": "union\\s+(\\w+)\\s*=",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
+      "description": "Union type",
+      "kind": "union"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "InputDecl",
+      "pattern": "input\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Input type",
+      "kind": "input"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "interface": "SchemaDecl",
+      "pattern": "schema\\s*\\{",
+      "description": "Schema definition",
+      "kind": "schema"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "DirectiveDecl",
+      "pattern": "directive\\s+@(\\w+)",
+      "captureGroup": 1,
+      "description": "Custom directive",
+      "kind": "directive"
+    },
+    {
+      "interface": "ResolverField",
+      "pattern": "\\w+\\s*\\([^)]*\\)\\s*:",
+      "description": "Resolver field with args",
+      "kind": "resolver"
     }
   ],
   "keywords": {
     "interface": [
-      "interface"
+      "interface",
+      "type",
+      "implements",
+      "directive"
     ],
     "implementation": [
+      "type",
       "implements",
-      "type"
+      "union",
+      "input",
+      "schema",
+      "directive"
     ]
   }
 }

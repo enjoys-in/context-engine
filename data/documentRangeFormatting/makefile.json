@@ -6,64 +6,67 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent recipe lines with tabs",
-      "pattern": "^\\t",
-      "action": "indent",
+      "description": "Tab-indent recipe lines",
+      "action": "reindent",
       "options": {
-        "useTabs": true
+        "tabSize": 4,
+        "insertSpaces": false
       }
     },
     {
-      "description": "Align consecutive variable assignments",
-      "pattern": "^[A-Z_][A-Z0-9_]*\\s*[?:+]?=",
+      "description": "Align variable assignments",
       "action": "align",
+      "pattern": "^\\w+\\s*[:+?]?=",
       "options": {
         "alignOn": "="
       }
     },
     {
-      "description": "Normalize spacing around assignment operators",
-      "pattern": "\\s*([?:+]?=)\\s*",
+      "description": "Format multi-line recipes",
+      "action": "indent",
+      "pattern": "\\\\\\s*$"
+    },
+    {
+      "description": "Indent conditional directives",
+      "action": "indent",
+      "pattern": "^(ifeq|ifneq|ifdef|ifndef)\\s+"
+    },
+    {
+      "description": "Normalize include directives",
       "action": "normalizeSpacing",
-      "options": {}
+      "pattern": "^-?include\\s+"
     },
     {
-      "description": "Trim trailing whitespace except in recipe continuation",
-      "pattern": "(?<!\\\\)\\s+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Align phony targets",
+      "action": "normalizeSpacing",
+      "pattern": "^\\.PHONY:\\s+"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format shell function calls",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\(shell\\s+"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
-  "adjustToSyntaxNode": true,
+  "adjustToSyntaxNode": false,
   "supportedRangeTypes": [
-    "statement",
-    "block",
-    "function",
-    "class",
+    "target",
+    "recipe",
+    "variable",
     "comment",
-    "selection"
+    "selection",
+    "conditional"
   ]
 }

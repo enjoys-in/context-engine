@@ -2,69 +2,123 @@
   "language": "swift",
   "implementationPatterns": [
     {
-      "interface": "Protocol",
-      "implementationKeyword": ":",
-      "pattern": "(?:class|struct|enum|actor)\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+",
-      "description": "Types conforming to protocols"
-    },
-    {
-      "interface": "Class",
-      "implementationKeyword": ":",
-      "pattern": "class\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+",
-      "description": "Classes inheriting from a superclass"
-    },
-    {
-      "interface": "Extension",
-      "implementationKeyword": "extension",
-      "pattern": "extension\\s+(\\w+)\\s*:\\s*\\w+",
-      "description": "Extensions adding protocol conformance"
-    },
-    {
-      "interface": "ProtocolExtension",
-      "implementationKeyword": "extension",
-      "pattern": "extension\\s+(\\w+)\\s*(?:where\\s+[^{]+)?\\s*\\{",
-      "description": "Protocol extensions providing default implementations"
-    },
-    {
-      "interface": "Actor",
-      "implementationKeyword": "actor",
-      "pattern": "actor\\s+(\\w+)\\s*(?:<[^>]*>)?\\s*:\\s*\\w+",
-      "description": "Actors conforming to protocols"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "interface": "ProtocolConformance",
+      "pattern": "(?:class|struct|enum|actor)\\s+(\\w+)\\s*:\\s*([\\w,\\s]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "Protocol conformance",
+      "kind": "protocol"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "ProtocolDecl",
+      "implementationKeyword": "protocol",
+      "pattern": "protocol\\s+(\\w+)(?:\\s*:\\s*[\\w,\\s]+)?",
+      "captureGroup": 1,
+      "description": "Protocol declaration",
+      "kind": "protocol"
+    },
+    {
+      "interface": "ExtensionConformance",
+      "implementationKeyword": "extension",
+      "pattern": "extension\\s+(\\w+)\\s*:\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Extension protocol conformance",
+      "kind": "extension"
+    },
+    {
+      "interface": "ExtensionDecl",
+      "pattern": "extension\\s+(\\w+)(?:<[^>]+>)?\\s*(?:where\\s+[^{]+)?\\{",
+      "captureGroup": 1,
+      "description": "Extension implementation",
+      "kind": "extension"
+    },
+    {
+      "interface": "ClassInherit",
+      "pattern": "class\\s+(\\w+)\\s*:\\s*(\\w+)",
+      "captureGroup": 1,
+      "description": "Class inheritance",
+      "kind": "class"
+    },
+    {
+      "interface": "OverrideMethod",
+      "implementationKeyword": "override",
+      "pattern": "override\\s+(?:class\\s+)?func\\s+(\\w+)",
       "captureGroup": 1,
       "description": "Method override",
-      "kind": "method"
+      "kind": "override"
     },
     {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "OverrideProperty",
+      "pattern": "override\\s+(?:class\\s+)?var\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
+      "description": "Property override",
+      "kind": "override"
     },
     {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
+      "interface": "RequiredInit",
+      "pattern": "required\\s+init\\s*\\(",
+      "description": "Required initializer",
+      "kind": "required"
+    },
+    {
+      "interface": "ProtocolExtDefault",
+      "pattern": "extension\\s+\\w+\\s*\\{\\s*(?://.*\\n)?\\s*func\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
+      "description": "Protocol extension default implementation",
+      "kind": "default"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "AssociatedType",
+      "pattern": "associatedtype\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Associated type requirement",
+      "kind": "associated"
+    },
+    {
+      "interface": "DelegatePattern",
+      "pattern": "(?:weak\\s+)?var\\s+delegate\\s*:\\s*(\\w+)\\?",
+      "captureGroup": 1,
+      "description": "Delegate pattern",
+      "kind": "delegate"
+    },
+    {
+      "interface": "PropertyWrapper",
+      "implementationKeyword": "@propertyWrapper",
+      "pattern": "@propertyWrapper\\s*struct\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Property wrapper",
+      "kind": "wrapper"
+    },
+    {
+      "interface": "ResultBuilder",
+      "implementationKeyword": "@resultBuilder",
+      "pattern": "@resultBuilder\\s*struct\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Result builder",
+      "kind": "builder"
+    },
+    {
+      "interface": "ActorDecl",
+      "implementationKeyword": "actor",
+      "pattern": "actor\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Actor declaration",
+      "kind": "actor"
+    },
+    {
+      "interface": "Codable",
+      "pattern": ":\\s*(?:.*,\\s*)?(?:Codable|Encodable|Decodable)",
+      "description": "Codable conformance",
+      "kind": "protocol"
     }
   ],
   "keywords": {
     "interface": [
       "protocol",
-      "class",
+      "extension",
+      "associatedtype",
+      "override",
+      "@propertyWrapper",
+      "@resultBuilder",
       "actor"
     ],
     "implementation": [
@@ -72,7 +126,10 @@
       "struct",
       "enum",
       "actor",
-      "extension"
+      "extension",
+      "override",
+      "required",
+      "func"
     ]
   }
 }

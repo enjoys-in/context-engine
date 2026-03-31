@@ -6,90 +6,104 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent func, class, struct, enum, protocol bodies",
-      "pattern": "\\b(func|class|struct|enum|protocol|extension|actor)\\b[^{]*\\{",
-      "action": "indent",
+      "description": "Swift 4-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 4,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Indent guard/if-let statements with early return",
-      "pattern": "\\bguard\\b\\s+\\blet\\b.*\\belse\\b\\s*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Indent control flow blocks (if, for, while, switch)",
-      "pattern": "\\b(if|for|while|switch|do|catch)\\b[^{]*\\{",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Align switch case clauses",
-      "pattern": "\\bswitch\\b[^{]*\\{[\\s\\S]*?\\}",
-      "action": "align",
-      "options": {
-        "alignCases": true
-      }
-    },
-    {
-      "description": "Format closure expression bodies",
-      "pattern": "\\{\\s*\\([^)]*\\)\\s*->\\s*\\w+\\s+in",
-      "action": "indent",
-      "options": {
-        "indentBody": true
-      }
-    },
-    {
-      "description": "Normalize spacing around protocol conformance colons",
-      "pattern": "\\b(class|struct|enum)\\b\\s+\\w+\\s*:\\s*\\w+",
+      "description": "Normalize operator spacing",
       "action": "normalizeSpacing",
-      "options": {
-        "beforeColon": false,
-        "afterColon": true
-      }
+      "pattern": "\\s*(==|!=|>=|<=|&&|\\|\\||\\?\\?|->|[+\\-*/%&|^]=?|=)\\s*"
     },
     {
-      "description": "Wrap long parameter lists in function declarations",
-      "pattern": "func\\s+\\w+\\([^)]{80,}\\)",
+      "description": "Wrap lines at 100 characters",
       "action": "wrapLine",
+      "pattern": ".{100,}",
       "options": {
-        "maxLength": 100
+        "maxLineLength": 100
       }
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Indent closure bodies",
+      "action": "indent",
+      "pattern": "\\{\\s*$"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format guard/if-let statements",
+      "action": "indent",
+      "pattern": "(guard|if)\\s+let\\s+"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Align switch cases",
+      "action": "indent",
+      "pattern": "case\\s+.+:|default:"
+    },
+    {
+      "description": "Format protocol method declarations",
+      "action": "indent",
+      "pattern": "func\\s+\\w+\\([^)]*\\)\\s*->"
+    },
+    {
+      "description": "Align computed property accessors",
+      "action": "indent",
+      "pattern": "\\b(get|set|willSet|didSet)\\b\\s*\\{"
+    },
+    {
+      "description": "Format generic constraints",
+      "action": "indent",
+      "pattern": "where\\s+\\w+\\s*:",
+      "options": {
+        "continuationIndent": 4
+      }
+    },
+    {
+      "description": "Normalize attribute placement",
+      "action": "indent",
+      "pattern": "^\\s*@\\w+"
+    },
+    {
+      "description": "Indent enum cases",
+      "action": "indent",
+      "pattern": "case\\s+\\w+"
+    },
+    {
+      "description": "Format string interpolation",
+      "action": "normalizeSpacing",
+      "pattern": "\\\\\\([^)]+\\)"
+    },
+    {
+      "description": "Align function parameters",
+      "action": "indent",
+      "pattern": "\\([^)]*$",
+      "options": {
+        "continuationIndent": 4
+      }
+    },
+    {
+      "description": "Normalize optional chaining",
+      "action": "normalizeSpacing",
+      "pattern": "\\?\\.(\\w+)"
+    },
+    {
+      "description": "Format result builders",
+      "action": "indent",
+      "pattern": "@\\w+Builder"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -98,7 +112,13 @@
     "block",
     "function",
     "class",
+    "struct",
+    "enum",
+    "protocol",
+    "extension",
     "comment",
-    "selection"
+    "selection",
+    "expression",
+    "closure"
   ]
 }

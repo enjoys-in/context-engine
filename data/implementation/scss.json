@@ -2,75 +2,77 @@
   "language": "scss",
   "implementationPatterns": [
     {
-      "interface": "Mixin",
+      "interface": "CustomProperty",
+      "pattern": "--([\\w-]+)\\s*:",
+      "captureGroup": 1,
+      "description": "CSS custom property (variable)",
+      "kind": "variable"
+    },
+    {
+      "interface": "Keyframes",
+      "pattern": "@keyframes\\s+([\\w-]+)",
+      "captureGroup": 1,
+      "description": "Animation keyframes",
+      "kind": "animation"
+    },
+    {
+      "interface": "FontFace",
+      "pattern": "@font-face\\s*\\{(?:[^}]*font-family:\\s*['\"]?([\\w\\s-]+))?",
+      "captureGroup": 1,
+      "description": "Font face definition",
+      "kind": "font"
+    },
+    {
+      "interface": "Layer",
+      "pattern": "@layer\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Cascade layer",
+      "kind": "layer"
+    },
+    {
+      "interface": "PropertyDef",
+      "pattern": "@property\\s+--([\\w-]+)",
+      "captureGroup": 1,
+      "description": "CSS property definition",
+      "kind": "property"
+    },
+    {
+      "interface": "MixinDef",
       "implementationKeyword": "@mixin",
       "pattern": "@mixin\\s+([\\w-]+)",
-      "description": "Mixin definition"
+      "captureGroup": 1,
+      "description": "Mixin definition",
+      "kind": "mixin"
     },
     {
-      "interface": "MixinInclude",
-      "implementationKeyword": "@include",
-      "pattern": "@include\\s+([\\w-]+)",
-      "description": "Mixin inclusion (usage)"
-    },
-    {
-      "interface": "Extend",
-      "implementationKeyword": "@extend",
-      "pattern": "@extend\\s+([.%][\\w-]+)",
-      "description": "Extending another selector/placeholder"
-    },
-    {
-      "interface": "Function",
+      "interface": "FunctionDef",
       "implementationKeyword": "@function",
       "pattern": "@function\\s+([\\w-]+)",
-      "description": "Function definition"
-    },
-    {
-      "interface": "Placeholder",
-      "implementationKeyword": "%",
-      "pattern": "%(\\w[\\w-]*)\\s*\\{",
-      "description": "Placeholder selector (abstract)"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
+      "description": "SCSS function",
+      "kind": "function"
     },
     {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
+      "interface": "PlaceholderSelector",
+      "pattern": "%([\\w-]+)\\s*\\{",
       "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
-      "kind": "trait"
-    },
-    {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "description": "Placeholder selector",
+      "kind": "placeholder"
     }
   ],
   "keywords": {
     "interface": [
-      "@mixin",
-      "%placeholder",
-      "@function"
+      "@property",
+      "@layer",
+      "@keyframes",
+      "--"
     ],
     "implementation": [
-      "@include",
-      "@extend",
-      "@function...@return"
+      "@keyframes",
+      "@font-face",
+      "@layer",
+      "--",
+      "@property"
     ]
   }
 }

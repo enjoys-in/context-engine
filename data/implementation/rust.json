@@ -2,48 +2,158 @@
   "language": "rust",
   "implementationPatterns": [
     {
-      "interface": "trait",
+      "interface": "TraitImpl",
       "implementationKeyword": "impl",
-      "pattern": "(?:struct)\\\\s+(\\\\w+)\\\\s+impl\\\\s+(\\\\w+)",
-      "description": "Find classes using impl"
-    },
-    {
-      "pattern": "(?:implements|extends|:)\\s+([\\w.]+)",
+      "pattern": "impl(?:<[^>]+>)?\\s+(\\w+)(?:<[^>]+>)?\\s+for\\s+(\\w+)",
       "captureGroup": 1,
-      "description": "Interface implementation",
-      "kind": "interface"
-    },
-    {
-      "pattern": "(?:@Override|@override|override)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Method override",
-      "kind": "method"
-    },
-    {
-      "pattern": "(?:abstract|virtual|deferred)\\s+(?:fun|func|def|method|function)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Abstract method implementation",
-      "kind": "abstract"
-    },
-    {
-      "pattern": "(?:use|include|with|mixin|trait)\\s+(\\w+)",
-      "captureGroup": 1,
-      "description": "Trait/mixin usage",
+      "description": "Trait implementation for type",
       "kind": "trait"
     },
     {
-      "pattern": "(?:on|handle|listener|callback|subscribe)\\w*\\s*[=(]",
-      "description": "Event handler implementation",
-      "kind": "handler"
+      "interface": "InherentImpl",
+      "implementationKeyword": "impl",
+      "pattern": "impl(?:<[^>]+>)?\\s+(\\w+)(?:<[^>]+>)?\\s*\\{",
+      "captureGroup": 1,
+      "description": "Inherent implementation block",
+      "kind": "impl"
+    },
+    {
+      "interface": "TraitDecl",
+      "implementationKeyword": "trait",
+      "pattern": "(?:pub\\s+)?trait\\s+(\\w+)(?:<[^>]+>)?(?:\\s*:\\s*[\\w+\\s]+)?",
+      "captureGroup": 1,
+      "description": "Trait declaration",
+      "kind": "trait"
+    },
+    {
+      "interface": "DeriveImpl",
+      "implementationKeyword": "derive",
+      "pattern": "#\\[derive\\(([^)]+)\\)\\]",
+      "captureGroup": 1,
+      "description": "Derive macro implementation",
+      "kind": "derive"
+    },
+    {
+      "interface": "StructDecl",
+      "implementationKeyword": "struct",
+      "pattern": "(?:pub\\s+)?struct\\s+(\\w+)(?:<[^>]+>)?",
+      "captureGroup": 1,
+      "description": "Struct declaration",
+      "kind": "struct"
+    },
+    {
+      "interface": "EnumDecl",
+      "implementationKeyword": "enum",
+      "pattern": "(?:pub\\s+)?enum\\s+(\\w+)(?:<[^>]+>)?",
+      "captureGroup": 1,
+      "description": "Enum declaration",
+      "kind": "enum"
+    },
+    {
+      "interface": "TypeAlias",
+      "implementationKeyword": "type",
+      "pattern": "type\\s+(\\w+)(?:<[^>]+>)?\\s*=",
+      "captureGroup": 1,
+      "description": "Type alias declaration",
+      "kind": "type"
+    },
+    {
+      "interface": "AssociatedType",
+      "pattern": "type\\s+(\\w+)\\s*(?::\\s*\\w+)?\\s*;",
+      "captureGroup": 1,
+      "description": "Associated type requirement",
+      "kind": "associated"
+    },
+    {
+      "interface": "DefaultImpl",
+      "pattern": "impl\\s+(\\w+)\\s+for\\s+\\.\\.\\s*\\{\\s*\\}",
+      "captureGroup": 1,
+      "description": "Default trait implementation",
+      "kind": "default"
+    },
+    {
+      "interface": "GenericImpl",
+      "pattern": "impl<([^>]+)>\\s+\\w+<\\1>",
+      "description": "Generic implementation",
+      "kind": "generic"
+    },
+    {
+      "interface": "WhereClause",
+      "pattern": "where\\s+(\\w+):\\s+(\\w[\\w+\\s]+)",
+      "captureGroup": 1,
+      "description": "Where clause constraint",
+      "kind": "constraint"
+    },
+    {
+      "interface": "DerefImpl",
+      "pattern": "impl(?:<[^>]+>)?\\s+(?:std::ops::)?Deref\\s+for\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Deref trait implementation",
+      "kind": "trait"
+    },
+    {
+      "interface": "FromImpl",
+      "pattern": "impl(?:<[^>]+>)?\\s+From<(\\w+)>\\s+for\\s+(\\w+)",
+      "captureGroup": 2,
+      "description": "From trait implementation",
+      "kind": "trait"
+    },
+    {
+      "interface": "DisplayImpl",
+      "pattern": "impl(?:<[^>]+>)?\\s+(?:std::fmt::)?Display\\s+for\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Display trait implementation",
+      "kind": "trait"
+    },
+    {
+      "interface": "IteratorImpl",
+      "pattern": "impl(?:<[^>]+>)?\\s+Iterator\\s+for\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Iterator trait implementation",
+      "kind": "trait"
+    },
+    {
+      "interface": "MacroDefn",
+      "implementationKeyword": "macro_rules",
+      "pattern": "macro_rules!\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Macro definition",
+      "kind": "macro"
+    },
+    {
+      "interface": "ProcMacro",
+      "pattern": "#\\[proc_macro(?:_derive|_attribute)?\\]\\s*(?:pub\\s+)?fn\\s+(\\w+)",
+      "captureGroup": 1,
+      "description": "Procedural macro",
+      "kind": "macro"
+    },
+    {
+      "interface": "AsyncTrait",
+      "pattern": "#\\[async_trait\\]\\s*impl",
+      "description": "Async trait implementation",
+      "kind": "async"
     }
   ],
   "keywords": {
     "interface": [
-      "trait"
+      "trait",
+      "impl",
+      "derive",
+      "dyn",
+      "where",
+      "macro_rules!",
+      "proc_macro",
+      "async_trait"
     ],
     "implementation": [
       "impl",
-      "struct"
+      "struct",
+      "enum",
+      "trait",
+      "type",
+      "derive",
+      "macro_rules!",
+      "fn"
     ]
   }
 }

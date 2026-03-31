@@ -6,81 +6,86 @@
   },
   "rangeFormattingRules": [
     {
-      "description": "Indent script block and function bodies",
-      "pattern": "\\b(function|filter|workflow)\\b\\s+\\w+[^{]*\\{",
-      "action": "indent",
+      "description": "PowerShell 4-space indentation",
+      "action": "reindent",
       "options": {
-        "indentBody": true
+        "tabSize": 4,
+        "insertSpaces": true
       }
     },
     {
-      "description": "Indent control flow block bodies",
-      "pattern": "\\b(if|elseif|else|foreach|for|while|switch|try|catch|finally)\\b[^{]*\\{",
+      "description": "Indent scriptblock bodies",
       "action": "indent",
+      "pattern": "\\{\\s*$"
+    },
+    {
+      "description": "Format pipeline continuation",
+      "action": "indent",
+      "pattern": "\\|\\s*$",
       "options": {
-        "indentBody": true
+        "continuationIndent": 4
       }
     },
     {
-      "description": "Align hashtable key-value pairs",
-      "pattern": "@\\{[\\s\\S]*?\\}",
+      "description": "Align hash table entries",
       "action": "align",
+      "pattern": "^\\s*\\w+\\s*=",
       "options": {
         "alignOn": "="
       }
     },
     {
-      "description": "Format pipeline continuation across lines",
-      "pattern": "\\|\\s*\\n\\s*\\w+-\\w+",
+      "description": "Format splatting variables",
       "action": "indent",
-      "options": {
-        "continuationIndent": true
-      }
+      "pattern": "@\\w+\\s*=\\s*@\\{"
     },
     {
-      "description": "Normalize spacing around PowerShell operators",
-      "pattern": "\\s*(-eq|-ne|-gt|-lt|-ge|-le|-like|-match|-contains|-in|-notin)\\s*",
+      "description": "Indent try/catch/finally blocks",
+      "action": "indent",
+      "pattern": "(try|catch|finally)\\s*\\{"
+    },
+    {
+      "description": "Normalize comparison operators",
       "action": "normalizeSpacing",
-      "options": {
-        "around": "operator"
-      }
+      "pattern": "\\s*-(eq|ne|gt|lt|ge|le|match|like|contains|in|notin)\\s*"
     },
     {
-      "description": "Indent param block contents",
-      "pattern": "\\bparam\\b\\s*\\([\\s\\S]*?\\)",
+      "description": "Format parameter blocks",
       "action": "indent",
-      "options": {
-        "indentBody": true
-      }
+      "pattern": "\\[Parameter\\([^)]*\\)\\]"
     },
     {
-      "description": "Trim trailing whitespace",
-      "pattern": "[ \\t]+$",
-      "action": "trimWhitespace",
-      "options": {}
+      "description": "Align function parameters",
+      "action": "indent",
+      "pattern": "param\\s*\\(\\s*$"
     },
     {
-      "description": "Normalize indentation in range",
-      "action": "reindent"
+      "description": "Format comment-based help",
+      "action": "indent",
+      "pattern": "^\\s*\\.\\w+"
     },
     {
-      "description": "Remove trailing whitespace in range",
+      "description": "Normalize string expansion",
+      "action": "normalizeSpacing",
+      "pattern": "\\$\\([^)]+\\)"
+    },
+    {
+      "description": "Format Where-Object/ForEach-Object",
+      "action": "indent",
+      "pattern": "(Where-Object|ForEach-Object)\\s*\\{"
+    },
+    {
+      "description": "Remove trailing whitespace",
       "action": "trimTrailing",
       "pattern": "\\s+$"
     },
     {
-      "description": "Normalize line endings in range",
+      "description": "Normalize line endings",
       "action": "normalizeEOL"
     },
     {
-      "description": "Align assignments in range",
-      "action": "align",
-      "pattern": "\\s*=\\s*"
-    },
-    {
-      "description": "Normalize spacing around operators",
-      "action": "spaceAround",
-      "pattern": "(?<=[\\w)])\\s*([+\\-*/%=<>!&|^~])\\s*(?=[\\w(])"
+      "description": "Normalize indentation in range",
+      "action": "reindent"
     }
   ],
   "adjustToSyntaxNode": true,
@@ -88,8 +93,10 @@
     "statement",
     "block",
     "function",
-    "class",
+    "scriptblock",
     "comment",
-    "selection"
+    "selection",
+    "pipeline",
+    "parameter_block"
   ]
 }

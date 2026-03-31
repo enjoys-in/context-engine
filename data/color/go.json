@@ -2,39 +2,83 @@
   "language": "go",
   "colorPatterns": [
     {
-      "pattern": "#([0-9a-fA-F]{6})\\b",
-      "format": "hex6",
-      "description": "6-digit hex color (#RRGGBB)"
+      "pattern": "[\"']#([0-9a-fA-F]{6})[\"']",
+      "format": "hex6_string",
+      "description": "Hex color in string literal (#rrggbb)."
     },
     {
-      "pattern": "#([0-9a-fA-F]{3})\\b",
-      "format": "hex3",
-      "description": "3-digit shorthand hex color (#RGB)"
+      "pattern": "[\"']#([0-9a-fA-F]{3})[\"']",
+      "format": "hex3_string",
+      "description": "Short hex in string literal."
+    },
+    {
+      "pattern": "[\"']#([0-9a-fA-F]{8})[\"']",
+      "format": "hex8_string",
+      "description": "Hex+alpha in string literal."
     },
     {
       "pattern": "0x([0-9a-fA-F]{6})\\b",
       "format": "hex_literal",
-      "description": "Hex color literal (0xRRGGBB)"
+      "description": "Hex integer color (0xRRGGBB)."
     },
     {
       "pattern": "0x([0-9a-fA-F]{8})\\b",
       "format": "hex_literal_alpha",
-      "description": "Hex color literal with alpha (0xAARRGGBB)"
+      "description": "Hex integer+alpha (0xAARRGGBB)."
     },
     {
-      "pattern": "#(?:[0-9a-fA-F]{3,4}){1,2}\\b",
-      "description": "Hex color (#RGB, #RGBA, #RRGGBB, #RRGGBBAA)",
-      "format": "hex"
+      "pattern": "color\\.RGBA\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}",
+      "format": "go-rgba",
+      "description": "Go image/color.RGBA."
     },
     {
-      "pattern": "rgba?\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+",
-      "description": "RGB/RGBA color function",
-      "format": "rgb"
+      "pattern": "color\\.NRGBA\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}",
+      "format": "go-nrgba",
+      "description": "Go image/color.NRGBA."
+    },
+    {
+      "pattern": "color\\.(?:White|Black|Transparent|Opaque)\\b",
+      "format": "go-named",
+      "description": "Go image/color named."
+    },
+    {
+      "pattern": "color\\.Gray\\{\\s*(\\d+)\\s*\\}",
+      "format": "go-gray",
+      "description": "Go image/color.Gray."
+    },
+    {
+      "pattern": "lipgloss\\.Color\\(\\s*[\"']([^\"']+)[\"']\\s*\\)",
+      "format": "lipgloss-color",
+      "description": "Lip Gloss TUI color."
+    },
+    {
+      "pattern": "tcell\\.Color(?:Red|Green|Blue|White|Black|Yellow|Default)\\b",
+      "format": "tcell-color",
+      "description": "Tcell terminal color."
+    },
+    {
+      "pattern": "\\\\033\\[\\d+(?:;\\d+)*m",
+      "format": "ansi-escape",
+      "description": "ANSI escape color."
     }
   ],
   "colorPresentations": [
-    "hex",
-    "hex_literal"
+    "hex6",
+    "hex8",
+    "rgb"
   ],
-  "namedColors": {}
+  "namedColors": {
+    "red": "#FF0000",
+    "green": "#008000",
+    "blue": "#0000FF",
+    "white": "#FFFFFF",
+    "black": "#000000",
+    "yellow": "#FFFF00",
+    "cyan": "#00FFFF",
+    "magenta": "#FF00FF",
+    "orange": "#FFA500",
+    "purple": "#800080",
+    "gray": "#808080",
+    "transparent": "rgba(0,0,0,0)"
+  }
 }
