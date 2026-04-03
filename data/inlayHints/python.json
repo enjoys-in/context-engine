@@ -50,6 +50,102 @@
       "pattern": "(?:const|let|var)\\s*[{\\[]",
       "display": ": type",
       "position": "inline"
+    },
+    {
+      "kind": "type",
+      "pattern": "(\\\\w+)\\\\s*=",
+      "label": ": {inferred_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Type inference for Python variable declarations"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b(\\\\w+)\\\\s*\\\\(",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Parameter name hints for Python function calls"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\breturn\\\\s+",
+      "label": "-> {return_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Return type hints for Python functions"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b(true|false|null|undefined|nil|None)\\\\b",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Boolean/null literal parameter hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\[([^\\\\]]+)\\\\]",
+      "label": ": {element_type}[]",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Array literal type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\{([^}]+)\\\\}",
+      "label": ": {object_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Object literal type hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b\\\\d+\\\\.?\\\\d*\\\\b",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Numeric literal parameter hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\"[^\"]*\"",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "String literal parameter hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\blambda\\\\b|=>|->",
+      "label": ": {callback_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Lambda/arrow function type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\.(\\\\w+)\\\\(\\\\)",
+      "label": ": {chain_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Chained expression type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\bnew\\\\s+\\\\w+",
+      "label": ": {constructor_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Constructor call type hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b[A-Z][A-Z0-9_]+\\\\b",
+      "label": "{enum_member}",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Enum value hints"
     }
   ],
   "typeInferenceRules": {
@@ -62,7 +158,7 @@
       "type": "number"
     },
     "boolean_literal": {
-      "pattern": "\\\\b(True|False)\\\\b",
+      "pattern": "\\\\b(true|false)\\\\b",
       "type": "boolean"
     },
     "array_literal": {
@@ -70,8 +166,28 @@
       "type": "array"
     },
     "null_literal": {
-      "pattern": "\\\\b(None)\\\\b",
+      "pattern": "\\\\b(null|nil|None|undefined)\\\\b",
       "type": "null"
+    },
+    "object_literal": {
+      "pattern": "\\\\{.*\\\\}",
+      "type": "object"
+    },
+    "regex_literal": {
+      "pattern": "\\/.*\\/[gimsuy]*",
+      "type": "regexp"
+    },
+    "function_expression": {
+      "pattern": "(function|=>|->|lambda|fn|fun)",
+      "type": "function"
+    },
+    "template_string": {
+      "pattern": "`[^`]*`",
+      "type": "string"
+    },
+    "tuple_literal": {
+      "pattern": "\\\\(.*,.*\\\\)",
+      "type": "tuple"
     }
   }
 }

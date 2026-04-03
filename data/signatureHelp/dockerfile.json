@@ -1,117 +1,684 @@
 {
   "language": "dockerfile",
-  "triggerCharacters": [" "],
-  "retriggerCharacters": [" "],
+  "triggerCharacters": [
+    " "
+  ],
+  "retriggerCharacters": [
+    " "
+  ],
   "signatures": [
     {
       "label": "FROM <image>[:<tag>] [AS <name>]",
-      "documentation": { "value": "Initializes a new build stage and sets the base image.\n```dockerfile\nFROM ubuntu:22.04\nFROM node:20-alpine AS builder\nFROM python:3.12-slim\n```" },
+      "documentation": {
+        "value": "Initializes a new build stage and sets the base image.\n```dockerfile\nFROM ubuntu:22.04\nFROM node:20-alpine AS builder\nFROM python:3.12-slim\n```"
+      },
       "parameters": [
-        { "label": "image", "documentation": { "value": "Base image name (e.g. `ubuntu`, `node`, `python`, `scratch`)." } },
-        { "label": "tag", "documentation": { "value": "Optional image tag (e.g. `22.04`, `20-alpine`, `3.12-slim`). Defaults to `latest`." } },
-        { "label": "AS name", "documentation": { "value": "Optional name for this build stage, used in multi-stage builds." } }
+        {
+          "label": "image",
+          "documentation": {
+            "value": "Base image name (e.g. `ubuntu`, `node`, `python`, `scratch`)."
+          }
+        },
+        {
+          "label": "tag",
+          "documentation": {
+            "value": "Optional image tag (e.g. `22.04`, `20-alpine`, `3.12-slim`). Defaults to `latest`."
+          }
+        },
+        {
+          "label": "AS name",
+          "documentation": {
+            "value": "Optional name for this build stage, used in multi-stage builds."
+          }
+        }
       ]
     },
     {
       "label": "RUN <command> | [\"executable\", \"param1\", \"param2\"]",
-      "documentation": { "value": "Executes a command in a new layer on top of the current image.\n```dockerfile\nRUN apt-get update && apt-get install -y curl\nRUN [\"pip\", \"install\", \"--no-cache-dir\", \"-r\", \"requirements.txt\"]\nRUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt\n```" },
+      "documentation": {
+        "value": "Executes a command in a new layer on top of the current image.\n```dockerfile\nRUN apt-get update && apt-get install -y curl\nRUN [\"pip\", \"install\", \"--no-cache-dir\", \"-r\", \"requirements.txt\"]\nRUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt\n```"
+      },
       "parameters": [
-        { "label": "command", "documentation": { "value": "Shell command (shell form) or exec form `[\"executable\", \"arg1\", ...]`." } }
+        {
+          "label": "command",
+          "documentation": {
+            "value": "Shell command (shell form) or exec form `[\"executable\", \"arg1\", ...]`."
+          }
+        }
       ]
     },
     {
       "label": "CMD <command> | [\"executable\", \"param1\", \"param2\"]",
-      "documentation": { "value": "Sets the default command to run when the container starts. Only the last CMD takes effect.\n```dockerfile\nCMD [\"node\", \"server.js\"]\nCMD [\"python\", \"-m\", \"flask\", \"run\"]\nCMD npm start\n```" },
+      "documentation": {
+        "value": "Sets the default command to run when the container starts. Only the last CMD takes effect.\n```dockerfile\nCMD [\"node\", \"server.js\"]\nCMD [\"python\", \"-m\", \"flask\", \"run\"]\nCMD npm start\n```"
+      },
       "parameters": [
-        { "label": "command", "documentation": { "value": "The default command. Exec form `[\"cmd\", \"arg\"]` is preferred." } }
+        {
+          "label": "command",
+          "documentation": {
+            "value": "The default command. Exec form `[\"cmd\", \"arg\"]` is preferred."
+          }
+        }
       ]
     },
     {
       "label": "ENTRYPOINT <command> | [\"executable\", \"param1\"]",
-      "documentation": { "value": "Configures the container to run as an executable. Arguments to `docker run` are appended.\n```dockerfile\nENTRYPOINT [\"python\", \"app.py\"]\nENTRYPOINT [\"/docker-entrypoint.sh\"]\n```" },
+      "documentation": {
+        "value": "Configures the container to run as an executable. Arguments to `docker run` are appended.\n```dockerfile\nENTRYPOINT [\"python\", \"app.py\"]\nENTRYPOINT [\"/docker-entrypoint.sh\"]\n```"
+      },
       "parameters": [
-        { "label": "command", "documentation": { "value": "The entrypoint command. Exec form `[\"cmd\", \"arg\"]` is recommended." } }
+        {
+          "label": "command",
+          "documentation": {
+            "value": "The entrypoint command. Exec form `[\"cmd\", \"arg\"]` is recommended."
+          }
+        }
       ]
     },
     {
       "label": "COPY [--from=<stage>] [--chown=<user>:<group>] <src>... <dest>",
-      "documentation": { "value": "Copies files/directories from the build context (or another stage) into the image.\n```dockerfile\nCOPY package.json package-lock.json ./\nCOPY . /app/\nCOPY --from=builder /app/dist /usr/share/nginx/html\nCOPY --chown=node:node . /app\n```" },
+      "documentation": {
+        "value": "Copies files/directories from the build context (or another stage) into the image.\n```dockerfile\nCOPY package.json package-lock.json ./\nCOPY . /app/\nCOPY --from=builder /app/dist /usr/share/nginx/html\nCOPY --chown=node:node . /app\n```"
+      },
       "parameters": [
-        { "label": "--from", "documentation": { "value": "Optional source stage name for multi-stage builds." } },
-        { "label": "--chown", "documentation": { "value": "Optional ownership `user:group` for copied files (Linux only)." } },
-        { "label": "src", "documentation": { "value": "Source path(s) relative to the build context or source stage." } },
-        { "label": "dest", "documentation": { "value": "Destination path inside the image." } }
+        {
+          "label": "--from",
+          "documentation": {
+            "value": "Optional source stage name for multi-stage builds."
+          }
+        },
+        {
+          "label": "--chown",
+          "documentation": {
+            "value": "Optional ownership `user:group` for copied files (Linux only)."
+          }
+        },
+        {
+          "label": "src",
+          "documentation": {
+            "value": "Source path(s) relative to the build context or source stage."
+          }
+        },
+        {
+          "label": "dest",
+          "documentation": {
+            "value": "Destination path inside the image."
+          }
+        }
       ]
     },
     {
       "label": "ADD [--chown=<user>:<group>] <src>... <dest>",
-      "documentation": { "value": "Copies files into the image. Unlike COPY, ADD also handles URLs and auto-extracts tar archives.\n```dockerfile\nADD https://example.com/file.tar.gz /tmp/\nADD rootfs.tar.gz /\n```" },
+      "documentation": {
+        "value": "Copies files into the image. Unlike COPY, ADD also handles URLs and auto-extracts tar archives.\n```dockerfile\nADD https://example.com/file.tar.gz /tmp/\nADD rootfs.tar.gz /\n```"
+      },
       "parameters": [
-        { "label": "--chown", "documentation": { "value": "Optional ownership `user:group` (Linux only)." } },
-        { "label": "src", "documentation": { "value": "Source path, URL, or tar archive." } },
-        { "label": "dest", "documentation": { "value": "Destination path inside the image." } }
+        {
+          "label": "--chown",
+          "documentation": {
+            "value": "Optional ownership `user:group` (Linux only)."
+          }
+        },
+        {
+          "label": "src",
+          "documentation": {
+            "value": "Source path, URL, or tar archive."
+          }
+        },
+        {
+          "label": "dest",
+          "documentation": {
+            "value": "Destination path inside the image."
+          }
+        }
       ]
     },
     {
       "label": "ENV <key>=<value> ...",
-      "documentation": { "value": "Sets environment variables available during build and at runtime.\n```dockerfile\nENV NODE_ENV=production\nENV APP_HOME=/app PORT=3000\n```" },
+      "documentation": {
+        "value": "Sets environment variables available during build and at runtime.\n```dockerfile\nENV NODE_ENV=production\nENV APP_HOME=/app PORT=3000\n```"
+      },
       "parameters": [
-        { "label": "key=value", "documentation": { "value": "One or more environment variable assignments." } }
+        {
+          "label": "key=value",
+          "documentation": {
+            "value": "One or more environment variable assignments."
+          }
+        }
       ]
     },
     {
       "label": "EXPOSE <port>[/<protocol>] ...",
-      "documentation": { "value": "Documents which ports the container listens on at runtime.\n```dockerfile\nEXPOSE 80\nEXPOSE 443/tcp\nEXPOSE 8080 9090\n```" },
+      "documentation": {
+        "value": "Documents which ports the container listens on at runtime.\n```dockerfile\nEXPOSE 80\nEXPOSE 443/tcp\nEXPOSE 8080 9090\n```"
+      },
       "parameters": [
-        { "label": "port", "documentation": { "value": "Port number to expose." } },
-        { "label": "protocol", "documentation": { "value": "Optional protocol: `tcp` (default) or `udp`." } }
+        {
+          "label": "port",
+          "documentation": {
+            "value": "Port number to expose."
+          }
+        },
+        {
+          "label": "protocol",
+          "documentation": {
+            "value": "Optional protocol: `tcp` (default) or `udp`."
+          }
+        }
       ]
     },
     {
       "label": "WORKDIR <path>",
-      "documentation": { "value": "Sets the working directory for subsequent RUN, CMD, ENTRYPOINT, COPY, and ADD instructions.\n```dockerfile\nWORKDIR /app\nWORKDIR /usr/src/app\n```" },
+      "documentation": {
+        "value": "Sets the working directory for subsequent RUN, CMD, ENTRYPOINT, COPY, and ADD instructions.\n```dockerfile\nWORKDIR /app\nWORKDIR /usr/src/app\n```"
+      },
       "parameters": [
-        { "label": "path", "documentation": { "value": "Absolute or relative path to set as the working directory. Created if it doesn't exist." } }
+        {
+          "label": "path",
+          "documentation": {
+            "value": "Absolute or relative path to set as the working directory. Created if it doesn't exist."
+          }
+        }
       ]
     },
     {
       "label": "ARG <name>[=<default>]",
-      "documentation": { "value": "Defines a build-time variable. Can be overridden with `--build-arg`.\n```dockerfile\nARG NODE_VERSION=20\nFROM node:${NODE_VERSION}-alpine\nARG BUILD_DATE\n```" },
+      "documentation": {
+        "value": "Defines a build-time variable. Can be overridden with `--build-arg`.\n```dockerfile\nARG NODE_VERSION=20\nFROM node:${NODE_VERSION}-alpine\nARG BUILD_DATE\n```"
+      },
       "parameters": [
-        { "label": "name", "documentation": { "value": "The argument name." } },
-        { "label": "default", "documentation": { "value": "Optional default value if not provided at build time." } }
+        {
+          "label": "name",
+          "documentation": {
+            "value": "The argument name."
+          }
+        },
+        {
+          "label": "default",
+          "documentation": {
+            "value": "Optional default value if not provided at build time."
+          }
+        }
       ]
     },
     {
       "label": "LABEL <key>=<value> ...",
-      "documentation": { "value": "Adds metadata to the image as key-value pairs.\n```dockerfile\nLABEL maintainer=\"user@example.com\"\nLABEL version=\"1.0\" description=\"My app image\"\n```" },
+      "documentation": {
+        "value": "Adds metadata to the image as key-value pairs.\n```dockerfile\nLABEL maintainer=\"user@example.com\"\nLABEL version=\"1.0\" description=\"My app image\"\n```"
+      },
       "parameters": [
-        { "label": "key=value", "documentation": { "value": "One or more label key-value pairs." } }
+        {
+          "label": "key=value",
+          "documentation": {
+            "value": "One or more label key-value pairs."
+          }
+        }
       ]
     },
     {
       "label": "VOLUME [\"/path\"] | VOLUME /path1 /path2",
-      "documentation": { "value": "Creates a mount point and marks it as holding externally mounted volumes.\n```dockerfile\nVOLUME /data\nVOLUME [\"/data\", \"/logs\"]\n```" },
+      "documentation": {
+        "value": "Creates a mount point and marks it as holding externally mounted volumes.\n```dockerfile\nVOLUME /data\nVOLUME [\"/data\", \"/logs\"]\n```"
+      },
       "parameters": [
-        { "label": "path", "documentation": { "value": "One or more directory paths inside the container to designate as volumes." } }
+        {
+          "label": "path",
+          "documentation": {
+            "value": "One or more directory paths inside the container to designate as volumes."
+          }
+        }
       ]
     },
     {
       "label": "USER <user>[:<group>]",
-      "documentation": { "value": "Sets the user (and optionally group) for subsequent RUN, CMD, and ENTRYPOINT instructions.\n```dockerfile\nRUN adduser --disabled-password appuser\nUSER appuser\nUSER 1000:1000\n```" },
+      "documentation": {
+        "value": "Sets the user (and optionally group) for subsequent RUN, CMD, and ENTRYPOINT instructions.\n```dockerfile\nRUN adduser --disabled-password appuser\nUSER appuser\nUSER 1000:1000\n```"
+      },
       "parameters": [
-        { "label": "user", "documentation": { "value": "Username or UID." } },
-        { "label": "group", "documentation": { "value": "Optional group name or GID." } }
+        {
+          "label": "user",
+          "documentation": {
+            "value": "Username or UID."
+          }
+        },
+        {
+          "label": "group",
+          "documentation": {
+            "value": "Optional group name or GID."
+          }
+        }
       ]
     },
     {
       "label": "HEALTHCHECK [--interval=<d>] [--timeout=<d>] [--retries=<n>] CMD <command>",
-      "documentation": { "value": "Tells Docker how to check if the container is still healthy.\n```dockerfile\nHEALTHCHECK --interval=30s --timeout=3s --retries=3 \\\n  CMD curl -f http://localhost/ || exit 1\nHEALTHCHECK NONE\n```" },
+      "documentation": {
+        "value": "Tells Docker how to check if the container is still healthy.\n```dockerfile\nHEALTHCHECK --interval=30s --timeout=3s --retries=3 \\\n  CMD curl -f http://localhost/ || exit 1\nHEALTHCHECK NONE\n```"
+      },
       "parameters": [
-        { "label": "--interval", "documentation": { "value": "Time between health checks (default: `30s`)." } },
-        { "label": "--timeout", "documentation": { "value": "Maximum time for a check to complete (default: `30s`)." } },
-        { "label": "--retries", "documentation": { "value": "Number of consecutive failures needed to report unhealthy (default: `3`)." } },
-        { "label": "command", "documentation": { "value": "The command to run for the health check. Exit code 0 = healthy, 1 = unhealthy." } }
+        {
+          "label": "--interval",
+          "documentation": {
+            "value": "Time between health checks (default: `30s`)."
+          }
+        },
+        {
+          "label": "--timeout",
+          "documentation": {
+            "value": "Maximum time for a check to complete (default: `30s`)."
+          }
+        },
+        {
+          "label": "--retries",
+          "documentation": {
+            "value": "Number of consecutive failures needed to report unhealthy (default: `3`)."
+          }
+        },
+        {
+          "label": "command",
+          "documentation": {
+            "value": "The command to run for the health check. Exit code 0 = healthy, 1 = unhealthy."
+          }
+        }
+      ]
+    },
+    {
+      "label": "print(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `print`\n\nPerforms the print operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `print`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `print`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "log(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `log`\n\nPerforms the log operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `log`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `log`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "write(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `write`\n\nPerforms the write operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `write`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `write`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "read(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `read`\n\nPerforms the read operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `read`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `read`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "open(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `open`\n\nPerforms the open operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `open`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `open`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "close(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `close`\n\nPerforms the close operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `close`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `close`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "length(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `length`\n\nPerforms the length operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `length`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `length`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "size(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `size`\n\nPerforms the size operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `size`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `size`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "count(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `count`\n\nPerforms the count operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `count`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `count`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "sort(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `sort`\n\nPerforms the sort operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `sort`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `sort`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "filter(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `filter`\n\nPerforms the filter operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `filter`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `filter`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "map(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `map`\n\nPerforms the map operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `map`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `map`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "reduce(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `reduce`\n\nPerforms the reduce operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `reduce`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `reduce`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "find(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `find`\n\nPerforms the find operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `find`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `find`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "indexOf(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `indexOf`\n\nPerforms the indexOf operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `indexOf`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `indexOf`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "contains(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `contains`\n\nPerforms the contains operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `contains`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `contains`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "toString(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `toString`\n\nPerforms the toString operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `toString`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `toString`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "parse(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `parse`\n\nPerforms the parse operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `parse`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `parse`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "format(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `format`\n\nPerforms the format operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `format`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `format`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "concat(arg1, arg2)",
+      "documentation": {
+        "value": "Dockerfile built-in: `concat`\n\nPerforms the concat operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `concat`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `concat`"
+          }
+        }
       ]
     }
   ]

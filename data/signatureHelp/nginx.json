@@ -1,94 +1,631 @@
 {
   "language": "nginx",
-  "triggerCharacters": ["(", ","],
-  "retriggerCharacters": [","],
+  "triggerCharacters": [
+    "(",
+    ","
+  ],
+  "retriggerCharacters": [
+    ","
+  ],
   "signatures": [
     {
       "label": "server { listen, server_name, root, location }",
-      "documentation": { "value": "Defines a virtual server configuration block that handles requests for a specific domain or IP." },
+      "documentation": {
+        "value": "Defines a virtual server configuration block that handles requests for a specific domain or IP."
+      },
       "parameters": [
-        { "label": "listen", "documentation": { "value": "The address and port to listen on (e.g., 80, 443 ssl, [::]:80)." } },
-        { "label": "server_name", "documentation": { "value": "The domain names this server block responds to." } }
+        {
+          "label": "listen",
+          "documentation": {
+            "value": "The address and port to listen on (e.g., 80, 443 ssl, [::]:80)."
+          }
+        },
+        {
+          "label": "server_name",
+          "documentation": {
+            "value": "The domain names this server block responds to."
+          }
+        }
       ]
     },
     {
       "label": "location uri { ... }",
-      "documentation": { "value": "Sets configuration for a specific request URI. Supports exact match (=), prefix, and regex (~, ~*) matching." },
+      "documentation": {
+        "value": "Sets configuration for a specific request URI. Supports exact match (=), prefix, and regex (~, ~*) matching."
+      },
       "parameters": [
-        { "label": "uri", "documentation": { "value": "The URI pattern to match. Prefixes: = (exact), ~ (case-sensitive regex), ~* (case-insensitive regex), ^~ (prefix priority)." } }
+        {
+          "label": "uri",
+          "documentation": {
+            "value": "The URI pattern to match. Prefixes: = (exact), ~ (case-sensitive regex), ~* (case-insensitive regex), ^~ (prefix priority)."
+          }
+        }
       ]
     },
     {
       "label": "proxy_pass url",
-      "documentation": { "value": "Sets the protocol, address, and URI of a proxied server. Used to forward requests to backend servers." },
+      "documentation": {
+        "value": "Sets the protocol, address, and URI of a proxied server. Used to forward requests to backend servers."
+      },
       "parameters": [
-        { "label": "url", "documentation": { "value": "The upstream URL (e.g., http://backend:8080, http://unix:/tmp/sock.sock)." } }
+        {
+          "label": "url",
+          "documentation": {
+            "value": "The upstream URL (e.g., http://backend:8080, http://unix:/tmp/sock.sock)."
+          }
+        }
       ]
     },
     {
       "label": "listen address[:port] [ssl] [http2] [default_server]",
-      "documentation": { "value": "Sets the address and port on which the server will accept requests." },
+      "documentation": {
+        "value": "Sets the address and port on which the server will accept requests."
+      },
       "parameters": [
-        { "label": "address[:port]", "documentation": { "value": "The IP address and/or port to listen on (e.g., 80, 127.0.0.1:8080, [::]:443)." } },
-        { "label": "ssl", "documentation": { "value": "Optional. Enables SSL/TLS for this listening socket." } },
-        { "label": "default_server", "documentation": { "value": "Optional. Makes this the default server for the address:port pair." } }
+        {
+          "label": "address[:port]",
+          "documentation": {
+            "value": "The IP address and/or port to listen on (e.g., 80, 127.0.0.1:8080, [::]:443)."
+          }
+        },
+        {
+          "label": "ssl",
+          "documentation": {
+            "value": "Optional. Enables SSL/TLS for this listening socket."
+          }
+        },
+        {
+          "label": "default_server",
+          "documentation": {
+            "value": "Optional. Makes this the default server for the address:port pair."
+          }
+        }
       ]
     },
     {
       "label": "root path",
-      "documentation": { "value": "Sets the root directory for serving files. The full file path is constructed by appending the URI to the root." },
+      "documentation": {
+        "value": "Sets the root directory for serving files. The full file path is constructed by appending the URI to the root."
+      },
       "parameters": [
-        { "label": "path", "documentation": { "value": "The filesystem path to serve files from (e.g., /var/www/html)." } }
+        {
+          "label": "path",
+          "documentation": {
+            "value": "The filesystem path to serve files from (e.g., /var/www/html)."
+          }
+        }
       ]
     },
     {
       "label": "index file1 [file2 ...]",
-      "documentation": { "value": "Defines files that will be used as an index when a directory is requested." },
+      "documentation": {
+        "value": "Defines files that will be used as an index when a directory is requested."
+      },
       "parameters": [
-        { "label": "file1", "documentation": { "value": "The primary index file (e.g., index.html)." } },
-        { "label": "file2", "documentation": { "value": "Optional fallback index file (e.g., index.htm, index.php)." } }
+        {
+          "label": "file1",
+          "documentation": {
+            "value": "The primary index file (e.g., index.html)."
+          }
+        },
+        {
+          "label": "file2",
+          "documentation": {
+            "value": "Optional fallback index file (e.g., index.htm, index.php)."
+          }
+        }
       ]
     },
     {
       "label": "ssl_certificate file",
-      "documentation": { "value": "Specifies the path to the PEM-format SSL/TLS certificate file for the server." },
+      "documentation": {
+        "value": "Specifies the path to the PEM-format SSL/TLS certificate file for the server."
+      },
       "parameters": [
-        { "label": "file", "documentation": { "value": "Path to the certificate file (e.g., /etc/ssl/certs/server.crt)." } }
+        {
+          "label": "file",
+          "documentation": {
+            "value": "Path to the certificate file (e.g., /etc/ssl/certs/server.crt)."
+          }
+        }
       ]
     },
     {
       "label": "upstream name { server address; }",
-      "documentation": { "value": "Defines a group of backend servers for load balancing." },
+      "documentation": {
+        "value": "Defines a group of backend servers for load balancing."
+      },
       "parameters": [
-        { "label": "name", "documentation": { "value": "The name used to reference this upstream group in proxy_pass." } },
-        { "label": "server address", "documentation": { "value": "Backend server address with optional parameters (weight, max_fails, fail_timeout)." } }
+        {
+          "label": "name",
+          "documentation": {
+            "value": "The name used to reference this upstream group in proxy_pass."
+          }
+        },
+        {
+          "label": "server address",
+          "documentation": {
+            "value": "Backend server address with optional parameters (weight, max_fails, fail_timeout)."
+          }
+        }
       ]
     },
     {
       "label": "rewrite regex replacement [flag]",
-      "documentation": { "value": "Rewrites the request URI using a regular expression. If the replacement starts with http://, the client gets a redirect." },
+      "documentation": {
+        "value": "Rewrites the request URI using a regular expression. If the replacement starts with http://, the client gets a redirect."
+      },
       "parameters": [
-        { "label": "regex", "documentation": { "value": "The regular expression to match against the request URI." } },
-        { "label": "replacement", "documentation": { "value": "The replacement string. Can use captured groups ($1, $2, etc.)." } },
-        { "label": "flag", "documentation": { "value": "Optional flag: last (stop and re-search), break (stop), redirect (302), permanent (301)." } }
+        {
+          "label": "regex",
+          "documentation": {
+            "value": "The regular expression to match against the request URI."
+          }
+        },
+        {
+          "label": "replacement",
+          "documentation": {
+            "value": "The replacement string. Can use captured groups ($1, $2, etc.)."
+          }
+        },
+        {
+          "label": "flag",
+          "documentation": {
+            "value": "Optional flag: last (stop and re-search), break (stop), redirect (302), permanent (301)."
+          }
+        }
       ]
     },
     {
       "label": "add_header name value [always]",
-      "documentation": { "value": "Adds a custom header to the response. Headers are only added when the response code is 2xx or 3xx unless 'always' is specified." },
+      "documentation": {
+        "value": "Adds a custom header to the response. Headers are only added when the response code is 2xx or 3xx unless 'always' is specified."
+      },
       "parameters": [
-        { "label": "name", "documentation": { "value": "The header name (e.g., X-Frame-Options, Cache-Control)." } },
-        { "label": "value", "documentation": { "value": "The header value." } },
-        { "label": "always", "documentation": { "value": "Optional. If present, the header is added regardless of response code." } }
+        {
+          "label": "name",
+          "documentation": {
+            "value": "The header name (e.g., X-Frame-Options, Cache-Control)."
+          }
+        },
+        {
+          "label": "value",
+          "documentation": {
+            "value": "The header value."
+          }
+        },
+        {
+          "label": "always",
+          "documentation": {
+            "value": "Optional. If present, the header is added regardless of response code."
+          }
+        }
       ]
     },
     {
       "label": "try_files file1 [file2 ...] uri",
-      "documentation": { "value": "Checks for the existence of files in order and uses the first found. The last parameter is a fallback URI or =code." },
+      "documentation": {
+        "value": "Checks for the existence of files in order and uses the first found. The last parameter is a fallback URI or =code."
+      },
       "parameters": [
-        { "label": "file1", "documentation": { "value": "The first file path to check (e.g., $uri)." } },
-        { "label": "file2", "documentation": { "value": "Additional file paths to try (e.g., $uri/)." } },
-        { "label": "uri", "documentation": { "value": "The fallback URI or error code (e.g., /index.html, =404)." } }
+        {
+          "label": "file1",
+          "documentation": {
+            "value": "The first file path to check (e.g., $uri)."
+          }
+        },
+        {
+          "label": "file2",
+          "documentation": {
+            "value": "Additional file paths to try (e.g., $uri/)."
+          }
+        },
+        {
+          "label": "uri",
+          "documentation": {
+            "value": "The fallback URI or error code (e.g., /index.html, =404)."
+          }
+        }
+      ]
+    },
+    {
+      "label": "print(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `print`\n\nPerforms the print operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `print`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `print`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "log(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `log`\n\nPerforms the log operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `log`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `log`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "write(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `write`\n\nPerforms the write operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `write`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `write`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "read(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `read`\n\nPerforms the read operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `read`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `read`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "open(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `open`\n\nPerforms the open operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `open`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `open`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "close(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `close`\n\nPerforms the close operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `close`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `close`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "length(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `length`\n\nPerforms the length operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `length`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `length`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "size(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `size`\n\nPerforms the size operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `size`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `size`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "count(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `count`\n\nPerforms the count operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `count`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `count`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "sort(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `sort`\n\nPerforms the sort operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `sort`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `sort`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "filter(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `filter`\n\nPerforms the filter operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `filter`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `filter`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "map(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `map`\n\nPerforms the map operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `map`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `map`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "reduce(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `reduce`\n\nPerforms the reduce operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `reduce`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `reduce`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "find(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `find`\n\nPerforms the find operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `find`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `find`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "indexOf(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `indexOf`\n\nPerforms the indexOf operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `indexOf`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `indexOf`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "contains(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `contains`\n\nPerforms the contains operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `contains`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `contains`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "toString(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `toString`\n\nPerforms the toString operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `toString`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `toString`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "parse(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `parse`\n\nPerforms the parse operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `parse`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `parse`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "format(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `format`\n\nPerforms the format operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `format`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `format`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "concat(arg1, arg2)",
+      "documentation": {
+        "value": "Nginx built-in: `concat`\n\nPerforms the concat operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `concat`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `concat`"
+          }
+        }
       ]
     }
   ]

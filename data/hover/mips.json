@@ -175,6 +175,167 @@
           "value": "**Pseudo-instructions** are assembler shorthands expanded to real instructions.\n```mips\nli $t0, 100    move $t0, $t1    bgt $t0, $t1, label\n```"
         }
       ]
+    },
+    "mul": {
+      "contents": [
+        {
+          "value": "```mips\nmul $rd, $rs, $rt\n```\nMultiplies the values in registers rs and rt, storing the lower 32 bits of the result in register rd. A pseudo-instruction in some assemblers that wraps mult and mflo."
+        }
+      ]
+    },
+    "and": {
+      "contents": [
+        {
+          "value": "```mips\nand $rd, $rs, $rt\n```\nPerforms a bitwise AND operation between the values in registers rs and rt, storing the result in register rd for masking and flag extraction operations."
+        }
+      ]
+    },
+    "or": {
+      "contents": [
+        {
+          "value": "```mips\nor $rd, $rs, $rt\n```\nPerforms a bitwise OR operation between the values in registers rs and rt, storing the result in register rd for combining bit flags or setting specific bits."
+        }
+      ]
+    },
+    "sll": {
+      "contents": [
+        {
+          "value": "```mips\nsll $rd, $rt, shamt\n```\nShifts the value in register rt left by the specified shift amount of 0 to 31 bits, filling vacated positions with zeros and storing the result in register rd."
+        }
+      ]
+    },
+    "srl": {
+      "contents": [
+        {
+          "value": "```mips\nsrl $rd, $rt, shamt\n```\nShifts the value in register rt right by the specified shift amount of 0 to 31 bits, filling vacated positions with zeros as a logical shift and storing result in register rd."
+        }
+      ]
+    },
+    "lw": {
+      "contents": [
+        {
+          "value": "```mips\nlw $rt, offset($rs)\n```\nLoads a 32-bit word from memory at the address computed by adding the sign-extended offset to register rs, storing the value in register rt. Address must be word-aligned."
+        }
+      ]
+    },
+    "sw": {
+      "contents": [
+        {
+          "value": "```mips\nsw $rt, offset($rs)\n```\nStores the 32-bit word from register rt into memory at the address computed by adding the sign-extended offset to register rs. Address must be word-aligned."
+        }
+      ]
+    },
+    "lb": {
+      "contents": [
+        {
+          "value": "```mips\nlb $rt, offset($rs)\n```\nLoads a byte from memory at the computed address, sign-extends it to 32 bits, and stores the result in register rt. Used for reading signed character data."
+        }
+      ]
+    },
+    "sb": {
+      "contents": [
+        {
+          "value": "```mips\nsb $rt, offset($rs)\n```\nStores the least significant byte of register rt into memory at the address computed by adding the sign-extended offset to register rs."
+        }
+      ]
+    },
+    "la": {
+      "contents": [
+        {
+          "value": "```mips\nla $rt, label\n```\nPseudo-instruction that loads the 32-bit address of a label into register rt. Typically expands to a lui and ori instruction pair for the upper and lower 16 bits."
+        }
+      ]
+    },
+    "li": {
+      "contents": [
+        {
+          "value": "```mips\nli $rt, immediate\n```\nPseudo-instruction that loads a 32-bit immediate constant into register rt, expanding to lui and ori as needed depending on the magnitude of the value."
+        }
+      ]
+    },
+    "beq": {
+      "contents": [
+        {
+          "value": "```mips\nbeq $rs, $rt, label\n```\nBranch on Equal compares registers rs and rt, and if they are equal, branches to the target label by adding the sign-extended offset to the program counter."
+        }
+      ]
+    },
+    "bne": {
+      "contents": [
+        {
+          "value": "```mips\nbne $rs, $rt, label\n```\nBranch on Not Equal compares registers rs and rt, and if they differ, branches to the target label by adding the sign-extended offset to the program counter."
+        }
+      ]
+    },
+    "slt": {
+      "contents": [
+        {
+          "value": "```mips\nslt $rd, $rs, $rt\n```\nSet on Less Than sets register rd to 1 if the signed value in rs is less than the signed value in rt, otherwise sets rd to 0. Essential for comparison-based branching."
+        }
+      ]
+    },
+    "j": {
+      "contents": [
+        {
+          "value": "```mips\nj target\n```\nUnconditional Jump instruction that jumps to the instruction at the specified 26-bit target address, with the upper 4 bits from the current program counter. Used for loops and gotos."
+        }
+      ]
+    },
+    "jal": {
+      "contents": [
+        {
+          "value": "```mips\njal target\n```\nJump and Link saves the return address PC+4 in register $ra and jumps to the target address. The standard instruction for calling subroutines in MIPS assembly programs."
+        }
+      ]
+    },
+    "jr": {
+      "contents": [
+        {
+          "value": "```mips\njr $rs\n```\nJump Register jumps to the address stored in register rs. Commonly used with $ra to return from a subroutine called by jal, restoring execution to the caller."
+        }
+      ]
+    },
+    "$v0": {
+      "contents": [
+        {
+          "value": "```mips\n$v0 (Register 2)\n```\nValue register 0, used for function return values and syscall service numbers. By convention, integer return values from functions are placed in $v0 before returning."
+        }
+      ]
+    },
+    "$a0": {
+      "contents": [
+        {
+          "value": "```mips\n$a0 (Register 4)\n```\nArgument register 0, used to pass the first argument to subroutines and syscalls. Part of the $a0-$a3 convention for the first four function parameters in MIPS calling convention."
+        }
+      ]
+    },
+    "$sp": {
+      "contents": [
+        {
+          "value": "```mips\n$sp (Register 29)\n```\nStack Pointer register, pointing to the top of the runtime stack in memory. Grows downward by convention; functions adjust it with addi $sp, $sp, -N to allocate stack frames."
+        }
+      ]
+    },
+    "$ra": {
+      "contents": [
+        {
+          "value": "```mips\n$ra (Register 31)\n```\nReturn Address register, automatically set by the jal instruction to hold the address of the instruction following the call. Used by jr $ra to return from subroutines."
+        }
+      ]
+    },
+    ".asciiz": {
+      "contents": [
+        {
+          "value": "```mips\n.asciiz \"string\"\n```\nAssembler directive that stores a null-terminated ASCII string in the data segment, automatically appending a zero byte. Used for strings passed to print_string syscall."
+        }
+      ]
+    },
+    ".word": {
+      "contents": [
+        {
+          "value": "```mips\n.word value [, value ...]\n```\nAssembler directive that stores one or more 32-bit integer values in the data segment, each occupying four consecutive bytes with proper word alignment."
+        }
+      ]
     }
   }
 }

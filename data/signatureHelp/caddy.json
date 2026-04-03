@@ -1,95 +1,664 @@
 {
   "language": "caddy",
-  "triggerCharacters": [" "],
-  "retriggerCharacters": [" "],
+  "triggerCharacters": [
+    " "
+  ],
+  "retriggerCharacters": [
+    " "
+  ],
   "signatures": [
     {
       "label": "reverse_proxy [matcher] upstream1 [upstream2 ...] { ... }",
-      "documentation": { "value": "Proxies requests to one or more backend servers.\n```caddy\nreverse_proxy localhost:8080\nreverse_proxy /api/* localhost:3000 localhost:3001 {\n  lb_policy round_robin\n  health_uri /health\n}\n```" },
+      "documentation": {
+        "value": "Proxies requests to one or more backend servers.\n```caddy\nreverse_proxy localhost:8080\nreverse_proxy /api/* localhost:3000 localhost:3001 {\n  lb_policy round_robin\n  health_uri /health\n}\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher (e.g. `/api/*`, `@name`)." } },
-        { "label": "upstream1", "documentation": { "value": "Address of the upstream backend (e.g. `localhost:8080`, `http://backend:3000`)." } },
-        { "label": "upstream2 ...", "documentation": { "value": "Additional upstream addresses for load balancing." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher (e.g. `/api/*`, `@name`)."
+          }
+        },
+        {
+          "label": "upstream1",
+          "documentation": {
+            "value": "Address of the upstream backend (e.g. `localhost:8080`, `http://backend:3000`)."
+          }
+        },
+        {
+          "label": "upstream2 ...",
+          "documentation": {
+            "value": "Additional upstream addresses for load balancing."
+          }
+        }
       ]
     },
     {
       "label": "file_server [matcher] { root <path>, browse }",
-      "documentation": { "value": "Serves static files from the given root directory.\n```caddy\nfile_server\nfile_server /static/* {\n  root /var/www\n  browse\n}\n```" },
+      "documentation": {
+        "value": "Serves static files from the given root directory.\n```caddy\nfile_server\nfile_server /static/* {\n  root /var/www\n  browse\n}\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher to limit which requests are served." } },
-        { "label": "root", "documentation": { "value": "Root directory for file serving (default: current directory)." } },
-        { "label": "browse", "documentation": { "value": "Enable directory browsing." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher to limit which requests are served."
+          }
+        },
+        {
+          "label": "root",
+          "documentation": {
+            "value": "Root directory for file serving (default: current directory)."
+          }
+        },
+        {
+          "label": "browse",
+          "documentation": {
+            "value": "Enable directory browsing."
+          }
+        }
       ]
     },
     {
       "label": "tls [cert_file] [key_file] { ... }",
-      "documentation": { "value": "Configures TLS settings for the site.\n```caddy\ntls internal\ntls /path/to/cert.pem /path/to/key.pem\ntls {\n  protocols tls1.2 tls1.3\n}\n```" },
+      "documentation": {
+        "value": "Configures TLS settings for the site.\n```caddy\ntls internal\ntls /path/to/cert.pem /path/to/key.pem\ntls {\n  protocols tls1.2 tls1.3\n}\n```"
+      },
       "parameters": [
-        { "label": "cert_file", "documentation": { "value": "Path to the TLS certificate file, or `internal` for self-signed." } },
-        { "label": "key_file", "documentation": { "value": "Path to the TLS private key file." } }
+        {
+          "label": "cert_file",
+          "documentation": {
+            "value": "Path to the TLS certificate file, or `internal` for self-signed."
+          }
+        },
+        {
+          "label": "key_file",
+          "documentation": {
+            "value": "Path to the TLS private key file."
+          }
+        }
       ]
     },
     {
       "label": "encode [matcher] gzip [zstd] { ... }",
-      "documentation": { "value": "Encodes responses using the specified algorithm(s).\n```caddy\nencode gzip zstd\nencode gzip {\n  minimum_length 256\n}\n```" },
+      "documentation": {
+        "value": "Encodes responses using the specified algorithm(s).\n```caddy\nencode gzip zstd\nencode gzip {\n  minimum_length 256\n}\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "gzip", "documentation": { "value": "Enable gzip compression." } },
-        { "label": "zstd", "documentation": { "value": "Enable Zstandard compression." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "gzip",
+          "documentation": {
+            "value": "Enable gzip compression."
+          }
+        },
+        {
+          "label": "zstd",
+          "documentation": {
+            "value": "Enable Zstandard compression."
+          }
+        }
       ]
     },
     {
       "label": "header [matcher] [field] [value] { ... }",
-      "documentation": { "value": "Manipulates HTTP response headers.\n```caddy\nheader X-Frame-Options DENY\nheader -Server\nheader /api/* Cache-Control \"no-store\"\n```" },
+      "documentation": {
+        "value": "Manipulates HTTP response headers.\n```caddy\nheader X-Frame-Options DENY\nheader -Server\nheader /api/* Cache-Control \"no-store\"\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "field", "documentation": { "value": "Header field name. Prefix with `-` to delete, `+` to add, `?` to set only if missing." } },
-        { "label": "value", "documentation": { "value": "Header value to set." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "field",
+          "documentation": {
+            "value": "Header field name. Prefix with `-` to delete, `+` to add, `?` to set only if missing."
+          }
+        },
+        {
+          "label": "value",
+          "documentation": {
+            "value": "Header value to set."
+          }
+        }
       ]
     },
     {
       "label": "rewrite [matcher] <to>",
-      "documentation": { "value": "Rewrites the URI internally (no redirect).\n```caddy\nrewrite /old /new\nrewrite /app/* /index.html\n```" },
+      "documentation": {
+        "value": "Rewrites the URI internally (no redirect).\n```caddy\nrewrite /old /new\nrewrite /app/* /index.html\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "to", "documentation": { "value": "The new URI to rewrite to. Supports placeholders like `{uri}`, `{path}`." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "to",
+          "documentation": {
+            "value": "The new URI to rewrite to. Supports placeholders like `{uri}`, `{path}`."
+          }
+        }
       ]
     },
     {
       "label": "respond [matcher] <status|body> [status_code] { ... }",
-      "documentation": { "value": "Returns a static response to the client.\n```caddy\nrespond \"Hello, World!\" 200\nrespond /health 200\nrespond 404\n```" },
+      "documentation": {
+        "value": "Returns a static response to the client.\n```caddy\nrespond \"Hello, World!\" 200\nrespond /health 200\nrespond 404\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "body", "documentation": { "value": "Response body string." } },
-        { "label": "status_code", "documentation": { "value": "HTTP status code (e.g. `200`, `404`, `503`)." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "body",
+          "documentation": {
+            "value": "Response body string."
+          }
+        },
+        {
+          "label": "status_code",
+          "documentation": {
+            "value": "HTTP status code (e.g. `200`, `404`, `503`)."
+          }
+        }
       ]
     },
     {
       "label": "redir [matcher] <to> [code]",
-      "documentation": { "value": "Issues an HTTP redirect.\n```caddy\nredir /old /new 301\nredir /blog https://blog.example.com permanent\n```" },
+      "documentation": {
+        "value": "Issues an HTTP redirect.\n```caddy\nredir /old /new 301\nredir /blog https://blog.example.com permanent\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "to", "documentation": { "value": "The URL to redirect to." } },
-        { "label": "code", "documentation": { "value": "HTTP redirect code: `301`, `302` (default), `307`, `308`, or `permanent`, `temporary`." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "to",
+          "documentation": {
+            "value": "The URL to redirect to."
+          }
+        },
+        {
+          "label": "code",
+          "documentation": {
+            "value": "HTTP redirect code: `301`, `302` (default), `307`, `308`, or `permanent`, `temporary`."
+          }
+        }
       ]
     },
     {
       "label": "basicauth [matcher] <realm> { <username> <hashed_password> }",
-      "documentation": { "value": "Enables HTTP Basic Authentication.\n```caddy\nbasicauth /admin/* {\n  admin JDJhJDEwJC5...\n}\n```" },
+      "documentation": {
+        "value": "Enables HTTP Basic Authentication.\n```caddy\nbasicauth /admin/* {\n  admin JDJhJDEwJC5...\n}\n```"
+      },
       "parameters": [
-        { "label": "matcher", "documentation": { "value": "Optional request matcher." } },
-        { "label": "realm", "documentation": { "value": "Optional authentication realm name." } },
-        { "label": "username", "documentation": { "value": "The username." } },
-        { "label": "hashed_password", "documentation": { "value": "The bcrypt-hashed password." } }
+        {
+          "label": "matcher",
+          "documentation": {
+            "value": "Optional request matcher."
+          }
+        },
+        {
+          "label": "realm",
+          "documentation": {
+            "value": "Optional authentication realm name."
+          }
+        },
+        {
+          "label": "username",
+          "documentation": {
+            "value": "The username."
+          }
+        },
+        {
+          "label": "hashed_password",
+          "documentation": {
+            "value": "The bcrypt-hashed password."
+          }
+        }
       ]
     },
     {
       "label": "log { output <destination>, format <format>, level <level> }",
-      "documentation": { "value": "Enables and configures HTTP access logging.\n```caddy\nlog {\n  output file /var/log/caddy/access.log\n  format json\n  level INFO\n}\n```" },
+      "documentation": {
+        "value": "Enables and configures HTTP access logging.\n```caddy\nlog {\n  output file /var/log/caddy/access.log\n  format json\n  level INFO\n}\n```"
+      },
       "parameters": [
-        { "label": "output", "documentation": { "value": "Log destination: `stdout`, `stderr`, `discard`, or `file /path/to/log`." } },
-        { "label": "format", "documentation": { "value": "Log format: `console`, `json`, or `filter`." } },
-        { "label": "level", "documentation": { "value": "Minimum log level: `DEBUG`, `INFO`, `WARN`, `ERROR`." } }
+        {
+          "label": "output",
+          "documentation": {
+            "value": "Log destination: `stdout`, `stderr`, `discard`, or `file /path/to/log`."
+          }
+        },
+        {
+          "label": "format",
+          "documentation": {
+            "value": "Log format: `console`, `json`, or `filter`."
+          }
+        },
+        {
+          "label": "level",
+          "documentation": {
+            "value": "Minimum log level: `DEBUG`, `INFO`, `WARN`, `ERROR`."
+          }
+        }
+      ]
+    },
+    {
+      "label": "print(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `print`\n\nPerforms the print operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `print`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `print`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "log(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `log`\n\nPerforms the log operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `log`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `log`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "write(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `write`\n\nPerforms the write operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `write`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `write`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "read(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `read`\n\nPerforms the read operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `read`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `read`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "open(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `open`\n\nPerforms the open operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `open`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `open`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "close(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `close`\n\nPerforms the close operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `close`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `close`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "length(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `length`\n\nPerforms the length operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `length`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `length`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "size(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `size`\n\nPerforms the size operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `size`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `size`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "count(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `count`\n\nPerforms the count operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `count`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `count`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "sort(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `sort`\n\nPerforms the sort operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `sort`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `sort`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "filter(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `filter`\n\nPerforms the filter operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `filter`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `filter`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "map(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `map`\n\nPerforms the map operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `map`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `map`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "reduce(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `reduce`\n\nPerforms the reduce operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `reduce`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `reduce`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "find(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `find`\n\nPerforms the find operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `find`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `find`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "indexOf(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `indexOf`\n\nPerforms the indexOf operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `indexOf`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `indexOf`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "contains(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `contains`\n\nPerforms the contains operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `contains`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `contains`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "toString(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `toString`\n\nPerforms the toString operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `toString`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `toString`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "parse(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `parse`\n\nPerforms the parse operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `parse`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `parse`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "format(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `format`\n\nPerforms the format operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `format`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `format`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "concat(arg1, arg2)",
+      "documentation": {
+        "value": "Caddy built-in: `concat`\n\nPerforms the concat operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `concat`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `concat`"
+          }
+        }
       ]
     }
   ]

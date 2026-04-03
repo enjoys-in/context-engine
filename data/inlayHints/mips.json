@@ -50,16 +50,112 @@
       "pattern": "(?:const|let|var)\\s*[{\\[]",
       "display": ": type",
       "position": "inline"
+    },
+    {
+      "kind": "type",
+      "pattern": "(const|let|var)\\\\s+(\\\\w+)",
+      "label": ": {inferred_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Type inference for MIPS Assembly variable declarations"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b(\\\\w+)\\\\s*\\\\(",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Parameter name hints for MIPS Assembly function calls"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\breturn\\\\s+",
+      "label": "-> {return_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Return type hints for MIPS Assembly functions"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b(true|false|null|undefined|nil|None)\\\\b",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Boolean/null literal parameter hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\[([^\\\\]]+)\\\\]",
+      "label": ": {element_type}[]",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Array literal type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\{([^}]+)\\\\}",
+      "label": ": {object_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Object literal type hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b\\\\d+\\\\.?\\\\d*\\\\b",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Numeric literal parameter hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\"[^\"]*\"",
+      "label": "{param_name}:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "String literal parameter hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\blambda\\\\b|=>|->",
+      "label": ": {callback_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Lambda/arrow function type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\.(\\\\w+)\\\\(\\\\)",
+      "label": ": {chain_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Chained expression type hints"
+    },
+    {
+      "kind": "type",
+      "pattern": "\\\\bnew\\\\s+\\\\w+",
+      "label": ": {constructor_type}",
+      "position": "after",
+      "paddingLeft": true,
+      "description": "Constructor call type hints"
+    },
+    {
+      "kind": "parameter",
+      "pattern": "\\\\b[A-Z][A-Z0-9_]+\\\\b",
+      "label": "{enum_member}",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Enum value hints"
     }
   ],
   "typeInferenceRules": {
     "string_literal": {
-      "pattern": "\"[^\"]*\"",
-      "type": "asciiz"
+      "pattern": "['\"].*['\"]",
+      "type": "string"
     },
     "number_literal": {
-      "pattern": "-?\\d+",
-      "type": "word"
+      "pattern": "\\\\d+(\\\\.\\\\d+)?",
+      "type": "number"
     },
     "hex_literal": {
       "pattern": "0x[0-9a-fA-F]+",
@@ -68,6 +164,38 @@
     "register_literal": {
       "pattern": "\\$\\d+|\\$[a-z]\\d+",
       "type": "register"
+    },
+    "boolean_literal": {
+      "pattern": "\\\\b(true|false)\\\\b",
+      "type": "boolean"
+    },
+    "null_literal": {
+      "pattern": "\\\\b(null|nil|None|undefined)\\\\b",
+      "type": "null"
+    },
+    "array_literal": {
+      "pattern": "\\\\[.*\\\\]",
+      "type": "array"
+    },
+    "object_literal": {
+      "pattern": "\\\\{.*\\\\}",
+      "type": "object"
+    },
+    "regex_literal": {
+      "pattern": "\\/.*\\/[gimsuy]*",
+      "type": "regexp"
+    },
+    "function_expression": {
+      "pattern": "(function|=>|->|lambda|fn|fun)",
+      "type": "function"
+    },
+    "template_string": {
+      "pattern": "`[^`]*`",
+      "type": "string"
+    },
+    "tuple_literal": {
+      "pattern": "\\\\(.*,.*\\\\)",
+      "type": "tuple"
     }
   }
 }

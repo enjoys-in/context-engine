@@ -1,115 +1,701 @@
 {
   "language": "ecl",
-  "triggerCharacters": ["(", ","],
-  "retriggerCharacters": [","],
+  "triggerCharacters": [
+    "(",
+    ","
+  ],
+  "retriggerCharacters": [
+    ","
+  ],
   "signatures": [
     {
       "label": "OUTPUT(recordset, [named], [format])",
-      "documentation": { "value": "Outputs a dataset or value to a workunit result.\n```ecl\nOUTPUT(myDataset);\nOUTPUT(myDataset, NAMED('Results'));\nOUTPUT(myDataset,, CSV);\n```" },
+      "documentation": {
+        "value": "Outputs a dataset or value to a workunit result.\n```ecl\nOUTPUT(myDataset);\nOUTPUT(myDataset, NAMED('Results'));\nOUTPUT(myDataset,, CSV);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset or expression to output." } },
-        { "label": "named", "documentation": { "value": "Optional `NAMED('name')` to label the output result." } },
-        { "label": "format", "documentation": { "value": "Optional output format: `CSV`, `XML`, `JSON`, `THOR`, etc." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset or expression to output."
+          }
+        },
+        {
+          "label": "named",
+          "documentation": {
+            "value": "Optional `NAMED('name')` to label the output result."
+          }
+        },
+        {
+          "label": "format",
+          "documentation": {
+            "value": "Optional output format: `CSV`, `XML`, `JSON`, `THOR`, etc."
+          }
+        }
       ]
     },
     {
       "label": "SORT(recordset, field1, -field2, ...)",
-      "documentation": { "value": "Sorts a dataset by the specified fields. Prefix with `-` for descending.\n```ecl\nsorted := SORT(people, lastname, firstname);\nsorted_desc := SORT(people, -age);\n```" },
+      "documentation": {
+        "value": "Sorts a dataset by the specified fields. Prefix with `-` for descending.\n```ecl\nsorted := SORT(people, lastname, firstname);\nsorted_desc := SORT(people, -age);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset to sort." } },
-        { "label": "field1, -field2, ...", "documentation": { "value": "Fields to sort by. Prefix with `-` for descending order." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset to sort."
+          }
+        },
+        {
+          "label": "field1, -field2, ...",
+          "documentation": {
+            "value": "Fields to sort by. Prefix with `-` for descending order."
+          }
+        }
       ]
     },
     {
       "label": "DEDUP(recordset, field1, field2, ..., [option])",
-      "documentation": { "value": "Removes duplicate records based on the specified fields.\n```ecl\nunique := DEDUP(sorted_ds, lastname, firstname);\nunique_all := DEDUP(myds, ALL);\n```" },
+      "documentation": {
+        "value": "Removes duplicate records based on the specified fields.\n```ecl\nunique := DEDUP(sorted_ds, lastname, firstname);\nunique_all := DEDUP(myds, ALL);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset to deduplicate (should be sorted on the key fields first)." } },
-        { "label": "field1, field2, ...", "documentation": { "value": "Fields that define uniqueness." } },
-        { "label": "option", "documentation": { "value": "Optional: `ALL` (dedup across entire dataset without needing pre-sort), `KEEP(n)`, `LEFT`, `RIGHT`." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset to deduplicate (should be sorted on the key fields first)."
+          }
+        },
+        {
+          "label": "field1, field2, ...",
+          "documentation": {
+            "value": "Fields that define uniqueness."
+          }
+        },
+        {
+          "label": "option",
+          "documentation": {
+            "value": "Optional: `ALL` (dedup across entire dataset without needing pre-sort), `KEEP(n)`, `LEFT`, `RIGHT`."
+          }
+        }
       ]
     },
     {
       "label": "JOIN(left, right, condition, transform, [type])",
-      "documentation": { "value": "Joins two datasets based on a condition.\n```ecl\nresult := JOIN(customers, orders,\n  LEFT.id = RIGHT.customer_id,\n  TRANSFORM(OutputRec, SELF := LEFT, SELF := RIGHT),\n  INNER);\n```" },
+      "documentation": {
+        "value": "Joins two datasets based on a condition.\n```ecl\nresult := JOIN(customers, orders,\n  LEFT.id = RIGHT.customer_id,\n  TRANSFORM(OutputRec, SELF := LEFT, SELF := RIGHT),\n  INNER);\n```"
+      },
       "parameters": [
-        { "label": "left", "documentation": { "value": "The left input dataset." } },
-        { "label": "right", "documentation": { "value": "The right input dataset." } },
-        { "label": "condition", "documentation": { "value": "Join condition using `LEFT.field = RIGHT.field`." } },
-        { "label": "transform", "documentation": { "value": "A TRANSFORM function defining the output record." } },
-        { "label": "type", "documentation": { "value": "Optional join type: `INNER` (default), `LEFT OUTER`, `RIGHT OUTER`, `FULL OUTER`, `LEFT ONLY`, `RIGHT ONLY`." } }
+        {
+          "label": "left",
+          "documentation": {
+            "value": "The left input dataset."
+          }
+        },
+        {
+          "label": "right",
+          "documentation": {
+            "value": "The right input dataset."
+          }
+        },
+        {
+          "label": "condition",
+          "documentation": {
+            "value": "Join condition using `LEFT.field = RIGHT.field`."
+          }
+        },
+        {
+          "label": "transform",
+          "documentation": {
+            "value": "A TRANSFORM function defining the output record."
+          }
+        },
+        {
+          "label": "type",
+          "documentation": {
+            "value": "Optional join type: `INNER` (default), `LEFT OUTER`, `RIGHT OUTER`, `FULL OUTER`, `LEFT ONLY`, `RIGHT ONLY`."
+          }
+        }
       ]
     },
     {
       "label": "TABLE(recordset, record_structure, [grouping_fields])",
-      "documentation": { "value": "Creates a new table with aggregation (cross-tab report).\n```ecl\nstats := TABLE(people, {age, cnt := COUNT(GROUP)}, age);\nsummary := TABLE(sales, {region, total := SUM(GROUP, amount)}, region);\n```" },
+      "documentation": {
+        "value": "Creates a new table with aggregation (cross-tab report).\n```ecl\nstats := TABLE(people, {age, cnt := COUNT(GROUP)}, age);\nsummary := TABLE(sales, {region, total := SUM(GROUP, amount)}, region);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The input dataset." } },
-        { "label": "record_structure", "documentation": { "value": "The output record definition with fields and aggregate expressions." } },
-        { "label": "grouping_fields", "documentation": { "value": "Optional fields to group by for aggregation." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The input dataset."
+          }
+        },
+        {
+          "label": "record_structure",
+          "documentation": {
+            "value": "The output record definition with fields and aggregate expressions."
+          }
+        },
+        {
+          "label": "grouping_fields",
+          "documentation": {
+            "value": "Optional fields to group by for aggregation."
+          }
+        }
       ]
     },
     {
       "label": "RECORD field1; field2; ... END",
-      "documentation": { "value": "Defines a record layout (structure).\n```ecl\nPersonRec := RECORD\n  STRING20 firstname;\n  STRING20 lastname;\n  UNSIGNED4 age;\n  REAL8 salary;\nEND;\n```" },
+      "documentation": {
+        "value": "Defines a record layout (structure).\n```ecl\nPersonRec := RECORD\n  STRING20 firstname;\n  STRING20 lastname;\n  UNSIGNED4 age;\n  REAL8 salary;\nEND;\n```"
+      },
       "parameters": [
-        { "label": "field1; field2; ...", "documentation": { "value": "Field declarations with type and name. Types: `STRING`, `UNSIGNED`, `INTEGER`, `REAL`, `BOOLEAN`, `DATA`, etc." } }
+        {
+          "label": "field1; field2; ...",
+          "documentation": {
+            "value": "Field declarations with type and name. Types: `STRING`, `UNSIGNED`, `INTEGER`, `REAL`, `BOOLEAN`, `DATA`, etc."
+          }
+        }
       ]
     },
     {
       "label": "SET(recordset, field): set",
-      "documentation": { "value": "Creates a set from a single field of a dataset.\n```ecl\nnames := SET(people, firstname);\nids := SET(filtered, id);\n```" },
+      "documentation": {
+        "value": "Creates a set from a single field of a dataset.\n```ecl\nnames := SET(people, firstname);\nids := SET(filtered, id);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The input dataset." } },
-        { "label": "field", "documentation": { "value": "The field to extract into a set." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The input dataset."
+          }
+        },
+        {
+          "label": "field",
+          "documentation": {
+            "value": "The field to extract into a set."
+          }
+        }
       ]
     },
     {
       "label": "TRANSFORM(record_type, assignments)",
-      "documentation": { "value": "Defines a record transformation function.\n```ecl\nOutputRec xform(InputRec L) := TRANSFORM\n  SELF.name := L.firstname + ' ' + L.lastname;\n  SELF.age := L.age;\n  SELF := L;\nEND;\n```" },
+      "documentation": {
+        "value": "Defines a record transformation function.\n```ecl\nOutputRec xform(InputRec L) := TRANSFORM\n  SELF.name := L.firstname + ' ' + L.lastname;\n  SELF.age := L.age;\n  SELF := L;\nEND;\n```"
+      },
       "parameters": [
-        { "label": "record_type", "documentation": { "value": "The output record type." } },
-        { "label": "assignments", "documentation": { "value": "`SELF.field := expression` assignments for each output field." } }
+        {
+          "label": "record_type",
+          "documentation": {
+            "value": "The output record type."
+          }
+        },
+        {
+          "label": "assignments",
+          "documentation": {
+            "value": "`SELF.field := expression` assignments for each output field."
+          }
+        }
       ]
     },
     {
       "label": "PROJECT(recordset, transform)",
-      "documentation": { "value": "Applies a transform to each record in a dataset.\n```ecl\nresult := PROJECT(input, myTransform(LEFT));\nresult := PROJECT(input, TRANSFORM(OutRec, SELF.name := LEFT.fname, SELF := LEFT));\n```" },
+      "documentation": {
+        "value": "Applies a transform to each record in a dataset.\n```ecl\nresult := PROJECT(input, myTransform(LEFT));\nresult := PROJECT(input, TRANSFORM(OutRec, SELF.name := LEFT.fname, SELF := LEFT));\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The input dataset." } },
-        { "label": "transform", "documentation": { "value": "A TRANSFORM function applied to each record (uses `LEFT` to reference input)." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The input dataset."
+          }
+        },
+        {
+          "label": "transform",
+          "documentation": {
+            "value": "A TRANSFORM function applied to each record (uses `LEFT` to reference input)."
+          }
+        }
       ]
     },
     {
       "label": "ROLLUP(recordset, condition, transform)",
-      "documentation": { "value": "Combines adjacent records that meet the condition using the transform.\n```ecl\nrolled := ROLLUP(sorted_ds, LEFT.key = RIGHT.key,\n  TRANSFORM(Rec, SELF.total := LEFT.total + RIGHT.total, SELF := LEFT));\n```" },
+      "documentation": {
+        "value": "Combines adjacent records that meet the condition using the transform.\n```ecl\nrolled := ROLLUP(sorted_ds, LEFT.key = RIGHT.key,\n  TRANSFORM(Rec, SELF.total := LEFT.total + RIGHT.total, SELF := LEFT));\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The input dataset (should be sorted on the rollup key)." } },
-        { "label": "condition", "documentation": { "value": "Condition comparing `LEFT` and `RIGHT` records to combine." } },
-        { "label": "transform", "documentation": { "value": "A TRANSFORM combining two adjacent records into one." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The input dataset (should be sorted on the rollup key)."
+          }
+        },
+        {
+          "label": "condition",
+          "documentation": {
+            "value": "Condition comparing `LEFT` and `RIGHT` records to combine."
+          }
+        },
+        {
+          "label": "transform",
+          "documentation": {
+            "value": "A TRANSFORM combining two adjacent records into one."
+          }
+        }
       ]
     },
     {
       "label": "COUNT(recordset): integer",
-      "documentation": { "value": "Returns the number of records in a dataset or group.\n```ecl\nn := COUNT(myDataset);\nOUTPUT(COUNT(filtered));\nTABLE(ds, {key, cnt := COUNT(GROUP)}, key);\n```" },
+      "documentation": {
+        "value": "Returns the number of records in a dataset or group.\n```ecl\nn := COUNT(myDataset);\nOUTPUT(COUNT(filtered));\nTABLE(ds, {key, cnt := COUNT(GROUP)}, key);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset to count, or `GROUP` within a TABLE aggregation." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset to count, or `GROUP` within a TABLE aggregation."
+          }
+        }
       ]
     },
     {
       "label": "SUM(recordset, field): numeric",
-      "documentation": { "value": "Returns the sum of a numeric field across a dataset or group.\n```ecl\ntotal := SUM(orders, amount);\nTABLE(orders, {region, total := SUM(GROUP, amount)}, region);\n```" },
+      "documentation": {
+        "value": "Returns the sum of a numeric field across a dataset or group.\n```ecl\ntotal := SUM(orders, amount);\nTABLE(orders, {region, total := SUM(GROUP, amount)}, region);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset or `GROUP` within a TABLE." } },
-        { "label": "field", "documentation": { "value": "The numeric field to sum." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset or `GROUP` within a TABLE."
+          }
+        },
+        {
+          "label": "field",
+          "documentation": {
+            "value": "The numeric field to sum."
+          }
+        }
       ]
     },
     {
       "label": "MAX(recordset, field): value",
-      "documentation": { "value": "Returns the maximum value of a field across a dataset or group.\n```ecl\nhighest := MAX(people, age);\nTABLE(ds, {dept, maxSalary := MAX(GROUP, salary)}, dept);\n```" },
+      "documentation": {
+        "value": "Returns the maximum value of a field across a dataset or group.\n```ecl\nhighest := MAX(people, age);\nTABLE(ds, {dept, maxSalary := MAX(GROUP, salary)}, dept);\n```"
+      },
       "parameters": [
-        { "label": "recordset", "documentation": { "value": "The dataset or `GROUP` within a TABLE." } },
-        { "label": "field", "documentation": { "value": "The field to find the maximum of." } }
+        {
+          "label": "recordset",
+          "documentation": {
+            "value": "The dataset or `GROUP` within a TABLE."
+          }
+        },
+        {
+          "label": "field",
+          "documentation": {
+            "value": "The field to find the maximum of."
+          }
+        }
+      ]
+    },
+    {
+      "label": "print(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `print`\n\nPerforms the print operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `print`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `print`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "log(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `log`\n\nPerforms the log operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `log`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `log`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "write(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `write`\n\nPerforms the write operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `write`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `write`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "read(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `read`\n\nPerforms the read operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `read`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `read`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "open(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `open`\n\nPerforms the open operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `open`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `open`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "close(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `close`\n\nPerforms the close operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `close`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `close`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "length(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `length`\n\nPerforms the length operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `length`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `length`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "size(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `size`\n\nPerforms the size operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `size`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `size`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "count(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `count`\n\nPerforms the count operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `count`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `count`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "sort(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `sort`\n\nPerforms the sort operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `sort`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `sort`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "filter(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `filter`\n\nPerforms the filter operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `filter`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `filter`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "map(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `map`\n\nPerforms the map operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `map`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `map`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "reduce(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `reduce`\n\nPerforms the reduce operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `reduce`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `reduce`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "find(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `find`\n\nPerforms the find operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `find`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `find`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "indexOf(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `indexOf`\n\nPerforms the indexOf operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `indexOf`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `indexOf`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "contains(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `contains`\n\nPerforms the contains operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `contains`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `contains`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "toString(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `toString`\n\nPerforms the toString operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `toString`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `toString`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "parse(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `parse`\n\nPerforms the parse operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `parse`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `parse`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "format(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `format`\n\nPerforms the format operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `format`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `format`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "concat(arg1, arg2)",
+      "documentation": {
+        "value": "ECL built-in: `concat`\n\nPerforms the concat operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `concat`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `concat`"
+          }
+        }
       ]
     }
   ]

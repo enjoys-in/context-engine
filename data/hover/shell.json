@@ -679,6 +679,258 @@
           "value": "```zsh\n# Hook functions run at specific times:\nprecmd()  { }  # Before each prompt\npreexec() { }  # Before each command ($1=typed, $2=expanded)\nchpwd()   { }  # After directory change\nperiodic(){ }  # Every $PERIOD seconds\nzshaddhistory() { }  # Before adding to history\n\n# Multiple functions per hook:\nautoload -Uz add-zsh-hook\nadd-zsh-hook precmd my_precmd_1\nadd-zsh-hook precmd my_precmd_2\nadd-zsh-hook -d precmd my_precmd_1  # Remove\n\n# Example: Timer for commands\n__timer_preexec() { __timer=$EPOCHREALTIME }\n__timer_precmd() {\n    [[ -n $__timer ]] || return\n    local elapsed=$(( EPOCHREALTIME - __timer ))\n    (( elapsed > 3 )) && printf 'Elapsed: %.2fs\\n' $elapsed\n    unset __timer\n}\nadd-zsh-hook preexec __timer_preexec\nadd-zsh-hook precmd __timer_precmd\n```\n**Hook functions** execute at shell events. Use `add-zsh-hook` to register multiple handlers. `preexec` receives the command as arguments."
         }
       ]
+    },
+    "builtin": {
+      "contents": [
+        {
+          "value": "```shell\nbuiltin name [args]\n```\nExecute a builtin command, ignoring functions and aliases with the same name."
+        }
+      ]
+    },
+    "compdef": {
+      "contents": [
+        {
+          "value": "```shell\ncompdef function command ...\n```\nAssociate a completion function with commands. Part of the completion system."
+        }
+      ]
+    },
+    "dirs": {
+      "contents": [
+        {
+          "value": "```shell\ndirs [-clpv]\n```\nDisplay directory stack. -v: verbose listing with indices. -c: clear stack."
+        }
+      ]
+    },
+    "emulate": {
+      "contents": [
+        {
+          "value": "```shell\nemulate [-lLR] mode\n```\nSet shell emulation mode: zsh, sh, ksh, csh. -L: local to function. -R: reset all options."
+        }
+      ]
+    },
+    "fc": {
+      "contents": [
+        {
+          "value": "```shell\nfc [-e editor] [-nlrdDfEim] [first [last]]\n```\nFix command — list, edit, or re-execute history entries."
+        }
+      ]
+    },
+    "float": {
+      "contents": [
+        {
+          "value": "```shell\nfloat [-Hg] [-E n] [-F n] [name[=value] ...]\n```\nDeclare floating-point variables."
+        }
+      ]
+    },
+    "functions": {
+      "contents": [
+        {
+          "value": "```shell\nfunctions [-mMtTuUz] [name ...]\n```\nDisplay or set attributes on functions. Same as typeset -f."
+        }
+      ]
+    },
+    "hash": {
+      "contents": [
+        {
+          "value": "```shell\nhash [-dfmrv] [name[=value] ...]\n```\nManage command hash table. Maps command names to paths for faster lookup."
+        }
+      ]
+    },
+    "integer": {
+      "contents": [
+        {
+          "value": "```shell\ninteger [-i base] [name[=value] ...]\n```\nDeclare integer variables. Arithmetic is performed on assignments."
+        }
+      ]
+    },
+    "print": {
+      "contents": [
+        {
+          "value": "```shell\nprint [-abcDilmnNoOpPrsz] [-u fd] [-f fmt] [args ...]\n```\nPrint arguments. More powerful than echo. -P: prompt expansion. -f: printf format. -l: one per line."
+        }
+      ]
+    },
+    "rehash": {
+      "contents": [
+        {
+          "value": "```shell\nrehash\n```\nRebuild command hash table. Run after installing new programs."
+        }
+      ]
+    },
+    "typeset": {
+      "contents": [
+        {
+          "value": "```shell\ntypeset [-aAfFghilrtuxmHLRZE] [name[=value] ...]\n```\nDeclare and set attributes on variables. The most versatile variable declaration command."
+        }
+      ]
+    },
+    "unfunction": {
+      "contents": [
+        {
+          "value": "```shell\nunfunction name ...\n```\nRemove function definitions."
+        }
+      ]
+    },
+    "unsetopt": {
+      "contents": [
+        {
+          "value": "```shell\nunsetopt [option ...]\n```\nDisable shell options."
+        }
+      ]
+    },
+    "whence": {
+      "contents": [
+        {
+          "value": "```shell\nwhence [-acfmpsvw] name ...\n```\nShow how each name would be interpreted. -p: search path only. -v: verbose."
+        }
+      ]
+    },
+    "where": {
+      "contents": [
+        {
+          "value": "```shell\nwhere name ...\n```\nDisplay all locations of a command."
+        }
+      ]
+    },
+    "which": {
+      "contents": [
+        {
+          "value": "```shell\nwhich [-aps] name ...\n```\nShow full path of command."
+        }
+      ]
+    },
+    "zcompile": {
+      "contents": [
+        {
+          "value": "```shell\nzcompile [-cz] [-R|-M] file [name ...]\n```\nCompile zsh scripts to wordcode for faster loading."
+        }
+      ]
+    },
+    "zle": {
+      "contents": [
+        {
+          "value": "```shell\nzle [-aAcCDFgGIKlLmNRU] [widget]\n```\nZsh Line Editor — manage widgets. -N: create widget from function. -C: create completion widget."
+        }
+      ]
+    },
+    "zmodload": {
+      "contents": [
+        {
+          "value": "```shell\nzmodload [-diLu] [module ...]\n```\nLoad or unload zsh modules. Common: zsh/datetime, zsh/stat, zsh/regex, zsh/net/tcp."
+        }
+      ]
+    },
+    "zparseopts": {
+      "contents": [
+        {
+          "value": "```shell\nzparseopts [-DEKA] specs ...\n```\nParse command-line options. -D: remove parsed options. -E: don't stop at first non-option. -A assoc: store in associative array."
+        }
+      ]
+    },
+    "PROMPT": {
+      "contents": [
+        {
+          "value": "```shell\nPROMPT=string\n```\nPrimary prompt string. Supports: %n (user), %m (host), %~ (dir), %F{color}...%f (color), %B...%b (bold), %# (# for root, %% for user)."
+        }
+      ]
+    },
+    "RPROMPT": {
+      "contents": [
+        {
+          "value": "```shell\nRPROMPT=string\n```\nRight-side prompt string. Commonly shows time, git status, or exit code."
+        }
+      ]
+    },
+    "PS1": {
+      "contents": [
+        {
+          "value": "```shell\nPS1=string\n```\nSame as PROMPT. Primary prompt."
+        }
+      ]
+    },
+    "PS2": {
+      "contents": [
+        {
+          "value": "```shell\nPS2=string\n```\nContinuation prompt (shown for multi-line commands). Default: '%_> '."
+        }
+      ]
+    },
+    "HISTFILE": {
+      "contents": [
+        {
+          "value": "```shell\nHISTFILE=path\n```\nPath to the history file. Default: ~/.zsh_history."
+        }
+      ]
+    },
+    "HISTSIZE": {
+      "contents": [
+        {
+          "value": "```shell\nHISTSIZE=number\n```\nMaximum number of history entries in memory."
+        }
+      ]
+    },
+    "SAVEHIST": {
+      "contents": [
+        {
+          "value": "```shell\nSAVEHIST=number\n```\nNumber of history entries saved to HISTFILE."
+        }
+      ]
+    },
+    "FPATH": {
+      "contents": [
+        {
+          "value": "```shell\nFPATH=dirs\n```\nFunction search path (colon-separated). Directories where autoloaded functions are found."
+        }
+      ]
+    },
+    "fpath": {
+      "contents": [
+        {
+          "value": "```shell\nfpath=(dirs)\n```\nArray form of FPATH. Tied to FPATH — changes to one affect the other."
+        }
+      ]
+    },
+    "path": {
+      "contents": [
+        {
+          "value": "```shell\npath=(dirs)\n```\nArray form of PATH. Tied to PATH."
+        }
+      ]
+    },
+    "CDPATH": {
+      "contents": [
+        {
+          "value": "```shell\nCDPATH=dirs\n```\nDirectories searched by cd. cd target tries CDPATH entries as parents."
+        }
+      ]
+    },
+    "KEYTIMEOUT": {
+      "contents": [
+        {
+          "value": "```shell\nKEYTIMEOUT=n\n```\nTimeout for key sequences (1/100th second). Default: 40 (0.4s). Set to 1 for fast vi-mode switch."
+        }
+      ]
+    },
+    "WORDCHARS": {
+      "contents": [
+        {
+          "value": "```shell\nWORDCHARS=chars\n```\nCharacters considered part of a word for word-based operations. Default includes many special chars."
+        }
+      ]
+    },
+    "ZSH_VERSION": {
+      "contents": [
+        {
+          "value": "```shell\nZSH_VERSION\n```\nCurrent zsh version string."
+        }
+      ]
+    },
+    "TERM": {
+      "contents": [
+        {
+          "value": "```shell\nTERM=string\n```\nTerminal type for terminfo lookups."
+        }
+      ]
     }
   }
 }

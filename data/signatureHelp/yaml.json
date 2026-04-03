@@ -1,70 +1,572 @@
 {
   "language": "yaml",
-  "triggerCharacters": [":", " ", "-"],
-  "retriggerCharacters": [" "],
+  "triggerCharacters": [
+    ":",
+    " ",
+    "-"
+  ],
+  "retriggerCharacters": [
+    " "
+  ],
   "signatures": [
     {
       "label": "key: value - Mapping entry",
-      "documentation": { "value": "A mapping (dictionary/hash) associates keys with values using a colon followed by a space." },
+      "documentation": {
+        "value": "A mapping (dictionary/hash) associates keys with values using a colon followed by a space."
+      },
       "parameters": [
-        { "label": "key", "documentation": { "value": "A scalar key (string, number, or boolean). Complex keys use `? key`" } },
-        { "label": "value", "documentation": { "value": "Any YAML value: scalar, sequence, or nested mapping" } }
+        {
+          "label": "key",
+          "documentation": {
+            "value": "A scalar key (string, number, or boolean). Complex keys use `? key`"
+          }
+        },
+        {
+          "label": "value",
+          "documentation": {
+            "value": "Any YAML value: scalar, sequence, or nested mapping"
+          }
+        }
       ]
     },
     {
       "label": "- item - Sequence entry",
-      "documentation": { "value": "A sequence (list/array) is indicated by a dash followed by a space for each entry." },
+      "documentation": {
+        "value": "A sequence (list/array) is indicated by a dash followed by a space for each entry."
+      },
       "parameters": [
-        { "label": "item", "documentation": { "value": "Any YAML value: scalar, mapping, or nested sequence" } }
+        {
+          "label": "item",
+          "documentation": {
+            "value": "Any YAML value: scalar, mapping, or nested sequence"
+          }
+        }
       ]
     },
     {
       "label": "scalar: string | number | boolean | null",
-      "documentation": { "value": "Scalar values are plain text, quoted strings, numbers, booleans (`true`/`false`), or null. YAML auto-detects types." },
+      "documentation": {
+        "value": "Scalar values are plain text, quoted strings, numbers, booleans (`true`/`false`), or null. YAML auto-detects types."
+      },
       "parameters": [
-        { "label": "string", "documentation": { "value": "Plain: `hello`, single-quoted: `'hello'`, double-quoted: `\"hello\\n\"`" } },
-        { "label": "number", "documentation": { "value": "Integer: `42`, float: `3.14`, hex: `0xFF`, octal: `0o77`" } },
-        { "label": "boolean", "documentation": { "value": "`true`, `false`, `yes`, `no`, `on`, `off` (unquoted)" } },
-        { "label": "null", "documentation": { "value": "`null`, `~`, or empty value" } }
+        {
+          "label": "string",
+          "documentation": {
+            "value": "Plain: `hello`, single-quoted: `'hello'`, double-quoted: `\"hello\\n\"`"
+          }
+        },
+        {
+          "label": "number",
+          "documentation": {
+            "value": "Integer: `42`, float: `3.14`, hex: `0xFF`, octal: `0o77`"
+          }
+        },
+        {
+          "label": "boolean",
+          "documentation": {
+            "value": "`true`, `false`, `yes`, `no`, `on`, `off` (unquoted)"
+          }
+        },
+        {
+          "label": "null",
+          "documentation": {
+            "value": "`null`, `~`, or empty value"
+          }
+        }
       ]
     },
     {
       "label": "&anchor / *alias - Anchor and alias",
-      "documentation": { "value": "An anchor (`&name`) marks a node for later reuse. An alias (`*name`) references the anchored node." },
+      "documentation": {
+        "value": "An anchor (`&name`) marks a node for later reuse. An alias (`*name`) references the anchored node."
+      },
       "parameters": [
-        { "label": "&anchor", "documentation": { "value": "Defines an anchor on a node, e.g. `&defaults` on a mapping" } },
-        { "label": "*alias", "documentation": { "value": "References a previously defined anchor, e.g. `*defaults`" } }
+        {
+          "label": "&anchor",
+          "documentation": {
+            "value": "Defines an anchor on a node, e.g. `&defaults` on a mapping"
+          }
+        },
+        {
+          "label": "*alias",
+          "documentation": {
+            "value": "References a previously defined anchor, e.g. `*defaults`"
+          }
+        }
       ]
     },
     {
       "label": "!tag value - Tag",
-      "documentation": { "value": "Tags specify the data type of a node. Custom tags use `!` prefix, standard tags use `!!`." },
+      "documentation": {
+        "value": "Tags specify the data type of a node. Custom tags use `!` prefix, standard tags use `!!`."
+      },
       "parameters": [
-        { "label": "tag", "documentation": { "value": "A type tag: `!!str`, `!!int`, `!!float`, `!!bool`, `!!null`, `!!seq`, `!!map`, or custom `!MyType`" } },
-        { "label": "value", "documentation": { "value": "The value to interpret according to the tag" } }
+        {
+          "label": "tag",
+          "documentation": {
+            "value": "A type tag: `!!str`, `!!int`, `!!float`, `!!bool`, `!!null`, `!!seq`, `!!map`, or custom `!MyType`"
+          }
+        },
+        {
+          "label": "value",
+          "documentation": {
+            "value": "The value to interpret according to the tag"
+          }
+        }
       ]
     },
     {
       "label": "<<: *alias - Merge key",
-      "documentation": { "value": "Merges the referenced mapping into the current mapping. Keys in the current mapping take precedence." },
+      "documentation": {
+        "value": "Merges the referenced mapping into the current mapping. Keys in the current mapping take precedence."
+      },
       "parameters": [
-        { "label": "*alias", "documentation": { "value": "An alias referencing an anchored mapping to merge, or a sequence of aliases" } }
+        {
+          "label": "*alias",
+          "documentation": {
+            "value": "An alias referencing an anchored mapping to merge, or a sequence of aliases"
+          }
+        }
       ]
     },
     {
       "label": "| or > - Multiline scalar",
-      "documentation": { "value": "Block scalars preserve (`|`, literal) or fold (`>`, folded) newlines in multiline text." },
+      "documentation": {
+        "value": "Block scalars preserve (`|`, literal) or fold (`>`, folded) newlines in multiline text."
+      },
       "parameters": [
-        { "label": "|", "documentation": { "value": "Literal block: preserves newlines as-is. Use `|-` to strip trailing newline, `|+` to keep all trailing newlines." } },
-        { "label": ">", "documentation": { "value": "Folded block: folds newlines into spaces. Use `>-` to strip trailing newline, `>+` to keep all trailing newlines." } }
+        {
+          "label": "|",
+          "documentation": {
+            "value": "Literal block: preserves newlines as-is. Use `|-` to strip trailing newline, `|+` to keep all trailing newlines."
+          }
+        },
+        {
+          "label": ">",
+          "documentation": {
+            "value": "Folded block: folds newlines into spaces. Use `>-` to strip trailing newline, `>+` to keep all trailing newlines."
+          }
+        }
       ]
     },
     {
       "label": "--- / ... - Document markers",
-      "documentation": { "value": "`---` starts a new YAML document. `...` ends a document. Multiple documents can exist in one file." },
+      "documentation": {
+        "value": "`---` starts a new YAML document. `...` ends a document. Multiple documents can exist in one file."
+      },
       "parameters": [
-        { "label": "---", "documentation": { "value": "Marks the beginning of a YAML document" } },
-        { "label": "...", "documentation": { "value": "Marks the end of a YAML document (optional)" } }
+        {
+          "label": "---",
+          "documentation": {
+            "value": "Marks the beginning of a YAML document"
+          }
+        },
+        {
+          "label": "...",
+          "documentation": {
+            "value": "Marks the end of a YAML document (optional)"
+          }
+        }
+      ]
+    },
+    {
+      "label": "print(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `print`\n\nPerforms the print operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `print`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `print`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "log(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `log`\n\nPerforms the log operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `log`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `log`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "write(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `write`\n\nPerforms the write operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `write`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `write`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "read(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `read`\n\nPerforms the read operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `read`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `read`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "open(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `open`\n\nPerforms the open operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `open`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `open`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "close(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `close`\n\nPerforms the close operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `close`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `close`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "length(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `length`\n\nPerforms the length operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `length`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `length`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "size(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `size`\n\nPerforms the size operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `size`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `size`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "count(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `count`\n\nPerforms the count operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `count`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `count`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "sort(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `sort`\n\nPerforms the sort operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `sort`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `sort`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "filter(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `filter`\n\nPerforms the filter operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `filter`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `filter`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "map(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `map`\n\nPerforms the map operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `map`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `map`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "reduce(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `reduce`\n\nPerforms the reduce operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `reduce`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `reduce`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "find(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `find`\n\nPerforms the find operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `find`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `find`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "indexOf(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `indexOf`\n\nPerforms the indexOf operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `indexOf`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `indexOf`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "contains(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `contains`\n\nPerforms the contains operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `contains`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `contains`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "toString(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `toString`\n\nPerforms the toString operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `toString`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `toString`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "parse(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `parse`\n\nPerforms the parse operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `parse`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `parse`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "format(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `format`\n\nPerforms the format operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `format`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `format`"
+          }
+        }
+      ]
+    },
+    {
+      "label": "concat(arg1, arg2)",
+      "documentation": {
+        "value": "YAML built-in: `concat`\n\nPerforms the concat operation."
+      },
+      "parameters": [
+        {
+          "label": "arg1",
+          "documentation": {
+            "value": "First argument to `concat`"
+          }
+        },
+        {
+          "label": "arg2",
+          "documentation": {
+            "value": "Second argument to `concat`"
+          }
+        }
       ]
     }
   ]
