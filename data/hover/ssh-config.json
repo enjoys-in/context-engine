@@ -1,0 +1,348 @@
+{
+  "language": "ssh-config",
+  "hovers": {
+    "Host": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost myserver\n    HostName 10.0.1.50\n    User deploy\n\nHost *.internal\n    ProxyJump bastion\n\nHost *\n    ServerAliveInterval 60\n```\n**Host** blocks match by name/pattern. `Host *` sets defaults. Wildcards and negation (`!pattern`) supported."
+        }
+      ]
+    },
+    "HostName": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost myserver\n    HostName 192.168.1.100\n\nHost staging\n    HostName staging.example.com\n```\n**HostName** specifies the real hostname or IP to connect to. Allows the `Host` alias to differ from the actual address."
+        }
+      ]
+    },
+    "User": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost production\n    User deploy\n\nHost *\n    User myusername\n```\n**User** sets the login username. Overrides the default (current local user) for specific hosts."
+        }
+      ]
+    },
+    "Port": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost myserver\n    Port 2222\n\nHost *\n    Port 22\n```\n**Port** specifies the remote SSH port. Default is 22. Some servers use non-standard ports for security."
+        }
+      ]
+    },
+    "IdentityFile": {
+      "contents": [
+        {
+          "value": "```ssh-config\nIdentityFile ~/.ssh/id_ed25519\nIdentityFile ~/.ssh/work_key\n```\n**IdentityFile** specifies the private key file. Multiple keys can be listed — SSH tries them in order."
+        }
+      ]
+    },
+    "IdentitiesOnly": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost work\n    IdentityFile ~/.ssh/work_key\n    IdentitiesOnly yes\n```\n**IdentitiesOnly** restricts authentication to the specified IdentityFile(s) only, ignoring keys from ssh-agent."
+        }
+      ]
+    },
+    "ProxyJump": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost internal\n    HostName 10.0.1.50\n    ProxyJump bastion\n\n# Chaining: ProxyJump host1,host2\n```\n**ProxyJump** connects through a bastion/jump host. Supports chaining multiple jumps."
+        }
+      ]
+    },
+    "ProxyCommand": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost internal\n    ProxyCommand ssh -W %h:%p bastion\n\nHost corporate\n    ProxyCommand nc -x proxy:1080 %h %p\n```\n**ProxyCommand** specifies a command to connect to the server. `%h` and `%p` are replaced with host and port."
+        }
+      ]
+    },
+    "LocalForward": {
+      "contents": [
+        {
+          "value": "```ssh-config\nLocalForward 5432 db-server:5432\nLocalForward 8080 localhost:80\n```\n**LocalForward** tunnels a local port to a remote destination via SSH. Great for accessing internal databases."
+        }
+      ]
+    },
+    "RemoteForward": {
+      "contents": [
+        {
+          "value": "```ssh-config\nRemoteForward 8080 localhost:3000\n```\n**RemoteForward** makes a local service accessible from the remote host. The remote port forwards back to local."
+        }
+      ]
+    },
+    "DynamicForward": {
+      "contents": [
+        {
+          "value": "```ssh-config\nDynamicForward 1080\n```\n**DynamicForward** creates a SOCKS proxy on the specified local port. All traffic through the proxy is tunneled over SSH."
+        }
+      ]
+    },
+    "ForwardAgent": {
+      "contents": [
+        {
+          "value": "```ssh-config\nForwardAgent yes\n# Security: only enable for trusted hosts\n```\n**ForwardAgent** forwards your SSH agent to the remote host. Useful for multi-hop but risky on untrusted servers."
+        }
+      ]
+    },
+    "ServerAliveInterval": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    ServerAliveInterval 60\n    ServerAliveCountMax 3\n```\n**ServerAliveInterval** sends keep-alive packets every N seconds. Prevents idle disconnections."
+        }
+      ]
+    },
+    "ServerAliveCountMax": {
+      "contents": [
+        {
+          "value": "```ssh-config\nServerAliveCountMax 3\n```\n**ServerAliveCountMax** sets how many keep-alive messages can go unanswered before disconnecting. With interval 60 and max 3, timeout is 180s."
+        }
+      ]
+    },
+    "AddKeysToAgent": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    AddKeysToAgent yes\n```\n**AddKeysToAgent** automatically adds keys to the running ssh-agent after first use. Values: `yes`, `no`, `ask`, `confirm`, or a time limit."
+        }
+      ]
+    },
+    "StrictHostKeyChecking": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    StrictHostKeyChecking ask\n\nHost *.test\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\n```\n**StrictHostKeyChecking** controls host key verification. `ask` (default) prompts, `yes` rejects unknown, `no` accepts all (insecure)."
+        }
+      ]
+    },
+    "UserKnownHostsFile": {
+      "contents": [
+        {
+          "value": "```ssh-config\nUserKnownHostsFile ~/.ssh/known_hosts\nUserKnownHostsFile /dev/null\n```\n**UserKnownHostsFile** specifies the file for storing known host keys. Use `/dev/null` to disable (with `StrictHostKeyChecking no`)."
+        }
+      ]
+    },
+    "Compression": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost slow-link\n    Compression yes\n```\n**Compression** enables zlib compression. Useful for slow connections but can increase latency on fast ones."
+        }
+      ]
+    },
+    "TCPKeepAlive": {
+      "contents": [
+        {
+          "value": "```ssh-config\nTCPKeepAlive yes\n```\n**TCPKeepAlive** sends TCP keepalive messages to detect dead connections. Different from `ServerAliveInterval` (application-level)."
+        }
+      ]
+    },
+    "ControlMaster": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    ControlMaster auto\n    ControlPath ~/.ssh/sockets/%r@%h-%p\n    ControlPersist 600\n```\n**ControlMaster** enables connection multiplexing. Subsequent connections to the same host reuse the existing TCP connection."
+        }
+      ]
+    },
+    "ControlPath": {
+      "contents": [
+        {
+          "value": "```ssh-config\nControlPath ~/.ssh/sockets/%r@%h-%p\n```\n**ControlPath** specifies the Unix socket file for connection multiplexing. `%r` = user, `%h` = host, `%p` = port."
+        }
+      ]
+    },
+    "ControlPersist": {
+      "contents": [
+        {
+          "value": "```ssh-config\nControlPersist 600\nControlPersist yes\n```\n**ControlPersist** keeps the master connection open after the last session closes. Value in seconds, or `yes` for indefinite."
+        }
+      ]
+    },
+    "Match": {
+      "contents": [
+        {
+          "value": "```ssh-config\nMatch host *.internal user deploy\n    ProxyJump bastion\n\nMatch exec \"test -f ~/.ssh/work_key\"\n    IdentityFile ~/.ssh/work_key\n```\n**Match** applies settings conditionally by host, user, or command result. More flexible than `Host`."
+        }
+      ]
+    },
+    "Include": {
+      "contents": [
+        {
+          "value": "```ssh-config\nInclude ~/.ssh/config.d/*\nInclude ~/.ssh/work_config\n```\n**Include** imports other config files. Supports glob patterns. Useful for splitting configs by project or team."
+        }
+      ]
+    },
+    "LogLevel": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost problematic\n    LogLevel DEBUG3\n\nHost *\n    LogLevel ERROR\n```\n**LogLevel** controls SSH client logging verbosity. Levels: `QUIET`, `FATAL`, `ERROR`, `INFO`, `VERBOSE`, `DEBUG`, `DEBUG1`-`DEBUG3`."
+        }
+      ]
+    },
+    "RequestTTY": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost scripts\n    RequestTTY no\n\nHost interactive\n    RequestTTY force\n```\n**RequestTTY** controls pseudo-terminal allocation. `no` for scripts, `force` for interactive. Equivalent to `-t`/`-T` flags."
+        }
+      ]
+    },
+    "BatchMode": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost automated\n    BatchMode yes\n```\n**BatchMode** disables password prompting and host key confirmation. Useful for scripts where no user interaction is possible."
+        }
+      ]
+    },
+    "ConnectTimeout": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    ConnectTimeout 10\n```\n**ConnectTimeout** sets the connection timeout in seconds. Default uses the system TCP timeout."
+        }
+      ]
+    },
+    "ConnectionAttempts": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost unreliable\n    ConnectionAttempts 3\n```\n**ConnectionAttempts** specifies the number of connection retry attempts before giving up. Default is 1."
+        }
+      ]
+    },
+    "Ciphers": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com\n```\n**Ciphers** specifies allowed encryption algorithms in preference order."
+        }
+      ]
+    },
+    "KexAlgorithms": {
+      "contents": [
+        {
+          "value": "```ssh-config\nKexAlgorithms curve25519-sha256,diffie-hellman-group16-sha512\n```\n**KexAlgorithms** specifies allowed key exchange algorithms. Modern setups prefer curve25519."
+        }
+      ]
+    },
+    "PubkeyAuthentication": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    PubkeyAuthentication yes\n    PasswordAuthentication no\n```\n**PubkeyAuthentication** enables/disables public key authentication. Best practice: enable keys, disable passwords."
+        }
+      ]
+    },
+    "PasswordAuthentication": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost legacy-server\n    PasswordAuthentication yes\n\nHost *\n    PasswordAuthentication no\n```\n**PasswordAuthentication** controls password-based login. Disable for security when key auth is available."
+        }
+      ]
+    },
+    "ForwardX11": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost desktop\n    ForwardX11 yes\n    ForwardX11Trusted yes\n```\n**ForwardX11** enables X11 forwarding for running graphical applications remotely. `Trusted` bypasses X11 security."
+        }
+      ]
+    },
+    "SendEnv": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    SendEnv LANG LC_*\n    SetEnv MY_VAR=value\n```\n**SendEnv** sends local environment variables to the remote server. Server must accept them via `AcceptEnv`."
+        }
+      ]
+    },
+    "SetEnv": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost staging\n    SetEnv ENV=staging\n    SetEnv DEBUG=1\n```\n**SetEnv** sets environment variables on the remote session. Does not require server-side `AcceptEnv` configuration."
+        }
+      ]
+    },
+    "PermitLocalCommand": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    PermitLocalCommand yes\n    LocalCommand echo \"Connected to %h\"\n```\n**PermitLocalCommand** allows running local commands after connecting. `LocalCommand` specifies the command."
+        }
+      ]
+    },
+    "CanonicalizeHostname": {
+      "contents": [
+        {
+          "value": "```ssh-config\nCanonicalizeHostname yes\nCanonicalDomains example.com internal.example.com\n```\n**CanonicalizeHostname** resolves short hostnames to FQDNs using `CanonicalDomains`. Useful in corporate networks."
+        }
+      ]
+    },
+    "AddressFamily": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    AddressFamily inet\n```\n**AddressFamily** restricts connections to `inet` (IPv4), `inet6` (IPv6), or `any` (default). Use `inet` to avoid IPv6 issues."
+        }
+      ]
+    },
+    "PreferredAuthentications": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *\n    PreferredAuthentications publickey,keyboard-interactive,password\n```\n**PreferredAuthentications** sets the order of authentication methods to try."
+        }
+      ]
+    },
+    "GSSAPIAuthentication": {
+      "contents": [
+        {
+          "value": "```ssh-config\nHost *.corp.example.com\n    GSSAPIAuthentication yes\n    GSSAPIDelegateCredentials yes\n\nHost *\n    GSSAPIAuthentication no\n```\n**GSSAPIAuthentication** enables Kerberos/GSSAPI authentication. Common in corporate environments with Active Directory."
+        }
+      ]
+    },
+    "String": {
+      "contents": [
+        {
+          "value": "```ssh-config\nString\n```\nText data type representing a sequence of characters."
+        }
+      ]
+    },
+    "Number": {
+      "contents": [
+        {
+          "value": "```ssh-config\nNumber\n```\nNumeric data type for integer and floating-point values."
+        }
+      ]
+    },
+    "Boolean": {
+      "contents": [
+        {
+          "value": "```ssh-config\nBoolean\n```\nLogical type with two values: true and false."
+        }
+      ]
+    },
+    "Array": {
+      "contents": [
+        {
+          "value": "```ssh-config\nArray\n```\nOrdered collection of elements accessible by index."
+        }
+      ]
+    },
+    "Object": {
+      "contents": [
+        {
+          "value": "```ssh-config\nObject\n```\nCollection of key-value pairs (properties and methods)."
+        }
+      ]
+    },
+    "null": {
+      "contents": [
+        {
+          "value": "```ssh-config\nnull\n```\nRepresents the intentional absence of any value."
+        }
+      ]
+    },
+    "undefined": {
+      "contents": [
+        {
+          "value": "```ssh-config\nundefined\n```\nRepresents an uninitialized or missing value."
+        }
+      ]
+    },
+    "print": {
+      "contents": [
+        {
+          "value": "```ssh-config\nprint(value)\n```\nOutput a value to the standard output stream."
+        }
+      ]
+    }
+  }
+}
