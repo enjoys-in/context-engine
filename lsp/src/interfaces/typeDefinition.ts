@@ -1,11 +1,12 @@
 export interface TypeDefinitionEntry {
   type: string;
-  signature: string;
-  description: string;
-  module: string;
+  signature?: string;
+  description?: string;
+  module?: string;
 }
 
 export interface TypeDefinitionData {
-  language: string;
-  typeDefinitions: Record<string, TypeDefinitionEntry>;
+  language?: string;
+  typeDefinitions?: Record<string, TypeDefinitionEntry>;
+  [key: string]: unknown;
 }

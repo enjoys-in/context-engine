@@ -3,10 +3,11 @@ export interface CodeActionEntry {
   kind: string;
   description: string;
   pattern: string;
-  isPreferred: boolean;
+  isPreferred?: boolean;
   diagnostic?: boolean;
   severity?: number;
   flags?: string;
+  edit?: Record<string, unknown>;
 }
 
 export interface CodeActionsData {

@@ -1,25 +1,25 @@
 export interface SignatureParameterDocumentation {
-  value: string;
+  value?: string;
 }
 
 export interface SignatureParameter {
   label: string;
-  documentation: SignatureParameterDocumentation;
+  documentation?: SignatureParameterDocumentation | string;
 }
 
 export interface SignatureDocumentation {
-  value: string;
+  value?: string;
 }
 
 export interface SignatureEntry {
   label: string;
-  documentation: SignatureDocumentation;
-  parameters: SignatureParameter[];
+  documentation?: SignatureDocumentation | string;
+  parameters?: SignatureParameter[];
 }
 
 export interface SignatureHelpData {
   language: string;
-  triggerCharacters: string[];
-  retriggerCharacters: string[];
-  signatures: SignatureEntry[];
+  triggerCharacters?: string[];
+  retriggerCharacters?: string[];
+  signatures?: SignatureEntry[];
 }

@@ -1,16 +1,21 @@
 export interface DefinitionParameter {
   name: string;
   type: string;
-  description: string;
+  description?: string;
+  optional?: boolean;
 }
 
 export interface DefinitionEntry {
-  signature: string;
+  signature?: string;
   description: string;
-  type: string;
-  module: string;
+  type?: string;
+  module?: string;
   parameters?: DefinitionParameter[];
   returns?: string;
+  members?: Record<string, unknown>;
+  url?: string;
+  section?: string;
+  [key: string]: unknown;
 }
 
 export interface DefinitionData {

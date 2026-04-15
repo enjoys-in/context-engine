@@ -1,11 +1,12 @@
 export interface CrossFileSymbol {
-  symbolKind: string;
+  symbolKind?: string;
+  kind?: string;
   pattern: string;
-  importPattern: string;
-  exportPattern: string;
-  highlightKind: number;
+  importPattern?: string;
+  exportPattern?: string;
+  highlightKind?: number;
   description: string;
-  crossFileCapable: boolean;
+  crossFileCapable?: boolean;
 }
 
 export interface ImportExportPatterns {
@@ -15,16 +16,27 @@ export interface ImportExportPatterns {
 }
 
 export interface ScopeRule {
-  patterns: string[];
-  highlightKind: number;
+  patterns?: string[];
+  highlightKind?: number;
 }
 
 export interface ScopeRules {
-  globalScope: ScopeRule;
-  moduleScope: ScopeRule;
-  classScope: ScopeRule;
-  functionScope: ScopeRule;
-  blockScope: ScopeRule;
+  globalScope?: ScopeRule;
+  moduleScope?: ScopeRule;
+  classScope?: ScopeRule;
+  functionScope?: ScopeRule;
+  blockScope?: ScopeRule;
+}
+
+export interface ScopeRuleListItem {
+  scope: string;
+  description: string;
+}
+
+export interface AccessOperationRule {
+  pattern: string;
+  kind?: string;
+  description?: string;
 }
 
 export interface SpecialHighlights {
@@ -34,15 +46,16 @@ export interface SpecialHighlights {
 }
 
 export interface MultiDocumentHighlightData {
-  language: string;
-  selector: { language: string; scheme: string };
-  highlightKinds: { text: number; read: number; write: number };
-  crossFileSymbols: CrossFileSymbol[];
-  importExportPatterns: ImportExportPatterns;
-  scopeRules: ScopeRules;
-  writeOperations: string[];
-  readOperations: string[];
-  declarationPatterns: string[];
-  referencePatterns: string[];
-  specialHighlights: SpecialHighlights;
+  language?: string;
+  selector?: { language: string; scheme: string } | Record<string, unknown>;
+  highlightKinds?: { text: number; read: number; write: number } | Record<string, unknown>;
+  crossFileSymbols?: CrossFileSymbol[] | Array<Record<string, unknown>>;
+  importExportPatterns?: ImportExportPatterns | Record<string, unknown>;
+  scopeRules?: ScopeRules | ScopeRuleListItem[] | Record<string, unknown>;
+  writeOperations?: string[] | AccessOperationRule[];
+  readOperations?: string[] | AccessOperationRule[];
+  declarationPatterns?: string[] | AccessOperationRule[];
+  referencePatterns?: string[] | AccessOperationRule[];
+  specialHighlights?: SpecialHighlights | AccessOperationRule[] | Record<string, unknown>;
+  [key: string]: unknown;
 }

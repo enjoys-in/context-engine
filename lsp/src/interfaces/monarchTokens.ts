@@ -5,21 +5,18 @@ export interface MonarchBracket {
 }
 
 export interface MonarchAction {
-  cases: Record<string, string>;
+  cases?: Record<string, string>;
+  [key: string]: unknown;
 }
 
-export type MonarchTokenRule =
-  | [string, string]
-  | [string, string, string]
-  | [string, MonarchAction]
-  | { include: string };
+export type MonarchTokenRule = unknown;
 
 export interface MonarchTokenizer {
-  root: MonarchTokenRule[];
-  whitespace: MonarchTokenRule[];
-  comment: MonarchTokenRule[];
-  string_double: MonarchTokenRule[];
-  string_single: MonarchTokenRule[];
+  root?: MonarchTokenRule[];
+  whitespace?: MonarchTokenRule[];
+  comment?: MonarchTokenRule[];
+  string_double?: MonarchTokenRule[];
+  string_single?: MonarchTokenRule[];
   string_backtick?: MonarchTokenRule[];
   string_triple?: MonarchTokenRule[];
   bracketCounting?: MonarchTokenRule[];
@@ -27,15 +24,16 @@ export interface MonarchTokenizer {
 }
 
 export interface MonarchTokensData {
-  language: string;
-  tokenPostfix: string;
-  defaultToken: string;
-  keywords: string[];
-  typeKeywords: string[];
-  operators: string[];
-  symbols: string;
-  escapes: string;
-  digits: string;
-  brackets: MonarchBracket[];
-  tokenizer: MonarchTokenizer;
+  language?: string;
+  tokenPostfix?: string;
+  defaultToken?: string;
+  keywords?: string[];
+  typeKeywords?: string[];
+  operators?: string[];
+  symbols?: string;
+  escapes?: string;
+  digits?: string;
+  brackets?: MonarchBracket[];
+  tokenizer?: MonarchTokenizer;
+  [key: string]: unknown;
 }

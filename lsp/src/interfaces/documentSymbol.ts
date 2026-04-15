@@ -2,8 +2,9 @@ export interface SymbolPattern {
   name: string;
   pattern: string;
   captureGroup: number;
-  kind: number;
-  type: string;
+  kind: number | string;
+  type?: string;
+  detail?: string;
 }
 
 export interface DocumentSymbolData {

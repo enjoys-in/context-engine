@@ -1,6 +1,10 @@
 export interface ReferencePattern {
-  symbol: string;
-  patterns: string[];
+  symbol?: string;
+  patterns?: string[];
+  pattern?: string;
+  kind?: string;
+  name?: string;
+  captureGroup?: number;
   includeDeclaration: boolean;
   description: string;
 }

@@ -2,14 +2,20 @@ export interface CompletionDocumentation {
   value: string;
 }
 
-export interface CompletionItem {
+export interface CompletionLabelObject {
   label: string;
-  kind: number;
+  detail?: string;
+  description?: string;
+}
+
+export interface CompletionItem {
+  label: string | CompletionLabelObject;
+  kind: number | string;
   detail: string;
-  documentation: CompletionDocumentation;
+  documentation?: CompletionDocumentation | string;
   insertText: string;
-  insertTextRules: number;
-  sortText: string;
+  insertTextRules?: number;
+  sortText?: string;
 }
 
 export interface CompletionData {

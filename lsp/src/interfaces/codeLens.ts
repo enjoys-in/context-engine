@@ -1,9 +1,10 @@
 export interface CodeLensPattern {
   pattern: string;
-  captureGroup: number;
+  captureGroup?: number;
   commandId: string;
   title: string;
   description: string;
+  tooltip?: string;
 }
 
 export interface CodeLensData {
