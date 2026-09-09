@@ -6,7 +6,7 @@ Comprehensive Monaco Editor language intelligence engine with **94 languages**, 
 
 Traditional LSP (Language Server Protocol) setups require a backend server running a separate language server process for every language you want to support. Each language server needs its own binary installed — Go, Rust, Python, TypeScript, and so on. At scale, this makes the backend **heavy**, memory-hungry, and CPU-intensive. Supporting all languages can easily consume **1 GB+** of disk space and significant runtime resources just to keep those servers alive.
 
-Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **94 languages across 26 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 464 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
+Context Engine takes a fundamentally different approach. Instead of running language servers on the backend, it ships **pre-built, Monaco-compatible JSON data** for **97 languages across 29 provider types** — completions, hover docs, definitions, code actions, formatting rules, semantic tokens, and 629 CLI tool definitions — all in a single package. No language binaries to install. No background processes to manage. No backend required for intelligence.
 
 > **Note:** Context Engine does not provide path-based intelligence (file resolution, go-to-definition across files, etc.) the way a full LSP does. It focuses on **language-aware completions, hover documentation, code actions, formatting, symbols, and terminal command autocomplete** — the features that matter most in web-based terminal and editor experiences, without the infrastructure overhead.
 
@@ -19,11 +19,11 @@ npm install @enjoys/context-engine
 ## What's Inside
 
 ```
-data/                        # 3,371 JSON files — 96 languages × 29 providers + 464 commands + 119 themes
+data/                        # 3,565 JSON files — 97 languages × 29 providers + 629 commands + 119 themes
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
-├── commands/                # 464 CLI tool definitions (git, docker, kubectl, ...)
+├── commands/                # 629 CLI tool definitions (git, docker, kubectl, ...)
 ├── completion/              # Monaco CompletionItem[] with snippets
 ├── declaration/             # Go-to-declaration data
 ├── definition/              # Definitions (signatures, descriptions, types)
@@ -786,7 +786,7 @@ Each language has up to 29 provider files — completions, hover, definitions, c
 | **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
 | **Other** | Crontab, Protobuf, Doctest, Tcl |
 
-## Covered Commands (464 files, 447 unique)
+## Covered Commands (629 files, 612 unique)
 
 | Category | Tools |
 |----------|-------|
