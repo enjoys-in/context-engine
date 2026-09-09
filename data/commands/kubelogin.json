@@ -1,0 +1,160 @@
+{
+  "name": "kubelogin",
+  "description": "kubectl credential plugin for OIDC and Azure AD authentication",
+  "category": "cloud",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell",
+    "cmd"
+  ],
+  "subcommands": [
+    {
+      "name": "get-token",
+      "description": "Fetch a token for kubectl",
+      "options": [
+        {
+          "name": "--oidc-issuer-url",
+          "description": "OIDC issuer URL",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--oidc-client-id",
+          "description": "OIDC client id",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--oidc-client-secret",
+          "description": "OIDC client secret",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--oidc-extra-scope",
+          "description": "Extra scopes to request",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--grant-type",
+          "description": "Grant type (auto, authcode, password, devicecode)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--login-method",
+          "description": "Azure login method (devicecode, spn, ropc, msi, azurecli)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--server-id",
+          "description": "Azure AD server application id",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--client-id",
+          "description": "Azure AD client application id",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tenant-id",
+          "description": "Azure AD tenant id",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "convert-kubeconfig",
+      "description": "Rewrite a kubeconfig to use kubelogin",
+      "options": [
+        {
+          "name": "--login",
+          "description": "Login method to configure",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--kubeconfig",
+          "description": "Kubeconfig to modify",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--context",
+          "description": "Context to convert",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "remove-tokens",
+      "description": "Delete the cached tokens"
+    },
+    {
+      "name": "setup",
+      "description": "Verify the configuration end to end"
+    },
+    {
+      "name": "version",
+      "description": "Show the installed version"
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "description": "Show help for this command",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-h",
+      "shorthand": "-h"
+    },
+    {
+      "name": "--token-cache-dir",
+      "description": "Directory holding the token cache",
+      "type": "directory",
+      "takesValue": true
+    },
+    {
+      "name": "--v",
+      "description": "Logging verbosity",
+      "type": "integer",
+      "takesValue": true
+    }
+  ],
+  "examples": [
+    {
+      "command": "kubelogin convert-kubeconfig -l azurecli",
+      "description": "Use the Azure CLI for cluster login"
+    },
+    {
+      "command": "kubelogin get-token --login devicecode --server-id ID --client-id ID --tenant-id ID",
+      "description": "Fetch a token with the device code flow"
+    },
+    {
+      "command": "kubelogin remove-tokens",
+      "description": "Clear the cached tokens"
+    }
+  ],
+  "relatedCommands": [
+    "kubectl",
+    "az",
+    "aws",
+    "saml2aws",
+    "kubectx"
+  ]
+}

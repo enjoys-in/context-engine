@@ -1,0 +1,169 @@
+{
+  "name": "driftctl",
+  "description": "Detect infrastructure drift between state and reality",
+  "category": "cloud",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell",
+    "cmd"
+  ],
+  "subcommands": [
+    {
+      "name": "scan",
+      "description": "Compare real infrastructure against state",
+      "options": [
+        {
+          "name": "--from",
+          "description": "State backend to read, e.g. tfstate+s3://bucket/key",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--to",
+          "description": "Provider to scan (aws+tf, azure+tf, gcp+tf)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format and destination",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--filter",
+          "description": "JMESPath expression to filter resources",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--driftignore",
+          "description": "Ignore file to apply",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress progress output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--only-managed",
+          "description": "Report only managed resources",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--only-unmanaged",
+          "description": "Report only unmanaged resources",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "gen-driftignore",
+      "description": "Generate a driftignore file from a scan",
+      "options": [
+        {
+          "name": "--input",
+          "description": "Scan JSON to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--exclude-unmanaged",
+          "description": "Skip unmanaged resources",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--exclude-missing",
+          "description": "Skip missing resources",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "completion",
+      "description": "Print shell completions",
+      "args": [
+        {
+          "name": "shell",
+          "description": "Shell to generate for",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show the installed version"
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "description": "Show help for this command",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-h",
+      "shorthand": "-h"
+    },
+    {
+      "name": "--version",
+      "description": "Show the installed version",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--no-version-check",
+      "description": "Skip the update check",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--log-level",
+      "description": "Logging level",
+      "type": "string",
+      "takesValue": true
+    }
+  ],
+  "examples": [
+    {
+      "command": "driftctl scan",
+      "description": "Scan using the local state file"
+    },
+    {
+      "command": "driftctl scan --from tfstate+s3://bucket/terraform.tfstate",
+      "description": "Scan against remote state"
+    },
+    {
+      "command": "driftctl scan -o json://drift.json",
+      "description": "Write a machine-readable report"
+    },
+    {
+      "command": "driftctl gen-driftignore -i drift.json",
+      "description": "Generate an ignore file from a scan"
+    }
+  ],
+  "relatedCommands": [
+    "terraform",
+    "infracost",
+    "checkov",
+    "tflint"
+  ]
+}

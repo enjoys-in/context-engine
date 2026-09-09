@@ -1,0 +1,255 @@
+{
+  "name": "trufflehog",
+  "description": "Find and verify leaked credentials across many sources",
+  "category": "security",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell",
+    "cmd"
+  ],
+  "subcommands": [
+    {
+      "name": "git",
+      "description": "Scan a git repository",
+      "options": [
+        {
+          "name": "--since-commit",
+          "description": "Start from this commit",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--branch",
+          "description": "Only this branch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--max-depth",
+          "description": "Commits to walk",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--bare",
+          "description": "Treat the path as a bare repository",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "uri",
+          "description": "Repository URI or path",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "github",
+      "description": "Scan GitHub repositories or an organisation",
+      "options": [
+        {
+          "name": "--org",
+          "description": "Organisation to scan",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--repo",
+          "description": "Repository to scan",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--token",
+          "description": "GitHub token",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--include-forks",
+          "description": "Include forked repositories",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--issue-comments",
+          "description": "Also scan issue comments",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "gitlab",
+      "description": "Scan GitLab projects",
+      "options": [
+        {
+          "name": "--token",
+          "description": "GitLab token",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--repo",
+          "description": "Project to scan",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "filesystem",
+      "description": "Scan files and directories",
+      "options": [
+        {
+          "name": "--directory",
+          "description": "Directory to scan",
+          "type": "directory",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Paths to scan",
+          "type": "path",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "s3",
+      "description": "Scan S3 buckets",
+      "options": [
+        {
+          "name": "--bucket",
+          "description": "Bucket to scan",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--role-arn",
+          "description": "Role to assume",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "docker",
+      "description": "Scan container images",
+      "options": [
+        {
+          "name": "--image",
+          "description": "Image to scan",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "gcs",
+      "description": "Scan Google Cloud Storage buckets",
+      "options": [
+        {
+          "name": "--bucket-name",
+          "description": "Bucket to scan",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "description": "Show help for this command",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-h",
+      "shorthand": "-h"
+    },
+    {
+      "name": "--version",
+      "description": "Show the installed version",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--only-verified",
+      "description": "Report only credentials confirmed to work",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--json",
+      "description": "Emit JSON",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--no-update",
+      "description": "Skip the update check",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--concurrency",
+      "description": "Worker count",
+      "type": "integer",
+      "takesValue": true
+    },
+    {
+      "name": "--fail",
+      "description": "Exit non-zero when secrets are found",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--archive-max-size",
+      "description": "Largest archive to unpack",
+      "type": "string",
+      "takesValue": true
+    },
+    {
+      "name": "--filter-entropy",
+      "description": "Minimum entropy to report",
+      "type": "number",
+      "takesValue": true
+    }
+  ],
+  "examples": [
+    {
+      "command": "trufflehog git file://. --only-verified",
+      "description": "Scan local history for verified secrets"
+    },
+    {
+      "command": "trufflehog github --org myorg --only-verified",
+      "description": "Scan an organisation"
+    },
+    {
+      "command": "trufflehog filesystem ./config --json",
+      "description": "Scan a directory and emit JSON"
+    },
+    {
+      "command": "trufflehog docker --image app:latest",
+      "description": "Scan a container image"
+    }
+  ],
+  "relatedCommands": [
+    "gitleaks",
+    "semgrep",
+    "trivy",
+    "snyk"
+  ]
+}
