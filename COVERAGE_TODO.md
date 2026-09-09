@@ -185,7 +185,7 @@ Measured from disk:
 | `aws` services | **195** |
 | leaf subcommands | **5,266** (plus 194 parent nodes) |
 | leaves with `options` | **4,816 — 91%** |
-| leaves with `args` | **1,801 — 34%** |
+| leaves with `args` | **2,631 — 50%** |
 | subcommand `options` | **16,003** |
 | `globalOptions` | 7,080 |
 | `args` entries | 1,963, **0 of them malformed** |
@@ -329,6 +329,45 @@ Reported against the depth-pass commit and fixed:
 Structure check against the committed tree: **`git.json` is the only file whose subcommand
 signature changed** (3 removed, 35 added). The other 628 files have 0 renames, 0
 re-nestings and 0 `args`-count changes.
+
+### DONE — args, second pass
+
+- [x] **C19 — `args` 34% -> 50%** (1,801 -> 2,631 leaves), on an invariant rather than a
+      guess: **a leaf whose own example shows a non-flag token straight after the
+      invocation path takes an argument, so it must declare one.** That is evidence from
+      the data itself, which is why it could be applied at scale. It now has a test, and
+      the test was verified by deleting one arg and watching it name the exact leaf.
+
+      Three passes:
+      - **356 group leaves** in 22 multi-service CLIs (`aws bedrock`, `argocd app`,
+        `openstack server`) got an `operation` arg whose description names the real
+        operation taken from that file's own example.
+      - **~380 value leaves** hand-authored across 40 files: `linux` (93 — every classic
+        Unix positional), `rclone`, `heroku` (colon syntax: `apps:info`), `mc`, `gsutil`,
+        `s3cmd`, `rake`/`rails` (`VAR=value` assignments), `git`, `crossplane`, `flux`,
+        `skopeo`, `sqlite-utils`, `xsv` and more.
+      - **90 stragglers** at 1-3 per file, to drive the invariant to zero.
+
+      Four wrong turns, each caught before writing:
+      - Deciding group-ness from the *leaf* name misfired: `linux mkdir mydir` and
+        `linux ifconfig eth0` also have an identifier after the leaf, but those are a
+        directory and an interface. The signal has to be whether the **next token** is an
+        operation word or an API action — `argo template list` is a group,
+        `argo retry my-workflow` is not.
+      - A verb blacklist added to compensate then over-corrected, dropping real groups
+        whose names read as verbs (`aws logs`, `aws configure`, `amplify env`). Removed:
+        the next-token test already covers what it was there for.
+      - Hyphenated AWS operations (`list-foundation-models`) matched neither pattern, so
+        `aws` silently dropped out of the pass entirely. Added, gated on a leading verb so
+        `my-workflow` still does not qualify.
+      - Shell operators counted as arguments: `dmesg | tail -20` is a pipe, not a
+        positional. `dmesg`, `env`, `mount`, `lsmod`, `lscpu`, `lspci`, `yes` and `lsof`
+        are correctly argument-free.
+
+      **2,635 leaves remain without args and no evidence that anything follows them** —
+      `docker ps`, `systemctl daemon-reload`, `terraform init`, `brew update`. Consistent
+      with taking none. Do not reopen this from the raw percentage; the invariant is the
+      measure, and it is at zero.
 
 ### DONE — the three items that were open
 
