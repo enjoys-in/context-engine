@@ -19,11 +19,11 @@ npm install @enjoys/context-engine
 ## What's Inside
 
 ```
-data/                        # 3,370 JSON files — 96 languages × 29 providers + 465 commands + 119 themes
+data/                        # 3,371 JSON files — 96 languages × 29 providers + 464 commands + 119 themes
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
-├── commands/                # 465 CLI tool definitions (git, docker, kubectl, ...)
+├── commands/                # 464 CLI tool definitions (git, docker, kubectl, ...)
 ├── completion/              # Monaco CompletionItem[] with snippets
 ├── declaration/             # Go-to-declaration data
 ├── definition/              # Definitions (signatures, descriptions, types)
@@ -731,16 +731,16 @@ Each language has up to 29 provider files — completions, hover, definitions, c
 | **Scripting** | Python, Ruby, Perl, Lua, PHP, Elixir, CoffeeScript, R |
 | **Shell** | Shell/Bash, PowerShell, AWK, Azure CLI |
 | **Functional** | Scheme, Julia, CameLIGO, PascaLIGO, Dart |
-| **Database / Query** | SQL, MySQL, PostgreSQL, Redshift, Redis, redis-cli, Cypher, SPARQL |
-| **Config / Infrastructure** | Dockerfile, Docker Compose, YAML, TOML, JSON, XML, INI, Dotenv, SSH Config, HCL, Makefile, Nginx, systemd, Caddy |
+| **Database / Query** | SQL, MySQL, PostgreSQL, Redshift, Redis, redis-cli, Cypher, SPARQL, Prisma |
+| **Config / Infrastructure** | Dockerfile, Docker Compose, YAML, TOML, JSON, XML, INI, Dotenv, SSH Config, HCL, Makefile, Nginx, systemd, Caddy, Ignore Files |
 | **Docs / Markup** | Markdown, MDX, reStructuredText |
 | **Data / BI** | MSDAX, Power Query, GraphQL |
 | **Blockchain** | Solidity, Lexon, Bicep |
 | **Hardware / Low-Level** | MIPS, SystemVerilog, WGSL, Structured Text |
 | **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
-| **Other** | Crontab, Protobuf, Doctest |
+| **Other** | Crontab, Protobuf, Doctest, Tcl |
 
-## Covered Commands (465 files, 447 unique)
+## Covered Commands (464 files, 447 unique)
 
 | Category | Tools |
 |----------|-------|
