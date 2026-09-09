@@ -337,6 +337,19 @@ const manifest = {
     if (!hay.includes(norm(id)) && !hay.includes(norm(names[id] ?? id)))
       fail(`README "Supported Languages" table does not mention ${id} (${names[id] ?? id})`);
 
+  // The README states the command counts in prose; they have drifted twice, so
+  // check them against disk rather than trusting them.
+  {
+    const files = jsonFiles(path.join(DATA, "commands")).filter((f) => f !== "manifest.json");
+    const unique = new Set(files.map((f) => read(path.join(DATA, "commands", f)).name)).size;
+    const m = readme.match(/## Covered Commands \((\d+) files, (\d+) unique\)/);
+    if (!m) fail('README has no "## Covered Commands (N files, M unique)" heading');
+    else {
+      if (Number(m[1]) !== files.length) fail(`README says ${m[1]} command files, disk has ${files.length}`);
+      if (Number(m[2]) !== unique) fail(`README says ${m[2]} unique commands, disk has ${unique}`);
+    }
+  }
+
   const cmdManifestPath = path.join(DATA, "commands", "manifest.json");
   if (fs.existsSync(cmdManifestPath)) {
     const listed = new Set(read(cmdManifestPath).files ?? []);
