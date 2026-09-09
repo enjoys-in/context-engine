@@ -1,0 +1,70 @@
+{
+  "language": "haskell",
+  "wordPattern": "[A-Za-z_'][A-Za-z0-9_']*",
+  "identifierRules": {
+    "start": "[A-Za-z_]",
+    "continue": "[A-Za-z0-9_']",
+    "caseSensitive": true,
+    "maxLength": 0,
+    "reservedWords": [
+      "module",
+      "where",
+      "import",
+      "qualified",
+      "hiding",
+      "as",
+      "data",
+      "newtype",
+      "type",
+      "class",
+      "instance",
+      "deriving",
+      "do",
+      "case",
+      "of",
+      "let",
+      "in",
+      "if",
+      "then",
+      "else",
+      "forall",
+      "infixl",
+      "infixr",
+      "infix",
+      "foreign"
+    ]
+  },
+  "renameValidation": {
+    "pattern": "^[A-Za-z_][A-Za-z0-9_']*$",
+    "message": "A Haskell identifier starts with a letter or underscore. Types and constructors must be capitalised; functions and variables must not be."
+  },
+  "renameStrategy": {
+    "scope": "module",
+    "followImports": true,
+    "notes": "Renaming an exported name requires updating the export list and every importing module."
+  },
+  "prepareRenamePatterns": [
+    {
+      "name": "Function",
+      "pattern": "^([a-z_]\\w*'?)",
+      "captureGroup": 1
+    },
+    {
+      "name": "Type or constructor",
+      "pattern": "\\b([A-Z]\\w*)\\b",
+      "captureGroup": 1
+    },
+    {
+      "name": "Record field",
+      "pattern": "^\\s*[,{]\\s*(\\w+)\\s*::",
+      "captureGroup": 1
+    }
+  ],
+  "renamePatterns": [
+    {
+      "name": "Type signature and equations must be renamed together",
+      "pattern": "^([a-z_]\\w*'?)\\s*(?:::|[^=]*=)",
+      "captureGroup": 1
+    }
+  ]
+}

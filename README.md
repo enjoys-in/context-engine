@@ -763,7 +763,7 @@ objects, never bare strings:
 
 ---
 
-## Supported Languages (96)
+## Supported Languages (97)
 
 Each language has up to 29 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
 
@@ -776,7 +776,7 @@ Each language has up to 29 provider files — completions, hover, definitions, c
 | **.NET** | C#, VB, Q# |
 | **Scripting** | Python, Ruby, Perl, Lua, PHP, Elixir, CoffeeScript, R |
 | **Shell** | Shell/Bash, PowerShell, AWK, Azure CLI |
-| **Functional** | Scheme, Julia, CameLIGO, PascaLIGO, Dart |
+| **Functional** | Haskell, Scheme, Julia, CameLIGO, PascaLIGO, Dart |
 | **Database / Query** | SQL, MySQL, PostgreSQL, Redshift, Redis, redis-cli, Cypher, SPARQL, Prisma |
 | **Config / Infrastructure** | Dockerfile, Docker Compose, YAML, TOML, JSON, XML, INI, Dotenv, SSH Config, HCL, Makefile, Nginx, systemd, Caddy, Ignore Files |
 | **Docs / Markup** | Markdown, MDX, reStructuredText |

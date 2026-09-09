@@ -1,0 +1,122 @@
+{
+  "language": "haskell",
+  "selector": {
+    "language": "haskell",
+    "scheme": "file"
+  },
+  "highlightKinds": {
+    "text": 0,
+    "read": 1,
+    "write": 2
+  },
+  "crossFileSymbols": [
+    "module",
+    "function",
+    "type",
+    "constructor",
+    "class",
+    "instance",
+    "field",
+    "operator"
+  ],
+  "importExportPatterns": {
+    "import": "^import\\s+(?:qualified\\s+)?([A-Z][\\w.]*)",
+    "importQualified": "^import\\s+qualified\\s+([A-Z][\\w.]*)(?:\\s+as\\s+(\\w+))?",
+    "importList": "^import\\s+[^(]*\\(([^)]*)\\)",
+    "importHiding": "^import\\s+[\\w.\\s]*hiding\\s*\\(([^)]*)\\)",
+    "export": "^module\\s+[A-Z][\\w.]*\\s*\\(([^)]*)\\)",
+    "reexport": "([A-Z][\\w.]*)\\s*\\(\\s*\\.\\.\\s*\\)"
+  },
+  "scopeRules": [
+    {
+      "scope": "module",
+      "pattern": "^module\\s+([A-Z][\\w.]*)",
+      "description": "Top-level module scope"
+    },
+    {
+      "scope": "where",
+      "pattern": "\\bwhere\\b",
+      "description": "Bindings local to a declaration"
+    },
+    {
+      "scope": "let",
+      "pattern": "\\blet\\b",
+      "description": "Bindings local to an expression"
+    },
+    {
+      "scope": "lambda",
+      "pattern": "\\\\[^-]*->",
+      "description": "Lambda parameters"
+    },
+    {
+      "scope": "case",
+      "pattern": "\\bcase\\b.*\\bof\\b",
+      "description": "Pattern bindings per alternative"
+    }
+  ],
+  "writeOperations": [
+    "<-",
+    "=",
+    ":=",
+    "modifyIORef",
+    "writeIORef",
+    "writeTVar",
+    "putMVar",
+    "modifyMVar"
+  ],
+  "readOperations": [
+    "readIORef",
+    "readTVar",
+    "takeMVar",
+    "readMVar",
+    "atomically",
+    "asks",
+    "get"
+  ],
+  "declarationPatterns": [
+    {
+      "name": "Signature",
+      "pattern": "^([a-z_]\\w*'?)\\s*::",
+      "captureGroup": 1
+    },
+    {
+      "name": "Type",
+      "pattern": "^(?:data|newtype|type)\\s+([A-Z]\\w*)",
+      "captureGroup": 1
+    },
+    {
+      "name": "Class",
+      "pattern": "^class\\s+(?:.*=>\\s*)?([A-Z]\\w*)",
+      "captureGroup": 1
+    }
+  ],
+  "referencePatterns": [
+    {
+      "name": "Application",
+      "pattern": "\\b([a-z_]\\w*'?)\\s+[\\w(\\[\"]",
+      "captureGroup": 1
+    },
+    {
+      "name": "Qualified use",
+      "pattern": "\\b([A-Z][\\w.]*)\\.([a-z_]\\w*)",
+      "captureGroup": 2
+    },
+    {
+      "name": "Constructor use",
+      "pattern": "\\b([A-Z]\\w*)\\b",
+      "captureGroup": 1
+    }
+  ],
+  "specialHighlights": [
+    {
+      "name": "Typed hole",
+      "pattern": "\\b_\\w*\\b",
+      "description": "GHC reports the expected type of a hole"
+    },
+    {
+      "name": "Partial function",
+      "pattern": "\\b(head|tail|fromJust|read|(!!))\\b",
+      "description": "Throws on unexpected input; prefer the total variant"
+    }
+  ]
+}
