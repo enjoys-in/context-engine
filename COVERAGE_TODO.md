@@ -117,8 +117,7 @@ under the base's name — that would attribute it to a language with no live han
 
 ## P2 — Missing language
 
-- [ ] **P2.1 `haskell` — not shipped at all.** Only mainstream language absent from the 96.
-      Needs 30 provider files + `manifest.json` + `languages.json` entry.
+- [x] **P2.1 `haskell`** — DONE. All **29 provider files** authored plus `languages.json` and the README table; the package now ships **97 languages**. Verified live: 13 symbols at correct lines (`Shape` at line 4), 63 completions, hover, folding, 73 semantic tokens, 4 references, formatting. Layout-sensitivity handled (`folding.offSide: true` in both `languageConfiguration` and `foldingRange`).
 
 ---
 
@@ -128,27 +127,21 @@ Config/markup formats (`ignore`, `ini`, `dotenv`, `crontab`, `json`, `toml`, `xm
 `makefile`) are **correctly** thin — no action.
 
 In-use languages, worst first:
-- [ ] **P3.1 `julia`** — completion 63, hover 36, defs 17, sigs 15
-- [ ] **P3.2 `clojure`** — 52 / 37 / 19 / 15
-- [ ] **P3.3 `scheme`** — 50 / 40 / 22 / 15
-- [ ] **P3.4 `tcl`** — 58 / 39 / 20 / 16
-- [ ] **P3.5 `coffee`** — 57 / 38 / 14 / 30
+- [x] **P3.1 `julia`** — DONE. completion 63->82, hover 36->43, defs 17->29, types 15->25, sigs 15->25
+- [x] **P3.2 `clojure`** — DONE. completion 52->61, hover 37->44, defs 19->31, types ->17, sigs 15->25
+- [x] **P3.3 `scheme`** — DONE. completion 50->59, hover 40->45, defs 22->29, types ->14, sigs 15->25
+- [x] **P3.4 `tcl`** — DONE. completion 58->66, hover 39->45, defs 20->30, types ->12, sigs 16->24
+- [x] **P3.5 `coffee`** — DONE. completion 57->64, hover 38->45, defs 14->26, types ->14, sigs ->38
 
 Niche DSLs — thin is arguably acceptable, lowest priority:
-- [ ] **P3.6** `sb` `postiats` `cameligo` `lexon` `ecl` `powerquery` `pla`
+- [x] **P3.6** `sb` `powerquery` `ecl` `postiats` `cameligo` `lexon` `pla` — DONE. Real completions and hovers replacing templated one-liners (`sb` +4/+8, `powerquery` +1/+4, `ecl` +4, `postiats` +8, `cameligo` +8, `lexon` +6, `pla` +3/+8). Their definitions and typeDefinitions were rebuilt in the filler pass below.
 
 ---
 
 ## P4 — Shallow-everywhere providers
 
-- [ ] **P4.1 `signatureHelp` — 23 languages at 15-17 signatures** (12 at exactly 15):
-      `c clojure css go julia lua mysql nestjs perl php r redis rust scheme scss shadcn
-      sparql sql tcl twig vb` (+ javascript, typescript — excluded)
-- [ ] **P4.2 `typeDefinition` — 36 languages at <=8** (median 11 overall, min 4):
-      `awk azcli bicep caddy crontab css docker-compose dockerfile dotenv flow9
-      freemarker2 graphql html ignore ini json less lexon liquid makefile mdx mips nginx
-      perl pla redis-cli restructuredtext sb scss ssh-config systemd tailwindcss tcl toml
-      twig xml`
+- [x] **P4.1 `signatureHelp`** — DONE. Was 23 languages at <=17 signatures; now **3**, and two of those (`javascript` 15, `typescript` 16) are excluded by request. `haskell` is the third at 22 (new language, authored from scratch). Added across `go rust c sql php lua r perl mysql scss css redis twig nestjs shadcn vb sparql julia clojure scheme tcl coffee haskell`.
+- [x] **P4.2 `typeDefinition`** — DONE as far as it should go. `css` 4->24 (the real CSS Values and Units types), `html` 7->23, `tailwindcss` 4->14, plus rebuilt sets for every language touched in the filler pass. **The rest was a false alarm:** `ini`, `dotenv`, `ssh-config`, `crontab`, `ignore`, `makefile` have no type system, so 4-7 conceptual entries is correct and inventing types would be worse than the gap.
 
 ---
 
@@ -157,10 +150,9 @@ Niche DSLs — thin is arguably acceptable, lowest priority:
 Rich completion but thin definitions, so autocomplete feels good while Go-to-Definition
 mostly misses. Bring `definition` up toward the `completion` count:
 
-- [ ] **P5.1** `ruby` 175 -> 15 · `kotlin` 175 -> 22 · `tailwindcss` 256 -> 22
-- [ ] **P5.2** `dart` 159 -> 22 · `java` 123 -> 22 · `css` 130 -> 22 · `csharp` 95 -> 19
-- [ ] **P5.3** `lua` — 230 completions / 198 hovers but only **31** monarch keywords,
-      weakest highlighting of any mainstream language
+- [x] **P5.1** — DONE. `ruby` 15->**54**, `kotlin` 22->**52**, `tailwindcss` 22->**40**
+- [x] **P5.2** — DONE. `dart` 22->**42**, `java` 22->**49**, `css` 22->**42**, `csharp` 19->**41**
+- [x] **P5.3 WITHDRAWN — my metric was wrong, the data is right.** `lua` has exactly **22** reserved words (Lua's complete set) and **9** stdlib modules (also complete). Summing `keywords + typeKeywords` was never a depth signal. The same mistake produced the earlier "`ignore` monarchTokens empty" and "`crontab` no brackets" reports.
 
 `go` is a 10x outlier at the top (912 / 1177 / 1136) — not a defect, just generated
 differently. Useful as the reference for what "deep" looks like.
