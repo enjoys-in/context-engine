@@ -848,6 +848,49 @@ const ctx = getContextEngine('systemctl');
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
 
+**This package never executes detectors** — there is no `child_process` dependency. It hands
+you the list; running them is yours. `npm run validate` enforces that every shipped detector
+is read-only, but that is a guarantee about the data, not a sandbox.
+
+### Staged argument completion
+
+A positional argument whose values can be listed from live state carries a `completion`
+object naming a detector **in the same command**:
+
+```jsonc
+// data/commands/git.json — subcommands[] entry for "checkout"
+{
+  "name": "<branch>",
+  "type": "branch",
+  "required": false,
+  "description": "Branch or commit to switch to",
+  "completion": { "detector": "local_branches" }
+}
+```
+
+That is the whole link a terminal needs to turn `git checkout ⇥` into a list of your real
+branches. `args` is ordered, so walking it gives the staged flow — pick a value, advance to
+the next slot.
+
+The detector is chosen **per argument, not per type**, because the useful values depend on
+the verb:
+
+| slot | resolves to |
+|---|---|
+| `docker stop <container>` | `running_containers` |
+| `docker start <container>` | `all_containers` |
+| `systemctl unmask <unit>` | `masked_units` |
+| `systemctl reset-failed <unit>` | `failed_units` |
+| `brew install <formula>` | *(none — candidates live in a remote registry)* |
+
+335 slots are linked. Of the rest, `file`/`path`/`directory` args are for your own
+filesystem picker, and roughly a thousand are free-form (commit messages, SQL, expressions)
+where showing `description` is the whole feature.
+
+**→ See [XTERM_INTEGRATION.md](./XTERM_INTEGRATION.md)** for a full walkthrough: parsing the
+line, the space-encoded subcommand forms, caching, where detectors must execute, and how to
+render the menu.
+
 ## Every Monaco `languages.*` API — Shipped as Data
 
 All 30 data-driven `monaco.languages.*` APIs, implemented for all 96 languages with

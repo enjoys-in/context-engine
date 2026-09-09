@@ -178,7 +178,9 @@ Measured from disk:
 |---|---|
 | command files | **629** (612 unique names, 27 aliases) |
 | display categories | 56 |
-| `contextEngine` detectors | **629/629 files · 2,446 detectors** |
+| `contextEngine` detectors | **629/629 files · 2,447 detectors** |
+| args with a semantic `type` | **447** across 29 enumerable kinds |
+| args linked to a detector | **335** (`completion.detector`) |
 | leaf subcommands | **5,137** (plus 194 parent nodes) |
 | leaves with `options` | **4,687 — 91%** |
 | leaves with `args` | **1,732 — 34%** |
@@ -218,6 +220,43 @@ Measured from disk:
       place and were verified by reintroducing the bug.
 - [x] **C11 — `args` depth.** Leaves with args **1,286 -> 1,732**; the name-implies-a-target
       residual went **729 -> 397**.
+- [x] **C12 — staged argument completion wired.** An arg whose values can be listed from
+      live state now carries `completion: { detector }` naming a detector in the **same**
+      command — the one link that was missing between a slot and its values. **335 slots
+      linked**, **447 args given a semantic `type`** (`container`, `unit`, `image`, `branch`
+      …) in place of a bare `string`.
+
+      The detector is chosen **per argument, not per type**, because the useful values
+      depend on the verb: `docker stop` -> `running_containers`, `docker start` ->
+      `all_containers`, `systemctl unmask` -> `masked_units`, `reset-failed` ->
+      `failed_units`. A global `type -> detector` table cannot express that, which is why
+      the link lives on the arg.
+
+      **111 slots are deliberately left unlinked**: `brew install`, `npm install`,
+      `apt-get install` and friends take candidates from a remote registry, and no
+      read-only local probe can enumerate them. Leaving those empty is correct.
+
+      Authoring verified every reference at write time, which found exactly **one** genuinely
+      missing detector — `crictl.images`, now added. My earlier "150 missing detectors"
+      estimate was produced by substring-matching detector names and was simply wrong: the
+      detectors existed under different names (`argo` has `workflows`, `bundle` has
+      `gemfile_deps`). Third counting error of the same family; see the withdrawn list.
+- [x] **C13 — `index.d.ts` typed and repaired.** It described every command shape as `any`,
+      so TypeScript consumers got no help for the feature above. Added `Command`,
+      `Subcommand`, `CommandArg` (with `completion`), `CommandOption`, `Detector`,
+      `ArgType` and `DetectorParser`, each with an index signature so no existing property
+      access breaks. Typechecking it under `--strict` also surfaced two **pre-existing**
+      errors: the default-export block referenced `getRawExamples` and `getAllExamples`,
+      which exist in `index.js` but were never declared. Both now declared; the file is
+      clean under `--strict`.
+- [x] **C14 — `XTERM_INTEGRATION.md`.** A consumer guide for building the staged flow on
+      xterm.js: the two viable architectures (own the prompt vs. wrap a PTY, with the
+      trade-offs), longest-match parsing for the three subcommand name forms, the cache key
+      that must include `cwd`, where detectors have to execute when the terminal is in a
+      browser, and why the menu belongs in a DOM overlay rather than the terminal grid.
+      Shipped in `package.json` `files`. Every API name in it was checked against the real
+      exports — which caught two mistakes in my own draft (`listCommands` does not exist;
+      it is `listCommandNames`, and `k` is not an alias of `kubectl`).
 
 ### New enforcement in `build.mjs`
 
@@ -259,6 +298,10 @@ same mistake as the withdrawn findings below.
   *parent groups*, which correctly carry no options of their own. The real figure was
   **3,240**. Same class of error as P5.3 — count the thing you actually mean before
   calling it a gap.
+- **"150 detectors missing for enumerable arg slots" was wrong.** That came from
+  substring-matching detector names against arg kinds. Resolving the mapping properly found
+  **one** real gap (`crictl.images`); the rest were present under names the substring test
+  did not match. Same family as the two below — measure the thing itself, not a proxy for it.
 - **The three subcommand naming forms coexist by design**, and are not an inconsistency to
   normalise: **4,334 flat** names, **771 space-encoded** (`docker` uses `"network ls"`,
   `kubectl` uses `"create deployment"` — relative to the binary, no prefix), and **194
@@ -287,12 +330,12 @@ re-nestings and 0 `args`-count changes.
 
 ### OPEN
 
-- [ ] **C12 — `args` residual: 397 leaves** whose name implies a target but that still
+- [ ] **C15 — `args` residual: 397 leaves** whose name implies a target but that still
       carry none. Many are flag-driven rather than positional (`az group create --name`),
       so the true remainder is smaller; it needs per-command checking, not a bulk pass.
-- [ ] **C13 — `aws` breadth: 66 of ~300 services.** The remaining ~230 are narrow
+- [ ] **C16 — `aws` breadth: 66 of ~300 services.** The remaining ~230 are narrow
       services; better added on demand than padded in bulk.
-- [ ] **C14 — leaf `examples`: 2,620 of 5,137.** `git` is now complete at 154/154; the
+- [ ] **C17 — leaf `examples`: 2,620 of 5,137.** `git` is now complete at 154/154; the
       rest of the tree is the open half.
 
 ### Nested cloud-CLI caveat
@@ -307,12 +350,17 @@ correctly refused. These need path-keyed addressing (`"a > b > c"`), not a loose
 
 - **Commits are not mine to make.** This checkout is shared; another session owns
   committing, so expect the tree to move under you and do not commit from an agent turn.
-  Three command commits have landed (`63559b5` short/shorthand, `1d13046` cloud options,
-  `96d325e` Linux/network flags). **51 files from the C6 depth pass are uncommitted at the
-  time of writing** — `aws`, `git`, `gcloud`, `az`, `nomad`, `doctl`, `shadcn`, `linux`
-  and 43 others, ~25.4k insertions.
+  **That session also rebases**, so do not cite commit hashes in this file — the ones that
+  used to be here were orphaned by a history rewrite within a day of being written. Name
+  commits by subject line instead. Everything through *"detectors on every file, option
+  depth, and a validator that checks both"* has landed; the staged-completion work (C12–C14)
+  is uncommitted at the time of writing.
 - **Concurrent edits.** The same process wired `languageConfiguration` into the LSP — the
   30th-provider gap flagged earlier is closed, LSP and manifest are now 30/30 aligned.
   Coordinate before bulk data writes.
+- **`completion.detector` drift is unguarded in the build, by request.** A validator check
+  that every `completion.detector` names a real detector in its file was offered and
+  declined, so `build.mjs` does not enforce it. `test.js` does follow every link and fails
+  on a dangling one, so it is covered by `npm test` but not by `npm run validate`.
 - **Regression guard.** Add the two checks used here to CI: every JSON parses, and every
   pattern-field string compiles as a `RegExp`. Both would have caught T0 at authoring time.
