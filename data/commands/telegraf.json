@@ -120,5 +120,38 @@
     "vector",
     "fluent-bit",
     "influx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Telegraf version",
+        "command": "telegraf --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "telegraf"
+      },
+      {
+        "name": "config",
+        "description": "Telegraf configuration",
+        "command": "cat /etc/telegraf/telegraf.conf 2>/dev/null | grep -v '^ *#' | grep . | head -40",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "plugins",
+        "description": "Telegraf input plugins enabled",
+        "command": "grep -o '^\\[\\[inputs\\.[a-z_]*\\]\\]' /etc/telegraf/telegraf.conf 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "service",
+        "description": "Telegraf service state",
+        "command": "systemctl is-active telegraf 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

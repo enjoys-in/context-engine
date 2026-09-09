@@ -35,6 +35,20 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "alias",
+          "description": "Alias name to define",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "description": "S3 endpoint URL",
+          "required": true,
+          "type": "url"
+        }
       ]
     },
     {
@@ -134,6 +148,20 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source path or URL",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path or URL",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -158,6 +186,20 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source path or URL",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path or URL",
+          "required": true,
+          "type": "path"
         }
       ]
     },
@@ -208,6 +250,14 @@
           "description": "Remove every version",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "target",
+          "description": "Object or prefix to remove",
+          "required": true,
+          "type": "path"
         }
       ]
     },
@@ -328,6 +378,14 @@
           "type": "integer",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "target",
+          "description": "Object to print",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -439,6 +497,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Path to search under",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -446,6 +512,30 @@
       "description": "Diff objects",
       "examples": [
         "mc diff myminio/bucket1/ myminio/bucket2/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Compare recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        }
+      ],
+      "args": [
+        {
+          "name": "first",
+          "description": "First path to compare",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "second",
+          "description": "Second path to compare",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -496,7 +586,8 @@
       "description": "Manage encryption",
       "examples": [
         "mc encrypt set sse-s3 myminio/bucket/"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "event",
@@ -532,7 +623,8 @@
       "examples": [
         "mc version enable myminio/bucket",
         "mc version info myminio/bucket"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "retention",
@@ -639,5 +731,32 @@
     "aws",
     "gsutil",
     "rclone"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "MinIO client version",
+        "command": "mc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mc"
+      },
+      {
+        "name": "aliases",
+        "description": "Configured MinIO aliases",
+        "command": "mc alias list 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "mc"
+      },
+      {
+        "name": "config",
+        "description": "MinIO client configuration",
+        "command": "cat ~/.mc/config.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

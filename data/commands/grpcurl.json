@@ -77,5 +77,31 @@
     "httpie",
     "protoc",
     "buf"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "grpcurl version",
+        "command": "grpcurl --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "grpcurl"
+      },
+      {
+        "name": "protos",
+        "description": "Protocol buffer definitions in this project",
+        "command": "find . -maxdepth 4 -name '*.proto' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "descriptors",
+        "description": "Compiled descriptor sets available",
+        "command": "find . -maxdepth 3 -name '*.protoset' -o -maxdepth 3 -name '*.pb' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

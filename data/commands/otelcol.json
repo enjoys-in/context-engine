@@ -29,11 +29,13 @@
     },
     {
       "name": "components",
-      "description": "List the built-in components"
+      "description": "List the built-in components",
+      "options": []
     },
     {
       "name": "featuregate",
-      "description": "List the feature gates"
+      "description": "List the feature gates",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -93,5 +95,38 @@
     "prometheus",
     "vector",
     "telegraf"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "OpenTelemetry Collector version",
+        "command": "otelcol --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "otelcol"
+      },
+      {
+        "name": "config",
+        "description": "Collector pipeline configuration",
+        "command": "cat /etc/otelcol/config.yaml 2>/dev/null | head -50 || cat otel-collector-config.yaml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "service",
+        "description": "Collector service state",
+        "command": "systemctl is-active otelcol 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "endpoint",
+        "description": "OTLP exporter endpoint in effect",
+        "command": "echo \"${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

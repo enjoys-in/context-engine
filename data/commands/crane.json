@@ -19,6 +19,26 @@
       "description": "Pull remote image as tarball",
       "examples": [
         "crane pull nginx:latest nginx.tar"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platform to pull",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--format",
+          "description": "Output format: tarball, legacy or oci",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--cache_path",
+          "description": "Directory to cache layers in",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +46,20 @@
       "description": "Push tarball to registry",
       "examples": [
         "crane push image.tar registry/image:tag"
+      ],
+      "options": [
+        {
+          "name": "--image-refs",
+          "description": "Write the pushed references to this file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--index",
+          "description": "Push as a multi-platform index",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -33,6 +67,28 @@
       "description": "Copy image between registries",
       "examples": [
         "crane copy src/image:tag dest/image:tag"
+      ],
+      "options": [
+        {
+          "name": "--all-tags",
+          "description": "Copy every tag in the repository",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--jobs",
+          "description": "Number of concurrent copies",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--no-clobber",
+          "description": "Do not overwrite an existing destination",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -40,6 +96,26 @@
       "description": "Get image digest",
       "examples": [
         "crane digest nginx:latest"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platform whose digest to print",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--full-ref",
+          "description": "Print the fully qualified reference",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--tarball",
+          "description": "Read the image from this tarball",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -47,6 +123,14 @@
       "description": "Get image manifest",
       "examples": [
         "crane manifest nginx:latest"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platform whose manifest to print",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -54,6 +138,20 @@
       "description": "List tags",
       "examples": [
         "crane ls nginx"
+      ],
+      "options": [
+        {
+          "name": "--full-ref",
+          "description": "Print fully qualified references",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--omit-digest-tags",
+          "description": "Skip tags that are only digests",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -61,6 +159,14 @@
       "description": "Get image config",
       "examples": [
         "crane config nginx:latest"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platform whose config to print",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -68,6 +174,14 @@
       "description": "List repositories",
       "examples": [
         "crane catalog registry.example.com"
+      ],
+      "options": [
+        {
+          "name": "--full-ref",
+          "description": "Print fully qualified references",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -75,6 +189,30 @@
       "description": "Login to registry",
       "examples": [
         "crane auth login registry.example.com"
+      ],
+      "options": [
+        {
+          "name": "--username",
+          "description": "Registry username",
+          "type": "string",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--password",
+          "description": "Registry password",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--password-stdin",
+          "description": "Read the password from stdin",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -106,5 +244,31 @@
     "docker",
     "podman",
     "cosign"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "crane version",
+        "command": "crane version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "crane"
+      },
+      {
+        "name": "registry_auth",
+        "description": "Registries with stored credentials",
+        "command": "grep -o '\"[^\"]*\": *{' ~/.docker/config.json 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "dockerfiles",
+        "description": "Image build files present",
+        "command": "ls Dockerfile* 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

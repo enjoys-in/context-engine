@@ -50,5 +50,31 @@
     "readlink",
     "stat",
     "cp"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ln version",
+        "command": "ln --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ln"
+      },
+      {
+        "name": "symlinks",
+        "description": "Symbolic links in this directory",
+        "command": "find . -maxdepth 1 -type l -ls 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "writable",
+        "description": "Whether the current directory accepts new links",
+        "command": "test -w . && echo writable || echo read-only",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

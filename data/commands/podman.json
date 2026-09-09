@@ -100,6 +100,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -259,6 +267,14 @@
           "type": "file",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -285,6 +301,14 @@
           "description": "Manifest format",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -335,6 +359,20 @@
           "short": "-e",
           "shorthand": "-e"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to exec into",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "command",
+          "description": "Command to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -359,6 +397,14 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -393,6 +439,14 @@
           "short": "-v",
           "shorthand": "-v"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -417,6 +471,14 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -454,6 +516,14 @@
           "takesValue": false,
           "short": "-t",
           "shorthand": "-t"
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -595,5 +665,49 @@
     "buildah",
     "skopeo",
     "kubectl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Podman version",
+        "command": "podman version --format json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 3600,
+        "requiresCmd": "podman"
+      },
+      {
+        "name": "containers",
+        "description": "Podman containers",
+        "command": "podman ps --all --format '{{.Names}}\\t{{.Status}}' 2>/dev/null | head -25",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "podman"
+      },
+      {
+        "name": "images",
+        "description": "Podman images",
+        "command": "podman images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "podman"
+      },
+      {
+        "name": "pods",
+        "description": "Podman pods",
+        "command": "podman pod ps --format '{{.Name}}\\t{{.Status}}' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "podman"
+      },
+      {
+        "name": "machines",
+        "description": "Podman machines (rootless VM)",
+        "command": "podman machine list --format '{{.Name}}\\t{{.Running}}' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "podman"
+      }
+    ]
+  }
 }

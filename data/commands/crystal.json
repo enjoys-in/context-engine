@@ -17,6 +17,40 @@
       "description": "Compile program",
       "examples": [
         "crystal build src/main.cr"
+      ],
+      "options": [
+        {
+          "name": "--release",
+          "description": "Compile with optimisations",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--output",
+          "description": "Path for the output binary",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--static",
+          "description": "Link statically",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-debug",
+          "description": "Omit debug symbols",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--threads",
+          "description": "Number of compiler threads",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -24,6 +58,28 @@
       "description": "Compile and run",
       "examples": [
         "crystal run src/main.cr"
+      ],
+      "options": [
+        {
+          "name": "--release",
+          "description": "Compile with optimisations",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-debug",
+          "description": "Omit debug symbols",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Crystal source file to run",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -31,6 +87,26 @@
       "description": "Run spec tests",
       "examples": [
         "crystal spec"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--junit_output",
+          "description": "Write JUnit XML to this directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--tag",
+          "description": "Only run specs with this tag",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -39,6 +115,20 @@
       "examples": [
         "crystal init app myapp",
         "crystal init lib mylib"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Overwrite existing files",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--skip-existing",
+          "description": "Leave existing files alone",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -46,6 +136,28 @@
       "description": "Generate documentation",
       "examples": [
         "crystal docs"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Directory to write the docs to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--project-name",
+          "description": "Project name for the docs",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--project-version",
+          "description": "Project version for the docs",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -53,6 +165,14 @@
       "description": "Evaluate code from arguments",
       "examples": [
         "crystal eval 'puts 1 + 1'"
+      ],
+      "options": [
+        {
+          "name": "--release",
+          "description": "Compile with optimisations",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -60,6 +180,28 @@
       "description": "Format source code",
       "examples": [
         "crystal tool format"
+      ],
+      "options": [
+        {
+          "name": "--check",
+          "description": "Fail rather than rewriting files",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--include",
+          "description": "Only format paths matching this pattern",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Files or directories to format",
+          "required": false,
+          "type": "path"
+        }
       ]
     }
   ],
@@ -99,5 +241,38 @@
     "nim",
     "zig",
     "shards"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Crystal version",
+        "command": "crystal --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "crystal"
+      },
+      {
+        "name": "project",
+        "description": "Crystal shard definition",
+        "command": "cat shard.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "dependencies",
+        "description": "Installed Crystal shards",
+        "command": "ls lib 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sources",
+        "description": "Crystal sources",
+        "command": "find . -maxdepth 3 -name '*.cr' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

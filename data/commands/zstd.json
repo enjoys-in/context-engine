@@ -133,5 +133,31 @@
     "xz",
     "lz4",
     "tar"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Zstandard version",
+        "command": "zstd --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "zstd"
+      },
+      {
+        "name": "archives",
+        "description": "Zstandard archives in this directory",
+        "command": "find . -maxdepth 2 -name '*.zst' -o -name '*.tzst' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "cpu_count",
+        "description": "CPUs available for threaded compression",
+        "command": "nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

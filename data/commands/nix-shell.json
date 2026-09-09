@@ -113,5 +113,38 @@
     "nix-env",
     "direnv",
     "mise"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Nix version",
+        "command": "nix-shell --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nix-shell"
+      },
+      {
+        "name": "shell_file",
+        "description": "Nix shell definition in this project",
+        "command": "cat shell.nix 2>/dev/null | head -30 || cat default.nix 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "flake",
+        "description": "Flake definition in this project",
+        "command": "cat flake.nix 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "in_shell",
+        "description": "Whether this session is already in a nix shell",
+        "command": "echo \"${IN_NIX_SHELL:-no}\"",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

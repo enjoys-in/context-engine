@@ -116,5 +116,40 @@
     "go",
     "gopls",
     "gofmt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "staticcheck version",
+        "command": "staticcheck --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "staticcheck"
+      },
+      {
+        "name": "config",
+        "description": "staticcheck configuration",
+        "command": "cat staticcheck.conf 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "packages",
+        "description": "Packages staticcheck would analyse",
+        "command": "go list ./... 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "go_version",
+        "description": "Go toolchain in use",
+        "command": "go version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      }
+    ]
+  }
 }

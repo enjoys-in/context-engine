@@ -157,5 +157,38 @@
     "mongodump",
     "mongosh",
     "pg_restore"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mongorestore version",
+        "command": "mongorestore --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mongorestore"
+      },
+      {
+        "name": "connection",
+        "description": "MongoDB connection string in effect",
+        "command": "echo \"${MONGODB_URI:-mongodb://localhost:27017}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "dumps",
+        "description": "Dump directories available to restore",
+        "command": "ls -d dump */dump 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "bson_files",
+        "description": "BSON collection files present",
+        "command": "find . -maxdepth 3 -name '*.bson' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -25,6 +25,28 @@
         "cat manifest.yaml | kube-score score -",
         "helm template my-release my-chart | kube-score score -",
         "kube-score score --output-format ci manifest.yaml"
+      ],
+      "options": [
+        {
+          "name": "--output-format",
+          "description": "Output format: human, ci, json or sarif",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--ignore-test",
+          "description": "Test to skip",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--enable-optional-test",
+          "description": "Optional test to enable",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -32,14 +54,16 @@
       "description": "List available checks",
       "examples": [
         "kube-score list"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "version",
       "description": "Show version",
       "examples": [
         "kube-score version"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -87,5 +111,31 @@
     "kubeconform",
     "popeye",
     "trivy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kube-score version",
+        "command": "kube-score version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kube-score"
+      },
+      {
+        "name": "manifests",
+        "description": "Kubernetes manifests kube-score can check",
+        "command": "grep -rl '^kind:' --include='*.yaml' --include='*.yml' . 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "helm_charts",
+        "description": "Helm charts present",
+        "command": "find . -maxdepth 3 -name 'Chart.yaml' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

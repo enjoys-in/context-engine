@@ -149,6 +149,14 @@
         "npx shadcn@latest add card dialog",
         "npx shadcn@latest add --all",
         "npx shadcn@latest add button --overwrite"
+      ],
+      "args": [
+        {
+          "name": "component",
+          "description": "Components to add",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -176,6 +184,14 @@
         "npx shadcn@latest diff [component]",
         "npx shadcn@latest diff",
         "npx shadcn@latest diff button"
+      ],
+      "args": [
+        {
+          "name": "component",
+          "description": "Component to diff against upstream",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2968,5 +2984,37 @@
     "tailwindcss",
     "next",
     "vite"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "config",
+        "description": "shadcn/ui component configuration",
+        "command": "cat components.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "components",
+        "description": "shadcn/ui components installed",
+        "command": "ls components/ui 2>/dev/null || ls src/components/ui 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "tailwind",
+        "description": "Tailwind configuration shadcn depends on",
+        "command": "ls tailwind.config.js tailwind.config.ts 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -154,5 +154,44 @@
     "conda",
     "virtualenv",
     "pyenv"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Python interpreter version",
+        "command": "python3 --version 2>&1 || python --version 2>&1",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active Python virtual environment",
+        "command": "echo \"${VIRTUAL_ENV:-none}\"",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "executable",
+        "description": "Python interpreter that will run",
+        "command": "which python3 python 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "project",
+        "description": "Python project configuration",
+        "command": "cat pyproject.toml 2>/dev/null | head -40 || cat setup.py 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "requirements",
+        "description": "Dependency files in this project",
+        "command": "ls requirements*.txt Pipfile poetry.lock uv.lock 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

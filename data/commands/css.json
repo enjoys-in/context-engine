@@ -92,50 +92,222 @@
       "name": "\"**/*.css\"",
       "description": "Lint CSS files using glob",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--fix",
+          "description": "Apply fixes that can be applied automatically",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--formatter",
+          "description": "Output formatter to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--max-warnings",
+          "description": "Fail once warnings exceed this count",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--cache",
+          "description": "Only lint files that changed",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Report errors only",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "--fix \"**/*.css\"",
       "description": "Auto-fix CSS lint issues",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--formatter",
+          "description": "Output formatter to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--quiet",
+          "description": "Report errors only",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "--config path/to/.stylelintrc",
       "description": "Use a custom Stylelint config",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--config-basedir",
+          "description": "Directory to resolve config extends from",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--syntax css",
       "description": "Force CSS syntax",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--custom-syntax",
+          "description": "Custom syntax module to parse with",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "lint",
       "description": "Lint CSS files",
-      "usage": "stylelint '**/*.css'"
+      "usage": "stylelint '**/*.css'",
+      "options": [
+        {
+          "name": "--fix",
+          "description": "Apply fixes that can be applied automatically",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--formatter",
+          "description": "Output formatter to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--max-warnings",
+          "description": "Fail once warnings exceed this count",
+          "type": "integer",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Stylesheets to lint",
+          "required": false,
+          "type": "path"
+        }
+      ]
     },
     {
       "name": "format",
       "description": "Format CSS files",
-      "usage": "prettier --write '**/*.css'"
+      "usage": "prettier --write '**/*.css'",
+      "options": [
+        {
+          "name": "--write",
+          "description": "Rewrite the files in place",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--check",
+          "description": "Fail rather than rewriting files",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--config",
+          "description": "Prettier config file to use",
+          "type": "file",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Stylesheets to format",
+          "required": false,
+          "type": "path"
+        }
+      ]
     },
     {
       "name": "minify",
       "description": "Minify CSS",
-      "usage": "cssnano input.css output.css"
+      "usage": "cssnano input.css output.css",
+      "options": [
+        {
+          "name": "--output",
+          "description": "File to write the minified CSS to",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--source-map",
+          "description": "Generate a source map",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "prefix",
       "description": "Add vendor prefixes",
-      "usage": "postcss input.css --use autoprefixer -o output.css"
+      "usage": "postcss input.css --use autoprefixer -o output.css",
+      "options": [
+        {
+          "name": "--browsers",
+          "description": "Browser targets to prefix for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--no-remove",
+          "description": "Keep prefixes that are no longer needed",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "purge",
       "description": "Remove unused CSS",
-      "usage": "purgecss --css style.css --content index.html"
+      "usage": "purgecss --css style.css --content index.html",
+      "options": [
+        {
+          "name": "--content",
+          "description": "Content globs to scan for used classes",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--safelist",
+          "description": "Selectors to keep regardless",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Directory to write the purged CSS to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     }
   ],
   "examples": [
@@ -161,5 +333,37 @@
     "eslint",
     "sass",
     "postcss"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Stylelint version",
+        "command": "stylelint --version 2>/dev/null || npx stylelint --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Stylelint configuration",
+        "command": "cat .stylelintrc 2>/dev/null || cat .stylelintrc.json 2>/dev/null || grep -A20 '\"stylelint\"' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "stylesheets",
+        "description": "Stylesheets in this project",
+        "command": "find . -maxdepth 3 -name '*.css' -not -path './node_modules/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

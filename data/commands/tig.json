@@ -16,7 +16,27 @@
   "subcommands": [
     {
       "name": "log",
-      "description": "Browse the commit log"
+      "description": "Browse the commit log",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Include every reference",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--follow",
+          "description": "Follow renames",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-merges",
+          "description": "Skip merge commits",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "show",
@@ -27,6 +47,26 @@
           "description": "Commit to show",
           "type": "string",
           "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Include every reference",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--follow",
+          "description": "Follow renames",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-merges",
+          "description": "Skip merge commits",
+          "type": "boolean",
+          "takesValue": false
         }
       ]
     },
@@ -40,19 +80,30 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--follow",
+          "description": "Follow renames",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
       "name": "status",
-      "description": "Browse the working tree status"
+      "description": "Browse the working tree status",
+      "options": []
     },
     {
       "name": "stash",
-      "description": "Browse the stash"
+      "description": "Browse the stash",
+      "options": []
     },
     {
       "name": "refs",
-      "description": "Browse branches and tags"
+      "description": "Browse branches and tags",
+      "options": []
     },
     {
       "name": "grep",
@@ -63,6 +114,16 @@
           "description": "Pattern to search for",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--ignore-case",
+          "description": "Case-insensitive matching",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
         }
       ]
     }
@@ -130,5 +191,40 @@
     "lazygit",
     "gitui",
     "delta"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "tig version",
+        "command": "tig --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "tig"
+      },
+      {
+        "name": "repo",
+        "description": "Git repository tig would browse",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "branch",
+        "description": "Active git branch",
+        "command": "git rev-parse --abbrev-ref HEAD 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "config",
+        "description": "tig configuration",
+        "command": "cat ~/.tigrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -122,5 +122,38 @@
     "pyright",
     "pytype",
     "python"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mypy version",
+        "command": "mypy --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mypy"
+      },
+      {
+        "name": "config",
+        "description": "mypy configuration",
+        "command": "cat mypy.ini 2>/dev/null || grep -A20 '\\[tool.mypy\\]' pyproject.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "cache",
+        "description": "mypy incremental cache present",
+        "command": "ls .mypy_cache 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active Python virtual environment",
+        "command": "echo \"${VIRTUAL_ENV:-none}\"",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

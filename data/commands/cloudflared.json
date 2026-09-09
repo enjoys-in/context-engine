@@ -26,6 +26,32 @@
         "cloudflared tunnel route ip add 10.0.0.0/8 my-tunnel",
         "cloudflared tunnel info my-tunnel",
         "cloudflared tunnel cleanup my-tunnel"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--credentials-file",
+          "description": "Tunnel credentials file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--url",
+          "description": "Local service to expose",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--loglevel",
+          "description": "Log verbosity level",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -33,6 +59,14 @@
       "description": "Authenticate with Cloudflare",
       "examples": [
         "cloudflared tunnel login"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -42,6 +76,26 @@
         "cloudflared access login https://app.example.com",
         "cloudflared access ssh --hostname ssh.example.com",
         "cloudflared access tcp --hostname tcp.example.com --url localhost:5432"
+      ],
+      "options": [
+        {
+          "name": "--hostname",
+          "description": "Protected hostname to reach",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--url",
+          "description": "Local address to bind",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--service-token-id",
+          "description": "Service token id to authenticate with",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -50,6 +104,14 @@
       "examples": [
         "cloudflared service install",
         "cloudflared service uninstall"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -58,6 +120,26 @@
       "examples": [
         "cloudflared proxy-dns",
         "cloudflared proxy-dns --port 5053 --upstream https://1.1.1.1/dns-query"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the DNS proxy listens on",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--address",
+          "description": "Address the DNS proxy binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--upstream",
+          "description": "Upstream DNS-over-HTTPS endpoint",
+          "type": "url",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -65,6 +147,20 @@
       "description": "Update cloudflared",
       "examples": [
         "cloudflared update"
+      ],
+      "options": [
+        {
+          "name": "--beta",
+          "description": "Update to the latest beta build",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--version",
+          "description": "Update to this specific version",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -72,13 +168,22 @@
       "description": "Show version",
       "examples": [
         "cloudflared version"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "quick-tunnel",
       "description": "Start a quick tunnel (trycloudflare)",
       "examples": [
         "cloudflared tunnel --url http://localhost:8080"
+      ],
+      "options": [
+        {
+          "name": "--url",
+          "description": "Local service to expose",
+          "type": "url",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -135,5 +240,39 @@
     "nginx",
     "ngrok",
     "caddy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "cloudflared version",
+        "command": "cloudflared --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "cloudflared"
+      },
+      {
+        "name": "tunnels",
+        "description": "Cloudflare tunnels for this account",
+        "command": "cloudflared tunnel list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "cloudflared"
+      },
+      {
+        "name": "config",
+        "description": "cloudflared tunnel configuration",
+        "command": "cat ~/.cloudflared/config.yml 2>/dev/null || cat /etc/cloudflared/config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "credentials",
+        "description": "Tunnel credential files present",
+        "command": "ls ~/.cloudflared/*.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

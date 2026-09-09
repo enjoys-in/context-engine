@@ -92,50 +92,192 @@
       "name": "--init",
       "description": "Create tsconfig.json",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--rootDir",
+          "description": "Root directory of the input files",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--outDir",
+          "description": "Directory for the emitted output",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--strict",
+          "description": "Enable every strict type-checking option",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "--watch",
       "description": "Watch mode",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--preserveWatchOutput",
+          "description": "Do not clear the screen between rebuilds",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--incremental",
+          "description": "Reuse information from a previous compile",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "file.ts",
       "description": "Compile file",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--outFile",
+          "description": "Concatenate the output into this file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--target",
+          "description": "ECMAScript target version",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--module",
+          "description": "Module system to emit",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--noEmit",
       "description": "Type check only",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--pretty",
+          "description": "Use colour and formatting in diagnostics",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--incremental",
+          "description": "Reuse information from a previous compile",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "check",
       "description": "Type-check without emitting",
-      "usage": "tsc --noEmit"
+      "usage": "tsc --noEmit",
+      "options": [
+        {
+          "name": "--noEmit",
+          "description": "Type-check without emitting output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--pretty",
+          "description": "Use colour and formatting in diagnostics",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "init",
       "description": "Create tsconfig.json",
-      "usage": "tsc --init"
+      "usage": "tsc --init",
+      "options": [
+        {
+          "name": "--strict",
+          "description": "Enable every strict type-checking option",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "watch",
       "description": "Watch mode compilation",
-      "usage": "tsc --watch"
+      "usage": "tsc --watch",
+      "options": [
+        {
+          "name": "--preserveWatchOutput",
+          "description": "Do not clear the screen between rebuilds",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "build",
       "description": "Build project references",
-      "usage": "tsc --build"
+      "usage": "tsc --build",
+      "options": [
+        {
+          "name": "--clean",
+          "description": "Delete the outputs of the referenced projects",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force",
+          "description": "Rebuild even when up to date",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--dry",
+          "description": "Report what would be built",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--verbose",
+          "description": "Explain the build ordering",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "declaration",
       "description": "Generate declaration files",
-      "usage": "tsc --declaration"
+      "usage": "tsc --declaration",
+      "options": [
+        {
+          "name": "--declarationDir",
+          "description": "Directory for the emitted declarations",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--declarationMap",
+          "description": "Emit source maps for the declarations",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--emitDeclarationOnly",
+          "description": "Emit declarations without JavaScript",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "examples": [
@@ -165,5 +307,44 @@
     "ts-node",
     "tsx",
     "eslint"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "TypeScript compiler version",
+        "command": "tsc --version 2>/dev/null || npx tsc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "TypeScript compiler configuration",
+        "command": "cat tsconfig.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "project_refs",
+        "description": "Project references declared",
+        "command": "grep -A10 '\"references\"' tsconfig.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

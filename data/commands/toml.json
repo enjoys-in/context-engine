@@ -103,7 +103,12 @@
       "name": "format",
       "description": "Format TOML files with taplo",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "TOML files to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -124,7 +129,12 @@
       "name": "lint",
       "description": "Lint TOML files for schema compliance",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "TOML files to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -139,18 +149,56 @@
       "name": "get",
       "description": "Get a value from a TOML file by key path",
       "args": [
-        "file",
-        "key"
+        {
+          "name": "file",
+          "description": "TOML file to act on",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "key",
+          "description": "Key to act on",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--output-format",
+          "description": "Output format: toml, json or value",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--strip-newline",
+          "description": "Omit the trailing newline",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "set",
       "description": "Set a value in a TOML file",
       "args": [
-        "file",
-        "key",
-        "value"
+        {
+          "name": "file",
+          "description": "TOML file to act on",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "key",
+          "description": "Key to act on",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "description": "Value to set",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -165,7 +213,12 @@
       "name": "validate",
       "description": "Validate TOML file syntax",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "TOML file to act on",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -180,7 +233,12 @@
       "name": "convert",
       "description": "Convert TOML to JSON or YAML",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "TOML file to act on",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -204,5 +262,38 @@
     "json",
     "ini",
     "jq"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "taplo version",
+        "command": "taplo --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "taplo"
+      },
+      {
+        "name": "toml_files",
+        "description": "TOML files in this project",
+        "command": "find . -maxdepth 3 -name '*.toml' -not -path './node_modules/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "taplo configuration",
+        "command": "cat .taplo.toml 2>/dev/null || cat taplo.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "alternatives",
+        "description": "Other TOML tools available",
+        "command": "which dasel toml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

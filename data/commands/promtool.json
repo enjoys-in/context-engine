@@ -17,7 +17,21 @@
   "subcommands": [
     {
       "name": "check",
-      "description": "Validate configuration, rules and metrics"
+      "description": "Validate configuration, rules and metrics",
+      "options": [
+        {
+          "name": "--syntax-only",
+          "description": "Only check the syntax",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--lint",
+          "description": "Lint checks to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "query",
@@ -47,6 +61,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Query subcommand: instant, range, series or labels",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -59,19 +81,53 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--junit",
+          "description": "Write JUnit XML results here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "debug",
-      "description": "Fetch debug information from a server"
+      "description": "Fetch debug information from a server",
+      "options": [
+        {
+          "name": "--server",
+          "description": "Prometheus server to query",
+          "type": "url",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "tsdb",
-      "description": "Inspect and repair the time-series database"
+      "description": "Inspect and repair the time-series database",
+      "options": [
+        {
+          "name": "--human-readable",
+          "description": "Print sizes in human-readable units",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-h",
+          "shorthand": "-h"
+        }
+      ]
     },
     {
       "name": "promql",
-      "description": "Format and inspect PromQL expressions"
+      "description": "Format and inspect PromQL expressions",
+      "options": [
+        {
+          "name": "--server",
+          "description": "Prometheus server to query",
+          "type": "url",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -119,5 +175,32 @@
     "amtool",
     "grafana-cli",
     "logcli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "promtool version",
+        "command": "promtool --version 2>&1 | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "promtool"
+      },
+      {
+        "name": "config_check",
+        "description": "Whether the Prometheus config validates",
+        "command": "promtool check config /etc/prometheus/prometheus.yml 2>/dev/null || promtool check config prometheus.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "promtool"
+      },
+      {
+        "name": "rule_files",
+        "description": "Alerting and recording rule files present",
+        "command": "find . /etc/prometheus -maxdepth 2 -name '*.rules' -o -maxdepth 2 -name '*rules*.yml' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

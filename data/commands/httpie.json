@@ -112,5 +112,38 @@
     "wget",
     "postman",
     "ab"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "HTTPie version",
+        "command": "http --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "http"
+      },
+      {
+        "name": "config",
+        "description": "HTTPie configuration",
+        "command": "cat ~/.config/httpie/config.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300
+      },
+      {
+        "name": "sessions",
+        "description": "HTTPie sessions stored locally",
+        "command": "ls ~/.config/httpie/sessions 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "proxy",
+        "description": "Proxy configuration in effect",
+        "command": "echo \"http=${http_proxy:-unset} https=${https_proxy:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

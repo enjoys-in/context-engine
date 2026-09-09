@@ -292,6 +292,16 @@
       "examples": [
         "velero snapshot-location get",
         "velero snapshot-location create default --provider aws --config region=us-east-1"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Velero namespace",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -300,6 +310,16 @@
       "examples": [
         "velero plugin get",
         "velero plugin add velero/velero-plugin-for-aws:v1.5.0"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Velero namespace",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -307,6 +327,22 @@
       "description": "Uninstall Velero",
       "examples": [
         "velero uninstall"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Velero namespace",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--force",
+          "description": "Uninstall without confirming",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -369,5 +405,49 @@
     "helm",
     "restic",
     "etcdctl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Velero CLI and server versions",
+        "command": "velero version --client-only 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "velero"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "backups",
+        "description": "Velero backups",
+        "command": "velero backup get 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "velero"
+      },
+      {
+        "name": "schedules",
+        "description": "Velero backup schedules",
+        "command": "velero schedule get 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "velero"
+      }
+    ]
+  }
 }

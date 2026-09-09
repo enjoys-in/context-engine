@@ -170,5 +170,39 @@
     "hydra",
     "openssl",
     "gpg"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "hashcat version",
+        "command": "hashcat --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hashcat"
+      },
+      {
+        "name": "devices",
+        "description": "Compute devices hashcat can use",
+        "command": "hashcat -I 2>/dev/null | head -25",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hashcat"
+      },
+      {
+        "name": "hash_files",
+        "description": "Hash files present for cracking",
+        "command": "find . -maxdepth 2 -name '*.hash' -o -maxdepth 2 -name '*.hccapx' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "potfile",
+        "description": "hashcat recovered-hash potfile",
+        "command": "ls -l ~/.local/share/hashcat/hashcat.potfile 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

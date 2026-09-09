@@ -33,6 +33,14 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Configuration files to validate",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -111,6 +119,20 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Write the generated config here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--fragment",
+          "description": "Emit a config fragment only",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -129,7 +151,15 @@
     },
     {
       "name": "list",
-      "description": "List the available components"
+      "description": "List the available components",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: text, json or avro",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -225,5 +255,39 @@
     "telegraf",
     "otelcol",
     "logcli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Vector version",
+        "command": "vector --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "vector"
+      },
+      {
+        "name": "config",
+        "description": "Vector topology configuration",
+        "command": "cat /etc/vector/vector.toml 2>/dev/null | head -40 || cat vector.toml 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "config_check",
+        "description": "Whether the Vector config validates",
+        "command": "vector validate --no-environment 2>/dev/null | tail -10",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "vector"
+      },
+      {
+        "name": "service",
+        "description": "Vector service state",
+        "command": "systemctl is-active vector 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

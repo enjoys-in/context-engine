@@ -98,45 +98,161 @@
       "name": "script.jl",
       "description": "Run Julia script",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project environment to activate",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--threads",
+          "description": "Number of threads to start",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--procs",
+          "description": "Number of worker processes",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--optimize",
+          "description": "Optimisation level",
+          "type": "string",
+          "takesValue": true,
+          "short": "-O",
+          "shorthand": "-O"
+        }
+      ]
     },
     {
       "name": "-e 'expression'",
       "description": "Evaluate expression",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project environment to activate",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--threads",
+          "description": "Number of threads to start",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        }
+      ]
     },
     {
       "name": "--project=.",
       "description": "Activate project environment",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--threads",
+          "description": "Number of threads to start",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--startup-file",
+          "description": "Whether to load the startup file",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-t auto",
       "description": "Start with auto threads",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project environment to activate",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "test",
       "description": "Run package tests",
-      "usage": "julia -e 'using Pkg; Pkg.test()'"
+      "usage": "julia -e 'using Pkg; Pkg.test()'",
+      "options": [
+        {
+          "name": "--coverage",
+          "description": "Collect coverage information",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--threads",
+          "description": "Number of threads to start",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        }
+      ]
     },
     {
       "name": "add",
       "description": "Add a package",
-      "usage": "julia -e 'using Pkg; Pkg.add(\"PackageName\")'"
+      "usage": "julia -e 'using Pkg; Pkg.add(\"PackageName\")'",
+      "options": [
+        {
+          "name": "--preserve",
+          "description": "Dependency preservation strategy",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "package",
+          "description": "Packages to add",
+          "required": true,
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "build",
       "description": "Build a package",
-      "usage": "julia -e 'using Pkg; Pkg.build()'"
+      "usage": "julia -e 'using Pkg; Pkg.build()'",
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose build output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "precompile",
       "description": "Precompile packages",
-      "usage": "julia -e 'using Pkg; Pkg.precompile()'"
+      "usage": "julia -e 'using Pkg; Pkg.precompile()'",
+      "options": [
+        {
+          "name": "--strict",
+          "description": "Fail when any package cannot precompile",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "examples": [
@@ -162,5 +278,38 @@
     "Rscript",
     "conda",
     "pkg"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Julia version",
+        "command": "julia --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "julia"
+      },
+      {
+        "name": "project",
+        "description": "Julia project definition",
+        "command": "cat Project.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "depot",
+        "description": "Julia depot path",
+        "command": "echo \"${JULIA_DEPOT_PATH:-$HOME/.julia}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "sources",
+        "description": "Julia sources",
+        "command": "find . -maxdepth 3 -name '*.jl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

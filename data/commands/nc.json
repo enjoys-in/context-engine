@@ -70,5 +70,24 @@
     "nmap",
     "curl",
     "telnet"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "netcat variant and version",
+        "command": "nc -h 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nc"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

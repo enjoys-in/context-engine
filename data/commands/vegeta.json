@@ -19,6 +19,44 @@
       "description": "Send requests at a given rate",
       "examples": [
         "vegeta attack -rate=50 -duration=30s"
+      ],
+      "options": [
+        {
+          "name": "-rate",
+          "description": "Requests per time unit",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-duration",
+          "description": "How long to attack for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-targets",
+          "description": "Targets file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "-output",
+          "description": "Write the results here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "-timeout",
+          "description": "Per-request timeout",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-workers",
+          "description": "Initial number of workers",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +64,20 @@
       "description": "Generate report from results",
       "examples": [
         "vegeta report"
+      ],
+      "options": [
+        {
+          "name": "-type",
+          "description": "Report type: text, json or hist",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-output",
+          "description": "Write the report here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -33,6 +85,20 @@
       "description": "Encode results",
       "examples": [
         "vegeta encode"
+      ],
+      "options": [
+        {
+          "name": "-to",
+          "description": "Format to encode to: json or gob",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-output",
+          "description": "Write the encoded results here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -40,6 +106,26 @@
       "description": "Generate HTML plot",
       "examples": [
         "vegeta plot > plot.html"
+      ],
+      "options": [
+        {
+          "name": "-title",
+          "description": "Title for the plot",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-threshold",
+          "description": "Threshold for the plot buckets",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "-output",
+          "description": "Write the plot here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -74,5 +160,31 @@
     "hey",
     "ab",
     "k6"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Vegeta version",
+        "command": "vegeta --version 2>&1 | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "vegeta"
+      },
+      {
+        "name": "targets",
+        "description": "Vegeta target files in this project",
+        "command": "find . -maxdepth 2 -name '*targets*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "open_files",
+        "description": "File descriptor limit that caps request rate",
+        "command": "ulimit -n 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

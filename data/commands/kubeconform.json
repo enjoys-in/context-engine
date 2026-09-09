@@ -101,5 +101,31 @@
     "kubeval",
     "kube-score",
     "helm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kubeconform version",
+        "command": "kubeconform -v 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kubeconform"
+      },
+      {
+        "name": "manifests",
+        "description": "Kubernetes manifests kubeconform can validate",
+        "command": "grep -rl '^kind:' --include='*.yaml' --include='*.yml' . 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "kustomizations",
+        "description": "Kustomize overlays present",
+        "command": "find . -maxdepth 3 -name 'kustomization.yaml' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

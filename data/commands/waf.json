@@ -81,23 +81,44 @@
     },
     {
       "name": "uninstall",
-      "description": "Remove the installed artifacts"
+      "description": "Remove the installed artifacts",
+      "options": [
+        {
+          "name": "--destdir",
+          "description": "Staging directory to remove from",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "clean",
-      "description": "Remove the build outputs"
+      "description": "Remove the build outputs",
+      "options": []
     },
     {
       "name": "distclean",
-      "description": "Remove the build outputs and configuration"
+      "description": "Remove the build outputs and configuration",
+      "options": []
     },
     {
       "name": "dist",
-      "description": "Create a source archive"
+      "description": "Create a source archive",
+      "options": [
+        {
+          "name": "--jobs",
+          "description": "Number of parallel jobs",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        }
+      ]
     },
     {
       "name": "list",
-      "description": "List the available targets"
+      "description": "List the available targets",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -159,5 +180,37 @@
     "meson",
     "make",
     "ninja"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "waf version",
+        "command": "./waf --version 2>/dev/null || waf --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "script",
+        "description": "waf build script",
+        "command": "cat wscript 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "build_dir",
+        "description": "waf build output directory",
+        "command": "ls -d build 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "python",
+        "description": "Python interpreter waf runs on",
+        "command": "python3 --version 2>&1",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

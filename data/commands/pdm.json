@@ -141,7 +141,25 @@
     },
     {
       "name": "run",
-      "description": "Run a command in the project environment"
+      "description": "Run a command in the project environment",
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project directory to act on",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Script or command to run",
+          "required": false,
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "build",
@@ -173,7 +191,17 @@
     },
     {
       "name": "venv",
-      "description": "Manage virtual environments"
+      "description": "Manage virtual environments",
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project directory to act on",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     },
     {
       "name": "list",
@@ -251,5 +279,40 @@
     "poetry",
     "hatch",
     "pip"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "PDM version",
+        "command": "pdm --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pdm"
+      },
+      {
+        "name": "pyproject",
+        "description": "Python project configuration",
+        "command": "cat pyproject.toml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "python",
+        "description": "Python interpreter PDM is using",
+        "command": "pdm info --python 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "pdm"
+      },
+      {
+        "name": "venv",
+        "description": "PDM-managed virtual environments",
+        "command": "pdm venv list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "pdm"
+      }
+    ]
+  }
 }

@@ -259,6 +259,14 @@
         "git commit -am 'quick fix'",
         "git commit --amend --no-edit",
         "git commit --fixup HEAD~2"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -901,6 +909,20 @@
         "git log --graph --all --oneline --decorate",
         "git log --author='name' --since='2024-01-01'",
         "git log --stat"
+      ],
+      "args": [
+        {
+          "name": "revision-range",
+          "description": "Commit range to list",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "pathspec",
+          "description": "Limit history to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -984,6 +1006,14 @@
         "git status -s",
         "git status -sb",
         "git status --porcelain"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1185,6 +1215,14 @@
         "git clean -fd",
         "git clean -fdn",
         "git clean -fdx"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1218,6 +1256,14 @@
           "description": "Print more detail",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "ref",
+          "description": "Reference whose reflog to show",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -1416,6 +1462,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git show HEAD",
+        "git show v1.2.0:src/index.js"
+      ],
+      "args": [
+        {
+          "name": "object",
+          "description": "Object or revision to act on",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -1439,6 +1497,18 @@
           "description": "Append a marker when the tree is dirty",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git describe --tags",
+        "git describe --always --dirty"
+      ],
+      "args": [
+        {
+          "name": "commit-ish",
+          "description": "Commit to describe",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -1470,6 +1540,19 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git rev-parse HEAD",
+        "git rev-parse --abbrev-ref HEAD",
+        "git rev-parse --show-toplevel"
+      ],
+      "args": [
+        {
+          "name": "args",
+          "description": "Revision or option to parse",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -1498,6 +1581,18 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "examples": [
+        "git rm src/old.js",
+        "git rm --cached .env"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Paths to remove from the index",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1519,6 +1614,23 @@
           "takesValue": false,
           "short": "-n",
           "shorthand": "-n"
+        }
+      ],
+      "examples": [
+        "git mv src/old.js src/new.js"
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Path to move",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "New path",
+          "required": true,
+          "type": "path"
         }
       ]
     },
@@ -1554,6 +1666,18 @@
           "short": "-R",
           "shorthand": "-R"
         }
+      ],
+      "examples": [
+        "git apply fix.patch",
+        "git apply --check fix.patch"
+      ],
+      "args": [
+        {
+          "name": "patch",
+          "description": "Patch file to apply",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -1586,6 +1710,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git am < patch.mbox",
+        "git am --abort"
+      ],
+      "args": [
+        {
+          "name": "mbox",
+          "description": "Mailbox file holding the patches",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -1612,6 +1748,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git format-patch -1 HEAD",
+        "git format-patch origin/main..HEAD -o patches/"
+      ],
+      "args": [
+        {
+          "name": "revision-range",
+          "description": "Commit range to format",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -1635,6 +1783,17 @@
           "description": "Do not actually send",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git send-email --to=maintainer@example.com patches/"
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Patch files or directory to send",
+          "required": true,
+          "type": "path"
         }
       ]
     },
@@ -1665,6 +1824,18 @@
           "takesValue": false,
           "short": "-p",
           "shorthand": "-p"
+        }
+      ],
+      "examples": [
+        "git cat-file -p HEAD",
+        "git cat-file -t 4b825dc"
+      ],
+      "args": [
+        {
+          "name": "object",
+          "description": "Object to print",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -1704,6 +1875,18 @@
           "short": "-s",
           "shorthand": "-s"
         }
+      ],
+      "examples": [
+        "git ls-files",
+        "git ls-files --others --exclude-standard"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1727,6 +1910,18 @@
           "description": "Exit non-zero when no refs match",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git ls-remote origin",
+        "git ls-remote --tags origin"
+      ],
+      "args": [
+        {
+          "name": "repository",
+          "description": "Repository to query",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -1756,6 +1951,24 @@
           "short": "-l",
           "shorthand": "-l"
         }
+      ],
+      "examples": [
+        "git ls-tree HEAD",
+        "git ls-tree -r --name-only HEAD"
+      ],
+      "args": [
+        {
+          "name": "tree-ish",
+          "description": "Tree to list",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "pathspec",
+          "description": "Limit to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1782,6 +1995,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git archive --format=tar.gz -o release.tar.gz HEAD",
+        "git archive --prefix=app/ HEAD | tar -x -C /tmp"
+      ],
+      "args": [
+        {
+          "name": "tree-ish",
+          "description": "Tree to archive",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -1806,6 +2031,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git gc",
+        "git gc --aggressive --prune=now"
       ]
     },
     {
@@ -1830,6 +2059,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git fsck",
+        "git fsck --unreachable"
       ]
     },
     {
@@ -1852,6 +2085,10 @@
           "short": "-v",
           "shorthand": "-v"
         }
+      ],
+      "examples": [
+        "git prune --dry-run",
+        "git prune --verbose"
       ]
     },
     {
@@ -1863,6 +2100,18 @@
           "description": "Notes ref to operate on",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git notes add -m 'reviewed' HEAD",
+        "git notes show HEAD"
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Notes subcommand to run",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -1891,6 +2140,18 @@
           "description": "Resume after resolving conflicts",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git revert HEAD",
+        "git revert --no-commit abc1234"
+      ],
+      "args": [
+        {
+          "name": "commit",
+          "description": "Commit to revert",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -1921,6 +2182,18 @@
           "takesValue": false,
           "short": "-e",
           "shorthand": "-e"
+        }
+      ],
+      "examples": [
+        "git shortlog -sn",
+        "git shortlog -sne --no-merges"
+      ],
+      "args": [
+        {
+          "name": "revision-range",
+          "description": "Commit range to summarise",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -1960,6 +2233,24 @@
           "short": "-c",
           "shorthand": "-c"
         }
+      ],
+      "examples": [
+        "git grep 'TODO'",
+        "git grep -n 'useState' -- '*.tsx'"
+      ],
+      "args": [
+        {
+          "name": "pattern",
+          "description": "Pattern to search for",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "pathspec",
+          "description": "Limit the search to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -1990,6 +2281,18 @@
           "short": "-y",
           "shorthand": "-y"
         }
+      ],
+      "examples": [
+        "git difftool HEAD~1",
+        "git difftool --tool=vimdiff"
+      ],
+      "args": [
+        {
+          "name": "commit",
+          "description": "Commit or range to diff",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2012,6 +2315,18 @@
           "short": "-y",
           "shorthand": "-y"
         }
+      ],
+      "examples": [
+        "git mergetool",
+        "git mergetool --tool=meld"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -2023,6 +2338,18 @@
           "description": "Stage resolutions automatically",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git rerere status",
+        "git rerere diff"
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Rerere subcommand to run",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -2036,6 +2363,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git bundle create repo.bundle --all",
+        "git bundle verify repo.bundle"
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Bundle file to act on",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -2047,6 +2386,18 @@
           "description": "Use cone mode patterns",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git sparse-checkout init --cone",
+        "git sparse-checkout set src/ docs/"
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Sparse-checkout subcommand to run",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2066,6 +2417,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git maintenance start",
+        "git maintenance run --task=gc"
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Maintenance subcommand to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2077,6 +2440,18 @@
           "description": "Similarity threshold for pairing",
           "type": "integer",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git range-diff main...feature",
+        "git range-diff HEAD~3..HEAD origin/main"
+      ],
+      "args": [
+        {
+          "name": "range",
+          "description": "Commit ranges to compare",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2091,6 +2466,18 @@
           "takesValue": false,
           "short": "-v",
           "shorthand": "-v"
+        }
+      ],
+      "examples": [
+        "git cherry -v origin/main",
+        "git cherry main feature"
+      ],
+      "args": [
+        {
+          "name": "upstream",
+          "description": "Upstream branch to compare against",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -2109,6 +2496,18 @@
           "description": "Test whether one commit is an ancestor",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git merge-base main feature",
+        "git merge-base --fork-point origin/main"
+      ],
+      "args": [
+        {
+          "name": "commit",
+          "description": "Commits to find the merge base of",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2134,6 +2533,18 @@
           "type": "integer",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git for-each-ref --sort=-committerdate refs/heads/",
+        "git for-each-ref --format='%(refname:short)' refs/tags/"
+      ],
+      "args": [
+        {
+          "name": "pattern",
+          "description": "Reference pattern to match",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2156,6 +2567,18 @@
           "short": "-n",
           "shorthand": "-n"
         }
+      ],
+      "examples": [
+        "git check-ignore -v node_modules/",
+        "git check-ignore --stdin < paths.txt"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Paths to test against the ignore rules",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -2176,6 +2599,18 @@
           "short": "-d",
           "shorthand": "-d"
         }
+      ],
+      "examples": [
+        "git symbolic-ref HEAD",
+        "git symbolic-ref --short HEAD"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Symbolic reference to read or write",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2195,6 +2630,24 @@
           "description": "Write a reflog entry",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git update-ref refs/heads/main abc1234",
+        "git update-ref -d refs/heads/stale"
+      ],
+      "args": [
+        {
+          "name": "ref",
+          "description": "Reference to update",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "newvalue",
+          "description": "New object the reference points at",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -2218,6 +2671,10 @@
           "short": "-d",
           "shorthand": "-d"
         }
+      ],
+      "examples": [
+        "git repack -ad",
+        "git repack --write-bitmap-index"
       ]
     },
     {
@@ -2240,6 +2697,9 @@
           "short": "-H",
           "shorthand": "-H"
         }
+      ],
+      "examples": [
+        "git count-objects -vH"
       ]
     },
     {
@@ -2251,6 +2711,18 @@
           "description": "Show the credential helper protocol",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git credential fill",
+        "git credential approve"
+      ],
+      "args": [
+        {
+          "name": "operation",
+          "description": "Credential operation: fill, approve or reject",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2272,6 +2744,9 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "examples": [
+        "git filter-branch --tree-filter 'rm -f secret.txt' HEAD"
       ]
     },
     {
@@ -2290,6 +2765,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git instaweb --httpd=webrick",
+        "git instaweb --stop"
       ]
     },
     {
@@ -2304,19 +2783,17 @@
           "short": "-v",
           "shorthand": "-v"
         }
-      ]
-    },
-    {
-      "name": "switch-detach",
-      "description": "Detach HEAD at a commit without changing the branch",
-      "options": [
+      ],
+      "examples": [
+        "git verify-commit HEAD",
+        "git verify-commit --verbose v1.0.0"
+      ],
+      "args": [
         {
-          "name": "--detach",
-          "description": "Detach HEAD at the named commit",
-          "type": "boolean",
-          "takesValue": false,
-          "short": "-d",
-          "shorthand": "-d"
+          "name": "commit",
+          "description": "Commit whose signature to verify",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2346,6 +2823,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git checkout-index -a",
+        "git checkout-index -f --prefix=/tmp/build/ -a"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -2367,6 +2856,17 @@
           "takesValue": true,
           "short": "-m",
           "shorthand": "-m"
+        }
+      ],
+      "examples": [
+        "git commit-tree $(git write-tree) -p HEAD -m 'message'"
+      ],
+      "args": [
+        {
+          "name": "tree",
+          "description": "Tree object to commit",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2396,6 +2896,18 @@
           "short": "-t",
           "shorthand": "-t"
         }
+      ],
+      "examples": [
+        "git hash-object -w file.txt",
+        "git hash-object --stdin < file.txt"
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "File to hash",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -2408,6 +2920,10 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git write-tree",
+        "git write-tree --prefix=src/"
       ]
     },
     {
@@ -2439,6 +2955,18 @@
           "description": "Write the index here",
           "type": "file",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git read-tree HEAD",
+        "git read-tree --prefix=vendor/ other-branch"
+      ],
+      "args": [
+        {
+          "name": "tree-ish",
+          "description": "Tree to read into the index",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2482,6 +3010,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git update-index --refresh",
+        "git update-index --assume-unchanged config.local"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -2514,6 +3054,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git diff-tree -r HEAD",
+        "git diff-tree --name-only -r HEAD~1 HEAD"
+      ],
+      "args": [
+        {
+          "name": "tree-ish",
+          "description": "Trees to compare",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2538,6 +3090,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git diff-index HEAD",
+        "git diff-index --cached HEAD"
+      ],
+      "args": [
+        {
+          "name": "tree-ish",
+          "description": "Tree to compare the index against",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2555,6 +3119,18 @@
           "description": "Show a diffstat",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git diff-files",
+        "git diff-files --name-only"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
         }
       ]
     },
@@ -2599,6 +3175,24 @@
           "description": "Only commits by this author",
           "type": "string",
           "takesValue": true
+        },
+        {
+          "name": "--left-right",
+          "description": "Mark which side each commit is on",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git rev-list --count HEAD",
+        "git rev-list --all --no-merges"
+      ],
+      "args": [
+        {
+          "name": "commit",
+          "description": "Commits to list",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -2624,6 +3218,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git name-rev HEAD",
+        "git name-rev --tags abc1234"
+      ],
+      "args": [
+        {
+          "name": "commit",
+          "description": "Commit to name",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2642,6 +3248,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git pack-refs --all",
+        "git pack-refs --all --prune"
       ]
     },
     {
@@ -2664,6 +3274,17 @@
           "short": "-s",
           "shorthand": "-s"
         }
+      ],
+      "examples": [
+        "git verify-pack -v .git/objects/pack/pack-*.idx"
+      ],
+      "args": [
+        {
+          "name": "idx",
+          "description": "Pack index file to verify",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -2684,6 +3305,18 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git verify-tag v1.0.0",
+        "git verify-tag --verbose v1.0.0"
+      ],
+      "args": [
+        {
+          "name": "tag",
+          "description": "Tag whose signature to verify",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2702,6 +3335,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git diff | git patch-id",
+        "git format-patch -1 --stdout | git patch-id"
       ]
     },
     {
@@ -2715,6 +3352,23 @@
           "takesValue": false,
           "short": "-p",
           "shorthand": "-p"
+        }
+      ],
+      "examples": [
+        "git request-pull v1.0.0 https://github.com/org/repo main"
+      ],
+      "args": [
+        {
+          "name": "start",
+          "description": "Commit the recipient already has",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "description": "Repository URL to pull from",
+          "required": true,
+          "type": "url"
         }
       ]
     },
@@ -2754,6 +3408,18 @@
           "short": "-g",
           "shorthand": "-g"
         }
+      ],
+      "examples": [
+        "git replace --graft HEAD abc1234",
+        "git replace -l"
+      ],
+      "args": [
+        {
+          "name": "object",
+          "description": "Object to replace",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2772,17 +3438,36 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git whatchanged -2",
+        "git whatchanged --since='2 weeks ago'"
+      ],
+      "args": [
+        {
+          "name": "revision-range",
+          "description": "Commit range to inspect",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
       "name": "citool",
       "description": "Open the graphical commit tool",
-      "options": []
+      "options": [],
+      "examples": [
+        "git citool"
+      ]
     },
     {
       "name": "gui",
       "description": "Open the graphical repository browser",
-      "options": []
+      "options": [],
+      "examples": [
+        "git gui",
+        "git gui blame src/index.js"
+      ]
     },
     {
       "name": "gitk",
@@ -2794,6 +3479,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "gitk --all",
+        "gitk HEAD~10..HEAD"
       ]
     },
     {
@@ -2824,6 +3513,18 @@
           "short": "-w",
           "shorthand": "-w"
         }
+      ],
+      "examples": [
+        "git help commit",
+        "git help -a"
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to show help for",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2836,6 +3537,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git version",
+        "git version --build-options"
       ]
     },
     {
@@ -2849,6 +3554,18 @@
           "takesValue": false,
           "short": "-l",
           "shorthand": "-l"
+        }
+      ],
+      "examples": [
+        "git var GIT_AUTHOR_IDENT",
+        "git var -l"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Logical variable to print",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -2872,6 +3589,10 @@
           "short": "-c",
           "shorthand": "-c"
         }
+      ],
+      "examples": [
+        "git stripspace < message.txt",
+        "git stripspace --strip-comments < message.txt"
       ]
     },
     {
@@ -2891,6 +3612,23 @@
           "description": "Cut at the scissors line",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git mailinfo msg patch < email.eml"
+      ],
+      "args": [
+        {
+          "name": "msg",
+          "description": "File to write the message to",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "patch",
+          "description": "File to write the patch to",
+          "required": true,
+          "type": "file"
         }
       ]
     },
@@ -2912,6 +3650,17 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git mailsplit -o outdir/ < mbox"
+      ],
+      "args": [
+        {
+          "name": "mbox",
+          "description": "Mailbox to split",
+          "required": false,
+          "type": "file"
+        }
       ]
     },
     {
@@ -2924,6 +3673,9 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git format-patch -1 --stdout | git imap-send"
       ]
     },
     {
@@ -2954,12 +3706,19 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git daemon --export-all --base-path=/srv/git",
+        "git daemon --reuseaddr --verbose"
       ]
     },
     {
       "name": "http-backend",
       "description": "Serve git over HTTP as a CGI program",
-      "options": []
+      "options": [],
+      "examples": [
+        "git http-backend"
+      ]
     },
     {
       "name": "upload-pack",
@@ -2977,6 +3736,17 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git upload-pack /srv/git/repo.git"
+      ],
+      "args": [
+        {
+          "name": "directory",
+          "description": "Repository directory to serve",
+          "required": true,
+          "type": "directory"
+        }
       ]
     },
     {
@@ -2990,6 +3760,17 @@
           "takesValue": false,
           "short": "-q",
           "shorthand": "-q"
+        }
+      ],
+      "examples": [
+        "git receive-pack /srv/git/repo.git"
+      ],
+      "args": [
+        {
+          "name": "directory",
+          "description": "Repository directory to serve",
+          "required": true,
+          "type": "directory"
         }
       ]
     },
@@ -3015,6 +3796,18 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git fast-export --all > repo.dump",
+        "git fast-export --all | git -C ../mirror fast-import"
+      ],
+      "args": [
+        {
+          "name": "revision-range",
+          "description": "Commit range to export",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -3039,6 +3832,9 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git fast-import < repo.dump"
       ]
     },
     {
@@ -3061,6 +3857,11 @@
           "short": "-s",
           "shorthand": "-s"
         }
+      ],
+      "examples": [
+        "git svn clone https://svn.example.com/repo",
+        "git svn rebase",
+        "git svn dcommit"
       ]
     },
     {
@@ -3081,12 +3882,57 @@
           "short": "-v",
           "shorthand": "-v"
         }
+      ],
+      "examples": [
+        "git cvsimport -d :pserver:anon@cvs.example.com:/cvsroot module"
       ]
     },
     {
       "name": "archimport",
       "description": "Import an Arch repository",
-      "options": []
+      "options": [
+        {
+          "name": "-h",
+          "description": "Show usage",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-v",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-T",
+          "description": "Create tags for each import",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-t",
+          "description": "Temporary directory to use",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "-o",
+          "description": "Use the old-style branch naming",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git archimport -i archive/category--branch"
+      ],
+      "args": [
+        {
+          "name": "archive",
+          "description": "Arch archive to import",
+          "required": true,
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "annotate",
@@ -3108,6 +3954,18 @@
           "short": "-e",
           "shorthand": "-e"
         }
+      ],
+      "examples": [
+        "git annotate src/index.js",
+        "git annotate -L 10,20 src/index.js"
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "File to annotate",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -3126,6 +3984,9 @@
           "type": "integer",
           "takesValue": true
         }
+      ],
+      "examples": [
+        "git column --mode=column < list.txt"
       ]
     },
     {
@@ -3149,6 +4010,18 @@
           "description": "Print only the trailers",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git interpret-trailers --trailer 'Reviewed-by: Ada' < message.txt",
+        "git interpret-trailers --only-trailers < message.txt"
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Commit message file to process",
+          "required": false,
+          "type": "file"
         }
       ]
     },
@@ -3176,6 +4049,24 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git check-attr diff src/index.js",
+        "git check-attr -a src/index.js"
+      ],
+      "args": [
+        {
+          "name": "attr",
+          "description": "Attribute to query",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "pathspec",
+          "description": "Paths to query",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -3187,6 +4078,17 @@
           "description": "Read contacts from stdin",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git check-mailmap 'Ada <ada@example.com>'"
+      ],
+      "args": [
+        {
+          "name": "contact",
+          "description": "Contact string to canonicalise",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -3210,6 +4112,10 @@
           "short": "-s",
           "shorthand": "-s"
         }
+      ],
+      "examples": [
+        "git diagnose -o /tmp/diag",
+        "git diagnose --mode=stats"
       ]
     },
     {
@@ -3221,6 +4127,17 @@
           "description": "Config key listing the repositories",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "examples": [
+        "git for-each-repo --config=maintenance.repo maintenance run"
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to run in each repository",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -3254,6 +4171,30 @@
           "short": "-p",
           "shorthand": "-p"
         }
+      ],
+      "examples": [
+        "git merge-file mine.txt base.txt theirs.txt",
+        "git merge-file -p mine.txt base.txt theirs.txt"
+      ],
+      "args": [
+        {
+          "name": "current",
+          "description": "Your version of the file",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "base",
+          "description": "Common ancestor version",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "other",
+          "description": "Their version of the file",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -3271,6 +4212,18 @@
           "description": "Print conflicted names only",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "examples": [
+        "git merge-tree main feature",
+        "git merge-tree --write-tree main feature"
+      ],
+      "args": [
+        {
+          "name": "branch",
+          "description": "Branches to merge",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -3292,6 +4245,9 @@
           "short": "-z",
           "shorthand": "-z"
         }
+      ],
+      "examples": [
+        "git ls-tree HEAD | git mktree"
       ]
     },
     {
@@ -3314,6 +4270,10 @@
           "short": "-q",
           "shorthand": "-q"
         }
+      ],
+      "examples": [
+        "git prune-packed",
+        "git prune-packed --dry-run"
       ]
     },
     {
@@ -3334,6 +4294,9 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "git unpack-objects < pack-file.pack"
       ]
     },
     {
@@ -3366,6 +4329,18 @@
           "short": "-d",
           "shorthand": "-d"
         }
+      ],
+      "examples": [
+        "git show-ref --tags",
+        "git show-ref --verify refs/heads/main"
+      ],
+      "args": [
+        {
+          "name": "pattern",
+          "description": "Reference pattern to match",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -3392,22 +4367,22 @@
           "type": "boolean",
           "takesValue": false
         }
-      ]
-    },
-    {
-      "name": "rev-list-count",
-      "description": "Count commits between revisions",
-      "options": [
+      ],
+      "examples": [
+        "git show-branch",
+        "git show-branch --all --topo-order"
+      ],
+      "args": [
         {
-          "name": "--left-right",
-          "description": "Mark which side each commit is on",
-          "type": "boolean",
-          "takesValue": false
+          "name": "rev",
+          "description": "Branches or revisions to show",
+          "required": false,
+          "type": "string"
         }
       ]
     },
     {
-      "name": "worktree-prune",
+      "name": "worktree prune",
       "description": "Remove stale worktree administrative files",
       "options": [
         {
@@ -3425,8 +4400,1122 @@
           "takesValue": false,
           "short": "-v",
           "shorthand": "-v"
+        },
+        {
+          "name": "--expire",
+          "description": "Only prune entries older than this",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "examples": [
+        "git worktree prune --dry-run"
+      ]
+    },
+    {
+      "name": "stash push",
+      "description": "Save local modifications to a new stash entry",
+      "options": [
+        {
+          "name": "--patch",
+          "description": "Interactively select hunks to stash",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--include-untracked",
+          "description": "Stash untracked files too",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--all",
+          "description": "Stash ignored and untracked files",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--keep-index",
+          "description": "Keep staged changes in the index",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--message",
+          "description": "Stash message",
+          "type": "string",
+          "takesValue": true,
+          "short": "-m",
+          "shorthand": "-m"
+        },
+        {
+          "name": "--staged",
+          "description": "Stash only staged changes",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress feedback",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "examples": [
+        "git stash push -m 'wip: refactor'",
+        "git stash push -u src/"
+      ],
+      "args": [
+        {
+          "name": "pathspec",
+          "description": "Limit the operation to these paths",
+          "required": false,
+          "type": "path"
         }
       ]
+    },
+    {
+      "name": "stash pop",
+      "description": "Apply a stash entry and remove it from the list",
+      "options": [
+        {
+          "name": "--index",
+          "description": "Restore the index state too",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress feedback",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "examples": [
+        "git stash pop",
+        "git stash pop stash@{2}"
+      ],
+      "args": [
+        {
+          "name": "stash",
+          "description": "Stash entry to pop",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "stash apply",
+      "description": "Apply a stash entry without removing it",
+      "options": [
+        {
+          "name": "--index",
+          "description": "Restore the index state too",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress feedback",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "examples": [
+        "git stash apply stash@{1}"
+      ],
+      "args": [
+        {
+          "name": "stash",
+          "description": "Stash entry to apply",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "stash list",
+      "description": "List the stash entries",
+      "options": [
+        {
+          "name": "--stat",
+          "description": "Show a diffstat for each entry",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--patch",
+          "description": "Show the full diff for each entry",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ],
+      "examples": [
+        "git stash list --stat"
+      ]
+    },
+    {
+      "name": "stash drop",
+      "description": "Remove a single stash entry",
+      "options": [
+        {
+          "name": "--quiet",
+          "description": "Suppress feedback",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "examples": [
+        "git stash drop stash@{0}"
+      ],
+      "args": [
+        {
+          "name": "stash",
+          "description": "Stash entry to drop",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "stash clear",
+      "description": "Remove every stash entry",
+      "examples": [
+        "git stash clear"
+      ],
+      "options": []
+    },
+    {
+      "name": "stash show",
+      "description": "Show the changes recorded in a stash entry",
+      "options": [
+        {
+          "name": "--patch",
+          "description": "Show the full diff",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--stat",
+          "description": "Show a diffstat",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--include-untracked",
+          "description": "Include untracked files",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-u",
+          "shorthand": "-u"
+        }
+      ],
+      "examples": [
+        "git stash show -p stash@{0}"
+      ],
+      "args": [
+        {
+          "name": "stash",
+          "description": "Stash entry to show",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "stash branch",
+      "description": "Create a branch from a stash entry and drop it",
+      "examples": [
+        "git stash branch fix/regression stash@{0}"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "branchname",
+          "description": "Branch to create",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "stash",
+          "description": "Stash entry to restore from",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote add",
+      "description": "Add a remote named for a repository URL",
+      "options": [
+        {
+          "name": "--track",
+          "description": "Track only this branch",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--master",
+          "description": "Set the default branch",
+          "type": "string",
+          "takesValue": true,
+          "short": "-m",
+          "shorthand": "-m"
+        },
+        {
+          "name": "--fetch",
+          "description": "Fetch immediately after adding",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--tags",
+          "description": "Import every tag on fetch",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-tags",
+          "description": "Import no tags on fetch",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--mirror",
+          "description": "Set up the remote as a mirror",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "examples": [
+        "git remote add upstream https://github.com/org/repo.git"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Name for the remote",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "description": "Repository URL",
+          "required": true,
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "name": "remote remove",
+      "description": "Remove a remote and its tracking branches",
+      "examples": [
+        "git remote remove origin"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to remove",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote rename",
+      "description": "Rename a remote and update its config",
+      "options": [
+        {
+          "name": "--progress",
+          "description": "Force progress reporting",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-progress",
+          "description": "Suppress progress reporting",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git remote rename origin upstream"
+      ],
+      "args": [
+        {
+          "name": "old",
+          "description": "Current remote name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "new",
+          "description": "New remote name",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote set-url",
+      "description": "Change the URL for a remote",
+      "options": [
+        {
+          "name": "--push",
+          "description": "Change the push URL instead",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--add",
+          "description": "Add a URL rather than replacing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--delete",
+          "description": "Delete matching URLs",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git remote set-url origin git@github.com:org/repo.git"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to modify",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "newurl",
+          "description": "New URL for the remote",
+          "required": true,
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "name": "remote get-url",
+      "description": "Print the URL for a remote",
+      "options": [
+        {
+          "name": "--push",
+          "description": "Print the push URL",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--all",
+          "description": "Print every configured URL",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git remote get-url --all origin"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to query",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote show",
+      "description": "Show information about a remote",
+      "options": [
+        {
+          "name": "--no-query-remotes",
+          "description": "Do not contact the remote",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ],
+      "examples": [
+        "git remote show origin"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to describe",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote prune",
+      "description": "Delete tracking branches that no longer exist on the remote",
+      "options": [
+        {
+          "name": "--dry-run",
+          "description": "Report what would be pruned",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ],
+      "examples": [
+        "git remote prune origin --dry-run"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to prune",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote update",
+      "description": "Fetch updates for a set of remotes",
+      "options": [
+        {
+          "name": "--prune",
+          "description": "Prune while updating",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ],
+      "examples": [
+        "git remote update --prune"
+      ],
+      "args": [
+        {
+          "name": "group",
+          "description": "Remote or group to update",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remote set-head",
+      "description": "Set or delete the default branch for a remote",
+      "options": [
+        {
+          "name": "--auto",
+          "description": "Query the remote for its default branch",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--delete",
+          "description": "Delete the default branch ref",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
+        }
+      ],
+      "examples": [
+        "git remote set-head origin --auto"
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Remote to modify",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submodule add",
+      "description": "Add a repository as a submodule",
+      "options": [
+        {
+          "name": "--branch",
+          "description": "Track this branch",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--force",
+          "description": "Allow adding an ignored path",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--name",
+          "description": "Use this name instead of the path",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--reference",
+          "description": "Use a local reference repository",
+          "type": "path",
+          "takesValue": true
+        },
+        {
+          "name": "--depth",
+          "description": "Create a shallow clone at this depth",
+          "type": "integer",
+          "takesValue": true
+        }
+      ],
+      "examples": [
+        "git submodule add https://github.com/org/lib.git vendor/lib"
+      ],
+      "args": [
+        {
+          "name": "repository",
+          "description": "Repository to add as a submodule",
+          "required": true,
+          "type": "url"
+        },
+        {
+          "name": "path",
+          "description": "Path to place the submodule at",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule init",
+      "description": "Register submodules in the local config",
+      "examples": [
+        "git submodule init"
+      ],
+      "options": [
+        {
+          "name": "--quiet",
+          "description": "Suppress informational output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to initialise",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule update",
+      "description": "Check out the recorded commit for each submodule",
+      "options": [
+        {
+          "name": "--init",
+          "description": "Initialise uninitialised submodules first",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--recursive",
+          "description": "Recurse into nested submodules",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--remote",
+          "description": "Use the remote tracking branch tip",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force",
+          "description": "Discard local submodule changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--depth",
+          "description": "Create a shallow clone at this depth",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--jobs",
+          "description": "Fetch this many submodules in parallel",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        },
+        {
+          "name": "--single-branch",
+          "description": "Clone only the tracked branch",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git submodule update --init --recursive"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to update",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule status",
+      "description": "Show the status of each submodule",
+      "options": [
+        {
+          "name": "--cached",
+          "description": "Use the index rather than the work tree",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--recursive",
+          "description": "Recurse into nested submodules",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git submodule status --recursive"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to report on",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule deinit",
+      "description": "Unregister submodules and clear their work trees",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Deinitialise every submodule",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force",
+          "description": "Deinitialise despite local changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ],
+      "examples": [
+        "git submodule deinit --all"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to deinitialise",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule foreach",
+      "description": "Run a shell command in each checked-out submodule",
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Recurse into nested submodules",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git submodule foreach 'git checkout main'"
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to run in each submodule",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submodule sync",
+      "description": "Sync submodule remote URLs from .gitmodules",
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Recurse into nested submodules",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git submodule sync --recursive"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to sync",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule set-branch",
+      "description": "Set the branch a submodule tracks",
+      "options": [
+        {
+          "name": "--branch",
+          "description": "Branch to track",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--default",
+          "description": "Track the remote default branch",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
+        }
+      ],
+      "examples": [
+        "git submodule set-branch -b main vendor/lib"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule to configure",
+          "required": true,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "submodule set-url",
+      "description": "Set the URL for a submodule",
+      "examples": [
+        "git submodule set-url vendor/lib https://github.com/org/lib.git"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule to configure",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "newurl",
+          "description": "New URL for the submodule",
+          "required": true,
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "name": "submodule summary",
+      "description": "Summarise the commit range for each submodule",
+      "options": [
+        {
+          "name": "--cached",
+          "description": "Compare against the index",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--files",
+          "description": "Compare the work tree against the index",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--summary-limit",
+          "description": "Limit the commits shown",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ],
+      "examples": [
+        "git submodule summary --cached"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Submodule paths to summarise",
+          "required": false,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "worktree add",
+      "description": "Create a worktree and check out a branch into it",
+      "options": [
+        {
+          "name": "--force",
+          "description": "Create despite an existing checkout",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--detach",
+          "description": "Detach HEAD in the new worktree",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--checkout",
+          "description": "Check out after creating",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-checkout",
+          "description": "Leave the worktree empty",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--branch",
+          "description": "Create a new branch",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--force-create-branch",
+          "description": "Force create a branch",
+          "type": "string",
+          "takesValue": true,
+          "short": "-B",
+          "shorthand": "-B"
+        },
+        {
+          "name": "--track",
+          "description": "Set up upstream tracking",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--lock",
+          "description": "Lock the worktree immediately",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--orphan",
+          "description": "Create a worktree with an orphan branch",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "git worktree add ../hotfix hotfix-branch",
+        "git worktree add -b feature ../feature main"
+      ],
+      "args": [
+        {
+          "name": "path",
+          "description": "Directory for the new worktree",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "commit-ish",
+          "description": "Branch or commit to check out",
+          "required": false,
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "worktree list",
+      "description": "List the details of each worktree",
+      "options": [
+        {
+          "name": "--porcelain",
+          "description": "Machine-readable output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--verbose",
+          "description": "Show additional detail",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        },
+        {
+          "name": "--expire",
+          "description": "Add an expiry marker to stale entries",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "examples": [
+        "git worktree list --porcelain"
+      ]
+    },
+    {
+      "name": "worktree remove",
+      "description": "Remove a worktree and its administrative files",
+      "options": [
+        {
+          "name": "--force",
+          "description": "Remove despite local changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ],
+      "examples": [
+        "git worktree remove ../hotfix"
+      ],
+      "args": [
+        {
+          "name": "worktree",
+          "description": "Worktree to remove",
+          "required": true,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "worktree move",
+      "description": "Move a worktree to a new location",
+      "options": [
+        {
+          "name": "--force",
+          "description": "Move despite a dirty work tree",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ],
+      "examples": [
+        "git worktree move ../hotfix ../hotfix-2"
+      ],
+      "args": [
+        {
+          "name": "worktree",
+          "description": "Worktree to move",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "new-path",
+          "description": "New location",
+          "required": true,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "worktree lock",
+      "description": "Lock a worktree against automatic pruning",
+      "options": [
+        {
+          "name": "--reason",
+          "description": "Explain why the worktree is locked",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "examples": [
+        "git worktree lock ../release --reason 'archived'"
+      ],
+      "args": [
+        {
+          "name": "worktree",
+          "description": "Worktree to lock",
+          "required": true,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "worktree unlock",
+      "description": "Unlock a previously locked worktree",
+      "examples": [
+        "git worktree unlock ../release"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "worktree",
+          "description": "Worktree to unlock",
+          "required": true,
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "name": "worktree repair",
+      "description": "Repair worktree administrative files after a move",
+      "examples": [
+        "git worktree repair"
+      ],
+      "options": []
     }
   ],
   "globalOptions": [

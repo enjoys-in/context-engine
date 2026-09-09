@@ -104,5 +104,38 @@
     "prometheus",
     "grafana-cli",
     "tempo"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Jaeger binary version",
+        "command": "jaeger version 2>/dev/null || jaeger-all-in-one --help 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "collector_endpoint",
+        "description": "Jaeger collector endpoint in effect",
+        "command": "echo \"${JAEGER_ENDPOINT:-http://localhost:14268/api/traces}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "agent_host",
+        "description": "Jaeger agent host in effect",
+        "command": "echo \"${JAEGER_AGENT_HOST:-localhost}:${JAEGER_AGENT_PORT:-6831}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "containers",
+        "description": "Jaeger containers running locally",
+        "command": "docker ps --filter name=jaeger --format '{{.Names}}\\t{{.Status}}' 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
 }

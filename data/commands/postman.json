@@ -19,6 +19,14 @@
       "description": "Login to Postman",
       "examples": [
         "postman login --with-api-key PMAK-xxx"
+      ],
+      "options": [
+        {
+          "name": "--with-api-key",
+          "description": "API key to authenticate with",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +34,38 @@
       "description": "Run a collection",
       "examples": [
         "postman collection run collection-id"
+      ],
+      "options": [
+        {
+          "name": "--environment",
+          "description": "Environment to run against",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--reporters",
+          "description": "Reporters to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--bail",
+          "description": "Stop on the first failure",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "collection",
+          "description": "Collection id, file or URL to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -33,6 +73,14 @@
       "description": "Lint API definition",
       "examples": [
         "postman api lint --api-definition openapi.yaml"
+      ],
+      "options": [
+        {
+          "name": "--api-id",
+          "description": "API to lint",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -83,5 +131,38 @@
     "curl",
     "httpie",
     "insomnia"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Postman CLI version",
+        "command": "postman --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "postman"
+      },
+      {
+        "name": "collections",
+        "description": "Postman collections exported into this project",
+        "command": "find . -maxdepth 3 -name '*postman_collection.json' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "environments",
+        "description": "Postman environment files here",
+        "command": "find . -maxdepth 3 -name '*postman_environment.json' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "newman",
+        "description": "Newman available as the collection runner",
+        "command": "newman --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

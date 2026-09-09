@@ -20,6 +20,36 @@
       "examples": [
         "ecs-cli configure --cluster my-cluster --region us-east-1 --default-launch-type FARGATE",
         "ecs-cli configure profile --profile-name default --access-key xxx --secret-key xxx"
+      ],
+      "options": [
+        {
+          "name": "--cluster",
+          "description": "Cluster name to configure",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--region",
+          "description": "Region to target",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--default-launch-type",
+          "description": "Default launch type: EC2 or FARGATE",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--config-name",
+          "description": "Name for this configuration",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -28,6 +58,44 @@
       "examples": [
         "ecs-cli up --cluster-config my-cluster --ecs-profile default",
         "ecs-cli up --capability-iam --size 3 --instance-type t3.medium"
+      ],
+      "options": [
+        {
+          "name": "--capability-iam",
+          "description": "Acknowledge that IAM resources will be created",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--keypair",
+          "description": "EC2 key pair for the instances",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--instance-type",
+          "description": "EC2 instance type",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--size",
+          "description": "Number of instances",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--vpc",
+          "description": "VPC to launch into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--force",
+          "description": "Recreate resources that already exist",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -35,6 +103,24 @@
       "description": "Delete ECS cluster resources",
       "examples": [
         "ecs-cli down --force --cluster-config my-cluster"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--cluster",
+          "description": "Cluster to tear down",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -46,6 +132,36 @@
         "ecs-cli compose service ps",
         "ecs-cli compose service scale 3",
         "ecs-cli compose service down"
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Compose file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--project-name",
+          "description": "Project name to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--ecs-params",
+          "description": "ECS parameters file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--task-role-arn",
+          "description": "Task role to assign",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -54,6 +170,22 @@
       "examples": [
         "ecs-cli ps",
         "ecs-cli ps --cluster my-cluster"
+      ],
+      "options": [
+        {
+          "name": "--cluster",
+          "description": "Cluster to list tasks from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--desired-status",
+          "description": "Only show tasks in this state",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -61,6 +193,34 @@
       "description": "View task logs",
       "examples": [
         "ecs-cli logs --task-id task-id --follow"
+      ],
+      "options": [
+        {
+          "name": "--task-id",
+          "description": "Task whose logs to fetch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--follow",
+          "description": "Stream new log lines",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--since",
+          "description": "Only logs newer than this many minutes",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--timestamps",
+          "description": "Prefix each line with a timestamp",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-t",
+          "shorthand": "-t"
+        }
       ]
     },
     {
@@ -68,6 +228,28 @@
       "description": "Push image to ECR",
       "examples": [
         "ecs-cli push my-image:latest"
+      ],
+      "options": [
+        {
+          "name": "--registry-id",
+          "description": "Registry to push to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tagged",
+          "description": "Push only tagged images",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -75,6 +257,28 @@
       "description": "Pull image from ECR",
       "examples": [
         "ecs-cli pull my-image:latest"
+      ],
+      "options": [
+        {
+          "name": "--registry-id",
+          "description": "Registry to pull from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tagged",
+          "description": "Pull only tagged images",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -82,6 +286,28 @@
       "description": "Scale cluster instances",
       "examples": [
         "ecs-cli scale --capability-iam --size 5"
+      ],
+      "options": [
+        {
+          "name": "--capability-iam",
+          "description": "Acknowledge that IAM resources will be created",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--size",
+          "description": "Number of instances to scale to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--cluster",
+          "description": "Cluster to scale",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -89,6 +315,28 @@
       "description": "Check task placement",
       "examples": [
         "ecs-cli check-attributes --task-def my-task"
+      ],
+      "options": [
+        {
+          "name": "--container-instances",
+          "description": "Container instances to check",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--task-def",
+          "description": "Task definition to check against",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--cluster",
+          "description": "Cluster to check",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     }
   ],
@@ -132,5 +380,31 @@
     "copilot",
     "docker",
     "docker-compose"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ecs-cli version",
+        "command": "ecs-cli --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ecs-cli"
+      },
+      {
+        "name": "config",
+        "description": "ecs-cli cluster configuration",
+        "command": "cat ~/.ecs/config 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "compose_files",
+        "description": "Compose files ecs-cli can deploy",
+        "command": "ls docker-compose*.yml ecs-params.yml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

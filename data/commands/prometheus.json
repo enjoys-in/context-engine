@@ -66,5 +66,38 @@
     "alertmanager",
     "node-exporter",
     "promtool"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Prometheus version",
+        "command": "prometheus --version 2>&1 | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "prometheus"
+      },
+      {
+        "name": "config",
+        "description": "Prometheus scrape configuration",
+        "command": "cat /etc/prometheus/prometheus.yml 2>/dev/null | head -50 || cat prometheus.yml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "service",
+        "description": "Prometheus service state",
+        "command": "systemctl is-active prometheus 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "targets",
+        "description": "Scrape targets Prometheus reports",
+        "command": "curl -s localhost:9090/api/v1/targets 2>/dev/null | head -c 2000",
+        "parser": "json",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

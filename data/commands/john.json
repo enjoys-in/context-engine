@@ -137,5 +137,39 @@
     "hydra",
     "gpg",
     "openssl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "John the Ripper version",
+        "command": "john --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "john"
+      },
+      {
+        "name": "formats",
+        "description": "Hash formats this build supports",
+        "command": "john --list=formats 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "john"
+      },
+      {
+        "name": "pot",
+        "description": "Previously cracked passwords file",
+        "command": "ls -l ~/.john/john.pot 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "hash_files",
+        "description": "Hash files present for cracking",
+        "command": "find . -maxdepth 2 -name '*.hash' -o -maxdepth 2 -name 'shadow*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

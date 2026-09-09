@@ -251,5 +251,32 @@
     "semgrep",
     "trivy",
     "snyk"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "trufflehog version",
+        "command": "trufflehog --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "trufflehog"
+      },
+      {
+        "name": "repo",
+        "description": "Git repository trufflehog would scan",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "config",
+        "description": "trufflehog detector configuration",
+        "command": "cat trufflehog.yaml 2>/dev/null || cat .trufflehogignore 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

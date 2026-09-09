@@ -203,5 +203,38 @@
     "pkill",
     "nice",
     "renice"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ps version",
+        "command": "ps --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ps"
+      },
+      {
+        "name": "top_cpu",
+        "description": "Processes by CPU usage",
+        "command": "ps -eo pid,user,comm,pcpu --sort=-pcpu 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 15
+      },
+      {
+        "name": "top_memory",
+        "description": "Processes by memory usage",
+        "command": "ps -eo pid,user,comm,pmem --sort=-pmem 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 15
+      },
+      {
+        "name": "process_count",
+        "description": "Processes running on this host",
+        "command": "ps -e 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

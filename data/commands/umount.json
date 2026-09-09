@@ -125,5 +125,30 @@
     "df",
     "lsblk",
     "fuser"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "mounts",
+        "description": "Filesystems currently mounted",
+        "command": "mount 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "busy_mounts",
+        "description": "Mount points with open files",
+        "command": "lsof 2>/dev/null | awk 'NR>1{print $9}' | grep '^/' | cut -d/ -f1-3 | sort -u | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "removable",
+        "description": "Removable block devices",
+        "command": "lsblk -o NAME,RM,MOUNTPOINT 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

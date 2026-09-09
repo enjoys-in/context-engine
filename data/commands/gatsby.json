@@ -20,6 +20,22 @@
       "examples": [
         "gatsby new my-site",
         "gatsby new my-blog https://github.com/gatsbyjs/gatsby-starter-blog"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Accept the defaults without prompting",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--no-colors",
+          "description": "Disable coloured output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -28,6 +44,38 @@
       "examples": [
         "gatsby develop",
         "gatsby develop -H 0.0.0.0"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-H",
+          "shorthand": "-H"
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--https",
+          "description": "Serve over HTTPS",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -35,6 +83,32 @@
       "description": "Build production site",
       "examples": [
         "gatsby build"
+      ],
+      "options": [
+        {
+          "name": "--prefix-paths",
+          "description": "Build with the configured path prefix",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-uglify",
+          "description": "Skip JavaScript minification",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--profile",
+          "description": "Build with React profiling enabled",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--log-pages",
+          "description": "Log the generated page objects",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -42,6 +116,38 @@
       "description": "Serve production build locally",
       "examples": [
         "gatsby serve"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--host",
+          "description": "Host the server binds to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-H",
+          "shorthand": "-H"
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--prefix-paths",
+          "description": "Serve with the configured path prefix",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -49,13 +155,24 @@
       "description": "Clean .cache and public dirs",
       "examples": [
         "gatsby clean"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "info",
       "description": "Show environment info",
       "examples": [
         "gatsby info"
+      ],
+      "options": [
+        {
+          "name": "--clipboard",
+          "description": "Copy the report to the clipboard",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-C",
+          "shorthand": "-C"
+        }
       ]
     },
     {
@@ -63,7 +180,8 @@
       "description": "Open a REPL with Gatsby context",
       "examples": [
         "gatsby repl"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -104,5 +222,44 @@
     "astro",
     "hugo",
     "eleventy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Gatsby CLI version",
+        "command": "gatsby --version 2>/dev/null || npx gatsby --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Gatsby site configuration",
+        "command": "cat gatsby-config.js 2>/dev/null | head -40 || cat gatsby-config.ts 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "plugins",
+        "description": "Gatsby plugins declared",
+        "command": "grep -oE 'gatsby-(source|transformer|plugin)-[a-z-]+' gatsby-config.js package.json 2>/dev/null | sort -u | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "cache",
+        "description": "Gatsby build cache present",
+        "command": "ls -d .cache public 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

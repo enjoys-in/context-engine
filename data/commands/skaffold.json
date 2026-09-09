@@ -393,6 +393,14 @@
       "examples": [
         "skaffold config list",
         "skaffold config set local-cluster true"
+      ],
+      "options": [
+        {
+          "name": "--kubecontext",
+          "description": "Kubeconfig context to use",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -451,6 +459,22 @@
       "examples": [
         "skaffold inspect profiles",
         "skaffold inspect build-env list"
+      ],
+      "options": [
+        {
+          "name": "--filename",
+          "description": "Skaffold config to inspect",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--format",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -546,5 +570,47 @@
     "docker",
     "helm",
     "tilt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Skaffold version",
+        "command": "skaffold version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "skaffold"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "config",
+        "description": "Skaffold pipeline configuration",
+        "command": "cat skaffold.yaml 2>/dev/null | head -60",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "profiles",
+        "description": "Skaffold profiles declared",
+        "command": "grep -A5 '^profiles:' skaffold.yaml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

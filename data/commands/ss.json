@@ -71,5 +71,40 @@
     "lsof",
     "ip",
     "nmap"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ss version",
+        "command": "ss -V 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ss"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      },
+      {
+        "name": "established",
+        "description": "Established TCP connections",
+        "command": "ss -tn state established 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "ss"
+      },
+      {
+        "name": "summary",
+        "description": "Socket count by type",
+        "command": "ss -s 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "ss"
+      }
+    ]
+  }
 }

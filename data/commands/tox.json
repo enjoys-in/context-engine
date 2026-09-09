@@ -67,6 +67,16 @@
           "type": "path",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--envname",
+          "description": "Environment name to create",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        }
       ]
     },
     {
@@ -85,11 +95,13 @@
     },
     {
       "name": "depends",
-      "description": "Show the environment dependency graph"
+      "description": "Show the environment dependency graph",
+      "options": []
     },
     {
       "name": "quickstart",
-      "description": "Generate a starter tox configuration"
+      "description": "Generate a starter tox configuration",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -167,5 +179,39 @@
     "nox",
     "python",
     "pipx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "tox version",
+        "command": "tox --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "tox"
+      },
+      {
+        "name": "config",
+        "description": "tox configuration",
+        "command": "cat tox.ini 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "environments",
+        "description": "Test environments tox declares",
+        "command": "tox --listenvs 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "tox"
+      },
+      {
+        "name": "python_version",
+        "description": "Python interpreter version",
+        "command": "python3 --version 2>&1 || python --version 2>&1",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

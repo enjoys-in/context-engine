@@ -118,5 +118,31 @@
     "tcpdump",
     "ss",
     "btop"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "bandwhich version",
+        "command": "bandwhich --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "bandwhich"
+      },
+      {
+        "name": "interfaces",
+        "description": "Network interfaces on this host",
+        "command": "ip -brief address 2>/dev/null || ifconfig -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "privileges",
+        "description": "Whether this session can capture packets",
+        "command": "test \"$(id -u)\" = 0 && echo root || echo 'needs sudo or cap_net_raw'",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

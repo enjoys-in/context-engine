@@ -126,7 +126,8 @@
           "type": "string",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "list",
@@ -138,7 +139,8 @@
           "type": "string",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "info",
@@ -150,11 +152,22 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Show full manifest detail",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
       ]
     },
     {
       "name": "bucket",
-      "description": "Manage the app buckets"
+      "description": "Manage the app buckets",
+      "options": []
     },
     {
       "name": "hold",
@@ -165,6 +178,16 @@
           "description": "Application name",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--global",
+          "description": "Act on globally installed apps",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-g",
+          "shorthand": "-g"
         }
       ]
     },
@@ -177,6 +200,16 @@
           "description": "Application name",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--global",
+          "description": "Act on globally installed apps",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-g",
+          "shorthand": "-g"
         }
       ]
     },
@@ -212,11 +245,22 @@
     },
     {
       "name": "cache",
-      "description": "Inspect or clear the download cache"
+      "description": "Inspect or clear the download cache",
+      "options": []
     },
     {
       "name": "status",
-      "description": "Show which apps are outdated"
+      "description": "Show which apps are outdated",
+      "options": [
+        {
+          "name": "--local",
+          "description": "Skip the remote check and compare locally only",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        }
+      ]
     },
     {
       "name": "reset",
@@ -228,7 +272,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "which",
@@ -240,11 +285,22 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "export",
-      "description": "Print the installed apps and buckets as JSON"
+      "description": "Print the installed apps and buckets as JSON",
+      "options": [
+        {
+          "name": "--config",
+          "description": "Include the Scoop configuration",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-c",
+          "shorthand": "-c"
+        }
+      ]
     },
     {
       "name": "import",
@@ -256,7 +312,8 @@
           "type": "file",
           "required": true
         }
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -302,5 +359,41 @@
     "choco",
     "brew",
     "apt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Scoop version",
+        "command": "scoop --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "scoop"
+      },
+      {
+        "name": "installed",
+        "description": "Apps Scoop has installed",
+        "command": "scoop list 2>/dev/null | head -25",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "scoop"
+      },
+      {
+        "name": "buckets",
+        "description": "Scoop buckets configured",
+        "command": "scoop bucket list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 3600,
+        "requiresCmd": "scoop"
+      },
+      {
+        "name": "status",
+        "description": "Apps with updates available",
+        "command": "scoop status 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "scoop"
+      }
+    ]
+  }
 }

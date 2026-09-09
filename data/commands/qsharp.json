@@ -136,9 +136,31 @@
       "name": "new -lang Q# -o project",
       "description": "Create a new Q# project from template",
       "args": [
-        "name"
+        {
+          "name": "name",
+          "description": "Name for the new Q# project",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--output",
+          "description": "Directory to place the project in",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--name",
+          "description": "Name for the new project",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ]
     },
     {
       "name": "test",
@@ -163,7 +185,12 @@
       "name": "add package",
       "description": "Add a Q# / NuGet package to project",
       "args": [
-        "package"
+        {
+          "name": "package",
+          "description": "Package to add",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -206,5 +233,31 @@
     "csharp",
     "python",
     "az"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": ".NET SDK version for Q#",
+        "command": "dotnet --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dotnet"
+      },
+      {
+        "name": "qsharp_projects",
+        "description": "Q# projects here",
+        "command": "grep -rl 'Microsoft.Quantum' --include='*.csproj' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "sources",
+        "description": "Q# sources",
+        "command": "find . -maxdepth 3 -name '*.qs' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -44,5 +44,31 @@
     "host",
     "whois",
     "ping"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "nslookup version",
+        "command": "nslookup -version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nslookup"
+      },
+      {
+        "name": "resolvers",
+        "description": "DNS resolvers configured",
+        "command": "cat /etc/resolv.conf 2>/dev/null | grep nameserver",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "hosts_file",
+        "description": "Static host overrides",
+        "command": "cat /etc/hosts 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

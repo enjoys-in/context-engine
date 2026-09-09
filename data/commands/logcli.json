@@ -85,6 +85,34 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Loki address to query",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--limit",
+          "description": "Maximum entries to return",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: default, raw or jsonl",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--now",
+          "description": "Evaluate the query at this time",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -96,6 +124,20 @@
           "description": "Label to list values for",
           "type": "string",
           "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Loki address to query",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--since",
+          "description": "Look back this far",
+          "type": "string",
+          "takesValue": true
         }
       ]
     },
@@ -109,6 +151,26 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Loki address to query",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--since",
+          "description": "Look back this far",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--analyze-labels",
+          "description": "Report label cardinality",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -121,11 +183,33 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Loki address to query",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--since",
+          "description": "Look back this far",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "fmt",
-      "description": "Format a LogQL query"
+      "description": "Format a LogQL query",
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Loki address to use",
+          "type": "url",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -205,5 +289,32 @@
     "promtool",
     "journalctl",
     "vector"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "logcli version",
+        "command": "logcli --version 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "logcli"
+      },
+      {
+        "name": "address",
+        "description": "Loki address in effect",
+        "command": "echo \"${LOKI_ADDR:-http://localhost:3100}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "labels",
+        "description": "Log labels available in Loki",
+        "command": "logcli labels 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "logcli"
+      }
+    ]
+  }
 }

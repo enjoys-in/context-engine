@@ -369,6 +369,24 @@
         "devspace use context my-context",
         "devspace use namespace my-ns",
         "devspace use profile my-profile"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to select",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "What to use: context, namespace or profile",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -379,6 +397,16 @@
         "devspace list profiles",
         "devspace list vars",
         "devspace list deployments"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to list from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -395,6 +423,14 @@
           "takesValue": true,
           "short": "-p",
           "shorthand": "-p"
+        }
+      ],
+      "args": [
+        {
+          "name": "pipeline",
+          "description": "Custom command to run",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -509,5 +545,48 @@
     "tilt",
     "telepresence",
     "kubectl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "DevSpace version",
+        "command": "devspace version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "devspace"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "config",
+        "description": "DevSpace project configuration",
+        "command": "cat devspace.yaml 2>/dev/null | head -60",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "profiles",
+        "description": "DevSpace profiles declared",
+        "command": "devspace list profiles 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "devspace"
+      }
+    ]
+  }
 }

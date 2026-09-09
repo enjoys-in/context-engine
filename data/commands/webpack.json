@@ -20,6 +20,40 @@
       "examples": [
         "webpack serve",
         "webpack serve --open"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--hot",
+          "description": "Enable hot module replacement",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--config",
+          "description": "webpack config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -27,6 +61,28 @@
       "description": "Watch files for changes",
       "examples": [
         "webpack watch"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "webpack config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--mode",
+          "description": "Build mode: development or production",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--progress",
+          "description": "Show build progress",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -34,6 +90,28 @@
       "description": "Build the project",
       "examples": [
         "webpack build"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "webpack config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--mode",
+          "description": "Build mode: development or production",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--analyze",
+          "description": "Open the bundle analyzer",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -97,5 +175,44 @@
     "rollup",
     "vite",
     "babel"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "webpack version",
+        "command": "webpack --version 2>/dev/null || npx webpack --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "webpack configuration",
+        "command": "cat webpack.config.js 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "configs",
+        "description": "webpack configs for each environment",
+        "command": "ls webpack.*.js 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

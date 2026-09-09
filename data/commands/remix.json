@@ -19,7 +19,8 @@
       "description": "Create a new Remix project",
       "examples": [
         "npx create-remix@latest"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "dev",
@@ -27,6 +28,20 @@
       "examples": [
         "remix dev",
         "npx remix dev"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -34,6 +49,20 @@
       "description": "Build for production",
       "examples": [
         "remix build"
+      ],
+      "options": [
+        {
+          "name": "--sourcemap",
+          "description": "Emit source maps for the build",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--mode",
+          "description": "Env mode to build for",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -41,6 +70,14 @@
       "description": "Show application routes",
       "examples": [
         "remix routes"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -49,6 +86,14 @@
       "examples": [
         "remix reveal entry.server",
         "remix reveal entry.client"
+      ],
+      "options": [
+        {
+          "name": "--no-typescript",
+          "description": "Emit JavaScript rather than TypeScript",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -78,5 +123,37 @@
     "astro",
     "vite",
     "react-router"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Remix version declared in this project",
+        "command": "grep -oE '\"@remix-run/[a-z-]+\": *\"[^\"]*\"' package.json 2>/dev/null | head -10",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Remix configuration",
+        "command": "cat remix.config.js 2>/dev/null || cat vite.config.ts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "routes",
+        "description": "Routes in this Remix app",
+        "command": "find app/routes -maxdepth 2 -type f 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

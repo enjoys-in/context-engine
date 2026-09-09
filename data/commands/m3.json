@@ -106,31 +106,82 @@
       "name": "-make",
       "description": "Build the current package and its dependencies",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose build output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-k",
+          "description": "Keep going after errors",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-DROOT",
+          "description": "Set the build root",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-build",
       "description": "Compile files listed in m3makefile",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose build output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-k",
+          "description": "Keep going after errors",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-clean",
       "description": "Remove derived files from build directory",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-ship",
       "description": "Install the package in the system package pool",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-find",
       "description": "Search for a package in the known package paths",
       "args": [
-        "package"
+        {
+          "name": "package",
+          "description": "Modula-3 package to locate",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -152,5 +203,31 @@
     "gcc",
     "make",
     "pascal"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Modula-3 compiler version",
+        "command": "cm3 -version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "cm3"
+      },
+      {
+        "name": "build_files",
+        "description": "Modula-3 build files present",
+        "command": "ls m3makefile m3overrides 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sources",
+        "description": "Modula-3 sources",
+        "command": "find . -maxdepth 3 -name '*.m3' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

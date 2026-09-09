@@ -130,5 +130,39 @@
     "binwalk",
     "nm",
     "strip"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "radare2 version",
+        "command": "radare2 -v 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "radare2"
+      },
+      {
+        "name": "binaries",
+        "description": "Binaries in this directory radare2 can open",
+        "command": "find . -maxdepth 2 -type f -perm -u+x -not -name '*.sh' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "radare2 startup configuration",
+        "command": "cat ~/.radare2rc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "plugins",
+        "description": "radare2 plugins available",
+        "command": "radare2 -L 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "radare2"
+      }
+    ]
+  }
 }

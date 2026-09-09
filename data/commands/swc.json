@@ -19,6 +19,54 @@
       "description": "Compile files (default)",
       "examples": [
         "swc src -d dist"
+      ],
+      "options": [
+        {
+          "name": "--out-dir",
+          "description": "Directory for the compiled output",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--out-file",
+          "description": "Path for the compiled output",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--config-file",
+          "description": "SWC config file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--source-maps",
+          "description": "Emit source maps",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--watch",
+          "description": "Recompile on change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Files or directories to compile",
+          "required": true,
+          "type": "path"
+        }
       ]
     }
   ],
@@ -74,5 +122,30 @@
     "babel",
     "tsc",
     "webpack"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "SWC version",
+        "command": "swc --version 2>/dev/null || npx swc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "SWC configuration",
+        "command": "cat .swcrc 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

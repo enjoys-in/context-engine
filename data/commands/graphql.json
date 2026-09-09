@@ -130,13 +130,25 @@
       "name": "init",
       "description": "Initialize a codegen configuration file",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--config",
+          "description": "Path for the generated config",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "get-schema",
       "description": "Download and save GraphQL schema from endpoint",
       "args": [
-        "endpoint"
+        {
+          "name": "endpoint",
+          "description": "GraphQL endpoint URL",
+          "type": "url",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -157,8 +169,18 @@
       "name": "validate",
       "description": "Validate GraphQL operations against schema",
       "args": [
-        "schema",
-        "documents"
+        {
+          "name": "schema",
+          "description": "Schema to inspect",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "documents",
+          "description": "Operation documents to check",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -173,7 +195,12 @@
       "name": "inspect",
       "description": "Inspect a GraphQL schema and display type information",
       "args": [
-        "schema"
+        {
+          "name": "schema",
+          "description": "Schema to inspect",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -188,8 +215,18 @@
       "name": "diff",
       "description": "Compare two GraphQL schemas for breaking changes",
       "args": [
-        "old-schema",
-        "new-schema"
+        {
+          "name": "old-schema",
+          "description": "Baseline schema to compare against",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "new-schema",
+          "description": "Updated schema to compare",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -213,5 +250,37 @@
     "typescript",
     "node",
     "apollo"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GraphQL Code Generator version",
+        "command": "graphql-codegen --version 2>/dev/null || npx graphql-codegen --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Code generator configuration",
+        "command": "cat codegen.yml 2>/dev/null || cat codegen.ts 2>/dev/null || cat .graphqlrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "schemas",
+        "description": "GraphQL schema and operation documents",
+        "command": "find . -maxdepth 3 -name '*.graphql' -o -maxdepth 3 -name '*.gql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

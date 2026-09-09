@@ -187,5 +187,30 @@
     "lsblk",
     "fstab",
     "findmnt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "mounts",
+        "description": "Mounted filesystems",
+        "command": "mount 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "fstab",
+        "description": "Filesystems declared in fstab",
+        "command": "cat /etc/fstab 2>/dev/null | grep -v '^#' | head -20",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "block_devices",
+        "description": "Block devices available to mount",
+        "command": "lsblk 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -115,27 +115,32 @@
     {
       "name": "test",
       "description": "Run Clojure tests",
-      "usage": "lein test"
+      "usage": "lein test",
+      "options": []
     },
     {
       "name": "deps",
       "description": "Download dependencies",
-      "usage": "lein deps"
+      "usage": "lein deps",
+      "options": []
     },
     {
       "name": "jar",
       "description": "Build JAR file",
-      "usage": "lein jar"
+      "usage": "lein jar",
+      "options": []
     },
     {
       "name": "uberjar",
       "description": "Build standalone JAR",
-      "usage": "lein uberjar"
+      "usage": "lein uberjar",
+      "options": []
     },
     {
       "name": "new",
       "description": "Create new project",
-      "usage": "lein new app myproject"
+      "usage": "lein new app myproject",
+      "options": []
     }
   ],
   "examples": [
@@ -165,5 +170,37 @@
     "lein",
     "bb",
     "java"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Clojure CLI version",
+        "command": "clj --version 2>/dev/null || clojure --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "deps",
+        "description": "Clojure dependency configuration",
+        "command": "cat deps.edn 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "aliases",
+        "description": "Aliases declared in deps.edn",
+        "command": "grep -A20 ':aliases' deps.edn 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "project_clj",
+        "description": "Leiningen project definition",
+        "command": "cat project.clj 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

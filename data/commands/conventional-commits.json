@@ -71,5 +71,38 @@
     "husky",
     "semantic-release",
     "changeset"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "tooling",
+        "description": "Conventional-commit tooling available in this project",
+        "command": "grep -oE '\"(commitizen|cz-conventional-changelog|@commitlint/[a-z-]+|standard-version)\": *\"[^\"]*\"' package.json 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Commitizen adapter configured",
+        "command": "grep -A8 '\"config\"' package.json 2>/dev/null | head -15 || cat .czrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "recent_subjects",
+        "description": "Recent commit subjects in this repository",
+        "command": "git log --oneline -15 --format='%s' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "types_used",
+        "description": "Conventional types already used here",
+        "command": "git log --format='%s' -200 2>/dev/null | grep -oE '^[a-z]+(\\([^)]*\\))?!?:' | sort | uniq -c | sort -rn | head -15",
+        "parser": "table",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

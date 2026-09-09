@@ -21,6 +21,64 @@
         "k3s server --cluster-init",
         "k3s server --tls-san my-server.example.com",
         "sudo k3s server &"
+      ],
+      "options": [
+        {
+          "name": "--token",
+          "description": "Shared secret for joining the cluster",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--data-dir",
+          "description": "Directory to store state in",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--cluster-init",
+          "description": "Initialise a new embedded etcd cluster",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--server",
+          "description": "Server URL to join",
+          "type": "url",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--disable",
+          "description": "Disable a packaged component",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tls-san",
+          "description": "Additional hostname or IP for the serving certificate",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--node-name",
+          "description": "Name to register this node under",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--write-kubeconfig",
+          "description": "Write the kubeconfig here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -28,6 +86,44 @@
       "description": "Start k3s agent (worker node)",
       "examples": [
         "k3s agent --server https://server:6443 --token mytoken"
+      ],
+      "options": [
+        {
+          "name": "--token",
+          "description": "Shared secret for joining the cluster",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--server",
+          "description": "Server URL to join",
+          "type": "url",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--data-dir",
+          "description": "Directory to store state in",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--node-name",
+          "description": "Name to register this node under",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--node-label",
+          "description": "Label to apply to this node",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -37,6 +133,22 @@
         "k3s kubectl get nodes",
         "k3s kubectl get pods -A",
         "k3s kubectl apply -f manifest.yaml"
+      ],
+      "options": [
+        {
+          "name": "--kubeconfig",
+          "description": "Kubeconfig file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--namespace",
+          "description": "Namespace to operate in",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -45,6 +157,24 @@
       "examples": [
         "k3s crictl ps",
         "k3s crictl images"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "crictl configuration file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--runtime-endpoint",
+          "description": "Container runtime endpoint",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        }
       ]
     },
     {
@@ -53,6 +183,24 @@
       "examples": [
         "k3s ctr images ls",
         "k3s ctr containers list"
+      ],
+      "options": [
+        {
+          "name": "--address",
+          "description": "containerd socket to connect to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--namespace",
+          "description": "containerd namespace to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -60,7 +208,8 @@
       "description": "Check system config",
       "examples": [
         "k3s check-config"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "token",
@@ -69,6 +218,24 @@
         "k3s token create",
         "k3s token list",
         "k3s token delete token-id"
+      ],
+      "options": [
+        {
+          "name": "--data-dir",
+          "description": "Directory holding cluster state",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--output",
+          "description": "Output format: text or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -76,6 +243,32 @@
       "description": "Manage certificates",
       "examples": [
         "k3s certificate rotate"
+      ],
+      "options": [
+        {
+          "name": "--data-dir",
+          "description": "Directory holding cluster state",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--service",
+          "description": "Service whose certificates to act on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--output",
+          "description": "Output format: text or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -85,6 +278,34 @@
         "k3s etcd-snapshot save",
         "k3s etcd-snapshot list",
         "k3s etcd-snapshot delete snapshot-name"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Name for the snapshot",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dir",
+          "description": "Directory to write snapshots to",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--s3",
+          "description": "Upload the snapshot to S3",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--data-dir",
+          "description": "Directory holding cluster state",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        }
       ]
     },
     {
@@ -94,6 +315,24 @@
         "k3s secrets-encrypt status",
         "k3s secrets-encrypt enable",
         "k3s secrets-encrypt disable"
+      ],
+      "options": [
+        {
+          "name": "--data-dir",
+          "description": "Directory holding cluster state",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--force",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
       ]
     },
     {
@@ -101,7 +340,8 @@
       "description": "Shell completion",
       "examples": [
         "source <(k3s completion bash)"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -132,5 +372,38 @@
     "k3d",
     "helm",
     "rancher"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "k3s version",
+        "command": "k3s --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "k3s"
+      },
+      {
+        "name": "service_status",
+        "description": "k3s service state",
+        "command": "systemctl is-active k3s 2>/dev/null || systemctl is-active k3s-agent 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30
+      },
+      {
+        "name": "kubeconfig",
+        "description": "k3s kubeconfig location",
+        "command": "ls /etc/rancher/k3s/k3s.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "manifests",
+        "description": "Auto-deploy manifests k3s is watching",
+        "command": "ls /var/lib/rancher/k3s/server/manifests 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

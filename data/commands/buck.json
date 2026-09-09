@@ -65,6 +65,22 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Set a build configuration value",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--num-threads",
+          "description": "Number of build threads",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -141,7 +157,8 @@
     },
     {
       "name": "clean",
-      "description": "Remove the build outputs"
+      "description": "Remove the build outputs",
+      "options": []
     },
     {
       "name": "install",
@@ -167,11 +184,20 @@
     },
     {
       "name": "audit",
-      "description": "Inspect build configuration and rules"
+      "description": "Inspect build configuration and rules",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "kill",
-      "description": "Stop the buck daemon"
+      "description": "Stop the buck daemon",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -235,5 +261,37 @@
     "pants",
     "ninja",
     "gradle"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Buck version",
+        "command": "buck2 --version 2>/dev/null || buck --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "root",
+        "description": "Buck project root",
+        "command": "ls .buckconfig 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "config",
+        "description": "Buck configuration",
+        "command": "cat .buckconfig 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "build_files",
+        "description": "Buck build files in this project",
+        "command": "find . -maxdepth 3 -name 'BUCK' -o -name 'TARGETS' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

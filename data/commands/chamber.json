@@ -20,6 +20,30 @@
       "examples": [
         "chamber write my-service db-password supersecret",
         "chamber write production/api SECRET_KEY abc123"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to write to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--kms-key-alias",
+          "description": "KMS key alias to encrypt with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
       ]
     },
     {
@@ -27,6 +51,46 @@
       "description": "Read a single secret",
       "examples": [
         "chamber read my-service db-password"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to read from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--version",
+          "description": "Secret version to read",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-v",
+          "shorthand": "-v"
+        },
+        {
+          "name": "--quiet",
+          "description": "Print the value only",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
+      ],
+      "args": [
+        {
+          "name": "service",
+          "description": "Service holding the secret",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "description": "Secret key to read",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -35,6 +99,24 @@
       "examples": [
         "chamber list my-service",
         "chamber list my-service -e"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to list",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--expand",
+          "description": "Show the secret values too",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-e",
+          "shorthand": "-e"
+        }
       ]
     },
     {
@@ -44,6 +126,42 @@
         "chamber exec my-service -- node server.js",
         "chamber exec production/api -- ./start.sh",
         "chamber exec my-service another-service -- env"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to read from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--pristine",
+          "description": "Pass only the loaded secrets as the environment",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--strict-value",
+          "description": "Only replace variables set to this sentinel",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "service",
+          "description": "Service whose secrets to load",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "command",
+          "description": "Command to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -52,6 +170,22 @@
       "examples": [
         "chamber env my-service",
         "chamber env my-service --backend ssm"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to read from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--format",
+          "description": "Output format: bash, fish, json, dotenv or tfvars",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -59,6 +193,36 @@
       "description": "Delete a secret",
       "examples": [
         "chamber delete my-service db-password"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to delete from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--exact-key",
+          "description": "Delete only this exact key",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "service",
+          "description": "Service holding the secret",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "description": "Secret key to delete",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -66,6 +230,16 @@
       "description": "View secret version history",
       "examples": [
         "chamber history my-service db-password"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to read from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        }
       ]
     },
     {
@@ -76,6 +250,40 @@
         "chamber export my-service --format json",
         "chamber export my-service --format dotenv",
         "chamber export my-service --format csv"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to read from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--format",
+          "description": "Output format: json, yaml, dotenv or tfvars",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--output-file",
+          "description": "Write the export to this file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ],
+      "args": [
+        {
+          "name": "service",
+          "description": "Service whose secrets to export",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -83,6 +291,30 @@
       "description": "Import secrets from JSON",
       "examples": [
         "chamber import my-service secrets.json"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to write to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        }
+      ],
+      "args": [
+        {
+          "name": "service",
+          "description": "Service to import into",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "description": "File holding the secrets",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -90,6 +322,30 @@
       "description": "Find services matching pattern",
       "examples": [
         "chamber find db"
+      ],
+      "options": [
+        {
+          "name": "--backend",
+          "description": "Secret backend to search",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--by-value",
+          "description": "Search values rather than keys",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "key",
+          "description": "Key or value to search for",
+          "required": true,
+          "type": "string"
+        }
       ]
     }
   ],
@@ -128,5 +384,31 @@
     "vault",
     "sops",
     "doppler"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "chamber version",
+        "command": "chamber version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "chamber"
+      },
+      {
+        "name": "backend",
+        "description": "Chamber secret backend in effect",
+        "command": "echo \"${CHAMBER_SECRET_BACKEND:-ssm}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "kms_key",
+        "description": "Chamber KMS key alias in effect",
+        "command": "echo \"${CHAMBER_KMS_KEY_ALIAS:-alias/parameter_store_key}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

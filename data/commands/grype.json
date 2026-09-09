@@ -21,6 +21,16 @@
         "grype db update",
         "grype db status",
         "grype db list"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "grype configuration file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     }
   ],
@@ -75,5 +85,39 @@
     "trivy",
     "cosign",
     "snyk"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "grype version",
+        "command": "grype version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "grype"
+      },
+      {
+        "name": "db_status",
+        "description": "Vulnerability database status",
+        "command": "grype db status 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "grype"
+      },
+      {
+        "name": "config",
+        "description": "grype configuration",
+        "command": "cat .grype.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "sbom_files",
+        "description": "SBOM files grype can scan",
+        "command": "find . -maxdepth 2 -name '*.sbom.json' -o -maxdepth 2 -name 'sbom.json' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

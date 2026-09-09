@@ -388,6 +388,31 @@ const manifest = {
 // ── 10. Command files — terminal autocomplete needs completable data ──
 {
   const VALUED = new Set(["string", "path", "file", "directory", "number", "integer", "url"]);
+
+  // Parsers the context engine knows how to apply to a detector's stdout.
+  // The set README.md documents. Only five are in use, but a validator stricter than
+  // the published contract would reject a detector authored straight from the docs.
+  const PARSERS = new Set(["text", "lines", "json", "csv", "keyvalue", "regex", "table"]);
+
+  // Types an arg may declare. `type` stays optional — 631 args legitimately omit it.
+  const ARG_TYPES = new Set([
+    "string", "path", "file", "directory", "number", "integer", "url", "boolean", "branch",
+  ]);
+
+  // A detector command must not change state. Package managers are the subtle
+  // case: `apt list --installed`, `dnf repolist` and `cargo install --list` are
+  // queries, so the rule keys off the mutating SUBCOMMAND, not the binary name.
+  const MUTATORS = [
+    /(^|[\s;|&(`])(rm|rmdir|mv|dd|mkfs|shutdown|reboot|halt|poweroff|pkill|chmod|chown|truncate|shred|unlink|tee)([\s;|&)]|$)/,
+    /(^|[\s;|&(`])(kill|killall)\s+(?!-l\b)/,
+    /\b(apt|apt-get|yum|dnf|pacman|zypper|apk|brew|port|snap|scoop|choco|winget|npm|pnpm|yarn|pip|pip3|gem|cargo|go|nix-env|guix|asdf|mise)\s+(install|uninstall|reinstall|remove|purge|erase|autoremove|upgrade|dist-upgrade)\b(?!\s+--?(list|dry-run|help|version))/,
+    /\bgit\s+(push|commit|reset|checkout|clean|rebase|merge|cherry-pick|am|apply|filter-branch)\b/,
+    /\bdocker\s+(rm|rmi|kill|stop|start|restart|prune|build|push|run|exec)\b/,
+    /\b(kubectl|oc)\s+(delete|apply|create|edit|patch|scale|replace|drain|cordon|taint)\b/,
+    /\bterraform\s+(apply|destroy|import|taint)\b/,
+    /\bhelm\s+(install|upgrade|uninstall|delete|rollback|push)\b/,
+    /\bsystemctl\s+(start|stop|restart|reload|enable|disable|mask|unmask)\b/,
+  ];
   for (const f of jsonFiles(path.join(DATA, "commands")).filter((x) => x !== "manifest.json")) {
     const d = read(path.join(DATA, "commands", f));
     const where = `commands/${f}`;
@@ -412,7 +437,19 @@ const manifest = {
       if (o.shorthand !== undefined && o.short === undefined)
         fail(`${where} ${at} option "${o.name}" has shorthand but no short`);
     };
+    // args are positional, and 275 of them shipped as bare strings — which render
+    // with no description and no type — so they get the same treatment as options.
+    const checkArg = (g, at) => {
+      if (typeof g === "string") return fail(`${where} ${at} arg "${g}" is a bare string, expected {name, description, required}`);
+      if (!g || typeof g !== "object") return fail(`${where} ${at} arg is not an object`);
+      if (!g.name) fail(`${where} ${at} arg has no name`);
+      if (!g.description) fail(`${where} ${at} arg "${g.name}" has no description`);
+      if (typeof g.required !== "boolean") fail(`${where} ${at} arg "${g.name}" has no boolean required`);
+      if (g.type !== undefined && !ARG_TYPES.has(g.type))
+        fail(`${where} ${at} arg "${g.name}" has unknown type "${g.type}"`);
+    };
     gopts.forEach((o, i) => checkOption(o, `globalOptions[${i}]`));
+    (d.args ?? []).forEach((g, i) => checkArg(g, `args[${i}]`));
     // Subcommands may carry their own subcommands[] — 168 already do — so this
     // recurses. A one-level walk left 1368 nested options unvalidated.
     // A name containing spaces is valid: 769 subcommands encode their path that
@@ -423,10 +460,49 @@ const manifest = {
         if (!s2.name) fail(`${where} has a subcommand with no name`);
         if (!s2.description) fail(`${where} subcommand "${at}" has no description`);
         (s2.options ?? []).forEach((o, i) => checkOption(o, `subcommand "${at}" options[${i}]`));
+        (s2.args ?? []).forEach((g, i) => checkArg(g, `subcommand "${at}" args[${i}]`));
         if ((s2.subcommands ?? []).length) walkSubs(s2.subcommands, at);
       }
     };
     walkSubs(subs, "");
+
+    // ---- contextEngine detectors ----------------------------------------
+    // These commands are EXECUTED by the consumer to gather shell context, so
+    // they are validated harder than the rest of the file: every one must be
+    // read-only. A detector that mutates state would run on tab-completion.
+    const dets = d.contextEngine?.detectors ?? [];
+    if (!dets.length) fail(`${where} has no contextEngine.detectors`);
+    const detNames = new Set();
+    for (const [i, det] of dets.entries()) {
+      const dat = `contextEngine.detectors[${i}]`;
+      for (const k of ["name", "description", "command", "parser"])
+        if (!det[k]) fail(`${where} ${dat} has no ${k}`);
+      if (typeof det.cacheFor !== "number")
+        fail(`${where} ${dat} "${det.name}" has no numeric cacheFor`);
+      if (det.parser && !PARSERS.has(det.parser))
+        fail(`${where} ${dat} "${det.name}" has unknown parser "${det.parser}"`);
+      if (det.name && detNames.has(det.name))
+        fail(`${where} ${dat} repeats the detector name "${det.name}"`);
+      detNames.add(det.name);
+      if (det.command) {
+        // Version and help probes, signal listing, and `which`-style lookups name
+        // a binary without running it, so neutralise them before the mutation test.
+        const probeless = det.command
+          .replace(/\b[\w.:@\/-]+\s+(--version|--help|-V\b|-h\b)/g, "PROBE")
+          .replace(/\b(kill|killall)\s+-l\b/g, "PROBE")
+          .replace(/\b(which|command\s+-v|type\s+-p)\s+[\w\s.:@\/-]+/g, "PROBE");
+        for (const re of MUTATORS)
+          if (re.test(probeless))
+            fail(`${where} ${dat} "${det.name}" is not read-only: ${det.command}`);
+        // A redirect inside quotes is literal text (a grep pattern, say), so only
+        // look for shell syntax once quoted spans are removed. 2>/dev/null is fine.
+        const shellOnly = det.command
+          .replace(/2>\/dev\/null/g, "").replace(/2>&1/g, "")
+          .replace(/'[^']*'/g, "''").replace(/"[^"]*"/g, '""');
+        if (/(^|[^0-9\s])>|>>/.test(shellOnly))
+          fail(`${where} ${dat} "${det.name}" redirects output to a file: ${det.command}`);
+      }
+    }
   }
 }
 

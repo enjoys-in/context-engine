@@ -1,5 +1,12 @@
 # context-engine coverage TODO
 
+Two independent tracks live in this file:
+
+- **T/P sections** — the Monaco language data under `data/<provider>/<language>.json`,
+  governed by `MONACO_LANGUAGES_API.instructions.md`.
+- **C section** — `data/commands`, which feeds xterm shell autocomplete and has nothing to
+  do with `monaco.languages.*`.
+
 Scope note: **javascript and typescript data is excluded by request** — already covered.
 
 ---
@@ -159,12 +166,153 @@ differently. Useful as the reference for what "deep" looks like.
 
 ---
 
+## C — `data/commands` (xterm shell autocomplete, **not** Monaco)
+
+This tree feeds inshellsense-style terminal completion, not `monaco.languages.*`, and it is
+**consumed downstream** — so every task here is additive. No renames, no re-nesting, no
+schema changes; only new keys and deeper values on the shapes already shipped.
+
+Measured from disk:
+
+| | |
+|---|---|
+| command files | **629** (612 unique names, 27 aliases) |
+| display categories | 56 |
+| `contextEngine` detectors | **629/629 files · 2,446 detectors** |
+| leaf subcommands | **5,137** (plus 194 parent nodes) |
+| leaves with `options` | **4,687 — 91%** |
+| leaves with `args` | **1,732 — 34%** |
+| subcommand `options` | **16,003** |
+| `globalOptions` | 7,080 |
+| `args` entries | 1,963, **0 of them malformed** |
+
+### DONE
+
+- [x] **C1 — 165 missing CLI tools authored.**
+- [x] **C2 — 1,368 `short`/`shorthand`/`takesValue` fills** on nested options, using the
+      kubectl/helm option shape as canonical (`takesValue` = `type !== "boolean"`).
+- [x] **C3 — command-name collisions were silently discarding 84 subcommands.**
+      `mergeCommand` in `index.js`/`index.mjs` now merges colliding entries key-wise.
+- [x] **C4 — alias resolution.** `aliasIndex()` + `resolveCommandName()`.
+- [x] **C5 — validator coverage for this tree** in `build.mjs`: command completability,
+      README/manifest drift, and alias-vs-name conflicts — which immediately caught two I
+      had introduced myself (`c.json` claiming `clang`, `cpp.json` claiming `clang++`).
+- [x] **C6 — option depth.** Option-less leaves **2,167 -> 450**; subcommand options
+      **6,983 -> 16,003**. Every remaining empty leaf is *deliberately* empty (see below).
+- [x] **C7 — `aws` complete.** 66 services, 361 options, 0 without options or examples.
+- [x] **C8 — `git` deepened.** 68 -> **154** subcommands, **154/154 with examples**
+      (was 28), 143 with options.
+- [x] **C9 — `contextEngine`: 166 -> 629/629 (100%), 2,446 detectors.** Authored against
+      each file's real binary, which is often *not* the filename: `css.json` is `stylelint`,
+      `json.json` is `jq`, `typescript.json` is `tsc`, `c.json` is `gcc`, `apex.json` is
+      `sf`. Every detector is a **read-only probe** — version and config reads, `find`/`ls`
+      project inspection, and cheap context queries (`kubectl config current-context`).
+      `build.mjs` now enforces that (below), and enforcing it found a genuine bug in the
+      pre-existing data: `winget upgrade` is a *mutating* command, corrected to
+      `winget list --upgrade-available`.
+- [x] **C10 — 275 malformed `args` repaired.** Across 48 files, `args` entries had shipped
+      as bare strings (`"image:tag"`, `"file"`) rather than the
+      `{name, description, required, type?}` objects the other 1,163 already used, so they
+      rendered with no description and no type. There was a `checkOption` guard for exactly
+      this mistake on options but no `checkArg`, which is why it survived. Both are now in
+      place and were verified by reintroducing the bug.
+- [x] **C11 — `args` depth.** Leaves with args **1,286 -> 1,732**; the name-implies-a-target
+      residual went **729 -> 397**.
+
+### New enforcement in `build.mjs`
+
+- Every detector must declare `name`, `description`, `command`, `parser` (one of
+  lines/text/json/table/keyvalue) and a numeric `cacheFor`, with unique names per file.
+- Every detector command must be **read-only**. The rule keys off the mutating
+  *subcommand*, not the binary, because `apt list --installed`, `dnf repolist` and
+  `cargo install --list` are queries; `--version`/`--help` probes and `which`-style
+  lookups are neutralised before the test, and redirects inside quotes are ignored
+  (a `>` in a grep pattern is not shell syntax).
+- `checkArg` mirrors `checkOption`: no bare strings, description required, boolean
+  `required`, and `type` — which stays optional, since 631 args legitimately omit it.
+
+### Deliberately empty — 450 option-less leaves, and why
+
+These are **not** unfinished. Padding them would be fabrication:
+
+- **Flagless coreutils and shell builtins** (`linux`, 18): `arch`, `whoami`, `bg`, `fg`,
+  `yes`, `rev`, `groups`, `lsmod`, `expr`, `source`, `nohup`, `mesg`, `xdg-open`.
+- **Dockerfile instructions** (11): `CMD`, `ENTRYPOINT`, `ENV`, `EXPOSE`, `USER` — these
+  are directives, not commands, and take no flags.
+- **`cmake -E` file operations** (11): `copy`, `rename`, `touch`, `md5sum` take operands only.
+- **VS Code command ids** (`tailwindcss`, 8): `tailwindcss.sortClasses` and friends are
+  editor commands, not a CLI.
+- **Positional-only subcommands**: `simctl` (10), `ufw` (10), `clojure` alias invocations
+  (9), `direnv` (9), `asdf` (8), `sdkman` (8), `awk` functions (8), `scoop` (7).
+- **Flagless git plumbing** (9): `citool`, `gui`, `http-backend`, `stash clear`,
+  `remote remove`, `worktree repair`.
+
+The same holds for `args`: of the 3,405 leaves without them, **892 inherently take no
+positional** (`docker ps`, `systemctl daemon-reload`, `terraform init`, `brew update`,
+`cargo clean`) and **2,116 are flags-as-names, DSL fragments or resource groups**
+(`-c file.coffee`, `.key file.yaml`, `openstack server`). Counting those as a gap is the
+same mistake as the withdrawn findings below.
+
+### Withdrawn — two of my own gap reports were wrong
+
+- **"3,427 subcommands offer nothing after the name" was inflated.** 187 of those are
+  *parent groups*, which correctly carry no options of their own. The real figure was
+  **3,240**. Same class of error as P5.3 — count the thing you actually mean before
+  calling it a gap.
+- **The three subcommand naming forms coexist by design**, and are not an inconsistency to
+  normalise: **4,334 flat** names, **771 space-encoded** (`docker` uses `"network ls"`,
+  `kubectl` uses `"create deployment"` — relative to the binary, no prefix), and **194
+  parent nodes** with real `subcommands[]`. I began migrating the space-encoded names into
+  a nested tree and was told to stop; **reverted in full**.
+
+### Corrected in `git.json` — three entries that should not have shipped
+
+Reported against the depth-pass commit and fixed:
+
+- `switch-detach` and `rev-list-count` folded a flag into the subcommand name, and both
+  flags already existed on the parent (`switch --detach`, `rev-list --count`) — pure
+  duplicates, **removed**. `rev-list-count`'s one unique flag (`--left-right`) was moved
+  onto `rev-list` first.
+- `worktree-prune` **renamed to `"worktree prune"`**, following the tree-wide convention
+  (`docker` `"network ls"`, `kubectl` `"create deployment"`). The file itself had no
+  space-encoded names to copy, but the tree's 771 are unambiguous.
+- While there: the 4 pseudo-groups (`stash`, `remote`, `submodule`, `worktree`) listed
+  their sub-subcommands as bare entries in `options[]`, where they complete as if they
+  were flags and cannot carry flags of their own. **34 real space-encoded paths added
+  alongside**; the existing bare entries were left untouched.
+
+Structure check against the committed tree: **`git.json` is the only file whose subcommand
+signature changed** (3 removed, 35 added). The other 628 files have 0 renames, 0
+re-nestings and 0 `args`-count changes.
+
+### OPEN
+
+- [ ] **C12 — `args` residual: 397 leaves** whose name implies a target but that still
+      carry none. Many are flag-driven rather than positional (`az group create --name`),
+      so the true remainder is smaller; it needs per-command checking, not a bulk pass.
+- [ ] **C13 — `aws` breadth: 66 of ~300 services.** The remaining ~230 are narrow
+      services; better added on demand than padded in bulk.
+- [ ] **C14 — leaf `examples`: 2,620 of 5,137.** `git` is now complete at 154/154; the
+      rest of the tree is the open half.
+
+### Nested cloud-CLI caveat
+
+~180 nested subcommands under `doctl`/`hcloud`/`civo` and friends repeat leaf names
+(`create`, `list`, `delete`) under different parents, so name-keyed fills are ambiguous and
+correctly refused. These need path-keyed addressing (`"a > b > c"`), not a looser matcher.
+
+---
+
 ## Notes / risks
 
-- **Concurrent edits.** Another process has been committing to `data/` throughout
-  (`languageConfiguration` provider, command re-categorisation, the earlier regex repair).
-  It has already wired `languageConfiguration` into the LSP — the 30th-provider gap I
-  flagged earlier is closed, LSP and manifest are now 30/30 aligned. Coordinate before
-  bulk data writes.
+- **Commits are not mine to make.** This checkout is shared; another session owns
+  committing, so expect the tree to move under you and do not commit from an agent turn.
+  Three command commits have landed (`63559b5` short/shorthand, `1d13046` cloud options,
+  `96d325e` Linux/network flags). **51 files from the C6 depth pass are uncommitted at the
+  time of writing** — `aws`, `git`, `gcloud`, `az`, `nomad`, `doctl`, `shadcn`, `linux`
+  and 43 others, ~25.4k insertions.
+- **Concurrent edits.** The same process wired `languageConfiguration` into the LSP — the
+  30th-provider gap flagged earlier is closed, LSP and manifest are now 30/30 aligned.
+  Coordinate before bulk data writes.
 - **Regression guard.** Add the two checks used here to CI: every JSON parses, and every
   pattern-field string compiles as a `RegExp`. Both would have caught T0 at authoring time.

@@ -22,6 +22,20 @@
       "description": "Add a new changeset",
       "examples": [
         "changeset add"
+      ],
+      "options": [
+        {
+          "name": "--empty",
+          "description": "Create a changeset with no package bumps",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--open",
+          "description": "Open the changeset in an editor",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -29,6 +43,20 @@
       "description": "Apply changesets to versions/changelogs",
       "examples": [
         "changeset version"
+      ],
+      "options": [
+        {
+          "name": "--ignore",
+          "description": "Package to exclude from versioning",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--snapshot",
+          "description": "Produce a snapshot version",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -36,6 +64,26 @@
       "description": "Publish changed packages",
       "examples": [
         "changeset publish"
+      ],
+      "options": [
+        {
+          "name": "--tag",
+          "description": "npm dist-tag to publish under",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--otp",
+          "description": "One-time password for two-factor auth",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--no-git-tag",
+          "description": "Do not create git tags",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -43,6 +91,26 @@
       "description": "Show current changeset status",
       "examples": [
         "changeset status"
+      ],
+      "options": [
+        {
+          "name": "--since",
+          "description": "Compare against this git ref",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Write the status as JSON here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -50,7 +118,8 @@
       "description": "Initialize changesets",
       "examples": [
         "changeset init"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -100,5 +169,37 @@
     "semantic-release",
     "npm",
     "pnpm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Changesets version",
+        "command": "changeset --version 2>/dev/null || npx changeset --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Changesets configuration",
+        "command": "cat .changeset/config.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "pending",
+        "description": "Pending changesets awaiting release",
+        "command": "ls .changeset/*.md 2>/dev/null | grep -v README | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

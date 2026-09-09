@@ -20,6 +20,40 @@
       "examples": [
         "semgrep scan",
         "semgrep scan --config auto"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Rule config or registry ruleset to run",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--severity",
+          "description": "Minimum severity to report",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--exclude",
+          "description": "Paths to skip",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--autofix",
+          "description": "Apply fixes that rules provide",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,6 +61,28 @@
       "description": "Run in CI mode",
       "examples": [
         "semgrep ci"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Rule config or registry ruleset to run",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--baseline-commit",
+          "description": "Only report findings newer than this commit",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -34,7 +90,8 @@
       "description": "Login to Semgrep Cloud",
       "examples": [
         "semgrep login"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -99,5 +156,38 @@
     "sonar",
     "codeql",
     "bandit"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Semgrep version",
+        "command": "semgrep --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "semgrep"
+      },
+      {
+        "name": "config",
+        "description": "Semgrep rule configuration",
+        "command": "cat .semgrep.yml 2>/dev/null || ls .semgrep 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "rules",
+        "description": "Custom Semgrep rules in this project",
+        "command": "find . -maxdepth 3 -name '*.semgrep.yml' -o -path '*/.semgrep/*.yml' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "ignore",
+        "description": "Paths Semgrep excludes",
+        "command": "cat .semgrepignore 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

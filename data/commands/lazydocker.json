@@ -90,5 +90,40 @@
     "docker-compose",
     "k9s",
     "dive"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "lazydocker version",
+        "command": "lazydocker --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "lazydocker"
+      },
+      {
+        "name": "docker_ok",
+        "description": "Docker daemon reachability",
+        "command": "docker info --format '{{.ServerVersion}}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "containers",
+        "description": "Docker containers lazydocker will show",
+        "command": "docker ps -a --format '{{.Names}}\\t{{.Status}}' 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "compose",
+        "description": "Compose project in this directory",
+        "command": "ls docker-compose.yml compose.yaml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

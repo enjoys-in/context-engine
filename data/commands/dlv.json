@@ -129,6 +129,20 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--headless",
+          "description": "Run without an interactive client",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--api-version",
+          "description": "Delve API version to speak",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -166,6 +180,14 @@
           "description": "Core file",
           "type": "file",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--log",
+          "description": "Enable debug logging",
+          "type": "string",
+          "takesValue": true
         }
       ]
     },
@@ -251,5 +273,39 @@
     "lldb",
     "go",
     "gopls"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Delve version",
+        "command": "dlv version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dlv"
+      },
+      {
+        "name": "go_version",
+        "description": "Go toolchain Delve will debug",
+        "command": "go version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "main_packages",
+        "description": "Main packages Delve can launch",
+        "command": "grep -rl 'func main()' --include='*.go' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Delve configuration",
+        "command": "cat ~/.config/dlv/config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -142,5 +142,31 @@
     "curl",
     "socat",
     "grpcurl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "websocat version",
+        "command": "websocat --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "websocat"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      },
+      {
+        "name": "proxy",
+        "description": "Proxy configuration in effect",
+        "command": "echo \"http=${http_proxy:-unset} https=${https_proxy:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

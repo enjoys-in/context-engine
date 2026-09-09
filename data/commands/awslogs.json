@@ -119,6 +119,38 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--region",
+          "description": "AWS region to target",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--profile",
+          "description": "Named AWS profile to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: json, text, table or yaml",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--query",
+          "description": "JMESPath expression to filter the response",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log-group-name",
+          "description": "Log group to list streams from",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -191,5 +223,31 @@
     "logcli",
     "journalctl",
     "sam"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "awslogs version",
+        "command": "awslogs --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "awslogs"
+      },
+      {
+        "name": "region",
+        "description": "AWS region in effect",
+        "command": "echo \"${AWS_REGION:-${AWS_DEFAULT_REGION:-unset}}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "profile",
+        "description": "AWS profile in effect",
+        "command": "echo \"${AWS_PROFILE:-default}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

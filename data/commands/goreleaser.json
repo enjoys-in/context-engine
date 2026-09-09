@@ -103,19 +103,59 @@
     },
     {
       "name": "init",
-      "description": "Create a starter .goreleaser.yaml"
+      "description": "Create a starter .goreleaser.yaml",
+      "options": [
+        {
+          "name": "--config",
+          "description": "Path for the generated config",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "healthcheck",
-      "description": "Verify the required external tools are installed"
+      "description": "Verify the required external tools are installed",
+      "options": [
+        {
+          "name": "--config",
+          "description": "Config file to check",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "schema",
-      "description": "Print the configuration JSON schema"
+      "description": "Print the configuration JSON schema",
+      "options": [
+        {
+          "name": "--output",
+          "description": "Write the JSON schema here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     },
     {
       "name": "changelog",
-      "description": "Print the generated changelog"
+      "description": "Print the generated changelog",
+      "options": [
+        {
+          "name": "--config",
+          "description": "Config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -186,5 +226,40 @@
     "docker",
     "cosign",
     "syft"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GoReleaser version",
+        "command": "goreleaser --version 2>/dev/null | head -6",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "goreleaser"
+      },
+      {
+        "name": "config",
+        "description": "GoReleaser release configuration",
+        "command": "cat .goreleaser.yaml 2>/dev/null | head -50 || cat .goreleaser.yml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "check",
+        "description": "Whether the GoReleaser config validates",
+        "command": "goreleaser check 2>&1 | tail -5",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "goreleaser"
+      },
+      {
+        "name": "last_tag",
+        "description": "Most recent tag GoReleaser would release from",
+        "command": "git describe --tags --abbrev=0 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "git"
+      }
+    ]
+  }
 }

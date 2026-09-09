@@ -107,5 +107,47 @@
     "markdown",
     "asciidoctor",
     "groff"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Pandoc version",
+        "command": "pandoc --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pandoc"
+      },
+      {
+        "name": "input_formats",
+        "description": "Input formats Pandoc accepts",
+        "command": "pandoc --list-input-formats 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "pandoc"
+      },
+      {
+        "name": "output_formats",
+        "description": "Output formats Pandoc can produce",
+        "command": "pandoc --list-output-formats 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "pandoc"
+      },
+      {
+        "name": "pdf_engine",
+        "description": "PDF engines available to Pandoc",
+        "command": "which pdflatex xelatex wkhtmltopdf weasyprint 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "documents",
+        "description": "Documents Pandoc can convert",
+        "command": "find . -maxdepth 2 -name '*.md' -o -name '*.rst' -o -name '*.docx' -o -name '*.tex' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

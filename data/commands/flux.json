@@ -205,6 +205,44 @@
       "description": "Create a Git source",
       "examples": [
         "flux create source git my-repo --url=https://github.com/org/repo --branch=main --interval=1m"
+      ],
+      "options": [
+        {
+          "name": "--url",
+          "description": "Repository URL to sync from",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--branch",
+          "description": "Branch to track",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tag",
+          "description": "Tag to track",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--interval",
+          "description": "How often to poll the source",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--secret-ref",
+          "description": "Secret holding the credentials",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--export",
+          "description": "Print the manifest rather than applying it",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -212,6 +250,32 @@
       "description": "Create a Helm source",
       "examples": [
         "flux create source helm bitnami --url=https://charts.bitnami.com/bitnami --interval=1h"
+      ],
+      "options": [
+        {
+          "name": "--url",
+          "description": "Helm repository URL",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--interval",
+          "description": "How often to poll the repository",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--secret-ref",
+          "description": "Secret holding the credentials",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--export",
+          "description": "Print the manifest rather than applying it",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -219,6 +283,38 @@
       "description": "Create a Kustomization",
       "examples": [
         "flux create kustomization my-app --source=my-repo --path=./deploy --prune=true --interval=5m"
+      ],
+      "options": [
+        {
+          "name": "--source",
+          "description": "Source to build from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--path",
+          "description": "Path within the source to build",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--prune",
+          "description": "Garbage-collect removed resources",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--interval",
+          "description": "How often to reconcile",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--export",
+          "description": "Print the manifest rather than applying it",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -226,6 +322,38 @@
       "description": "Create a HelmRelease",
       "examples": [
         "flux create hr my-app --source=HelmRepository/bitnami --chart=nginx --interval=1h"
+      ],
+      "options": [
+        {
+          "name": "--source",
+          "description": "Chart source to install from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--chart",
+          "description": "Chart name to install",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--chart-version",
+          "description": "Chart version to install",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--values",
+          "description": "Values file to apply",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--export",
+          "description": "Print the manifest rather than applying it",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -268,6 +396,14 @@
           "takesValue": false,
           "short": "-w",
           "shorthand": "-w"
+        }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to list",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -380,6 +516,20 @@
           "short": "-s",
           "shorthand": "-s"
         }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to delete",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "description": "Resource name to delete",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -432,6 +582,22 @@
       "description": "Show resource tree",
       "examples": [
         "flux tree kustomization my-app"
+      ],
+      "options": [
+        {
+          "name": "--compact",
+          "description": "Hide resources that are not managed",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--output",
+          "description": "Output format: yaml or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -462,6 +628,14 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to export",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -482,6 +656,14 @@
           "description": "Show a progress bar",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to diff",
+          "required": true,
+          "type": "string"
         }
       ]
     }
@@ -529,5 +711,49 @@
     "argocd",
     "kustomize",
     "git"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Flux CLI version",
+        "command": "flux version --client 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "flux"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "sources",
+        "description": "Flux sources being reconciled",
+        "command": "flux get sources all 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "flux"
+      },
+      {
+        "name": "kustomizations",
+        "description": "Flux kustomizations",
+        "command": "flux get kustomizations 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "flux"
+      }
+    ]
+  }
 }

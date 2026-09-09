@@ -147,6 +147,32 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--dev",
+          "description": "Remove from the dev dependency group",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--optional",
+          "description": "Remove from this optional extra",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--package",
+          "description": "Remove from this workspace member",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--frozen",
+          "description": "Do not update the lockfile",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -284,5 +310,46 @@
     "pipx",
     "pyenv",
     "python"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "uv version",
+        "command": "uv --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "uv"
+      },
+      {
+        "name": "pyproject",
+        "description": "Python project configuration",
+        "command": "cat pyproject.toml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "python_versions",
+        "description": "Python interpreters uv can use",
+        "command": "uv python list 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "uv"
+      },
+      {
+        "name": "lock",
+        "description": "uv lockfile present",
+        "command": "ls uv.lock 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active Python virtual environment",
+        "command": "echo \"${VIRTUAL_ENV:-none}\"",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

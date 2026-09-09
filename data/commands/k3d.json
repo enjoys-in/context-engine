@@ -87,6 +87,14 @@
           "short": "-v",
           "shorthand": "-v"
         }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Name for the new cluster",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -128,6 +136,14 @@
           "short": "-a",
           "shorthand": "-a"
         }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Cluster to delete",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -157,6 +173,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Cluster to start",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -173,6 +197,14 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Cluster to stop",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -210,6 +242,14 @@
           "takesValue": true,
           "short": "-i",
           "shorthand": "-i"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Name for the new node",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -251,6 +291,14 @@
           "short": "-a",
           "shorthand": "-a"
         }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Node to delete",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -281,6 +329,14 @@
           "description": "Suppress the usage hint",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Name for the new registry",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -322,6 +378,14 @@
           "short": "-a",
           "shorthand": "-a"
         }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Registry to delete",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -353,6 +417,14 @@
           "short": "-m",
           "shorthand": "-m"
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -370,6 +442,14 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Cluster whose kubeconfig to print",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -410,5 +490,41 @@
     "docker",
     "kind",
     "minikube"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "k3d and k3s versions",
+        "command": "k3d version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "k3d"
+      },
+      {
+        "name": "clusters",
+        "description": "k3d clusters on this machine",
+        "command": "k3d cluster list --no-headers 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "k3d"
+      },
+      {
+        "name": "nodes",
+        "description": "k3d nodes",
+        "command": "k3d node list --no-headers 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "k3d"
+      },
+      {
+        "name": "registries",
+        "description": "k3d managed registries",
+        "command": "k3d registry list --no-headers 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "k3d"
+      }
+    ]
+  }
 }

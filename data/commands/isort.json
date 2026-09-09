@@ -105,5 +105,31 @@
     "ruff",
     "black",
     "flake8"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "isort version",
+        "command": "isort --version-number 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "isort"
+      },
+      {
+        "name": "config",
+        "description": "isort configuration",
+        "command": "cat .isort.cfg 2>/dev/null || grep -A12 '\\[tool.isort\\]' pyproject.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "profile",
+        "description": "isort profile in effect",
+        "command": "grep -A6 '\\[tool.isort\\]' pyproject.toml 2>/dev/null | grep profile",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

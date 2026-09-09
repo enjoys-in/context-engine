@@ -109,7 +109,12 @@
       "name": "lint",
       "description": "Lint Twig template files for syntax errors",
       "args": [
-        "path"
+        {
+          "name": "path",
+          "description": "Path to lint",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -149,7 +154,12 @@
       "name": "render",
       "description": "Render a Twig template with given data",
       "args": [
-        "template"
+        {
+          "name": "template",
+          "description": "Template to render",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -170,13 +180,33 @@
       "name": "cache:clear",
       "description": "Clear compiled Twig template cache",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--no-warmup",
+          "description": "Do not warm the cache afterwards",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--env",
+          "description": "Symfony environment to target",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        }
+      ]
     },
     {
       "name": "check",
       "description": "Check Twig templates for deprecated features",
       "args": [
-        "path"
+        {
+          "name": "path",
+          "description": "Path to lint",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -200,5 +230,38 @@
     "composer",
     "symfony",
     "html"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Symfony console availability",
+        "command": "php bin/console --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "php"
+      },
+      {
+        "name": "templates",
+        "description": "Twig templates in this project",
+        "command": "find templates -maxdepth 3 -name '*.twig' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "composer",
+        "description": "PHP project manifest",
+        "command": "cat composer.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "twig_config",
+        "description": "Twig configuration for this Symfony app",
+        "command": "cat config/packages/twig.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

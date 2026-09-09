@@ -110,7 +110,12 @@
       "name": "compile",
       "description": "Compile Structured Text to PLC bytecode",
       "args": [
-        "file.st"
+        {
+          "name": "file.st",
+          "description": "Structured Text program to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -131,7 +136,12 @@
       "name": "check",
       "description": "Syntax-check Structured Text source files",
       "args": [
-        "file.st"
+        {
+          "name": "file.st",
+          "description": "Structured Text program to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -146,7 +156,12 @@
       "name": "simulate",
       "description": "Run PLC simulation with Structured Text program",
       "args": [
-        "file.st"
+        {
+          "name": "file.st",
+          "description": "Structured Text program to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -167,7 +182,12 @@
       "name": "download",
       "description": "Download compiled program to PLC controller",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Compiled output file to download",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -188,7 +208,12 @@
       "name": "generate",
       "description": "Generate C code from Structured Text using matiec",
       "args": [
-        "file.st"
+        {
+          "name": "file.st",
+          "description": "Structured Text program to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -216,5 +241,30 @@
     "gcc",
     "make",
     "systemverilog"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "compiler",
+        "description": "Structured Text compiler available",
+        "command": "which iec2c 2>/dev/null || which matiec 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sources",
+        "description": "Structured Text programs",
+        "command": "find . -maxdepth 2 -name '*.st' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "plc_projects",
+        "description": "PLC project files present",
+        "command": "ls plc.xml beremiz.xml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

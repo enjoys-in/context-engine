@@ -110,5 +110,32 @@
     "gotest",
     "golangci-lint",
     "task"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "gotestsum version",
+        "command": "gotestsum --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gotestsum"
+      },
+      {
+        "name": "test_packages",
+        "description": "Packages containing Go tests",
+        "command": "grep -rl 'func Test' --include='*_test.go' . 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "go_version",
+        "description": "Go toolchain in use",
+        "command": "go version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      }
+    ]
+  }
 }

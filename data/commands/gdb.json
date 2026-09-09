@@ -130,5 +130,45 @@
     "objdump",
     "strace",
     "perf"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GDB version",
+        "command": "gdb --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gdb"
+      },
+      {
+        "name": "ptrace_scope",
+        "description": "Whether ptrace attachment is restricted",
+        "command": "cat /proc/sys/kernel/yama/ptrace_scope 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "init_file",
+        "description": "GDB startup configuration",
+        "command": "cat ~/.gdbinit 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "core_dumps",
+        "description": "Core dumps available to inspect",
+        "command": "find . -maxdepth 2 -name 'core' -o -name 'core.*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "debug_binaries",
+        "description": "Executables with debug symbols here",
+        "command": "find . -maxdepth 2 -type f -perm -u+x 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

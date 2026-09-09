@@ -125,7 +125,15 @@
     },
     {
       "name": "kernelspec",
-      "description": "Manage installed kernels"
+      "description": "Manage installed kernels",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "kernel",
@@ -141,11 +149,20 @@
     },
     {
       "name": "server",
-      "description": "Manage Jupyter server instances"
+      "description": "Manage Jupyter server instances",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "troubleshoot",
-      "description": "Print environment detail for bug reports"
+      "description": "Print environment detail for bug reports",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -205,5 +222,40 @@
     "pip",
     "ipython",
     "papermill"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Jupyter component versions",
+        "command": "jupyter --version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "jupyter"
+      },
+      {
+        "name": "kernels",
+        "description": "Jupyter kernels registered",
+        "command": "jupyter kernelspec list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "jupyter"
+      },
+      {
+        "name": "servers",
+        "description": "Jupyter servers currently running",
+        "command": "jupyter server list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "jupyter"
+      },
+      {
+        "name": "notebooks",
+        "description": "Notebooks in this project",
+        "command": "find . -maxdepth 3 -name '*.ipynb' -not -path './.ipynb_checkpoints/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

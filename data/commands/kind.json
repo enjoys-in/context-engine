@@ -20,6 +20,38 @@
       "examples": [
         "kind create cluster",
         "kind create cluster --name my-cluster"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Name for the cluster",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--config",
+          "description": "Cluster configuration file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--image",
+          "description": "Node image to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--wait",
+          "description": "Wait this long for the control plane",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--retain",
+          "description": "Keep the nodes when creation fails",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,6 +59,20 @@
       "description": "Delete a cluster",
       "examples": [
         "kind delete cluster"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Cluster to delete",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--kubeconfig",
+          "description": "Kubeconfig file to update",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -34,13 +80,28 @@
       "description": "List clusters",
       "examples": [
         "kind get clusters"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "get nodes",
       "description": "List cluster nodes",
       "examples": [
         "kind get nodes"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Cluster whose nodes to list",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--all-clusters",
+          "description": "List nodes from every cluster",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -48,6 +109,20 @@
       "description": "Load Docker image into cluster",
       "examples": [
         "kind load docker-image myapp:latest"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Cluster to load into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--nodes",
+          "description": "Only load onto these nodes",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -55,6 +130,26 @@
       "description": "Export kubeconfig",
       "examples": [
         "kind export kubeconfig --name my-cluster"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Cluster to export",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--kubeconfig",
+          "description": "Kubeconfig file to write",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--internal",
+          "description": "Use the internal API server address",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -62,6 +157,22 @@
       "description": "Export cluster logs",
       "examples": [
         "kind export logs ./logs"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Cluster whose logs to export",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "directory",
+          "description": "Directory to write the logs to",
+          "required": false,
+          "type": "directory"
+        }
       ]
     }
   ],
@@ -97,5 +208,40 @@
     "minikube",
     "docker",
     "k3d"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kind version",
+        "command": "kind version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kind"
+      },
+      {
+        "name": "clusters",
+        "description": "kind clusters on this machine",
+        "command": "kind get clusters 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "kind"
+      },
+      {
+        "name": "nodes",
+        "description": "Nodes in the active kind cluster",
+        "command": "kind get nodes 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "kind"
+      },
+      {
+        "name": "config",
+        "description": "kind cluster configuration in this project",
+        "command": "cat kind-config.yaml 2>/dev/null || cat kind.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

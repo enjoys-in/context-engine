@@ -97,7 +97,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "show",
@@ -109,7 +110,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "pull",
@@ -179,11 +181,61 @@
     },
     {
       "name": "package",
-      "description": "Manage profiles the classic way"
+      "description": "Manage profiles the classic way",
+      "options": [
+        {
+          "name": "--install",
+          "description": "Install these packages",
+          "type": "string",
+          "takesValue": true,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--remove",
+          "description": "Remove these packages",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--list-installed",
+          "description": "List the installed packages",
+          "type": "string",
+          "takesValue": true,
+          "short": "-I",
+          "shorthand": "-I"
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-n",
+          "shorthand": "-n"
+        }
+      ]
     },
     {
       "name": "system",
-      "description": "Build and deploy whole system configurations"
+      "description": "Build and deploy whole system configurations",
+      "options": [
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--no-grub",
+          "description": "Do not install the bootloader",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "gc",
@@ -209,7 +261,17 @@
     },
     {
       "name": "describe",
-      "description": "Show which Guix revision is in use"
+      "description": "Show which Guix revision is in use",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: human, channels or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -251,5 +313,40 @@
     "nix-env",
     "apt",
     "port"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Guix version",
+        "command": "guix --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "guix"
+      },
+      {
+        "name": "generations",
+        "description": "Guix profile generations",
+        "command": "guix package --list-generations 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "guix"
+      },
+      {
+        "name": "installed",
+        "description": "Packages in the current Guix profile",
+        "command": "guix package --list-installed 2>/dev/null | head -25",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "guix"
+      },
+      {
+        "name": "manifest",
+        "description": "Guix manifest in this project",
+        "command": "cat manifest.scm 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -109,7 +109,12 @@
       "name": "format",
       "description": "Format DAX expressions using DAX Formatter",
       "args": [
-        "expression"
+        {
+          "name": "expression",
+          "description": "DAX expression to format",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -130,7 +135,12 @@
       "name": "analyze",
       "description": "Analyze DAX model using DAX Studio",
       "args": [
-        "connection"
+        {
+          "name": "connection",
+          "description": "Connection string to the model",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -151,7 +161,12 @@
       "name": "query",
       "description": "Execute DAX query against tabular model",
       "args": [
-        "query"
+        {
+          "name": "query",
+          "description": "DAX query to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -172,7 +187,12 @@
       "name": "export",
       "description": "Export DAX query results to file",
       "args": [
-        "query"
+        {
+          "name": "query",
+          "description": "DAX query to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -193,7 +213,12 @@
       "name": "benchmark",
       "description": "Benchmark DAX query performance",
       "args": [
-        "query"
+        {
+          "name": "query",
+          "description": "DAX query to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -221,5 +246,30 @@
     "powerquery",
     "sql",
     "powershell"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "model_files",
+        "description": "Power BI and tabular model files here",
+        "command": "find . -maxdepth 2 -name '*.pbix' -o -maxdepth 2 -name '*.bim' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "dax_queries",
+        "description": "DAX query files in this project",
+        "command": "find . -maxdepth 2 -name '*.dax' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "tools",
+        "description": "DAX tooling available on this host",
+        "command": "which pbi-tools tabular-editor 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

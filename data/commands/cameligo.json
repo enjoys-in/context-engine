@@ -112,31 +112,148 @@
       "name": "compile contract",
       "description": "Compile a CameLIGO contract",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--syntax",
+          "description": "Source syntax to parse",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--output-file",
+          "description": "Write the output here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--michelson-format",
+          "description": "Michelson output format",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--protocol",
+          "description": "Tezos protocol to target",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "compile storage",
       "description": "Compile storage expression",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--syntax",
+          "description": "Source syntax to parse",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--output-file",
+          "description": "Write the output here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--michelson-format",
+          "description": "Michelson output format",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--protocol",
+          "description": "Tezos protocol to target",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "compile parameter",
       "description": "Compile parameter expression",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--syntax",
+          "description": "Source syntax to parse",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--output-file",
+          "description": "Write the output here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--michelson-format",
+          "description": "Michelson output format",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--protocol",
+          "description": "Tezos protocol to target",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "run dry-run",
       "description": "Dry run a contract",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--syntax",
+          "description": "Source syntax to parse",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--entry-point",
+          "description": "Entry point to invoke",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "run test",
       "description": "Run contract tests",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--syntax",
+          "description": "Source syntax to parse",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--protocol",
+          "description": "Tezos protocol to target",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -158,5 +275,31 @@
     "octez-client",
     "truffle",
     "solc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "LIGO compiler version",
+        "command": "ligo --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ligo"
+      },
+      {
+        "name": "contracts",
+        "description": "CameLIGO contracts in this project",
+        "command": "find . -maxdepth 3 -name '*.mligo' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "tezos_client",
+        "description": "Tezos client available",
+        "command": "octez-client --version 2>/dev/null || tezos-client --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

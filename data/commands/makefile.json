@@ -98,45 +98,185 @@
       "name": "target",
       "description": "Build target",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--jobs",
+          "description": "Number of parallel jobs",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        },
+        {
+          "name": "--dry-run",
+          "description": "Print the recipes without running them",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--keep-going",
+          "description": "Keep going after a failed target",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--always-make",
+          "description": "Rebuild every target",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-B",
+          "shorthand": "-B"
+        }
+      ]
     },
     {
       "name": "-j4",
       "description": "Parallel build",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--load-average",
+          "description": "Do not start jobs above this load",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--output-sync",
+          "description": "Group output per job",
+          "type": "string",
+          "takesValue": true,
+          "short": "-O",
+          "shorthand": "-O"
+        }
+      ]
     },
     {
       "name": "-n",
       "description": "Dry run",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--print-data-base",
+          "description": "Print the parsed rules and variables",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     },
     {
       "name": "clean",
       "description": "Clean build",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--file",
+          "description": "Makefile to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--directory",
+          "description": "Change to this directory first",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-C",
+          "shorthand": "-C"
+        }
+      ]
     },
     {
       "name": "build",
       "description": "Build default target",
-      "usage": "make"
+      "usage": "make",
+      "options": [
+        {
+          "name": "--file",
+          "description": "Makefile to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--jobs",
+          "description": "Number of parallel jobs",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        }
+      ]
     },
     {
       "name": "install",
       "description": "Install built files",
-      "usage": "make install"
+      "usage": "make install",
+      "options": [
+        {
+          "name": "--file",
+          "description": "Makefile to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--directory",
+          "description": "Change to this directory first",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-C",
+          "shorthand": "-C"
+        }
+      ]
     },
     {
       "name": "dry-run",
       "description": "Show what would be done",
-      "usage": "make -n"
+      "usage": "make -n",
+      "options": [
+        {
+          "name": "--file",
+          "description": "Makefile to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "parallel",
       "description": "Build with parallel jobs",
-      "usage": "make -j$(nproc)"
+      "usage": "make -j$(nproc)",
+      "options": [
+        {
+          "name": "--jobs",
+          "description": "Number of parallel jobs",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        },
+        {
+          "name": "--output-sync",
+          "description": "Group output per job",
+          "type": "string",
+          "takesValue": true,
+          "short": "-O",
+          "shorthand": "-O"
+        }
+      ]
     }
   ],
   "examples": [
@@ -167,5 +307,38 @@
     "ninja",
     "bazel",
     "gcc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GNU Make version",
+        "command": "make --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "make"
+      },
+      {
+        "name": "targets",
+        "description": "Targets declared in this Makefile",
+        "command": "grep -hoE '^[a-zA-Z0-9_.-]+:' Makefile makefile GNUmakefile 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "variables",
+        "description": "Variables assigned in this Makefile",
+        "command": "grep -hoE '^[A-Z_][A-Z0-9_]* *[:?+]?=' Makefile 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "includes",
+        "description": "Makefiles included by this one",
+        "command": "grep -h '^include' Makefile 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

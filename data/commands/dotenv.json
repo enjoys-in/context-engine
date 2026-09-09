@@ -110,7 +110,12 @@
       "name": "run",
       "description": "Run a command with .env variables loaded",
       "args": [
-        "command"
+        {
+          "name": "command",
+          "description": "Command to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -138,17 +143,45 @@
       "name": "set",
       "description": "Set a variable in .env file",
       "args": [
-        "KEY=VALUE"
+        {
+          "name": "KEY=VALUE",
+          "description": "Environment variable assignment",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--env-file",
+          "description": "Env file to write to",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "get",
       "description": "Get a specific variable value",
       "args": [
-        "KEY"
+        {
+          "name": "KEY",
+          "description": "Environment variable name",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--env-file",
+          "description": "Env file to read from",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "check",
@@ -176,5 +209,38 @@
     "export",
     "direnv",
     "shell"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "dotenv CLI version",
+        "command": "dotenv --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dotenv"
+      },
+      {
+        "name": "env_files",
+        "description": "Environment files in this project",
+        "command": "ls -a 2>/dev/null | grep '^\\.env' | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "keys",
+        "description": "Variable names declared in .env",
+        "command": "grep -oE '^[A-Za-z_][A-Za-z0-9_]*' .env 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "gitignored",
+        "description": "Whether .env is excluded from git",
+        "command": "grep -c '^\\.env' .gitignore 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -124,5 +124,32 @@
     "dive",
     "hadolint",
     "trivy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "container-structure-test version",
+        "command": "container-structure-test version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "container-structure-test"
+      },
+      {
+        "name": "test_configs",
+        "description": "Structure test configurations in this project",
+        "command": "find . -maxdepth 3 -name '*structure-test*.yaml' -o -maxdepth 3 -name '*structure-test*.yml' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "images",
+        "description": "Local images available to test",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
 }

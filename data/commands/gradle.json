@@ -63,6 +63,24 @@
       "description": "Delete build directory",
       "examples": [
         "gradle clean"
+      ],
+      "options": [
+        {
+          "name": "--info",
+          "description": "Print info-level log output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--stacktrace",
+          "description": "Print the stack trace on failure",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -348,5 +366,37 @@
     "javac",
     "ant",
     "sbt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Gradle version",
+        "command": "gradle --version 2>/dev/null | head -8 || ./gradlew --version 2>/dev/null | head -8",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "wrapper",
+        "description": "Gradle wrapper version pinned for this project",
+        "command": "grep distributionUrl gradle/wrapper/gradle-wrapper.properties 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "build_files",
+        "description": "Gradle build scripts in this project",
+        "command": "ls build.gradle build.gradle.kts settings.gradle settings.gradle.kts 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "tasks",
+        "description": "Gradle tasks available in this build",
+        "command": "./gradlew tasks --all 2>/dev/null | head -30 || gradle tasks 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

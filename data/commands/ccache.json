@@ -121,5 +121,40 @@
     "make",
     "ninja",
     "sccache"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ccache version",
+        "command": "ccache --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ccache"
+      },
+      {
+        "name": "statistics",
+        "description": "ccache hit rate and cache size",
+        "command": "ccache --show-stats 2>/dev/null | head -20",
+        "parser": "keyvalue",
+        "cacheFor": 60,
+        "requiresCmd": "ccache"
+      },
+      {
+        "name": "config",
+        "description": "ccache configuration",
+        "command": "ccache --show-config 2>/dev/null | head -20",
+        "parser": "keyvalue",
+        "cacheFor": 300,
+        "requiresCmd": "ccache"
+      },
+      {
+        "name": "cache_dir",
+        "description": "ccache storage directory",
+        "command": "echo \"${CCACHE_DIR:-$HOME/.ccache}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

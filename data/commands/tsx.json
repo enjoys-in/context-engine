@@ -97,5 +97,37 @@
     "typescript",
     "tsc",
     "esbuild"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "tsx version",
+        "command": "tsx --version 2>/dev/null || npx tsx --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "tsconfig",
+        "description": "TypeScript configuration tsx will read",
+        "command": "cat tsconfig.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "entry_points",
+        "description": "TypeScript entry points in this project",
+        "command": "find . -maxdepth 2 -name 'index.ts' -o -maxdepth 2 -name 'main.ts' -not -path './node_modules/*' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

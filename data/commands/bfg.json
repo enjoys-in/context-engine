@@ -106,5 +106,45 @@
     "git-filter-repo",
     "gitleaks",
     "trufflehog"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "availability",
+        "description": "BFG jar or wrapper available",
+        "command": "which bfg 2>/dev/null; ls ~/bfg*.jar 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "java",
+        "description": "JVM BFG requires",
+        "command": "java -version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "repo",
+        "description": "Git repository root",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "repo_size",
+        "description": "Size of the git object store BFG would rewrite",
+        "command": "du -sh .git 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "largest_objects",
+        "description": "Largest blobs in this repository's history",
+        "command": "git verify-pack -v .git/objects/pack/*.idx 2>/dev/null | sort -k3 -rn | head -10",
+        "parser": "table",
+        "cacheFor": 600
+      }
+    ]
+  }
 }

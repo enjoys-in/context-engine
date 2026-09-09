@@ -110,7 +110,12 @@
       "name": "minimize",
       "description": "Minimize PLA logic using Espresso algorithm",
       "args": [
-        "input.pla"
+        {
+          "name": "input.pla",
+          "description": "PLA truth table to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -131,7 +136,12 @@
       "name": "simulate",
       "description": "Simulate PLA truth table with input vectors",
       "args": [
-        "input.pla"
+        {
+          "name": "input.pla",
+          "description": "PLA truth table to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -152,7 +162,12 @@
       "name": "convert",
       "description": "Convert between PLA, BLIF, and Verilog formats",
       "args": [
-        "input"
+        {
+          "name": "input",
+          "description": "PLA truth table to convert",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -173,8 +188,18 @@
       "name": "verify",
       "description": "Verify PLA against reference truth table",
       "args": [
-        "design.pla",
-        "reference.pla"
+        {
+          "name": "design.pla",
+          "description": "PLA design under test",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "reference.pla",
+          "description": "Reference PLA to compare against",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -182,7 +207,12 @@
       "name": "stats",
       "description": "Show PLA statistics (inputs, outputs, product terms)",
       "args": [
-        "input.pla"
+        {
+          "name": "input.pla",
+          "description": "PLA truth table to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     }
@@ -197,5 +227,30 @@
     "systemverilog",
     "abc",
     "yosys"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Espresso logic minimiser availability",
+        "command": "espresso 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sources",
+        "description": "PLA truth-table files in this project",
+        "command": "find . -maxdepth 2 -name '*.pla' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "tools",
+        "description": "Logic synthesis tools available",
+        "command": "which espresso abc sis 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

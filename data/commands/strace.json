@@ -183,5 +183,31 @@
     "gdb",
     "perf",
     "lsof"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "strace version",
+        "command": "strace -V 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "strace"
+      },
+      {
+        "name": "ptrace_scope",
+        "description": "Whether ptrace attachment is restricted",
+        "command": "cat /proc/sys/kernel/yama/ptrace_scope 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "top_cpu",
+        "description": "Processes strace could attach to",
+        "command": "ps -eo pid,comm,pcpu --sort=-pcpu 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 15
+      }
+    ]
+  }
 }

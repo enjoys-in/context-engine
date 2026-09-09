@@ -114,5 +114,38 @@
     "nvim",
     "nano",
     "emacsclient"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Emacs version",
+        "command": "emacs --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "emacs"
+      },
+      {
+        "name": "config",
+        "description": "Emacs init file in use",
+        "command": "ls ~/.emacs.d/init.el ~/.emacs ~/.config/emacs/init.el 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "packages",
+        "description": "Emacs packages installed",
+        "command": "ls ~/.emacs.d/elpa 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "server",
+        "description": "Whether an Emacs server is running",
+        "command": "ls /tmp/emacs*/server 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

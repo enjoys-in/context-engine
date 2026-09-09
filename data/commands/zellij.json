@@ -66,7 +66,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "kill-all-sessions",
@@ -106,7 +107,8 @@
     },
     {
       "name": "action",
-      "description": "Send an action to the running session"
+      "description": "Send an action to the running session",
+      "options": []
     },
     {
       "name": "run",
@@ -135,6 +137,14 @@
           "takesValue": false,
           "short": "-c",
           "shorthand": "-c"
+        }
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to run in a new pane",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -261,5 +271,39 @@
     "tmux",
     "screen",
     "byobu"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Zellij version",
+        "command": "zellij --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "zellij"
+      },
+      {
+        "name": "sessions",
+        "description": "Zellij sessions running",
+        "command": "zellij list-sessions 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "zellij"
+      },
+      {
+        "name": "layouts",
+        "description": "Zellij layouts available",
+        "command": "ls ~/.config/zellij/layouts 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "inside_session",
+        "description": "Whether this shell is inside Zellij",
+        "command": "echo \"${ZELLIJ:-no}\"",
+        "parser": "text",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

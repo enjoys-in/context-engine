@@ -87,7 +87,21 @@
     },
     {
       "name": "msfdb",
-      "description": "Manage the framework database"
+      "description": "Manage the framework database",
+      "options": [
+        {
+          "name": "--component",
+          "description": "Database component to act on",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--debug",
+          "description": "Enable debug output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "msfrpcd",
@@ -153,5 +167,38 @@
     "nuclei",
     "sqlmap",
     "hydra"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Metasploit Framework version",
+        "command": "msfconsole --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "msfconsole"
+      },
+      {
+        "name": "database",
+        "description": "Metasploit database configuration",
+        "command": "cat ~/.msf4/database.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "modules",
+        "description": "Locally installed custom modules",
+        "command": "ls ~/.msf4/modules 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "workspace_logs",
+        "description": "Metasploit loot and logs directory",
+        "command": "ls ~/.msf4/loot 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

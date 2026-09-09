@@ -61,6 +61,14 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "args": [
+        {
+          "name": "query",
+          "description": "SQL query to run",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -126,6 +134,14 @@
           "description": "Show the view definition",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "resource",
+          "description": "Dataset, table or view to describe",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -225,6 +241,14 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "args": [
+        {
+          "name": "resource",
+          "description": "Dataset or table to remove",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -273,6 +297,20 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "destination",
+          "description": "Destination table",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "source",
+          "description": "Source data files or URIs",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -315,6 +353,42 @@
       "examples": [
         "bq cp dataset.source dataset.dest",
         "bq cp project1:dataset.table project2:dataset.table"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Overwrite the destination table",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--append_table",
+          "description": "Append rather than replace",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--destination_kms_key",
+          "description": "KMS key to encrypt the destination with",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source table",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "destination",
+          "description": "Destination table",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -357,6 +431,32 @@
       "examples": [
         "bq update --description 'My table' dataset.table",
         "bq update --expiration 3600 dataset.table"
+      ],
+      "options": [
+        {
+          "name": "--description",
+          "description": "Description to set",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--expiration",
+          "description": "Expiration in seconds",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--schema",
+          "description": "Schema to apply",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--set_label",
+          "description": "Label to set as key:value",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -364,6 +464,20 @@
       "description": "List partitions",
       "examples": [
         "bq ls --format=json dataset.table$"
+      ],
+      "options": [
+        {
+          "name": "--time_partitioning_type",
+          "description": "Partition granularity",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--time_partitioning_expiration",
+          "description": "Partition expiry in seconds",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -451,5 +565,33 @@
     "gsutil",
     "psql",
     "mysql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "bq version",
+        "command": "bq version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "bq"
+      },
+      {
+        "name": "project",
+        "description": "Active gcloud project for BigQuery",
+        "command": "gcloud config get-value project 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "datasets",
+        "description": "BigQuery datasets in the active project",
+        "command": "bq ls 2>/dev/null | head -30",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "bq"
+      }
+    ]
+  }
 }

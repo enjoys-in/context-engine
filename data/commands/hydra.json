@@ -127,5 +127,32 @@
     "hashcat",
     "nmap",
     "ssh"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "hydra version",
+        "command": "hydra -h 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hydra"
+      },
+      {
+        "name": "services",
+        "description": "Protocols this hydra build supports",
+        "command": "hydra -h 2>&1 | grep -A4 'Supported services'",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hydra"
+      },
+      {
+        "name": "wordlists",
+        "description": "Wordlists available locally",
+        "command": "ls /usr/share/wordlists 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

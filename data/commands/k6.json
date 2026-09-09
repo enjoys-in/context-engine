@@ -125,6 +125,46 @@
           "description": "Test script",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--vus",
+          "description": "Number of virtual users",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--duration",
+          "description": "How long to run for",
+          "type": "string",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--env",
+          "description": "Set an environment variable for the script",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress progress output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        },
+        {
+          "name": "--exit-on-running",
+          "description": "Return as soon as the test starts running",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -135,6 +175,20 @@
           "name": "script",
           "description": "Script file",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--execution-requirements",
+          "description": "Include the computed execution requirements",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--compatibility-mode",
+          "description": "JavaScript compatibility mode",
+          "type": "string",
+          "takesValue": true
         }
       ]
     },
@@ -147,6 +201,30 @@
           "description": "Script file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--archive-out",
+          "description": "Path to write the archive to",
+          "type": "file",
+          "takesValue": true,
+          "short": "-O",
+          "shorthand": "-O"
+        },
+        {
+          "name": "--env",
+          "description": "Set an environment variable for the script",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--include-system-env-vars",
+          "description": "Bundle the system environment into the archive",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -155,37 +233,172 @@
       "subcommands": [
         {
           "name": "cloud",
-          "description": "Login to k6 Cloud"
+          "description": "Login to k6 Cloud",
+          "options": [
+            {
+              "name": "--token",
+              "description": "API token to store",
+              "type": "string",
+              "takesValue": true,
+              "short": "-t",
+              "shorthand": "-t"
+            },
+            {
+              "name": "--show",
+              "description": "Print the stored credentials",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--reset",
+              "description": "Remove the stored credentials",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "influxdb",
-          "description": "Login to InfluxDB"
+          "description": "Login to InfluxDB",
+          "options": [
+            {
+              "name": "--username",
+              "description": "InfluxDB username",
+              "type": "string",
+              "takesValue": true,
+              "short": "-u",
+              "shorthand": "-u"
+            },
+            {
+              "name": "--password",
+              "description": "InfluxDB password",
+              "type": "string",
+              "takesValue": true,
+              "short": "-p",
+              "shorthand": "-p"
+            },
+            {
+              "name": "--show",
+              "description": "Print the stored credentials",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--reset",
+              "description": "Remove the stored credentials",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         }
       ]
     },
     {
       "name": "pause",
-      "description": "Pause a running test"
+      "description": "Pause a running test",
+      "options": [
+        {
+          "name": "--quiet",
+          "description": "Suppress progress output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        },
+        {
+          "name": "--address",
+          "description": "k6 REST API address",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "resume",
-      "description": "Resume a paused test"
+      "description": "Resume a paused test",
+      "options": [
+        {
+          "name": "--quiet",
+          "description": "Suppress progress output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        },
+        {
+          "name": "--address",
+          "description": "k6 REST API address",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "scale",
-      "description": "Scale VUs of a running test"
+      "description": "Scale VUs of a running test",
+      "options": [
+        {
+          "name": "--vus",
+          "description": "Number of virtual users to scale to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--max",
+          "description": "Maximum number of virtual users",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-m",
+          "shorthand": "-m"
+        },
+        {
+          "name": "--address",
+          "description": "k6 REST API address",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "stats",
-      "description": "Show test stats"
+      "description": "Show test stats",
+      "options": [
+        {
+          "name": "--address",
+          "description": "k6 REST API address",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "status",
-      "description": "Show test status"
+      "description": "Show test status",
+      "options": [
+        {
+          "name": "--address",
+          "description": "k6 REST API address",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "version",
-      "description": "Show version"
+      "description": "Show version",
+      "options": []
     }
   ],
   "globalOptions": [

@@ -102,5 +102,39 @@
     "lazydocker",
     "nerdctl",
     "syft"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "dive version",
+        "command": "dive --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dive"
+      },
+      {
+        "name": "images",
+        "description": "Local images dive can analyse",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}\\t{{.Size}}' 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "config",
+        "description": "dive configuration",
+        "command": "cat ~/.dive.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "dockerfiles",
+        "description": "Dockerfiles in this project",
+        "command": "ls Dockerfile* 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

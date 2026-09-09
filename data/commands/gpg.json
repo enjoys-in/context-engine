@@ -262,5 +262,40 @@
     "openssl",
     "ssh-keygen",
     "sops"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GnuPG version",
+        "command": "gpg --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gpg"
+      },
+      {
+        "name": "secret_keys",
+        "description": "Secret keys in this keyring",
+        "command": "gpg --list-secret-keys --keyid-format=long 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "gpg"
+      },
+      {
+        "name": "public_keys",
+        "description": "Public keys in this keyring",
+        "command": "gpg --list-keys --keyid-format=long 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "gpg"
+      },
+      {
+        "name": "signing_key",
+        "description": "Git signing key configured",
+        "command": "git config --get user.signingkey 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

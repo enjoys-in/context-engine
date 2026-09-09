@@ -108,25 +108,57 @@
       "name": "-l",
       "description": "List current user's cron jobs",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-u",
+          "description": "Act on this user's crontab",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-e",
       "description": "Edit current user's crontab",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-u",
+          "description": "Act on this user's crontab",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-r",
       "description": "Remove current user's crontab entirely",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-u",
+          "description": "Act on this user's crontab",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-i",
+          "description": "Prompt before removing",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-l -u user",
       "description": "List crontab for a specific user",
       "args": [
-        "user"
+        {
+          "name": "user",
+          "description": "User whose crontab to act on",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -134,9 +166,21 @@
       "name": "file",
       "description": "Install crontab from a file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Crontab file to install",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-u",
+          "description": "Install into this user's crontab",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -152,5 +196,37 @@
     "at",
     "anacron",
     "systemd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "user_crontab",
+        "description": "Crontab for the current user",
+        "command": "crontab -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "system_cron",
+        "description": "System-wide cron directories",
+        "command": "ls /etc/cron.d /etc/cron.daily /etc/cron.hourly 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "cron_service",
+        "description": "cron daemon state",
+        "command": "systemctl is-active cron 2>/dev/null || systemctl is-active crond 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "editor",
+        "description": "Editor crontab -e will open",
+        "command": "echo \"${VISUAL:-${EDITOR:-vi}}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

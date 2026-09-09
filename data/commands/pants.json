@@ -97,6 +97,14 @@
           "type": "string",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--changed-since",
+          "description": "Only act on targets changed since this ref",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -108,6 +116,14 @@
           "description": "Target spec",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--args",
+          "description": "Arguments to pass to the program",
+          "type": "string",
+          "takesValue": true
         }
       ]
     },
@@ -121,6 +137,20 @@
           "type": "string",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--changed-since",
+          "description": "Only act on targets changed since this ref",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--only",
+          "description": "Only run these checkers",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -132,6 +162,20 @@
           "description": "Target specs",
           "type": "string",
           "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--changed-since",
+          "description": "Only list targets changed since this ref",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--documented",
+          "description": "Only list documented targets",
+          "type": "boolean",
+          "takesValue": false
         }
       ]
     },
@@ -201,7 +245,21 @@
     },
     {
       "name": "export",
-      "description": "Export a virtualenv or IDE configuration"
+      "description": "Export a virtualenv or IDE configuration",
+      "options": [
+        {
+          "name": "--resolve",
+          "description": "Resolve to export a virtualenv for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--py-editable-in-resolve",
+          "description": "Install first-party code as editable",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -269,5 +327,39 @@
     "buck",
     "make",
     "uv"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Pants version",
+        "command": "pants --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pants"
+      },
+      {
+        "name": "config",
+        "description": "Pants configuration",
+        "command": "cat pants.toml 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "build_files",
+        "description": "Pants BUILD files in this project",
+        "command": "find . -maxdepth 3 -name 'BUILD' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "targets",
+        "description": "Pants targets in this project",
+        "command": "pants list :: 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "pants"
+      }
+    ]
+  }
 }

@@ -112,31 +112,152 @@
       "name": "new console",
       "description": "Create console app",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--output",
+          "description": "Directory to place the output in",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--name",
+          "description": "Name for the new project",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--framework",
+          "description": "Target framework",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "build",
       "description": "Build project",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--configuration",
+          "description": "Build configuration: Debug or Release",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--no-restore",
+          "description": "Skip the implicit restore",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--verbosity",
+          "description": "MSBuild verbosity level",
+          "type": "string",
+          "takesValue": true,
+          "short": "-v",
+          "shorthand": "-v"
+        }
+      ]
     },
     {
       "name": "run",
       "description": "Run project",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--configuration",
+          "description": "Build configuration: Debug or Release",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--project",
+          "description": "Project file to run",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--no-build",
+          "description": "Run without building first",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "test",
       "description": "Run tests",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--filter",
+          "description": "Only run tests matching this expression",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--logger",
+          "description": "Test logger to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--no-build",
+          "description": "Test without building first",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "publish",
       "description": "Publish project",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--configuration",
+          "description": "Build configuration: Debug or Release",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--runtime",
+          "description": "Target runtime identifier",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--output",
+          "description": "Directory to publish into",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--self-contained",
+          "description": "Publish the runtime alongside the app",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "examples": [
@@ -166,5 +287,39 @@
     "nuget",
     "dotnet",
     "csc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": ".NET SDK version",
+        "command": "dotnet --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dotnet"
+      },
+      {
+        "name": "sdks",
+        "description": "Installed .NET SDKs",
+        "command": "dotnet --list-sdks 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "dotnet"
+      },
+      {
+        "name": "projects",
+        "description": "C# projects and solutions here",
+        "command": "find . -maxdepth 3 -name '*.csproj' -o -maxdepth 3 -name '*.sln' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "target_framework",
+        "description": "Target frameworks declared",
+        "command": "grep -ho '<TargetFramework[s]*>[^<]*<' *.csproj **/*.csproj 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

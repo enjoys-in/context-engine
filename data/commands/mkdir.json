@@ -40,5 +40,38 @@
     "rmdir",
     "ls",
     "touch"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mkdir version",
+        "command": "mkdir --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mkdir"
+      },
+      {
+        "name": "subdirs",
+        "description": "Directories already present here",
+        "command": "ls -d */ 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "writable",
+        "description": "Whether the current directory is writable",
+        "command": "test -w . && echo writable || echo read-only",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "umask",
+        "description": "Permission mask applied to new directories",
+        "command": "umask 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

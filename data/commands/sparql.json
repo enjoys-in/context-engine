@@ -104,7 +104,12 @@
       "name": "query",
       "description": "Execute a SPARQL query against an endpoint or local file",
       "args": [
-        "query"
+        {
+          "name": "query",
+          "description": "SPARQL query to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -131,7 +136,12 @@
       "name": "update",
       "description": "Execute a SPARQL UPDATE operation",
       "args": [
-        "update"
+        {
+          "name": "update",
+          "description": "Update statement to run",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -152,8 +162,18 @@
       "name": "validate",
       "description": "Validate RDF data using SHACL shapes",
       "args": [
-        "data",
-        "shapes"
+        {
+          "name": "data",
+          "description": "RDF data to validate",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "shapes",
+          "description": "SHACL shapes file to validate against",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -168,7 +188,12 @@
       "name": "load",
       "description": "Load RDF data into a triplestore",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "RDF data file to load",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -242,5 +267,30 @@
     "graphql",
     "curl",
     "jq"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "tools",
+        "description": "SPARQL clients available on this host",
+        "command": "which rsparql arq sparql roqet 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "queries",
+        "description": "SPARQL query files in this project",
+        "command": "find . -maxdepth 2 -name '*.rq' -o -name '*.sparql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "datasets",
+        "description": "RDF datasets available to query",
+        "command": "find . -maxdepth 2 -name '*.ttl' -o -name '*.nt' -o -name '*.rdf' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

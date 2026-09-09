@@ -74,5 +74,31 @@
     "mtr",
     "nmap",
     "dig"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ping version",
+        "command": "ping -V 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ping"
+      },
+      {
+        "name": "default_gateway",
+        "description": "Default gateway to test against",
+        "command": "ip route 2>/dev/null | grep default || netstat -rn 2>/dev/null | grep default",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "resolvers",
+        "description": "DNS resolvers configured",
+        "command": "cat /etc/resolv.conf 2>/dev/null | grep nameserver",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

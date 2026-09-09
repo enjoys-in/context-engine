@@ -513,6 +513,16 @@
         "heroku auth:whoami",
         "heroku auth:token",
         "heroku auth:login"
+      ],
+      "options": [
+        {
+          "name": "--app",
+          "description": "Heroku app to scope to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
       ]
     },
     {
@@ -627,5 +637,40 @@
     "docker",
     "railway",
     "flyctl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Heroku CLI version",
+        "command": "heroku --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "heroku"
+      },
+      {
+        "name": "account",
+        "description": "Authenticated Heroku account",
+        "command": "heroku auth:whoami 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "heroku"
+      },
+      {
+        "name": "apps",
+        "description": "Heroku apps for this account",
+        "command": "heroku apps --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "heroku"
+      },
+      {
+        "name": "app_remote",
+        "description": "Heroku app wired to this git remote",
+        "command": "git config --get remote.heroku.url 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

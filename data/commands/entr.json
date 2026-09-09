@@ -46,5 +46,31 @@
     "inotifywait",
     "fswatch",
     "nodemon"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "entr version",
+        "command": "entr 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "entr"
+      },
+      {
+        "name": "repo",
+        "description": "Git repository whose files entr can watch",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "tracked_files",
+        "description": "Files entr could watch",
+        "command": "git ls-files 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

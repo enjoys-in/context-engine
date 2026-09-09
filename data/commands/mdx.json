@@ -110,7 +110,12 @@
       "name": "compile",
       "description": "Compile MDX files to JavaScript",
       "args": [
-        "file.mdx"
+        {
+          "name": "file.mdx",
+          "description": "MDX document to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -131,15 +136,32 @@
       "name": "evaluate",
       "description": "Compile and evaluate MDX in one step",
       "args": [
-        "file.mdx"
+        {
+          "name": "file.mdx",
+          "description": "MDX document to process",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--out-dir",
+          "description": "Directory for the evaluated output",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "lint",
       "description": "Lint MDX files with remark-lint",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "MDX documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -154,7 +176,12 @@
       "name": "format",
       "description": "Format MDX files with prettier",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "MDX documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -191,5 +218,37 @@
     "react",
     "next",
     "prettier"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "MDX compiler version",
+        "command": "npx @mdx-js/mdx --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "documents",
+        "description": "MDX documents in this project",
+        "command": "find . -maxdepth 4 -name '*.mdx' -not -path './node_modules/*' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "mdx_deps",
+        "description": "MDX-related dependencies declared",
+        "command": "grep -oE '\"@mdx-js/[^\"]*\": *\"[^\"]*\"' package.json 2>/dev/null | head -15",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

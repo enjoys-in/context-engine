@@ -62,5 +62,31 @@
     "shellcheck",
     "trivy",
     "dockle"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "hadolint version",
+        "command": "hadolint --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hadolint"
+      },
+      {
+        "name": "dockerfiles",
+        "description": "Dockerfiles hadolint can lint",
+        "command": "find . -maxdepth 3 -name 'Dockerfile*' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "hadolint rule configuration",
+        "command": "cat .hadolint.yaml 2>/dev/null || cat .hadolint.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

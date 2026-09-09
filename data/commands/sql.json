@@ -4,7 +4,29 @@
   "description": "SQL — Structured Query Language for relational databases",
   "category": "database",
   "contextEngine": {
-    "detectors": []
+    "detectors": [
+      {
+        "name": "scripts",
+        "description": "SQL scripts in this project",
+        "command": "find . -maxdepth 3 -name '*.sql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "clients",
+        "description": "SQL clients available on this host",
+        "command": "which psql mysql sqlite3 duckdb cqlsh sqlcmd 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "migrations",
+        "description": "Migration directories in this project",
+        "command": "ls -d migrations db/migrate prisma/migrations 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
   },
   "platforms": [
     "linux",
@@ -110,7 +132,12 @@
       "name": "sqlite3",
       "description": "SQLite3 interactive shell and command-line tool",
       "args": [
-        "database"
+        {
+          "name": "database",
+          "description": "Database file or name to open",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -143,7 +170,12 @@
       "name": "mysql",
       "description": "MySQL command-line client",
       "args": [
-        "database"
+        {
+          "name": "database",
+          "description": "Database file or name to open",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -182,7 +214,12 @@
       "name": "psql",
       "description": "PostgreSQL interactive terminal",
       "args": [
-        "database"
+        {
+          "name": "database",
+          "description": "Database file or name to open",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -258,7 +295,12 @@
       "name": "sqlfmt",
       "description": "SQL formatter for standardized code style",
       "args": [
-        "file.sql"
+        {
+          "name": "file.sql",
+          "description": "SQL script to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -279,7 +321,12 @@
       "name": "sqlfluff",
       "description": "SQL linter and auto-fixer",
       "args": [
-        "file.sql"
+        {
+          "name": "file.sql",
+          "description": "SQL script to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {

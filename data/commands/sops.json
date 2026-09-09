@@ -24,6 +24,50 @@
         "sops -e --gcp-kms 'projects/my-proj/locations/global/keyRings/kr/cryptoKeys/key' secrets.yaml",
         "sops -e --age 'age1xxx...' secrets.yaml",
         "sops -e --pgp 'FP1,FP2' secrets.yaml"
+      ],
+      "options": [
+        {
+          "name": "--kms",
+          "description": "AWS KMS ARNs to encrypt with",
+          "type": "string",
+          "takesValue": true,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--pgp",
+          "description": "PGP fingerprints to encrypt with",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--age",
+          "description": "age recipients to encrypt with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--gcp-kms",
+          "description": "GCP KMS resource ids to encrypt with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--in-place",
+          "description": "Rewrite the file in place",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--encrypted-regex",
+          "description": "Only encrypt keys matching this pattern",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -34,6 +78,28 @@
         "sops -d --output secrets.yaml secrets.enc.yaml",
         "sops --decrypt --in-place secrets.enc.yaml",
         "sops -d --extract '[\"key\"]' secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--in-place",
+          "description": "Rewrite the file in place",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--extract",
+          "description": "Only decrypt this part of the document",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Write the plaintext here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -42,6 +108,16 @@
       "examples": [
         "sops secrets.enc.yaml",
         "EDITOR=vim sops secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--in-place",
+          "description": "Rewrite the file in place",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        }
       ]
     },
     {
@@ -49,6 +125,16 @@
       "description": "Update encryption keys",
       "examples": [
         "sops updatekeys secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
       ]
     },
     {
@@ -57,6 +143,74 @@
       "examples": [
         "sops -r secrets.enc.yaml",
         "sops --rotate --in-place secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--kms",
+          "description": "AWS KMS ARNs to encrypt with",
+          "type": "string",
+          "takesValue": true,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--pgp",
+          "description": "PGP fingerprints to encrypt with",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--age",
+          "description": "age recipients to encrypt with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--gcp-kms",
+          "description": "GCP KMS resource ids to encrypt with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--in-place",
+          "description": "Rewrite the file in place",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--encrypted-regex",
+          "description": "Only encrypt keys matching this pattern",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--add-kms",
+          "description": "KMS ARNs to add",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--rm-kms",
+          "description": "KMS ARNs to remove",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--add-age",
+          "description": "age recipients to add",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--rm-age",
+          "description": "age recipients to remove",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -65,6 +219,14 @@
       "examples": [
         "sops groups add --file secrets.enc.yaml --pgp 'FP'",
         "sops groups delete --file secrets.enc.yaml --shamir-secret-sharing-threshold 2"
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Encrypted file to act on",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -72,6 +234,36 @@
       "description": "Publish encrypted file to a store",
       "examples": [
         "sops publish secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--omit-extensions",
+          "description": "Strip the file extension on publish",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--recursive",
+          "description": "Publish a whole directory",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Encrypted file to publish",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -79,6 +271,14 @@
       "description": "Show file encryption status",
       "examples": [
         "sops filestatus secrets.enc.yaml"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "SOPS configuration file to read",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -183,5 +383,38 @@
     "age",
     "gpg",
     "sealed-secrets"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "SOPS version",
+        "command": "sops --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "sops"
+      },
+      {
+        "name": "config",
+        "description": "SOPS creation rules for this repository",
+        "command": "cat .sops.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "encrypted_files",
+        "description": "SOPS-encrypted files in this project",
+        "command": "grep -rl 'sops:' --include='*.yaml' --include='*.json' --include='*.env' . 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "age_key",
+        "description": "SOPS age key file in effect",
+        "command": "echo \"${SOPS_AGE_KEY_FILE:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

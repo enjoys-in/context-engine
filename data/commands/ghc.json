@@ -78,5 +78,38 @@
     "stack",
     "ghci",
     "haskell"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "GHC version",
+        "command": "ghc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ghc"
+      },
+      {
+        "name": "packages",
+        "description": "Globally registered GHC packages",
+        "command": "ghc-pkg list --simple-output 2>/dev/null | tr ' ' '\\n' | head -30",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sources",
+        "description": "Haskell sources",
+        "command": "find . -maxdepth 3 -name '*.hs' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "project_files",
+        "description": "Haskell project files present",
+        "command": "ls *.cabal stack.yaml cabal.project 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

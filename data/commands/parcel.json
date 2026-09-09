@@ -196,5 +196,44 @@
     "rollup",
     "esbuild",
     "rspack"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Parcel version",
+        "command": "parcel --version 2>/dev/null || npx parcel --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Parcel configuration",
+        "command": "cat .parcelrc 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "targets",
+        "description": "Build targets declared for Parcel",
+        "command": "grep -A10 '\"targets\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "cache",
+        "description": "Parcel build cache present",
+        "command": "ls -d .parcel-cache dist 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -110,43 +110,203 @@
       "name": "file.sv",
       "description": "Compile SystemVerilog file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "SystemVerilog source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-work",
+          "description": "Library to compile into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "+incdir+",
+          "description": "Add an include search directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-sv",
+          "description": "Enable SystemVerilog features",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-timescale",
+          "description": "Default timescale to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-sv file.sv",
       "description": "Force SystemVerilog language mode",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "SystemVerilog source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-work",
+          "description": "Library to compile into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "+incdir+",
+          "description": "Add an include search directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-sv",
+          "description": "Enable SystemVerilog features",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-timescale",
+          "description": "Default timescale to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-lint file.sv",
       "description": "Run lint checks on SystemVerilog",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "SystemVerilog source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-work",
+          "description": "Library to compile into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "+incdir+",
+          "description": "Add an include search directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-sv",
+          "description": "Enable SystemVerilog features",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-timescale",
+          "description": "Default timescale to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "+incdir+path file.sv",
       "description": "Compile with include directory",
       "args": [
-        "path",
-        "file"
+        {
+          "name": "path",
+          "description": "Include directory to add",
+          "type": "directory",
+          "required": true
+        },
+        {
+          "name": "file",
+          "description": "SystemVerilog source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-work",
+          "description": "Library to compile into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "+incdir+",
+          "description": "Add an include search directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-sv",
+          "description": "Enable SystemVerilog features",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-timescale",
+          "description": "Default timescale to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-work library file.sv",
       "description": "Compile into a named library",
       "args": [
-        "library",
-        "file"
+        {
+          "name": "library",
+          "description": "Library to compile into",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "file",
+          "description": "SystemVerilog source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-work",
+          "description": "Library to compile into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "+incdir+",
+          "description": "Add an include search directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-sv",
+          "description": "Enable SystemVerilog features",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-timescale",
+          "description": "Default timescale to apply",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -161,5 +321,37 @@
     "gtkwave",
     "pla",
     "mips"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "SystemVerilog compiler version",
+        "command": "vlog -version 2>/dev/null || verilator --version 2>/dev/null || iverilog -V 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sources",
+        "description": "SystemVerilog sources in this project",
+        "command": "find . -maxdepth 3 -name '*.sv' -o -maxdepth 3 -name '*.svh' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "filelists",
+        "description": "Compilation file lists present",
+        "command": "ls *.f filelist.txt 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "work_library",
+        "description": "ModelSim work library present",
+        "command": "ls work 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

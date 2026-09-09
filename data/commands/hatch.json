@@ -43,11 +43,21 @@
     },
     {
       "name": "env",
-      "description": "Manage project environments"
+      "description": "Manage project environments",
+      "options": []
     },
     {
       "name": "run",
-      "description": "Run a command in an environment"
+      "description": "Run a command in an environment",
+      "options": [],
+      "args": [
+        {
+          "name": "command",
+          "description": "Script or command to run",
+          "required": true,
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "build",
@@ -111,7 +121,8 @@
           "type": "string",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "test",
@@ -139,11 +150,30 @@
     },
     {
       "name": "shell",
-      "description": "Open a shell inside an environment"
+      "description": "Open a shell inside an environment",
+      "options": []
     },
     {
       "name": "clean",
-      "description": "Remove build artifacts"
+      "description": "Remove build artifacts",
+      "options": [
+        {
+          "name": "--env",
+          "description": "Environment to clean",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--project",
+          "description": "Project to clean",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -217,5 +247,39 @@
     "poetry",
     "pdm",
     "twine"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Hatch version",
+        "command": "hatch --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hatch"
+      },
+      {
+        "name": "pyproject",
+        "description": "Python project configuration",
+        "command": "cat pyproject.toml 2>/dev/null | head -50",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "environments",
+        "description": "Hatch environments declared",
+        "command": "hatch env show --json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120,
+        "requiresCmd": "hatch"
+      },
+      {
+        "name": "scripts",
+        "description": "Hatch scripts declared",
+        "command": "grep -A15 '\\[tool.hatch.envs' pyproject.toml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

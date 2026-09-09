@@ -77,5 +77,38 @@
     "tflint",
     "trivy",
     "semgrep"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Checkov version",
+        "command": "checkov --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "checkov"
+      },
+      {
+        "name": "config",
+        "description": "Checkov configuration",
+        "command": "cat .checkov.yaml 2>/dev/null || cat .checkov.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "frameworks",
+        "description": "Infrastructure files Checkov can scan",
+        "command": "ls *.tf Dockerfile *.yaml docker-compose.yml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "skipped",
+        "description": "Checks skipped inline in this project",
+        "command": "grep -rho 'checkov:skip=[A-Z_0-9]*' . 2>/dev/null | sort -u | head -15",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

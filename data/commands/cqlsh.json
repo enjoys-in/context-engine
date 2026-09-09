@@ -124,5 +124,31 @@
     "psql",
     "mongosh",
     "sql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "cqlsh version",
+        "command": "cqlsh --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "cqlsh"
+      },
+      {
+        "name": "connection",
+        "description": "Cassandra connection settings in effect",
+        "command": "echo \"host=${CQLSH_HOST:-localhost} port=${CQLSH_PORT:-9042}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "scripts",
+        "description": "CQL scripts in this project",
+        "command": "find . -maxdepth 2 -name '*.cql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

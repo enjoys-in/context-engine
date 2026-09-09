@@ -35,7 +35,8 @@
     },
     {
       "name": "logout",
-      "description": "Clear the cached credentials"
+      "description": "Clear the cached credentials",
+      "options": []
     },
     {
       "name": "list",
@@ -80,6 +81,14 @@
           "takesValue": true,
           "short": "-R",
           "shorthand": "-R"
+        }
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to run with the credentials",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -143,11 +152,13 @@
     },
     {
       "name": "cache",
-      "description": "Refresh or inspect the local cache"
+      "description": "Refresh or inspect the local cache",
+      "options": []
     },
     {
       "name": "config",
-      "description": "Manage the configuration file"
+      "description": "Manage the configuration file",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -217,5 +228,31 @@
     "saml2aws",
     "aws-vault",
     "kubelogin"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "aws-sso version",
+        "command": "aws-sso version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "aws-sso"
+      },
+      {
+        "name": "config",
+        "description": "aws-sso configuration",
+        "command": "cat ~/.aws-sso/config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "profiles",
+        "description": "AWS profiles available locally",
+        "command": "grep -o '^\\[.*\\]' ~/.aws/config 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -103,15 +103,18 @@
     },
     {
       "name": "remove-tokens",
-      "description": "Delete the cached tokens"
+      "description": "Delete the cached tokens",
+      "options": []
     },
     {
       "name": "setup",
-      "description": "Verify the configuration end to end"
+      "description": "Verify the configuration end to end",
+      "options": []
     },
     {
       "name": "version",
-      "description": "Show the installed version"
+      "description": "Show the installed version",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -156,5 +159,31 @@
     "aws",
     "saml2aws",
     "kubectx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kubelogin version",
+        "command": "kubelogin --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kubelogin"
+      },
+      {
+        "name": "kubeconfig",
+        "description": "Kubeconfig in effect",
+        "command": "echo \"${KUBECONFIG:-$HOME/.kube/config}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "azure_contexts",
+        "description": "Kubeconfig contexts using the Azure auth provider",
+        "command": "grep -l 'azure' ~/.kube/config 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

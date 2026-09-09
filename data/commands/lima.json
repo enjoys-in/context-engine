@@ -151,15 +151,46 @@
           "short": "-r",
           "shorthand": "-r"
         }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source path",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
       "name": "info",
-      "description": "Show the Lima configuration and templates"
+      "description": "Show the Lima configuration and templates",
+      "options": []
     },
     {
       "name": "edit",
-      "description": "Edit an instance configuration"
+      "description": "Edit an instance configuration",
+      "options": [
+        {
+          "name": "--tty",
+          "description": "Open the editor on a terminal",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "instance",
+          "description": "Instance to edit",
+          "required": false,
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "validate",
@@ -171,11 +202,13 @@
           "type": "file",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "template",
-      "description": "Inspect the bundled templates"
+      "description": "Inspect the bundled templates",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -229,5 +262,33 @@
     "docker",
     "nerdctl",
     "vagrant"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Lima version",
+        "command": "limactl --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "limactl"
+      },
+      {
+        "name": "instances",
+        "description": "Lima instances on this machine",
+        "command": "limactl list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "limactl"
+      },
+      {
+        "name": "templates",
+        "description": "Lima instance templates available",
+        "command": "limactl start --list-templates 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "limactl"
+      }
+    ]
+  }
 }

@@ -104,7 +104,12 @@
       "name": "new razor -o project",
       "description": "Create a new Razor Pages project",
       "args": [
-        "name"
+        {
+          "name": "name",
+          "description": "Name for the new Razor project",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -144,7 +149,22 @@
       "name": "watch run",
       "description": "Run with hot reload on file changes",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--project",
+          "description": "Project to watch",
+          "type": "file",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--no-hot-reload",
+          "description": "Disable hot reload",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "build",
@@ -182,7 +202,12 @@
       "name": "add package",
       "description": "Add a NuGet package",
       "args": [
-        "package"
+        {
+          "name": "package",
+          "description": "Package to add",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -206,5 +231,31 @@
     "csharp",
     "html",
     "css"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": ".NET SDK version",
+        "command": "dotnet --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dotnet"
+      },
+      {
+        "name": "views",
+        "description": "Razor views and components in this project",
+        "command": "find . -maxdepth 4 -name '*.cshtml' -o -maxdepth 4 -name '*.razor' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "projects",
+        "description": "ASP.NET projects here",
+        "command": "find . -maxdepth 3 -name '*.csproj' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

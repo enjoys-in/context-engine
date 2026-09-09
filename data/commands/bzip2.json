@@ -113,5 +113,31 @@
     "gzip",
     "xz",
     "tar"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "bzip2 version",
+        "command": "bzip2 --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "bzip2"
+      },
+      {
+        "name": "compressible",
+        "description": "Files in this directory bzip2 could compress",
+        "command": "find . -maxdepth 2 -type f -name '*.tar' -o -name '*.log' -o -name '*.sql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "cpu_count",
+        "description": "CPUs available (pbzip2 can parallelise)",
+        "command": "nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

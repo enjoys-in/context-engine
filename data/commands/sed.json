@@ -61,5 +61,38 @@
     "tr",
     "cut",
     "perl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "sed implementation and version",
+        "command": "sed --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "sed"
+      },
+      {
+        "name": "in_place_flag",
+        "description": "Whether this sed needs a suffix for -i (BSD vs GNU)",
+        "command": "sed --version 2>/dev/null | head -1 | grep -q GNU && echo 'GNU: -i' || echo 'BSD: -i \\x27\\x27'",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "text_files",
+        "description": "Text files sed could rewrite",
+        "command": "find . -maxdepth 2 -name '*.txt' -o -name '*.md' -o -name '*.conf' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "repo",
+        "description": "Git repository (so edits are recoverable)",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

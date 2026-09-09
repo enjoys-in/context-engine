@@ -64,5 +64,31 @@
     "journalctl",
     "syslog",
     "kern.log"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "dmesg version",
+        "command": "dmesg --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dmesg"
+      },
+      {
+        "name": "recent",
+        "description": "Most recent kernel messages",
+        "command": "dmesg 2>/dev/null | tail -25",
+        "parser": "lines",
+        "cacheFor": 15
+      },
+      {
+        "name": "restrict",
+        "description": "Whether unprivileged dmesg is restricted",
+        "command": "cat /proc/sys/kernel/dmesg_restrict 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

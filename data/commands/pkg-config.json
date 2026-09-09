@@ -125,5 +125,40 @@
     "cmake",
     "meson",
     "make"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pkg-config version",
+        "command": "pkg-config --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pkg-config"
+      },
+      {
+        "name": "search_path",
+        "description": "Directories searched for .pc files",
+        "command": "pkg-config --variable pc_path pkg-config 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pkg-config"
+      },
+      {
+        "name": "packages",
+        "description": "Libraries pkg-config knows about",
+        "command": "pkg-config --list-all 2>/dev/null | head -30",
+        "parser": "table",
+        "cacheFor": 3600,
+        "requiresCmd": "pkg-config"
+      },
+      {
+        "name": "env_path",
+        "description": "PKG_CONFIG_PATH in effect",
+        "command": "echo \"${PKG_CONFIG_PATH:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

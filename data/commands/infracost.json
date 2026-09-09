@@ -125,15 +125,37 @@
     },
     {
       "name": "configure",
-      "description": "Set or read configuration values"
+      "description": "Set or read configuration values",
+      "options": []
     },
     {
       "name": "auth",
-      "description": "Log in to Infracost Cloud"
+      "description": "Log in to Infracost Cloud",
+      "options": []
     },
     {
       "name": "generate",
-      "description": "Generate an Infracost config file"
+      "description": "Generate an Infracost config file",
+      "options": [
+        {
+          "name": "--repo-path",
+          "description": "Repository path to scan",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--template-path",
+          "description": "Config template to render",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--out-file",
+          "description": "Write the generated config here",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -188,5 +210,31 @@
     "tflint",
     "checkov",
     "driftctl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Infracost version",
+        "command": "infracost --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "infracost"
+      },
+      {
+        "name": "config",
+        "description": "Infracost configuration file",
+        "command": "cat infracost.yml 2>/dev/null || cat infracost.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "terraform_dirs",
+        "description": "Terraform directories Infracost can price",
+        "command": "find . -maxdepth 3 -name '*.tf' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

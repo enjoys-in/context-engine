@@ -165,5 +165,31 @@
     "infracost",
     "checkov",
     "tflint"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "driftctl version",
+        "command": "driftctl version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "driftctl"
+      },
+      {
+        "name": "tfstate",
+        "description": "Terraform state files driftctl can scan",
+        "command": "find . -maxdepth 3 -name 'terraform.tfstate' -o -maxdepth 3 -name '*.tfstate' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "driftctl configuration",
+        "command": "cat ~/.driftctl/config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

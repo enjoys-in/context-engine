@@ -122,5 +122,31 @@
     "crontab",
     "batch",
     "systemd-timer"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "at version",
+        "command": "at -V 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "at"
+      },
+      {
+        "name": "queue",
+        "description": "Jobs queued with at",
+        "command": "atq 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 30
+      },
+      {
+        "name": "permissions",
+        "description": "Users permitted to use at",
+        "command": "cat /etc/at.allow 2>/dev/null || cat /etc/at.deny 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

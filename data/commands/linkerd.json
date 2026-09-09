@@ -132,6 +132,16 @@
       "description": "Remove sidecar proxy",
       "examples": [
         "linkerd uninject deployment.yaml | kubectl apply -f -"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: yaml or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -458,6 +468,14 @@
       "description": "Uninstall Linkerd",
       "examples": [
         "linkerd uninstall | kubectl delete -f -"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to uninstall from",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -525,5 +543,41 @@
     "istioctl",
     "helm",
     "nginx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Linkerd CLI and control-plane versions",
+        "command": "linkerd version --client --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "linkerd"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "check",
+        "description": "Linkerd control-plane health",
+        "command": "linkerd check --output short 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "linkerd"
+      }
+    ]
+  }
 }

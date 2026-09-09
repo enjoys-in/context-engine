@@ -524,6 +524,14 @@
           "name": "--force",
           "description": "Succeed even if lint errors exist"
         }
+      ],
+      "args": [
+        {
+          "name": "project",
+          "description": "Project to lint",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -541,6 +549,14 @@
         {
           "name": "--defaults",
           "description": "Disable interactive prompts and use defaults"
+        }
+      ],
+      "args": [
+        {
+          "name": "package",
+          "description": "Package to add and configure",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -660,6 +676,14 @@
           "name": "<target>",
           "description": "Target in the format project:target[:configuration]"
         }
+      ],
+      "args": [
+        {
+          "name": "target",
+          "description": "Target to run as project:target",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -687,22 +711,74 @@
     {
       "name": "npm run start",
       "description": "Starts the Angular development server (alias for ng serve).",
-      "options": []
+      "options": [
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Suppress npm's own output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "npm run build",
       "description": "Builds the Angular application for production.",
-      "options": []
+      "options": [
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Suppress npm's own output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "npm run test",
       "description": "Runs the unit test suite.",
-      "options": []
+      "options": [
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Suppress npm's own output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "npm run lint",
       "description": "Runs the linter on the project.",
-      "options": []
+      "options": [
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Suppress npm's own output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "npx ng",
@@ -743,5 +819,38 @@
     "npx",
     "vue",
     "react"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Angular CLI and framework versions",
+        "command": "ng version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ng"
+      },
+      {
+        "name": "workspace",
+        "description": "Angular workspace configuration",
+        "command": "cat angular.json 2>/dev/null | head -60",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "projects",
+        "description": "Projects in this Angular workspace",
+        "command": "grep -oE '\"[a-z0-9-]+\": *\\{ *$' angular.json 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

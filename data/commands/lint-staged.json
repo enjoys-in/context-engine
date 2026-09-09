@@ -129,5 +129,37 @@
     "eslint",
     "biome",
     "pre-commit"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "lint-staged version",
+        "command": "lint-staged --version 2>/dev/null || npx lint-staged --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "lint-staged configuration",
+        "command": "cat .lintstagedrc 2>/dev/null || grep -A15 '\"lint-staged\"' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "hooks",
+        "description": "Git hooks that would run lint-staged",
+        "command": "ls .husky 2>/dev/null || ls .git/hooks/pre-commit 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "staged_files",
+        "description": "Files currently staged for commit",
+        "command": "git diff --cached --name-only 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 15
+      }
+    ]
+  }
 }

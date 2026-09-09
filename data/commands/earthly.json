@@ -67,7 +67,25 @@
     },
     {
       "name": "ls",
-      "description": "List the targets in the Earthfile"
+      "description": "List the targets in the Earthfile",
+      "options": [
+        {
+          "name": "--args",
+          "description": "Show the build arguments each target accepts",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--long",
+          "description": "Show fully qualified target names",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        }
+      ]
     },
     {
       "name": "prune",
@@ -89,23 +107,75 @@
     },
     {
       "name": "doc",
-      "description": "Print documentation for the Earthfile targets"
+      "description": "Print documentation for the Earthfile targets",
+      "options": [
+        {
+          "name": "--short",
+          "description": "Print a compact listing",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "account",
-      "description": "Manage your Earthly account"
+      "description": "Manage your Earthly account",
+      "options": []
     },
     {
       "name": "org",
-      "description": "Manage organisations"
+      "description": "Manage organisations",
+      "options": []
     },
     {
       "name": "secret",
-      "description": "Manage cloud secrets"
+      "description": "Manage cloud secrets",
+      "options": [
+        {
+          "name": "--org",
+          "description": "Organization the secret belongs to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--project",
+          "description": "Project the secret belongs to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--file",
+          "description": "Read the secret value from this file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "registry",
-      "description": "Manage registry credentials"
+      "description": "Manage registry credentials",
+      "options": [
+        {
+          "name": "--org",
+          "description": "Organization the credentials belong to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--project",
+          "description": "Project the credentials belong to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--cred-helper",
+          "description": "Credential helper to use",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -183,5 +253,39 @@
     "bazel",
     "make",
     "dagger"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Earthly version",
+        "command": "earthly --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "earthly"
+      },
+      {
+        "name": "earthfile",
+        "description": "Earthfile targets in this project",
+        "command": "grep -E '^[a-z0-9-]+:' Earthfile 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Earthly configuration",
+        "command": "cat ~/.earthly/config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "docker",
+        "description": "Docker daemon Earthly builds against",
+        "command": "docker info --format '{{.ServerVersion}}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
 }

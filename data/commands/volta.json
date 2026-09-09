@@ -21,6 +21,20 @@
         "volta install node@20",
         "volta install npm",
         "volta install yarn"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -29,6 +43,14 @@
       "examples": [
         "volta pin node@20",
         "volta pin npm@10"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -37,6 +59,26 @@
       "examples": [
         "volta list",
         "volta list node"
+      ],
+      "options": [
+        {
+          "name": "--current",
+          "description": "Only show the active tools",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--default",
+          "description": "Only show the default tools",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--format",
+          "description": "Output format: human or plain",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -44,6 +86,14 @@
       "description": "Fetch a tool without installing",
       "examples": [
         "volta fetch node@20"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -51,6 +101,26 @@
       "description": "Run a tool with specific version",
       "examples": [
         "volta run node@18 -- script.js"
+      ],
+      "options": [
+        {
+          "name": "--node",
+          "description": "Node version to run with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--npm",
+          "description": "npm version to run with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--env",
+          "description": "Set an environment variable",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -58,6 +128,14 @@
       "description": "Show path of installed tool",
       "examples": [
         "volta which node"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -83,5 +161,39 @@
     "fnm",
     "node",
     "npm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Volta version",
+        "command": "volta --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "volta"
+      },
+      {
+        "name": "installed",
+        "description": "Tools Volta manages",
+        "command": "volta list 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "volta"
+      },
+      {
+        "name": "pinned",
+        "description": "Toolchain pinned in this project",
+        "command": "grep -A10 '\"volta\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "home",
+        "description": "Volta installation directory",
+        "command": "echo \"${VOLTA_HOME:-$HOME/.volta}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

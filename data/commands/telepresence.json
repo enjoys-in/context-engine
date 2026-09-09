@@ -21,6 +21,34 @@
         "telepresence connect",
         "telepresence connect --context my-context",
         "telepresence connect --namespace my-ns"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to connect to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--mapped-namespaces",
+          "description": "Namespaces to map into the cluster network",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--context",
+          "description": "Kubeconfig context to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--manager-namespace",
+          "description": "Namespace the traffic manager runs in",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -30,6 +58,48 @@
         "telepresence intercept my-service --port 8080",
         "telepresence intercept my-service --port 8080:http --env-file my-service.env",
         "telepresence intercept my-service --port 8080 -- npm run dev"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Local port to forward traffic to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--namespace",
+          "description": "Namespace the workload lives in",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--env-file",
+          "description": "Write the workload environment to this file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--mount",
+          "description": "Mount the remote volumes at this path",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--http-header",
+          "description": "Only intercept requests with this header",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--replace",
+          "description": "Replace the workload container entirely",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -37,13 +107,38 @@
       "description": "Leave an intercept",
       "examples": [
         "telepresence leave my-service"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "list",
       "description": "List intercepts",
       "examples": [
         "telepresence list"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to list from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--agents",
+          "description": "Only list workloads with agents",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -51,6 +146,16 @@
       "description": "Show connection status",
       "examples": [
         "telepresence status"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -58,6 +163,16 @@
       "description": "Disconnect from cluster",
       "examples": [
         "telepresence quit"
+      ],
+      "options": [
+        {
+          "name": "--stop-daemons",
+          "description": "Also stop the root and user daemons",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -67,6 +182,30 @@
         "telepresence helm install",
         "telepresence helm upgrade",
         "telepresence helm uninstall"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to install the traffic manager into",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--set",
+          "description": "Set a Helm value",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--values",
+          "description": "Helm values file to apply",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
       ]
     },
     {
@@ -74,6 +213,28 @@
       "description": "Gather debugging logs",
       "examples": [
         "telepresence gather-logs"
+      ],
+      "options": [
+        {
+          "name": "--output-file",
+          "description": "Write the log archive here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--daemons",
+          "description": "Which daemons to collect logs from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--traffic-manager",
+          "description": "Include traffic manager logs",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -81,14 +242,16 @@
       "description": "Show version",
       "examples": [
         "telepresence version"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "dashboard",
       "description": "Open Ambassador Cloud dashboard",
       "examples": [
         "telepresence dashboard"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -121,5 +284,49 @@
     "skaffold",
     "tilt",
     "devspace"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Telepresence version",
+        "command": "telepresence version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "telepresence"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "status",
+        "description": "Telepresence connection status",
+        "command": "telepresence status 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "telepresence"
+      },
+      {
+        "name": "intercepts",
+        "description": "Active Telepresence intercepts",
+        "command": "telepresence list 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "telepresence"
+      }
+    ]
+  }
 }
