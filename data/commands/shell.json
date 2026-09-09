@@ -1,73 +1,95 @@
 {
   "language": "shell",
   "name": "sh",
-  "description": "Shell Script command-line tool",
+  "description": "POSIX shell and shell scripting — sh, bash, zsh, dash and ksh invocation, script execution and debugging",
   "category": "development",
   "contextEngine": {
     "detectors": [
       {
+        "name": "current_shell",
+        "description": "Shell this session is running",
+        "command": "echo \"${SHELL:-unknown}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "shell_version",
+        "description": "Version of the active shell",
+        "command": "${SHELL:-sh} --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "available_shells",
+        "description": "Shells installed on this host",
+        "command": "cat /etc/shells 2>/dev/null | grep -v '^#'",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "bash_version",
+        "description": "Bash version, if bash is present",
+        "command": "bash --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "bash"
+      },
+      {
         "name": "zsh_version",
-        "description": "Installed zsh version",
+        "description": "Zsh version, if zsh is present",
         "command": "zsh --version 2>/dev/null",
         "parser": "text",
         "cacheFor": 3600,
         "requiresCmd": "zsh"
       },
       {
-        "name": "current_shell",
-        "description": "Current user shell",
-        "command": "echo $SHELL",
-        "parser": "text",
-        "cacheFor": 3600,
-        "requiresCmd": "zsh"
+        "name": "rc_files",
+        "description": "Shell startup files present for this user",
+        "command": "ls -a ~ 2>/dev/null | grep -E '^\\.(bashrc|bash_profile|profile|zshrc|zprofile|kshrc)$'",
+        "parser": "lines",
+        "cacheFor": 300
       },
       {
-        "name": "zshrc_exists",
-        "description": "Check if .zshrc exists",
-        "command": "test -f ~/.zshrc && echo 'yes' || echo 'no'",
+        "name": "aliases",
+        "description": "Aliases defined in this shell",
+        "command": "alias 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "functions",
+        "description": "Shell functions defined in this session",
+        "command": "declare -F 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "shell_options",
+        "description": "Shell options currently set",
+        "command": "echo \"$-\"",
         "parser": "text",
-        "cacheFor": 60,
-        "requiresCmd": "zsh"
+        "cacheFor": 60
+      },
+      {
+        "name": "scripts",
+        "description": "Shell scripts in this project",
+        "command": "find . -maxdepth 3 -name '*.sh' -o -maxdepth 3 -name '*.bash' -o -maxdepth 3 -name '*.zsh' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "shebangs",
+        "description": "Interpreters the local scripts declare",
+        "command": "grep -rh '^#!' --include='*.sh' . 2>/dev/null | sort -u | head -10",
+        "parser": "lines",
+        "cacheFor": 300
       },
       {
         "name": "oh_my_zsh",
-        "description": "Check if Oh My Zsh is installed",
-        "command": "test -d ~/.oh-my-zsh && echo 'installed' || echo 'not installed'",
+        "description": "Oh My Zsh installation, if present",
+        "command": "ls -d ~/.oh-my-zsh 2>/dev/null",
         "parser": "text",
-        "cacheFor": 300,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "zsh_theme",
-        "description": "Current ZSH_THEME",
-        "command": "grep '^ZSH_THEME=' ~/.zshrc 2>/dev/null | head -1 | cut -d'\"' -f2",
-        "parser": "text",
-        "cacheFor": 120,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "zsh_plugins",
-        "description": "Configured Oh My Zsh plugins",
-        "command": "grep -A20 '^plugins=(' ~/.zshrc 2>/dev/null | sed -n '/^plugins=(/,/)/p' | tr -d '()' | sed 's/plugins=//' | tr '\\n' ' '",
-        "parser": "text",
-        "cacheFor": 120,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "fpath_dirs",
-        "description": "Number of fpath directories",
-        "command": "zsh -c 'echo ${#fpath}' 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 300,
-        "requiresCmd": "zsh"
-      },
-      {
-        "name": "aliases_count",
-        "description": "Number of defined aliases",
-        "command": "zsh -ic 'alias | wc -l' 2>/dev/null",
-        "parser": "text",
-        "cacheFor": 60,
-        "requiresCmd": "zsh"
+        "cacheFor": 3600
       }
     ]
   },
@@ -79,8 +101,8 @@
   "shells": [
     "bash",
     "zsh",
-    "powershell",
-    "fish"
+    "fish",
+    "powershell"
   ],
   "builtinCommands": [
     {
@@ -503,7 +525,20 @@
     {
       "name": "-c 'command'",
       "description": "Execute command string",
-      "args": [],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command string to execute",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "arguments",
+          "description": "Positional parameters for the command",
+          "required": false,
+          "type": "string"
+        }
+      ],
       "options": [
         {
           "name": "-e",
@@ -523,12 +558,29 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "bash -c 'echo Hello World'",
+        "sh -c 'for i in 1 2 3; do echo $i; done'"
       ]
     },
     {
       "name": "script.sh",
       "description": "Execute script",
-      "args": [],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
       "options": [
         {
           "name": "-e",
@@ -542,12 +594,29 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "bash script.sh",
+        "sh install.sh --prefix /usr/local"
       ]
     },
     {
       "name": "-x script.sh",
       "description": "Debug mode",
-      "args": [],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
       "options": [
         {
           "name": "-e",
@@ -561,12 +630,29 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "bash -x deploy.sh",
+        "sh -x install.sh 2>trace.log"
       ]
     },
     {
       "name": "-n script.sh",
       "description": "Syntax check",
-      "args": [],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
       "options": [
         {
           "name": "-x",
@@ -574,6 +660,10 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "examples": [
+        "bash -n script.sh",
+        "sh -n install.sh"
       ]
     },
     {
@@ -602,6 +692,445 @@
         "bash -l"
       ],
       "options": []
+    },
+    {
+      "name": "-e script.sh",
+      "description": "Run a script that aborts on the first failing command",
+      "options": [
+        {
+          "name": "-u",
+          "description": "Treat an unset variable as an error",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-o",
+          "description": "Set a shell option, such as pipefail",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command before running it",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash -e deploy.sh",
+        "sh -eu install.sh"
+      ]
+    },
+    {
+      "name": "-u script.sh",
+      "description": "Run a script that errors on any unset variable",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command before running it",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash -u build.sh"
+      ]
+    },
+    {
+      "name": "-o pipefail script.sh",
+      "description": "Run a script where a pipeline fails if any stage fails",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-u",
+          "description": "Treat an unset variable as an error",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash -eo pipefail ci.sh",
+        "bash -euo pipefail script.sh"
+      ]
+    },
+    {
+      "name": "-s",
+      "description": "Read commands from standard input rather than a file",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command before running it",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "arguments",
+          "description": "Positional parameters for the piped script",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "curl -fsSL https://example.com/install.sh | bash -s -- --prefix=/usr/local",
+        "echo 'echo hi' | sh -s"
+      ]
+    },
+    {
+      "name": "-i",
+      "description": "Start an interactive shell",
+      "options": [
+        {
+          "name": "-l",
+          "description": "Also behave as a login shell",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--norc",
+          "description": "Skip the per-user rc file",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "bash -i",
+        "zsh -i"
+      ]
+    },
+    {
+      "name": "--posix",
+      "description": "Run in POSIX-conformant mode",
+      "options": [],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash --posix script.sh"
+      ]
+    },
+    {
+      "name": "--norc",
+      "description": "Start without reading the per-user rc file",
+      "options": [
+        {
+          "name": "--noprofile",
+          "description": "Also skip the login profile files",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "bash --norc",
+        "zsh --no-rcs"
+      ]
+    },
+    {
+      "name": "--rcfile file",
+      "description": "Start an interactive shell using this rc file instead",
+      "options": [],
+      "args": [
+        {
+          "name": "file",
+          "description": "Rc file to read instead of the default",
+          "required": true,
+          "type": "file"
+        }
+      ],
+      "examples": [
+        "bash --rcfile ./custom_rc",
+        "bash --rcfile /dev/null -i"
+      ]
+    },
+    {
+      "name": "-v script.sh",
+      "description": "Echo each input line as it is read",
+      "options": [
+        {
+          "name": "-x",
+          "description": "Also trace each command after expansion",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash -v script.sh"
+      ]
+    },
+    {
+      "name": "-r",
+      "description": "Start a restricted shell",
+      "options": [],
+      "examples": [
+        "bash -r"
+      ]
+    },
+    {
+      "name": "-l",
+      "description": "Start a login shell, reading the profile files",
+      "options": [
+        {
+          "name": "-i",
+          "description": "Also behave as an interactive shell",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "examples": [
+        "bash -l",
+        "sh -l -c 'echo $PATH'"
+      ]
+    },
+    {
+      "name": "bash script.sh",
+      "description": "Run a script with GNU Bash",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-u",
+          "description": "Treat an unset variable as an error",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--posix",
+          "description": "Run in POSIX mode",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "bash script.sh",
+        "bash -euo pipefail script.sh arg1"
+      ]
+    },
+    {
+      "name": "zsh script.sh",
+      "description": "Run a script with Z shell",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-u",
+          "description": "Treat an unset variable as an error",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-rcs",
+          "description": "Skip the rc files",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "zsh script.sh",
+        "zsh -x script.sh"
+      ]
+    },
+    {
+      "name": "dash script.sh",
+      "description": "Run a script with dash, a small POSIX shell",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "dash script.sh"
+      ]
+    },
+    {
+      "name": "ksh script.sh",
+      "description": "Run a script with KornShell",
+      "options": [
+        {
+          "name": "-e",
+          "description": "Abort on the first failing command",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-x",
+          "description": "Trace each command",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "script",
+          "description": "Shell script to execute",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "arguments",
+          "description": "Arguments passed to the script as $1, $2, …",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "examples": [
+        "ksh script.sh"
+      ]
     }
   ],
   "examples": [
@@ -625,6 +1154,19 @@
     "csh",
     "tcsh",
     "env",
-    "source"
+    "source",
+    "shellcheck",
+    "shfmt",
+    "export",
+    "trap",
+    "getopts"
+  ],
+  "aliases": [
+    "shell",
+    "shellscript",
+    "bash",
+    "zsh",
+    "dash",
+    "ksh"
   ]
 }
