@@ -840,6 +840,32 @@ Every provider below is fully implemented for all 96 languages with spec-complia
 | New Symbol Names | `registerNewSymbolNameProvider` | `renameSuggestionRules[]` |
 | Commands (CLI) | Custom API | `subcommands[]`, `globalOptions[]` |
 
+## Validating the data
+
+The data is generated, so it is checked rather than trusted. `build.mjs`
+regenerates `data/manifest.json` and validates every file against
+`MONACO_LANGUAGES_API.instructions.md`:
+
+```bash
+npm run build       # regenerate data/manifest.json, then validate
+npm run validate    # validate only, no writes (runs in CI and on prepublish)
+npm test
+```
+
+`npm run validate` fails on:
+
+- a provider directory missing a file for any of the 96 languages
+- a file missing a canonical key for its directory (extra keys are allowed)
+- a regex field that will not compile, or that is double-escaped — `"\\s"` in
+  JSON is `\s` after parsing; `"\\\\s"` reaches `RegExp` as a literal
+  backslash and matches nothing
+- an out-of-range enum value (instructions §32): `CompletionItemKind` 0–28,
+  `SymbolKind` 0–25, `InlayHintKind` 1–2, `IndentAction` 0–3
+- snippet `insertText` without `insertTextRules: 4` (`InsertAsSnippet`)
+- a Monarch `@reference` that resolves to no attribute or state
+- `languageConfiguration.folding.offSide` disagreeing with `foldingRange.offSide`
+- a stale `data/manifest.json`
+
 ## License
 
 MIT © Enjoys Inc
