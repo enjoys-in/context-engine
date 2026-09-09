@@ -181,11 +181,11 @@ Measured from disk:
 | `contextEngine` detectors | **629/629 files · 2,447 detectors** |
 | args with a semantic `type` | **447** across 29 enumerable kinds |
 | args linked to a detector | **335** (`completion.detector`) |
-| leaves with `examples` | **4,980 — 95%** |
+| leaves with `examples` | **5,100 — 97%** |
 | `aws` services | **195** |
 | leaf subcommands | **5,266** (plus 194 parent nodes) |
 | leaves with `options` | **4,816 — 91%** |
-| leaves with `args` | **2,631 — 50%** |
+| leaves with `args` | **2,654 — 50%** |
 | subcommand `options` | **16,003** |
 | `globalOptions` | 7,080 |
 | `args` entries | 1,963, **0 of them malformed** |
@@ -420,13 +420,66 @@ re-nestings and 0 `args`-count changes.
       It also surfaced a mis-typing from C12: `flatpak install <ref>` had been typed
       `branch` by a `/ref$/` pattern, when it is an application id. Retyped `package`.
 
+### DONE — C18, scoped: topic names now resolve, and `shell` is a real entry
+
+The original framing of C18 ("45 files list operations their binary does not have") was too
+coarse. Checking what binary each file's **own examples** actually invoke split it into four
+groups, only two of which were problems:
+
+- **17 files declared a `name` their own examples never use.** For an autocomplete engine
+  that is a functional bug, not a cosmetic one: the *topic* name a user types was
+  unreachable. `getCommand("xml")`, `("yaml")`, `("ini")`, `("markdown")`, `("json")`,
+  `("bash")`, `("zsh")` all returned **nothing**, because each file is named after its
+  binary (`xmllint`, `yq`, `crudini`, `markdownlint`, `jq`, `sh`).
+- **28 files were fine.** Their leaves are legitimate flag/usage forms. I had claimed an
+  example there would duplicate the leaf — wrong: the leaf is `--format file.xml`, the
+  example is `xmllint --format file.xml`, and the binary is the useful part.
+
+Done in this pass:
+
+- [x] **C18a — both naming forms resolve**, the way `next` and `nextjs` already did. Added
+      topic aliases: `xml`, `yaml`/`yml`, `ini`/`cfg`/`conf`/`config`, `taplo`, `json`,
+      `html`, `markdown`/`md`, `clojure`, `doctest`, `containerfile`. All 36 probed tokens
+      resolve; `build.mjs` already rejects an alias that collides with a command name, so
+      the additions are checked.
+
+      `doctest` is worth noting: its `name` is `"python -m doctest"` — a name *with spaces*,
+      which no lookup can ever match. The alias makes it reachable without renaming a field
+      that consumers may already read.
+- [x] **C18b — `shell.json` expanded and un-mixed.** It described three shells at once:
+      `name: "sh"`, bash-only options and examples, and **all eight detectors zsh-only**
+      (`oh_my_zsh`, `zsh_theme`, `fpath_dirs`). Now: 6 -> **21 subcommands** covering real
+      invocation forms (`-e`, `-u`, `-o pipefail`, `-s`, `-i`, `-l`, `--posix`, `--norc`,
+      `--rcfile`, `-v`, `-r`) plus explicit `bash`/`zsh`/`dash`/`ksh` script entries; the
+      four original flag-form leaves finally got args and examples; **12 detectors** that
+      identify the *active* shell first and then read whichever config it actually uses;
+      aliases `shell`, `shellscript`, `bash`, `zsh`, `dash`, `ksh`.
+- [x] **C18c — examples for the config formats and Groups 2-3.** 101 leaves across 13
+      files: `xml`, `yaml`, `ini`, `toml`, `nextjs`, `html`, `markdown`, `clojure`, `mdx`,
+      `doctest`, `dockerfile`, `tailwindcss`, `sql`. Hand-authored, because the correct
+      binary differs per leaf — `xmllint` cannot transform (that is `xsltproc`),
+      `markdownlint` cannot convert (that is `pandoc`), `html-validate` cannot serve, and
+      `taplo` lints rather than validates. Dockerfile directives get the directive line
+      (`FROM node:20-alpine`); `tailwindcss.*` get their Command Palette entry, since they
+      are editor commands and no shell string would be honest.
+
+      The args invariant caught 8 leaves whose new examples revealed an undeclared
+      argument (`clj -T:build jar`, `next telemetry status`, and the five `NEXT_*`/`PORT`
+      env-var assignments). Declared. Leaf examples **95% -> 97%**.
+
 ### OPEN
 
-- [ ] **C18 — the conceptual-subcommand files.** 45 files list operations their binary does
-      not have (`stylelint lint`, `jq validate`, `coffee repl`). That is a data-modelling
-      question, not a coverage gap: either they are real invocations expressed differently,
-      or the subcommand lists should change shape. Needs a decision before either
-      examples or options can be authored honestly there.
+- [ ] **C19 — 31 files, 181 leaves still without examples**, all in the "fine" group above:
+      flag/usage-form leaves where the only open question is whether they want an example
+      at all, plus ~5 files that genuinely list operations their binary lacks
+      (`css` -> `stylelint minify`, `awk` -> `print`/`gsub` as language functions,
+      `json` -> `jq validate`, `coffee` -> `coffee repl`, `powerquery`). That last handful
+      is the only real modelling question left, and it is small.
+- [ ] **C20 — 7 files whose real binary still resolves to nothing**: `sparql`
+      (`rsparql`/`arq`), `pla` (`espresso`), `powerquery` (`pbi-tools`), `st`
+      (`iec2c`/`matiec`), `msdax` (`daxstudio`), `sb` (`SmallBasicCompiler`), `flow9`
+      (`flowc1` — the declared name is `flowc`, off by one character). Same alias fix as
+      C18a; left out of this pass by request.
 
 ### Nested cloud-CLI caveat
 
