@@ -16,7 +16,33 @@
   "subcommands": [
     {
       "name": "plan",
-      "description": "Generate and show execution plan (wraps terraform plan)"
+      "description": "Generate and show execution plan (wraps terraform plan)",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--terragrunt-source",
+          "description": "Override the module source",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--terragrunt-non-interactive",
+          "description": "Never prompt",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--out",
+          "description": "Write the plan here",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "apply",
@@ -30,19 +56,93 @@
     },
     {
       "name": "destroy",
-      "description": "Destroy infrastructure (wraps terraform destroy)"
+      "description": "Destroy infrastructure (wraps terraform destroy)",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--terragrunt-non-interactive",
+          "description": "Never prompt",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--auto-approve",
+          "description": "Skip the approval prompt",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "init",
-      "description": "Initialize Terraform (wraps terraform init)"
+      "description": "Initialize Terraform (wraps terraform init)",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--upgrade",
+          "description": "Upgrade the modules and providers",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--reconfigure",
+          "description": "Reconfigure the backend",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "validate",
-      "description": "Validate configuration"
+      "description": "Validate configuration",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "output",
-      "description": "Show output values"
+      "description": "Show output values",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--raw",
+          "description": "Print the raw value",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "run-all",
@@ -50,53 +150,221 @@
       "subcommands": [
         {
           "name": "plan",
-          "description": "Plan across all modules"
+          "description": "Plan across all modules",
+          "options": [
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--terragrunt-parallelism",
+              "description": "Concurrent module runs",
+              "type": "integer",
+              "takesValue": true
+            },
+            {
+              "name": "--terragrunt-include-dir",
+              "description": "Only these directories",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--terragrunt-exclude-dir",
+              "description": "Skip these directories",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "apply",
-          "description": "Apply across all modules"
+          "description": "Apply across all modules",
+          "options": [
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--terragrunt-parallelism",
+              "description": "Concurrent module runs",
+              "type": "integer",
+              "takesValue": true
+            },
+            {
+              "name": "--auto-approve",
+              "description": "Skip the approval prompt",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "destroy",
-          "description": "Destroy across all modules"
+          "description": "Destroy across all modules",
+          "options": [
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--auto-approve",
+              "description": "Skip the approval prompt",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "init",
-          "description": "Init across all modules"
+          "description": "Init across all modules",
+          "options": [
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--upgrade",
+              "description": "Upgrade the modules and providers",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "validate",
-          "description": "Validate across all modules"
+          "description": "Validate across all modules",
+          "options": [
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "output",
-          "description": "Show outputs across all modules"
+          "description": "Show outputs across all modules",
+          "options": [
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--terragrunt-non-interactive",
+              "description": "Never prompt",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         }
       ]
     },
     {
       "name": "graph-dependencies",
-      "description": "Show dependency graph"
+      "description": "Show dependency graph",
+      "options": [
+        {
+          "name": "--terragrunt-working-dir",
+          "description": "Working directory",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "hclfmt",
-      "description": "Format HCL files"
+      "description": "Format HCL files",
+      "options": [
+        {
+          "name": "--terragrunt-check",
+          "description": "Report without writing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--terragrunt-diff",
+          "description": "Print the diff",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--terragrunt-hclfmt-file",
+          "description": "Only this file",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "render-json",
-      "description": "Render terragrunt.hcl as JSON"
+      "description": "Render terragrunt.hcl as JSON",
+      "options": [
+        {
+          "name": "--terragrunt-json-out",
+          "description": "File to write",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--with-metadata",
+          "description": "Include Terragrunt metadata",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "aws-provider-patch",
-      "description": "Patch AWS provider configs"
+      "description": "Patch AWS provider configs",
+      "options": [
+        {
+          "name": "--terragrunt-override-attr",
+          "description": "Attribute to override, key=value",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "scaffold",
-      "description": "Scaffold new module configuration"
+      "description": "Scaffold new module configuration",
+      "options": [
+        {
+          "name": "--var",
+          "description": "Template variable, key=value",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--var-file",
+          "description": "Template variable file",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "catalog",
-      "description": "Browse module catalog"
+      "description": "Browse module catalog",
+      "options": [
+        {
+          "name": "--terragrunt-no-include-root",
+          "description": "Exclude the root module",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [

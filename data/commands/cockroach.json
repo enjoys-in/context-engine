@@ -120,7 +120,27 @@
     },
     {
       "name": "init",
-      "description": "Initialize a cluster"
+      "description": "Initialize a cluster",
+      "options": [
+        {
+          "name": "--host",
+          "description": "Node to contact",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--certs-dir",
+          "description": "Certificate directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--insecure",
+          "description": "Connect without TLS",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "node",
@@ -128,23 +148,99 @@
       "subcommands": [
         {
           "name": "ls",
-          "description": "List nodes"
+          "description": "List nodes",
+          "options": [
+            {
+              "name": "--format",
+              "description": "Output format (table, csv, tsv)",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--certs-dir",
+              "description": "Certificate directory",
+              "type": "directory",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "status",
-          "description": "Node status"
+          "description": "Node status",
+          "options": [
+            {
+              "name": "--all",
+              "description": "Show every status field",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--ranges",
+              "description": "Include range statistics",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--stats",
+              "description": "Include disk statistics",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--decommission",
+              "description": "Include decommissioning detail",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "decommission",
-          "description": "Decommission nodes"
+          "description": "Decommission nodes",
+          "options": [
+            {
+              "name": "--wait",
+              "description": "When to return (all, none)",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--self",
+              "description": "Decommission this node",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "recommission",
-          "description": "Recommission nodes"
+          "description": "Recommission nodes",
+          "options": [
+            {
+              "name": "--self",
+              "description": "Recommission this node",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "drain",
-          "description": "Drain a node"
+          "description": "Drain a node",
+          "options": [
+            {
+              "name": "--drain-wait",
+              "description": "How long to wait for the drain",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--self",
+              "description": "Drain this node",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         }
       ]
     },
@@ -157,11 +253,45 @@
           "description": "Database name",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--dump-mode",
+          "description": "What to dump (both, schema, data)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--as-of",
+          "description": "Dump as of this timestamp",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "demo",
-      "description": "Start temporary in-memory cluster"
+      "description": "Start temporary in-memory cluster",
+      "options": [
+        {
+          "name": "--nodes",
+          "description": "Nodes in the demo cluster",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--with-load",
+          "description": "Generate background load",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-example-database",
+          "description": "Skip the sample database",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "cert",
@@ -169,25 +299,101 @@
       "subcommands": [
         {
           "name": "create-ca",
-          "description": "Create CA cert"
+          "description": "Create CA cert",
+          "options": [
+            {
+              "name": "--certs-dir",
+              "description": "Certificate directory",
+              "type": "directory",
+              "takesValue": true
+            },
+            {
+              "name": "--ca-key",
+              "description": "CA key path",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--allow-ca-key-reuse",
+              "description": "Reuse an existing CA key",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "create-node",
-          "description": "Create node cert"
+          "description": "Create node cert",
+          "options": [
+            {
+              "name": "--certs-dir",
+              "description": "Certificate directory",
+              "type": "directory",
+              "takesValue": true
+            },
+            {
+              "name": "--ca-key",
+              "description": "CA key path",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--overwrite",
+              "description": "Replace an existing certificate",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "create-client",
-          "description": "Create client cert"
+          "description": "Create client cert",
+          "options": [
+            {
+              "name": "--certs-dir",
+              "description": "Certificate directory",
+              "type": "directory",
+              "takesValue": true
+            },
+            {
+              "name": "--ca-key",
+              "description": "CA key path",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--also-generate-pkcs8-key",
+              "description": "Also emit a PKCS#8 key",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "list",
-          "description": "List certificates"
+          "description": "List certificates",
+          "options": [
+            {
+              "name": "--certs-dir",
+              "description": "Certificate directory",
+              "type": "directory",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
     {
       "name": "version",
-      "description": "Show version"
+      "description": "Show version",
+      "options": [
+        {
+          "name": "--build-tag",
+          "description": "Print only the build tag",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [

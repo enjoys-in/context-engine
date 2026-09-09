@@ -41,6 +41,26 @@
           "description": "Specific toolchain to update",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--no-self-update",
+          "description": "Do not update rustup itself",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force",
+          "description": "Reinstall even if up to date",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force-non-host",
+          "description": "Allow a non-host toolchain",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -60,7 +80,17 @@
       "subcommands": [
         {
           "name": "list",
-          "description": "List installed toolchains"
+          "description": "List installed toolchains",
+          "options": [
+            {
+              "name": "--verbose",
+              "description": "Show the installed targets",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-v",
+              "shorthand": "-v"
+            }
+          ]
         },
         {
           "name": "install",
@@ -70,6 +100,36 @@
               "name": "toolchain",
               "description": "Toolchain name",
               "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--profile",
+              "description": "Component profile (minimal, default, complete)",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--component",
+              "description": "Extra components to add",
+              "type": "string",
+              "takesValue": true,
+              "short": "-c",
+              "shorthand": "-c"
+            },
+            {
+              "name": "--target",
+              "description": "Extra targets to add",
+              "type": "string",
+              "takesValue": true,
+              "short": "-t",
+              "shorthand": "-t"
+            },
+            {
+              "name": "--force-non-host",
+              "description": "Allow a non-host toolchain",
+              "type": "boolean",
+              "takesValue": false
             }
           ]
         },
@@ -108,7 +168,21 @@
       "subcommands": [
         {
           "name": "list",
-          "description": "List available targets"
+          "description": "List available targets",
+          "options": [
+            {
+              "name": "--installed",
+              "description": "Only installed targets",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to query",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "add",
@@ -118,6 +192,14 @@
               "name": "target",
               "description": "Target triple",
               "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to modify",
+              "type": "string",
+              "takesValue": true
             }
           ]
         },
@@ -130,6 +212,14 @@
               "description": "Target triple",
               "required": true
             }
+          ],
+          "options": [
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to modify",
+              "type": "string",
+              "takesValue": true
+            }
           ]
         }
       ]
@@ -140,7 +230,21 @@
       "subcommands": [
         {
           "name": "list",
-          "description": "List available components"
+          "description": "List available components",
+          "options": [
+            {
+              "name": "--installed",
+              "description": "Only installed components",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to query",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "add",
@@ -150,6 +254,20 @@
               "name": "component",
               "description": "Component name (clippy, rustfmt, etc.)",
               "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to modify",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--target",
+              "description": "Target the component applies to",
+              "type": "string",
+              "takesValue": true
             }
           ]
         },
@@ -161,6 +279,20 @@
               "name": "component",
               "description": "Component name",
               "required": true
+            }
+          ],
+          "options": [
+            {
+              "name": "--toolchain",
+              "description": "Toolchain to modify",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--target",
+              "description": "Target the component applies to",
+              "type": "string",
+              "takesValue": true
             }
           ]
         }
@@ -179,11 +311,33 @@
               "description": "Toolchain name",
               "required": true
             }
+          ],
+          "options": [
+            {
+              "name": "--path",
+              "description": "Directory to override",
+              "type": "directory",
+              "takesValue": true
+            }
           ]
         },
         {
           "name": "unset",
-          "description": "Remove override"
+          "description": "Remove override",
+          "options": [
+            {
+              "name": "--path",
+              "description": "Directory to clear",
+              "type": "directory",
+              "takesValue": true
+            },
+            {
+              "name": "--nonexistent",
+              "description": "Remove overrides for missing directories",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "list",
@@ -205,6 +359,14 @@
           "description": "Command to run",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--install",
+          "description": "Install the toolchain if missing",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -216,11 +378,39 @@
           "description": "Binary name",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to query",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "doc",
-      "description": "Open Rust docs in browser"
+      "description": "Open Rust docs in browser",
+      "options": [
+        {
+          "name": "--book",
+          "description": "Open the Rust book",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--std",
+          "description": "Open the standard library docs",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--path",
+          "description": "Print the path instead of opening",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "self",
@@ -232,7 +422,17 @@
         },
         {
           "name": "uninstall",
-          "description": "Uninstall rustup"
+          "description": "Uninstall rustup",
+          "options": [
+            {
+              "name": "--no-prompt",
+              "description": "Do not prompt for confirmation",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-y",
+              "shorthand": "-y"
+            }
+          ]
         }
       ]
     }
