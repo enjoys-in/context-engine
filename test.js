@@ -119,5 +119,47 @@ assert(
 );
 assert(engine.getProviderData("completion", "typescript").triggerCharacters.includes("."), "typescript completion triggers on .");
 
+// ── Command data for terminal autocomplete ───────────────────
+const cmdNames = engine.listCommandNames();
+assert(
+  cmdNames.every((c) => {
+    const d = engine.getCommand(c);
+    return (d.subcommands?.length ?? 0) > 0 || (d.globalOptions?.length ?? 0) > 0;
+  }),
+  "every command has subcommands or globalOptions to complete"
+);
+assert(
+  cmdNames.every((c) => (engine.getCommand(c).examples?.length ?? 0) > 0),
+  "every command has examples"
+);
+// Options must be objects, never bare strings, or the menu has no description
+let bareOpts = 0, noDesc = 0, badTakesValue = 0;
+const VALUED = new Set(["string", "path", "file", "directory", "number", "integer", "url"]);
+for (const c of cmdNames) {
+  const d = engine.getCommand(c);
+  const all = [...(d.globalOptions ?? []), ...(d.subcommands ?? []).flatMap((s) => s.options ?? [])];
+  for (const o of all) {
+    if (typeof o === "string") { bareOpts++; continue; }
+    if (!o.description) noDesc++;
+    if (typeof o.type === "string" && typeof o.takesValue === "boolean" && o.takesValue !== VALUED.has(o.type)) badTakesValue++;
+    if (o.shorthand !== undefined && o.short === undefined) badTakesValue++;
+  }
+}
+assert(bareOpts === 0, `no option is a bare string (found ${bareOpts})`);
+assert(noDesc === 0, `every option has a description (missing ${noDesc})`);
+assert(badTakesValue === 0, `takesValue agrees with type and short is always set (${badTakesValue} bad)`);
+
+// getExamples() must be one shape regardless of how the data stores it
+const gitEx = engine.getExamples("git");
+const linuxEx = engine.getExamples("linux");
+assert(gitEx.every((e) => typeof e.command === "string" && typeof e.description === "string"), "getExamples normalizes string examples");
+assert(linuxEx.every((e) => typeof e.command === "string" && typeof e.description === "string"), "getExamples normalizes object examples");
+assert(linuxEx[0].description.length > 0, "object examples keep their description");
+assert(typeof engine.getRawExamples("git")[0] === "string", "getRawExamples preserves the stored shape");
+const allEx = engine.getAllExamples("git");
+assert(allEx.length > gitEx.length, "getAllExamples includes subcommand examples");
+assert(allEx.some((e) => e.subcommand !== null), "getAllExamples tags the subcommand");
+assert(engine.getAllExamples("nope").length === 0, "getAllExamples on an unknown command returns []");
+
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

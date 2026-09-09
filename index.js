@@ -40,7 +40,9 @@ __export(index_exports, {
   getCommandsByCategory: () => getCommandsByCategory,
   getCommandsByPlatform: () => getCommandsByPlatform,
   getContextEngine: () => getContextEngine,
+  getAllExamples: () => getAllExamples,
   getExamples: () => getExamples,
+  getRawExamples: () => getRawExamples,
   getGlobalOptions: () => getGlobalOptions,
   getLanguageConfiguration: () => getLanguageConfiguration,
   getLanguageData: () => getLanguageData,
@@ -159,9 +161,28 @@ function getGlobalOptions(name) {
   const cmd = getCommand(name);
   return Array.isArray(cmd?.globalOptions) ? cmd.globalOptions : [];
 }
+function normalizeExamples(list) {
+  return Array.isArray(list)
+    ? list.map((e) => (typeof e === "string" ? { command: e, description: "" } : { command: e?.command ?? "", description: e?.description ?? "" }))
+    : [];
+}
 function getExamples(name) {
   const cmd = getCommand(name);
+  return normalizeExamples(cmd?.examples);
+}
+/** Examples exactly as stored — either a plain string or `{command, description}`. */
+function getRawExamples(name) {
+  const cmd = getCommand(name);
   return Array.isArray(cmd?.examples) ? cmd.examples : [];
+}
+/** Every example for a command, including its subcommands', in one uniform shape. */
+function getAllExamples(name) {
+  const cmd = getCommand(name);
+  if (!cmd) return [];
+  const out = normalizeExamples(cmd.examples).map((e) => ({ ...e, subcommand: null }));
+  for (const sub of cmd.subcommands ?? [])
+    for (const e of normalizeExamples(sub.examples)) out.push({ ...e, subcommand: sub.name });
+  return out;
 }
 function count() {
   return loadCommands().size;
@@ -328,7 +349,9 @@ var index_default = {
   getCommandsByCategory,
   getCommandsByPlatform,
   getContextEngine,
+  getAllExamples,
   getExamples,
+  getRawExamples,
   getGlobalOptions,
   getLanguageConfiguration,
   getLanguageData,

@@ -451,9 +451,29 @@ getGlobalOptions('journalctl');
 
 ### `getExamples(name)`
 
+Returns every example in one shape, `{ command, description }`, regardless of how
+the file stores it — 344 command files hold examples as plain strings and 119 as
+`{command, description}` objects, so this normalizes both:
+
 ```js
-getExamples('nginx');
-// ['nginx -t', 'nginx -s reload', 'sudo nginx -t && sudo nginx -s reload', ...]
+getExamples('git')    // [{ command: 'git init', description: '' }, ...]
+getExamples('linux')  // [{ command: 'ls -la /home', description: 'List all files in home directory' }, ...]
+```
+
+### `getRawExamples(name)`
+
+The examples exactly as stored — a plain string or a `{command, description}`
+object — if you need the original shape.
+
+### `getAllExamples(name)`
+
+A command's own examples plus all of its subcommands', flattened and tagged, which
+is what a terminal completion menu usually wants:
+
+```js
+getAllExamples('git')
+// [{ command: 'git init', description: '', subcommand: null },
+//  { command: 'git init', description: '', subcommand: 'init' }, ... ]  // 114 entries
 ```
 
 ### `getContextEngine(name)`
@@ -680,6 +700,32 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 ```
 
 ### Command Definition (`data/commands/*.json`)
+
+Every command is completable: it has at least one of `subcommands` or
+`globalOptions`, plus `examples` and `relatedCommands`. Options are always
+objects, never bare strings:
+
+```json
+{
+  "name": "--output",
+  "description": "Write the result to this file",
+  "type": "file",
+  "takesValue": true,
+  "short": "-o",
+  "shorthand": "-o"
+}
+```
+
+- `type` is one of `string`, `path`, `file`, `directory`, `number`, `integer`,
+  `url` or `boolean`
+- `takesValue` says whether the flag consumes the next token — `true` for every
+  type above except `boolean`. Completion needs this to decide whether to offer a
+  value or the next flag
+- `short` is always present when a short form exists; `shorthand` is the older
+  key name and is kept as an alias
+
+`npm run validate` enforces all of the above.
+
 
 ```json
 {
