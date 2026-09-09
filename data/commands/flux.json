@@ -20,6 +20,56 @@
       "examples": [
         "flux bootstrap github --owner=myorg --repository=fleet-infra --branch=main --path=clusters/my-cluster --personal",
         "flux bootstrap gitlab --owner=myorg --repository=fleet-infra --branch=main --path=clusters/my-cluster"
+      ],
+      "options": [
+        {
+          "name": "--owner",
+          "description": "Git provider owner or organisation",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--repository",
+          "description": "Repository name",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--branch",
+          "description": "Branch to write to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--path",
+          "description": "Path inside the repository",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--personal",
+          "description": "Treat the owner as a user rather than an organisation",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--private",
+          "description": "Create the repository as private",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--token-auth",
+          "description": "Authenticate with a token rather than SSH",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--read-write-key",
+          "description": "Create a deploy key with write access",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,6 +77,60 @@
       "description": "Install Flux components",
       "examples": [
         "flux install"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to install into",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--components",
+          "description": "Toolkit components to install",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--components-extra",
+          "description": "Optional components to also install",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--version",
+          "description": "Toolkit version to install",
+          "type": "string",
+          "takesValue": true,
+          "short": "-v",
+          "shorthand": "-v"
+        },
+        {
+          "name": "--export",
+          "description": "Print the manifests instead of applying them",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would happen without applying it",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--registry",
+          "description": "Container registry to pull from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--watch-all-namespaces",
+          "description": "Reconcile resources in every namespace",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -34,6 +138,36 @@
       "description": "Uninstall Flux",
       "examples": [
         "flux uninstall"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to uninstall from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--keep-namespace",
+          "description": "Leave the namespace in place",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would happen without applying it",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Do not prompt for confirmation",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -42,6 +176,28 @@
       "examples": [
         "flux check",
         "flux check --pre"
+      ],
+      "options": [
+        {
+          "name": "--pre",
+          "description": "Check prerequisites only, before installing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--components",
+          "description": "Components expected to be present",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--namespace",
+          "description": "Namespace holding the installation",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -81,6 +237,38 @@
         "flux get kustomizations",
         "flux get helmreleases",
         "flux get sources helm"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to query",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--all-namespaces",
+          "description": "Operate across every namespace",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--status-selector",
+          "description": "Filter by reconciliation status",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--watch",
+          "description": "Stream updates as they happen",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        }
       ]
     },
     {
@@ -90,6 +278,28 @@
         "flux reconcile source git my-repo",
         "flux reconcile kustomization my-app",
         "flux reconcile hr my-app"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace of the resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--with-source",
+          "description": "Also reconcile the source first",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--timeout",
+          "description": "How long to wait before giving up, e.g. 5m",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -98,6 +308,22 @@
       "examples": [
         "flux suspend kustomization my-app",
         "flux suspend hr my-app"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace of the resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--all",
+          "description": "Suspend every resource of this kind",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -106,6 +332,28 @@
       "examples": [
         "flux resume kustomization my-app",
         "flux resume hr my-app"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace of the resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--all",
+          "description": "Resume every resource of this kind",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--wait",
+          "description": "Block until reconciliation finishes",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -114,6 +362,24 @@
       "examples": [
         "flux delete source git my-repo",
         "flux delete kustomization my-app"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace of the resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--silent",
+          "description": "Do not prompt for confirmation",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -123,6 +389,42 @@
         "flux logs",
         "flux logs --follow",
         "flux logs --kind=Kustomization --name=my-app"
+      ],
+      "options": [
+        {
+          "name": "--follow",
+          "description": "Stream new log lines",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--tail",
+          "description": "Lines to show from the end",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--level",
+          "description": "Minimum log level to show",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--kind",
+          "description": "Only logs for this kind",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--all-namespaces",
+          "description": "Operate across every namespace",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-A",
+          "shorthand": "-A"
+        }
       ]
     },
     {
@@ -138,6 +440,28 @@
       "examples": [
         "flux export source git my-repo",
         "flux export kustomization my-app > my-app.yaml"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace of the resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--all",
+          "description": "Export every resource of this kind",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--with-credentials",
+          "description": "Include the referenced secrets",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -145,6 +469,20 @@
       "description": "Diff local vs cluster",
       "examples": [
         "flux diff kustomization my-app --path=./deploy"
+      ],
+      "options": [
+        {
+          "name": "--path",
+          "description": "Path to the kustomization",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--progress-bar",
+          "description": "Show a progress bar",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],

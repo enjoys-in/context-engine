@@ -20,6 +20,58 @@
       "examples": [
         "velero install --provider aws --bucket my-bucket --secret-file ./credentials --backup-location-config region=us-east-1",
         "velero install --provider gcp --bucket my-bucket --secret-file ./credentials"
+      ],
+      "options": [
+        {
+          "name": "--provider",
+          "description": "Object storage provider",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--bucket",
+          "description": "Bucket to store backups in",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--secret-file",
+          "description": "Credentials file for the provider",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--use-node-agent",
+          "description": "Deploy the node agent for filesystem backups",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--namespace",
+          "description": "Namespace to install into",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--plugins",
+          "description": "Plugin images to install",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dry-run",
+          "description": "Print the manifests instead of applying them",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--wait",
+          "description": "Block until Velero is ready",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -34,6 +86,70 @@
         "velero backup describe my-backup",
         "velero backup logs my-backup",
         "velero backup delete my-backup"
+      ],
+      "options": [
+        {
+          "name": "--include-namespaces",
+          "description": "Namespaces to include",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--exclude-namespaces",
+          "description": "Namespaces to exclude",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--include-resources",
+          "description": "Resource types to include",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--exclude-resources",
+          "description": "Resource types to exclude",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--selector",
+          "description": "Label selector for the resources to back up",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--snapshot-volumes",
+          "description": "Take volume snapshots",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--default-volumes-to-fs-backup",
+          "description": "Use filesystem backup for volumes by default",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--ttl",
+          "description": "How long to retain the backup, e.g. 720h",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--storage-location",
+          "description": "Backup storage location to write to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--wait",
+          "description": "Block until the operation completes",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -47,6 +163,56 @@
         "velero restore describe my-restore",
         "velero restore logs my-restore",
         "velero restore delete my-restore"
+      ],
+      "options": [
+        {
+          "name": "--from-backup",
+          "description": "Backup to restore from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--from-schedule",
+          "description": "Restore the latest backup from this schedule",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--include-namespaces",
+          "description": "Namespaces to include",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--exclude-namespaces",
+          "description": "Namespaces to exclude",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--namespace-mappings",
+          "description": "Remap namespaces, old:new",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--restore-volumes",
+          "description": "Restore volumes from snapshots",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--existing-resource-policy",
+          "description": "What to do with existing resources (none, update)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--wait",
+          "description": "Block until the operation completes",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -58,6 +224,32 @@
         "velero schedule get",
         "velero schedule describe daily",
         "velero schedule delete daily"
+      ],
+      "options": [
+        {
+          "name": "--schedule",
+          "description": "Cron expression for the schedule",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--ttl",
+          "description": "How long to retain each backup",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--include-namespaces",
+          "description": "Namespaces to include",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--paused",
+          "description": "Create the schedule paused",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -66,6 +258,32 @@
       "examples": [
         "velero backup-location get",
         "velero backup-location create secondary --provider aws --bucket secondary-bucket --config region=eu-west-1"
+      ],
+      "options": [
+        {
+          "name": "--provider",
+          "description": "Object storage provider",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--bucket",
+          "description": "Bucket name",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--default",
+          "description": "Make this the default location",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--access-mode",
+          "description": "Access mode (ReadWrite, ReadOnly)",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -96,6 +314,14 @@
       "description": "Show version",
       "examples": [
         "velero version"
+      ],
+      "options": [
+        {
+          "name": "--client-only",
+          "description": "Print only the client version",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],

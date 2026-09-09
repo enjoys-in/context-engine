@@ -21,6 +21,20 @@
         "rclone config",
         "rclone config show",
         "rclone config create myremote s3 provider=AWS env_auth=true region=us-east-1"
+      ],
+      "options": [
+        {
+          "name": "--obscure",
+          "description": "Obscure passwords in the config",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--non-interactive",
+          "description": "Do not prompt",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -30,6 +44,40 @@
         "rclone copy /local/path remote:bucket/path",
         "rclone copy remote:bucket/path /local/path",
         "rclone copy src:path dst:path"
+      ],
+      "options": [
+        {
+          "name": "--update",
+          "description": "Skip files newer at the destination",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--max-age",
+          "description": "Only files younger than this",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--min-size",
+          "description": "Only files at least this size",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--ignore-existing",
+          "description": "Skip files that already exist",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--create-empty-src-dirs",
+          "description": "Recreate empty source directories",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -39,6 +87,32 @@
         "rclone sync /local/path remote:bucket/",
         "rclone sync remote:bucket/ /local/path",
         "rclone sync --dry-run /local/ remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--delete-during",
+          "description": "Delete during the transfer rather than after",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--track-renames",
+          "description": "Detect renames instead of re-uploading",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--backup-dir",
+          "description": "Move replaced files here",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--max-delete",
+          "description": "Abort if more than this many files would be deleted",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -47,6 +121,14 @@
       "examples": [
         "rclone move /local/path remote:bucket/",
         "rclone move --delete-empty-src-dirs /local/ remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--delete-empty-src-dirs",
+          "description": "Remove source directories left empty",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -55,6 +137,20 @@
       "examples": [
         "rclone ls remote:bucket/",
         "rclone ls remote:bucket/prefix/"
+      ],
+      "options": [
+        {
+          "name": "--max-depth",
+          "description": "Directory depth to descend",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--include-from",
+          "description": "Read include patterns from this file",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -78,6 +174,30 @@
       "examples": [
         "rclone lsf remote:bucket/",
         "rclone lsf --format 'pst' remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--format",
+          "description": "Fields to print (p, s, t, h, i, m)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-F",
+          "shorthand": "-F"
+        },
+        {
+          "name": "--separator",
+          "description": "Field separator",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--recursive",
+          "description": "Recurse into directories",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-R",
+          "shorthand": "-R"
+        }
       ]
     },
     {
@@ -107,6 +227,20 @@
       "examples": [
         "rclone delete remote:bucket/file.txt",
         "rclone delete --min-age 30d remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--rmdirs",
+          "description": "Also remove empty directories",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--min-age",
+          "description": "Only files older than this",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -121,6 +255,26 @@
       "description": "Check files match",
       "examples": [
         "rclone check /local/ remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--one-way",
+          "description": "Only report files missing at the destination",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--download",
+          "description": "Compare by downloading rather than by hash",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--combined",
+          "description": "Write a combined report here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -129,6 +283,26 @@
       "examples": [
         "rclone bisync /local/ remote:bucket/",
         "rclone bisync --resync /local/ remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--resync",
+          "description": "Rebuild the sync state from scratch",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--check-access",
+          "description": "Verify marker files before syncing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--max-lock",
+          "description": "Lock timeout",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -139,6 +313,38 @@
         "rclone serve webdav remote:bucket/ --addr :8080",
         "rclone serve sftp remote:bucket/ --addr :2022",
         "rclone serve docker remote:"
+      ],
+      "options": [
+        {
+          "name": "--addr",
+          "description": "Address to listen on",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--read-only",
+          "description": "Refuse write operations",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--user",
+          "description": "Username for authentication",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--pass",
+          "description": "Password for authentication",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--vfs-cache-mode",
+          "description": "VFS cache mode (off, minimal, writes, full)",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -148,6 +354,32 @@
         "rclone mount remote:bucket/ /mnt/bucket",
         "rclone mount remote:bucket/ /mnt/bucket --daemon",
         "rclone mount remote:bucket/ /mnt/bucket --vfs-cache-mode full"
+      ],
+      "options": [
+        {
+          "name": "--allow-other",
+          "description": "Allow other users to access the mount",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--vfs-cache-mode",
+          "description": "VFS cache mode (off, minimal, writes, full)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--daemon",
+          "description": "Run in the background",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--read-only",
+          "description": "Mount read-only",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -169,6 +401,14 @@
       "description": "Get total size and count",
       "examples": [
         "rclone size remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -176,6 +416,30 @@
       "description": "List in tree format",
       "examples": [
         "rclone tree remote:bucket/"
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Include hidden files",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--level",
+          "description": "Depth limit",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--dirs-only",
+          "description": "Show directories only",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
+        }
       ]
     },
     {
@@ -266,6 +530,12 @@
       "description": "Stats printing interval",
       "type": "string",
       "takesValue": true
+    },
+    {
+      "name": "--fast-list",
+      "description": "Use fewer, larger listings",
+      "type": "boolean",
+      "takesValue": false
     }
   ],
   "examples": [
