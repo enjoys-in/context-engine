@@ -1,5 +1,8 @@
 declare const PROVIDERS: readonly ["codeActions", "codeLens", "color", "commands", "completion", "declaration", "definition", "documentHighlight", "documentRangeFormatting", "documentSymbol", "foldingRange", "formatting", "hover", "implementation", "inlayHints", "inlineCompletions", "languageConfiguration", "linkedEditingRange", "links", "monarchTokens", "multiDocumentHighlight", "newSymbolNames", "onTypeFormatting", "rangeSemanticTokens", "references", "rename", "selectionRange", "semanticTokens", "signatureHelp", "typeDefinition"];
 export type ProviderName = (typeof PROVIDERS)[number];
+/** Resolve a typed name (or binary alias, e.g. `hx`, `ncu`, `r2`) to its canonical command name. */
+export declare function resolveCommandName(name: string): string;
+/** Look up a command by name or by any of its declared `aliases`. */
 export declare function getCommand(name: string): any;
 export declare function getAllCommands(): any[];
 export declare function listCommandNames(): string[];
@@ -105,6 +108,7 @@ export declare function listThemes(): string[];
 export declare function resolveThemePath(name: string): string;
 declare const _default: {
     getCommand: typeof getCommand;
+    resolveCommandName: typeof resolveCommandName;
     getAllCommands: typeof getAllCommands;
     listCommandNames: typeof listCommandNames;
     getCommandsByCategory: typeof getCommandsByCategory;
