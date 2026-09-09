@@ -1,0 +1,333 @@
+{
+  "language": "haskell",
+  "tokenPostfix": ".hs",
+  "defaultToken": "",
+  "keywords": [
+    "module",
+    "where",
+    "import",
+    "qualified",
+    "hiding",
+    "as",
+    "data",
+    "newtype",
+    "type",
+    "class",
+    "instance",
+    "deriving",
+    "do",
+    "case",
+    "of",
+    "let",
+    "in",
+    "if",
+    "then",
+    "else",
+    "forall",
+    "infixl",
+    "infixr",
+    "infix",
+    "foreign",
+    "mdo",
+    "rec",
+    "proc"
+  ],
+  "typeKeywords": [
+    "Int",
+    "Integer",
+    "Float",
+    "Double",
+    "Rational",
+    "Char",
+    "String",
+    "Bool",
+    "Maybe",
+    "Either",
+    "IO",
+    "Ordering",
+    "Word",
+    "Eq",
+    "Ord",
+    "Show",
+    "Read",
+    "Enum",
+    "Bounded",
+    "Num",
+    "Real",
+    "Integral",
+    "Fractional",
+    "Floating",
+    "Functor",
+    "Applicative",
+    "Monad",
+    "Foldable",
+    "Traversable",
+    "Semigroup",
+    "Monoid",
+    "Text",
+    "ByteString",
+    "Map",
+    "Set",
+    "Vector"
+  ],
+  "operators": [
+    "::",
+    "->",
+    "<-",
+    "=>",
+    "=",
+    "|",
+    "\\",
+    "@",
+    "~",
+    "!",
+    "<$>",
+    "<*>",
+    "*>",
+    "<*",
+    "<>",
+    "$",
+    "$!",
+    ">>=",
+    ">>",
+    "=<<",
+    ".",
+    "..",
+    "&&",
+    "||",
+    "++",
+    "+",
+    "-",
+    "*",
+    "/",
+    "^",
+    "^^",
+    "**",
+    "==",
+    "/=",
+    "<",
+    ">",
+    "<=",
+    ">=",
+    "&",
+    "<&>"
+  ],
+  "symbols": "[=><!~?:&|+\\-*\\/\\^%@#$.\\\\]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'0]|x[0-9A-Fa-f]+|o[0-7]+|[0-9]+|NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL)",
+  "digits": "\\d+(_+\\d+)*",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
+    "root": [
+      {
+        "include": "@whitespace"
+      },
+      [
+        "\\{-#",
+        "annotation",
+        "@pragma"
+      ],
+      [
+        "^\\s*#\\w+",
+        "keyword.directive"
+      ],
+      [
+        "[A-Z][\\w']*\\.(?=[A-Za-z(])",
+        "namespace"
+      ],
+      [
+        "[A-Z][\\w']*",
+        {
+          "cases": {
+            "@typeKeywords": "type.identifier",
+            "@default": "constructor"
+          }
+        }
+      ],
+      [
+        "[a-z_][\\w']*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@default": "identifier"
+          }
+        }
+      ],
+      [
+        "`[A-Za-z_][\\w']*`",
+        "operator"
+      ],
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "0[xX][0-9a-fA-F](_*[0-9a-fA-F])*",
+        "number.hex"
+      ],
+      [
+        "0[oO][0-7](_*[0-7])*",
+        "number.octal"
+      ],
+      [
+        "0[bB][01](_*[01])*",
+        "number.binary"
+      ],
+      [
+        "(@digits)\\.(@digits)([eE][\\-+]?(@digits))?",
+        "number.float"
+      ],
+      [
+        "(@digits)[eE][\\-+]?(@digits)",
+        "number.float"
+      ],
+      [
+        "(@digits)",
+        "number"
+      ],
+      [
+        "\"",
+        "string",
+        "@string"
+      ],
+      [
+        "'(?:[^'\\\\]|@escapes)'",
+        "string"
+      ],
+      [
+        "'",
+        "string.invalid"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
+        }
+      ],
+      [
+        "[;,]",
+        "delimiter"
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        ""
+      ],
+      [
+        "\\{-\\|",
+        "comment.doc",
+        "@doccomment"
+      ],
+      [
+        "\\{-",
+        "comment",
+        "@comment"
+      ],
+      [
+        "--\\s*[|^].*$",
+        "comment.doc"
+      ],
+      [
+        "--+.*$",
+        "comment"
+      ]
+    ],
+    "comment": [
+      [
+        "[^{-]+",
+        "comment"
+      ],
+      [
+        "\\{-",
+        "comment",
+        "@push"
+      ],
+      [
+        "-\\}",
+        "comment",
+        "@pop"
+      ],
+      [
+        "[{-]",
+        "comment"
+      ]
+    ],
+    "doccomment": [
+      [
+        "[^{-]+",
+        "comment.doc"
+      ],
+      [
+        "\\{-",
+        "comment.doc",
+        "@push"
+      ],
+      [
+        "-\\}",
+        "comment.doc",
+        "@pop"
+      ],
+      [
+        "[{-]",
+        "comment.doc"
+      ]
+    ],
+    "pragma": [
+      [
+        "[^#]+",
+        "annotation"
+      ],
+      [
+        "#-\\}",
+        "annotation",
+        "@pop"
+      ],
+      [
+        "#",
+        "annotation"
+      ]
+    ],
+    "string": [
+      [
+        "[^\\\\\"]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\\\\$",
+        "string.escape"
+      ],
+      [
+        "\\\\.",
+        "string.escape.invalid"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
+    ]
+  }
+}

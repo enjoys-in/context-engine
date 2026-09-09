@@ -1,0 +1,272 @@
+{
+  "language": "haskell",
+  "legend": {
+    "tokenTypes": [
+      "namespace",
+      "type",
+      "class",
+      "enum",
+      "interface",
+      "struct",
+      "typeParameter",
+      "parameter",
+      "variable",
+      "property",
+      "enumMember",
+      "event",
+      "function",
+      "method",
+      "macro",
+      "keyword",
+      "modifier",
+      "comment",
+      "string",
+      "number",
+      "regexp",
+      "operator",
+      "decorator"
+    ],
+    "tokenModifiers": [
+      "declaration",
+      "definition",
+      "readonly",
+      "static",
+      "deprecated",
+      "abstract",
+      "async",
+      "modification",
+      "documentation",
+      "defaultLibrary"
+    ]
+  },
+  "semanticRules": [
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(module|where|import|qualified|hiding|as)\\b",
+      "tokenModifiers": [],
+      "description": "Module and import keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(data|newtype|type|class|instance|deriving)\\b",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Declaration keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(do|case|of|let|in|if|then|else)\\b",
+      "tokenModifiers": [],
+      "description": "Expression keywords"
+    },
+    {
+      "tokenType": "keyword",
+      "pattern": "\\b(forall|infixl|infixr|infix|foreign)\\b",
+      "tokenModifiers": [],
+      "description": "Quantification and fixity"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b([A-Z][A-Za-z0-9_']*)\\b",
+      "tokenModifiers": [],
+      "description": "Types and constructors are capitalised"
+    },
+    {
+      "tokenType": "typeParameter",
+      "pattern": "\\bforall\\s+([a-z]\\w*)",
+      "tokenModifiers": [],
+      "description": "Explicitly quantified type variable"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "^([a-z_]\\w*'?)\\s*::",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Top-level type signature"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "^([a-z_]\\w*'?)\\s+[\\w({\\[]",
+      "tokenModifiers": [
+        "definition"
+      ],
+      "description": "Function equation"
+    },
+    {
+      "tokenType": "property",
+      "pattern": "^\\s*[,{]\\s*(\\w+)\\s*::",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Record field"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "^class\\s+(?:.*=>\\s*)?([A-Z]\\w*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Class declaration"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^module\\s+([A-Z][\\w.]*)",
+      "tokenModifiers": [
+        "declaration"
+      ],
+      "description": "Module name"
+    },
+    {
+      "tokenType": "namespace",
+      "pattern": "^import\\s+(?:qualified\\s+)?([A-Z][\\w.]*)",
+      "tokenModifiers": [],
+      "description": "Imported module"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "--[^\\n]*",
+      "tokenModifiers": [],
+      "description": "Line comment"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\{-[\\s\\S]*?-\\}",
+      "tokenModifiers": [],
+      "description": "Block comment"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "\\{-\\|[\\s\\S]*?-\\}",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Haddock block"
+    },
+    {
+      "tokenType": "comment",
+      "pattern": "--\\s*[|^][^\\n]*",
+      "tokenModifiers": [
+        "documentation"
+      ],
+      "description": "Haddock line"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "\"(?:[^\"\\\\]|\\\\.)*\"",
+      "tokenModifiers": [],
+      "description": "String literal"
+    },
+    {
+      "tokenType": "string",
+      "pattern": "'(?:[^'\\\\]|\\\\.)'",
+      "tokenModifiers": [],
+      "description": "Char literal"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[xX][0-9a-fA-F_]+\\b",
+      "tokenModifiers": [],
+      "description": "Hexadecimal"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[oO][0-7_]+\\b",
+      "tokenModifiers": [],
+      "description": "Octal"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b0[bB][01_]+\\b",
+      "tokenModifiers": [],
+      "description": "Binary"
+    },
+    {
+      "tokenType": "number",
+      "pattern": "\\b\\d[\\d_]*(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d+)?\\b",
+      "tokenModifiers": [],
+      "description": "Decimal literal"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "(?:::|->|<-|=>|<\\$>|<\\*>|>>=|>>|<>|\\$!|\\$|\\.|\\|)",
+      "tokenModifiers": [],
+      "description": "Core operators"
+    },
+    {
+      "tokenType": "macro",
+      "pattern": "\\{-#[\\s\\S]*?#-\\}",
+      "tokenModifiers": [],
+      "description": "Pragma"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b([a-z_]\\w*'?)\\b",
+      "tokenModifiers": [],
+      "description": "Identifier"
+    },
+    {
+      "tokenType": "decorator",
+      "pattern": "\\$\\(([^)]*)\\)",
+      "tokenModifiers": [],
+      "description": "Template Haskell splice"
+    },
+    {
+      "tokenType": "enumMember",
+      "pattern": "\\b(True|False|Nothing|Just|Left|Right|LT|EQ|GT)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Prelude constructors"
+    },
+    {
+      "tokenType": "variable",
+      "pattern": "\\b_\\w*\\b",
+      "tokenModifiers": [],
+      "description": "Wildcard or typed hole"
+    },
+    {
+      "tokenType": "modifier",
+      "pattern": "!(?=\\w)",
+      "tokenModifiers": [],
+      "description": "Strictness annotation"
+    },
+    {
+      "tokenType": "function",
+      "pattern": "\\b(map|filter|foldr|foldl'|fmap|pure|traverse|sequenceA|mapM_|when|zipWith|concatMap|show|read|putStrLn|print)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Prelude functions"
+    },
+    {
+      "tokenType": "type",
+      "pattern": "\\b(Int|Integer|Double|Float|Char|String|Bool|Maybe|Either|IO|Ordering|Rational)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Prelude types"
+    },
+    {
+      "tokenType": "class",
+      "pattern": "\\b(Eq|Ord|Show|Read|Enum|Bounded|Num|Functor|Applicative|Monad|Foldable|Traversable|Semigroup|Monoid)\\b",
+      "tokenModifiers": [
+        "defaultLibrary"
+      ],
+      "description": "Prelude classes"
+    },
+    {
+      "tokenType": "parameter",
+      "pattern": "\\\\\\s*(\\w+)",
+      "tokenModifiers": [],
+      "description": "Lambda parameter"
+    },
+    {
+      "tokenType": "operator",
+      "pattern": "`\\w+`",
+      "tokenModifiers": [],
+      "description": "Backtick-infixed function"
+    }
+  ]
+}

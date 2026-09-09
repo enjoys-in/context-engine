@@ -1,0 +1,71 @@
+{
+  "language": "haskell",
+  "inlayHintPatterns": [
+    {
+      "pattern": "^([a-z_]\\w*'?)\\s+[^=:]*=",
+      "captureGroup": 1,
+      "kind": 1,
+      "label": "{inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Inferred type for a binding with no signature"
+    },
+    {
+      "pattern": "\\blet\\s+(\\w+)\\s*=",
+      "captureGroup": 1,
+      "kind": 1,
+      "label": "{inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Inferred type of a let binding"
+    },
+    {
+      "pattern": "(\\w+)\\s*<-\\s*",
+      "captureGroup": 1,
+      "kind": 1,
+      "label": "{inferred_type}",
+      "position": "after_capture_1",
+      "paddingLeft": true,
+      "description": "Inferred type of a do-bind"
+    },
+    {
+      "pattern": "\\bforall\\b",
+      "kind": 2,
+      "label": "∀",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Explicit quantification marker"
+    },
+    {
+      "pattern": "::\\s*([A-Z]\\w*)\\s*=>",
+      "captureGroup": 1,
+      "kind": 2,
+      "label": "constraint:",
+      "position": "before",
+      "paddingRight": true,
+      "description": "Class constraint"
+    }
+  ],
+  "typeInferenceRules": {
+    "numeric-literal": {
+      "pattern": "\\b\\d+\\b",
+      "type": "Num a => a",
+      "description": "Integer literals are polymorphic via Num"
+    },
+    "string-literal": {
+      "pattern": "\"[^\"]*\"",
+      "type": "String",
+      "description": "String literal; IsString a => a under OverloadedStrings"
+    },
+    "list-literal": {
+      "pattern": "\\[[^\\]]*\\]",
+      "type": "[a]",
+      "description": "List literal"
+    },
+    "do-block": {
+      "pattern": "\\bdo\\b",
+      "type": "Monad m => m a",
+      "description": "do notation requires a Monad"
+    }
+  }
+}
