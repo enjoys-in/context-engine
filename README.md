@@ -802,9 +802,15 @@ const ctx = getContextEngine('systemctl');
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
 
-## All 29 Monaco Provider Types — Shipped
+## Every Monaco `languages.*` API — Shipped as Data
 
-Every provider below is fully implemented for all 96 languages with spec-compliant JSON data:
+All 30 data-driven `monaco.languages.*` APIs, implemented for all 96 languages with
+spec-compliant JSON. 27 are `register*` providers; the other three are
+`setLanguageConfiguration`, `setMonarchTokensProvider` and `register` itself.
+The last row is this package's own command API, not a Monaco one.
+
+`data/` holds 29 per-language provider directories — the 30th API, language
+registration, is the single `data/languages.json` registry rather than a directory.
 
 | Provider | Registration Method | Data Key |
 |----------|-------------------|----------|

@@ -277,6 +277,19 @@ const manifest = {
     const onDisk = jsonFiles(path.join(DATA, "commands")).filter((f) => f !== "manifest.json");
     for (const f of onDisk) if (!listed.has(f)) fail(`data/commands/manifest.json does not list ${f}`);
     for (const f of listed) if (!onDisk.includes(f)) fail(`data/commands/manifest.json lists missing ${f}`);
+    // Every command file must also sit in exactly one context category.
+    const cm = read(cmdManifestPath);
+    const byFile = new Map();
+    for (const cat of cm.context ?? [])
+      for (const f of cat.files ?? []) {
+        if (!onDisk.includes(f)) fail(`data/commands/manifest.json context "${cat.category}" references missing ${f}`);
+        byFile.set(f, (byFile.get(f) ?? 0) + 1);
+      }
+    for (const f of onDisk) {
+      const n = byFile.get(f) ?? 0;
+      if (n === 0) fail(`data/commands/manifest.json puts ${f} in no context category`);
+      else if (n > 1) fail(`data/commands/manifest.json lists ${f} in ${n} context categories`);
+    }
   }
 }
 
