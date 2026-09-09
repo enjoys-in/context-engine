@@ -181,9 +181,11 @@ Measured from disk:
 | `contextEngine` detectors | **629/629 files · 2,447 detectors** |
 | args with a semantic `type` | **447** across 29 enumerable kinds |
 | args linked to a detector | **335** (`completion.detector`) |
-| leaf subcommands | **5,137** (plus 194 parent nodes) |
-| leaves with `options` | **4,687 — 91%** |
-| leaves with `args` | **1,732 — 34%** |
+| leaves with `examples` | **4,980 — 95%** |
+| `aws` services | **195** |
+| leaf subcommands | **5,266** (plus 194 parent nodes) |
+| leaves with `options` | **4,816 — 91%** |
+| leaves with `args` | **1,801 — 34%** |
 | subcommand `options` | **16,003** |
 | `globalOptions` | 7,080 |
 | `args` entries | 1,963, **0 of them malformed** |
@@ -328,15 +330,64 @@ Structure check against the committed tree: **`git.json` is the only file whose 
 signature changed** (3 removed, 35 added). The other 628 files have 0 renames, 0
 re-nestings and 0 `args`-count changes.
 
+### DONE — the three items that were open
+
+- [x] **C15 — `args` reviewed to completion.** Leaves with args **1,732 -> 1,801**. The
+      "397 residual" that stood here was a **bad metric, not a gap**: it flagged any leaf
+      whose name ends in a verb like `install` or `run`, regardless of whether that verb
+      takes an operand in that tool. `caddy run`, `apachectl start`, `mvn compile`,
+      `bundle install`, `terraform validate` and `kubectl apply` are all flags-only.
+      Every one of those leaves has now been walked by hand; the genuine positionals were
+      filled (`s3cmd get`, `crane pull`, `skopeo copy`, `sqlite-utils query`, `vue create`,
+      `sdkman install`, `cmake -E copy`, `dotnet publish`, `firebase apps create` …) and
+      the rest are correctly empty. **The heuristic count is retired — do not reopen it
+      from that number.** Fourth counting error of the same family.
+- [x] **C16 — `aws` breadth: 66 -> 195 services.** Added the current, commonly-typed long
+      tail with accurate CLI v2 names, the shared global option set and a real example
+      each: `bedrock`, `bedrock-runtime`, `bedrock-agent`, `ce`, `kafka`, `memorydb`,
+      `transfer`, `fsx`, `docdb`, `neptune`, `keyspaces`, `emr-serverless`,
+      `emr-containers`, `vpc-lattice`, `cloudcontrol`, `fis`, `securityhub`, `inspector2`,
+      `workspaces`, `datazone`, `deadline` and ~110 more.
+
+      Authoring caught two invalid names I had introduced myself: `servicequotas` and
+      `licensemanager` do not exist — the CLI v2 commands are hyphenated
+      (`service-quotas`, `license-manager`). Removed and corrected.
+
+      The ~100 still absent are genuinely obscure or deprecated (`mturk`, `cloudsearch`,
+      `elastictranscoder`, `sms`); adding them on demand beats padding the list.
+- [x] **C17 — leaf `examples`: 2,746 -> 4,980 (53% -> 95%).** 2,105 generated across 160
+      files, **derived from each file's own data** — the real invocation path plus its args
+      with a realistic placeholder per semantic type — so an example cannot contradict the
+      subcommand it sits next to.
+
+      Four defects were caught in dry-run before anything was written, which is the only
+      reason this was safe to do mechanically:
+      - `brew bundle dump` lost its prefix, because `bundle` is in the runner list as the
+        Ruby tool while here it is a brew subcommand. Fixed by treating a token as a runner
+        only when the command has no subcommand by that exact name.
+      - Flag-form names (`-Wall -Wextra file.c`) dropped the binary entirely.
+      - `linux localectl set-x11-keymap` prefixed a binary that does not exist — that file
+        is a meta-collection whose leaves are each their own executable. Found by
+        cross-referencing leaf first-tokens against every known command name, which also
+        showed `mc ls` and `docker-machine ls` as *false* positives (real subcommands that
+        merely share names with coreutils).
+      - Names that already embed their arguments (`-v file.py`) had args appended twice.
+
+      **286 leaves are deliberately left without examples**, in 45 files whose subcommand
+      lists are not shell-invocable: Dockerfile directives, `tailwindcss.*` editor command
+      ids, and conceptual verbs the named binary does not actually have (`stylelint minify`,
+      `jq validate`). Generating there would invent commands that do not exist.
+
+      It also surfaced a mis-typing from C12: `flatpak install <ref>` had been typed
+      `branch` by a `/ref$/` pattern, when it is an application id. Retyped `package`.
+
 ### OPEN
 
-- [ ] **C15 — `args` residual: 397 leaves** whose name implies a target but that still
-      carry none. Many are flag-driven rather than positional (`az group create --name`),
-      so the true remainder is smaller; it needs per-command checking, not a bulk pass.
-- [ ] **C16 — `aws` breadth: 66 of ~300 services.** The remaining ~230 are narrow
-      services; better added on demand than padded in bulk.
-- [ ] **C17 — leaf `examples`: 2,620 of 5,137.** `git` is now complete at 154/154; the
-      rest of the tree is the open half.
+- [ ] **C18 — the conceptual-subcommand files.** 45 files list operations their binary does
+      not have (`stylelint lint`, `jq validate`, `coffee repl`). That is a data-modelling
+      question, not a coverage gap: either they are real invocations expressed differently,
+      or the subcommand lists should change shape. Needs a decision before either
+      examples or options can be authored honestly there.
 
 ### Nested cloud-CLI caveat
 
