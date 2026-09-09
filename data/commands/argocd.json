@@ -22,6 +22,44 @@
         "argocd login argocd.example.com --username admin --password secret",
         "argocd login argocd.example.com --sso",
         "argocd login argocd.example.com --insecure"
+      ],
+      "options": [
+        {
+          "name": "--username",
+          "description": "Username to authenticate as",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--password",
+          "description": "Password to authenticate with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--sso",
+          "description": "Authenticate through the configured SSO provider",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--insecure",
+          "description": "Skip server certificate verification",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--grpc-web",
+          "description": "Use gRPC-web, for proxies that block HTTP/2",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--name",
+          "description": "Context name to save the session under",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -43,6 +81,30 @@
         "argocd app manifests my-app",
         "argocd app terminate-op my-app",
         "argocd app resources my-app"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format (json, yaml, wide, name)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--refresh",
+          "description": "Refresh application state from git before reporting",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--selector",
+          "description": "Label selector to filter by",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        }
       ]
     },
     {
@@ -55,6 +117,34 @@
         "argocd proj add-source my-project https://github.com/org/repo.git",
         "argocd proj add-destination my-project https://kubernetes.default.svc default",
         "argocd proj delete my-project"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format (json, yaml, wide, name)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--description",
+          "description": "Project description",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dest",
+          "description": "Permitted destination, server,namespace",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--src",
+          "description": "Permitted source repository URL",
+          "type": "url",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -65,6 +155,44 @@
         "argocd repo add https://github.com/org/repo.git --ssh-private-key-path ~/.ssh/id_rsa",
         "argocd repo list",
         "argocd repo rm https://github.com/org/repo.git"
+      ],
+      "options": [
+        {
+          "name": "--username",
+          "description": "Username for repository access",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--password",
+          "description": "Password or token",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--ssh-private-key-path",
+          "description": "SSH key for repository access",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--insecure-skip-server-verification",
+          "description": "Skip host key verification",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--type",
+          "description": "Repository type (git, helm)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--name",
+          "description": "Name for a Helm repository",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -75,6 +203,32 @@
         "argocd cluster list",
         "argocd cluster get https://kubernetes.default.svc",
         "argocd cluster rm https://1.2.3.4"
+      ],
+      "options": [
+        {
+          "name": "--in-cluster",
+          "description": "Use the in-cluster API server address",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--name",
+          "description": "Name to register the cluster under",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--upsert",
+          "description": "Overwrite an existing registration",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--service-account",
+          "description": "Service account to use",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -86,6 +240,22 @@
         "argocd account update-password",
         "argocd account generate-token --account my-account",
         "argocd account can-i sync applications '*'"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format (json, yaml, wide, name)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--account",
+          "description": "Account to act on",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -95,6 +265,20 @@
         "argocd cert add-tls example.com --from server.crt",
         "argocd cert list",
         "argocd cert rm example.com"
+      ],
+      "options": [
+        {
+          "name": "--type",
+          "description": "Certificate type (ssh, https)",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--from",
+          "description": "File to read the certificate from",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -131,6 +315,16 @@
         "argocd admin cluster kubeconfig",
         "argocd admin dashboard",
         "argocd admin settings validate"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace holding the Argo CD installation",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        }
       ]
     },
     {
@@ -146,6 +340,14 @@
       "examples": [
         "argocd context",
         "argocd context argocd.example.com"
+      ],
+      "options": [
+        {
+          "name": "--delete",
+          "description": "Remove the named context",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -154,6 +356,20 @@
       "examples": [
         "argocd version",
         "argocd version --client"
+      ],
+      "options": [
+        {
+          "name": "--client",
+          "description": "Print only the client version",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--short",
+          "description": "Print just the version number",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
