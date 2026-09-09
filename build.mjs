@@ -413,11 +413,20 @@ const manifest = {
         fail(`${where} ${at} option "${o.name}" has shorthand but no short`);
     };
     gopts.forEach((o, i) => checkOption(o, `globalOptions[${i}]`));
-    for (const s2 of subs) {
-      if (!s2.name) fail(`${where} has a subcommand with no name`);
-      if (!s2.description) fail(`${where} subcommand "${s2.name}" has no description`);
-      (s2.options ?? []).forEach((o, i) => checkOption(o, `subcommand "${s2.name}" options[${i}]`));
-    }
+    // Subcommands may carry their own subcommands[] — 168 already do — so this
+    // recurses. A one-level walk left 1368 nested options unvalidated.
+    // A name containing spaces is valid: 769 subcommands encode their path that
+    // way and consumers rely on it, so nothing here asserts on name shape.
+    const walkSubs = (list, prefix) => {
+      for (const s2 of list) {
+        const at = prefix ? `${prefix} ${s2.name}` : s2.name;
+        if (!s2.name) fail(`${where} has a subcommand with no name`);
+        if (!s2.description) fail(`${where} subcommand "${at}" has no description`);
+        (s2.options ?? []).forEach((o, i) => checkOption(o, `subcommand "${at}" options[${i}]`));
+        if ((s2.subcommands ?? []).length) walkSubs(s2.subcommands, at);
+      }
+    };
+    walkSubs(subs, "");
   }
 }
 
