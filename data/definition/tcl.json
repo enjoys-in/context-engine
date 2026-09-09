@@ -14,10 +14,10 @@
       "module": "Core Commands"
     },
     "puts": {
-      "signature": "puts [-nonewline] [channelId] string",
-      "description": "Writes a string to the specified output channel (defaulting to stdout) followed by a newline unless -nonewline is specified, used for all text output in Tcl programs.",
-      "type": "function",
-      "module": "I/O Commands"
+      "signature": "puts ?-nonewline? ?channel? string",
+      "description": "Writes to a channel, with a newline unless `-nonewline`.",
+      "type": "command",
+      "module": "tcl"
     },
     "gets": {
       "signature": "gets channelId [varName] -> count|string",
@@ -26,62 +26,10 @@
       "module": "I/O Commands"
     },
     "string": {
-      "signature": "string subcommand [args ...]",
-      "description": "Ensemble command providing comprehensive string manipulation operations including comparison, searching, matching, transformation, formatting, and character classification subcommands.",
-      "type": "class",
-      "module": "String Commands",
-      "members": {
-        "length": {
-          "signature": "string length string -> integer",
-          "description": "Returns the number of characters in the string.",
-          "type": "method"
-        },
-        "range": {
-          "signature": "string range string first last -> string",
-          "description": "Returns a substring from the first to last character index inclusive.",
-          "type": "method"
-        },
-        "match": {
-          "signature": "string match [-nocase] pattern string -> boolean",
-          "description": "Tests if the string matches a glob-style pattern with * and ? wildcards.",
-          "type": "method"
-        },
-        "map": {
-          "signature": "string map [-nocase] mapping string -> string",
-          "description": "Replaces substrings according to the key-value mapping list.",
-          "type": "method"
-        },
-        "trim": {
-          "signature": "string trim string [chars] -> string",
-          "description": "Removes leading and trailing characters (default whitespace) from the string.",
-          "type": "method"
-        },
-        "tolower": {
-          "signature": "string tolower string -> string",
-          "description": "Returns the string converted to lowercase.",
-          "type": "method"
-        },
-        "toupper": {
-          "signature": "string toupper string -> string",
-          "description": "Returns the string converted to uppercase.",
-          "type": "method"
-        },
-        "index": {
-          "signature": "string index string charIndex -> char",
-          "description": "Returns the character at the specified index position in the string.",
-          "type": "method"
-        },
-        "first": {
-          "signature": "string first needleString haystackString [startIndex] -> integer",
-          "description": "Returns the index of the first occurrence of the needle in the haystack, or -1.",
-          "type": "method"
-        },
-        "replace": {
-          "signature": "string replace string first last [newString] -> string",
-          "description": "Replaces characters from first to last index with the new string.",
-          "type": "method"
-        }
-      }
+      "signature": "string subcommand arg ?arg...?",
+      "description": "Ensemble for text: length, index, range, match, map, trim, tolower, compare, is.",
+      "type": "command",
+      "module": "tcl"
     },
     "list": {
       "signature": "list [arg1 arg2 ...]",
@@ -205,67 +153,94 @@
       }
     },
     "package": {
-      "signature": "package subcommand [args ...]",
-      "description": "Manages Tcl packages for code distribution and version control, supporting require for loading dependencies and provide for declaring package availability with semantic versioning.",
-      "type": "class",
-      "module": "Package Commands",
-      "members": {
-        "require": {
-          "signature": "package require [-exact] packageName [version]",
-          "description": "Loads a package by name, optionally requiring an exact or minimum version.",
-          "type": "method"
-        },
-        "provide": {
-          "signature": "package provide packageName version",
-          "description": "Declares that the current script provides the named package at the given version.",
-          "type": "method"
-        }
-      }
+      "signature": "package require name ?version?",
+      "description": "Loads a package, searching the auto-path.",
+      "type": "command",
+      "module": "tcl"
     },
-    "String": {
-      "signature": "String",
-      "description": "Text data type representing a sequence of characters.",
-      "type": "type"
+    "lindex": {
+      "signature": "lindex list ?index...?",
+      "description": "Element at an index; multiple indices reach into nested lists.",
+      "type": "command",
+      "module": "tcl"
     },
-    "Number": {
-      "signature": "Number",
-      "description": "Numeric data type for integer and floating-point values.",
-      "type": "type"
+    "llength": {
+      "signature": "llength list -> int",
+      "description": "Number of elements in a list.",
+      "type": "command",
+      "module": "tcl"
     },
-    "Boolean": {
-      "signature": "Boolean",
-      "description": "Logical type with two values: true and false.",
-      "type": "type"
+    "lrange": {
+      "signature": "lrange list first last -> list",
+      "description": "Sublist between two indices, inclusive. `end` and `end-1` are valid indices.",
+      "type": "command",
+      "module": "tcl"
     },
-    "Array": {
-      "signature": "Array",
-      "description": "Ordered collection of elements accessible by index.",
-      "type": "type"
+    "lappend": {
+      "signature": "lappend varName ?value...?",
+      "description": "Appends to a list variable in place — cheaper than `set v [concat ...]`.",
+      "type": "command",
+      "module": "tcl"
     },
-    "Object": {
-      "signature": "Object",
-      "description": "Collection of key-value pairs (properties and methods).",
-      "type": "type"
+    "foreach": {
+      "signature": "foreach varlist list ?varlist list...? body",
+      "description": "Iterates over one or more lists, optionally taking several elements per step.",
+      "type": "command",
+      "module": "tcl"
     },
-    "null": {
-      "signature": "null",
-      "description": "Represents the intentional absence of any value.",
-      "type": "constant"
+    "switch": {
+      "signature": "switch ?options? string pattern body ?pattern body...?",
+      "description": "Multi-way branch with `-exact`, `-glob` or `-regexp` matching. `-` chains a body to the next pattern.",
+      "type": "command",
+      "module": "tcl"
     },
-    "undefined": {
-      "signature": "undefined",
-      "description": "Represents an uninitialized or missing value.",
-      "type": "constant"
+    "open": {
+      "signature": "open fileName ?access? ?permissions? -> channel",
+      "description": "Opens a file or pipe (with a leading `|`) and returns a channel.",
+      "type": "command",
+      "module": "tcl"
     },
-    "print": {
-      "signature": "print(value)",
-      "description": "Output a value to the standard output stream.",
-      "type": "function"
+    "exec": {
+      "signature": "exec ?switches? arg ?arg...?",
+      "description": "Runs external programs, with pipelines and redirection.",
+      "type": "command",
+      "module": "tcl"
     },
-    "length": {
-      "signature": "length",
-      "description": "Returns the number of elements in a collection or characters in a string.",
-      "type": "property"
+    "vwait": {
+      "signature": "vwait varName",
+      "description": "Enters the event loop until the variable is written. The usual way to keep a script alive.",
+      "type": "command",
+      "module": "tcl"
+    },
+    "trace": {
+      "signature": "trace add variable|command|execution name ops commandPrefix",
+      "description": "Fires a callback on reads, writes, unsets or command execution.",
+      "type": "command",
+      "module": "tcl"
+    },
+    "empty-string": {
+      "signature": "{}",
+      "description": "Tcl has no null. Absence is the empty string, tested with `{$x eq {}}` or `[info exists x]`.",
+      "type": "concept",
+      "module": "tcl"
+    },
+    "everything-is-a-string": {
+      "signature": "set x 1",
+      "description": "Every value is a string; numeric and list forms are internal caches. This is why `expr` must be braced.",
+      "type": "concept",
+      "module": "tcl"
+    },
+    "string length": {
+      "signature": "string length string",
+      "description": "Character count. `string bytelength` gives bytes in the internal encoding.",
+      "type": "command",
+      "module": "tcl"
+    },
+    "incr": {
+      "signature": "incr varName ?increment?",
+      "description": "Adds to an integer variable in place, creating it as 0 if unset.",
+      "type": "command",
+      "module": "tcl"
     }
   }
 }

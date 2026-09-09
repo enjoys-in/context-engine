@@ -26,10 +26,10 @@
       "module": "Binding Forms"
     },
     "letrec": {
-      "signature": "(letrec ((var1 expr1) (var2 expr2) ...) body ...) -> value",
-      "description": "Recursive binding form where all variables are in scope for all expressions, enabling mutually recursive procedure definitions within a local binding block.",
-      "type": "function",
-      "module": "Binding Forms"
+      "signature": "(letrec ((f expr)) body)",
+      "description": "Bindings visible to each other, so procedures can be mutually recursive.",
+      "type": "syntax",
+      "module": "r7rs base"
     },
     "cond": {
       "signature": "(cond (test1 expr1 ...) (test2 expr2 ...) ... (else expr ...)) -> value",
@@ -38,28 +38,28 @@
       "module": "Control Flow"
     },
     "car": {
-      "signature": "(car pair) -> value",
-      "description": "Returns the first element (head) of a pair or the first element of a non-empty list, raising an error if applied to an empty list or non-pair value.",
-      "type": "function",
-      "module": "Pairs and Lists"
+      "signature": "(car pair) -> obj",
+      "description": "First element of a pair. Composed as `cadr`, `caddr` for deeper access.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
     "cdr": {
-      "signature": "(cdr pair) -> value",
-      "description": "Returns the second element (tail) of a pair, or the rest of a list after removing the first element, serving as the fundamental list decomposition operation.",
-      "type": "function",
-      "module": "Pairs and Lists"
+      "signature": "(cdr pair) -> obj",
+      "description": "Rest of a pair.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
     "cons": {
-      "signature": "(cons a b) -> pair",
-      "description": "Constructs a new pair from two values; when the second argument is a list, produces a new list with the first argument prepended as the head element.",
-      "type": "function",
-      "module": "Pairs and Lists"
+      "signature": "(cons a d) -> pair",
+      "description": "Allocates a pair. `(cons 1 '(2))` builds `(1 2)`.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
     "map": {
-      "signature": "(map procedure list1 list2 ...) -> list",
-      "description": "Applies a procedure element-wise to corresponding elements of one or more lists and returns a new list of the results, preserving the order of elements.",
-      "type": "function",
-      "module": "List Operations"
+      "signature": "(map proc list ...) -> list",
+      "description": "Applies proc elementwise, stopping at the shortest list.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
     "fold-left": {
       "signature": "(fold-left procedure init list) -> value",
@@ -103,30 +103,89 @@
       "type": "function",
       "module": "Control Flow"
     },
-    "String": {
-      "signature": "String",
-      "description": "Text data type representing a sequence of characters.",
-      "type": "type"
+    "force": {
+      "signature": "(force promise) -> obj",
+      "description": "Evaluates a promise once and caches the result.",
+      "type": "procedure",
+      "module": "r7rs lazy"
     },
-    "Number": {
-      "signature": "Number",
-      "description": "Numeric data type for integer and floating-point values.",
-      "type": "type"
+    "with-exception-handler": {
+      "signature": "(with-exception-handler handler thunk)",
+      "description": "Installs a handler for the dynamic extent of the thunk. `guard` is the convenient form.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
-    "Boolean": {
-      "signature": "Boolean",
-      "description": "Logical type with two values: true and false.",
-      "type": "type"
+    "raise": {
+      "signature": "(raise obj)",
+      "description": "Raises any object as a condition.",
+      "type": "procedure",
+      "module": "r7rs base"
     },
-    "Array": {
-      "signature": "Array",
-      "description": "Ordered collection of elements accessible by index.",
-      "type": "type"
+    "define-record-type": {
+      "signature": "(define-record-type <T> (make ...) pred accessors ...)",
+      "description": "Declares a disjoint record type with a constructor, predicate and accessors.",
+      "type": "syntax",
+      "module": "r7rs base"
     },
-    "Object": {
-      "signature": "Object",
-      "description": "Collection of key-value pairs (properties and methods).",
-      "type": "type"
+    "string->list": {
+      "signature": "(string->list s [start [end]]) -> list",
+      "description": "Converts a string to a list of characters.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "exact": {
+      "signature": "(exact z) -> number",
+      "description": "Converts to an exact number; `inexact` goes the other way. Exactness, not just type, is part of Scheme's numeric tower.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "library": {
+      "signature": "(define-library (name) (export ...) (import ...) (begin ...))",
+      "description": "R7RS library form for modular code.",
+      "type": "syntax",
+      "module": "r7rs"
+    },
+    "boolean?": {
+      "signature": "(boolean? obj) -> boolean",
+      "description": "Whether obj is #t or #f. Only `#f` is false — the empty list is true, unlike in Lisp.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "number?": {
+      "signature": "(number? obj) -> boolean",
+      "description": "Whether obj is any number in the numeric tower.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "string?": {
+      "signature": "(string? obj) -> boolean",
+      "description": "Whether obj is a string.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "vector?": {
+      "signature": "(vector? obj) -> boolean",
+      "description": "Whether obj is a vector — Scheme's O(1) indexed sequence.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "list?": {
+      "signature": "(list? obj) -> boolean",
+      "description": "Whether obj is a proper list. `pair?` tests a single cons cell.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "display": {
+      "signature": "(display obj [port])",
+      "description": "Writes without quoting. `write` writes read-ably.",
+      "type": "procedure",
+      "module": "r7rs base"
+    },
+    "length": {
+      "signature": "(length list) -> integer",
+      "description": "Length of a proper list, O(n). `string-length` and `vector-length` are O(1).",
+      "type": "procedure",
+      "module": "r7rs base"
     }
   }
 }
