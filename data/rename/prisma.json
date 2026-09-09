@@ -1,37 +1,70 @@
 {
   "language": "prisma",
-  "displayName": "Prisma",
-  "capabilities": {
-    "rename": true,
-    "prepareRename": true
-  },
-  "supportedSymbols": [
-    "variable",
-    "function",
-    "class",
-    "method",
-    "property",
-    "parameter",
-    "type",
-    "interface",
-    "enum",
-    "constant",
-    "module"
-  ],
-  "validationRules": {
-    "identifierPattern": "[a-zA-Z_$][a-zA-Z0-9_$]*",
+  "wordPattern": "[A-Za-z_][A-Za-z0-9_]*",
+  "identifierRules": {
+    "start": "[A-Za-z_]",
+    "continue": "[A-Za-z0-9_]",
+    "forbidden": [],
+    "validPattern": "^[A-Za-z_][A-Za-z0-9_]*$",
     "reservedWords": [
       "model",
       "enum",
       "datasource",
       "generator",
-      "@id",
-      "@unique",
-      "@relation",
-      "@default",
-      "@map",
-      "@updatedAt"
+      "type",
+      "view",
+      "String",
+      "Boolean",
+      "Int",
+      "BigInt",
+      "Float",
+      "Decimal",
+      "DateTime",
+      "Json",
+      "Bytes",
+      "Unsupported"
     ],
     "caseSensitive": true
+  },
+  "renameValidation": {
+    "allowEmpty": false,
+    "maxLength": 255,
+    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+    "rejectPattern": "^\\d|\\s",
+    "allowEmptyName": false
+  },
+  "prepareRenamePatterns": [
+    {
+      "pattern": "^\\s*model\\s+([A-Za-z_]\\w*)",
+      "captureGroup": 1,
+      "description": "Model name"
+    },
+    {
+      "pattern": "^\\s*enum\\s+([A-Za-z_]\\w*)",
+      "captureGroup": 1,
+      "description": "Enum name"
+    },
+    {
+      "pattern": "^\\s*type\\s+([A-Za-z_]\\w*)",
+      "captureGroup": 1,
+      "description": "Composite type name"
+    },
+    {
+      "pattern": "^\\s*([A-Za-z_]\\w*)\\s+\\w+",
+      "captureGroup": 1,
+      "description": "Field name"
+    },
+    {
+      "pattern": "@relation\\([^)]*fields:\\s*\\[([^\\]]+)\\]",
+      "captureGroup": 1,
+      "description": "Relation field reference"
+    }
+  ],
+  "renameStrategy": {
+    "scopeAware": true,
+    "updateImports": false,
+    "updateStrings": false,
+    "updateComments": false,
+    "preview": true
   }
 }

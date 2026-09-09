@@ -108,6 +108,20 @@
     "VisualHostKey",
     "XAuthLocation"
   ],
+  "typeKeywords": [],
+  "operators": [
+    "="
+  ],
+  "symbols": "[=]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d+",
+  "brackets": [
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    }
+  ],
   "booleans": [
     "yes",
     "no",
@@ -134,46 +148,119 @@
     "DEBUG2",
     "DEBUG3"
   ],
-  "escapes": "\\\\(?:[abfnrtv\\\\\"'\\\\]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
   "tokenizer": {
     "root": [
-      ["[ \\t\\r\\n]+", ""],
-      ["#.*$", "comment"],
-      ["(Host|Match)(\\s+)", ["keyword.section", ""], "@hostValue"],
-      ["[a-zA-Z_][a-zA-Z0-9_]*", {
-        "cases": {
-          "@keywords": "keyword",
-          "@default": "identifier"
+      [
+        "[ \\t\\r\\n]+",
+        ""
+      ],
+      [
+        "#.*$",
+        "comment"
+      ],
+      [
+        "(Host|Match)(\\s+)",
+        [
+          "keyword.section",
+          ""
+        ],
+        "@hostValue"
+      ],
+      [
+        "[a-zA-Z_][a-zA-Z0-9_]*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@default": "identifier"
+          }
         }
-      }],
-      ["=", "delimiter"],
-      ["\\d+\\.\\d+\\.\\d+\\.\\d+(\\/\\d+)?", "number.ip"],
-      ["\\[:?[0-9a-fA-F:]+\\]", "number.ip"],
-      ["\\d+", "number"],
-      ["\"", "string", "@string_double"],
-      ["[*?]+", "regexp"],
-      ["~?\\/[^\\s]+", "string.path"],
-      ["%[dhlnpru%]", "variable"],
-      ["[^\\s#=]+", {
-        "cases": {
-          "@booleans": "keyword.boolean",
-          "@logLevels": "constant",
-          "@default": "string.value"
+      ],
+      [
+        "=",
+        "delimiter"
+      ],
+      [
+        "\\d+\\.\\d+\\.\\d+\\.\\d+(\\/\\d+)?",
+        "number.ip"
+      ],
+      [
+        "\\[:?[0-9a-fA-F:]+\\]",
+        "number.ip"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "[*?]+",
+        "regexp"
+      ],
+      [
+        "~?\\/[^\\s]+",
+        "string.path"
+      ],
+      [
+        "%[dhlnpru%]",
+        "variable"
+      ],
+      [
+        "[^\\s#=]+",
+        {
+          "cases": {
+            "@booleans": "keyword.boolean",
+            "@logLevels": "constant",
+            "@default": "string.value"
+          }
         }
-      }]
+      ]
     ],
     "hostValue": [
-      ["#.*$", "comment", "@pop"],
-      ["[ \\t]+", ""],
-      ["[*?]+[a-zA-Z0-9._\\-*?]*", "regexp"],
-      ["!\\S+", "string.invalid"],
-      ["[a-zA-Z0-9._\\-]+", "string.host"],
-      ["$", "", "@pop"]
+      [
+        "#.*$",
+        "comment",
+        "@pop"
+      ],
+      [
+        "[ \\t]+",
+        ""
+      ],
+      [
+        "[*?]+[a-zA-Z0-9._\\-*?]*",
+        "regexp"
+      ],
+      [
+        "!\\S+",
+        "string.invalid"
+      ],
+      [
+        "[a-zA-Z0-9._\\-]+",
+        "string.host"
+      ],
+      [
+        "$",
+        "",
+        "@pop"
+      ]
     ],
     "string_double": [
-      ["[^\"\\\\]+", "string"],
-      ["\\\\.", "string.escape"],
-      ["\"", "string", "@pop"]
+      [
+        "[^\"\\\\]+",
+        "string"
+      ],
+      [
+        "\\\\.",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
     ]
   }
 }

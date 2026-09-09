@@ -1,138 +1,141 @@
 {
   "language": "prisma",
-  "displayName": "Prisma",
-  "tokenTypes": [
-    "keyword",
-    "string",
-    "comment",
-    "number",
-    "operator",
-    "identifier",
+  "tokenPostfix": ".prisma",
+  "defaultToken": "invalid",
+  "keywords": [
+    "model",
+    "enum",
+    "datasource",
+    "generator",
     "type",
-    "delimiter",
-    "variable",
-    "function"
+    "view"
   ],
-  "rules": {
+  "typeKeywords": [
+    "String",
+    "Boolean",
+    "Int",
+    "BigInt",
+    "Float",
+    "Decimal",
+    "DateTime",
+    "Json",
+    "Bytes",
+    "Unsupported"
+  ],
+  "operators": [
+    "=",
+    "?",
+    "[]"
+  ],
+  "symbols": "[=?:]+",
+  "escapes": "\\\\(?:[abfnrtv\\\\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})",
+  "digits": "\\d*\\.?\\d+([eE][\\-+]?\\d+)?",
+  "brackets": [
+    {
+      "open": "{",
+      "close": "}",
+      "token": "delimiter.curly"
+    },
+    {
+      "open": "[",
+      "close": "]",
+      "token": "delimiter.square"
+    },
+    {
+      "open": "(",
+      "close": ")",
+      "token": "delimiter.parenthesis"
+    }
+  ],
+  "tokenizer": {
     "root": [
-      {
-        "regex": "model",
-        "action": {
-          "token": "keyword"
+      [
+        "[ \\t\\r\\n]+",
+        ""
+      ],
+      [
+        "///.*$",
+        "comment.doc"
+      ],
+      [
+        "//.*$",
+        "comment"
+      ],
+      [
+        "@@[a-zA-Z_]\\w*",
+        "annotation.block"
+      ],
+      [
+        "@[a-zA-Z_]\\w*",
+        "annotation"
+      ],
+      [
+        "\"",
+        "string",
+        "@string_double"
+      ],
+      [
+        "0[xX][0-9a-fA-F]+",
+        "number.hex"
+      ],
+      [
+        "\\d+\\.\\d*([eE][+-]?\\d+)?",
+        "number.float"
+      ],
+      [
+        "\\d+",
+        "number"
+      ],
+      [
+        "[{}()\\[\\]]",
+        "@brackets"
+      ],
+      [
+        "[a-zA-Z_]\\w*",
+        {
+          "cases": {
+            "@keywords": "keyword",
+            "@typeKeywords": "type",
+            "@default": "identifier"
+          }
         }
-      },
-      {
-        "regex": "enum",
-        "action": {
-          "token": "keyword"
+      ],
+      [
+        "@symbols",
+        {
+          "cases": {
+            "@operators": "operator",
+            "@default": ""
+          }
         }
-      },
-      {
-        "regex": "datasource",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "generator",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@id",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@unique",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@relation",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@default",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@map",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "@updatedAt",
-        "action": {
-          "token": "keyword"
-        }
-      },
-      {
-        "regex": "\"([^\"\\\\]|\\\\.)*\"",
-        "action": {
-          "token": "string"
-        }
-      },
-      {
-        "regex": "'([^'\\\\]|\\\\.)*'",
-        "action": {
-          "token": "string"
-        }
-      },
-      {
-        "regex": "//.*$",
-        "action": {
-          "token": "comment"
-        }
-      },
-      {
-        "regex": "/\\*",
-        "action": {
-          "token": "comment",
-          "next": "@comment"
-        }
-      },
-      {
-        "regex": "\\d+(\\.\\d+)?",
-        "action": {
-          "token": "number"
-        }
-      },
-      {
-        "regex": "[{}()\\[\\]]",
-        "action": {
-          "token": "delimiter"
-        }
-      },
-      {
-        "regex": "[a-zA-Z_]\\w*",
-        "action": {
-          "token": "identifier"
-        }
-      }
+      ]
+    ],
+    "whitespace": [
+      [
+        "[ \\t\\r\\n]+",
+        ""
+      ]
     ],
     "comment": [
-      {
-        "regex": "\\*/",
-        "action": {
-          "token": "comment",
-          "next": "@pop"
-        }
-      },
-      {
-        "regex": ".",
-        "action": {
-          "token": "comment"
-        }
-      }
+      [
+        "//.*$",
+        "comment"
+      ]
+    ],
+    "string_double": [
+      [
+        "[^\"\\\\]+",
+        "string"
+      ],
+      [
+        "@escapes",
+        "string.escape"
+      ],
+      [
+        "\"",
+        "string",
+        "@pop"
+      ]
     ]
   }
 }

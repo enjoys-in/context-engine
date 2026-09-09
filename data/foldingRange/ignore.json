@@ -1,23 +1,36 @@
 {
   "language": "ignore",
-  "displayName": "Ignore Files",
-  "capabilities": {
-    "foldingRange": true,
-    "foldingRangeKinds": [
-      "comment",
-      "imports",
-      "region"
-    ]
+  "offSide": false,
+  "markers": {
+    "start": "^\\s*#\\s*region\\b",
+    "end": "^\\s*#\\s*endregion\\b"
   },
-  "strategies": [
+  "foldingRules": [
     {
-      "strategy": "indentation",
-      "kind": "region"
+      "kind": "comment",
+      "startPattern": "^\\s*#",
+      "endPattern": "^(?!\\s*#)",
+      "description": "Consecutive comment lines",
+      "groupConsecutive": true
     },
     {
-      "start": "#",
-      "end": "",
-      "kind": "comment"
+      "kind": "region",
+      "startPattern": "^\\s*#\\s*[-=]{3,}",
+      "endPattern": "^\\s*$|^\\s*#\\s*[-=]{3,}",
+      "description": "Comment-delimited section block"
+    },
+    {
+      "kind": "region",
+      "startPattern": "^\\s*#.*:\\s*$",
+      "endPattern": "^\\s*$",
+      "description": "Labeled group of ignore patterns"
+    },
+    {
+      "kind": "region",
+      "startPattern": "^\\s*!",
+      "endPattern": "^(?!\\s*!)",
+      "description": "Consecutive negation (re-include) patterns",
+      "groupConsecutive": true
     }
   ]
 }

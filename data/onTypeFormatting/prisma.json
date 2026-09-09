@@ -1,24 +1,52 @@
 {
   "language": "prisma",
-  "displayName": "Prisma",
-  "capabilities": {
-    "onTypeFormatting": true
-  },
-  "triggerCharacters": [
+  "autoFormatTriggerCharacters": [
     "\n",
     "}",
     ")"
   ],
-  "rules": [
-    {
-      "trigger": "\n",
-      "action": "indentNextLine",
-      "description": "Auto-indent on new line in prisma"
-    },
+  "formatRules": [
     {
       "trigger": "}",
-      "action": "outdent",
-      "description": "Outdent closing brace in prisma"
+      "description": "Align closing brace of a block",
+      "rules": [
+        {
+          "action": "outdent",
+          "pattern": "^\\s*\\}",
+          "description": "Outdent closing brace to block level"
+        }
+      ]
+    },
+    {
+      "trigger": ")",
+      "description": "Format attribute argument lists",
+      "rules": [
+        {
+          "action": "trimWhitespace",
+          "pattern": "\\(\\s+|\\s+\\)",
+          "description": "Trim padding inside attribute parentheses"
+        }
+      ]
+    },
+    {
+      "trigger": "\n",
+      "description": "Formatting on newline",
+      "rules": [
+        {
+          "action": "trimWhitespace",
+          "pattern": "\\s+$",
+          "description": "Remove trailing whitespace"
+        },
+        {
+          "action": "indent",
+          "pattern": "\\{\\s*$",
+          "description": "Indent inside an opened block"
+        }
+      ]
     }
-  ]
+  ],
+  "indentation": {
+    "increasePattern": "\\{\\s*$",
+    "decreasePattern": "^\\s*\\}"
+  }
 }
