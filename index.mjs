@@ -99,8 +99,27 @@ var _providerCache = /* @__PURE__ */ new Map();
 function providerCacheKey(provider, lang) {
   return `${provider}/${lang}`;
 }
+var _aliasIndex = null;
+/**
+ * Binary aliases — the same tool invoked under another name: hx for helix, ncu
+ * for npm-check-updates, r2 for radare2, cc for gcc. Declared per command file
+ * as `aliases`, so completion resolves whichever name the user typed.
+ */
+function aliasIndex() {
+  if (_aliasIndex) return _aliasIndex;
+  _aliasIndex = /* @__PURE__ */ new Map();
+  for (const [name, data] of loadCommands()) {
+    for (const alias of data.aliases ?? []) if (!_aliasIndex.has(alias)) _aliasIndex.set(alias, name);
+  }
+  return _aliasIndex;
+}
+/** Resolve a typed name to its canonical command name. */
+function resolveCommandName(name) {
+  if (loadCommands().has(name)) return name;
+  return aliasIndex().get(name) ?? name;
+}
 function getCommand(name) {
-  return loadCommands().get(name);
+  return loadCommands().get(resolveCommandName(name));
 }
 function getAllCommands() {
   return Array.from(loadCommands().values());
@@ -171,6 +190,7 @@ function count() {
 }
 function clearCache() {
   _commandCache = null;
+  _aliasIndex = null;
   _providerCache.clear();
   _languages = null;
 }
@@ -343,6 +363,7 @@ export {
   listLanguagesForProvider,
   listProviders,
   listThemes,
+  resolveCommandName,
   resolveCommandPath,
   resolveProviderPath,
   resolveThemePath,

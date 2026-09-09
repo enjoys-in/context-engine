@@ -351,6 +351,19 @@ const manifest = {
         if (!onDisk.includes(f)) fail(`data/commands/manifest.json context "${cat.category}" references missing ${f}`);
         byFile.set(f, (byFile.get(f) ?? 0) + 1);
       }
+    // Binary aliases must be unambiguous: unique across commands, and never
+    // the same string as a real command name.
+    const names = new Set();
+    const aliasOwner = new Map();
+    for (const f2 of onDisk) names.add(read(path.join(DATA, "commands", f2)).name);
+    for (const f2 of onDisk) {
+      const d2 = read(path.join(DATA, "commands", f2));
+      for (const a of d2.aliases ?? []) {
+        if (names.has(a)) fail(`commands/${f2} alias "${a}" is already a command name`);
+        if (aliasOwner.has(a)) fail(`commands/${f2} alias "${a}" is also claimed by ${aliasOwner.get(a)}`);
+        aliasOwner.set(a, f2);
+      }
+    }
     // A command may appear under more than one category on purpose — this is a
     // display/autocomplete taxonomy for the terminal, not an exclusive filing
     // system. Only "no category at all" is a defect.

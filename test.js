@@ -171,5 +171,14 @@ assert(allEx.length > gitEx.length, "getAllExamples includes subcommand examples
 assert(allEx.some((e) => e.subcommand !== null), "getAllExamples tags the subcommand");
 assert(engine.getAllExamples("nope").length === 0, "getAllExamples on an unknown command returns []");
 
+// ── Binary aliases ───────────────────────────────────────────────
+for (const [alias, canonical] of [["hx", "helix"], ["ncu", "npm-check-updates"], ["r2", "radare2"],
+                                  ["subl", "sublime"], ["7za", "7z"], ["vi", "vim"], ["cc", "gcc"]]) {
+  assert(engine.resolveCommandName(alias) === canonical, `alias ${alias} resolves to ${canonical}`);
+  assert(engine.getCommand(alias)?.name === canonical, `getCommand("${alias}") returns ${canonical}`);
+}
+assert(engine.resolveCommandName("git") === "git", "a canonical name resolves to itself");
+assert(engine.getCommand("nope") === undefined, "an unknown name is still undefined");
+
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);
