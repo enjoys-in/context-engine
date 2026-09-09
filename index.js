@@ -103,13 +103,61 @@ var PROVIDERS = [
   "typeDefinition"
 ];
 var _commandCache = null;
+/**
+ * Union two lists, de-duplicated by `key`. The richer entry wins a tie: for a
+ * subcommand that is the one carrying more options and args.
+ */
+function mergeList(a, b, key, weight) {
+  const out = new Map();
+  for (const item of [...(a ?? []), ...(b ?? [])]) {
+    if (item === null || item === undefined) continue;
+    const id = typeof item === "string" ? item : item?.[key];
+    if (id === undefined) continue;
+    const prev = out.get(id);
+    if (prev === undefined || (weight && weight(item) > weight(prev))) out.set(id, item);
+  }
+  return [...out.values()];
+}
+const subWeight = (s) => (s?.options?.length ?? 0) + (s?.args?.length ?? 0) + (s?.description ? 1 : 0);
+/**
+ * 14 command names are claimed by more than one file, because a language's
+ * per-language command data (commands/hcl.json) describes the same CLI as the
+ * canonical file (commands/terraform.json). Keying a Map by name meant the last
+ * file read simply overwrote the others, discarding 116 authored subcommands —
+ * getCommand("dotnet") returned 6 of 28. They are merged instead.
+ *
+ * The file whose basename equals the command name is canonical and supplies the
+ * scalar fields; the rest contribute their subcommands, options and examples.
+ */
+function mergeCommand(prev, next, nextIsCanonical) {
+  const base = nextIsCanonical ? next : prev;
+  return {
+    ...prev,
+    ...next,
+    name: base.name,
+    description: base.description,
+    category: base.category,
+    platforms: base.platforms,
+    shells: base.shells,
+    contextEngine: base.contextEngine ?? prev.contextEngine ?? next.contextEngine,
+    subcommands: mergeList(prev.subcommands, next.subcommands, "name", subWeight),
+    globalOptions: mergeList(prev.globalOptions, next.globalOptions, "name"),
+    examples: mergeList(prev.examples, next.examples, "command"),
+    relatedCommands: mergeList(prev.relatedCommands, next.relatedCommands),
+  };
+}
 function loadCommands() {
   if (_commandCache) return _commandCache;
   _commandCache = /* @__PURE__ */ new Map();
   const files = fs.readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".json") && f !== "manifest.json");
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(COMMANDS_DIR, file), "utf-8"));
-    _commandCache.set(data.name, data);
+    const prev = _commandCache.get(data.name);
+    if (prev === undefined) {
+      _commandCache.set(data.name, data);
+      continue;
+    }
+    _commandCache.set(data.name, mergeCommand(prev, data, file === `${data.name}.json`));
   }
   return _commandCache;
 }
