@@ -1,0 +1,209 @@
+{
+  "name": "logcli",
+  "description": "Command-line client for querying Grafana Loki",
+  "category": "monitoring",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell",
+    "cmd"
+  ],
+  "subcommands": [
+    {
+      "name": "query",
+      "description": "Run a LogQL query",
+      "options": [
+        {
+          "name": "--limit",
+          "description": "Maximum log lines",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--since",
+          "description": "Look back this far, e.g. 1h",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--from",
+          "description": "Range start",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--to",
+          "description": "Range end",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tail",
+          "description": "Stream new results",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--forward",
+          "description": "Return the oldest lines first",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--output",
+          "description": "Output format (default, raw, jsonl)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ],
+      "args": [
+        {
+          "name": "query",
+          "description": "LogQL query",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "instant-query",
+      "description": "Run an instant metric query",
+      "args": [
+        {
+          "name": "query",
+          "description": "LogQL query",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "labels",
+      "description": "List the label names or values",
+      "args": [
+        {
+          "name": "label",
+          "description": "Label to list values for",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "series",
+      "description": "List the series matching a selector",
+      "args": [
+        {
+          "name": "matcher",
+          "description": "Stream selector",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "stats",
+      "description": "Show index statistics for a selector",
+      "args": [
+        {
+          "name": "matcher",
+          "description": "Stream selector",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "fmt",
+      "description": "Format a LogQL query"
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "description": "Show help for this command",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-h",
+      "shorthand": "-h"
+    },
+    {
+      "name": "--version",
+      "description": "Show the installed version",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--addr",
+      "description": "Loki server address",
+      "type": "url",
+      "takesValue": true
+    },
+    {
+      "name": "--username",
+      "description": "Basic auth username",
+      "type": "string",
+      "takesValue": true
+    },
+    {
+      "name": "--password",
+      "description": "Basic auth password",
+      "type": "string",
+      "takesValue": true
+    },
+    {
+      "name": "--org-id",
+      "description": "Tenant id for multi-tenant Loki",
+      "type": "string",
+      "takesValue": true
+    },
+    {
+      "name": "--tls-skip-verify",
+      "description": "Do not verify the server certificate",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--quiet",
+      "description": "Suppress metadata output",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-q",
+      "shorthand": "-q"
+    }
+  ],
+  "examples": [
+    {
+      "command": "logcli query '{app=\"api\"}' --since 1h",
+      "description": "Query the last hour of a stream"
+    },
+    {
+      "command": "logcli query '{app=\"api\"} |= \"error\"' --tail",
+      "description": "Stream matching lines"
+    },
+    {
+      "command": "logcli labels",
+      "description": "List the available labels"
+    },
+    {
+      "command": "logcli stats '{app=\"api\"}'",
+      "description": "Show index statistics"
+    }
+  ],
+  "relatedCommands": [
+    "prometheus",
+    "promtool",
+    "journalctl",
+    "vector"
+  ]
+}

@@ -1,6 +1,14 @@
 "use strict";
 
 const engine = require("./index");
+const fs = require("node:fs");
+const path = require("node:path");
+// Derived from disk, not hardcoded: adding a command must not break the suite.
+const CMD_COUNT = new Set(
+  fs.readdirSync(path.join(__dirname, "data", "commands"))
+    .filter((f) => f.endsWith(".json") && f !== "manifest.json")
+    .map((f) => JSON.parse(fs.readFileSync(path.join(__dirname, "data", "commands", f), "utf-8")).name)
+).size;
 
 let passed = 0;
 let failed = 0;
@@ -18,11 +26,11 @@ function assert(condition, msg) {
 console.log("\n@enjoys/context-engine tests\n");
 
 // count
-assert(engine.count() === 447, `count() === 447 (got ${engine.count()})`);
+assert(engine.count() === CMD_COUNT, `count() === ${CMD_COUNT} (got ${engine.count()})`);
 
 // listCommandNames
 const names = engine.listCommandNames();
-assert(Array.isArray(names) && names.length === 447, "listCommandNames() returns 447 names");
+assert(Array.isArray(names) && names.length === CMD_COUNT, `listCommandNames() returns ${CMD_COUNT} names`);
 assert(names.includes("git"), "includes git");
 assert(names.includes("docker"), "includes docker");
 assert(names.includes("kubectl"), "includes kubectl");
@@ -73,7 +81,7 @@ assert(p.endsWith("git.json"), "resolveCommandPath ends with git.json");
 
 // clearCache
 engine.clearCache();
-assert(engine.count() === 447, "count() still 447 after clearCache");
+assert(engine.count() === CMD_COUNT, `count() still ${CMD_COUNT} after clearCache`);
 
 // ── Languages ────────────────────────────────────────────────
 const langs = engine.listLanguages();

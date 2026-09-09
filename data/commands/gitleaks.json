@@ -1,0 +1,188 @@
+{
+  "name": "gitleaks",
+  "description": "Detect secrets and credentials in git history and files",
+  "category": "security",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ],
+  "shells": [
+    "bash",
+    "zsh",
+    "fish",
+    "powershell",
+    "cmd"
+  ],
+  "subcommands": [
+    {
+      "name": "detect",
+      "description": "Scan git history for secrets",
+      "options": [
+        {
+          "name": "--source",
+          "description": "Repository or path to scan",
+          "type": "path",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--log-opts",
+          "description": "Extra git log options to scope the scan",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--report-path",
+          "description": "Write the report here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--report-format",
+          "description": "Report format (json, csv, sarif, junit)",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--baseline-path",
+          "description": "Ignore findings present in this baseline",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--redact",
+          "description": "Redact the secret values",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
+    },
+    {
+      "name": "protect",
+      "description": "Scan uncommitted changes",
+      "options": [
+        {
+          "name": "--staged",
+          "description": "Only scan staged changes",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--source",
+          "description": "Path to scan",
+          "type": "path",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        }
+      ]
+    },
+    {
+      "name": "dir",
+      "description": "Scan a directory or file, ignoring git history",
+      "options": [
+        {
+          "name": "--source",
+          "description": "Path to scan",
+          "type": "path",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--report-path",
+          "description": "Write the report here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        }
+      ]
+    },
+    {
+      "name": "version",
+      "description": "Show the installed version"
+    }
+  ],
+  "globalOptions": [
+    {
+      "name": "--help",
+      "description": "Show help for this command",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-h",
+      "shorthand": "-h"
+    },
+    {
+      "name": "--version",
+      "description": "Show the installed version",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--config",
+      "description": "Rules configuration file",
+      "type": "file",
+      "takesValue": true,
+      "short": "-c",
+      "shorthand": "-c"
+    },
+    {
+      "name": "--verbose",
+      "description": "Print each finding",
+      "type": "boolean",
+      "takesValue": false,
+      "short": "-v",
+      "shorthand": "-v"
+    },
+    {
+      "name": "--no-banner",
+      "description": "Suppress the banner",
+      "type": "boolean",
+      "takesValue": false
+    },
+    {
+      "name": "--exit-code",
+      "description": "Exit code to use when secrets are found",
+      "type": "integer",
+      "takesValue": true
+    },
+    {
+      "name": "--max-target-megabytes",
+      "description": "Skip files larger than this",
+      "type": "integer",
+      "takesValue": true
+    }
+  ],
+  "examples": [
+    {
+      "command": "gitleaks detect --source . -v",
+      "description": "Scan the repository history"
+    },
+    {
+      "command": "gitleaks protect --staged",
+      "description": "Check staged changes before committing"
+    },
+    {
+      "command": "gitleaks dir --source ./config -f sarif -r out.sarif",
+      "description": "Scan a directory and emit SARIF"
+    },
+    {
+      "command": "gitleaks detect --baseline-path baseline.json",
+      "description": "Ignore known findings"
+    }
+  ],
+  "relatedCommands": [
+    "trufflehog",
+    "git-crypt",
+    "semgrep",
+    "trivy",
+    "pre-commit"
+  ]
+}
