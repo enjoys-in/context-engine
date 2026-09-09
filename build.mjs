@@ -15,6 +15,36 @@ const ROOT = import.meta.dirname;
 const DATA = path.join(ROOT, "data");
 const CHECK_ONLY = process.argv.includes("--check");
 
+/**
+ * Language inheritance, owned here so a rebuild cannot drop it.
+ *
+ * These languages are authored as thin layers on a base — measured label
+ * overlap with their base is 0-15%, so serving them standalone loses the
+ * base entirely (a TypeScript file saw no `console`, no keywords). The LSP
+ * merges base -> overlay when resolving a provider.
+ */
+const EXTENDS = {
+  typescript: "javascript",
+  react: "javascript",
+  coffee: "javascript",
+  flow9: "javascript",
+  nextjs: "react",
+  shadcn: "react",
+  angular: "typescript",
+  nestjs: "typescript",
+  scss: "css",
+  less: "css",
+  tailwindcss: "css",
+  mdx: "markdown",
+  razor: "html",
+  twig: "html",
+  liquid: "html",
+  pgsql: "sql",
+  mysql: "sql",
+  redshift: "sql",
+  "redis-cli": "redis",
+};
+
 /** Directory descriptions, owned here so the manifest never depends on its own prior content. */
 const DESCRIPTIONS = {
   codeActions: "Quick-fix, refactor and source actions for registerCodeActionProvider",
@@ -240,6 +270,20 @@ else {
   for (const lang of languages) if (!seen.has(lang)) fail(`languages.json is missing an entry for ${lang}`);
 }
 
+// ── 7b. Language inheritance must name real languages and not cycle ──
+for (const [child, parent] of Object.entries(EXTENDS)) {
+  if (!languages.includes(child)) fail(`EXTENDS has unknown language "${child}"`);
+  if (!languages.includes(parent)) fail(`EXTENDS: "${child}" extends unknown "${parent}"`);
+  if (child === parent) fail(`EXTENDS: "${child}" extends itself`);
+}
+for (const child of Object.keys(EXTENDS)) {
+  const seen = new Set([child]);
+  for (let cur = EXTENDS[child]; cur; cur = EXTENDS[cur]) {
+    if (seen.has(cur)) { fail(`EXTENDS: inheritance cycle through "${child}"`); break; }
+    seen.add(cur);
+  }
+}
+
 // ── 8. Regenerate the manifest ───────────────────────────────────────
 const manifestPath = path.join(DATA, "manifest.json");
 const prev = fs.existsSync(manifestPath) ? read(manifestPath) : {};
@@ -268,7 +312,9 @@ const manifest = {
     const files = {};
     for (const dir of [...providerDirs, "commands"])
       if (fs.existsSync(path.join(DATA, dir, `${id}.json`))) files[dir] = `${dir}/${id}.json`;
-    return { id, name: NAMES[id] ?? id, files };
+    const entry = { id, name: NAMES[id] ?? id, files };
+    if (EXTENDS[id]) entry.extends = EXTENDS[id];
+    return entry;
   }),
   directories: Object.fromEntries(
     providerDirs.map((d) => [d, {
