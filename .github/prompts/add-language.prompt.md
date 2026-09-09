@@ -18,29 +18,59 @@ Generate all JSON data files for the language **{{input}}** covering every Monac
 
 Create these files:
 
-| # | File | Monaco Provider | Description |
-|---|------|----------------|-------------|
-| 1 | `data/completion/{{input}}.json` | `registerCompletionItemProvider` | Autocomplete items (keywords, built-ins, snippets, stdlib) |
+| # | File | Monaco API | Description |
+|---|------|-----------|-------------|
+| 1 | `data/completion/{{input}}.json` | `registerCompletionItemProvider` | Autocomplete items plus `triggerCharacters` |
 | 2 | `data/definition/{{input}}.json` | `registerDefinitionProvider` | Symbol definitions / Go-to-Definition data |
 | 3 | `data/hover/{{input}}.json` | `registerHoverProvider` | Hover tooltips |
-| 4 | `data/commands/{{input}}.json` | — | Terminal commands & CLI actions |
-| 5 | `data/codeActions/{{input}}.json` | `registerCodeActionProvider` | Quick-fix & refactor actions |
-| 6 | `data/documentHighlight/{{input}}.json` | `registerDocumentHighlightProvider` | Highlight occurrences of symbols |
-| 7 | `data/documentSymbol/{{input}}.json` | `registerDocumentSymbolProvider` | Outline / breadcrumb symbols |
-| 8 | `data/links/{{input}}.json` | `registerLinkProvider` | Clickable links (URLs, imports, includes) |
-| 9 | `data/typeDefinition/{{input}}.json` | `registerTypeDefinitionProvider` | Go-to-Type-Definition data |
-| 10 | `data/references/{{input}}.json` | `registerReferenceProvider` | Find All References patterns |
-| 11 | `data/implementation/{{input}}.json` | `registerImplementationProvider` | Go-to-Implementation data |
-| 12 | `data/inlineCompletions/{{input}}.json` | `registerInlineCompletionsProvider` | Ghost-text / inline completion templates |
-| 13 | `data/formatting/{{input}}.json` | `registerDocumentFormattingEditProvider` | Document formatting rules |
-| 14 | `data/codeLens/{{input}}.json` | `registerCodeLensProvider` | Inline code lens actions |
-| 15 | `data/color/{{input}}.json` | `registerColorProvider` | Color picker patterns |
-| 16 | `data/declaration/{{input}}.json` | `registerDeclarationProvider` | Go-to-Declaration data |
-| 17 | `data/inlayHints/{{input}}.json` | `registerInlayHintsProvider` | Inline type/parameter hints |
+| 4 | `data/languageConfiguration/{{input}}.json` | `setLanguageConfiguration` | Comments, brackets, auto-closing & surrounding pairs, wordPattern, indentationRules, onEnterRules, folding |
+| 5 | `data/monarchTokens/{{input}}.json` | `setMonarchTokensProvider` | `IMonarchLanguage` grammar — the key **must** be `tokenizer` |
+| 6 | `data/codeActions/{{input}}.json` | `registerCodeActionProvider` | Quick-fix & refactor actions plus `providedCodeActionKinds` |
+| 7 | `data/documentHighlight/{{input}}.json` | `registerDocumentHighlightProvider` | Highlight occurrences of symbols |
+| 8 | `data/documentSymbol/{{input}}.json` | `registerDocumentSymbolProvider` | Outline / breadcrumb symbols |
+| 9 | `data/links/{{input}}.json` | `registerLinkProvider` | Clickable links (URLs, imports, includes) |
+| 10 | `data/typeDefinition/{{input}}.json` | `registerTypeDefinitionProvider` | Go-to-Type-Definition data |
+| 11 | `data/references/{{input}}.json` | `registerReferenceProvider` | Find All References patterns |
+| 12 | `data/implementation/{{input}}.json` | `registerImplementationProvider` | Go-to-Implementation data |
+| 13 | `data/inlineCompletions/{{input}}.json` | `registerInlineCompletionsProvider` | Ghost-text / inline completion templates |
+| 14 | `data/formatting/{{input}}.json` | `registerDocumentFormattingEditProvider` | Document formatting rules |
+| 15 | `data/documentRangeFormatting/{{input}}.json` | `registerDocumentRangeFormattingEditProvider` | Format-selection rules |
+| 16 | `data/onTypeFormatting/{{input}}.json` | `registerOnTypeFormattingEditProvider` | Format-as-you-type plus `autoFormatTriggerCharacters` |
+| 17 | `data/codeLens/{{input}}.json` | `registerCodeLensProvider` | Inline code lens actions |
+| 18 | `data/color/{{input}}.json` | `registerColorProvider` | Color picker patterns |
+| 19 | `data/declaration/{{input}}.json` | `registerDeclarationProvider` | Go-to-Declaration data |
+| 20 | `data/inlayHints/{{input}}.json` | `registerInlayHintsProvider` | Inline type/parameter hints (`kind` 1=Type, 2=Parameter) |
+| 21 | `data/foldingRange/{{input}}.json` | `registerFoldingRangeProvider` | Folding rules, `offSide` and region `markers` |
+| 22 | `data/rename/{{input}}.json` | `registerRenameProvider` | Rename validation, identifier rules, prepare-rename |
+| 23 | `data/newSymbolNames/{{input}}.json` | `registerNewSymbolNameProvider` | AI rename suggestions |
+| 24 | `data/selectionRange/{{input}}.json` | `registerSelectionRangeProvider` | Smart-selection expand/shrink |
+| 25 | `data/linkedEditingRange/{{input}}.json` | `registerLinkedEditingRangeProvider` | Linked editing pairs (e.g. HTML tags) |
+| 26 | `data/semanticTokens/{{input}}.json` | `registerDocumentSemanticTokensProvider` | Semantic highlighting legend + rules |
+| 27 | `data/rangeSemanticTokens/{{input}}.json` | `registerDocumentRangeSemanticTokensProvider` | Range-scoped semantic tokens |
+| 28 | `data/signatureHelp/{{input}}.json` | `registerSignatureHelpProvider` | Parameter hints plus `triggerCharacters` |
+| 29 | `data/multiDocumentHighlight/{{input}}.json` | `registerMultiDocumentHighlightProvider` | Cross-file symbol highlighting |
+| 30 | `data/commands/{{input}}.json` | `— (custom API)` | Terminal commands & CLI actions (optional) |
+
+All 29 provider directories are expected to have an entry for every language —
+`node build.mjs --check` fails if any is missing.
 
 Then update:
-- `data/manifest.json` — add language entry with all file paths
-- `data/commands/manifest.json` — add the commands file entry
+- `data/languages.json` — add an `ILanguageExtensionPoint`: `id`, `extensions`,
+  `filenames`, `filenamePatterns`, `firstLine` (shebang regex), `aliases`, `mimetypes`
+- `data/commands/manifest.json` — add the commands file entry, if you added one
+- Run `npm run build` to regenerate `data/manifest.json`, then `npm test`
+
+### Rules that `build.mjs` enforces
+
+- `language` in each file must equal its filename
+- Every file must carry the full canonical key set for its directory (extra keys are allowed)
+- Regex fields must compile, and must **not** be double-escaped — write `\\s` in JSON
+  (which is `\s` after parsing), never `\\\\s`
+- Enum values follow instructions §32: `CompletionItemKind` 0–28, `SymbolKind` 0–25,
+  `InlayHintKind` 1–2, `IndentAction` 0–3, `insertTextRules` ∈ {0,1,4}
+- Snippet `insertText` (containing `${1:...}` or `$0`) **must** set `insertTextRules: 4`
+- Every Monarch `@reference` must resolve to a defined attribute or state
+- `languageConfiguration.folding.offSide` must agree with `foldingRange.offSide`
 
 Ensure **all files are valid JSON** with no trailing commas and follow the formats below.
 

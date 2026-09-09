@@ -1,0 +1,35 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  data:
+    name: Data schema + tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Fails on: missing per-language files, missing canonical keys, regexes that
+      # do not compile or are double-escaped, out-of-range enum values, unresolved
+      # Monarch references, invalid languageConfiguration/languages.json, or a
+      # stale data/manifest.json.
+      - name: Validate data against MONACO_LANGUAGES_API.instructions.md
+        run: npm run validate
+      - name: Test
+        run: npm test
+
+  lsp:
+    name: LSP typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - working-directory: lsp
+        run: bun install --frozen-lockfile
+      - working-directory: lsp
+        run: bunx tsc --noEmit
