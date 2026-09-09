@@ -180,5 +180,50 @@ for (const [alias, canonical] of [["hx", "helix"], ["ncu", "npm-check-updates"],
 assert(engine.resolveCommandName("git") === "git", "a canonical name resolves to itself");
 assert(engine.getCommand("nope") === undefined, "an unknown name is still undefined");
 
+// ── Staged arg completion: arg.completion.detector must resolve ───
+// Every completion link is followed for real: the named detector has to exist in the
+// same command file, or a consumer resolving the slot gets nothing.
+{
+  let links = 0, dangling = [];
+  for (const cmd of engine.getAllCommands()) {
+    const detectors = new Set(((cmd.contextEngine || {}).detectors || []).map((d) => d.name));
+    const walk = (list, prefix) => {
+      for (const s of list || []) {
+        const at = prefix ? `${prefix} > ${s.name}` : s.name;
+        for (const a of s.args || []) {
+          if (!a.completion) continue;
+          links++;
+          if (!detectors.has(a.completion.detector)) dangling.push(`${cmd.name} ${at} -> ${a.completion.detector}`);
+        }
+        if ((s.subcommands || []).length) walk(s.subcommands, at);
+      }
+    };
+    walk(cmd.subcommands, "");
+  }
+  assert(links > 250, `arg completion links present (${links})`);
+  assert(dangling.length === 0, `no dangling completion detectors${dangling.length ? ": " + dangling.slice(0, 3).join(", ") : ""}`);
+}
+
+// The staged flow a terminal walks: subcommand -> arg slot -> detector -> shell command.
+{
+  const checkout = engine.getSubcommands("git").find((s) => s.name === "checkout");
+  const slot = checkout.args[0];
+  assert(slot.type === "branch", "git checkout arg is typed as a branch");
+  const det = engine.getContextEngine("git").detectors.find((d) => d.name === slot.completion.detector);
+  assert(det !== undefined, "git checkout resolves to a real detector");
+  assert(det.command.includes("git branch"), "that detector actually lists branches");
+  assert(typeof det.cacheFor === "number", "the detector declares a cache window");
+}
+
+// The same slot type resolves to different detectors depending on the verb, which is the
+// whole reason the link is per-arg rather than a global type->detector table.
+{
+  const subs = engine.getSubcommands("docker");
+  const detOf = (n) => subs.find((s) => s.name === n).args[0].completion.detector;
+  assert(detOf("stop") === "running_containers", "docker stop offers running containers");
+  assert(detOf("start") === "all_containers", "docker start offers stopped ones too");
+  assert(detOf("stop") !== detOf("start"), "verb changes the resolved detector");
+}
+
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);
