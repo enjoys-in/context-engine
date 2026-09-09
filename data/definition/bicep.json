@@ -2,37 +2,10 @@
   "language": "bicep",
   "definitions": {
     "resource": {
-      "signature": "resource symbolicName 'Microsoft.Provider/resourceType@apiVersion' = { name: 'name', location: location, properties: { ... } }",
-      "description": "Declares an Azure resource to be deployed or updated. The resource declaration includes a symbolic name for referencing within the template, the fully qualified resource type with API version, and a body containing the resource's name, location, and configuration properties.",
+      "signature": "resource sym 'Type@Version' = { ... }",
+      "description": "Declares a resource; referencing another's symbol creates an implicit dependency.",
       "type": "keyword",
-      "module": "Bicep Language",
-      "members": {
-        "name": {
-          "signature": "name: string",
-          "description": "The deployment name of the Azure resource, which must be unique within its resource group and type.",
-          "type": "property"
-        },
-        "location": {
-          "signature": "location: string",
-          "description": "The Azure region where the resource will be deployed, typically set via resourceGroup().location.",
-          "type": "property"
-        },
-        "properties": {
-          "signature": "properties: { ... }",
-          "description": "The resource-specific configuration properties that vary by resource type as defined by the Azure Resource Manager API.",
-          "type": "property"
-        },
-        "dependsOn": {
-          "signature": "dependsOn: [ symbolicName1, symbolicName2 ]",
-          "description": "Explicitly declares deployment dependencies; Bicep auto-detects most, use this only for implicit dependencies.",
-          "type": "property"
-        },
-        "tags": {
-          "signature": "tags: { key: 'value' }",
-          "description": "Name/value pairs for categorizing resources and consolidating billing across resource groups.",
-          "type": "property"
-        }
-      }
+      "module": "Bicep"
     },
     "module": {
       "signature": "module symbolicName 'path/to/module.bicep' = { name: 'deploymentName', params: { param1: value1 } }",
@@ -58,10 +31,10 @@
       }
     },
     "param": {
-      "signature": "param paramName paramType [= defaultValue]",
-      "description": "Declares an input parameter for the Bicep template that can be provided at deployment time. Parameters support type constraints, default values, decorators for validation (@minLength, @maxLength, @minValue, @maxValue, @allowed, @description), and secure string handling with @secure().",
+      "signature": "param name type = default",
+      "description": "Deployment input. `@secure()` keeps it out of logs and history.",
       "type": "keyword",
-      "module": "Bicep Language"
+      "module": "Bicep"
     },
     "output": {
       "signature": "output outputName outputType = value",
@@ -105,50 +78,41 @@
       "type": "function",
       "module": "Bicep Functions"
     },
-    "String": {
-      "signature": "String",
-      "description": "Text data type representing a sequence of characters.",
-      "type": "type"
+    "string": {
+      "signature": "string",
+      "description": "Text type. Interpolate with `'${expr}'`.",
+      "type": "type",
+      "module": "Bicep"
     },
-    "Number": {
-      "signature": "Number",
-      "description": "Numeric data type for integer and floating-point values.",
-      "type": "type"
+    "int": {
+      "signature": "int",
+      "description": "64-bit signed integer.",
+      "type": "type",
+      "module": "Bicep"
     },
-    "Boolean": {
-      "signature": "Boolean",
-      "description": "Logical type with two values: true and false.",
-      "type": "type"
+    "bool": {
+      "signature": "bool",
+      "description": "true or false.",
+      "type": "type",
+      "module": "Bicep"
     },
-    "Array": {
-      "signature": "Array",
-      "description": "Ordered collection of elements accessible by index.",
-      "type": "type"
+    "array-type": {
+      "signature": "array / T[]",
+      "description": "Ordered collection, 0-indexed.",
+      "type": "type",
+      "module": "Bicep"
     },
-    "Object": {
-      "signature": "Object",
-      "description": "Collection of key-value pairs (properties and methods).",
-      "type": "type"
+    "object": {
+      "signature": "object",
+      "description": "Untyped property bag; a user-defined `type` gives it a shape.",
+      "type": "type",
+      "module": "Bicep"
     },
-    "null": {
+    "null-type": {
       "signature": "null",
-      "description": "Represents the intentional absence of any value.",
-      "type": "constant"
-    },
-    "undefined": {
-      "signature": "undefined",
-      "description": "Represents an uninitialized or missing value.",
-      "type": "constant"
-    },
-    "print": {
-      "signature": "print(value)",
-      "description": "Output a value to the standard output stream.",
-      "type": "function"
-    },
-    "length": {
-      "signature": "length",
-      "description": "Returns the number of elements in a collection or characters in a string.",
-      "type": "property"
+      "description": "Bicep has `null`, but an unset optional property is simply absent — `?` marks optional in a user-defined type.",
+      "type": "type",
+      "module": "Bicep"
     }
   }
 }

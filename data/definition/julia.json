@@ -177,8 +177,8 @@
       }
     },
     "println": {
-      "signature": "println([io::IO], xs...)",
-      "description": "Prints the textual representation of the arguments to the output stream (defaulting to stdout), followed by a newline character. Each argument is converted to a string via the show function. Multiple arguments are printed consecutively without separators.",
+      "signature": "println(io=stdout, xs...)",
+      "description": "Prints its arguments then a newline. `print` omits it, `@show` prints the expression too.",
       "type": "function",
       "module": "Base"
     },
@@ -228,40 +228,93 @@
         }
       }
     },
-    "Number": {
-      "signature": "Number",
-      "description": "Numeric data type for integer and floating-point values.",
-      "type": "type"
+    "Base": {
+      "signature": "module Base",
+      "description": "Automatically imported standard library holding the core types and functions.",
+      "type": "module"
     },
-    "Boolean": {
-      "signature": "Boolean",
-      "description": "Logical type with two values: true and false.",
-      "type": "type"
+    "eltype": {
+      "signature": "eltype(x) -> Type",
+      "description": "Element type of a collection or iterator type.",
+      "type": "function",
+      "module": "Base"
     },
-    "Object": {
-      "signature": "Object",
-      "description": "Collection of key-value pairs (properties and methods).",
-      "type": "type"
+    "similar": {
+      "signature": "similar(A, [T], [dims]) -> AbstractArray",
+      "description": "Uninitialised array like A, optionally with a new element type or shape. The idiomatic way to preallocate.",
+      "type": "function",
+      "module": "Base"
     },
-    "null": {
-      "signature": "null",
-      "description": "Represents the intentional absence of any value.",
-      "type": "constant"
+    "view": {
+      "signature": "view(A, inds...) -> SubArray",
+      "description": "A lazy window onto A that shares its memory. `@view A[1:3]` is the sugar.",
+      "type": "function",
+      "module": "Base"
     },
-    "undefined": {
-      "signature": "undefined",
-      "description": "Represents an uninitialized or missing value.",
-      "type": "constant"
+    "reinterpret": {
+      "signature": "reinterpret(T, A) -> AbstractArray",
+      "description": "Reinterprets the bits of A as element type T without copying.",
+      "type": "function",
+      "module": "Base"
     },
-    "print": {
-      "signature": "print(value)",
-      "description": "Output a value to the standard output stream.",
-      "type": "function"
+    "dispatch": {
+      "signature": "f(x::T)",
+      "description": "Multiple dispatch selects the most specific method across *all* argument types, not just the receiver. The defining feature of the language.",
+      "type": "concept"
+    },
+    "Union": {
+      "signature": "Union{T, U}",
+      "description": "A type holding any of its members. `Union{T, Nothing}` is the optional idiom; small unions are optimised.",
+      "type": "type",
+      "module": "Core"
+    },
+    "Vararg": {
+      "signature": "Vararg{T, N}",
+      "description": "Trailing arguments of type T, optionally exactly N of them.",
+      "type": "type",
+      "module": "Core"
+    },
+    "promote": {
+      "signature": "promote(xs...) -> Tuple",
+      "description": "Converts arguments to a common type — how mixed-type arithmetic works.",
+      "type": "function",
+      "module": "Base"
+    },
+    "convert": {
+      "signature": "convert(T, x) -> T",
+      "description": "Converts x to type T. Called implicitly on assignment to a typed field or array.",
+      "type": "function",
+      "module": "Base"
+    },
+    "ccall": {
+      "signature": "ccall((:sym, \"lib\"), RetType, (ArgTypes...), args...)",
+      "description": "Calls a C function directly with no wrapper.",
+      "type": "function",
+      "module": "Base"
+    },
+    "Pkg": {
+      "signature": "module Pkg",
+      "description": "Package manager. `Pkg.add`, `Pkg.activate`, and the `]` REPL mode.",
+      "type": "module",
+      "module": "stdlib"
+    },
+    "nothing": {
+      "signature": "nothing",
+      "description": "The sole instance of `Nothing`, returned when there is nothing to return. Not `null`; `missing` is the separate statistical absence.",
+      "type": "constant",
+      "module": "Base"
+    },
+    "Bool": {
+      "signature": "Bool <: Integer",
+      "description": "true or false. A subtype of Integer, so `true + true == 2`.",
+      "type": "type",
+      "module": "Core"
     },
     "length": {
-      "signature": "length",
-      "description": "Returns the number of elements in a collection or characters in a string.",
-      "type": "property"
+      "signature": "length(collection) -> Int",
+      "description": "Element count. For a String this is the number of characters, while `sizeof` gives bytes and `ncodeunits` code units.",
+      "type": "function",
+      "module": "Base"
     }
   }
 }
