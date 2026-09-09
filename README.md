@@ -19,11 +19,11 @@ npm install @enjoys/context-engine
 ## What's Inside
 
 ```
-data/                        # 2,444 JSON files — 94 languages × 26 providers + 256 commands
+data/                        # 3,273 JSON files — 96 languages × 28 providers + 465 commands + 119 themes
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
-├── commands/                # 464 CLI tool definitions (git, docker, kubectl, ...)
+├── commands/                # 465 CLI tool definitions (git, docker, kubectl, ...)
 ├── completion/              # Monaco CompletionItem[] with snippets
 ├── declaration/             # Go-to-declaration data
 ├── definition/              # Definitions (signatures, descriptions, types)
@@ -178,7 +178,7 @@ function getDefinitionInfo(keyword) {
 ```js
 import manifest from '@enjoys/context-engine/data/manifest.json';
 
-// Dynamically register all 94 languages
+// Dynamically register all 96 languages
 for (const lang of manifest.languages) {
   const completionData = await import(`@enjoys/context-engine/${lang.files.completion}`);
   const hoverData = await import(`@enjoys/context-engine/${lang.files.hover}`);
@@ -647,9 +647,9 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 
 ---
 
-## Supported Languages (94)
+## Supported Languages (96)
 
-Each language has up to 26 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
+Each language has up to 28 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
 
 | Category | Languages |
 |----------|-----------|
@@ -670,7 +670,7 @@ Each language has up to 26 provider files — completions, hover, definitions, c
 | **Enterprise / Niche** | ABAP, Apex, ECL, Flow9, M3, Pascal, PLA, Postiats, SB |
 | **Other** | Crontab, Protobuf, Doctest |
 
-## Covered Commands (464 files, 447 unique)
+## Covered Commands (465 files, 447 unique)
 
 | Category | Tools |
 |----------|-------|
@@ -732,9 +732,9 @@ const ctx = getContextEngine('systemctl');
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
 
-## All 26 Monaco Provider Types — Shipped
+## All 28 Monaco Provider Types — Shipped
 
-Every provider below is fully implemented for all 94 languages with spec-compliant JSON data:
+Every provider below is fully implemented for all 96 languages with spec-compliant JSON data:
 
 | Provider | Registration Method | Data Key |
 |----------|-------------------|----------|
@@ -763,6 +763,9 @@ Every provider below is fully implemented for all 94 languages with spec-complia
 | Semantic Tokens | `registerDocumentSemanticTokensProvider` | `tokenTypes[]` |
 | Signature Help | `registerSignatureHelpProvider` | `signatures{}` |
 | Type Definition | `registerTypeDefinitionProvider` | `typeDefinitions{}` |
+| Monarch Tokenizer | `setMonarchTokensProvider` | `tokenizer{}` |
+| Multi-Document Highlight | `registerMultiDocumentHighlightProvider` | `crossFileSymbols[]` |
+| New Symbol Names | `registerNewSymbolNameProvider` | `renameSuggestionRules[]` |
 | Commands (CLI) | Custom API | `subcommands[]`, `globalOptions[]` |
 
 ## License

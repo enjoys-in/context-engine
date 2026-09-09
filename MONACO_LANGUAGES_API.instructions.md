@@ -2400,6 +2400,9 @@ registerDocumentSymbolProvider(languageSelector: LanguageSelector, provider: Doc
 // § Document Highlight (highlight occurrences)
 registerDocumentHighlightProvider(languageSelector: LanguageSelector, provider: DocumentHighlightProvider): IDisposable;
 
+// § Multi Document Highlight (highlight occurrences across several models)
+registerMultiDocumentHighlightProvider(languageSelector: LanguageSelector, provider: MultiDocumentHighlightProvider): IDisposable;
+
 // § Linked Editing Range (linked tag editing)
 registerLinkedEditingRangeProvider(languageSelector: LanguageSelector, provider: LinkedEditingRangeProvider): IDisposable;
 
@@ -2473,6 +2476,7 @@ registerDocumentRangeSemanticTokensProvider(languageSelector: LanguageSelector, 
 | **Navigation** | `registerReferenceProvider(sel, provider)` | `ReferenceProvider` | Find All References |
 | **Symbols** | `registerDocumentSymbolProvider(sel, provider)` | `DocumentSymbolProvider` | Outline / Breadcrumbs |
 | **Highlight** | `registerDocumentHighlightProvider(sel, provider)` | `DocumentHighlightProvider` | Highlight occurrences |
+| **Highlight** | `registerMultiDocumentHighlightProvider(sel, provider)` | `MultiDocumentHighlightProvider` | Highlight occurrences across models |
 | **Editing** | `registerLinkedEditingRangeProvider(sel, provider)` | `LinkedEditingRangeProvider` | Linked tag editing |
 | **Formatting** | `registerDocumentFormattingEditProvider(sel, provider)` | `DocumentFormattingEditProvider` | Format Document |
 | **Formatting** | `registerDocumentRangeFormattingEditProvider(sel, provider)` | `DocumentRangeFormattingEditProvider` | Format Selection |
