@@ -600,6 +600,29 @@ List all available language IDs.
 
 ---
 
+### context/languageConfiguration
+
+Get the language's `setLanguageConfiguration` data — comments, brackets,
+auto-closing and surrounding pairs, `wordPattern`, `indentationRules`,
+`onEnterRules` and `folding`.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 100,
+  "method": "context/languageConfiguration"
+}
+```
+
+**Response:** `{ "language": "typescript", "comments": { "lineComment": "//", "blockComment": ["/*", "*/"] }, "brackets": [["{","}"],["[","]"],["(",")"]], ... }`
+
+Regex-valued fields (`wordPattern`, `indentationRules.*`, `onEnterRules.*`,
+`folding.markers.*`) are regex **source strings** — JSON cannot carry a
+`RegExp`, so the client constructs one. `onEnterRules[].action.indentAction`
+is the numeric `IndentAction` enum: `None=0, Indent=1, IndentOutdent=2, Outdent=3`.
+
+---
+
 ### context/languageData
 
 Get the full raw data loaded for the current connection's language.

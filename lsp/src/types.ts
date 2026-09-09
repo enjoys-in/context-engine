@@ -28,6 +28,7 @@ import type { TypeDefinitionData } from "./interfaces/typeDefinition.ts";
 import type { MonarchTokensData } from "./interfaces/monarchTokens.ts";
 import type { NewSymbolNamesData } from "./interfaces/newSymbolNames.ts";
 import type { MultiDocumentHighlightData } from "./interfaces/multiDocumentHighlight.ts";
+import type { LanguageConfigurationData } from "./interfaces/languageConfiguration.ts";
 
 export * from "./interfaces";
 
@@ -49,6 +50,7 @@ export interface LanguageProviders {
   implementation?: ImplementationData;
   inlayHints?: InlayHintsData;
   inlineCompletions?: InlineCompletionsData;
+  languageConfiguration?: LanguageConfigurationData;
   linkedEditingRange?: LinkedEditingRangeData;
   links?: LinksData;
   onTypeFormatting?: OnTypeFormattingData;
@@ -118,6 +120,7 @@ export interface ServerCapabilities {
   monarchTokensProvider?: boolean;
   newSymbolNamesProvider?: boolean;
   multiDocumentHighlightProvider?: boolean;
+  languageConfigurationProvider?: boolean;
 }
 
 export interface ManifestLanguage {
