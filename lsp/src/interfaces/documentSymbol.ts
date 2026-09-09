@@ -2,7 +2,8 @@ export interface SymbolPattern {
   name: string;
   pattern: string;
   captureGroup: number;
-  kind: number | string;
+  /** SymbolKind (spec §32) — numeric. */
+  kind: number;
   type?: string;
   detail?: string;
 }

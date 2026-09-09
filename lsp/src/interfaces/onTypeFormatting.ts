@@ -18,7 +18,6 @@ export interface OnTypeFormatTrigger {
 export interface OnTypeFormattingData {
   language?: string;
   autoFormatTriggerCharacters?: string[];
-  triggerCharacters?: string[];
   formatRules?: OnTypeFormatTrigger[] | Array<Record<string, unknown>> | unknown;
   indentation?: {
     increasePattern?: string;

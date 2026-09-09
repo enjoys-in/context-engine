@@ -14,6 +14,7 @@ export * from "./formatting";
 export * from "./implementation";
 export * from "./inlayHints";
 export * from "./inlineCompletions";
+export * from "./languageConfiguration";
 export * from "./linkedEditingRange";
 export * from "./links";
 export * from "./onTypeFormatting";

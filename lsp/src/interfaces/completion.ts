@@ -10,7 +10,8 @@ export interface CompletionLabelObject {
 
 export interface CompletionItem {
   label: string | CompletionLabelObject;
-  kind: number | string;
+  /** CompletionItemKind (spec §32) — numeric. */
+  kind: number;
   detail: string;
   documentation?: CompletionDocumentation | string;
   insertText: string;
@@ -20,5 +21,7 @@ export interface CompletionItem {
 
 export interface CompletionData {
   language: string;
+  /** CompletionItemProvider.triggerCharacters */
+  triggerCharacters: string[];
   completions: CompletionItem[];
 }

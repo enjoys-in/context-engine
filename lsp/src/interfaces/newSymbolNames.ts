@@ -65,8 +65,6 @@ export interface NewSymbolNamesData {
   renameSuggestionRules?: RenameSuggestionRule[];
   reservedWords?: string[];
   identifierRules?: NewSymbolIdentifierRules;
-  displayName?: string;
-  capabilities?: Record<string, unknown>;
   prefixes?: string[];
   suffixes?: string[];
 }
