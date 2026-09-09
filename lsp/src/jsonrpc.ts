@@ -41,11 +41,19 @@ export function createReader(ws: WebSocket): JsonRpcReader {
 
   const onMessage = (data: Buffer | string) => {
     if (disposed) return;
+    let message: JsonRpcMessage;
     try {
-      const message = JSON.parse(String(data)) as JsonRpcMessage;
-      for (const cb of listeners) cb(message);
+      message = JSON.parse(String(data)) as JsonRpcMessage;
     } catch {
-      // malformed JSON — ignore
+      return; // malformed JSON — ignore
+    }
+    for (const cb of listeners) {
+      // One listener throwing must not stop the others or kill the process.
+      try {
+        cb(message);
+      } catch (err) {
+        console.error("jsonrpc listener threw:", err);
+      }
     }
   };
 

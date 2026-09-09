@@ -127,6 +127,8 @@ export interface ManifestLanguage {
   id: string;
   name: string;
   files: Record<string, string>;
+  /** Base language this one layers on top of, e.g. typescript -> javascript. */
+  extends?: string;
 }
 
 export interface Manifest {
