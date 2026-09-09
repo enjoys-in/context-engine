@@ -285,10 +285,46 @@ const manifest = {
         if (!onDisk.includes(f)) fail(`data/commands/manifest.json context "${cat.category}" references missing ${f}`);
         byFile.set(f, (byFile.get(f) ?? 0) + 1);
       }
-    for (const f of onDisk) {
-      const n = byFile.get(f) ?? 0;
-      if (n === 0) fail(`data/commands/manifest.json puts ${f} in no context category`);
-      else if (n > 1) fail(`data/commands/manifest.json lists ${f} in ${n} context categories`);
+    // A command may appear under more than one category on purpose — this is a
+    // display/autocomplete taxonomy for the terminal, not an exclusive filing
+    // system. Only "no category at all" is a defect.
+    for (const f of onDisk)
+      if (!byFile.has(f)) fail(`data/commands/manifest.json puts ${f} in no context category`);
+  }
+}
+
+// ── 10. Command files — terminal autocomplete needs completable data ──
+{
+  const VALUED = new Set(["string", "path", "file", "directory", "number", "integer", "url"]);
+  for (const f of jsonFiles(path.join(DATA, "commands")).filter((x) => x !== "manifest.json")) {
+    const d = read(path.join(DATA, "commands", f));
+    const where = `commands/${f}`;
+    for (const k of ["name", "description", "category", "platforms", "shells"])
+      if (d[k] === undefined) fail(`${where} has no ${k}`);
+    const subs = d.subcommands ?? [];
+    const gopts = d.globalOptions ?? [];
+    // Nothing to suggest means the entry cannot participate in completion at all.
+    if (subs.length === 0 && gopts.length === 0)
+      fail(`${where} has neither subcommands nor globalOptions — nothing to autocomplete`);
+    if (!(d.examples ?? []).length) fail(`${where} has no examples`);
+    if (!(d.relatedCommands ?? []).length) fail(`${where} has no relatedCommands`);
+
+    const checkOption = (o, at) => {
+      // A bare string carries no description, so the completion menu has nothing to show.
+      if (typeof o === "string") return fail(`${where} ${at} option "${o}" is a bare string, expected {name, description}`);
+      if (!o || typeof o !== "object") return fail(`${where} ${at} option is not an object`);
+      if (!o.name) fail(`${where} ${at} option has no name`);
+      if (!o.description) fail(`${where} ${at} option "${o.name}" has no description`);
+      if (typeof o.type === "string" && typeof o.takesValue === "boolean" && o.takesValue !== VALUED.has(o.type))
+        fail(`${where} ${at} option "${o.name}" has type "${o.type}" but takesValue ${o.takesValue}`);
+      if (o.shorthand !== undefined && o.short === undefined)
+        fail(`${where} ${at} option "${o.name}" has shorthand but no short`);
+    };
+    gopts.forEach((o, i) => checkOption(o, `globalOptions[${i}]`));
+    for (const s2 of subs) {
+      if (!s2.name) fail(`${where} has a subcommand with no name`);
+      if (!s2.description) fail(`${where} subcommand "${s2.name}" has no description`);
+      (s2.options ?? []).forEach((o, i) => checkOption(o, `subcommand "${s2.name}" options[${i}]`));
     }
   }
 }

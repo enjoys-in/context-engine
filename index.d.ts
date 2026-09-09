@@ -115,6 +115,8 @@ declare const _default: {
     getSubcommands: typeof getSubcommands;
     getGlobalOptions: typeof getGlobalOptions;
     getExamples: typeof getExamples;
+    getRawExamples: typeof getRawExamples;
+    getAllExamples: typeof getAllExamples;
     count: typeof count;
     clearCache: typeof clearCache;
     resolveCommandPath: typeof resolveCommandPath;
