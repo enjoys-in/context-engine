@@ -105,18 +105,38 @@ const RE_FIELDS = new Set([
   "importPattern", "exportPattern", "regex", "start", "end", "match", "import", "export",
   "unindentPattern", "indentNextLinePattern", "increaseIndentPattern", "decreaseIndentPattern",
   "unIndentedLinePattern", "beforeText", "afterText", "previousLineText", "firstLine",
+  // Array-valued: references[].patterns holds a list of regexes. Its absence
+  // here is why 460 double-escaped patterns under `patterns: [...]` shipped.
+  "patterns", "symbolPattern",
 ]);
-/** A run of exactly two backslashes before a shorthand class — the bug signature. */
-const DOUBLED = /(?:^|[^\\])\\{2}[sSwWdDbB]/;
+/**
+ * A run of exactly two backslashes before an escape that only makes sense as an
+ * escape — the bug signature.
+ *
+ * The class must cover n/r/t/f/v as well as the character classes. An earlier
+ * repair used [sSwWdDbB] alone, which left 198 doubled `\\n` values behind in
+ * formatting and selectionRange: each still compiles — as a literal backslash
+ * followed by "n" — so it never matched and never failed to parse.
+ */
+const DOUBLED = /(?:^|[^\\])\\{2}[nrtfvsSwWdDbB]/;
 let regexCount = 0;
 const walkRegex = (node, where) => {
   if (!node || typeof node !== "object") return;
   if (Array.isArray(node)) return node.forEach((v, i) => walkRegex(v, `${where}[${i}]`));
   for (const [k, v] of Object.entries(node)) {
-    if (typeof v === "string" && RE_FIELDS.has(k)) {
-      regexCount++;
-      try { new RegExp(v); } catch (e) { fail(`${where}.${k} will not compile: ${e.message}`); }
-      if (DOUBLED.test(v)) fail(`${where}.${k} is double-escaped: ${JSON.stringify(v)}`);
+    if (RE_FIELDS.has(k)) {
+      // A regex field may hold one pattern or an array of them (e.g.
+      // references[].patterns). Only checking the string case is how 460
+      // double-escaped patterns under `patterns: [...]` went unnoticed.
+      const list = typeof v === "string" ? [v] : Array.isArray(v) ? v : [];
+      list.forEach((s, i) => {
+        if (typeof s !== "string") return;
+        regexCount++;
+        const at = typeof v === "string" ? `${where}.${k}` : `${where}.${k}[${i}]`;
+        try { new RegExp(s); } catch (e) { fail(`${at} will not compile: ${e.message}`); }
+        if (DOUBLED.test(s)) fail(`${at} is double-escaped: ${JSON.stringify(s)}`);
+      });
+      if (typeof v === "string") continue;
     }
     walkRegex(v, `${where}.${k}`);
   }
