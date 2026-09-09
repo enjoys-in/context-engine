@@ -394,9 +394,15 @@ const manifest = {
   // the published contract would reject a detector authored straight from the docs.
   const PARSERS = new Set(["text", "lines", "json", "csv", "keyvalue", "regex", "table"]);
 
-  // Types an arg may declare. `type` stays optional — 631 args legitimately omit it.
+  // Types an arg may declare. `type` stays optional — many args legitimately omit it.
+  // The first row is the original primitive set; the rest are semantic kinds that name an
+  // ENUMERABLE runtime value, so a consumer can complete the slot from a detector.
   const ARG_TYPES = new Set([
-    "string", "path", "file", "directory", "number", "integer", "url", "boolean", "branch",
+    "string", "path", "file", "directory", "number", "integer", "url", "boolean",
+    "branch", "container", "image", "namespace", "pod", "service", "cluster", "bucket",
+    "volume", "network", "app", "project", "profile", "environment", "package", "unit",
+    "table", "database", "remote", "tag", "stash", "instance", "node", "job", "function",
+    "secret", "alias", "version", "device", "session", "worktree", "stack", "zone",
   ]);
 
   // A detector command must not change state. Package managers are the subtle
