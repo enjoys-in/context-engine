@@ -19,6 +19,20 @@
         "nvm install 20",
         "nvm install --lts",
         "nvm install 18.17.0"
+      ],
+      "options": [
+        {
+          "name": "--lts",
+          "description": "Install the latest LTS release",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--reinstall-packages-from",
+          "description": "Reinstall global packages from this version",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -28,6 +42,14 @@
         "nvm use 20",
         "nvm use --lts",
         "nvm use default"
+      ],
+      "options": [
+        {
+          "name": "--silent",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -35,6 +57,14 @@
       "description": "List installed versions",
       "examples": [
         "nvm ls"
+      ],
+      "options": [
+        {
+          "name": "--no-colors",
+          "description": "Disable coloured output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -42,6 +72,14 @@
       "description": "List available remote versions",
       "examples": [
         "nvm ls-remote --lts"
+      ],
+      "options": [
+        {
+          "name": "--lts",
+          "description": "Only show LTS releases",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -49,28 +87,32 @@
       "description": "Set an alias",
       "examples": [
         "nvm alias default 20"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "uninstall",
       "description": "Uninstall a version",
       "examples": [
         "nvm uninstall 16"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "current",
       "description": "Show currently active version",
       "examples": [
         "nvm current"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "which",
       "description": "Show path for installed version",
       "examples": [
         "nvm which 20"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -114,5 +156,37 @@
     "volta",
     "node",
     "npm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "current",
+        "description": "Node version nvm has active",
+        "command": "node --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "version_file",
+        "description": "Node version pinned for this project",
+        "command": "cat .nvmrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "installed",
+        "description": "Node versions installed under nvm",
+        "command": "ls ~/.nvm/versions/node 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "nvm_dir",
+        "description": "nvm installation directory",
+        "command": "echo \"${NVM_DIR:-$HOME/.nvm}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

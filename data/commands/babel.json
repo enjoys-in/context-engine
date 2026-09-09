@@ -90,5 +90,37 @@
     "esbuild",
     "tsc",
     "webpack"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Babel version",
+        "command": "babel --version 2>/dev/null || npx babel --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Babel configuration",
+        "command": "cat babel.config.js 2>/dev/null || cat .babelrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "presets",
+        "description": "Babel presets declared",
+        "command": "grep -oE '\"@babel/preset[^\"]*\"' babel.config.js .babelrc package.json 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

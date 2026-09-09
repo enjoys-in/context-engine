@@ -170,5 +170,31 @@
     "pg_dump",
     "mongodump",
     "sql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mysqldump version",
+        "command": "mysqldump --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mysqldump"
+      },
+      {
+        "name": "connection",
+        "description": "MySQL connection defaults",
+        "command": "grep -A8 '\\[client\\]' ~/.my.cnf 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "existing_dumps",
+        "description": "SQL dump files in this directory",
+        "command": "find . -maxdepth 2 -name '*.sql' -o -name '*.sql.gz' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

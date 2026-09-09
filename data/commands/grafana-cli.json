@@ -19,6 +19,34 @@
       "description": "Install a plugin",
       "examples": [
         "grafana-cli plugins install grafana-clock-panel"
+      ],
+      "options": [
+        {
+          "name": "--pluginsDir",
+          "description": "Plugin directory to install into",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--repo",
+          "description": "Plugin repository URL",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--insecure",
+          "description": "Skip TLS verification",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "plugin",
+          "description": "Plugin id to install",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -26,6 +54,14 @@
       "description": "List available plugins",
       "examples": [
         "grafana-cli plugins list-remote"
+      ],
+      "options": [
+        {
+          "name": "--repo",
+          "description": "Plugin repository URL",
+          "type": "url",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -33,6 +69,14 @@
       "description": "List installed plugins",
       "examples": [
         "grafana-cli plugins ls"
+      ],
+      "options": [
+        {
+          "name": "--pluginsDir",
+          "description": "Plugin directory to list",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -40,6 +84,14 @@
       "description": "Update a plugin",
       "examples": [
         "grafana-cli plugins update grafana-clock-panel"
+      ],
+      "options": [
+        {
+          "name": "--pluginsDir",
+          "description": "Plugin directory to update",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -47,6 +99,14 @@
       "description": "Update all plugins",
       "examples": [
         "grafana-cli plugins update-all"
+      ],
+      "options": [
+        {
+          "name": "--pluginsDir",
+          "description": "Plugin directory to update",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -54,6 +114,22 @@
       "description": "Remove a plugin",
       "examples": [
         "grafana-cli plugins remove grafana-clock-panel"
+      ],
+      "options": [
+        {
+          "name": "--pluginsDir",
+          "description": "Plugin directory to remove from",
+          "type": "directory",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "plugin",
+          "description": "Plugin id to remove",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -61,6 +137,26 @@
       "description": "Reset admin password",
       "examples": [
         "grafana-cli admin reset-admin-password newpassword"
+      ],
+      "options": [
+        {
+          "name": "--homepath",
+          "description": "Grafana home path",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--password-from-stdin",
+          "description": "Read the new password from stdin",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -96,5 +192,39 @@
     "grafana-server",
     "influxdb",
     "telegraf"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "grafana-cli version",
+        "command": "grafana-cli --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "grafana-cli"
+      },
+      {
+        "name": "plugins",
+        "description": "Grafana plugins installed",
+        "command": "grafana-cli plugins ls 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "grafana-cli"
+      },
+      {
+        "name": "config",
+        "description": "Grafana server configuration",
+        "command": "grep -v '^;' /etc/grafana/grafana.ini 2>/dev/null | grep . | head -25",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "service",
+        "description": "Grafana service state",
+        "command": "systemctl is-active grafana-server 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

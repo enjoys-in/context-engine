@@ -151,6 +151,20 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-r",
+          "description": "Recurse into subdirectories",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -163,6 +177,20 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-r",
+          "description": "Recurse into subdirectories",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -174,6 +202,32 @@
           "description": "Archive to update",
           "type": "file",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-o",
+          "description": "Output directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "-r",
+          "description": "Recurse into subdirectories",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-y",
+          "description": "Assume yes to all prompts",
+          "type": "boolean",
+          "takesValue": false
         }
       ]
     }
@@ -221,5 +275,32 @@
     "unzip",
     "tar",
     "zstd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "7-Zip version",
+        "command": "7z --help 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "7z"
+      },
+      {
+        "name": "archives",
+        "description": "Archives in this directory",
+        "command": "find . -maxdepth 2 -name '*.7z' -o -name '*.zip' -o -name '*.rar' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "formats",
+        "description": "Archive formats this build supports",
+        "command": "7z i 2>/dev/null | head -25",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "7z"
+      }
+    ]
+  }
 }

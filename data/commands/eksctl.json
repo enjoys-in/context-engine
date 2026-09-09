@@ -401,5 +401,32 @@
     "aws",
     "helm",
     "cdk"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "eksctl version",
+        "command": "eksctl version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "eksctl"
+      },
+      {
+        "name": "clusters",
+        "description": "EKS clusters in the active region",
+        "command": "eksctl get cluster -o json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "eksctl"
+      },
+      {
+        "name": "cluster_configs",
+        "description": "eksctl ClusterConfig manifests here",
+        "command": "grep -rl 'kind: ClusterConfig' --include='*.yaml' --include='*.yml' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -18,7 +18,8 @@
       "examples": [
         "asdf plugin add nodejs",
         "asdf plugin add python"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "install",
@@ -26,6 +27,14 @@
       "examples": [
         "asdf install nodejs 20.10.0",
         "asdf install python 3.12.0"
+      ],
+      "options": [
+        {
+          "name": "--keep-download",
+          "description": "Keep the downloaded source after installing",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -33,41 +42,60 @@
       "description": "Set global version",
       "examples": [
         "asdf global nodejs 20.10.0"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "local",
       "description": "Set local version",
       "examples": [
         "asdf local nodejs 20.10.0"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "list",
       "description": "List installed versions",
       "examples": [
         "asdf list nodejs"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "list all",
       "description": "List all available versions",
       "examples": [
         "asdf list all nodejs"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "current",
       "description": "Show currently active versions",
       "examples": [
         "asdf current"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "plugin list",
       "description": "List installed plugins",
       "examples": [
         "asdf plugin list"
+      ],
+      "options": [
+        {
+          "name": "--urls",
+          "description": "Show each plugin's repository URL",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--refs",
+          "description": "Show each plugin's git ref",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -75,14 +103,16 @@
       "description": "Uninstall a version",
       "examples": [
         "asdf uninstall nodejs 18.0.0"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "reshim",
       "description": "Recreate shims",
       "examples": [
         "asdf reshim nodejs"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -113,5 +143,40 @@
     "pyenv",
     "rbenv",
     "mise"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "asdf version",
+        "command": "asdf --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "asdf"
+      },
+      {
+        "name": "current",
+        "description": "Tool versions active in this directory",
+        "command": "asdf current 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "asdf"
+      },
+      {
+        "name": "plugins",
+        "description": "asdf plugins installed",
+        "command": "asdf plugin list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "asdf"
+      },
+      {
+        "name": "tool_versions",
+        "description": "Versions pinned for this project",
+        "command": "cat .tool-versions 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

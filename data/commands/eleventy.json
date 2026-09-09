@@ -74,5 +74,37 @@
     "jekyll",
     "gatsby",
     "astro"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Eleventy version",
+        "command": "npx @11ty/eleventy --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Eleventy configuration",
+        "command": ".eleventy.js 2>/dev/null; cat .eleventy.js 2>/dev/null || cat eleventy.config.js 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "input_dir",
+        "description": "Eleventy input and output directories",
+        "command": "grep -E 'dir:|input:|output:' .eleventy.js eleventy.config.js 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

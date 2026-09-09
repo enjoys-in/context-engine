@@ -40,5 +40,24 @@
     "ssh",
     "ncat",
     "stunnel"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "socat version",
+        "command": "socat -V 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "socat"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

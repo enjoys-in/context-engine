@@ -49,19 +49,71 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: simple, extended or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
       "name": "config",
-      "description": "Show the running configuration"
+      "description": "Show the running configuration",
+      "options": [
+        {
+          "name": "--alertmanager.url",
+          "description": "Alertmanager URL to contact",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: simple, extended or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     },
     {
       "name": "cluster",
-      "description": "Show the gossip cluster status"
+      "description": "Show the gossip cluster status",
+      "options": [
+        {
+          "name": "--alertmanager.url",
+          "description": "Alertmanager URL to contact",
+          "type": "url",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: simple, extended or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     },
     {
       "name": "template",
-      "description": "Render notification templates"
+      "description": "Render notification templates",
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: simple, extended or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -130,5 +182,40 @@
     "prometheus",
     "promtool",
     "grafana-cli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "amtool version",
+        "command": "amtool --version 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "amtool"
+      },
+      {
+        "name": "config",
+        "description": "amtool configuration",
+        "command": "cat ~/.config/amtool/config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "alerts",
+        "description": "Alerts currently firing in Alertmanager",
+        "command": "amtool alert query 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "amtool"
+      },
+      {
+        "name": "silences",
+        "description": "Active Alertmanager silences",
+        "command": "amtool silence query 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "amtool"
+      }
+    ]
+  }
 }

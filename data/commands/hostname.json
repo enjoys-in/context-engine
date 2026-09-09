@@ -48,5 +48,40 @@
     "hostnamectl",
     "uname",
     "ip"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "hostname",
+        "description": "Short hostname",
+        "command": "hostname 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "hostname"
+      },
+      {
+        "name": "fqdn",
+        "description": "Fully qualified domain name",
+        "command": "hostname -f 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "hostname"
+      },
+      {
+        "name": "addresses",
+        "description": "Addresses resolving to this host",
+        "command": "hostname -I 2>/dev/null || hostname -i 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "hostname"
+      },
+      {
+        "name": "hosts_file",
+        "description": "Static host entries",
+        "command": "cat /etc/hosts 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

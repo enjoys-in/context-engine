@@ -145,5 +145,38 @@
     "curl",
     "nmap",
     "socat"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mitmproxy version",
+        "command": "mitmproxy --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mitmproxy"
+      },
+      {
+        "name": "ca_cert",
+        "description": "mitmproxy CA certificate present",
+        "command": "ls ~/.mitmproxy/mitmproxy-ca-cert.pem 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "mitmproxy configuration",
+        "command": "cat ~/.mitmproxy/config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "scripts",
+        "description": "mitmproxy addon scripts here",
+        "command": "find . -maxdepth 2 -name '*.py' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

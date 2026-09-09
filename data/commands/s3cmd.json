@@ -21,6 +21,22 @@
         "s3cmd ls",
         "s3cmd ls s3://my-bucket/",
         "s3cmd ls s3://my-bucket/prefix/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--long-listing",
+          "description": "Show size and modification time",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -28,6 +44,14 @@
       "description": "Make bucket",
       "examples": [
         "s3cmd mb s3://new-bucket"
+      ],
+      "options": [
+        {
+          "name": "--bucket-location",
+          "description": "Region to create the bucket in",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -35,6 +59,22 @@
       "description": "Remove bucket",
       "examples": [
         "s3cmd rb s3://my-bucket"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Delete the bucket contents too",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--force",
+          "description": "Delete without confirming",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -180,6 +220,36 @@
       "description": "Copy objects",
       "examples": [
         "s3cmd cp s3://bucket1/file.txt s3://bucket2/file.txt"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--acl-public",
+          "description": "Make the object publicly readable",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -187,6 +257,36 @@
       "description": "Move objects",
       "examples": [
         "s3cmd mv s3://my-bucket/old.txt s3://my-bucket/new.txt"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--acl-public",
+          "description": "Make the object publicly readable",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--config",
+          "description": "Configuration file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -212,7 +312,8 @@
       "description": "Object info",
       "examples": [
         "s3cmd info s3://my-bucket/file.txt"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "setacl",
@@ -240,7 +341,8 @@
       "description": "Generate presigned URL",
       "examples": [
         "s3cmd signurl s3://my-bucket/file.txt 3600"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "expire",
@@ -365,5 +467,32 @@
     "gsutil",
     "rclone",
     "mc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "s3cmd version",
+        "command": "s3cmd --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "s3cmd"
+      },
+      {
+        "name": "config",
+        "description": "s3cmd configuration",
+        "command": "grep -E '^(host_base|bucket_location|access_key)' ~/.s3cfg 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "buckets",
+        "description": "Buckets visible to s3cmd",
+        "command": "s3cmd ls 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "s3cmd"
+      }
+    ]
+  }
 }

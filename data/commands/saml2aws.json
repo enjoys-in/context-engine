@@ -115,6 +115,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "command",
+          "description": "Command to run with the credentials",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -229,5 +237,31 @@
     "aws-vault",
     "aws-sso",
     "kubelogin"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "saml2aws version",
+        "command": "saml2aws --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "saml2aws"
+      },
+      {
+        "name": "accounts",
+        "description": "saml2aws configured IDP accounts",
+        "command": "grep -o '^\\[.*\\]' ~/.saml2aws 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "profiles",
+        "description": "AWS profiles saml2aws can populate",
+        "command": "grep -o '^\\[.*\\]' ~/.aws/credentials 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

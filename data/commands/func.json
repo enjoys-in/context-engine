@@ -19,6 +19,32 @@
       "description": "Initialize function app project",
       "examples": [
         "func init MyFunctionApp --worker-runtime node"
+      ],
+      "options": [
+        {
+          "name": "--worker-runtime",
+          "description": "Language worker runtime to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--docker",
+          "description": "Add a Dockerfile to the project",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--source-control",
+          "description": "Initialise a git repository",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--language",
+          "description": "Language to scaffold",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +52,32 @@
       "description": "Create a new function",
       "examples": [
         "func new --template 'HTTP trigger' --name HttpTrigger"
+      ],
+      "options": [
+        {
+          "name": "--template",
+          "description": "Function template to use",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--name",
+          "description": "Name for the new function",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--authlevel",
+          "description": "HTTP auth level for the trigger",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
       ]
     },
     {
@@ -33,6 +85,40 @@
       "description": "Start local functions host",
       "examples": [
         "func start"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the host listens on",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--cors",
+          "description": "Allowed CORS origins",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--useHttps",
+          "description": "Serve over HTTPS",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--functions",
+          "description": "Only load these functions",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose host output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -40,6 +126,44 @@
       "description": "Publish to Azure",
       "examples": [
         "func azure functionapp publish MyFunctionApp"
+      ],
+      "options": [
+        {
+          "name": "--publish-local-settings",
+          "description": "Also publish local.settings.json",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--nozip",
+          "description": "Deploy without zipping",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--build",
+          "description": "Build action to perform",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--slot",
+          "description": "Deployment slot to publish to",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Function app to publish to",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -47,6 +171,30 @@
       "description": "Install binding extensions",
       "examples": [
         "func extensions install"
+      ],
+      "options": [
+        {
+          "name": "--package",
+          "description": "Extension package to install",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--version",
+          "description": "Package version to install",
+          "type": "string",
+          "takesValue": true,
+          "short": "-v",
+          "shorthand": "-v"
+        },
+        {
+          "name": "--csx",
+          "description": "Use the C# script project layout",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -54,6 +202,28 @@
       "description": "Add app setting",
       "examples": [
         "func settings add MY_SETTING value"
+      ],
+      "options": [
+        {
+          "name": "--connection-string",
+          "description": "Store the value as a connection string",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Setting name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "description": "Setting value",
+          "required": true,
+          "type": "string"
+        }
       ]
     }
   ],
@@ -87,5 +257,38 @@
     "serverless",
     "sam",
     "cdk"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Azure Functions Core Tools version",
+        "command": "func --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "func"
+      },
+      {
+        "name": "host_config",
+        "description": "Functions host configuration",
+        "command": "cat host.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "functions",
+        "description": "Functions in this project",
+        "command": "find . -maxdepth 2 -name 'function.json' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "worker_runtime",
+        "description": "Configured worker runtime",
+        "command": "grep -o '\"FUNCTIONS_WORKER_RUNTIME\": *\"[^\"]*\"' local.settings.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

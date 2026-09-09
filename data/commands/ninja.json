@@ -118,5 +118,39 @@
     "meson",
     "make",
     "bazel"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Ninja version",
+        "command": "ninja --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ninja"
+      },
+      {
+        "name": "build_file",
+        "description": "Ninja build manifest present",
+        "command": "ls build.ninja 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "targets",
+        "description": "Targets in the Ninja manifest",
+        "command": "ninja -t targets 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "ninja"
+      },
+      {
+        "name": "generator",
+        "description": "Tool that generated this Ninja file",
+        "command": "head -3 build.ninja 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

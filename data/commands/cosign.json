@@ -19,6 +19,34 @@
       "description": "Sign a container image",
       "examples": [
         "cosign sign image:tag"
+      ],
+      "options": [
+        {
+          "name": "--key",
+          "description": "Private key to sign with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--yes",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--annotations",
+          "description": "Annotations to record with the signature",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tlog-upload",
+          "description": "Upload the signature to the transparency log",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +54,34 @@
       "description": "Verify image signature",
       "examples": [
         "cosign verify image:tag --key cosign.pub"
+      ],
+      "options": [
+        {
+          "name": "--key",
+          "description": "Public key to verify with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--certificate-identity",
+          "description": "Expected certificate identity",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--certificate-oidc-issuer",
+          "description": "Expected OIDC issuer",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: json or text",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -33,6 +89,20 @@
       "description": "Generate signing key pair",
       "examples": [
         "cosign generate-key-pair"
+      ],
+      "options": [
+        {
+          "name": "--output-key-prefix",
+          "description": "Prefix for the generated key files",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--kms",
+          "description": "KMS URI to generate the key in",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -40,6 +110,34 @@
       "description": "Attach artifacts to image",
       "examples": [
         "cosign attach sbom --sbom sbom.json image:tag"
+      ],
+      "options": [
+        {
+          "name": "--signature",
+          "description": "Signature file to attach",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--payload",
+          "description": "Payload file to attach",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--certificate",
+          "description": "Certificate to attach",
+          "type": "file",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image to attach the artifact to",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -47,6 +145,22 @@
       "description": "Download artifacts",
       "examples": [
         "cosign download sbom image:tag"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platform whose artifacts to download",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image whose artifacts to download",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -54,6 +168,28 @@
       "description": "Sign a blob/file",
       "examples": [
         "cosign sign-blob --key cosign.key file.txt"
+      ],
+      "options": [
+        {
+          "name": "--key",
+          "description": "Private key to sign with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output-signature",
+          "description": "Write the signature here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--yes",
+          "description": "Skip the confirmation prompt",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
       ]
     },
     {
@@ -61,6 +197,26 @@
       "description": "Verify blob signature",
       "examples": [
         "cosign verify-blob --key cosign.pub --signature sig file.txt"
+      ],
+      "options": [
+        {
+          "name": "--key",
+          "description": "Public key to verify with",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--signature",
+          "description": "Signature file to verify",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--certificate",
+          "description": "Certificate to verify with",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -68,6 +224,14 @@
       "description": "Show image supply chain tree",
       "examples": [
         "cosign tree image:tag"
+      ],
+      "options": [
+        {
+          "name": "--attachment-tag-prefix",
+          "description": "Tag prefix for the attachments",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -102,5 +266,38 @@
     "skopeo",
     "syft",
     "grype"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "cosign version",
+        "command": "cosign version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "cosign"
+      },
+      {
+        "name": "keys",
+        "description": "cosign key pairs present",
+        "command": "ls cosign.key cosign.pub 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "experimental",
+        "description": "Keyless signing mode in effect",
+        "command": "echo \"${COSIGN_EXPERIMENTAL:-0}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "registry_auth",
+        "description": "Registries with stored credentials",
+        "command": "grep -o '\"[^\"]*\": *{' ~/.docker/config.json 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

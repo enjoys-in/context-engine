@@ -57,5 +57,38 @@
     "husky",
     "changeset",
     "np"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "semantic-release version",
+        "command": "semantic-release --version 2>/dev/null || npx semantic-release --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "semantic-release configuration",
+        "command": "cat .releaserc 2>/dev/null || cat .releaserc.json 2>/dev/null || grep -A20 '\"release\"' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "branches",
+        "description": "Release branches configured",
+        "command": "grep -A10 'branches' .releaserc .releaserc.json package.json 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "last_tag",
+        "description": "Most recent release tag",
+        "command": "git describe --tags --abbrev=0 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "git"
+      }
+    ]
+  }
 }

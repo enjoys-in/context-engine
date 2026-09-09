@@ -110,7 +110,12 @@
       "name": "compile",
       "description": "Compile Lexon contract to Solidity or other target",
       "args": [
-        "file.lex"
+        {
+          "name": "file.lex",
+          "description": "Lexon contract to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -131,7 +136,12 @@
       "name": "check",
       "description": "Validate Lexon contract syntax",
       "args": [
-        "file.lex"
+        {
+          "name": "file.lex",
+          "description": "Lexon contract to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -139,7 +149,12 @@
       "name": "deploy",
       "description": "Deploy compiled contract to a blockchain network",
       "args": [
-        "file.lex"
+        {
+          "name": "file.lex",
+          "description": "Lexon contract to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -160,7 +175,12 @@
       "name": "explain",
       "description": "Show human-readable interpretation of compiled contract",
       "args": [
-        "file.lex"
+        {
+          "name": "file.lex",
+          "description": "Lexon contract to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -182,5 +202,31 @@
     "node",
     "truffle",
     "hardhat"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Lexon compiler version",
+        "command": "lexon --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "lexon"
+      },
+      {
+        "name": "sources",
+        "description": "Lexon contracts in this project",
+        "command": "find . -maxdepth 3 -name '*.lex' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "solidity_output",
+        "description": "Solidity output from Lexon",
+        "command": "find . -maxdepth 3 -name '*.sol' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

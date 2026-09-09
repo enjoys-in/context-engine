@@ -70,5 +70,31 @@
     "mtr",
     "dig",
     "nmap"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "traceroute version",
+        "command": "traceroute --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "traceroute"
+      },
+      {
+        "name": "default_gateway",
+        "description": "First hop on the default route",
+        "command": "ip route 2>/dev/null | grep default",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "resolvers",
+        "description": "DNS resolvers configured",
+        "command": "cat /etc/resolv.conf 2>/dev/null | grep nameserver",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

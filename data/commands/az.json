@@ -1927,6 +1927,14 @@
           "type": "integer",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "query",
+          "description": "Search term to look up in the CLI reference",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -2070,5 +2078,41 @@
     "azd",
     "terraform",
     "pulumi"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Azure CLI and extension versions",
+        "command": "az version 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 3600,
+        "requiresCmd": "az"
+      },
+      {
+        "name": "account",
+        "description": "Active Azure subscription",
+        "command": "az account show 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120,
+        "requiresCmd": "az"
+      },
+      {
+        "name": "subscriptions",
+        "description": "Azure subscriptions available",
+        "command": "az account list --query '[].{name:name,id:id,default:isDefault}' 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "az"
+      },
+      {
+        "name": "locations",
+        "description": "Configured default location",
+        "command": "az configure --list-defaults 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "az"
+      }
+    ]
+  }
 }

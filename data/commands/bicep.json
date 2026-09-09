@@ -112,19 +112,76 @@
       "name": "build",
       "description": "Build a Bicep file",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--outfile",
+          "description": "Write the ARM template here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--outdir",
+          "description": "Directory to write the template to",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--stdout",
+          "description": "Write the template to stdout",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-restore",
+          "description": "Skip restoring external modules",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "decompile",
       "description": "Decompile ARM template to Bicep",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--outfile",
+          "description": "Write the Bicep file here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--outdir",
+          "description": "Directory to write the Bicep file to",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--force",
+          "description": "Overwrite an existing file",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "install",
       "description": "Install Bicep CLI",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--target-platform",
+          "description": "Platform to install the Bicep CLI for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--version",
+          "description": "Version to install",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "upgrade",
@@ -135,8 +192,34 @@
     {
       "name": "publish",
       "description": "Publish a Bicep file to a registry",
-      "args": [],
-      "options": []
+      "args": [
+        {
+          "name": "file",
+          "description": "Bicep file to publish",
+          "required": true,
+          "type": "file"
+        }
+      ],
+      "options": [
+        {
+          "name": "--target",
+          "description": "Registry reference to publish to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--documentation-uri",
+          "description": "Documentation URI to record",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--force",
+          "description": "Overwrite an existing module version",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "examples": [
@@ -162,5 +245,31 @@
     "terraform",
     "pulumi",
     "helm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Bicep CLI version",
+        "command": "az bicep version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "az"
+      },
+      {
+        "name": "templates",
+        "description": "Bicep templates in this project",
+        "command": "find . -maxdepth 3 -name '*.bicep' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "parameters",
+        "description": "Bicep parameter files",
+        "command": "find . -maxdepth 3 -name '*.bicepparam' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

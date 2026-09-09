@@ -127,11 +127,20 @@
     },
     {
       "name": "linter",
-      "description": "List the supported linters and their prefixes"
+      "description": "List the supported linters and their prefixes",
+      "options": [
+        {
+          "name": "--output-format",
+          "description": "Output format to print",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "clean",
-      "description": "Delete the cache directories"
+      "description": "Delete the cache directories",
+      "options": []
     },
     {
       "name": "config",
@@ -143,11 +152,27 @@
           "type": "string",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--output-format",
+          "description": "Output format to print",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "version",
-      "description": "Show the ruff version"
+      "description": "Show the ruff version",
+      "options": [
+        {
+          "name": "--output-format",
+          "description": "Output format to print",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -228,5 +253,39 @@
     "pylint",
     "isort",
     "mypy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Ruff version",
+        "command": "ruff --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ruff"
+      },
+      {
+        "name": "config",
+        "description": "Ruff configuration",
+        "command": "cat ruff.toml 2>/dev/null || cat .ruff.toml 2>/dev/null || grep -A25 '\\[tool.ruff\\]' pyproject.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "rules",
+        "description": "Rule selection in effect",
+        "command": "ruff check --show-settings 2>/dev/null | head -25",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "ruff"
+      },
+      {
+        "name": "target_version",
+        "description": "Python version Ruff targets",
+        "command": "grep -A10 '\\[tool.ruff\\]' pyproject.toml 2>/dev/null | grep target-version",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

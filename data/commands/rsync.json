@@ -323,5 +323,38 @@
     "sftp",
     "cp",
     "rclone"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "rsync version and capabilities",
+        "command": "rsync --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "rsync"
+      },
+      {
+        "name": "ssh_hosts",
+        "description": "SSH hosts rsync could target",
+        "command": "grep -i '^host ' ~/.ssh/config 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "exclude_file",
+        "description": "Default rsync exclusions",
+        "command": "cat ~/.rsync-filter 2>/dev/null || cat .rsync-filter 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "cwd_size",
+        "description": "Size of the directory to transfer",
+        "command": "du -sh . 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

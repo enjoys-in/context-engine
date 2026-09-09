@@ -19,7 +19,8 @@
       "description": "Create package.json",
       "examples": [
         "pnpm init"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "add",
@@ -71,6 +72,32 @@
       ],
       "examples": [
         "pnpm remove lodash"
+      ],
+      "options": [
+        {
+          "name": "--save-dev",
+          "description": "Remove from devDependencies",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-D",
+          "shorthand": "-D"
+        },
+        {
+          "name": "--global",
+          "description": "Remove from the global store",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-g",
+          "shorthand": "-g"
+        },
+        {
+          "name": "--recursive",
+          "description": "Remove from every workspace package",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        }
       ]
     },
     {
@@ -89,6 +116,14 @@
       "examples": [
         "pnpm install",
         "pnpm install --frozen-lockfile"
+      ],
+      "args": [
+        {
+          "name": "package",
+          "description": "Packages to install",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -105,6 +140,34 @@
       "examples": [
         "pnpm run build",
         "pnpm run dev"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Run in every workspace package",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--parallel",
+          "description": "Run in every package at once",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--filter",
+          "description": "Only run in matching packages",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -120,6 +183,22 @@
       ],
       "examples": [
         "pnpm exec tsc --version"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Run in every workspace package",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--parallel",
+          "description": "Run in every package at once",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -135,6 +214,22 @@
       ],
       "examples": [
         "pnpm dlx create-react-app myapp"
+      ],
+      "options": [
+        {
+          "name": "--package",
+          "description": "Package to run the binary from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--allow-build",
+          "description": "Permit build scripts for these packages",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -158,6 +253,28 @@
       "description": "Check for outdated packages",
       "examples": [
         "pnpm outdated"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Check every workspace package",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--long",
+          "description": "Include the package details",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--format",
+          "description": "Output format: table or json",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -165,6 +282,14 @@
       "description": "Remove unreferenced packages from store",
       "examples": [
         "pnpm store prune"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Prune despite version mismatches",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -188,6 +313,20 @@
       "description": "Run command in all workspace packages",
       "examples": [
         "pnpm -r run build"
+      ],
+      "options": [
+        {
+          "name": "--filter",
+          "description": "Only act on matching packages",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--parallel",
+          "description": "Run in every package at once",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -227,5 +366,46 @@
     "yarn",
     "npx",
     "node"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pnpm version",
+        "command": "pnpm --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pnpm"
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "workspaces",
+        "description": "pnpm workspace packages",
+        "command": "cat pnpm-workspace.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "store",
+        "description": "pnpm content-addressable store location",
+        "command": "pnpm store path 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pnpm"
+      }
+    ]
+  }
 }

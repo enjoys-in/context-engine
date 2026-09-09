@@ -17,6 +17,48 @@
       "description": "Install a Ruby version",
       "examples": [
         "rbenv install 3.3.0"
+      ],
+      "options": [
+        {
+          "name": "--list",
+          "description": "List the installable versions",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--force",
+          "description": "Reinstall over an existing version",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--skip-existing",
+          "description": "Do nothing if already installed",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose build output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
+      ],
+      "args": [
+        {
+          "name": "version",
+          "description": "Ruby version to install",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -24,6 +66,14 @@
       "description": "List installed versions",
       "examples": [
         "rbenv versions"
+      ],
+      "options": [
+        {
+          "name": "--bare",
+          "description": "Print version names only",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -31,13 +81,22 @@
       "description": "Set global Ruby version",
       "examples": [
         "rbenv global 3.3.0"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "local",
       "description": "Set local Ruby version",
       "examples": [
         "rbenv local 3.2.0"
+      ],
+      "options": [
+        {
+          "name": "--unset",
+          "description": "Remove the local version file",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -45,6 +104,14 @@
       "description": "Set shell-specific version",
       "examples": [
         "rbenv shell 3.3.0"
+      ],
+      "options": [
+        {
+          "name": "--unset",
+          "description": "Clear the shell version",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -52,6 +119,24 @@
       "description": "Uninstall a version",
       "examples": [
         "rbenv uninstall 3.1.0"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Uninstall without confirming",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ],
+      "args": [
+        {
+          "name": "version",
+          "description": "Ruby version to uninstall",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -59,14 +144,16 @@
       "description": "Show full path for command",
       "examples": [
         "rbenv which ruby"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "rehash",
       "description": "Rehash shims",
       "examples": [
         "rbenv rehash"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -102,5 +189,40 @@
     "gem",
     "bundle",
     "rvm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "rbenv version",
+        "command": "rbenv --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "rbenv"
+      },
+      {
+        "name": "current",
+        "description": "Ruby version rbenv has active",
+        "command": "rbenv version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "rbenv"
+      },
+      {
+        "name": "installed",
+        "description": "Ruby versions rbenv manages",
+        "command": "rbenv versions 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "rbenv"
+      },
+      {
+        "name": "version_file",
+        "description": "Ruby version pinned for this project",
+        "command": "cat .ruby-version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

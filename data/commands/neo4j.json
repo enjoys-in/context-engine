@@ -17,31 +17,64 @@
   "subcommands": [
     {
       "name": "start",
-      "description": "Start the server in the background"
+      "description": "Start the server in the background",
+      "options": []
     },
     {
       "name": "stop",
-      "description": "Stop the running server"
+      "description": "Stop the running server",
+      "options": []
     },
     {
       "name": "restart",
-      "description": "Restart the server"
+      "description": "Restart the server",
+      "options": []
     },
     {
       "name": "status",
-      "description": "Show whether the server is running"
+      "description": "Show whether the server is running",
+      "options": []
     },
     {
       "name": "console",
-      "description": "Run the server in the foreground"
+      "description": "Run the server in the foreground",
+      "options": [
+        {
+          "name": "--dry-run",
+          "description": "Print the command without running it",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "version",
-      "description": "Show the server version"
+      "description": "Show the server version",
+      "options": []
     },
     {
       "name": "admin-report",
-      "description": "Collect diagnostics for support"
+      "description": "Collect diagnostics for support",
+      "options": [
+        {
+          "name": "--to-path",
+          "description": "Directory to write the report to",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -95,5 +128,39 @@
     "cqlsh",
     "psql",
     "mongosh"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Neo4j version",
+        "command": "neo4j --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "neo4j"
+      },
+      {
+        "name": "status",
+        "description": "Neo4j server status",
+        "command": "neo4j status 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "neo4j"
+      },
+      {
+        "name": "config",
+        "description": "Neo4j server configuration",
+        "command": "grep -v '^#' /etc/neo4j/neo4j.conf 2>/dev/null | grep . | head -25",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "client",
+        "description": "Cypher Shell available for queries",
+        "command": "cypher-shell --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

@@ -113,5 +113,39 @@
     "perf",
     "asan",
     "strace"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Valgrind version",
+        "command": "valgrind --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "valgrind"
+      },
+      {
+        "name": "tools",
+        "description": "Valgrind tools available",
+        "command": "valgrind --help 2>/dev/null | grep -A8 'tool selection'",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "valgrind"
+      },
+      {
+        "name": "suppressions",
+        "description": "Valgrind suppression files present",
+        "command": "find . -maxdepth 2 -name '*.supp' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "executables",
+        "description": "Executables Valgrind can instrument",
+        "command": "find . -maxdepth 2 -type f -perm -u+x 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

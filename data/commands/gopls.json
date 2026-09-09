@@ -49,6 +49,14 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--severity",
+          "description": "Minimum diagnostic severity to report",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -113,6 +121,20 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--markdown",
+          "description": "Render the hover text as Markdown",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -124,6 +146,16 @@
           "description": "file:line:col",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--declaration",
+          "description": "Include the declaration itself",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
         }
       ]
     },
@@ -165,19 +197,30 @@
           "type": "file",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "version",
-      "description": "Show the gopls version"
+      "description": "Show the gopls version",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "stats",
-      "description": "Print cache and workspace statistics"
+      "description": "Print cache and workspace statistics",
+      "options": []
     },
     {
       "name": "api-diff",
-      "description": "Compare the API of two package versions"
+      "description": "Compare the API of two package versions",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -245,5 +288,39 @@
     "staticcheck",
     "golangci-lint",
     "dlv"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "gopls version",
+        "command": "gopls version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gopls"
+      },
+      {
+        "name": "module",
+        "description": "Go module gopls will index",
+        "command": "head -3 go.mod 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "workspace",
+        "description": "Go workspace file if this is a multi-module setup",
+        "command": "cat go.work 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "go_env",
+        "description": "Go environment gopls inherits",
+        "command": "go env GOPATH GOMODCACHE GOFLAGS 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      }
+    ]
+  }
 }

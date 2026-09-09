@@ -65,5 +65,31 @@
     "host",
     "whois",
     "ping"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "dig version",
+        "command": "dig -v 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "dig"
+      },
+      {
+        "name": "resolvers",
+        "description": "DNS resolvers configured",
+        "command": "cat /etc/resolv.conf 2>/dev/null | grep nameserver",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "search_domains",
+        "description": "DNS search domains",
+        "command": "grep -E '^(search|domain)' /etc/resolv.conf 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

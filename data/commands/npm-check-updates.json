@@ -144,5 +144,37 @@
     "pnpm",
     "renovate",
     "dependabot"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "npm-check-updates version",
+        "command": "ncu --version 2>/dev/null || npx npm-check-updates --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "npm-check-updates configuration",
+        "command": "cat .ncurc.json 2>/dev/null || cat .ncurc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "dependency_count",
+        "description": "Dependencies declared in this project",
+        "command": "grep -cE '\": *\"[\\^~]?[0-9]' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -137,7 +137,15 @@
     },
     {
       "name": "init",
-      "description": "Create a biome.json"
+      "description": "Create a biome.json",
+      "options": [
+        {
+          "name": "--jsonc",
+          "description": "Write the config as JSONC",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "migrate",
@@ -161,7 +169,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "search",
@@ -173,11 +182,20 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--stdin-file-path",
+          "description": "Treat stdin as this file path",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "clean",
-      "description": "Remove the Biome cache"
+      "description": "Remove the Biome cache",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -254,5 +272,37 @@
     "ruff",
     "oxlint",
     "tsc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Biome version",
+        "command": "biome --version 2>/dev/null || npx biome --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Biome configuration",
+        "command": "cat biome.json 2>/dev/null || cat biome.jsonc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -80,5 +80,30 @@
     "at",
     "systemd-timer",
     "anacron"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "user_crontab",
+        "description": "Crontab for the current user",
+        "command": "crontab -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "system_cron",
+        "description": "System-wide cron jobs",
+        "command": "ls /etc/cron.d /etc/cron.daily 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "cron_service",
+        "description": "cron service state",
+        "command": "systemctl is-active cron 2>/dev/null || systemctl is-active crond 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

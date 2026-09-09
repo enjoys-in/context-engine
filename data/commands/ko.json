@@ -19,6 +19,38 @@
       "description": "Build Go binary into container image",
       "examples": [
         "ko build ./cmd/app"
+      ],
+      "options": [
+        {
+          "name": "--platform",
+          "description": "Platforms to build for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--push",
+          "description": "Push the image after building",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--bare",
+          "description": "Use the repository without appending the import path",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--tags",
+          "description": "Tags to apply to the image",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--sbom",
+          "description": "SBOM format to emit",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -26,6 +58,30 @@
       "description": "Build and apply to Kubernetes",
       "examples": [
         "ko apply -f config/"
+      ],
+      "options": [
+        {
+          "name": "--filename",
+          "description": "Manifests to apply",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--platform",
+          "description": "Platforms to build for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--selector",
+          "description": "Only apply resources matching this selector",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        }
       ]
     },
     {
@@ -33,6 +89,28 @@
       "description": "Build and print resolved YAML",
       "examples": [
         "ko resolve -f config/"
+      ],
+      "options": [
+        {
+          "name": "--filename",
+          "description": "Manifests to resolve",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--platform",
+          "description": "Platforms to build for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--push",
+          "description": "Push the images after building",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -40,6 +118,24 @@
       "description": "Delete resources",
       "examples": [
         "ko delete -f config/"
+      ],
+      "options": [
+        {
+          "name": "--filename",
+          "description": "Manifests listing what to delete",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--selector",
+          "description": "Only delete resources matching this selector",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        }
       ]
     },
     {
@@ -47,6 +143,30 @@
       "description": "Login to registry",
       "examples": [
         "ko login ghcr.io"
+      ],
+      "options": [
+        {
+          "name": "--username",
+          "description": "Registry username",
+          "type": "string",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--password",
+          "description": "Registry password",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--password-stdin",
+          "description": "Read the password from stdin",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -90,5 +210,38 @@
     "kubectl",
     "podman",
     "buildah"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ko version",
+        "command": "ko version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ko"
+      },
+      {
+        "name": "docker_repo",
+        "description": "Container repository ko publishes to",
+        "command": "echo \"${KO_DOCKER_REPO:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "config",
+        "description": "ko build configuration",
+        "command": "cat .ko.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "main_packages",
+        "description": "Go main packages ko can build",
+        "command": "grep -rl 'func main()' --include='*.go' ./cmd . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

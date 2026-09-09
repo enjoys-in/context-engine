@@ -288,6 +288,28 @@
         "argocd gpg add --from pubkey.gpg",
         "argocd gpg list",
         "argocd gpg rm KEYID"
+      ],
+      "options": [
+        {
+          "name": "--server",
+          "description": "Argo CD server address",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--grpc-web",
+          "description": "Use gRPC-Web for the connection",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--output",
+          "description": "Output format: wide, json, yaml or name",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -296,6 +318,22 @@
       "examples": [
         "argocd repocreds add https://github.com/org --username user --password token",
         "argocd repocreds list"
+      ],
+      "options": [
+        {
+          "name": "--server",
+          "description": "Argo CD server address",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: wide, json, yaml or name",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -306,6 +344,22 @@
         "argocd appset create appset.yaml",
         "argocd appset get my-appset",
         "argocd appset delete my-appset"
+      ],
+      "options": [
+        {
+          "name": "--server",
+          "description": "Argo CD server address",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output",
+          "description": "Output format: wide, json, yaml or name",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -332,7 +386,8 @@
       "description": "Logout",
       "examples": [
         "argocd logout argocd.example.com"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "context",
@@ -434,5 +489,33 @@
     "flux",
     "kustomize",
     "git"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Argo CD CLI version",
+        "command": "argocd version --client --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "argocd"
+      },
+      {
+        "name": "context",
+        "description": "Argo CD server context in use",
+        "command": "argocd context 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 300,
+        "requiresCmd": "argocd"
+      },
+      {
+        "name": "apps",
+        "description": "Argo CD applications",
+        "command": "argocd app list -o name 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "argocd"
+      }
+    ]
+  }
 }

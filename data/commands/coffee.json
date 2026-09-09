@@ -92,50 +92,151 @@
       "name": "-c file.coffee",
       "description": "Compile CoffeeScript to JavaScript",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--output",
+          "description": "Directory to write compiled JavaScript to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--map",
+          "description": "Generate a source map",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-m",
+          "shorthand": "-m"
+        },
+        {
+          "name": "--bare",
+          "description": "Compile without the top-level function wrapper",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--no-header",
+          "description": "Omit the generated-by header",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-w file.coffee",
       "description": "Watch and compile on changes",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--output",
+          "description": "Directory to write compiled JavaScript to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--compile",
+          "description": "Compile on each change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--bare",
+          "description": "Compile without the top-level function wrapper",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-b",
+          "shorthand": "-b"
+        }
+      ]
     },
     {
       "name": "-p file.coffee",
       "description": "Print compiled JS to stdout",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--bare",
+          "description": "Compile without the top-level function wrapper",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--no-header",
+          "description": "Omit the generated-by header",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-e 'code'",
       "description": "Evaluate CoffeeScript expression",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--bare",
+          "description": "Compile without the top-level function wrapper",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--print",
+          "description": "Print the result rather than running it",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     },
     {
       "name": "lint",
       "description": "Lint CoffeeScript",
-      "usage": "coffeelint app.coffee"
+      "usage": "coffeelint app.coffee",
+      "options": [],
+      "args": [
+        {
+          "name": "files",
+          "description": "CoffeeScript files to lint",
+          "required": false,
+          "type": "path"
+        }
+      ]
     },
     {
       "name": "eval",
       "description": "Evaluate CoffeeScript expression",
-      "usage": "coffee -e 'console.log 1 + 2'"
+      "usage": "coffee -e 'console.log 1 + 2'",
+      "options": []
     },
     {
       "name": "repl",
       "description": "Start CoffeeScript REPL",
-      "usage": "coffee"
+      "usage": "coffee",
+      "options": []
     },
     {
       "name": "tokens",
       "description": "Print token stream",
-      "usage": "coffee --tokens app.coffee"
+      "usage": "coffee --tokens app.coffee",
+      "options": []
     },
     {
       "name": "nodes",
       "description": "Print AST nodes",
-      "usage": "coffee --nodes app.coffee"
+      "usage": "coffee --nodes app.coffee",
+      "options": []
     }
   ],
   "examples": [
@@ -161,5 +262,31 @@
     "npm",
     "babel",
     "tsc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "CoffeeScript compiler version",
+        "command": "coffee --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "coffee"
+      },
+      {
+        "name": "sources",
+        "description": "CoffeeScript sources in this project",
+        "command": "find . -maxdepth 3 -name '*.coffee' -not -path './node_modules/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

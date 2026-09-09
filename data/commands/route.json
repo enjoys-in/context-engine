@@ -18,6 +18,28 @@
       "examples": [
         "route add default gw 192.168.1.1",
         "route add -net 10.0.0.0/8 gw 192.168.1.1"
+      ],
+      "options": [
+        {
+          "name": "-net",
+          "description": "Add a network route",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-host",
+          "description": "Add a host route",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "target",
+          "description": "Destination network or host",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -26,6 +48,20 @@
       "examples": [
         "route del default",
         "route del -net 10.0.0.0/8"
+      ],
+      "options": [
+        {
+          "name": "-net",
+          "description": "Delete a network route",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-host",
+          "description": "Delete a host route",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -49,5 +85,30 @@
     "ip",
     "netstat",
     "ifconfig"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "routes",
+        "description": "Routing table",
+        "command": "route -n 2>/dev/null || netstat -rn 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 60
+      },
+      {
+        "name": "default_gateway",
+        "description": "Default gateway",
+        "command": "ip route 2>/dev/null | grep default",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "interfaces",
+        "description": "Network interfaces on this host",
+        "command": "ip -brief address 2>/dev/null || ifconfig -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

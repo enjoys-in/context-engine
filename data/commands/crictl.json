@@ -89,6 +89,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -111,6 +119,14 @@
           "short": "-q",
           "shorthand": "-q"
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -130,6 +146,14 @@
           "description": "Lines to show from the end",
           "type": "integer",
           "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container id to read logs from",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -153,6 +177,20 @@
           "short": "-t",
           "shorthand": "-t"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container id to exec into",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "command",
+          "description": "Command to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -166,6 +204,14 @@
           "takesValue": true,
           "short": "-o",
           "shorthand": "-o"
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container id to inspect",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -185,7 +231,25 @@
     },
     {
       "name": "stats",
-      "description": "Show container resource usage"
+      "description": "Show container resource usage",
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json, yaml or table",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--seconds",
+          "description": "Sample interval in seconds",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        }
+      ]
     },
     {
       "name": "stop",
@@ -198,6 +262,14 @@
           "takesValue": true,
           "short": "-t",
           "shorthand": "-t"
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container id to stop",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -213,15 +285,34 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container id to remove",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
       "name": "info",
-      "description": "Show runtime information"
+      "description": "Show runtime information",
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json, yaml or go-template",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ]
     },
     {
       "name": "version",
-      "description": "Show the runtime version"
+      "description": "Show the runtime version",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -300,5 +391,48 @@
     "ctr",
     "docker",
     "k9s"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "crictl and runtime versions",
+        "command": "crictl version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "crictl"
+      },
+      {
+        "name": "info",
+        "description": "Container runtime configuration",
+        "command": "crictl info 2>/dev/null | head -c 2000",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "crictl"
+      },
+      {
+        "name": "pods",
+        "description": "Pod sandboxes on this node",
+        "command": "crictl pods 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "crictl"
+      },
+      {
+        "name": "containers",
+        "description": "Containers on this node",
+        "command": "crictl ps -a 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "crictl"
+      },
+      {
+        "name": "config",
+        "description": "crictl endpoint configuration",
+        "command": "cat /etc/crictl.yaml 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

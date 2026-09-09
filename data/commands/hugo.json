@@ -20,6 +20,30 @@
       "examples": [
         "hugo new site mysite",
         "hugo new posts/my-post.md"
+      ],
+      "options": [
+        {
+          "name": "--kind",
+          "description": "Archetype to use for the new content",
+          "type": "string",
+          "takesValue": true,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--force",
+          "description": "Overwrite existing files",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--editor",
+          "description": "Editor to open the new file in",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -28,6 +52,42 @@
       "examples": [
         "hugo server",
         "hugo server -D"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--bind",
+          "description": "Address the server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--buildDrafts",
+          "description": "Include content marked as draft",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-D",
+          "shorthand": "-D"
+        },
+        {
+          "name": "--disableFastRender",
+          "description": "Always do a full rebuild",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--navigateToChanged",
+          "description": "Navigate to the changed content",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -36,6 +96,36 @@
       "examples": [
         "hugo",
         "hugo --minify"
+      ],
+      "options": [
+        {
+          "name": "--destination",
+          "description": "Directory to write the site to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--minify",
+          "description": "Minify the generated output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--buildDrafts",
+          "description": "Include content marked as draft",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-D",
+          "shorthand": "-D"
+        },
+        {
+          "name": "--cleanDestinationDir",
+          "description": "Empty the destination first",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -44,6 +134,14 @@
       "examples": [
         "hugo mod init",
         "hugo mod tidy"
+      ],
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -51,6 +149,26 @@
       "description": "Deploy site to cloud provider",
       "examples": [
         "hugo deploy"
+      ],
+      "options": [
+        {
+          "name": "--target",
+          "description": "Deployment target to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dryRun",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--confirm",
+          "description": "Prompt before making changes",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -58,7 +176,8 @@
       "description": "Print version",
       "examples": [
         "hugo version"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -105,5 +224,46 @@
     "gatsby",
     "eleventy",
     "astro"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Hugo version",
+        "command": "hugo version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hugo"
+      },
+      {
+        "name": "config",
+        "description": "Hugo site configuration",
+        "command": "cat hugo.toml 2>/dev/null || cat config.toml 2>/dev/null || cat config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "theme",
+        "description": "Hugo themes installed",
+        "command": "ls themes 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "content",
+        "description": "Content sections in this site",
+        "command": "ls content 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "modules",
+        "description": "Hugo modules this site depends on",
+        "command": "hugo mod graph 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "hugo"
+      }
+    ]
+  }
 }

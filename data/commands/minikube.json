@@ -281,6 +281,16 @@
       "examples": [
         "minikube kubectl -- get pods",
         "minikube kubectl -- apply -f manifest.yaml"
+      ],
+      "options": [
+        {
+          "name": "--profile",
+          "description": "minikube profile to target",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
       ]
     },
     {
@@ -331,6 +341,30 @@
       "description": "Copy files into minikube",
       "examples": [
         "minikube cp file.txt /home/docker/file.txt"
+      ],
+      "options": [
+        {
+          "name": "--profile",
+          "description": "minikube profile to target",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Local source path",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path in the node",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -404,6 +438,16 @@
         "minikube config set cpus 4",
         "minikube config set memory 8192",
         "minikube config view"
+      ],
+      "options": [
+        {
+          "name": "--profile",
+          "description": "minikube profile to target",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
       ]
     },
     {
@@ -483,6 +527,16 @@
       "description": "Check for updates",
       "examples": [
         "minikube update-check"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: text or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     }
   ],
@@ -564,5 +618,41 @@
     "kind",
     "docker",
     "helm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "minikube version",
+        "command": "minikube version --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "minikube"
+      },
+      {
+        "name": "profiles",
+        "description": "minikube profiles on this machine",
+        "command": "minikube profile list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "minikube"
+      },
+      {
+        "name": "status",
+        "description": "Active minikube cluster status",
+        "command": "minikube status 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 30,
+        "requiresCmd": "minikube"
+      },
+      {
+        "name": "addons",
+        "description": "Enabled minikube addons",
+        "command": "minikube addons list -o json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 300,
+        "requiresCmd": "minikube"
+      }
+    ]
+  }
 }

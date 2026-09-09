@@ -21,6 +21,36 @@
         "k9s",
         "k9s -n my-namespace",
         "k9s --context my-context"
+      ],
+      "options": [
+        {
+          "name": "--namespace",
+          "description": "Namespace to start in",
+          "type": "string",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--context",
+          "description": "Kubeconfig context to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--kubeconfig",
+          "description": "Kubeconfig file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--refresh",
+          "description": "Refresh interval in seconds",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        }
       ]
     },
     {
@@ -39,6 +69,16 @@
         "k9s -c secret",
         "k9s -c ingress",
         "k9s -c pv"
+      ],
+      "options": [
+        {
+          "name": "--command",
+          "description": "Resource view to open on start",
+          "type": "string",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -46,6 +86,14 @@
       "description": "Launch in read-only mode",
       "examples": [
         "k9s --readonly"
+      ],
+      "options": [
+        {
+          "name": "--readonly",
+          "description": "Disable every modifying command",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -53,6 +101,16 @@
       "description": "Launch watching all namespaces",
       "examples": [
         "k9s -A"
+      ],
+      "options": [
+        {
+          "name": "--all-namespaces",
+          "description": "Start with every namespace selected",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-A",
+          "shorthand": "-A"
+        }
       ]
     },
     {
@@ -60,6 +118,14 @@
       "description": "Run without header/footer",
       "examples": [
         "k9s --headless"
+      ],
+      "options": [
+        {
+          "name": "--headless",
+          "description": "Hide the header pane",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -67,6 +133,14 @@
       "description": "Log output to file",
       "examples": [
         "k9s --write /tmp/k9s.log"
+      ],
+      "options": [
+        {
+          "name": "--write",
+          "description": "Enable modifying commands",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -74,13 +148,24 @@
       "description": "Print cluster info",
       "examples": [
         "k9s info"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "version",
       "description": "Print version",
       "examples": [
         "k9s version"
+      ],
+      "options": [
+        {
+          "name": "--short",
+          "description": "Print the version only",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -88,7 +173,8 @@
       "description": "Print help",
       "examples": [
         "k9s help"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -175,5 +261,48 @@
     "kubens",
     "stern",
     "helm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "k9s version",
+        "command": "k9s version --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "k9s"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "config",
+        "description": "k9s configuration",
+        "command": "cat ~/.config/k9s/config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "contexts",
+        "description": "Kubeconfig contexts k9s can switch to",
+        "command": "kubectl config get-contexts -o name 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "kubectl"
+      }
+    ]
+  }
 }

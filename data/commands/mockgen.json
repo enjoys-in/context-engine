@@ -109,5 +109,38 @@
     "go",
     "gotestsum",
     "gopls"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mockgen version",
+        "command": "mockgen --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mockgen"
+      },
+      {
+        "name": "directives",
+        "description": "go:generate mockgen directives in this project",
+        "command": "grep -rn 'go:generate.*mockgen' --include='*.go' . 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "interfaces",
+        "description": "Go files declaring interfaces mockgen could target",
+        "command": "grep -rl 'interface {' --include='*.go' . 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "existing_mocks",
+        "description": "Generated mock files present",
+        "command": "find . -maxdepth 4 -name 'mock_*.go' -o -maxdepth 4 -path '*/mocks/*.go' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

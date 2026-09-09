@@ -20,6 +20,34 @@
       "examples": [
         "astro dev",
         "astro dev --port 3001"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--config",
+          "description": "Astro config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     },
     {
@@ -27,6 +55,34 @@
       "description": "Build production site",
       "examples": [
         "astro build"
+      ],
+      "options": [
+        {
+          "name": "--outDir",
+          "description": "Directory for the build output",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--config",
+          "description": "Astro config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -34,6 +90,26 @@
       "description": "Preview production build",
       "examples": [
         "astro preview"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the preview server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the preview server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -41,6 +117,28 @@
       "description": "Check project for errors",
       "examples": [
         "astro check"
+      ],
+      "options": [
+        {
+          "name": "--watch",
+          "description": "Re-check on file changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        },
+        {
+          "name": "--minimumSeverity",
+          "description": "Minimum severity to report",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tsconfig",
+          "description": "TypeScript config to use",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -49,6 +147,24 @@
       "examples": [
         "astro add react",
         "astro add tailwind"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip confirmation prompts",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
+      ],
+      "args": [
+        {
+          "name": "integration",
+          "description": "Integrations to add",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -56,6 +172,16 @@
       "description": "Generate TypeScript types",
       "examples": [
         "astro sync"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Astro config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     }
   ],
@@ -106,5 +232,44 @@
     "gatsby",
     "hugo",
     "next"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Astro version",
+        "command": "astro --version 2>/dev/null || npx astro --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Astro configuration",
+        "command": "cat astro.config.mjs 2>/dev/null || cat astro.config.ts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "integrations",
+        "description": "Astro integrations declared",
+        "command": "grep -oE '@astrojs/[a-z-]+' astro.config.mjs package.json 2>/dev/null | sort -u | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "pages",
+        "description": "Pages in this Astro site",
+        "command": "find src/pages -maxdepth 3 -type f 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

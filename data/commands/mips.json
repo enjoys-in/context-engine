@@ -110,33 +110,79 @@
       "name": "-file program.s",
       "description": "Load and run a MIPS assembly program",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "MIPS assembly file to load",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-quiet",
+          "description": "Suppress the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-noexception",
+          "description": "Do not load the exception handler",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-bare",
       "description": "Run in bare machine mode (no pseudoinstructions)",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-quiet",
+          "description": "Suppress the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-trap",
       "description": "Load trap handler before running",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-quiet",
+          "description": "Suppress the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-notrap",
       "description": "Do not load the trap handler",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-quiet",
+          "description": "Suppress the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-quiet",
       "description": "Suppress informational messages",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-file",
+          "description": "Assembly file to load",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -151,5 +197,31 @@
     "gdb",
     "qemu",
     "systemverilog"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "SPIM simulator version",
+        "command": "spim -version 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "spim"
+      },
+      {
+        "name": "sources",
+        "description": "MIPS assembly sources",
+        "command": "find . -maxdepth 2 -name '*.s' -o -name '*.asm' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "alternatives",
+        "description": "Other MIPS simulators available",
+        "command": "which mars qtspim xspim 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

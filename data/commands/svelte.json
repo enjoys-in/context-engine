@@ -19,6 +19,34 @@
       "description": "Create a new SvelteKit project",
       "examples": [
         "npm create svelte@latest my-app"
+      ],
+      "options": [
+        {
+          "name": "--template",
+          "description": "Project template to scaffold from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--types",
+          "description": "Type-checking approach to set up",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--no-add-ons",
+          "description": "Skip the optional add-ons",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "description": "Directory for the new project",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -27,6 +55,26 @@
       "examples": [
         "npm run dev",
         "npm run dev -- --open"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -34,6 +82,20 @@
       "description": "Build for production",
       "examples": [
         "npm run build"
+      ],
+      "options": [
+        {
+          "name": "--outDir",
+          "description": "Directory for the build output",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--mode",
+          "description": "Env mode to build for",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -41,6 +103,20 @@
       "description": "Preview production build",
       "examples": [
         "npm run preview"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the preview server binds to",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the preview server binds to",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -48,6 +124,26 @@
       "description": "Run svelte-check diagnostics",
       "examples": [
         "npx svelte-check"
+      ],
+      "options": [
+        {
+          "name": "--watch",
+          "description": "Re-check on file changes",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--threshold",
+          "description": "Minimum severity to report",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--tsconfig",
+          "description": "TypeScript config to use",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -55,7 +151,8 @@
       "description": "Sync SvelteKit-generated files",
       "examples": [
         "npx svelte-kit sync"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -86,5 +183,37 @@
     "astro",
     "next",
     "react"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Svelte and SvelteKit versions declared",
+        "command": "grep -oE '\"(svelte|@sveltejs/kit)\": *\"[^\"]*\"' package.json 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Svelte configuration",
+        "command": "cat svelte.config.js 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "routes",
+        "description": "Routes in this SvelteKit app",
+        "command": "find src/routes -maxdepth 3 -type f 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

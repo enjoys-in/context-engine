@@ -103,50 +103,187 @@
       "name": "script.pl",
       "description": "Run a Perl script",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Perl script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-I",
+          "description": "Add a directory to @INC",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "-M",
+          "description": "Load this module before running",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-w",
+          "description": "Enable warnings",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-T",
+          "description": "Enable taint checking",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-e \"code\"",
       "description": "Execute a one-liner expression",
       "args": [
-        "code"
+        {
+          "name": "code",
+          "description": "Code to execute",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-l",
+          "description": "Enable automatic line-ending processing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-n",
+          "description": "Wrap the code in a read loop",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-p",
+          "description": "Wrap the code in a print loop",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-M",
+          "description": "Load this module first",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-c script.pl",
       "description": "Syntax check without executing",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Perl script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-w",
+          "description": "Enable warnings",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-I",
+          "description": "Add a directory to @INC",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-n -e \"code\"",
       "description": "Process each input line with expression",
       "args": [
-        "code"
+        {
+          "name": "code",
+          "description": "Code to execute",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-l",
+          "description": "Enable automatic line-ending processing",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-a",
+          "description": "Split each line into @F",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-F",
+          "description": "Field separator for autosplit",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-p -i -e 's/old/new/g' file",
       "description": "In-place edit with regex substitution",
       "args": [
-        "pattern",
-        "file"
+        {
+          "name": "pattern",
+          "description": "Substitution expression to apply",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "file",
+          "description": "Perl script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-i",
+          "description": "Edit in place, optionally with this backup suffix",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-l",
+          "description": "Enable automatic line-ending processing",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-MCPAN -e 'install Module'",
       "description": "Install a CPAN module",
       "args": [
-        "module"
+        {
+          "name": "module",
+          "description": "Module to act on",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-I",
+          "description": "Add a directory to @INC",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -163,5 +300,39 @@
     "python",
     "ruby",
     "grep"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Perl version",
+        "command": "perl -v 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "perl"
+      },
+      {
+        "name": "inc_paths",
+        "description": "Perl module search paths",
+        "command": "perl -e 'print join(\"\\n\", @INC)' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "perl"
+      },
+      {
+        "name": "project_files",
+        "description": "Perl project files present",
+        "command": "ls Makefile.PL Build.PL cpanfile 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sources",
+        "description": "Perl sources",
+        "command": "find . -maxdepth 3 -name '*.pl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

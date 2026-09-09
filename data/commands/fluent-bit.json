@@ -144,5 +144,39 @@
     "telegraf",
     "otelcol",
     "logcli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Fluent Bit version",
+        "command": "fluent-bit --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "fluent-bit"
+      },
+      {
+        "name": "config",
+        "description": "Fluent Bit configuration",
+        "command": "cat /etc/fluent-bit/fluent-bit.conf 2>/dev/null | head -40 || cat fluent-bit.conf 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "plugins",
+        "description": "Input and output plugins available",
+        "command": "fluent-bit --help 2>/dev/null | grep -A15 'Inputs'",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "fluent-bit"
+      },
+      {
+        "name": "service",
+        "description": "Fluent Bit service state",
+        "command": "systemctl is-active fluent-bit 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

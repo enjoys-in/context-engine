@@ -107,15 +107,73 @@
           "short": "-t",
           "shorthand": "-t"
         }
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Inspect subcommand, such as active or stats",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
       "name": "control",
-      "description": "Send control commands to workers"
+      "description": "Send control commands to workers",
+      "options": [
+        {
+          "name": "--app",
+          "description": "Celery application to act on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--timeout",
+          "description": "How long to wait for replies",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--destination",
+          "description": "Only address these workers",
+          "type": "string",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        }
+      ]
     },
     {
       "name": "status",
-      "description": "Show which workers are online"
+      "description": "Show which workers are online",
+      "options": [
+        {
+          "name": "--app",
+          "description": "Celery application to act on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--timeout",
+          "description": "How long to wait for replies",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "purge",
@@ -155,7 +213,33 @@
     },
     {
       "name": "events",
-      "description": "Watch the event stream"
+      "description": "Watch the event stream",
+      "options": [
+        {
+          "name": "--app",
+          "description": "Celery application to act on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--dump",
+          "description": "Dump events rather than rendering the monitor",
+          "type": "string",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--frequency",
+          "description": "Screen refresh interval",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "result",
@@ -166,6 +250,30 @@
           "description": "Task identifier",
           "type": "string",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "--app",
+          "description": "Celery application to act on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--task",
+          "description": "Task name the id belongs to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--traceback",
+          "description": "Show the traceback for failures",
+          "type": "boolean",
+          "takesValue": false
         }
       ]
     }
@@ -231,5 +339,38 @@
     "rabbitmq",
     "python",
     "flower"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Celery version",
+        "command": "celery --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "celery"
+      },
+      {
+        "name": "app",
+        "description": "Celery application module in this project",
+        "command": "grep -rl 'Celery(' --include='*.py' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "broker",
+        "description": "Broker URL configured in the environment",
+        "command": "echo \"${CELERY_BROKER_URL:-${BROKER_URL:-unset}}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "workers",
+        "description": "Celery workers currently running",
+        "command": "ps -eo comm 2>/dev/null | grep -c celery",
+        "parser": "text",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

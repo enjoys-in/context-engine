@@ -167,6 +167,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "workflow",
+          "description": "Workflow to fetch",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -221,6 +229,14 @@
           "takesValue": false,
           "short": "-p",
           "shorthand": "-p"
+        }
+      ],
+      "args": [
+        {
+          "name": "workflow",
+          "description": "Workflow to read logs from",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -287,6 +303,14 @@
           "description": "Delete without waiting for cleanup",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "workflow",
+          "description": "Workflow to delete",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -415,6 +439,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "workflow",
+          "description": "Workflow to stop",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -469,6 +501,14 @@
           "takesValue": true,
           "short": "-o",
           "shorthand": "-o"
+        }
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Workflow manifest to lint",
+          "required": true,
+          "type": "file"
         }
       ]
     },
@@ -655,5 +695,49 @@
     "argocd",
     "tkn",
     "flux"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Argo Workflows CLI version",
+        "command": "argo version --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "argo"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "workflows",
+        "description": "Argo workflows in the active namespace",
+        "command": "argo list 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "argo"
+      },
+      {
+        "name": "templates",
+        "description": "Workflow templates available",
+        "command": "argo template list 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "argo"
+      }
+    ]
+  }
 }

@@ -104,43 +104,136 @@
       "name": "-File script.ps1",
       "description": "Run a PowerShell script file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "PowerShell script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-NoProfile",
+          "description": "Do not load the PowerShell profile",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-ExecutionPolicy",
+          "description": "Execution policy for this session",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-NonInteractive",
+          "description": "Do not present an interactive prompt",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-Command \"cmd\"",
       "description": "Execute a PowerShell command string",
       "args": [
-        "command"
+        {
+          "name": "command",
+          "description": "Command to run",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-NoProfile",
+          "description": "Do not load the PowerShell profile",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-NoLogo",
+          "description": "Hide the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-OutputFormat",
+          "description": "Output format: Text or XML",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-NoProfile",
       "description": "Start without loading any profile scripts",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-Command",
+          "description": "Command to run",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-File",
+          "description": "Script file to run",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-ExecutionPolicy Bypass",
       "description": "Run with bypassed execution policy",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-File",
+          "description": "Script file to run",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "-Command",
+          "description": "Command to run",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-EncodedCommand",
       "description": "Execute a Base64-encoded command string",
       "args": [
-        "encoded"
+        {
+          "name": "encoded",
+          "description": "Base64-encoded command to run",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-NoProfile",
+          "description": "Do not load the PowerShell profile",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-Interactive",
       "description": "Start interactive PowerShell session",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "-NoLogo",
+          "description": "Hide the startup banner",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "examples": [
@@ -155,5 +248,40 @@
     "cmd",
     "dotnet",
     "shell"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "PowerShell version",
+        "command": "pwsh --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pwsh"
+      },
+      {
+        "name": "profile",
+        "description": "PowerShell profile path",
+        "command": "pwsh -NoProfile -Command '$PROFILE' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pwsh"
+      },
+      {
+        "name": "modules",
+        "description": "PowerShell modules available",
+        "command": "pwsh -NoProfile -Command 'Get-Module -ListAvailable | Select-Object -First 20 -ExpandProperty Name' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "pwsh"
+      },
+      {
+        "name": "scripts",
+        "description": "PowerShell scripts in this project",
+        "command": "find . -maxdepth 2 -name '*.ps1' -o -name '*.psm1' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

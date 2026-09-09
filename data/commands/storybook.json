@@ -19,6 +19,34 @@
       "description": "Start Storybook in development mode",
       "examples": [
         "storybook dev -p 6006"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the dev server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--host",
+          "description": "Host the dev server binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--no-open",
+          "description": "Do not open a browser on start",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -26,6 +54,28 @@
       "description": "Build static Storybook",
       "examples": [
         "storybook build -o storybook-static"
+      ],
+      "options": [
+        {
+          "name": "--output-dir",
+          "description": "Directory for the static build",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--webpack-stats-json",
+          "description": "Emit webpack build statistics",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -33,6 +83,32 @@
       "description": "Initialize Storybook in a project",
       "examples": [
         "storybook init"
+      ],
+      "options": [
+        {
+          "name": "--type",
+          "description": "Framework to configure Storybook for",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--builder",
+          "description": "Builder to use: webpack5 or vite",
+          "type": "string",
+          "takesValue": true,
+          "short": "-b",
+          "shorthand": "-b"
+        },
+        {
+          "name": "--yes",
+          "description": "Accept the defaults without prompting",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
       ]
     },
     {
@@ -40,6 +116,22 @@
       "description": "Upgrade Storybook",
       "examples": [
         "storybook upgrade"
+      ],
+      "options": [
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--yes",
+          "description": "Accept the defaults without prompting",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
       ]
     },
     {
@@ -47,6 +139,16 @@
       "description": "Check for common issues",
       "examples": [
         "storybook doctor"
+      ],
+      "options": [
+        {
+          "name": "--config-dir",
+          "description": "Storybook config directory",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     }
   ],
@@ -88,5 +190,37 @@
     "webpack",
     "jest",
     "chromatic"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Storybook version",
+        "command": "storybook --version 2>/dev/null || npx storybook --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Storybook configuration",
+        "command": "cat .storybook/main.js 2>/dev/null || cat .storybook/main.ts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "stories",
+        "description": "Story files in this project",
+        "command": "find . -maxdepth 4 -name '*.stories.*' -not -path './node_modules/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

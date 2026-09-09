@@ -28,6 +28,14 @@
       "examples": [
         "node app.js",
         "node src/index.js"
+      ],
+      "options": [
+        {
+          "name": "--if-present",
+          "description": "Do nothing when the script is missing",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -44,6 +52,14 @@
       "examples": [
         "node -e \"console.log('hello')\"",
         "node -e \"process.versions\""
+      ],
+      "options": [
+        {
+          "name": "--input-type",
+          "description": "Treat the input as module or commonjs",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -137,5 +153,46 @@
     "fnm",
     "deno",
     "bun"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Node.js version",
+        "command": "node --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "npm_version",
+        "description": "npm version bundled with this Node",
+        "command": "npm --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "npm"
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "engines",
+        "description": "Node version this project requires",
+        "command": "grep -A5 '\"engines\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "version_file",
+        "description": "Node version pinned for this project",
+        "command": "cat .nvmrc 2>/dev/null || cat .node-version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

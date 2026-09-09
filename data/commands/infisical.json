@@ -20,6 +20,26 @@
       "examples": [
         "infisical login",
         "infisical login --domain https://app.infisical.com"
+      ],
+      "options": [
+        {
+          "name": "--method",
+          "description": "Authentication method to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--domain",
+          "description": "Self-hosted Infisical domain",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--plain",
+          "description": "Print the token without decoration",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,7 +47,8 @@
       "description": "Initialize project link",
       "examples": [
         "infisical init"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "run",
@@ -36,6 +57,34 @@
         "infisical run -- npm run dev",
         "infisical run --env=prod -- node server.js",
         "infisical run --path=/backend -- ./start.sh"
+      ],
+      "options": [
+        {
+          "name": "--env",
+          "description": "Environment slug to pull secrets from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--path",
+          "description": "Secret path to read from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--command",
+          "description": "Shell command to run",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--secret-overriding",
+          "description": "Allow personal overrides to win",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -48,6 +97,28 @@
         "infisical secrets get MY_SECRET",
         "infisical secrets delete MY_SECRET",
         "infisical secrets generate-example-env"
+      ],
+      "options": [
+        {
+          "name": "--env",
+          "description": "Environment slug to read",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--path",
+          "description": "Secret path to read from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--plain",
+          "description": "Print values only",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -57,6 +128,28 @@
         "infisical export",
         "infisical export --env=prod --format=json",
         "infisical export --format=dotenv > .env"
+      ],
+      "options": [
+        {
+          "name": "--env",
+          "description": "Environment slug to export",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        },
+        {
+          "name": "--format",
+          "description": "Output format: dotenv, json, csv or yaml",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--path",
+          "description": "Secret path to export",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -65,21 +158,24 @@
       "examples": [
         "infisical vault set-backend file",
         "infisical vault set-backend auto"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "user",
       "description": "User info",
       "examples": [
         "infisical user"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "reset",
       "description": "Reset local state",
       "examples": [
         "infisical reset"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -128,5 +224,32 @@
     "vault",
     "chamber",
     "sops"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Infisical CLI version",
+        "command": "infisical --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "infisical"
+      },
+      {
+        "name": "project",
+        "description": "Infisical project configuration",
+        "command": "cat .infisical.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "user",
+        "description": "Authenticated Infisical identity",
+        "command": "infisical user get 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "infisical"
+      }
+    ]
+  }
 }

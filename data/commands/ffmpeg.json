@@ -125,5 +125,40 @@
     "imagemagick",
     "sox",
     "vlc"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "FFmpeg version and build configuration",
+        "command": "ffmpeg -version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ffmpeg"
+      },
+      {
+        "name": "encoders",
+        "description": "Video and audio encoders available",
+        "command": "ffmpeg -hide_banner -encoders 2>/dev/null | head -30",
+        "parser": "table",
+        "cacheFor": 3600,
+        "requiresCmd": "ffmpeg"
+      },
+      {
+        "name": "hwaccels",
+        "description": "Hardware acceleration methods available",
+        "command": "ffmpeg -hide_banner -hwaccels 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "ffmpeg"
+      },
+      {
+        "name": "media_files",
+        "description": "Media files in this directory",
+        "command": "find . -maxdepth 2 -name '*.mp4' -o -name '*.mkv' -o -name '*.mov' -o -name '*.mp3' -o -name '*.wav' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

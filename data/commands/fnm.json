@@ -20,6 +20,14 @@
       "examples": [
         "fnm install 20",
         "fnm install --lts"
+      ],
+      "options": [
+        {
+          "name": "--lts",
+          "description": "Install the latest LTS release",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -28,6 +36,20 @@
       "examples": [
         "fnm use 20",
         "fnm use --lts"
+      ],
+      "options": [
+        {
+          "name": "--install-if-missing",
+          "description": "Install the version if it is not present",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--silent-if-unchanged",
+          "description": "Print nothing when already active",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -35,13 +57,28 @@
       "description": "List installed versions",
       "examples": [
         "fnm list"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "list-remote",
       "description": "List available versions",
       "examples": [
         "fnm list-remote"
+      ],
+      "options": [
+        {
+          "name": "--lts",
+          "description": "Only show LTS releases",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--sort",
+          "description": "Sort order: asc or desc",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -49,20 +86,42 @@
       "description": "Set the default version",
       "examples": [
         "fnm default 20"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "current",
       "description": "Show current version",
       "examples": [
         "fnm current"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "env",
       "description": "Print shell env setup",
       "examples": [
         "fnm env --use-on-cd"
+      ],
+      "options": [
+        {
+          "name": "--shell",
+          "description": "Shell syntax to emit",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--use-on-cd",
+          "description": "Emit code that switches version on directory change",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -70,7 +129,8 @@
       "description": "Uninstall a version",
       "examples": [
         "fnm uninstall 16"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -98,5 +158,40 @@
     "nvm",
     "volta",
     "node"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "fnm version",
+        "command": "fnm --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "fnm"
+      },
+      {
+        "name": "current",
+        "description": "Node version fnm has active",
+        "command": "fnm current 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "fnm"
+      },
+      {
+        "name": "installed",
+        "description": "Node versions fnm manages",
+        "command": "fnm list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "fnm"
+      },
+      {
+        "name": "version_file",
+        "description": "Node version pinned for this project",
+        "command": "cat .nvmrc 2>/dev/null || cat .node-version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

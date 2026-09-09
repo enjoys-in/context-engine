@@ -128,5 +128,31 @@
     "psql",
     "clickhouse-client",
     "sqlite-utils"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "DuckDB version",
+        "command": "duckdb --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "duckdb"
+      },
+      {
+        "name": "databases",
+        "description": "DuckDB database files here",
+        "command": "find . -maxdepth 2 -name '*.duckdb' -o -name '*.ddb' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "data_files",
+        "description": "Data files DuckDB can query directly",
+        "command": "find . -maxdepth 2 -name '*.parquet' -o -name '*.csv' -o -name '*.json' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -31,11 +31,35 @@
           "type": "string",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Overwrite an existing directory",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--to-dir",
+          "description": "Directory to generate into",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "run",
-      "description": "Run the project main function"
+      "description": "Run the project main function",
+      "options": [
+        {
+          "name": "--",
+          "description": "Pass the remaining arguments to the main function",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "repl",
@@ -65,19 +89,50 @@
           "type": "string",
           "required": false
         }
+      ],
+      "options": [
+        {
+          "name": "--only",
+          "description": "Only run this namespace or var",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--select",
+          "description": "Only run tests with this selector",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "uberjar",
-      "description": "Build a standalone jar including dependencies"
+      "description": "Build a standalone jar including dependencies",
+      "options": [
+        {
+          "name": "--trace",
+          "description": "Show the full stack trace on failure",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "jar",
-      "description": "Build a jar of the project classes"
+      "description": "Build a jar of the project classes",
+      "options": [
+        {
+          "name": "--trace",
+          "description": "Show the full stack trace on failure",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "install",
-      "description": "Install the artifact into the local repository"
+      "description": "Install the artifact into the local repository",
+      "options": []
     },
     {
       "name": "deploy",
@@ -88,6 +143,14 @@
           "description": "Repository name",
           "type": "string",
           "required": false
+        }
+      ],
+      "options": [
+        {
+          "name": "--sign-releases",
+          "description": "Sign the artifacts before deploying",
+          "type": "boolean",
+          "takesValue": false
         }
       ]
     },
@@ -105,15 +168,18 @@
     },
     {
       "name": "clean",
-      "description": "Remove the build outputs"
+      "description": "Remove the build outputs",
+      "options": []
     },
     {
       "name": "check",
-      "description": "Compile every namespace to surface warnings"
+      "description": "Compile every namespace to surface warnings",
+      "options": []
     },
     {
       "name": "update-in",
-      "description": "Modify the project map before running a task"
+      "description": "Modify the project map before running a task",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -171,5 +237,38 @@
     "clojure",
     "deps.edn",
     "mvn"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Leiningen and Clojure versions",
+        "command": "lein --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "lein"
+      },
+      {
+        "name": "project",
+        "description": "Leiningen project definition",
+        "command": "cat project.clj 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "profiles",
+        "description": "Leiningen user profiles",
+        "command": "cat ~/.lein/profiles.clj 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "java",
+        "description": "JVM Leiningen will run on",
+        "command": "java -version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

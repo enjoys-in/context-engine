@@ -110,41 +110,107 @@
       "name": "file.flow",
       "description": "Compile Flow9 program",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Flow source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose compiler output",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--js file.flow",
       "description": "Compile to JavaScript target",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Flow source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--jsmodule",
+          "description": "JavaScript module format to emit",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--esversion",
+          "description": "ECMAScript version to target",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--bytecode file.flow",
       "description": "Compile to bytecode",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Flow source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose compiler output",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--java file.flow",
       "description": "Compile to Java target",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Flow source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--javapackage",
+          "description": "Java package for the generated code",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--html file.flow",
       "description": "Compile and generate HTML wrapper",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Flow source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--jsmodule",
+          "description": "JavaScript module format to emit",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -157,5 +223,30 @@
     "node",
     "java",
     "typescript"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Flow9 compiler version",
+        "command": "flowc1 --version 2>/dev/null || flowc --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sources",
+        "description": "Flow sources in this project",
+        "command": "find . -maxdepth 3 -name '*.flow' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "flow_config",
+        "description": "Flow9 configuration",
+        "command": "cat flow.config 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

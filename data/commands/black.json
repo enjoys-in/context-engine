@@ -134,5 +134,38 @@
     "isort",
     "flake8",
     "autopep8"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Black version",
+        "command": "black --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "black"
+      },
+      {
+        "name": "config",
+        "description": "Black configuration in pyproject.toml",
+        "command": "grep -A12 '\\[tool.black\\]' pyproject.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "line_length",
+        "description": "Configured line length",
+        "command": "grep -A5 '\\[tool.black\\]' pyproject.toml 2>/dev/null | grep line-length",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active Python virtual environment",
+        "command": "echo \"${VIRTUAL_ENV:-none}\"",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

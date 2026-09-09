@@ -106,7 +106,12 @@
       "name": "run",
       "description": "Run an ECL program on a cluster",
       "args": [
-        "file.ecl"
+        {
+          "name": "file.ecl",
+          "description": "ECL query to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -127,7 +132,12 @@
       "name": "publish",
       "description": "Publish ECL query to a Roxie cluster",
       "args": [
-        "file.ecl"
+        {
+          "name": "file.ecl",
+          "description": "ECL query to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -148,7 +158,12 @@
       "name": "deploy",
       "description": "Deploy ECL workunit to target cluster",
       "args": [
-        "wuid"
+        {
+          "name": "wuid",
+          "description": "Workunit id to act on",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -163,7 +178,12 @@
       "name": "compile",
       "description": "Compile ECL code without running",
       "args": [
-        "file.ecl"
+        {
+          "name": "file.ecl",
+          "description": "ECL query to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -178,15 +198,40 @@
       "name": "status",
       "description": "Check status of a workunit",
       "args": [
-        "wuid"
+        {
+          "name": "wuid",
+          "description": "Workunit id to act on",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--server",
+          "description": "ECL server to query",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--username",
+          "description": "User to authenticate as",
+          "type": "string",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        }
+      ]
     },
     {
       "name": "results",
       "description": "Retrieve results from a completed workunit",
       "args": [
-        "wuid"
+        {
+          "name": "wuid",
+          "description": "Workunit id to act on",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -209,5 +254,31 @@
     "sql",
     "sparql",
     "hive"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ECL client tools version",
+        "command": "ecl --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ecl"
+      },
+      {
+        "name": "config",
+        "description": "ECL client configuration",
+        "command": "cat ~/.ecl/ecl.ini 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "sources",
+        "description": "ECL queries in this project",
+        "command": "find . -maxdepth 3 -name '*.ecl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

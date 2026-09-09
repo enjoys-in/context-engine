@@ -17,6 +17,26 @@
       "description": "Create a new Jekyll site",
       "examples": [
         "jekyll new myblog"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Initialise into a non-empty directory",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--blank",
+          "description": "Create an empty scaffold",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--skip-bundle",
+          "description": "Do not run bundle install",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -25,6 +45,42 @@
       "examples": [
         "jekyll build",
         "jekyll build --destination ./output"
+      ],
+      "options": [
+        {
+          "name": "--destination",
+          "description": "Directory to write the site to",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--drafts",
+          "description": "Include posts in _drafts",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--future",
+          "description": "Include posts dated in the future",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--incremental",
+          "description": "Rebuild only changed posts",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-I",
+          "shorthand": "-I"
+        },
+        {
+          "name": "--config",
+          "description": "Config files to read",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -33,6 +89,46 @@
       "examples": [
         "jekyll serve",
         "jekyll serve --livereload"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-P",
+          "shorthand": "-P"
+        },
+        {
+          "name": "--host",
+          "description": "Host the server binds to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-H",
+          "shorthand": "-H"
+        },
+        {
+          "name": "--livereload",
+          "description": "Reload the browser on change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--drafts",
+          "description": "Include posts in _drafts",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--detach",
+          "description": "Run the server in the background",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-B",
+          "shorthand": "-B"
+        }
       ]
     },
     {
@@ -40,6 +136,14 @@
       "description": "Check for issues",
       "examples": [
         "jekyll doctor"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Config files to read",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -47,6 +151,14 @@
       "description": "Clean the build output",
       "examples": [
         "jekyll clean"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Config files to read",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -106,5 +218,44 @@
     "gatsby",
     "eleventy",
     "bundler"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Jekyll version",
+        "command": "jekyll --version 2>/dev/null || bundle exec jekyll --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Jekyll site configuration",
+        "command": "cat _config.yml 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "gemfile",
+        "description": "Ruby dependencies for this site",
+        "command": "cat Gemfile 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "posts",
+        "description": "Posts in this Jekyll site",
+        "command": "ls _posts 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "collections",
+        "description": "Jekyll collections declared",
+        "command": "grep -A10 '^collections:' _config.yml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

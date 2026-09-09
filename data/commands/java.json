@@ -156,5 +156,45 @@
     "jpackage",
     "jshell",
     "jar"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Java runtime version",
+        "command": "java -version 2>&1 | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "java"
+      },
+      {
+        "name": "home",
+        "description": "JAVA_HOME in effect",
+        "command": "echo \"${JAVA_HOME:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "installed",
+        "description": "JDKs installed on this machine",
+        "command": "ls /usr/lib/jvm 2>/dev/null || /usr/libexec/java_home -V 2>&1 | head -10",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "build_files",
+        "description": "Java build files in this project",
+        "command": "ls pom.xml build.gradle build.gradle.kts 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "jars",
+        "description": "Runnable JARs in this project",
+        "command": "find . -maxdepth 3 -name '*.jar' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

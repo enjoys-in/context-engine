@@ -430,5 +430,38 @@
     "scalac",
     "coursier",
     "mill"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Scala version",
+        "command": "scala -version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "scala"
+      },
+      {
+        "name": "sbt_version",
+        "description": "sbt version for this build",
+        "command": "cat project/build.properties 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "build",
+        "description": "sbt build definition",
+        "command": "cat build.sbt 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "sources",
+        "description": "Scala sources",
+        "command": "find . -maxdepth 3 -name '*.scala' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

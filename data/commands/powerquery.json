@@ -111,7 +111,12 @@
       "name": "evaluate",
       "description": "Evaluate a Power Query M expression",
       "args": [
-        "expression"
+        {
+          "name": "expression",
+          "description": "Expression to evaluate",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -126,7 +131,12 @@
       "name": "format",
       "description": "Format Power Query M code",
       "args": [
-        "file.pq"
+        {
+          "name": "file.pq",
+          "description": "Power Query M script to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -147,7 +157,12 @@
       "name": "extract",
       "description": "Extract Power Query M code from PBIX file",
       "args": [
-        "file.pbix"
+        {
+          "name": "file.pbix",
+          "description": "Power BI report to extract",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -162,7 +177,12 @@
       "name": "lint",
       "description": "Check Power Query M code for common issues",
       "args": [
-        "file.pq"
+        {
+          "name": "file.pq",
+          "description": "Power Query M script to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -177,7 +197,12 @@
       "name": "compile",
       "description": "Compile Power Query M expression to mashup document",
       "args": [
-        "file.pq"
+        {
+          "name": "file.pq",
+          "description": "Power Query M script to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -199,5 +224,31 @@
     "msdax",
     "powershell",
     "sql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pbi-tools version",
+        "command": "pbi-tools info 2>/dev/null | head -5",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pbi-tools"
+      },
+      {
+        "name": "reports",
+        "description": "Power BI reports in this directory",
+        "command": "find . -maxdepth 2 -name '*.pbix' -o -maxdepth 2 -name '*.pbit' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "m_queries",
+        "description": "Power Query M scripts in this project",
+        "command": "find . -maxdepth 2 -name '*.m' -o -name '*.pq' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

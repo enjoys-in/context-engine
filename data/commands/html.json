@@ -105,7 +105,12 @@
       "name": "validate",
       "description": "Validate HTML files for standards compliance",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "HTML documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -126,7 +131,12 @@
       "name": "lint",
       "description": "Lint HTML files for common errors",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "HTML documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -147,7 +157,12 @@
       "name": "format",
       "description": "Format HTML files with Prettier",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "HTML documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -168,7 +183,12 @@
       "name": "minify",
       "description": "Minify HTML files using html-minifier-terser",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "HTML document to minify",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -189,7 +209,12 @@
       "name": "serve",
       "description": "Serve HTML files with a local dev server",
       "args": [
-        "directory"
+        {
+          "name": "directory",
+          "description": "Directory to serve",
+          "type": "directory",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -210,7 +235,14 @@
       "name": "init",
       "description": "Initialize html-validate configuration",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--config",
+          "description": "Path for the generated configuration",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -225,5 +257,30 @@
     "css",
     "javascript",
     "eslint"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "html-validate version",
+        "command": "html-validate --version 2>/dev/null || npx html-validate --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "html-validate configuration",
+        "command": "cat .htmlvalidate.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "documents",
+        "description": "HTML documents in this project",
+        "command": "find . -maxdepth 3 -name '*.html' -not -path './node_modules/*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

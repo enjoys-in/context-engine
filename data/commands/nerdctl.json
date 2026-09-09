@@ -68,6 +68,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -158,6 +166,14 @@
           "short": "-q",
           "shorthand": "-q"
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -169,6 +185,14 @@
           "description": "Platform to push",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -192,6 +216,20 @@
           "short": "-t",
           "shorthand": "-t"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to exec into",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "command",
+          "description": "Command to run",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -211,6 +249,14 @@
           "description": "Lines to show from the end",
           "type": "string",
           "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to act on",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -240,6 +286,14 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "args": [
+        {
+          "name": "container",
+          "description": "Container to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -254,19 +308,43 @@
           "short": "-f",
           "shorthand": "-f"
         }
+      ],
+      "args": [
+        {
+          "name": "image",
+          "description": "Image reference to act on",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
       "name": "stats",
-      "description": "Show a live resource usage stream"
+      "description": "Show a live resource usage stream",
+      "options": [
+        {
+          "name": "--no-stream",
+          "description": "Print a single sample rather than streaming",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--format",
+          "description": "Output format as a Go template",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "namespace",
-      "description": "Manage containerd namespaces"
+      "description": "Manage containerd namespaces",
+      "options": []
     },
     {
       "name": "system",
-      "description": "Show system-wide information"
+      "description": "Show system-wide information",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -337,5 +415,40 @@
     "ctr",
     "crictl",
     "containerd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "nerdctl and containerd versions",
+        "command": "nerdctl version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "nerdctl"
+      },
+      {
+        "name": "containers",
+        "description": "Containers nerdctl can see",
+        "command": "nerdctl ps -a --format '{{.Names}}\\t{{.Status}}' 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "nerdctl"
+      },
+      {
+        "name": "images",
+        "description": "Images in the containerd store",
+        "command": "nerdctl images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "nerdctl"
+      },
+      {
+        "name": "namespace",
+        "description": "containerd namespace nerdctl is using",
+        "command": "echo \"${CONTAINERD_NAMESPACE:-default}\"",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

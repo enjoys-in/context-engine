@@ -24,7 +24,8 @@
           "type": "path",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "deny",
@@ -36,15 +37,25 @@
           "type": "path",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "reload",
-      "description": "Reload the current environment"
+      "description": "Reload the current environment",
+      "options": []
     },
     {
       "name": "status",
-      "description": "Show the loader state and configuration"
+      "description": "Show the loader state and configuration",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "edit",
@@ -56,7 +67,8 @@
           "type": "directory",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "exec",
@@ -68,7 +80,8 @@
           "type": "directory",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "export",
@@ -80,7 +93,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "hook",
@@ -92,15 +106,18 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "prune",
-      "description": "Remove stale allow entries"
+      "description": "Remove stale allow entries",
+      "options": []
     },
     {
       "name": "version",
-      "description": "Show the installed version"
+      "description": "Show the installed version",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -137,5 +154,39 @@
     "nix",
     "dotenv",
     "starship"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "direnv version",
+        "command": "direnv --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "direnv"
+      },
+      {
+        "name": "envrc",
+        "description": "direnv configuration for this directory",
+        "command": "cat .envrc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "status",
+        "description": "Whether this directory's .envrc is allowed",
+        "command": "direnv status 2>/dev/null | head -15",
+        "parser": "keyvalue",
+        "cacheFor": 60,
+        "requiresCmd": "direnv"
+      },
+      {
+        "name": "allowed",
+        "description": "direnv allow records on this machine",
+        "command": "ls ~/.local/share/direnv/allow 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

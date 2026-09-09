@@ -158,5 +158,31 @@
     "file",
     "exiftool",
     "objdump"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "binwalk version",
+        "command": "binwalk --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "binwalk"
+      },
+      {
+        "name": "firmware_images",
+        "description": "Firmware images binwalk can analyse",
+        "command": "find . -maxdepth 2 -name '*.bin' -o -maxdepth 2 -name '*.img' -o -maxdepth 2 -name '*.fw' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "extractions",
+        "description": "Previous binwalk extraction directories",
+        "command": "ls -d _*.extracted 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

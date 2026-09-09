@@ -25,7 +25,8 @@
           "type": "directory",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "query",
@@ -121,7 +122,8 @@
     },
     {
       "name": "edit",
-      "description": "Interactively edit the database"
+      "description": "Interactively edit the database",
+      "options": []
     },
     {
       "name": "import",
@@ -189,5 +191,32 @@
     "fzf",
     "autojump",
     "fd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "zoxide version",
+        "command": "zoxide --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "zoxide"
+      },
+      {
+        "name": "top_dirs",
+        "description": "Most-visited directories zoxide tracks",
+        "command": "zoxide query --list --score 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "zoxide"
+      },
+      {
+        "name": "data_dir",
+        "description": "zoxide database location",
+        "command": "echo \"${_ZO_DATA_DIR:-$HOME/.local/share/zoxide}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

@@ -68,5 +68,31 @@
     "sops",
     "openssl",
     "ssh"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "age version",
+        "command": "age --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "age"
+      },
+      {
+        "name": "recipients",
+        "description": "age recipient files present",
+        "command": "ls ~/.age 2>/dev/null; ls *.age-recipients 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "encrypted_files",
+        "description": "age-encrypted files in this project",
+        "command": "find . -maxdepth 3 -name '*.age' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

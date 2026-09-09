@@ -92,5 +92,24 @@
     "ssh",
     "curl",
     "socat"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "telnet client version",
+        "command": "telnet --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "telnet"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

@@ -136,6 +136,40 @@
       "description": "Lint source files",
       "examples": [
         "deno lint"
+      ],
+      "options": [
+        {
+          "name": "--fix",
+          "description": "Apply fixes that can be applied automatically",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--rules",
+          "description": "List the available lint rules",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--ignore",
+          "description": "Paths to skip",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "files",
+          "description": "Files to lint",
+          "required": false,
+          "type": "path"
+        }
       ]
     },
     {
@@ -152,6 +186,20 @@
       "examples": [
         "deno task dev",
         "deno task build"
+      ],
+      "options": [
+        {
+          "name": "--cwd",
+          "description": "Directory to run the task in",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--filter",
+          "description": "Only run tasks in matching workspace members",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -160,6 +208,20 @@
       "examples": [
         "deno init",
         "deno init my_project"
+      ],
+      "options": [
+        {
+          "name": "--lib",
+          "description": "Scaffold a library rather than an app",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--serve",
+          "description": "Scaffold an HTTP server project",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -192,6 +254,26 @@
       "description": "Run benchmarks",
       "examples": [
         "deno bench"
+      ],
+      "options": [
+        {
+          "name": "--filter",
+          "description": "Only run benchmarks matching this pattern",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--no-run",
+          "description": "Type-check without running",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -199,6 +281,20 @@
       "description": "Type-check without running",
       "examples": [
         "deno check main.ts"
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Also type-check remote modules",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--doc",
+          "description": "Also type-check code in doc comments",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -215,6 +311,20 @@
       "examples": [
         "deno info",
         "deno info main.ts"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--location",
+          "description": "Base location to resolve against",
+          "type": "url",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -230,6 +340,20 @@
       ],
       "examples": [
         "deno cache deps.ts"
+      ],
+      "options": [
+        {
+          "name": "--reload",
+          "description": "Ignore the cache and refetch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--frozen",
+          "description": "Fail if the lockfile would change",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     }
   ],
@@ -270,5 +394,39 @@
     "bun",
     "npm",
     "tsx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Deno version",
+        "command": "deno --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "deno"
+      },
+      {
+        "name": "config",
+        "description": "Deno project configuration",
+        "command": "cat deno.json 2>/dev/null || cat deno.jsonc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "tasks",
+        "description": "Deno tasks declared",
+        "command": "deno task 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "deno"
+      },
+      {
+        "name": "import_map",
+        "description": "Import map in effect",
+        "command": "grep -A15 '\"imports\"' deno.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

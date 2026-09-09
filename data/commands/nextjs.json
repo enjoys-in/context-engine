@@ -204,12 +204,26 @@
     {
       "name": "next experimental-compile",
       "description": "Runs the compilation step of next build without generating static pages.",
-      "options": []
+      "options": [
+        {
+          "name": "--build-mode",
+          "description": "Build mode to compile in",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "next experimental-generate",
       "description": "Runs the static generation step of next build after experimental-compile.",
-      "options": []
+      "options": [
+        {
+          "name": "--build-mode",
+          "description": "Build mode to generate in",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "npx create-next-app@latest",
@@ -330,5 +344,44 @@
     "react",
     "vercel",
     "turbo"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Next.js version",
+        "command": "next --version 2>/dev/null || npx next --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "Next.js configuration",
+        "command": "cat next.config.js 2>/dev/null || cat next.config.mjs 2>/dev/null || cat next.config.ts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "router",
+        "description": "Router layout in use (app or pages)",
+        "command": "ls -d app src/app pages src/pages 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "routes",
+        "description": "Route entry points",
+        "command": "find app src/app pages src/pages -maxdepth 3 -name 'page.tsx' -o -maxdepth 3 -name 'page.js' -o -maxdepth 3 -name 'index.tsx' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

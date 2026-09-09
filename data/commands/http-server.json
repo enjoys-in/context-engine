@@ -164,5 +164,30 @@
     "caddy",
     "python",
     "vite"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "http-server version",
+        "command": "http-server --version 2>/dev/null || npx http-server --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "index_files",
+        "description": "Entry documents http-server would serve",
+        "command": "ls index.html index.htm 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "listening",
+        "description": "Ports already in use on this host",
+        "command": "ss -tln 2>/dev/null | head -15 || netstat -an 2>/dev/null | grep LISTEN | head -15",
+        "parser": "table",
+        "cacheFor": 30
+      }
+    ]
+  }
 }

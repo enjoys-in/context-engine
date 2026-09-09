@@ -86,6 +86,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "subcommand",
+          "description": "Edit subcommand, such as set or add",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -212,7 +220,8 @@
       "description": "Generate shell completion",
       "examples": [
         "source <(kustomize completion bash)"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "version",
@@ -273,5 +282,31 @@
     "helm",
     "flux",
     "argocd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kustomize version",
+        "command": "kustomize version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kustomize"
+      },
+      {
+        "name": "kustomizations",
+        "description": "Kustomization files in this project",
+        "command": "find . -maxdepth 4 -name 'kustomization.yaml' -o -maxdepth 4 -name 'kustomization.yml' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "bases",
+        "description": "Bases and overlays referenced",
+        "command": "grep -A10 '^resources:' kustomization.yaml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

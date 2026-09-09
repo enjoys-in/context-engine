@@ -226,7 +226,8 @@
       ],
       "examples": [
         "go mod init github.com/user/myproject"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "mod tidy",
@@ -273,6 +274,14 @@
           "description": "Emit JSON",
           "type": "boolean",
           "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "package",
+          "description": "Modules to download",
+          "required": false,
+          "type": "string"
         }
       ]
     },
@@ -584,7 +593,8 @@
       ],
       "examples": [
         "go work init ./mod1 ./mod2"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "work use",
@@ -622,5 +632,47 @@
     "gore",
     "air",
     "delve"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Go toolchain version",
+        "command": "go version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "module",
+        "description": "Go module path and Go directive",
+        "command": "head -5 go.mod 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "env",
+        "description": "Key Go environment settings",
+        "command": "go env GOPATH GOROOT GOOS GOARCH GOMODCACHE 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "packages",
+        "description": "Packages in this module",
+        "command": "go list ./... 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "main_packages",
+        "description": "Main packages that produce binaries",
+        "command": "grep -rl 'func main()' --include='*.go' . 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

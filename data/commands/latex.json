@@ -65,5 +65,37 @@
     "bibtex",
     "latexmk",
     "dvipdfm"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "TeX distribution and version",
+        "command": "latex --version 2>/dev/null | head -2 || pdflatex --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "documents",
+        "description": "LaTeX sources in this project",
+        "command": "find . -maxdepth 3 -name '*.tex' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "bibliography",
+        "description": "Bibliography files present",
+        "command": "find . -maxdepth 2 -name '*.bib' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "engines",
+        "description": "TeX engines available",
+        "command": "which pdflatex xelatex lualatex latexmk 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

@@ -103,7 +103,12 @@
       "name": "lint",
       "description": "Lint markdown files for style violations",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "Markdown documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -130,7 +135,12 @@
       "name": "fix",
       "description": "Automatically fix markdown lint violations",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "Markdown documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -145,7 +155,12 @@
       "name": "convert",
       "description": "Convert markdown to other formats using pandoc",
       "args": [
-        "input"
+        {
+          "name": "input",
+          "description": "Markdown document to convert",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -172,7 +187,12 @@
       "name": "render",
       "description": "Render markdown to HTML with markdown-it",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Markdown document to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -193,7 +213,12 @@
       "name": "toc",
       "description": "Generate table of contents for markdown file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Markdown document to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -214,7 +239,12 @@
       "name": "check-links",
       "description": "Check for broken links in markdown files",
       "args": [
-        "files"
+        {
+          "name": "files",
+          "description": "Markdown documents to process",
+          "type": "path",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -244,5 +274,37 @@
     "pandoc",
     "html",
     "mdx"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "markdownlint version",
+        "command": "markdownlint --version 2>/dev/null || npx markdownlint --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "markdownlint rule configuration",
+        "command": "cat .markdownlint.json 2>/dev/null || cat .markdownlint.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "documents",
+        "description": "Markdown documents in this project",
+        "command": "find . -maxdepth 3 -name '*.md' -not -path './node_modules/*' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "pandoc",
+        "description": "pandoc available for conversion",
+        "command": "pandoc --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

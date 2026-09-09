@@ -149,5 +149,39 @@
     "poetry",
     "hatch",
     "build"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "twine version",
+        "command": "twine --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "twine"
+      },
+      {
+        "name": "distributions",
+        "description": "Distributions ready to upload",
+        "command": "ls dist 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "repositories",
+        "description": "Package repositories configured",
+        "command": "grep -o '^\\[.*\\]' ~/.pypirc 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "check",
+        "description": "Whether built distributions pass metadata checks",
+        "command": "twine check dist/* 2>/dev/null | tail -5",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "twine"
+      }
+    ]
+  }
 }

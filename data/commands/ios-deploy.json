@@ -138,5 +138,39 @@
     "simctl",
     "xcodebuild",
     "fastlane"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ios-deploy version",
+        "command": "ios-deploy --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ios-deploy"
+      },
+      {
+        "name": "devices",
+        "description": "Connected iOS devices",
+        "command": "ios-deploy -c 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "ios-deploy"
+      },
+      {
+        "name": "apps",
+        "description": "iOS app bundles built in this project",
+        "command": "find . -maxdepth 4 -name '*.app' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "xcode",
+        "description": "Active Xcode toolchain",
+        "command": "xcode-select -p 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

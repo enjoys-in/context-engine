@@ -94,5 +94,37 @@
     "rollup",
     "swc",
     "vite"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "esbuild version",
+        "command": "esbuild --version 2>/dev/null || npx esbuild --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "esbuild build script in this project",
+        "command": "find . -maxdepth 2 -name 'esbuild.config.*' -o -maxdepth 2 -name 'build.mjs' -o -maxdepth 2 -name 'build.js' 2>/dev/null | head -5",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

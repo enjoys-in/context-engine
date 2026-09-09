@@ -70,5 +70,40 @@
     "lsof",
     "ip",
     "nmap"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "netstat version",
+        "command": "netstat --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "netstat"
+      },
+      {
+        "name": "listening",
+        "description": "Ports listening on this host",
+        "command": "ss -tlnp 2>/dev/null | head -20 || netstat -an 2>/dev/null | grep LISTEN | head -20",
+        "parser": "table",
+        "cacheFor": 30
+      },
+      {
+        "name": "routes",
+        "description": "Routing table",
+        "command": "netstat -rn 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "netstat"
+      },
+      {
+        "name": "statistics",
+        "description": "Per-protocol network statistics",
+        "command": "netstat -s 2>/dev/null | head -20",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "netstat"
+      }
+    ]
+  }
 }

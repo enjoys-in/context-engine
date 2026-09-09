@@ -22,6 +22,46 @@
         "tilt up --stream",
         "tilt up --port 10350",
         "tilt up -- --my-flag"
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Tiltfile to run",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--port",
+          "description": "Port for the web UI",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--host",
+          "description": "Host the web UI binds to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--stream",
+          "description": "Stream logs to stdout rather than opening the UI",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--namespace",
+          "description": "Kubernetes namespace to deploy into",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--legacy",
+          "description": "Use the terminal UI",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -30,6 +70,28 @@
       "examples": [
         "tilt down",
         "tilt down --delete-namespaces"
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Tiltfile to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--delete-namespaces",
+          "description": "Delete namespaces Tilt created",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--namespace",
+          "description": "Kubernetes namespace to operate in",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -38,6 +100,28 @@
       "examples": [
         "tilt ci",
         "tilt ci --timeout 10m"
+      ],
+      "options": [
+        {
+          "name": "--file",
+          "description": "Tiltfile to run",
+          "type": "file",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--timeout",
+          "description": "How long to wait before failing",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--output-snapshot-on-exit",
+          "description": "Write a snapshot when the run ends",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -45,6 +129,20 @@
       "description": "Start demo project",
       "examples": [
         "tilt demo"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port for the web UI",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--tmpdir",
+          "description": "Temporary directory for the demo project",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -53,6 +151,32 @@
       "examples": [
         "tilt get uiresources",
         "tilt get cmd"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json, yaml or name",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--watch",
+          "description": "Watch for changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to fetch",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -61,6 +185,28 @@
       "examples": [
         "tilt logs",
         "tilt logs my-resource"
+      ],
+      "options": [
+        {
+          "name": "--follow",
+          "description": "Stream new log lines",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--resource",
+          "description": "Only show logs for this resource",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--since",
+          "description": "Only logs newer than this duration",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -68,6 +214,14 @@
       "description": "Trigger an update",
       "examples": [
         "tilt trigger my-resource"
+      ],
+      "options": [
+        {
+          "name": "--build",
+          "description": "Force a rebuild rather than just a redeploy",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -75,6 +229,28 @@
       "description": "Enable a resource",
       "examples": [
         "tilt enable my-resource"
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Enable every resource",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--only",
+          "description": "Enable only the named resources and disable the rest",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "resource",
+          "description": "Resources to enable",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -82,6 +258,22 @@
       "description": "Disable a resource",
       "examples": [
         "tilt disable my-resource"
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Disable every resource",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ],
+      "args": [
+        {
+          "name": "resource",
+          "description": "Resources to disable",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -89,6 +281,24 @@
       "description": "Describe a resource",
       "examples": [
         "tilt describe uiresource/my-resource"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
+      ],
+      "args": [
+        {
+          "name": "kind",
+          "description": "Resource kind to describe",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -96,6 +306,16 @@
       "description": "Diagnose issues",
       "examples": [
         "tilt doctor"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -104,6 +324,16 @@
       "examples": [
         "tilt dump engine",
         "tilt dump cli"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -111,6 +341,16 @@
       "description": "Show version",
       "examples": [
         "tilt version"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "Output format: json or yaml",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     }
   ],
@@ -161,5 +401,48 @@
     "kubectl",
     "docker",
     "devspace"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Tilt version",
+        "command": "tilt version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "tilt"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "tiltfile",
+        "description": "Tiltfile for this project",
+        "command": "cat Tiltfile 2>/dev/null | head -60",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "resources",
+        "description": "Resources Tilt is managing",
+        "command": "tilt get uiresources -o name 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "tilt"
+      }
+    ]
+  }
 }

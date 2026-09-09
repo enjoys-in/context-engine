@@ -80,6 +80,20 @@
       ],
       "examples": [
         "yarn remove lodash"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -114,6 +128,20 @@
       "examples": [
         "yarn run build",
         "yarn run dev"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -143,6 +171,20 @@
       "description": "Check for outdated packages",
       "examples": [
         "yarn outdated"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -150,6 +192,26 @@
       "description": "Clean cache",
       "examples": [
         "yarn cache clean"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--mirror",
+          "description": "Also clean the local mirror",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -166,6 +228,32 @@
       "examples": [
         "yarn link",
         "yarn link my-package"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--all",
+          "description": "Link every workspace",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--private",
+          "description": "Include private packages",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -181,6 +269,36 @@
       ],
       "examples": [
         "yarn dlx create-react-app myapp"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--package",
+          "description": "Package to run the binary from",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--quiet",
+          "description": "Suppress output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-q",
+          "shorthand": "-q"
+        }
       ]
     },
     {
@@ -188,6 +306,20 @@
       "description": "Run command in workspace",
       "examples": [
         "yarn workspace @myapp/server add express"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -195,6 +327,52 @@
       "description": "Run command in all workspaces",
       "examples": [
         "yarn workspaces foreach run build"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit newline-delimited JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--cwd",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--parallel",
+          "description": "Run in every workspace at once",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--topological",
+          "description": "Respect dependency order",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--all",
+          "description": "Include every workspace",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-A",
+          "shorthand": "-A"
+        },
+        {
+          "name": "--jobs",
+          "description": "Number of concurrent jobs",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-j",
+          "shorthand": "-j"
+        }
       ]
     }
   ],
@@ -226,5 +404,45 @@
     "pnpm",
     "npx",
     "node"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Yarn version",
+        "command": "yarn --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "yarn"
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "workspaces",
+        "description": "Yarn workspace globs declared",
+        "command": "grep -A8 '\"workspaces\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Yarn configuration for this project",
+        "command": "cat .yarnrc.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

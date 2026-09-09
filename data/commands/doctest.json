@@ -114,33 +114,81 @@
       "name": "-v file.py",
       "description": "Run doctests verbosely showing each test case",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Python module or text file containing doctests",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--option",
+          "description": "Set a doctest option flag",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "file.txt",
       "description": "Run doctests from a plain text file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Python module or text file containing doctests",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "file.py",
       "description": "Run doctests in a Python module (quiet mode)",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Python module or text file containing doctests",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-v",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-v module.py",
       "description": "Run doctests with verbose output",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Python module or text file containing doctests",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--option",
+          "description": "Set a doctest option flag",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -154,5 +202,31 @@
     "pytest",
     "python",
     "unittest"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Python version running doctest",
+        "command": "python -m doctest --help 2>/dev/null | head -1; python --version 2>&1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "python"
+      },
+      {
+        "name": "modules",
+        "description": "Python modules containing doctests",
+        "command": "grep -rl '>>>' --include='*.py' . 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "test_config",
+        "description": "Test configuration that may enable doctests",
+        "command": "grep -l 'doctest' pytest.ini setup.cfg pyproject.toml tox.ini 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

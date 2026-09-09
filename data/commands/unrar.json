@@ -60,6 +60,32 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-o+",
+          "description": "Overwrite existing files",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-y",
+          "description": "Assume yes to all prompts",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-inul",
+          "description": "Suppress all output",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -72,6 +98,20 @@
           "type": "file",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-v",
+          "description": "Verbose listing",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -83,6 +123,14 @@
           "description": "Archive to verify",
           "type": "file",
           "required": true
+        }
+      ],
+      "options": [
+        {
+          "name": "-p",
+          "description": "Password to use",
+          "type": "string",
+          "takesValue": true
         }
       ]
     }
@@ -119,5 +167,24 @@
     "7z",
     "unzip",
     "tar"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "unrar version",
+        "command": "unrar 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "unrar"
+      },
+      {
+        "name": "archives",
+        "description": "RAR archives in this directory",
+        "command": "find . -maxdepth 2 -name '*.rar' -o -name '*.r00' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

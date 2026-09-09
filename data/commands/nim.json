@@ -19,6 +19,40 @@
       "description": "Compile to C and build",
       "examples": [
         "nim c src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "-d",
+          "description": "Define a conditional symbol",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--opt",
+          "description": "Optimisation target: none, speed or size",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--out",
+          "description": "Path for the output binary",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--threads",
+          "description": "Enable thread support",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-r",
+          "description": "Run the binary after compiling",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -26,6 +60,28 @@
       "description": "Compile to C++",
       "examples": [
         "nim cpp src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "-d",
+          "description": "Define a conditional symbol",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--opt",
+          "description": "Optimisation target: none, speed or size",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--out",
+          "description": "Path for the output binary",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -33,6 +89,22 @@
       "description": "Compile to JavaScript",
       "examples": [
         "nim js src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "-d",
+          "description": "Define a conditional symbol",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--out",
+          "description": "Path for the output file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -40,6 +112,20 @@
       "description": "Compile and run",
       "examples": [
         "nim r src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "-d",
+          "description": "Define a conditional symbol",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--opt",
+          "description": "Optimisation target: none, speed or size",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -47,6 +133,14 @@
       "description": "Check for errors without compiling",
       "examples": [
         "nim check src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "--hints",
+          "description": "Whether to print hints",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -54,6 +148,26 @@
       "description": "Generate documentation",
       "examples": [
         "nim doc src/main.nim"
+      ],
+      "options": [
+        {
+          "name": "--project",
+          "description": "Document the whole project",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--outdir",
+          "description": "Directory to write the docs to",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--index",
+          "description": "Generate an index",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -101,5 +215,38 @@
     "gcc",
     "zig",
     "crystal"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Nim compiler version",
+        "command": "nim --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nim"
+      },
+      {
+        "name": "project",
+        "description": "Nimble package definition",
+        "command": "cat *.nimble 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "config",
+        "description": "Nim project configuration",
+        "command": "cat nim.cfg 2>/dev/null || cat config.nims 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "sources",
+        "description": "Nim sources",
+        "command": "find . -maxdepth 3 -name '*.nim' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

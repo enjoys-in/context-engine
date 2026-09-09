@@ -131,7 +131,27 @@
     },
     {
       "name": "configure",
-      "description": "Show or change configuration options"
+      "description": "Show or change configuration options",
+      "options": [
+        {
+          "name": "--prefix",
+          "description": "Installation prefix",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--buildtype",
+          "description": "Build type to configure",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-D",
+          "description": "Set a project option",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "introspect",
@@ -171,15 +191,40 @@
     },
     {
       "name": "wrap",
-      "description": "Manage subproject wraps"
+      "description": "Manage subproject wraps",
+      "options": []
     },
     {
       "name": "subprojects",
-      "description": "Operate on all subprojects"
+      "description": "Operate on all subprojects",
+      "options": [
+        {
+          "name": "--num-processes",
+          "description": "Number of parallel processes",
+          "type": "integer",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "devenv",
-      "description": "Run a command in the build environment"
+      "description": "Run a command in the build environment",
+      "options": [
+        {
+          "name": "--workdir",
+          "description": "Directory to run in",
+          "type": "directory",
+          "takesValue": true,
+          "short": "-w",
+          "shorthand": "-w"
+        },
+        {
+          "name": "--dump",
+          "description": "Print the environment rather than starting a shell",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -221,5 +266,38 @@
     "cmake",
     "make",
     "pkg-config"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Meson version",
+        "command": "meson --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "meson"
+      },
+      {
+        "name": "project",
+        "description": "Meson project definition",
+        "command": "cat meson.build 2>/dev/null | head -30",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "build_dirs",
+        "description": "Configured Meson build directories",
+        "command": "ls -d build builddir 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "ninja",
+        "description": "Ninja backend available",
+        "command": "ninja --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

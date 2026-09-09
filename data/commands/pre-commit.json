@@ -19,6 +19,36 @@
       "description": "Install hook scripts",
       "examples": [
         "pre-commit install"
+      ],
+      "options": [
+        {
+          "name": "--hook-type",
+          "description": "Hook type to install",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        },
+        {
+          "name": "--overwrite",
+          "description": "Replace existing hooks",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--install-hooks",
+          "description": "Install the hook environments now",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--allow-missing-config",
+          "description": "Do not fail when the config is absent",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,6 +57,42 @@
       "examples": [
         "pre-commit run",
         "pre-commit run --all-files"
+      ],
+      "options": [
+        {
+          "name": "--all-files",
+          "description": "Run against every tracked file",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--files",
+          "description": "Only run against these files",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--hook-stage",
+          "description": "Stage to run hooks for",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--show-diff-on-failure",
+          "description": "Print the diff when a hook changes files",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
       ]
     },
     {
@@ -34,6 +100,26 @@
       "description": "Update hooks to latest version",
       "examples": [
         "pre-commit autoupdate"
+      ],
+      "options": [
+        {
+          "name": "--bleeding-edge",
+          "description": "Update to the tip of the default branch",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--freeze",
+          "description": "Pin to the resolved commit hash",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--repo",
+          "description": "Only update this repository",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -41,27 +127,40 @@
       "description": "Produce a sample config",
       "examples": [
         "pre-commit sample-config"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "validate-config",
       "description": "Validate config file",
       "examples": [
         "pre-commit validate-config .pre-commit-config.yaml"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "clean",
       "description": "Clean cached pre-commit files",
       "examples": [
         "pre-commit clean"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "uninstall",
       "description": "Uninstall hooks",
       "examples": [
         "pre-commit uninstall"
+      ],
+      "options": [
+        {
+          "name": "--hook-type",
+          "description": "Hook type to uninstall",
+          "type": "string",
+          "takesValue": true,
+          "short": "-t",
+          "shorthand": "-t"
+        }
       ]
     }
   ],
@@ -99,5 +198,38 @@
     "commitlint",
     "lint-staged",
     "black"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pre-commit version",
+        "command": "pre-commit --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pre-commit"
+      },
+      {
+        "name": "config",
+        "description": "pre-commit hook configuration",
+        "command": "cat .pre-commit-config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "installed",
+        "description": "Whether pre-commit hooks are installed in this repo",
+        "command": "ls .git/hooks/pre-commit 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "repos",
+        "description": "Hook repositories this project pulls from",
+        "command": "grep -E '^ *- repo:' .pre-commit-config.yaml 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

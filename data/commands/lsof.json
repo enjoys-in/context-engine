@@ -158,5 +158,33 @@
     "netstat",
     "ss",
     "ps"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "lsof version",
+        "command": "lsof -v 2>&1 | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "lsof"
+      },
+      {
+        "name": "listening_ports",
+        "description": "Processes listening on TCP ports",
+        "command": "lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 30,
+        "requiresCmd": "lsof"
+      },
+      {
+        "name": "cwd_open",
+        "description": "Open files under the current directory",
+        "command": "lsof +D . 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 15,
+        "requiresCmd": "lsof"
+      }
+    ]
+  }
 }

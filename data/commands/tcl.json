@@ -114,9 +114,21 @@
       "name": "script.tcl",
       "description": "Run a Tcl script file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Tcl script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-encoding",
+          "description": "Character encoding of the script",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "<< 'puts hello'",
@@ -128,16 +140,38 @@
       "name": "script.tcl arg1 arg2",
       "description": "Run Tcl script with command-line arguments",
       "args": [
-        "file",
-        "args"
+        {
+          "name": "file",
+          "description": "Tcl script to run",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "args",
+          "description": "Arguments passed to the script",
+          "type": "string",
+          "required": false
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-encoding",
+          "description": "Character encoding of the script",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-encoding utf-8 script.tcl",
       "description": "Run with specified file encoding",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Tcl script to run",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     }
@@ -154,5 +188,32 @@
     "wish",
     "python",
     "perl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Tcl patchlevel",
+        "command": "echo 'puts [info patchlevel]' | tclsh 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "tclsh"
+      },
+      {
+        "name": "auto_path",
+        "description": "Tcl package search path",
+        "command": "echo 'puts [join $auto_path \\n]' | tclsh 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "tclsh"
+      },
+      {
+        "name": "sources",
+        "description": "Tcl scripts",
+        "command": "find . -maxdepth 3 -name '*.tcl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

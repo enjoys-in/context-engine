@@ -13,27 +13,183 @@
   "subcommands": [
     {
       "name": "simctl",
-      "description": "Control the iOS, watchOS and tvOS simulators"
+      "description": "Control the iOS, watchOS and tvOS simulators",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "altool",
-      "description": "Validate and upload apps to App Store Connect (legacy)"
+      "description": "Validate and upload apps to App Store Connect (legacy)",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "notarytool",
-      "description": "Submit and check notarisation requests"
+      "description": "Submit and check notarisation requests",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "stapler",
-      "description": "Attach a notarisation ticket to a bundle"
+      "description": "Attach a notarisation ticket to a bundle",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "swift",
-      "description": "Run the Swift toolchain"
+      "description": "Run the Swift toolchain",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "xctrace",
-      "description": "Record and inspect Instruments traces"
+      "description": "Record and inspect Instruments traces",
+      "options": [
+        {
+          "name": "--sdk",
+          "description": "SDK to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--toolchain",
+          "description": "Toolchain to resolve the tool from",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--find",
+          "description": "Print the tool path without running it",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log",
+          "description": "Log the command being run",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -134,5 +290,37 @@
     "swift",
     "fastlane",
     "pod"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Xcode version and build",
+        "command": "xcodebuild -version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "developer_dir",
+        "description": "Active Xcode developer directory",
+        "command": "xcode-select -p 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "sdks",
+        "description": "SDKs available to xcrun",
+        "command": "xcodebuild -showsdks 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "projects",
+        "description": "Xcode projects and workspaces here",
+        "command": "ls -d *.xcodeproj *.xcworkspace 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

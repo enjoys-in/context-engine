@@ -109,7 +109,12 @@
       "name": "validate",
       "description": "Validate WGSL shader syntax and semantics",
       "args": [
-        "file.wgsl"
+        {
+          "name": "file.wgsl",
+          "description": "WGSL shader to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -117,7 +122,12 @@
       "name": "convert",
       "description": "Convert WGSL to SPIR-V, GLSL, HLSL, or Metal",
       "args": [
-        "input"
+        {
+          "name": "input",
+          "description": "Shader to convert",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -138,7 +148,12 @@
       "name": "info",
       "description": "Display shader module information (entry points, bindings)",
       "args": [
-        "file.wgsl"
+        {
+          "name": "file.wgsl",
+          "description": "WGSL shader to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": []
     },
@@ -146,7 +161,12 @@
       "name": "compact",
       "description": "Minify WGSL shader removing whitespace and comments",
       "args": [
-        "file.wgsl"
+        {
+          "name": "file.wgsl",
+          "description": "WGSL shader to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -161,7 +181,12 @@
       "name": "lint",
       "description": "Check WGSL for common issues and performance hints",
       "args": [
-        "file.wgsl"
+        {
+          "name": "file.wgsl",
+          "description": "WGSL shader to process",
+          "type": "file",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -185,5 +210,31 @@
     "spirv-cross",
     "cargo",
     "wasm-pack"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "naga shader translator version",
+        "command": "naga --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "naga"
+      },
+      {
+        "name": "shaders",
+        "description": "WGSL shaders in this project",
+        "command": "find . -maxdepth 3 -name '*.wgsl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "cargo",
+        "description": "Rust manifest for this graphics project",
+        "command": "grep -E '^(wgpu|naga|winit)' Cargo.toml 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

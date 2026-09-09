@@ -61,7 +61,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "create",
@@ -85,7 +86,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "delete",
@@ -97,7 +99,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "install",
@@ -115,7 +118,8 @@
           "type": "path",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "uninstall",
@@ -133,7 +137,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "launch",
@@ -183,7 +188,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "openurl",
@@ -201,7 +207,8 @@
           "type": "url",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "io",
@@ -277,7 +284,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "privacy",
@@ -289,7 +297,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "push",
@@ -301,7 +310,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "status_bar",
@@ -397,5 +407,41 @@
     "xcodebuild",
     "adb",
     "fastlane"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Xcode command-line tools version",
+        "command": "xcrun simctl help 2>/dev/null | head -2; xcodebuild -version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "xcrun"
+      },
+      {
+        "name": "booted",
+        "description": "Simulators currently booted",
+        "command": "xcrun simctl list devices booted 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "xcrun"
+      },
+      {
+        "name": "devices",
+        "description": "Simulator devices available",
+        "command": "xcrun simctl list devices available 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "xcrun"
+      },
+      {
+        "name": "runtimes",
+        "description": "Simulator runtimes installed",
+        "command": "xcrun simctl list runtimes 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 3600,
+        "requiresCmd": "xcrun"
+      }
+    ]
+  }
 }

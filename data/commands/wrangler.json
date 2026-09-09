@@ -437,7 +437,8 @@
       "description": "Show authenticated user",
       "examples": [
         "wrangler whoami"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "types",
@@ -459,7 +460,8 @@
       "description": "Generate a Worker from template",
       "examples": [
         "wrangler generate my-worker https://github.com/cloudflare/worker-template"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "vectorize",
@@ -489,6 +491,16 @@
       "description": "Manage Workers AI",
       "examples": [
         "wrangler ai models list"
+      ],
+      "options": [
+        {
+          "name": "--config",
+          "description": "Wrangler config file to read",
+          "type": "file",
+          "takesValue": true,
+          "short": "-c",
+          "shorthand": "-c"
+        }
       ]
     }
   ],
@@ -535,5 +547,39 @@
     "netlify",
     "vercel",
     "firebase"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Wrangler version",
+        "command": "wrangler --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "wrangler"
+      },
+      {
+        "name": "config",
+        "description": "Worker configuration",
+        "command": "cat wrangler.toml 2>/dev/null || cat wrangler.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "account",
+        "description": "Authenticated Cloudflare account",
+        "command": "wrangler whoami 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "wrangler"
+      },
+      {
+        "name": "bindings",
+        "description": "Bindings declared for this Worker",
+        "command": "grep -E '^\\[\\[?(kv_namespaces|d1_databases|r2_buckets|durable_objects)' wrangler.toml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

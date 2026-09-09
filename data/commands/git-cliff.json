@@ -153,5 +153,40 @@
     "conventional-commits",
     "commitlint",
     "changeset"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "git-cliff version",
+        "command": "git-cliff --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "git-cliff"
+      },
+      {
+        "name": "config",
+        "description": "git-cliff changelog configuration",
+        "command": "cat cliff.toml 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "last_tag",
+        "description": "Most recent tag git-cliff would start from",
+        "command": "git describe --tags --abbrev=0 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "commit_range",
+        "description": "Commits since the last tag",
+        "command": "git log $(git describe --tags --abbrev=0 2>/dev/null)..HEAD --oneline 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "git"
+      }
+    ]
+  }
 }

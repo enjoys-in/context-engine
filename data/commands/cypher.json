@@ -109,37 +109,113 @@
       "name": "-u neo4j -p pass",
       "description": "Connect to Neo4j with credentials",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--address",
+          "description": "Bolt address to connect to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--database",
+          "description": "Database to run against",
+          "type": "string",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--format",
+          "description": "Output format: auto, verbose or plain",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--format plain",
       "description": "Output results in plain text format",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--address",
+          "description": "Bolt address to connect to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "-f script.cypher",
       "description": "Execute Cypher script from file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "Cypher script to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--fail-fast",
+          "description": "Stop at the first failing statement",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--fail-at-end",
+          "description": "Run every statement and report failures at the end",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "--database neo4j",
       "description": "Connect to a specific database",
       "args": [
-        "database"
+        {
+          "name": "database",
+          "description": "Database to connect to",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--address",
+          "description": "Bolt address to connect to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-a",
+          "shorthand": "-a"
+        }
+      ]
     },
     {
       "name": "-a bolt://host:7687",
       "description": "Connect to specific server address",
       "args": [
-        "address"
+        {
+          "name": "address",
+          "description": "Address to connect to",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--encryption",
+          "description": "Whether to use an encrypted connection",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -154,5 +230,31 @@
     "mongosh",
     "redis-cli",
     "psql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Cypher Shell version",
+        "command": "cypher-shell --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "cypher-shell"
+      },
+      {
+        "name": "connection",
+        "description": "Neo4j connection settings in effect",
+        "command": "echo \"uri=${NEO4J_URI:-bolt://localhost:7687} user=${NEO4J_USERNAME:-neo4j}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "scripts",
+        "description": "Cypher scripts in this project",
+        "command": "find . -maxdepth 2 -name '*.cypher' -o -name '*.cql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

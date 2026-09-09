@@ -386,6 +386,28 @@
       "examples": [
         "helmfile fetch",
         "helmfile fetch --output-dir charts/"
+      ],
+      "options": [
+        {
+          "name": "--output-dir",
+          "description": "Directory to fetch the charts into",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--selector",
+          "description": "Only fetch matching releases",
+          "type": "string",
+          "takesValue": true,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--concurrency",
+          "description": "Number of concurrent fetches",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -502,5 +524,48 @@
     "kubectl",
     "kustomize",
     "argocd"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "helmfile version",
+        "command": "helmfile --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "helmfile"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "config",
+        "description": "helmfile release definitions",
+        "command": "cat helmfile.yaml 2>/dev/null | head -60 || cat helmfile.yml 2>/dev/null | head -60",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "releases",
+        "description": "Releases helmfile manages",
+        "command": "helmfile list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "helmfile"
+      }
+    ]
+  }
 }

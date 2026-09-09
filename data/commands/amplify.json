@@ -69,6 +69,14 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "args": [
+        {
+          "name": "category",
+          "description": "Category to add, such as api or auth",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -177,6 +185,24 @@
       "examples": [
         "amplify remove auth",
         "amplify remove api"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip confirmation prompts",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
+      ],
+      "args": [
+        {
+          "name": "category",
+          "description": "Category to remove",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -275,6 +301,16 @@
         "amplify update auth",
         "amplify update api",
         "amplify update function"
+      ],
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip confirmation prompts",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        }
       ]
     },
     {
@@ -282,6 +318,14 @@
       "description": "Open Amplify console",
       "examples": [
         "amplify console"
+      ],
+      "options": [
+        {
+          "name": "--app-id",
+          "description": "Amplify app to open",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -328,5 +372,38 @@
     "firebase",
     "cdk",
     "serverless"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Amplify CLI version",
+        "command": "amplify --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "amplify"
+      },
+      {
+        "name": "project",
+        "description": "Amplify project configuration",
+        "command": "cat amplify/.config/project-config.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "backend_categories",
+        "description": "Amplify backend categories in this project",
+        "command": "ls amplify/backend 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "environments",
+        "description": "Amplify environments",
+        "command": "cat amplify/.config/local-env-info.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

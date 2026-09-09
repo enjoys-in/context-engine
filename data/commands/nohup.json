@@ -39,5 +39,38 @@
     "tmux",
     "disown",
     "bg"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "nohup version",
+        "command": "nohup --version 2>/dev/null | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nohup"
+      },
+      {
+        "name": "output_file",
+        "description": "nohup output in this directory",
+        "command": "ls -l nohup.out 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "jobs",
+        "description": "Background jobs in this shell",
+        "command": "jobs -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 15
+      },
+      {
+        "name": "detached",
+        "description": "Processes detached from a terminal",
+        "command": "ps -eo pid,tty,comm 2>/dev/null | awk '$2==\"?\"' | head -15",
+        "parser": "table",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

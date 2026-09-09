@@ -28,7 +28,8 @@
         "stern . -n my-namespace",
         "stern my-app -o json",
         "stern my-app --template '{{.PodName}} {{.Message}}'"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -140,5 +141,41 @@
     "k9s",
     "kubetail",
     "lnav"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "stern version",
+        "command": "stern --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "stern"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "pods",
+        "description": "Pods stern can tail in the active namespace",
+        "command": "kubectl get pods -o name 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      }
+    ]
+  }
 }

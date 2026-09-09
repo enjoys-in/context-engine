@@ -53,11 +53,51 @@
     },
     {
       "name": "inspect",
-      "description": "Inspect on-disk storage"
+      "description": "Inspect on-disk storage",
+      "options": [
+        {
+          "name": "--bolt-path",
+          "description": "Path to the BoltDB file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--engine-path",
+          "description": "Path to the engine data directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--log-level",
+          "description": "Log verbosity level",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "recovery",
-      "description": "Recover organisations, users and tokens"
+      "description": "Recover organisations, users and tokens",
+      "options": [
+        {
+          "name": "--bolt-path",
+          "description": "Path to the BoltDB file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--engine-path",
+          "description": "Path to the engine data directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--log-level",
+          "description": "Log verbosity level",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "upgrade",
@@ -87,15 +127,56 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--bolt-path",
+          "description": "Path to the BoltDB file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--engine-path",
+          "description": "Path to the engine data directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--log-level",
+          "description": "Log verbosity level",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
       "name": "print-config",
-      "description": "Print the resolved configuration"
+      "description": "Print the resolved configuration",
+      "options": [
+        {
+          "name": "--bolt-path",
+          "description": "Path to the BoltDB file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--engine-path",
+          "description": "Path to the engine data directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "--log-level",
+          "description": "Log verbosity level",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "version",
-      "description": "Show the server version"
+      "description": "Show the server version",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -137,5 +218,38 @@
     "telegraf",
     "prometheus",
     "grafana-cli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "InfluxDB server version",
+        "command": "influxd version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "influxd"
+      },
+      {
+        "name": "config",
+        "description": "InfluxDB server configuration",
+        "command": "cat /etc/influxdb/config.toml 2>/dev/null | head -30 || cat ~/.influxdbv2/configs 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "service",
+        "description": "InfluxDB service state",
+        "command": "systemctl is-active influxdb 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "data_dir",
+        "description": "InfluxDB engine data directory",
+        "command": "ls ~/.influxdbv2 2>/dev/null || ls /var/lib/influxdb 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

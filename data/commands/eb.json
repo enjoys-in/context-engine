@@ -112,6 +112,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "environment",
+          "description": "Name for the new environment",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -234,6 +242,14 @@
           "short": "-g",
           "shorthand": "-g"
         }
+      ],
+      "args": [
+        {
+          "name": "environment",
+          "description": "Environment to read logs from",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -241,6 +257,15 @@
       "description": "Open app in browser",
       "examples": [
         "eb open"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "environment",
+          "description": "Environment to open in a browser",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -316,6 +341,14 @@
           "type": "integer",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "number",
+          "description": "Number of instances to run",
+          "required": true,
+          "type": "integer"
+        }
       ]
     },
     {
@@ -339,7 +372,8 @@
       "description": "Print environment variables",
       "examples": [
         "eb printenv"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "terminate",
@@ -397,6 +431,15 @@
       "description": "Set default environment",
       "examples": [
         "eb use my-env"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "environment",
+          "description": "Environment to make the default",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -428,6 +471,14 @@
           "type": "boolean",
           "takesValue": false
         }
+      ],
+      "args": [
+        {
+          "name": "environment",
+          "description": "Environment to clone",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -452,6 +503,15 @@
       "description": "Restore terminated environment",
       "examples": [
         "eb restore env-id"
+      ],
+      "options": [],
+      "args": [
+        {
+          "name": "environment-id",
+          "description": "Terminated environment id to restore",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -459,7 +519,8 @@
       "description": "Abort environment update",
       "examples": [
         "eb abort"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -497,5 +558,32 @@
     "copilot",
     "docker",
     "heroku"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "EB CLI version",
+        "command": "eb --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "eb"
+      },
+      {
+        "name": "config",
+        "description": "Elastic Beanstalk application configuration",
+        "command": "cat .elasticbeanstalk/config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "environments",
+        "description": "Elastic Beanstalk environments",
+        "command": "eb list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "eb"
+      }
+    ]
+  }
 }

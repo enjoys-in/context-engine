@@ -320,5 +320,45 @@
     "ssh-agent",
     "rsync",
     "mosh"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "OpenSSH client version",
+        "command": "ssh -V 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ssh"
+      },
+      {
+        "name": "hosts",
+        "description": "Hosts defined in the SSH config",
+        "command": "grep -i '^host ' ~/.ssh/config 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "keys",
+        "description": "SSH private keys available",
+        "command": "ls ~/.ssh/id_* 2>/dev/null | grep -v '\\.pub$'",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "agent_keys",
+        "description": "Keys loaded into the SSH agent",
+        "command": "ssh-add -l 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "known_hosts_count",
+        "description": "Hosts already trusted",
+        "command": "wc -l < ~/.ssh/known_hosts 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

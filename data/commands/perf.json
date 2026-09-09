@@ -183,23 +183,83 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "symbol",
+          "description": "Symbol to annotate",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
       "name": "list",
-      "description": "List the available events"
+      "description": "List the available events",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit raw JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "diff",
-      "description": "Compare two recorded profiles"
+      "description": "Compare two recorded profiles",
+      "options": [
+        {
+          "name": "--sort",
+          "description": "Field to sort by",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--percentage",
+          "description": "How to compute percentages",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "bench",
-      "description": "Run the built-in benchmarks"
+      "description": "Run the built-in benchmarks",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: default, simple or json",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ]
     },
     {
       "name": "trace",
-      "description": "Trace system calls, like strace"
+      "description": "Trace system calls, like strace",
+      "options": [
+        {
+          "name": "--output",
+          "description": "Write the trace here",
+          "type": "file",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--pid",
+          "description": "Only trace this process",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -246,5 +306,39 @@
     "strace",
     "hyperfine",
     "btop"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "perf version",
+        "command": "perf --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "perf"
+      },
+      {
+        "name": "paranoid",
+        "description": "Whether unprivileged perf events are restricted",
+        "command": "cat /proc/sys/kernel/perf_event_paranoid 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "events",
+        "description": "Hardware events perf can count",
+        "command": "perf list hw 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "perf"
+      },
+      {
+        "name": "recordings",
+        "description": "perf recordings in this directory",
+        "command": "find . -maxdepth 2 -name 'perf.data*' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

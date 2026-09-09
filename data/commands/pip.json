@@ -113,6 +113,30 @@
       "examples": [
         "pip freeze",
         "pip freeze > requirements.txt"
+      ],
+      "options": [
+        {
+          "name": "--local",
+          "description": "Exclude globally installed packages",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--all",
+          "description": "Include pip and setuptools",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--requirement",
+          "description": "Only report packages in this file",
+          "type": "file",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        }
       ]
     },
     {
@@ -152,6 +176,24 @@
       "examples": [
         "pip show flask",
         "pip show requests"
+      ],
+      "options": [
+        {
+          "name": "--files",
+          "description": "List the installed files too",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
       ]
     },
     {
@@ -167,6 +209,16 @@
       ],
       "examples": [
         "pip search requests"
+      ],
+      "options": [
+        {
+          "name": "--index",
+          "description": "Package index to search",
+          "type": "url",
+          "takesValue": true,
+          "short": "-i",
+          "shorthand": "-i"
+        }
       ]
     },
     {
@@ -199,14 +251,16 @@
       "description": "Verify installed packages have compatible dependencies",
       "examples": [
         "pip check"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "cache purge",
       "description": "Remove all items from the cache",
       "examples": [
         "pip cache purge"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "wheel",
@@ -248,11 +302,22 @@
     },
     {
       "name": "cache",
-      "description": "Inspect and clear the wheel cache"
+      "description": "Inspect and clear the wheel cache",
+      "options": []
     },
     {
       "name": "debug",
-      "description": "Print information useful for debugging pip"
+      "description": "Print information useful for debugging pip",
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Verbose output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
+      ]
     },
     {
       "name": "index",
@@ -270,7 +335,17 @@
     },
     {
       "name": "inspect",
-      "description": "Emit a JSON report of the environment"
+      "description": "Emit a JSON report of the environment",
+      "options": [
+        {
+          "name": "--local",
+          "description": "Exclude globally installed packages",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        }
+      ]
     },
     {
       "name": "hash",
@@ -345,5 +420,44 @@
     "poetry",
     "conda",
     "virtualenv"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pip version and the Python it targets",
+        "command": "pip --version 2>/dev/null || pip3 --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "virtualenv",
+        "description": "Active Python virtual environment",
+        "command": "echo \"${VIRTUAL_ENV:-none}\"",
+        "parser": "text",
+        "cacheFor": 60
+      },
+      {
+        "name": "installed",
+        "description": "Packages pip has installed",
+        "command": "pip list --format=json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "requirements",
+        "description": "Requirement files in this project",
+        "command": "ls requirements*.txt constraints.txt 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "index",
+        "description": "Package index pip will use",
+        "command": "pip config get global.index-url 2>/dev/null || echo 'https://pypi.org/simple'",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

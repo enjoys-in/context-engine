@@ -75,11 +75,13 @@
           "type": "string",
           "required": false
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "explain",
-      "description": "Explain what each prompt module is showing"
+      "description": "Explain what each prompt module is showing",
+      "options": []
     },
     {
       "name": "module",
@@ -131,11 +133,13 @@
     },
     {
       "name": "timings",
-      "description": "Show how long each module took to render"
+      "description": "Show how long each module took to render",
+      "options": []
     },
     {
       "name": "bug-report",
-      "description": "Open a pre-filled bug report"
+      "description": "Open a pre-filled bug report",
+      "options": []
     },
     {
       "name": "toggle",
@@ -147,7 +151,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     },
     {
       "name": "completions",
@@ -159,7 +164,8 @@
           "type": "string",
           "required": true
         }
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -201,5 +207,38 @@
     "atuin",
     "oh-my-posh",
     "powerlevel10k"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Starship version",
+        "command": "starship --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "starship"
+      },
+      {
+        "name": "config",
+        "description": "Starship prompt configuration",
+        "command": "cat ~/.config/starship.toml 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "modules",
+        "description": "Starship modules explicitly configured",
+        "command": "grep -o '^\\[[a-z_]*\\]' ~/.config/starship.toml 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "shell",
+        "description": "Shell Starship is initialised in",
+        "command": "echo \"${SHELL:-unknown}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

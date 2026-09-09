@@ -154,5 +154,38 @@
     "mongosh",
     "mysqldump",
     "pg_dump"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "mongodump version",
+        "command": "mongodump --version 2>/dev/null | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "mongodump"
+      },
+      {
+        "name": "connection",
+        "description": "MongoDB connection string in effect",
+        "command": "echo \"${MONGODB_URI:-mongodb://localhost:27017}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "existing_dumps",
+        "description": "Previous dump directories here",
+        "command": "ls -d dump 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "server",
+        "description": "MongoDB server reachability",
+        "command": "mongosh --quiet --eval 'db.version()' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60
+      }
+    ]
+  }
 }

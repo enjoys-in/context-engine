@@ -185,5 +185,39 @@
     "grype",
     "sqlmap",
     "nmap"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "nuclei version",
+        "command": "nuclei -version 2>&1 | head -3",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nuclei"
+      },
+      {
+        "name": "templates",
+        "description": "nuclei template directory",
+        "command": "ls ~/nuclei-templates 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 3600
+      },
+      {
+        "name": "template_count",
+        "description": "nuclei templates installed",
+        "command": "nuclei -tl 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nuclei"
+      },
+      {
+        "name": "config",
+        "description": "nuclei configuration",
+        "command": "cat ~/.config/nuclei/config.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

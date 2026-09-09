@@ -113,6 +113,14 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "package",
+          "description": "Go package to build and install",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -175,5 +183,46 @@
     "adb",
     "xcodebuild",
     "flutter"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "gomobile version",
+        "command": "gomobile version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gomobile"
+      },
+      {
+        "name": "go_version",
+        "description": "Go toolchain gomobile uses",
+        "command": "go version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "go"
+      },
+      {
+        "name": "android_sdk",
+        "description": "Android SDK location",
+        "command": "echo \"${ANDROID_HOME:-${ANDROID_SDK_ROOT:-unset}}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "ndk",
+        "description": "Android NDK location",
+        "command": "echo \"${ANDROID_NDK_HOME:-unset}\"",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "module",
+        "description": "Go module gomobile will bind",
+        "command": "head -3 go.mod 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

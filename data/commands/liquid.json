@@ -202,7 +202,12 @@
       "name": "theme init",
       "description": "Clone a theme to start development",
       "args": [
-        "name"
+        {
+          "name": "name",
+          "description": "Name for the new theme",
+          "type": "string",
+          "required": true
+        }
       ],
       "options": [
         {
@@ -252,5 +257,38 @@
     "npm",
     "html",
     "css"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Shopify CLI version",
+        "command": "shopify version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "shopify"
+      },
+      {
+        "name": "theme",
+        "description": "Shopify theme configuration",
+        "command": "cat .shopifyrc 2>/dev/null || cat shopify.theme.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "templates",
+        "description": "Liquid templates in this theme",
+        "command": "find . -maxdepth 3 -name '*.liquid' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "theme_dirs",
+        "description": "Shopify theme directories present",
+        "command": "ls -d sections snippets templates layout assets 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -257,5 +257,53 @@
     "puppet",
     "chef",
     "salt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Ansible version and config file in use",
+        "command": "ansible --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "ansible"
+      },
+      {
+        "name": "inventory",
+        "description": "Ansible inventory in effect",
+        "command": "ansible-inventory --list 2>/dev/null | head -c 2000",
+        "parser": "json",
+        "cacheFor": 120,
+        "requiresCmd": "ansible"
+      },
+      {
+        "name": "config",
+        "description": "Ansible configuration for this project",
+        "command": "cat ansible.cfg 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "playbooks",
+        "description": "Playbooks in this project",
+        "command": "find . -maxdepth 2 -name '*.yml' -o -maxdepth 2 -name '*.yaml' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "roles",
+        "description": "Roles available to these playbooks",
+        "command": "ls roles 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "collections",
+        "description": "Ansible collections installed",
+        "command": "ansible-galaxy collection list 2>/dev/null | head -20",
+        "parser": "table",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

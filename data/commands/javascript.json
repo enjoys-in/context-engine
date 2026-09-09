@@ -104,41 +104,133 @@
       "name": "file.js",
       "description": "Run a JavaScript file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "JavaScript file to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--inspect",
+          "description": "Enable the inspector",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--experimental-modules",
+          "description": "Enable ES module support",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--max-old-space-size",
+          "description": "Heap size limit in MB",
+          "type": "integer",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-e \"code\"",
       "description": "Evaluate JavaScript expression",
       "args": [
-        "code"
+        {
+          "name": "code",
+          "description": "Code to execute",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--input-type",
+          "description": "Treat the input as module or commonjs",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--print",
+          "description": "Print the result",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
+      ]
     },
     {
       "name": "--inspect file.js",
       "description": "Run with Chrome DevTools debugger attached",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "JavaScript file to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--inspect-brk",
+          "description": "Break before the first line",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--inspect-port",
+          "description": "Port for the inspector",
+          "type": "integer",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-p \"expression\"",
       "description": "Evaluate and print expression result",
       "args": [
-        "expression"
+        {
+          "name": "expression",
+          "description": "Expression to evaluate",
+          "type": "string",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--input-type",
+          "description": "Treat the input as module or commonjs",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "--watch file.js",
       "description": "Watch for file changes and restart",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "JavaScript file to run",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "--watch-path",
+          "description": "Additional path to watch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--watch-preserve-output",
+          "description": "Do not clear the screen between runs",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "--test",
@@ -168,5 +260,45 @@
     "deno",
     "bun",
     "typescript"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Node.js version",
+        "command": "node --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "node"
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "npm scripts declared in this project",
+        "command": "grep -A25 '\"scripts\"' package.json 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "module_type",
+        "description": "Whether this project is ESM or CommonJS",
+        "command": "grep -o '\"type\": *\"[^\"]*\"' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_manager",
+        "description": "Lockfile indicating the package manager",
+        "command": "ls package-lock.json yarn.lock pnpm-lock.yaml bun.lockb 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

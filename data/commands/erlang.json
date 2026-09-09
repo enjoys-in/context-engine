@@ -80,5 +80,38 @@
     "mix",
     "elixir",
     "erl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Erlang/OTP release",
+        "command": "erl -noshell -eval 'io:format(\"~s~n\",[erlang:system_info(otp_release)]),halt().' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "erl"
+      },
+      {
+        "name": "rebar_config",
+        "description": "Rebar3 project configuration",
+        "command": "cat rebar.config 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "beam_files",
+        "description": "Compiled BEAM modules",
+        "command": "find . -maxdepth 4 -name '*.beam' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 60
+      },
+      {
+        "name": "sources",
+        "description": "Erlang sources",
+        "command": "find . -maxdepth 3 -name '*.erl' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

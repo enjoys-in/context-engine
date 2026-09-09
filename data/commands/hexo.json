@@ -19,6 +19,20 @@
       "description": "Initialize a new Hexo site",
       "examples": [
         "hexo init myblog"
+      ],
+      "options": [
+        {
+          "name": "--no-clone",
+          "description": "Copy the scaffold rather than cloning it",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--force",
+          "description": "Initialise into a non-empty directory",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -27,6 +41,32 @@
       "examples": [
         "hexo new \"My Post\"",
         "hexo new page about"
+      ],
+      "options": [
+        {
+          "name": "--path",
+          "description": "Path for the new post",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--replace",
+          "description": "Overwrite an existing post",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--slug",
+          "description": "Slug for the new post",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -35,6 +75,40 @@
       "examples": [
         "hexo generate",
         "hexo g"
+      ],
+      "options": [
+        {
+          "name": "--deploy",
+          "description": "Deploy after generating",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-d",
+          "shorthand": "-d"
+        },
+        {
+          "name": "--watch",
+          "description": "Regenerate on file changes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        },
+        {
+          "name": "--force",
+          "description": "Regenerate every file",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--bail",
+          "description": "Stop on the first error",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-b",
+          "shorthand": "-b"
+        }
       ]
     },
     {
@@ -43,6 +117,40 @@
       "examples": [
         "hexo server",
         "hexo s"
+      ],
+      "options": [
+        {
+          "name": "--port",
+          "description": "Port the server binds to",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--ip",
+          "description": "Address the server binds to",
+          "type": "string",
+          "takesValue": true,
+          "short": "-i",
+          "shorthand": "-i"
+        },
+        {
+          "name": "--static",
+          "description": "Serve only static files",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--open",
+          "description": "Open a browser on start",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -51,6 +159,16 @@
       "examples": [
         "hexo deploy",
         "hexo d"
+      ],
+      "options": [
+        {
+          "name": "--generate",
+          "description": "Generate before deploying",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-g",
+          "shorthand": "-g"
+        }
       ]
     },
     {
@@ -58,7 +176,8 @@
       "description": "Clean cache and generated files",
       "examples": [
         "hexo clean"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -98,5 +217,38 @@
     "jekyll",
     "gatsby",
     "eleventy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Hexo version",
+        "command": "hexo version 2>/dev/null | head -5",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "hexo"
+      },
+      {
+        "name": "config",
+        "description": "Hexo site configuration",
+        "command": "cat _config.yml 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "theme",
+        "description": "Hexo theme in use",
+        "command": "grep -m1 '^theme:' _config.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "posts",
+        "description": "Posts in this Hexo site",
+        "command": "ls source/_posts 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

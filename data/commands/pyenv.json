@@ -18,6 +18,48 @@
       "examples": [
         "pyenv install 3.12.0",
         "pyenv install --list"
+      ],
+      "options": [
+        {
+          "name": "--list",
+          "description": "List the installable versions",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--force",
+          "description": "Reinstall over an existing version",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--skip-existing",
+          "description": "Do nothing if already installed",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--verbose",
+          "description": "Verbose build output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        }
+      ],
+      "args": [
+        {
+          "name": "version",
+          "description": "Python version to install",
+          "required": false,
+          "type": "string"
+        }
       ]
     },
     {
@@ -25,6 +67,20 @@
       "description": "List installed versions",
       "examples": [
         "pyenv versions"
+      ],
+      "options": [
+        {
+          "name": "--bare",
+          "description": "Print version names only",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--skip-envs",
+          "description": "Exclude virtualenvs",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -32,13 +88,22 @@
       "description": "Set global Python version",
       "examples": [
         "pyenv global 3.12.0"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "local",
       "description": "Set local (per-directory) Python version",
       "examples": [
         "pyenv local 3.11.5"
+      ],
+      "options": [
+        {
+          "name": "--unset",
+          "description": "Remove the local version file",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -46,6 +111,14 @@
       "description": "Set shell-specific version",
       "examples": [
         "pyenv shell 3.12.0"
+      ],
+      "options": [
+        {
+          "name": "--unset",
+          "description": "Clear the shell version",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -53,6 +126,24 @@
       "description": "Uninstall a version",
       "examples": [
         "pyenv uninstall 3.10.0"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Uninstall without confirming",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        }
+      ],
+      "args": [
+        {
+          "name": "version",
+          "description": "Python version to uninstall",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -60,14 +151,16 @@
       "description": "Display full path to executable",
       "examples": [
         "pyenv which python"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "rehash",
       "description": "Rehash shims",
       "examples": [
         "pyenv rehash"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -104,5 +197,47 @@
     "pip",
     "conda",
     "poetry"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pyenv version",
+        "command": "pyenv --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pyenv"
+      },
+      {
+        "name": "current",
+        "description": "Python version pyenv has active",
+        "command": "pyenv version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "pyenv"
+      },
+      {
+        "name": "installed",
+        "description": "Python versions pyenv manages",
+        "command": "pyenv versions 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "pyenv"
+      },
+      {
+        "name": "version_file",
+        "description": "Python version pinned for this project",
+        "command": "cat .python-version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "virtualenvs",
+        "description": "pyenv virtualenvs available",
+        "command": "pyenv virtualenvs 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

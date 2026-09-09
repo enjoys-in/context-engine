@@ -17,11 +17,57 @@
   "subcommands": [
     {
       "name": "compile",
-      "description": "Compile the main sources"
+      "description": "Compile the main sources",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--batch",
+          "description": "Disable interactive prompts",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--debug",
+          "description": "Enable debug logging",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--java-home",
+          "description": "JDK to build with",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "test",
-      "description": "Run the test suite"
+      "description": "Run the test suite",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--batch",
+          "description": "Disable interactive prompts",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--debug",
+          "description": "Enable debug logging",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "testOnly",
@@ -33,47 +79,147 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--",
+          "description": "Pass the remaining arguments to the test framework",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
       "name": "run",
-      "description": "Run the main class"
+      "description": "Run the main class",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--batch",
+          "description": "Disable interactive prompts",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "package",
-      "description": "Produce a jar of the main classes"
+      "description": "Produce a jar of the main classes",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "assembly",
-      "description": "Produce a fat jar including dependencies"
+      "description": "Produce a fat jar including dependencies",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "publishLocal",
-      "description": "Publish artifacts to the local repository"
+      "description": "Publish artifacts to the local repository",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "publish",
-      "description": "Publish artifacts to the configured repository"
+      "description": "Publish artifacts to the configured repository",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "clean",
-      "description": "Delete the build outputs"
+      "description": "Delete the build outputs",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "console",
-      "description": "Start a Scala REPL with the project on the classpath"
+      "description": "Start a Scala REPL with the project on the classpath",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "reload",
-      "description": "Reload the build definition"
+      "description": "Reload the build definition",
+      "options": [
+        {
+          "name": "--plugins",
+          "description": "Reload the plugin build rather than the project",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "dependencyTree",
-      "description": "Print the dependency tree"
+      "description": "Print the dependency tree",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "scalafmtAll",
-      "description": "Format every Scala source"
+      "description": "Format every Scala source",
+      "options": [
+        {
+          "name": "--client",
+          "description": "Run against a persistent sbt server",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -158,5 +304,45 @@
     "gradle",
     "mvn",
     "coursier"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "sbt version",
+        "command": "sbt --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "sbt"
+      },
+      {
+        "name": "build_properties",
+        "description": "sbt version pinned for this project",
+        "command": "cat project/build.properties 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 300
+      },
+      {
+        "name": "build",
+        "description": "sbt build definition",
+        "command": "cat build.sbt 2>/dev/null | head -40",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "plugins",
+        "description": "sbt plugins declared",
+        "command": "cat project/plugins.sbt 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "java",
+        "description": "JVM sbt will run on",
+        "command": "java -version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

@@ -151,5 +151,39 @@
     "air",
     "task",
     "fswatch"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "watchexec version",
+        "command": "watchexec --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "watchexec"
+      },
+      {
+        "name": "repo",
+        "description": "Git repository root",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "git"
+      },
+      {
+        "name": "ignore_file",
+        "description": "Patterns watchexec will ignore",
+        "command": "cat .gitignore 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "watch_limit",
+        "description": "Maximum inotify watches per user",
+        "command": "cat /proc/sys/fs/inotify/max_user_watches 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

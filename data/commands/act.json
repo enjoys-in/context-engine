@@ -85,5 +85,47 @@
     "docker",
     "nektos",
     "make"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "act version",
+        "command": "act --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "act"
+      },
+      {
+        "name": "workflows",
+        "description": "GitHub Actions workflows act can run",
+        "command": "ls .github/workflows 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "jobs",
+        "description": "Jobs act found in this repository",
+        "command": "act --list 2>/dev/null | head -25",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "act"
+      },
+      {
+        "name": "docker",
+        "description": "Docker daemon act needs",
+        "command": "docker info --format '{{.ServerVersion}}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      },
+      {
+        "name": "config",
+        "description": "act default flags",
+        "command": "cat ~/.actrc 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

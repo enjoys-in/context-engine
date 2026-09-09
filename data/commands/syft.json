@@ -20,6 +20,36 @@
       "examples": [
         "syft scan dir:.",
         "syft scan image:tag"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "SBOM format to emit",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--scope",
+          "description": "Cataloguing scope: squashed or all-layers",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--file",
+          "description": "Write the SBOM here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--platform",
+          "description": "Platform of the image to scan",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -27,6 +57,24 @@
       "description": "List packages (alias for scan)",
       "examples": [
         "syft packages image:tag"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "SBOM format to emit",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--scope",
+          "description": "Cataloguing scope: squashed or all-layers",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        }
       ]
     },
     {
@@ -34,6 +82,24 @@
       "description": "Generate SBOM attestation",
       "examples": [
         "syft attest --key cosign.key image:tag"
+      ],
+      "options": [
+        {
+          "name": "--key",
+          "description": "Private key to sign the attestation with",
+          "type": "string",
+          "takesValue": true,
+          "short": "-k",
+          "shorthand": "-k"
+        },
+        {
+          "name": "--output",
+          "description": "SBOM format to emit",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        }
       ]
     },
     {
@@ -41,6 +107,22 @@
       "description": "Convert SBOM format",
       "examples": [
         "syft convert sbom.json -o spdx-json"
+      ],
+      "options": [
+        {
+          "name": "--output",
+          "description": "SBOM format to emit",
+          "type": "string",
+          "takesValue": true,
+          "short": "-o",
+          "shorthand": "-o"
+        },
+        {
+          "name": "--file",
+          "description": "Write the converted SBOM here",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -76,5 +158,39 @@
     "cosign",
     "trivy",
     "docker"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "syft version",
+        "command": "syft version 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600,
+        "requiresCmd": "syft"
+      },
+      {
+        "name": "config",
+        "description": "syft configuration",
+        "command": "cat .syft.yaml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "manifests",
+        "description": "Package manifests syft can catalogue",
+        "command": "ls package.json go.mod requirements.txt Gemfile.lock pom.xml Cargo.lock 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "images",
+        "description": "Local images syft can scan",
+        "command": "docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
 }

@@ -108,42 +108,125 @@
       "name": "file.dats",
       "description": "Compile an ATS dynamic file",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "ATS source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-IATS",
+          "description": "Add an ATS include search directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "-o",
+          "description": "Path for the output binary",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "-D",
+          "description": "Define a preprocessor macro",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-o output file.dats",
       "description": "Compile with named output executable",
       "args": [
-        "output",
-        "file"
+        {
+          "name": "output",
+          "description": "Path for the compiled binary",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "file",
+          "description": "ATS source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-IATS",
+          "description": "Add an ATS include search directory",
+          "type": "directory",
+          "takesValue": true
+        },
+        {
+          "name": "-cleanaft",
+          "description": "Remove the generated C after compiling",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "-tcats file.dats",
       "description": "Type-check only without compiling to C",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "ATS source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-IATS",
+          "description": "Add an ATS include search directory",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "-ccats file.dats",
       "description": "Compile to C without generating executable",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "ATS source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-IATS",
+          "description": "Add an ATS include search directory",
+          "type": "directory",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "file.dats -DATS_MEMALLOC_LIBC",
       "description": "Compile with libc memory allocation",
       "args": [
-        "file"
+        {
+          "name": "file",
+          "description": "ATS source file to compile",
+          "type": "file",
+          "required": true
+        }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "-o",
+          "description": "Path for the output binary",
+          "type": "file",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -157,5 +240,31 @@
     "gcc",
     "make",
     "c"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ATS/Postiats compiler version",
+        "command": "patscc --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "patscc"
+      },
+      {
+        "name": "patshome",
+        "description": "PATSHOME in effect",
+        "command": "echo \"${PATSHOME:-unset}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "sources",
+        "description": "ATS sources",
+        "command": "find . -maxdepth 3 -name '*.dats' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

@@ -130,5 +130,38 @@
     "mycli",
     "litecli",
     "pgsql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "pgcli version",
+        "command": "pgcli --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "pgcli"
+      },
+      {
+        "name": "connection",
+        "description": "PostgreSQL connection settings in effect",
+        "command": "echo \"host=${PGHOST:-localhost} port=${PGPORT:-5432} db=${PGDATABASE:-unset} user=${PGUSER:-$USER}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "config",
+        "description": "pgcli configuration",
+        "command": "cat ~/.config/pgcli/config 2>/dev/null | head -25",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "service_file",
+        "description": "Connection profiles defined locally",
+        "command": "grep -o '^\\[.*\\]' ~/.pg_service.conf 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

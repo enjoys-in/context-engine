@@ -184,5 +184,39 @@
     "semgrep",
     "trivy",
     "pre-commit"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "gitleaks version",
+        "command": "gitleaks version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gitleaks"
+      },
+      {
+        "name": "config",
+        "description": "gitleaks rule configuration",
+        "command": "cat .gitleaks.toml 2>/dev/null || cat gitleaks.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "baseline",
+        "description": "gitleaks baseline present",
+        "command": "ls gitleaks-report.json .gitleaksignore 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "repo",
+        "description": "Git repository gitleaks would scan",
+        "command": "git rev-parse --show-toplevel 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "git"
+      }
+    ]
+  }
 }

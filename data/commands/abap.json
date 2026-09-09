@@ -161,27 +161,72 @@
       "name": "status",
       "description": "Show repository status",
       "args": [],
-      "options": []
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: standard or json",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "check",
       "description": "Check ABAP syntax",
-      "usage": "abaplint check src/"
+      "usage": "abaplint check src/",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: standard, json or junit",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--fix",
+          "description": "Apply fixes that can be applied automatically",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "format",
       "description": "Format ABAP files",
-      "usage": "abaplint fix src/"
+      "usage": "abaplint fix src/",
+      "options": [
+        {
+          "name": "--check",
+          "description": "Fail rather than rewriting files",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "unit",
       "description": "Run ABAP unit tests",
-      "usage": "abapunit run"
+      "usage": "abapunit run",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: standard or junit",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "deps",
       "description": "Check dependencies",
-      "usage": "apack dependencies"
+      "usage": "apack dependencies",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format: standard or json",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "examples": [
@@ -207,5 +252,37 @@
     "abap",
     "adt",
     "sapcli"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "abapGit or abaplint version",
+        "command": "abapgit --version 2>/dev/null || abaplint --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "abaplint configuration for this project",
+        "command": "cat abaplint.json 2>/dev/null || cat abaplint.jsonc 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "sources",
+        "description": "ABAP sources in this project",
+        "command": "find . -maxdepth 3 -name '*.abap' 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "package_files",
+        "description": "abapGit package metadata",
+        "command": "ls .abapgit.xml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

@@ -21,6 +21,46 @@
         "skopeo copy oci:./my-image:latest docker://registry.example.com/my-image:latest",
         "skopeo copy docker://src oci-archive:./archive.tar",
         "skopeo copy --all docker://src docker://dst"
+      ],
+      "options": [
+        {
+          "name": "--tls-verify",
+          "description": "Verify the registry TLS certificate",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--creds",
+          "description": "Registry credentials as user:password",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--all",
+          "description": "Copy every image in the manifest list",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--format",
+          "description": "Manifest format to write: oci, v2s1 or v2s2",
+          "type": "string",
+          "takesValue": true,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--sign-by",
+          "description": "Sign the copied image with this key",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -32,6 +72,38 @@
         "skopeo inspect --config docker://docker.io/library/node:18",
         "skopeo inspect dir:/tmp/img",
         "skopeo inspect oci:./my-image"
+      ],
+      "options": [
+        {
+          "name": "--tls-verify",
+          "description": "Verify the registry TLS certificate",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--creds",
+          "description": "Registry credentials as user:password",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--config",
+          "description": "Show the image configuration",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--raw",
+          "description": "Show the raw manifest",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -40,6 +112,26 @@
       "examples": [
         "skopeo delete docker://registry.example.com/my-image:old",
         "skopeo delete docker://my-registry.com/temp:latest"
+      ],
+      "options": [
+        {
+          "name": "--tls-verify",
+          "description": "Verify the registry TLS certificate",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--creds",
+          "description": "Registry credentials as user:password",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to read",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -49,6 +141,26 @@
         "skopeo list-tags docker://docker.io/library/nginx",
         "skopeo list-tags docker://registry.example.com/my-app",
         "skopeo list-tags docker://ghcr.io/my-org/my-app"
+      ],
+      "options": [
+        {
+          "name": "--tls-verify",
+          "description": "Verify the registry TLS certificate",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--creds",
+          "description": "Registry credentials as user:password",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to read",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -57,6 +169,44 @@
       "examples": [
         "skopeo sync --src docker --dest dir docker.io/library/nginx /tmp/nginx-sync",
         "skopeo sync --src yaml --dest docker sync.yaml my-registry.com"
+      ],
+      "options": [
+        {
+          "name": "--tls-verify",
+          "description": "Verify the registry TLS certificate",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--creds",
+          "description": "Registry credentials as user:password",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to read",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--src",
+          "description": "Source transport: docker, dir or yaml",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dest",
+          "description": "Destination transport: docker or dir",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--scoped",
+          "description": "Prefix the destination with the source registry",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -66,6 +216,36 @@
         "skopeo login registry.example.com",
         "skopeo login docker.io -u username -p password",
         "skopeo login --get-login registry.example.com"
+      ],
+      "options": [
+        {
+          "name": "--username",
+          "description": "Registry username",
+          "type": "string",
+          "takesValue": true,
+          "short": "-u",
+          "shorthand": "-u"
+        },
+        {
+          "name": "--password",
+          "description": "Registry password",
+          "type": "string",
+          "takesValue": true,
+          "short": "-p",
+          "shorthand": "-p"
+        },
+        {
+          "name": "--password-stdin",
+          "description": "Read the password from stdin",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to write",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -74,6 +254,22 @@
       "examples": [
         "skopeo logout registry.example.com",
         "skopeo logout --all"
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "description": "Log out of every registry",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--authfile",
+          "description": "Registry auth file to update",
+          "type": "file",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -81,21 +277,24 @@
       "description": "Compute manifest digest",
       "examples": [
         "skopeo manifest-digest manifest.json"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "standalone-sign",
       "description": "Sign image manifest",
       "examples": [
         "skopeo standalone-sign manifest.json registry.example.com/my-image key-fingerprint"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "standalone-verify",
       "description": "Verify image signature",
       "examples": [
         "skopeo standalone-verify manifest.json registry.example.com/my-image key-fingerprint signature"
-      ]
+      ],
+      "options": []
     }
   ],
   "globalOptions": [
@@ -162,5 +361,31 @@
     "crane",
     "buildah",
     "crictl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Skopeo version",
+        "command": "skopeo --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "skopeo"
+      },
+      {
+        "name": "registry_auth",
+        "description": "Registries with stored credentials",
+        "command": "grep -o '\"[^\"]*\": *{' ~/.docker/config.json 2>/dev/null | head -15",
+        "parser": "lines",
+        "cacheFor": 300
+      },
+      {
+        "name": "policy",
+        "description": "Skopeo signature policy",
+        "command": "cat /etc/containers/policy.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

@@ -145,5 +145,40 @@
     "nix-shell",
     "brew",
     "apt"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Nix version",
+        "command": "nix-env --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "nix-env"
+      },
+      {
+        "name": "installed",
+        "description": "Packages in the current Nix profile",
+        "command": "nix-env -q 2>/dev/null | head -25",
+        "parser": "lines",
+        "cacheFor": 300,
+        "requiresCmd": "nix-env"
+      },
+      {
+        "name": "generations",
+        "description": "Nix profile generations",
+        "command": "nix-env --list-generations 2>/dev/null | tail -10",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "nix-env"
+      },
+      {
+        "name": "channels",
+        "description": "Nix channels configured",
+        "command": "nix-channel --list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600
+      }
+    ]
+  }
 }

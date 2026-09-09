@@ -195,5 +195,32 @@
     "terragrunt",
     "driftctl",
     "pulumi"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "terracognita version",
+        "command": "terracognita version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "terracognita"
+      },
+      {
+        "name": "providers",
+        "description": "Cloud providers terracognita supports here",
+        "command": "terracognita --help 2>/dev/null | grep -A12 'Available Commands'",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "terracognita"
+      },
+      {
+        "name": "tfstate",
+        "description": "Terraform state files present",
+        "command": "find . -maxdepth 3 -name '*.tfstate' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

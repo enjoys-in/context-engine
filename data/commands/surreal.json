@@ -183,15 +183,40 @@
     },
     {
       "name": "version",
-      "description": "Show the server version"
+      "description": "Show the server version",
+      "options": []
     },
     {
       "name": "isready",
-      "description": "Check whether the server is accepting connections"
+      "description": "Check whether the server is accepting connections",
+      "options": [
+        {
+          "name": "--endpoint",
+          "description": "SurrealDB endpoint to check",
+          "type": "string",
+          "takesValue": true,
+          "short": "-e",
+          "shorthand": "-e"
+        }
+      ]
     },
     {
       "name": "upgrade",
-      "description": "Upgrade to a newer SurrealDB version"
+      "description": "Upgrade to a newer SurrealDB version",
+      "options": [
+        {
+          "name": "--version",
+          "description": "Version to upgrade to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--dry-run",
+          "description": "Report what would change",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -233,5 +258,38 @@
     "mongosh",
     "redis-cli",
     "psql"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "SurrealDB version",
+        "command": "surreal version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "surreal"
+      },
+      {
+        "name": "connection",
+        "description": "SurrealDB endpoint in effect",
+        "command": "echo \"${SURREAL_ENDPOINT:-ws://localhost:8000}\"",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "scripts",
+        "description": "SurrealQL scripts in this project",
+        "command": "find . -maxdepth 2 -name '*.surql' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "data_dir",
+        "description": "SurrealDB local data directory",
+        "command": "ls -d surreal.db 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

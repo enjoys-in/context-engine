@@ -22,6 +22,58 @@
       "description": "Convert or transform images",
       "examples": [
         "magick convert input.png output.jpg"
+      ],
+      "options": [
+        {
+          "name": "-resize",
+          "description": "Resize the image to these dimensions",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-quality",
+          "description": "Output quality from 1 to 100",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "-crop",
+          "description": "Crop to this geometry",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-rotate",
+          "description": "Rotate by this many degrees",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-strip",
+          "description": "Remove profiles and comments",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-format",
+          "description": "Output format to write",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "input",
+          "description": "Input image to read",
+          "required": true,
+          "type": "file"
+        },
+        {
+          "name": "output",
+          "description": "Output image to write",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -29,6 +81,26 @@
       "description": "Describe image properties",
       "examples": [
         "magick identify image.png"
+      ],
+      "options": [
+        {
+          "name": "-verbose",
+          "description": "Show the full image metadata",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-format",
+          "description": "Output format string",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-ping",
+          "description": "Read only the image header",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -36,6 +108,44 @@
       "description": "In-place image transformation",
       "examples": [
         "magick mogrify -resize 50% *.jpg"
+      ],
+      "options": [
+        {
+          "name": "-resize",
+          "description": "Resize the image to these dimensions",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-quality",
+          "description": "Output quality from 1 to 100",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "-crop",
+          "description": "Crop to this geometry",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-rotate",
+          "description": "Rotate by this many degrees",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-strip",
+          "description": "Remove profiles and comments",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-format",
+          "description": "Output format to write",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -43,6 +153,26 @@
       "description": "Overlay images",
       "examples": [
         "magick composite overlay.png base.png result.png"
+      ],
+      "options": [
+        {
+          "name": "-gravity",
+          "description": "Placement of the overlay",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-geometry",
+          "description": "Offset and size of the overlay",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-blend",
+          "description": "Blend percentage",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -50,6 +180,32 @@
       "description": "Create image montage",
       "examples": [
         "magick montage *.jpg -geometry 100x100+2+2 montage.jpg"
+      ],
+      "options": [
+        {
+          "name": "-tile",
+          "description": "Tile layout as columns x rows",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-geometry",
+          "description": "Thumbnail size and spacing",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-label",
+          "description": "Label to draw under each tile",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-background",
+          "description": "Background colour",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     }
   ],
@@ -125,5 +281,37 @@
     "gimp",
     "optipng",
     "pngquant"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "ImageMagick version",
+        "command": "magick --version 2>/dev/null | head -2 || convert --version 2>/dev/null | head -2",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "formats",
+        "description": "Image formats ImageMagick supports",
+        "command": "magick identify -list format 2>/dev/null | head -30 || identify -list format 2>/dev/null | head -30",
+        "parser": "table",
+        "cacheFor": 3600
+      },
+      {
+        "name": "resource_limits",
+        "description": "ImageMagick resource limits",
+        "command": "magick -list resource 2>/dev/null || convert -list resource 2>/dev/null",
+        "parser": "keyvalue",
+        "cacheFor": 3600
+      },
+      {
+        "name": "images",
+        "description": "Images in this directory",
+        "command": "find . -maxdepth 2 -name '*.jpg' -o -name '*.png' -o -name '*.gif' -o -name '*.webp' -o -name '*.tiff' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

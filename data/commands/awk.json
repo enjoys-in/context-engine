@@ -102,42 +102,50 @@
     {
       "name": "print",
       "description": "Print text or field values",
-      "usage": "awk '{print $1}' file.txt"
+      "usage": "awk '{print $1}' file.txt",
+      "options": []
     },
     {
       "name": "printf",
       "description": "Formatted output",
-      "usage": "awk '{printf \"%-10s %d\\n\", $1, $2}' file.txt"
+      "usage": "awk '{printf \"%-10s %d\\n\", $1, $2}' file.txt",
+      "options": []
     },
     {
       "name": "split",
       "description": "Split string into array",
-      "usage": "awk '{split($0, a, \":\"); print a[1]}' file.txt"
+      "usage": "awk '{split($0, a, \":\"); print a[1]}' file.txt",
+      "options": []
     },
     {
       "name": "gsub",
       "description": "Global string substitution",
-      "usage": "awk '{gsub(/old/, \"new\"); print}' file.txt"
+      "usage": "awk '{gsub(/old/, \"new\"); print}' file.txt",
+      "options": []
     },
     {
       "name": "match",
       "description": "Pattern matching",
-      "usage": "awk '/pattern/ {print}' file.txt"
+      "usage": "awk '/pattern/ {print}' file.txt",
+      "options": []
     },
     {
       "name": "substr",
       "description": "Extract substring",
-      "usage": "awk '{print substr($0, 1, 10)}' file.txt"
+      "usage": "awk '{print substr($0, 1, 10)}' file.txt",
+      "options": []
     },
     {
       "name": "length",
       "description": "Get string length",
-      "usage": "awk '{print length($0)}' file.txt"
+      "usage": "awk '{print length($0)}' file.txt",
+      "options": []
     },
     {
       "name": "tolower",
       "description": "Convert to lowercase",
-      "usage": "awk '{print tolower($0)}' file.txt"
+      "usage": "awk '{print tolower($0)}' file.txt",
+      "options": []
     }
   ],
   "examples": [
@@ -159,5 +167,31 @@
     "sort",
     "uniq",
     "perl"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "awk implementation and version",
+        "command": "awk --version 2>/dev/null | head -1 || awk -W version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "awk"
+      },
+      {
+        "name": "data_files",
+        "description": "Delimited data files awk can process",
+        "command": "find . -maxdepth 2 -name '*.csv' -o -name '*.tsv' -o -name '*.txt' -o -name '*.log' 2>/dev/null | head -20",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "scripts",
+        "description": "awk program files in this project",
+        "command": "find . -maxdepth 2 -name '*.awk' 2>/dev/null | head -10",
+        "parser": "lines",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

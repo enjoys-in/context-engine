@@ -26,6 +26,14 @@
       "description": "Add a hook",
       "examples": [
         "npx husky add .husky/pre-commit 'npm test'"
+      ],
+      "args": [
+        {
+          "name": "file",
+          "description": "Hook file to add",
+          "required": true,
+          "type": "file"
+        }
       ]
     },
     {
@@ -63,5 +71,37 @@
     "lint-staged",
     "git",
     "pre-commit"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "husky version",
+        "command": "husky --version 2>/dev/null || npx husky --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "hooks",
+        "description": "Hooks husky manages in this repository",
+        "command": "ls .husky 2>/dev/null | grep -v '^_$'",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "hooks_path",
+        "description": "Git hooks path husky installed",
+        "command": "git config --get core.hooksPath 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "package_json",
+        "description": "Project package manifest",
+        "command": "cat package.json 2>/dev/null",
+        "parser": "json",
+        "cacheFor": 120
+      }
+    ]
+  }
 }

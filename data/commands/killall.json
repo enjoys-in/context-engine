@@ -154,5 +154,31 @@
     "pkill",
     "pgrep",
     "ps"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "killall version",
+        "command": "killall --version 2>&1 | head -1",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "killall"
+      },
+      {
+        "name": "processes",
+        "description": "Named processes currently running",
+        "command": "ps -eo comm 2>/dev/null | sort -u | head -30",
+        "parser": "lines",
+        "cacheFor": 30
+      },
+      {
+        "name": "top_cpu",
+        "description": "Processes by CPU usage",
+        "command": "ps -eo pid,comm,pcpu --sort=-pcpu 2>/dev/null | head -15",
+        "parser": "table",
+        "cacheFor": 15
+      }
+    ]
+  }
 }

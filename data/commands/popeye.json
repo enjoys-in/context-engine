@@ -118,5 +118,40 @@
     "kube-score",
     "kubeconform",
     "k9s"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Popeye version",
+        "command": "popeye version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "popeye"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "spinach",
+        "description": "Popeye configuration",
+        "command": "cat spinach.yml 2>/dev/null || cat ~/.config/popeye/spinach.yml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      }
+    ]
+  }
 }

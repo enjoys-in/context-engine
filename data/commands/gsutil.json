@@ -90,6 +90,14 @@
       "description": "Remove bucket",
       "examples": [
         "gsutil rb gs://my-bucket"
+      ],
+      "options": [
+        {
+          "name": "-f",
+          "description": "Continue past errors",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -140,6 +148,20 @@
           "type": "string",
           "takesValue": true
         }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source path or URL",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path or URL",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -148,6 +170,46 @@
       "examples": [
         "gsutil mv gs://my-bucket/old.txt gs://my-bucket/new.txt",
         "gsutil mv ./local.txt gs://my-bucket/"
+      ],
+      "options": [
+        {
+          "name": "-r",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-a",
+          "description": "Set a predefined ACL",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-p",
+          "description": "Project to bill the request to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-h",
+          "description": "Set a request header",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "source",
+          "description": "Source path or URL",
+          "required": true,
+          "type": "path"
+        },
+        {
+          "name": "destination",
+          "description": "Destination path or URL",
+          "required": true,
+          "type": "path"
+        }
       ]
     },
     {
@@ -182,6 +244,14 @@
           "takesValue": false,
           "short": "-a",
           "shorthand": "-a"
+        }
+      ],
+      "args": [
+        {
+          "name": "url",
+          "description": "Object or bucket URL to remove",
+          "required": true,
+          "type": "string"
         }
       ]
     },
@@ -240,6 +310,28 @@
       "description": "Concatenate object content",
       "examples": [
         "gsutil cat gs://my-bucket/file.txt"
+      ],
+      "options": [
+        {
+          "name": "-h",
+          "description": "Print short header lines before each object",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-r",
+          "description": "Byte range to read",
+          "type": "string",
+          "takesValue": true
+        }
+      ],
+      "args": [
+        {
+          "name": "url",
+          "description": "Object URL to print",
+          "required": true,
+          "type": "string"
+        }
       ]
     },
     {
@@ -247,7 +339,8 @@
       "description": "Object statistics",
       "examples": [
         "gsutil stat gs://my-bucket/file.txt"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "du",
@@ -289,6 +382,26 @@
       "examples": [
         "gsutil iam get gs://my-bucket",
         "gsutil iam ch user:user@example.com:objectViewer gs://my-bucket"
+      ],
+      "options": [
+        {
+          "name": "-r",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-f",
+          "description": "Continue past errors",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-d",
+          "description": "Remove the named binding",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -297,6 +410,32 @@
       "examples": [
         "gsutil acl get gs://my-bucket",
         "gsutil acl set public-read gs://my-bucket/file.txt"
+      ],
+      "options": [
+        {
+          "name": "-r",
+          "description": "Operate recursively",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "-a",
+          "description": "Set a predefined ACL",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-p",
+          "description": "Project to bill the request to",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "-h",
+          "description": "Set a request header",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -305,7 +444,8 @@
       "examples": [
         "gsutil cors get gs://my-bucket",
         "gsutil cors set cors.json gs://my-bucket"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "lifecycle",
@@ -313,7 +453,8 @@
       "examples": [
         "gsutil lifecycle get gs://my-bucket",
         "gsutil lifecycle set lifecycle.json gs://my-bucket"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "versioning",
@@ -321,7 +462,8 @@
       "examples": [
         "gsutil versioning set on gs://my-bucket",
         "gsutil versioning get gs://my-bucket"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "signurl",
@@ -361,7 +503,8 @@
       "description": "Compose objects",
       "examples": [
         "gsutil compose gs://my-bucket/part1 gs://my-bucket/part2 gs://my-bucket/combined"
-      ]
+      ],
+      "options": []
     },
     {
       "name": "hash",
@@ -480,5 +623,33 @@
     "s3cmd",
     "aws",
     "rclone"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "gsutil version",
+        "command": "gsutil version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "gsutil"
+      },
+      {
+        "name": "project",
+        "description": "Active gcloud project",
+        "command": "gcloud config get-value project 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "gcloud"
+      },
+      {
+        "name": "buckets",
+        "description": "Cloud Storage buckets in the active project",
+        "command": "gsutil ls 2>/dev/null | head -30",
+        "parser": "lines",
+        "cacheFor": 120,
+        "requiresCmd": "gsutil"
+      }
+    ]
+  }
 }

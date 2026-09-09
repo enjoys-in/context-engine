@@ -62,5 +62,38 @@
     "husky",
     "conventional-commits",
     "semantic-release"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "commitlint version",
+        "command": "commitlint --version 2>/dev/null || npx commitlint --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600
+      },
+      {
+        "name": "config",
+        "description": "commitlint configuration",
+        "command": "cat commitlint.config.js 2>/dev/null || cat .commitlintrc.json 2>/dev/null || grep -A10 '\"commitlint\"' package.json 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 120
+      },
+      {
+        "name": "hooks",
+        "description": "Git hooks that would run commitlint",
+        "command": "ls .husky 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 120
+      },
+      {
+        "name": "recent_subjects",
+        "description": "Recent commit subjects to check convention against",
+        "command": "git log --oneline -10 --format='%s' 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "git"
+      }
+    ]
+  }
 }

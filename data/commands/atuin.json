@@ -81,6 +81,14 @@
           "type": "string",
           "required": true
         }
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Re-import even when history already exists",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -165,11 +173,20 @@
     },
     {
       "name": "logout",
-      "description": "Log out of the sync server"
+      "description": "Log out of the sync server",
+      "options": []
     },
     {
       "name": "key",
-      "description": "Print the encryption key"
+      "description": "Print the encryption key",
+      "options": [
+        {
+          "name": "--base64",
+          "description": "Print the key in base64",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "init",
@@ -199,11 +216,32 @@
     },
     {
       "name": "history",
-      "description": "Manage history entries"
+      "description": "Manage history entries",
+      "options": [
+        {
+          "name": "--cwd",
+          "description": "Filter to this working directory",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--format",
+          "description": "Output format template",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--reverse",
+          "description": "Show oldest entries first",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "doctor",
-      "description": "Report configuration and environment problems"
+      "description": "Report configuration and environment problems",
+      "options": []
     }
   ],
   "globalOptions": [
@@ -245,5 +283,40 @@
     "fzf",
     "zoxide",
     "starship"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Atuin version",
+        "command": "atuin --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "atuin"
+      },
+      {
+        "name": "status",
+        "description": "Atuin sync status",
+        "command": "atuin status 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "atuin"
+      },
+      {
+        "name": "config",
+        "description": "Atuin configuration",
+        "command": "cat ~/.config/atuin/config.toml 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300
+      },
+      {
+        "name": "history_count",
+        "description": "Shell history entries Atuin has indexed",
+        "command": "atuin history list 2>/dev/null | wc -l",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "atuin"
+      }
+    ]
+  }
 }

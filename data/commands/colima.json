@@ -104,7 +104,15 @@
     },
     {
       "name": "restart",
-      "description": "Restart the instance"
+      "description": "Restart the instance",
+      "options": [
+        {
+          "name": "--profile",
+          "description": "Profile to act on",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "status",
@@ -134,19 +142,51 @@
     },
     {
       "name": "ssh",
-      "description": "Open a shell inside the instance"
+      "description": "Open a shell inside the instance",
+      "options": [
+        {
+          "name": "--profile",
+          "description": "Profile to connect to",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "nerdctl",
-      "description": "Run nerdctl inside the instance"
+      "description": "Run nerdctl inside the instance",
+      "options": [
+        {
+          "name": "--profile",
+          "description": "Profile to act on",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "kubernetes",
-      "description": "Manage the Kubernetes cluster"
+      "description": "Manage the Kubernetes cluster",
+      "options": [
+        {
+          "name": "--profile",
+          "description": "Profile to act on",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "template",
-      "description": "Edit the default configuration"
+      "description": "Edit the default configuration",
+      "options": [
+        {
+          "name": "--editor",
+          "description": "Editor to open the template in",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [
@@ -203,5 +243,41 @@
     "podman",
     "nerdctl",
     "minikube"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "Colima version",
+        "command": "colima version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "colima"
+      },
+      {
+        "name": "status",
+        "description": "Colima VM status",
+        "command": "colima status 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "colima"
+      },
+      {
+        "name": "profiles",
+        "description": "Colima profiles on this machine",
+        "command": "colima list 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "colima"
+      },
+      {
+        "name": "docker_context",
+        "description": "Docker context Colima registered",
+        "command": "docker context ls 2>/dev/null",
+        "parser": "table",
+        "cacheFor": 120,
+        "requiresCmd": "docker"
+      }
+    ]
+  }
 }

@@ -41,5 +41,33 @@
     "kubectl",
     "kubectx",
     "k9s"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "kubens version",
+        "command": "kubens --version 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 3600,
+        "requiresCmd": "kubens"
+      },
+      {
+        "name": "current",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 30,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "namespaces",
+        "description": "Namespaces in the active cluster",
+        "command": "kubectl get namespaces -o name 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      }
+    ]
+  }
 }

@@ -602,5 +602,49 @@
     "helm",
     "linkerd",
     "envoy"
-  ]
+  ],
+  "contextEngine": {
+    "detectors": [
+      {
+        "name": "version",
+        "description": "istioctl and control-plane versions",
+        "command": "istioctl version --short 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 300,
+        "requiresCmd": "istioctl"
+      },
+      {
+        "name": "kube_context",
+        "description": "Active Kubernetes context",
+        "command": "kubectl config current-context 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "kube_namespace",
+        "description": "Active Kubernetes namespace",
+        "command": "kubectl config view --minify -o jsonpath='{..namespace}' 2>/dev/null",
+        "parser": "text",
+        "cacheFor": 60,
+        "requiresCmd": "kubectl"
+      },
+      {
+        "name": "profiles",
+        "description": "Istio installation profiles available",
+        "command": "istioctl profile list 2>/dev/null",
+        "parser": "lines",
+        "cacheFor": 3600,
+        "requiresCmd": "istioctl"
+      },
+      {
+        "name": "proxies",
+        "description": "Sidecar proxies known to the mesh",
+        "command": "istioctl proxy-status 2>/dev/null | head -25",
+        "parser": "table",
+        "cacheFor": 60,
+        "requiresCmd": "istioctl"
+      }
+    ]
+  }
 }
