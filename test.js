@@ -215,6 +215,37 @@ assert(engine.getCommand("nope") === undefined, "an unknown name is still undefi
   assert(typeof det.cacheFor === "number", "the detector declares a cache window");
 }
 
+// ── args are declared wherever the data itself proves one exists ──
+// If a leaf's own example shows a non-flag token straight after the invocation path, then
+// that leaf takes an argument and must declare it. This is the invariant that replaced the
+// old "name ends in a verb" heuristic, which flagged flags-only commands like `mvn compile`.
+{
+  const SHELL_OP = /^[-|<>&;]/;
+  let undeclared = [];
+  for (const cmd of engine.getAllCommands()) {
+    const bin = cmd.name;
+    const walk = (list, prefix) => {
+      for (const s of list || []) {
+        const at = prefix ? `${prefix} ${s.name}` : s.name;
+        if ((s.subcommands || []).length) { walk(s.subcommands, at); continue; }
+        if ((s.args || []).length) continue;
+        for (const ex of (s.examples || []).map((e) => (typeof e === "string" ? e : e.command)).filter(Boolean)) {
+          let rest = ex.trim();
+          const withBin = (rest.startsWith(bin + " ") ? bin + " " : "") + at;
+          if (rest.startsWith(withBin)) rest = rest.slice(withBin.length);
+          else if (rest.startsWith(at)) rest = rest.slice(at.length);
+          else continue;
+          const next = rest.trim().split(/\s+/).filter(Boolean)[0];
+          if (next && !SHELL_OP.test(next)) { undeclared.push(`${bin} ${at} (example shows "${next}")`); break; }
+        }
+      }
+    };
+    walk(cmd.subcommands, "");
+  }
+  assert(undeclared.length === 0,
+    `every leaf whose example shows an argument declares one${undeclared.length ? ": " + undeclared.slice(0, 3).join("; ") : ""}`);
+}
+
 // The same slot type resolves to different detectors depending on the verb, which is the
 // whole reason the link is per-arg rather than a global type->detector table.
 {
