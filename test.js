@@ -77,14 +77,16 @@ assert(engine.count() === 447, "count() still 447 after clearCache");
 
 // ── Languages ────────────────────────────────────────────────
 const langs = engine.listLanguages();
-assert(langs.length === 96, `listLanguages() === 96 (got ${langs.length})`);
+// Derived from disk, not hardcoded: adding a language must not break the suite.
+const LANG_COUNT = engine.listLanguagesForProvider("completion").length;
+assert(langs.length === LANG_COUNT, `listLanguages() === ${LANG_COUNT} (got ${langs.length})`);
 assert(!langs.includes("git") && !langs.includes("docker"), "listLanguages() excludes CLI command names");
 assert(langs.includes("typescript") && langs.includes("python"), "listLanguages() includes real languages");
 
 // ── Language configuration (setLanguageConfiguration) ────────
 assert(
-  engine.listLanguagesForProvider("languageConfiguration").length === 96,
-  "languageConfiguration covers all 96 languages"
+  engine.listLanguagesForProvider("languageConfiguration").length === LANG_COUNT,
+  `languageConfiguration covers all ${LANG_COUNT} languages`
 );
 const ts = engine.getLanguageConfiguration("typescript");
 assert(ts.comments.lineComment === "//", "typescript lineComment is //");
@@ -104,7 +106,7 @@ assert(engine.toMonacoLanguageConfiguration("nope") === null, "unknown language 
 
 // ── Language registration (ILanguageExtensionPoint) ──────────
 const points = engine.getLanguageExtensionPoints();
-assert(points.length === 96, `getLanguageExtensionPoints() === 96 (got ${points.length})`);
+assert(points.length === LANG_COUNT, `getLanguageExtensionPoints() === ${LANG_COUNT} (got ${points.length})`);
 assert(points.every((p) => typeof p.id === "string" && Array.isArray(p.aliases)), "every extension point has id + aliases");
 const py = engine.getLanguageExtensionPoint("python");
 assert(py.extensions.includes(".py"), "python registers .py");
