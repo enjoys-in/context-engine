@@ -225,7 +225,14 @@ const manifestPath = path.join(DATA, "manifest.json");
 const prev = fs.existsSync(manifestPath) ? read(manifestPath) : {};
 const pkg = read(path.join(ROOT, "package.json"));
 const NAMES = Object.fromEntries((prev.languages ?? []).map((l) => [l.id, l.name]));
-const totalFiles = allDirs.reduce((n, d) => n + jsonFiles(path.join(DATA, d)).length, 0) + 1; // + languages.json
+// Every .json under data/, including the two at its root (manifest.json,
+// languages.json) and the nested commands/manifest.json.
+const countJson = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).reduce(
+    (n, e) => n + (e.isDirectory() ? countJson(path.join(dir, e.name)) : e.name.endsWith(".json") ? 1 : 0),
+    0
+  );
+const totalFiles = countJson(DATA);
 
 const manifest = {
   version: pkg.version,
@@ -250,6 +257,28 @@ const manifest = {
     }])
   ),
 };
+
+// ── 9. Docs and the commands manifest must not drift ─────────────────
+// Both of these had silently gone stale before.
+{
+  const readme = fs.readFileSync(path.join(ROOT, "README.md"), "utf-8");
+  const start = readme.indexOf("## Supported Languages");
+  const table = start === -1 ? "" : readme.slice(start, readme.indexOf("## Covered Commands", start));
+  const norm = (x) => x.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const hay = norm(table);
+  const names = Object.fromEntries(manifest.languages.map((l) => [l.id, l.name]));
+  for (const id of languages)
+    if (!hay.includes(norm(id)) && !hay.includes(norm(names[id] ?? id)))
+      fail(`README "Supported Languages" table does not mention ${id} (${names[id] ?? id})`);
+
+  const cmdManifestPath = path.join(DATA, "commands", "manifest.json");
+  if (fs.existsSync(cmdManifestPath)) {
+    const listed = new Set(read(cmdManifestPath).files ?? []);
+    const onDisk = jsonFiles(path.join(DATA, "commands")).filter((f) => f !== "manifest.json");
+    for (const f of onDisk) if (!listed.has(f)) fail(`data/commands/manifest.json does not list ${f}`);
+    for (const f of listed) if (!onDisk.includes(f)) fail(`data/commands/manifest.json lists missing ${f}`);
+  }
+}
 
 if (problems.length) {
   console.error(`\n${problems.length} problem(s) found:\n`);
