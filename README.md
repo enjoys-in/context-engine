@@ -19,7 +19,7 @@ npm install @enjoys/context-engine
 ## What's Inside
 
 ```
-data/                        # 3,273 JSON files — 96 languages × 28 providers + 465 commands + 119 themes
+data/                        # 3,370 JSON files — 96 languages × 29 providers + 465 commands + 119 themes
 ├── codeActions/             # Quick-fix and refactoring actions
 ├── codeLens/                # Inline actionable annotations (references, tests)
 ├── color/                   # Color picker and decorator support
@@ -36,6 +36,7 @@ data/                        # 3,273 JSON files — 96 languages × 28 providers
 ├── implementation/          # Go-to-implementation data
 ├── inlayHints/              # Inline parameter/type hints
 ├── inlineCompletions/       # Ghost-text inline completions
+├── languageConfiguration/   # Brackets, comments, auto-close, indent, folding
 ├── linkedEditingRange/      # Linked editing (e.g. HTML tag pairs)
 ├── links/                   # Clickable document link patterns
 ├── onTypeFormatting/        # Format-as-you-type rules
@@ -46,6 +47,7 @@ data/                        # 3,273 JSON files — 96 languages × 28 providers
 ├── semanticTokens/          # Full semantic tokenization
 ├── signatureHelp/           # Function signature tooltips
 ├── typeDefinition/          # Go-to-type-definition data
+├── languages.json           # ILanguageExtensionPoint registry (96 entries)
 └── manifest.json            # Language registry with file mappings
 ```
 
@@ -317,6 +319,74 @@ monaco.languages.registerSignatureHelpProvider('typescript', {
 ```
 
 ---
+
+## Language Configuration & Registration
+
+Two APIs that are pure static data — shipped for all 96 languages.
+
+### `setLanguageConfiguration` — brackets, comments, indentation
+
+This is what makes `Cmd+/` toggle comments, quotes and brackets auto-close,
+Enter indent correctly, and `#region` fold.
+
+```js
+import * as monaco from 'monaco-editor';
+import { toMonacoLanguageConfiguration } from '@enjoys/context-engine';
+
+// Regexes are revived into real RegExp objects, ready to hand to Monaco.
+monaco.languages.setLanguageConfiguration(
+  'typescript',
+  toMonacoLanguageConfiguration('typescript')
+);
+```
+
+JSON cannot hold a `RegExp`, so `wordPattern`, `indentationRules.*`,
+`onEnterRules.*` and `folding.markers.*` are stored as **regex source strings**.
+`toMonacoLanguageConfiguration(id)` converts them and strips authoring-only
+`description` keys. Use `getLanguageConfiguration(id)` for the raw JSON.
+
+```js
+getLanguageConfiguration('python').comments        // { lineComment: '#', blockComment: ['"""','"""'] }
+getLanguageConfiguration('python').folding.offSide // true
+```
+
+`onEnterRules[].action.indentAction` is the numeric `IndentAction` enum
+(`None=0, Indent=1, IndentOutdent=2, Outdent=3`).
+
+### `register` — extensions, filenames, aliases, mimetypes
+
+Register every language, so `.tf` maps to `hcl` and `Dockerfile` to `dockerfile`:
+
+```js
+import { getLanguageExtensionPoints } from '@enjoys/context-engine';
+
+for (const lang of getLanguageExtensionPoints()) {
+  monaco.languages.register(lang);   // ILanguageExtensionPoint
+}
+```
+
+```js
+getLanguageExtensionPoint('python')
+// { id: 'python', extensions: ['.py', '.pyi', ...],
+//   firstLine: '^#!/.*\\bpython[0-9.-]*\\b',
+//   aliases: ['Python','python'], mimetypes: ['text/x-python'] }
+```
+
+`firstLine` is a regex source for shebang detection; `filenames` and
+`filenamePatterns` cover extension-less files such as `Makefile` and `.gitignore`.
+
+### Completion trigger characters
+
+Every `completion/*.json` declares `triggerCharacters`, so suggestions fire on
+more than word characters:
+
+```js
+const { triggerCharacters, completions } = require('@enjoys/context-engine/completion/typescript.json');
+monaco.languages.registerCompletionItemProvider('typescript', {
+  triggerCharacters,            // ['.', '"', "'", '/', '@', '#']
+  provideCompletionItems() { /* ... */ }
+});
+```
 
 ## Terminal Autocomplete — Command Engine API
 
@@ -649,7 +719,7 @@ const manifest = require('@enjoys/context-engine/data/manifest.json');
 
 ## Supported Languages (96)
 
-Each language has up to 28 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
+Each language has up to 29 provider files — completions, hover, definitions, code actions, formatting, symbols, and more.
 
 | Category | Languages |
 |----------|-----------|
@@ -732,7 +802,7 @@ const ctx = getContextEngine('systemctl');
 
 **Parser types:** `text` | `lines` | `json` | `csv` | `keyvalue` | `regex` | `table`
 
-## All 28 Monaco Provider Types — Shipped
+## All 29 Monaco Provider Types — Shipped
 
 Every provider below is fully implemented for all 96 languages with spec-compliant JSON data:
 
@@ -763,6 +833,8 @@ Every provider below is fully implemented for all 96 languages with spec-complia
 | Semantic Tokens | `registerDocumentSemanticTokensProvider` | `tokenTypes[]` |
 | Signature Help | `registerSignatureHelpProvider` | `signatures{}` |
 | Type Definition | `registerTypeDefinitionProvider` | `typeDefinitions{}` |
+| Language Configuration | `setLanguageConfiguration` | `comments{}`, `brackets[]`, `autoClosingPairs[]` |
+| Language Registration | `register` | `languages.json` (`ILanguageExtensionPoint[]`) |
 | Monarch Tokenizer | `setMonarchTokensProvider` | `tokenizer{}` |
 | Multi-Document Highlight | `registerMultiDocumentHighlightProvider` | `crossFileSymbols[]` |
 | New Symbol Names | `registerNewSymbolNameProvider` | `renameSuggestionRules[]` |

@@ -42,7 +42,10 @@ __export(index_exports, {
   getContextEngine: () => getContextEngine,
   getExamples: () => getExamples,
   getGlobalOptions: () => getGlobalOptions,
+  getLanguageConfiguration: () => getLanguageConfiguration,
   getLanguageData: () => getLanguageData,
+  getLanguageExtensionPoint: () => getLanguageExtensionPoint,
+  getLanguageExtensionPoints: () => getLanguageExtensionPoints,
   getManifest: () => getManifest,
   getProviderData: () => getProviderData,
   getSubcommands: () => getSubcommands,
@@ -55,6 +58,7 @@ __export(index_exports, {
   resolveCommandPath: () => resolveCommandPath,
   resolveProviderPath: () => resolveProviderPath,
   resolveThemePath: () => resolveThemePath,
+  toMonacoLanguageConfiguration: () => toMonacoLanguageConfiguration,
   searchCommands: () => searchCommands
 });
 module.exports = __toCommonJS(index_exports);
@@ -81,6 +85,7 @@ var PROVIDERS = [
   "implementation",
   "inlayHints",
   "inlineCompletions",
+  "languageConfiguration",
   "linkedEditingRange",
   "links",
   "monarchTokens",
@@ -164,6 +169,7 @@ function count() {
 function clearCache() {
   _commandCache = null;
   _providerCache.clear();
+  _languages = null;
 }
 function resolveCommandPath(name) {
   return path.join(COMMANDS_DIR, `${name}.json`);
@@ -200,6 +206,7 @@ function listLanguagesForProvider(provider) {
 function listLanguages() {
   const langs = /* @__PURE__ */ new Set();
   for (const provider of PROVIDERS) {
+    if (provider === "commands") continue;
     for (const lang of listLanguagesForProvider(provider)) {
       langs.add(lang);
     }
@@ -208,6 +215,40 @@ function listLanguages() {
 }
 function listProviders() {
   return PROVIDERS;
+}
+// ── Language configuration (monaco.languages.setLanguageConfiguration) ──
+function getLanguageConfiguration(languageId) {
+  return getProviderData("languageConfiguration", languageId);
+}
+var RE_FIELDS = ["wordPattern", "increaseIndentPattern", "decreaseIndentPattern", "indentNextLinePattern", "unIndentedLinePattern", "beforeText", "afterText", "previousLineText", "start", "end"];
+function reviveRegExp(node, key) {
+  if (node === null || typeof node !== "object") return node;
+  if (Array.isArray(node)) return node.map((v) => reviveRegExp(v, key));
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    out[k] = typeof v === "string" && RE_FIELDS.includes(k) ? new RegExp(v) : reviveRegExp(v, k);
+  }
+  return out;
+}
+function toMonacoLanguageConfiguration(languageId) {
+  const raw = getLanguageConfiguration(languageId);
+  if (!raw) return null;
+  const { language, ...rest } = raw;
+  const cfg = reviveRegExp(rest);
+  if (cfg.onEnterRules) {
+    cfg.onEnterRules = cfg.onEnterRules.map(({ description, ...r }) => r);
+  }
+  return cfg;
+}
+// ── Language registration (monaco.languages.register) ──
+var _languages = null;
+function getLanguageExtensionPoints() {
+  if (_languages) return _languages;
+  _languages = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "languages.json"), "utf-8"));
+  return _languages;
+}
+function getLanguageExtensionPoint(languageId) {
+  return getLanguageExtensionPoints().find((l) => l.id === languageId) ?? null;
 }
 function resolveProviderPath(provider, languageId) {
   return path.join(DATA_DIR, provider, `${languageId}.json`);
@@ -264,6 +305,11 @@ var index_default = {
   listLanguages,
   listProviders,
   resolveProviderPath,
+  // Language configuration + registration
+  getLanguageConfiguration,
+  toMonacoLanguageConfiguration,
+  getLanguageExtensionPoints,
+  getLanguageExtensionPoint,
   // Manifest
   getManifest,
   // Themes
@@ -284,7 +330,10 @@ var index_default = {
   getContextEngine,
   getExamples,
   getGlobalOptions,
+  getLanguageConfiguration,
   getLanguageData,
+  getLanguageExtensionPoint,
+  getLanguageExtensionPoints,
   getManifest,
   getProviderData,
   getSubcommands,
@@ -297,5 +346,6 @@ var index_default = {
   resolveCommandPath,
   resolveProviderPath,
   resolveThemePath,
-  searchCommands
+  searchCommands,
+  toMonacoLanguageConfiguration
 });

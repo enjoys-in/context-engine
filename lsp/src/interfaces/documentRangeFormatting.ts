@@ -15,6 +15,4 @@ export interface RangeFormattingData {
   adjustToSyntaxNode?: boolean;
   supportedRangeTypes?: string[];
   options?: Record<string, unknown>;
-  displayName?: string;
-  capabilities?: Record<string, unknown>;
 }

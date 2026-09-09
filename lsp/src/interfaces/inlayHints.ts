@@ -1,6 +1,7 @@
 export interface InlayHintPattern {
   pattern?: string;
-  kind?: number | string;
+  /** InlayHintKind (spec §32): Type=1, Parameter=2. */
+  kind?: number;
   label?: string;
   position?: string;
   paddingLeft?: boolean;
