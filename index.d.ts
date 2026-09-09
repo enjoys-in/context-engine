@@ -1,19 +1,115 @@
 declare const PROVIDERS: readonly ["codeActions", "codeLens", "color", "commands", "completion", "declaration", "definition", "documentHighlight", "documentRangeFormatting", "documentSymbol", "foldingRange", "formatting", "hover", "implementation", "inlayHints", "inlineCompletions", "languageConfiguration", "linkedEditingRange", "links", "monarchTokens", "multiDocumentHighlight", "newSymbolNames", "onTypeFormatting", "rangeSemanticTokens", "references", "rename", "selectionRange", "semanticTokens", "signatureHelp", "typeDefinition"];
 export type ProviderName = (typeof PROVIDERS)[number];
+/** How a detector's stdout should be turned into values. */
+export type DetectorParser = "text" | "lines" | "json" | "csv" | "keyvalue" | "regex" | "table";
+
+/**
+ * A read-only shell probe that gathers live context for completion.
+ *
+ * This package never executes detectors — it has no `child_process` dependency. Running
+ * them is the consumer's responsibility; see XTERM_INTEGRATION.md before wiring execution.
+ */
+export interface Detector {
+  /** Unique within its command. Referenced by `CommandArg.completion.detector`. */
+  name: string;
+  description: string;
+  /** Read-only shell command. `npm run validate` fails the build if it mutates state. */
+  command: string;
+  parser: DetectorParser;
+  /** Seconds the result may be reused. Honour it, or you shell out per keystroke. */
+  cacheFor: number;
+  /** Binary that must exist; skip the probe entirely when it does not. */
+  requiresCmd?: string;
+  [key: string]: any;
+}
+
+/** Semantic kinds that name an enumerable runtime value, so a detector can list them. */
+export type ArgType =
+  | "string" | "path" | "file" | "directory" | "number" | "integer" | "url" | "boolean"
+  | "branch" | "container" | "image" | "namespace" | "pod" | "service" | "cluster"
+  | "bucket" | "volume" | "network" | "app" | "project" | "profile" | "environment"
+  | "package" | "unit" | "table" | "database" | "remote" | "tag" | "stash" | "instance"
+  | "node" | "job" | "function" | "secret" | "alias" | "version" | "device" | "session"
+  | "worktree" | "stack" | "zone";
+
+/** A positional argument. `args` is ordered, so index N is the Nth positional. */
+export interface CommandArg {
+  name: string;
+  description: string;
+  required: boolean;
+  type?: ArgType;
+  /**
+   * Where this slot's candidate values come from. `detector` names a `Detector` in the
+   * SAME command. Chosen per-arg rather than per-type because the useful values depend on
+   * the verb: `docker stop` wants running containers, `docker start` wants all of them.
+   * Absent when nothing local can enumerate the values (`brew install` reads a registry).
+   */
+  completion?: { detector: string; [key: string]: any };
+  [key: string]: any;
+}
+
+export interface CommandOption {
+  name: string;
+  description: string;
+  /** Short form, e.g. `-f`. `shorthand` mirrors it. */
+  short?: string;
+  shorthand?: string;
+  type?: string;
+  /** True for every `type` except `boolean`. */
+  takesValue?: boolean;
+  [key: string]: any;
+}
+
+export interface Subcommand {
+  /**
+   * Three forms coexist by design: flat (`"commit"`), space-encoded relative to the binary
+   * (`"network ls"`, 771 of them), and parents with real nested `subcommands`. Resolve by
+   * longest match and one code path handles all three.
+   */
+  name: string;
+  description: string;
+  options?: CommandOption[];
+  args?: CommandArg[];
+  examples?: string[];
+  subcommands?: Subcommand[];
+  [key: string]: any;
+}
+
+export interface Command {
+  name: string;
+  description: string;
+  category: string;
+  aliases?: string[];
+  platforms?: string[];
+  shells?: string[];
+  subcommands?: Subcommand[];
+  globalOptions?: CommandOption[];
+  args?: CommandArg[];
+  examples?: any[];
+  relatedCommands?: string[];
+  contextEngine?: { detectors: Detector[] };
+  [key: string]: any;
+}
+
 /** Resolve a typed name (or binary alias, e.g. `hx`, `ncu`, `r2`) to its canonical command name. */
 export declare function resolveCommandName(name: string): string;
 /** Look up a command by name or by any of its declared `aliases`. */
-export declare function getCommand(name: string): any;
-export declare function getAllCommands(): any[];
+export declare function getCommand(name: string): Command | undefined;
+export declare function getAllCommands(): Command[];
 export declare function listCommandNames(): string[];
-export declare function getCommandsByCategory(category: string): any[];
-export declare function getCommandsByPlatform(platform: string): any[];
-export declare function searchCommands(query: string): any[];
+export declare function getCommandsByCategory(category: string): Command[];
+export declare function getCommandsByPlatform(platform: string): Command[];
+export declare function searchCommands(query: string): Command[];
 export declare function getCategories(): string[];
-export declare function getContextEngine(name: string): any;
-export declare function getSubcommands(name: string): any;
-export declare function getGlobalOptions(name: string): any;
-export declare function getExamples(name: string): any;
+export declare function getContextEngine(name: string): { detectors: Detector[] } | null;
+export declare function getSubcommands(name: string): Subcommand[];
+export declare function getGlobalOptions(name: string): CommandOption[];
+/** Examples normalised to `{command, description}`. */
+export declare function getExamples(name: string): { command: string; description?: string }[];
+/** Examples exactly as stored — either a plain string or `{command, description}`. */
+export declare function getRawExamples(name: string): (string | { command: string; description?: string })[];
+/** Every example for a command including its subcommands', each tagged with its origin. */
+export declare function getAllExamples(name: string): { command: string; description?: string; subcommand: string | null }[];
 export declare function count(): number;
 export declare function clearCache(): void;
 export declare function resolveCommandPath(name: string): string;
