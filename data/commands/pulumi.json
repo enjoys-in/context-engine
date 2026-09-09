@@ -175,11 +175,55 @@
               "description": "Stack name",
               "required": true
             }
+          ],
+          "options": [
+            {
+              "name": "--secrets-provider",
+              "description": "Secrets provider to use",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--copy-config-from",
+              "description": "Copy configuration from this stack",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--non-interactive",
+              "description": "Do not prompt",
+              "type": "boolean",
+              "takesValue": false
+            }
           ]
         },
         {
           "name": "ls",
-          "description": "List stacks"
+          "description": "List stacks",
+          "options": [
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--all",
+              "description": "Include every organisation",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-a",
+              "shorthand": "-a"
+            },
+            {
+              "name": "--organization",
+              "description": "Organisation to list",
+              "type": "string",
+              "takesValue": true,
+              "short": "-o",
+              "shorthand": "-o"
+            }
+          ]
         },
         {
           "name": "select",
@@ -190,31 +234,157 @@
               "description": "Stack name",
               "required": true
             }
+          ],
+          "options": [
+            {
+              "name": "--create",
+              "description": "Create the stack if missing",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-c",
+              "shorthand": "-c"
+            },
+            {
+              "name": "--secrets-provider",
+              "description": "Secrets provider to use",
+              "type": "string",
+              "takesValue": true
+            }
           ]
         },
         {
           "name": "rm",
-          "description": "Remove a stack"
+          "description": "Remove a stack",
+          "options": [
+            {
+              "name": "--force",
+              "description": "Remove even with resources",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-f",
+              "shorthand": "-f"
+            },
+            {
+              "name": "--yes",
+              "description": "Skip confirmation",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-y",
+              "shorthand": "-y"
+            },
+            {
+              "name": "--preserve-config",
+              "description": "Keep the configuration file",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "output",
-          "description": "Show stack outputs"
+          "description": "Show stack outputs",
+          "options": [
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--show-secrets",
+              "description": "Reveal secret outputs",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            }
+          ]
         },
         {
           "name": "export",
-          "description": "Export stack state"
+          "description": "Export stack state",
+          "options": [
+            {
+              "name": "--file",
+              "description": "File to write",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--show-secrets",
+              "description": "Include secret values",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--version",
+              "description": "Checkpoint version",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "import",
-          "description": "Import stack state"
+          "description": "Import stack state",
+          "options": [
+            {
+              "name": "--file",
+              "description": "File to read",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--force",
+              "description": "Import despite integrity errors",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "tag",
-          "description": "Manage stack tags"
+          "description": "Manage stack tags",
+          "options": [
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            }
+          ]
         },
         {
           "name": "history",
-          "description": "Show update history"
+          "description": "Show update history",
+          "options": [
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--show-secrets",
+              "description": "Reveal secret values",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--page-size",
+              "description": "Entries per page",
+              "type": "integer",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
@@ -224,33 +394,201 @@
       "subcommands": [
         {
           "name": "set",
-          "description": "Set config value"
+          "description": "Set config value",
+          "options": [
+            {
+              "name": "--secret",
+              "description": "Store the value encrypted",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--path",
+              "description": "Treat the key as a path",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            },
+            {
+              "name": "--plaintext",
+              "description": "Store the value in plain text",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "get",
-          "description": "Get config value"
+          "description": "Get config value",
+          "options": [
+            {
+              "name": "--path",
+              "description": "Treat the key as a path",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            },
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "rm",
-          "description": "Remove config key"
+          "description": "Remove config key",
+          "options": [
+            {
+              "name": "--path",
+              "description": "Treat the key as a path",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            }
+          ]
         },
         {
           "name": "refresh",
-          "description": "Update config from current values"
+          "description": "Update config from current values",
+          "options": [
+            {
+              "name": "--force",
+              "description": "Overwrite local changes",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-f",
+              "shorthand": "-f"
+            },
+            {
+              "name": "--stack",
+              "description": "Stack to operate on",
+              "type": "string",
+              "takesValue": true,
+              "short": "-s",
+              "shorthand": "-s"
+            }
+          ]
         }
       ]
     },
     {
       "name": "refresh",
-      "description": "Refresh state with actual cloud state"
+      "description": "Refresh state with actual cloud state",
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip confirmation",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--skip-preview",
+          "description": "Do not show a preview",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--stack",
+          "description": "Stack to operate on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--target",
+          "description": "Only these resource URNs",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--parallel",
+          "description": "Parallel resource operations",
+          "type": "integer",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "import",
-      "description": "Import existing resource"
+      "description": "Import existing resource",
+      "options": [
+        {
+          "name": "--file",
+          "description": "Bulk import file",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--out",
+          "description": "Write generated code here",
+          "type": "file",
+          "takesValue": true
+        },
+        {
+          "name": "--yes",
+          "description": "Skip confirmation",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--protect",
+          "description": "Mark imported resources protected",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "cancel",
-      "description": "Cancel in-progress update"
+      "description": "Cancel in-progress update",
+      "options": [
+        {
+          "name": "--yes",
+          "description": "Skip confirmation",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-y",
+          "shorthand": "-y"
+        },
+        {
+          "name": "--stack",
+          "description": "Stack to operate on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        }
+      ]
     },
     {
       "name": "login",
@@ -266,11 +604,41 @@
     },
     {
       "name": "logout",
-      "description": "Logout from Pulumi Cloud"
+      "description": "Logout from Pulumi Cloud",
+      "options": [
+        {
+          "name": "--all",
+          "description": "Log out of every backend",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--local",
+          "description": "Log out of the local backend",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "whoami",
-      "description": "Show current user"
+      "description": "Show current user",
+      "options": [
+        {
+          "name": "--verbose",
+          "description": "Include organisation detail",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-v",
+          "shorthand": "-v"
+        },
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "plugin",
@@ -278,29 +646,153 @@
       "subcommands": [
         {
           "name": "install",
-          "description": "Install plugin"
+          "description": "Install plugin",
+          "options": [
+            {
+              "name": "--exact",
+              "description": "Install exactly this version",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--file",
+              "description": "Install from this file",
+              "type": "file",
+              "takesValue": true,
+              "short": "-f",
+              "shorthand": "-f"
+            },
+            {
+              "name": "--reinstall",
+              "description": "Reinstall even if present",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "ls",
-          "description": "List plugins"
+          "description": "List plugins",
+          "options": [
+            {
+              "name": "--json",
+              "description": "Emit JSON",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--project",
+              "description": "Only plugins used by this project",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-p",
+              "shorthand": "-p"
+            }
+          ]
         },
         {
           "name": "rm",
-          "description": "Remove plugin"
+          "description": "Remove plugin",
+          "options": [
+            {
+              "name": "--all",
+              "description": "Remove every version",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--yes",
+              "description": "Skip confirmation",
+              "type": "boolean",
+              "takesValue": false,
+              "short": "-y",
+              "shorthand": "-y"
+            }
+          ]
         }
       ]
     },
     {
       "name": "watch",
-      "description": "Watch for file changes and update"
+      "description": "Watch for file changes and update",
+      "options": [
+        {
+          "name": "--stack",
+          "description": "Stack to operate on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--path",
+          "description": "Paths to watch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--secrets-provider",
+          "description": "Secrets provider to use",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "logs",
-      "description": "Show aggregated logs"
+      "description": "Show aggregated logs",
+      "options": [
+        {
+          "name": "--stack",
+          "description": "Stack to operate on",
+          "type": "string",
+          "takesValue": true,
+          "short": "-s",
+          "shorthand": "-s"
+        },
+        {
+          "name": "--follow",
+          "description": "Stream new output",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-f",
+          "shorthand": "-f"
+        },
+        {
+          "name": "--since",
+          "description": "Look back this far",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--resource",
+          "description": "Only this resource",
+          "type": "string",
+          "takesValue": true,
+          "short": "-r",
+          "shorthand": "-r"
+        }
+      ]
     },
     {
       "name": "about",
-      "description": "Show environment info"
+      "description": "Show environment info",
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--transitive",
+          "description": "Include transitive dependencies",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-t",
+          "shorthand": "-t"
+        }
+      ]
     }
   ],
   "globalOptions": [

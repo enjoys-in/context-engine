@@ -80,7 +80,27 @@
     },
     {
       "name": "members",
-      "description": "List cluster members"
+      "description": "List cluster members",
+      "options": [
+        {
+          "name": "--detailed",
+          "description": "Include Serf tags",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--wan",
+          "description": "Show WAN members",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--status",
+          "description": "Filter by status regex",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "catalog",
@@ -88,11 +108,51 @@
       "subcommands": [
         {
           "name": "services",
-          "description": "List services"
+          "description": "List services",
+          "options": [
+            {
+              "name": "--tags",
+              "description": "Show the tags for each service",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--node",
+              "description": "Only services on this node",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--datacenter",
+              "description": "Datacenter to query",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "nodes",
-          "description": "List nodes"
+          "description": "List nodes",
+          "options": [
+            {
+              "name": "--detailed",
+              "description": "Include node metadata",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--service",
+              "description": "Only nodes running this service",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--datacenter",
+              "description": "Datacenter to query",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "datacenters",
@@ -118,6 +178,38 @@
               "description": "Value",
               "required": false
             }
+          ],
+          "options": [
+            {
+              "name": "--cas",
+              "description": "Only write if at this index",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--modify-index",
+              "description": "Index to compare against",
+              "type": "integer",
+              "takesValue": true
+            },
+            {
+              "name": "--flags",
+              "description": "Unsigned flag value",
+              "type": "integer",
+              "takesValue": true
+            },
+            {
+              "name": "--acquire",
+              "description": "Acquire a lock with this session",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--release",
+              "description": "Release the lock",
+              "type": "boolean",
+              "takesValue": false
+            }
           ]
         },
         {
@@ -129,11 +221,57 @@
               "description": "Key",
               "required": true
             }
+          ],
+          "options": [
+            {
+              "name": "--recurse",
+              "description": "Fetch every key under the prefix",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--keys",
+              "description": "Return keys only",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--detailed",
+              "description": "Include metadata",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--raw",
+              "description": "Print the raw value",
+              "type": "boolean",
+              "takesValue": false
+            }
           ]
         },
         {
           "name": "delete",
-          "description": "Delete KV pair"
+          "description": "Delete KV pair",
+          "options": [
+            {
+              "name": "--recurse",
+              "description": "Delete every key under the prefix",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--cas",
+              "description": "Only delete if at this index",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--modify-index",
+              "description": "Index to compare against",
+              "type": "integer",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "export",
@@ -151,11 +289,57 @@
       "subcommands": [
         {
           "name": "register",
-          "description": "Register a service"
+          "description": "Register a service",
+          "options": [
+            {
+              "name": "--name",
+              "description": "Service name",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--id",
+              "description": "Service id",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--address",
+              "description": "Service address",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--port",
+              "description": "Service port",
+              "type": "integer",
+              "takesValue": true
+            },
+            {
+              "name": "--tag",
+              "description": "Service tag",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--meta",
+              "description": "Service metadata, key=value",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "deregister",
-          "description": "Deregister a service"
+          "description": "Deregister a service",
+          "options": [
+            {
+              "name": "--id",
+              "description": "Service id to remove",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
@@ -165,15 +349,81 @@
       "subcommands": [
         {
           "name": "proxy",
-          "description": "Run connect proxy"
+          "description": "Run connect proxy",
+          "options": [
+            {
+              "name": "--sidecar-for",
+              "description": "Run as a sidecar for this service",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--service",
+              "description": "Service to proxy",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--upstream",
+              "description": "Upstream to expose, name:port",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--listen",
+              "description": "Listen address",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "envoy",
-          "description": "Run Envoy proxy"
+          "description": "Run Envoy proxy",
+          "options": [
+            {
+              "name": "--sidecar-for",
+              "description": "Run as a sidecar for this service",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--gateway",
+              "description": "Run as a gateway (mesh, ingress, terminating)",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--admin-bind",
+              "description": "Envoy admin bind address",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--bootstrap",
+              "description": "Print the bootstrap configuration",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "ca",
-          "description": "CA management"
+          "description": "CA management",
+          "options": [
+            {
+              "name": "--config-file",
+              "description": "CA configuration file",
+              "type": "file",
+              "takesValue": true
+            },
+            {
+              "name": "--format",
+              "description": "Output format (table, json, yaml)",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
@@ -183,7 +433,33 @@
       "subcommands": [
         {
           "name": "create",
-          "description": "Create intention"
+          "description": "Create intention",
+          "options": [
+            {
+              "name": "--allow",
+              "description": "Allow the traffic",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--deny",
+              "description": "Deny the traffic",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--meta",
+              "description": "Intention metadata, key=value",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--replace",
+              "description": "Overwrite an existing intention",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         },
         {
           "name": "delete",
@@ -199,7 +475,21 @@
         },
         {
           "name": "match",
-          "description": "Match intentions"
+          "description": "Match intentions",
+          "options": [
+            {
+              "name": "--source",
+              "description": "Match by source",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--destination",
+              "description": "Match by destination",
+              "type": "boolean",
+              "takesValue": false
+            }
+          ]
         }
       ]
     },
@@ -209,7 +499,21 @@
       "subcommands": [
         {
           "name": "save",
-          "description": "Save snapshot"
+          "description": "Save snapshot",
+          "options": [
+            {
+              "name": "--stale",
+              "description": "Allow a stale read from any server",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--append-filename",
+              "description": "Append metadata to the filename",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "restore",
@@ -217,7 +521,21 @@
         },
         {
           "name": "inspect",
-          "description": "Inspect snapshot"
+          "description": "Inspect snapshot",
+          "options": [
+            {
+              "name": "--kvdetails",
+              "description": "Include key-value detail",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--format",
+              "description": "Output format (table, json, yaml)",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
@@ -227,19 +545,93 @@
       "subcommands": [
         {
           "name": "bootstrap",
-          "description": "Bootstrap ACLs"
+          "description": "Bootstrap ACLs",
+          "options": [
+            {
+              "name": "--format",
+              "description": "Output format (table, json, yaml)",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "token",
-          "description": "Token management"
+          "description": "Token management",
+          "options": [
+            {
+              "name": "--description",
+              "description": "Token description",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--policy-name",
+              "description": "Policy to attach",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--role-name",
+              "description": "Role to attach",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--format",
+              "description": "Output format (table, json, yaml)",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "policy",
-          "description": "Policy management"
+          "description": "Policy management",
+          "options": [
+            {
+              "name": "--name",
+              "description": "Policy name",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--rules",
+              "description": "Policy rules, or @file",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--description",
+              "description": "Policy description",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "role",
-          "description": "Role management"
+          "description": "Role management",
+          "options": [
+            {
+              "name": "--name",
+              "description": "Role name",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--policy-name",
+              "description": "Policy to attach",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--description",
+              "description": "Role description",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
@@ -249,17 +641,71 @@
       "subcommands": [
         {
           "name": "raft",
-          "description": "Raft operations"
+          "description": "Raft operations",
+          "options": [
+            {
+              "name": "--list-peers",
+              "description": "List the Raft peers",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--remove-peer",
+              "description": "Remove a peer",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--format",
+              "description": "Output format (table, json, yaml)",
+              "type": "string",
+              "takesValue": true
+            }
+          ]
         },
         {
           "name": "autopilot",
-          "description": "Autopilot settings"
+          "description": "Autopilot settings",
+          "options": [
+            {
+              "name": "--get-config",
+              "description": "Print the autopilot configuration",
+              "type": "boolean",
+              "takesValue": false
+            },
+            {
+              "name": "--cleanup-dead-servers",
+              "description": "Automatically remove dead servers",
+              "type": "string",
+              "takesValue": true
+            },
+            {
+              "name": "--min-quorum",
+              "description": "Minimum quorum to maintain",
+              "type": "integer",
+              "takesValue": true
+            }
+          ]
         }
       ]
     },
     {
       "name": "monitor",
-      "description": "Stream logs from Consul agent"
+      "description": "Stream logs from Consul agent",
+      "options": [
+        {
+          "name": "--log-level",
+          "description": "Log level to stream",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--log-json",
+          "description": "Stream JSON log lines",
+          "type": "boolean",
+          "takesValue": false
+        }
+      ]
     },
     {
       "name": "reload",
@@ -271,11 +717,27 @@
     },
     {
       "name": "info",
-      "description": "Show agent debug info"
+      "description": "Show agent debug info",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format (table, json, yaml)",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     },
     {
       "name": "version",
-      "description": "Show version"
+      "description": "Show version",
+      "options": [
+        {
+          "name": "--format",
+          "description": "Output format (table, json, yaml)",
+          "type": "string",
+          "takesValue": true
+        }
+      ]
     }
   ],
   "globalOptions": [

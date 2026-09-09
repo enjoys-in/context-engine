@@ -21,6 +21,20 @@
         "mc alias set myminio https://minio.example.com accesskey secretkey",
         "mc alias set s3 https://s3.amazonaws.com AKID SKEY",
         "mc alias set gcs https://storage.googleapis.com GOOG_ACCESS_KEY GOOG_SECRET"
+      ],
+      "options": [
+        {
+          "name": "--api",
+          "description": "S3 API signature to use",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--path",
+          "description": "Bucket lookup style",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -28,6 +42,14 @@
       "description": "List aliases",
       "examples": [
         "mc alias list"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -37,6 +59,36 @@
         "mc ls myminio/",
         "mc ls myminio/mybucket/",
         "mc ls --recursive myminio/mybucket/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "List recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--incomplete",
+          "description": "Show incomplete uploads",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-I",
+          "shorthand": "-I"
+        },
+        {
+          "name": "--versions",
+          "description": "Include object versions",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--summarize",
+          "description": "Print a summary",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -46,6 +98,42 @@
         "mc cp file.txt myminio/bucket/",
         "mc cp myminio/bucket/file.txt .",
         "mc cp --recursive ./dir/ myminio/bucket/dir/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Copy recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--attr",
+          "description": "Object metadata, key=value",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--preserve",
+          "description": "Preserve filesystem attributes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        },
+        {
+          "name": "--storage-class",
+          "description": "Storage class to set",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--encrypt-key",
+          "description": "Encryption key to use",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -53,6 +141,24 @@
       "description": "Move objects",
       "examples": [
         "mc mv myminio/bucket/old.txt myminio/bucket/new.txt"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Move recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--preserve",
+          "description": "Preserve filesystem attributes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        }
       ]
     },
     {
@@ -61,6 +167,48 @@
       "examples": [
         "mc rm myminio/bucket/file.txt",
         "mc rm --recursive --force myminio/bucket/dir/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Remove recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--force",
+          "description": "Allow a recursive removal",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--dangerous",
+          "description": "Allow removal of a whole bucket",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--older-than",
+          "description": "Only objects older than this",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--incomplete",
+          "description": "Remove incomplete uploads",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-I",
+          "shorthand": "-I"
+        },
+        {
+          "name": "--versions",
+          "description": "Remove every version",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -68,6 +216,30 @@
       "description": "Make bucket",
       "examples": [
         "mc mb myminio/newbucket"
+      ],
+      "options": [
+        {
+          "name": "--region",
+          "description": "Region to create the bucket in",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--with-lock",
+          "description": "Enable object locking",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-l",
+          "shorthand": "-l"
+        },
+        {
+          "name": "--ignore-existing",
+          "description": "Do nothing if it exists",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-p",
+          "shorthand": "-p"
+        }
       ]
     },
     {
@@ -76,6 +248,20 @@
       "examples": [
         "mc rb myminio/oldbucket",
         "mc rb --force myminio/oldbucket"
+      ],
+      "options": [
+        {
+          "name": "--force",
+          "description": "Remove a non-empty bucket",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--dangerous",
+          "description": "Confirm removal of everything",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -85,6 +271,42 @@
         "mc mirror ./local/ myminio/bucket/",
         "mc mirror myminio/bucket/ ./local/",
         "mc mirror --watch ./local/ myminio/bucket/"
+      ],
+      "options": [
+        {
+          "name": "--overwrite",
+          "description": "Overwrite existing objects",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--remove",
+          "description": "Delete extraneous objects at the target",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--watch",
+          "description": "Keep mirroring on change",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-w",
+          "shorthand": "-w"
+        },
+        {
+          "name": "--exclude",
+          "description": "Skip paths matching this pattern",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--preserve",
+          "description": "Preserve filesystem attributes",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-a",
+          "shorthand": "-a"
+        }
       ]
     },
     {
@@ -92,6 +314,20 @@
       "description": "Display object content",
       "examples": [
         "mc cat myminio/bucket/file.txt"
+      ],
+      "options": [
+        {
+          "name": "--version-id",
+          "description": "Object version to read",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--offset",
+          "description": "Byte offset to start at",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -99,6 +335,22 @@
       "description": "Display first lines",
       "examples": [
         "mc head myminio/bucket/file.txt"
+      ],
+      "options": [
+        {
+          "name": "--lines",
+          "description": "Lines to print",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-n",
+          "shorthand": "-n"
+        },
+        {
+          "name": "--version-id",
+          "description": "Object version to read",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -106,6 +358,22 @@
       "description": "Object statistics",
       "examples": [
         "mc stat myminio/bucket/file.txt"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Stat recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--versions",
+          "description": "Include versions",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -113,6 +381,24 @@
       "description": "Disk usage",
       "examples": [
         "mc du myminio/bucket/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Include every prefix",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--depth",
+          "description": "Prefix depth to report",
+          "type": "integer",
+          "takesValue": true,
+          "short": "-d",
+          "shorthand": "-d"
+        }
       ]
     },
     {
@@ -121,6 +407,38 @@
       "examples": [
         "mc find myminio/bucket/ --name '*.csv'",
         "mc find myminio/bucket/ --older-than 30d"
+      ],
+      "options": [
+        {
+          "name": "--name",
+          "description": "Match this glob",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--older-than",
+          "description": "Only objects older than this",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--newer-than",
+          "description": "Only objects newer than this",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--larger",
+          "description": "Only objects larger than this",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--exec",
+          "description": "Run this command per match",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -136,6 +454,22 @@
       "examples": [
         "mc share download myminio/bucket/file.txt",
         "mc share upload myminio/bucket/ --expire 24h"
+      ],
+      "options": [
+        {
+          "name": "--expire",
+          "description": "Link lifetime, e.g. 7d",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--recursive",
+          "description": "Share recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        }
       ]
     },
     {
@@ -147,6 +481,14 @@
         "mc admin user add myminio newuser newpassword",
         "mc admin policy list myminio",
         "mc admin service restart myminio"
+      ],
+      "options": [
+        {
+          "name": "--json",
+          "description": "Emit JSON",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -162,6 +504,26 @@
       "examples": [
         "mc event add myminio/bucket arn:xxx --event put",
         "mc event list myminio/bucket"
+      ],
+      "options": [
+        {
+          "name": "--event",
+          "description": "Events to watch",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--prefix",
+          "description": "Only this prefix",
+          "type": "string",
+          "takesValue": true
+        },
+        {
+          "name": "--suffix",
+          "description": "Only this suffix",
+          "type": "string",
+          "takesValue": true
+        }
       ]
     },
     {
@@ -177,6 +539,28 @@
       "description": "Set object retention",
       "examples": [
         "mc retention set --default GOVERNANCE 30d myminio/bucket/"
+      ],
+      "options": [
+        {
+          "name": "--recursive",
+          "description": "Apply recursively",
+          "type": "boolean",
+          "takesValue": false,
+          "short": "-r",
+          "shorthand": "-r"
+        },
+        {
+          "name": "--default",
+          "description": "Set the bucket default",
+          "type": "boolean",
+          "takesValue": false
+        },
+        {
+          "name": "--bypass",
+          "description": "Bypass governance mode",
+          "type": "boolean",
+          "takesValue": false
+        }
       ]
     },
     {
@@ -185,6 +569,20 @@
       "examples": [
         "mc ilm rule list myminio/bucket",
         "mc ilm rule add myminio/bucket --expire-days 90"
+      ],
+      "options": [
+        {
+          "name": "--expire-days",
+          "description": "Expire objects after this many days",
+          "type": "integer",
+          "takesValue": true
+        },
+        {
+          "name": "--transition-days",
+          "description": "Transition after this many days",
+          "type": "integer",
+          "takesValue": true
+        }
       ]
     }
   ],
